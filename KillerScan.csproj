@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Resources\ks-icon.ico</ApplicationIcon>
+    <Version>1.1.3</Version>
+    <FileVersion>1.1.3.0</FileVersion>
+    <AssemblyVersion>1.1.3.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\oui.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ks-icon.ico" />
+  </ItemGroup>
+
+</Project>
