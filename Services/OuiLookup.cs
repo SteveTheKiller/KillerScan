@@ -29,7 +29,7 @@ namespace KillerScan.Services
             string? line;
             while ((line = reader.ReadLine()) != null)
             {
-                var parts = line.Split('\t', 2);
+                var parts = line.Split(new[] { '\t' }, 2);
                 if (parts.Length == 2)
                 {
                     OuiTable[parts[0]] = parts[1];

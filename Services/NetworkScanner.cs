@@ -237,7 +237,7 @@ namespace KillerScan.Services
                     if (string.IsNullOrEmpty(trimmed)) continue;
 
                     // Parse lines like: 192.168.8.1     94-83-c4-a4-78-82     dynamic
-                    var parts = trimmed.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    var parts = trimmed.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     if (parts.Length >= 2)
                     {
                         string ip = parts[0];
@@ -427,8 +427,10 @@ namespace KillerScan.Services
             var scores = new Dictionary<string, int>();
             void Add(string type, int s)
             {
-                if (!scores.TryAdd(type, s))
+                if (scores.ContainsKey(type))
                     scores[type] += s;
+                else
+                    scores[type] = s;
             }
 
             bool hasWorkstationPorts = ports.Contains(3389) || ports.Contains(445);
@@ -666,13 +668,7 @@ namespace KillerScan.Services
                     if (await Task.WhenAny(connect, Task.Delay(1500)) != connect || !tcp.Connected)
                         continue;
                     using var ssl = new SslStream(tcp.GetStream(), false, (_, _, _, _) => true);
-                    var opts = new SslClientAuthenticationOptions
-                    {
-                        TargetHost = addr.ToString(),
-                        EnabledSslProtocols = SslProtocols.None,
-                        RemoteCertificateValidationCallback = (_, _, _, _) => true,
-                    };
-                    var auth = ssl.AuthenticateAsClientAsync(opts);
+                    var auth = ssl.AuthenticateAsClientAsync(addr.ToString(), null, SslProtocols.None, false);
                     if (await Task.WhenAny(auth, Task.Delay(1500)) != auth) continue;
                     if (ssl.RemoteCertificate != null)
                     {

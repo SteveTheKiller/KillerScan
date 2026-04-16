@@ -26,6 +26,8 @@ namespace KillerScan
         public MainWindow()
         {
             InitializeComponent();
+            var v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            if (v != null) VersionLabel.Text = $"v{v.Major}.{v.Minor}.{v.Build}";
             ResultsGrid.ItemsSource = _devices;            _filteredView = CollectionViewSource.GetDefaultView(_devices);
             if (_filteredView is ListCollectionView lcv)
             {
@@ -150,11 +152,11 @@ namespace KillerScan
                 _filteredView.Filter = obj =>
                 {
                     if (obj is not NetworkDevice d) return false;
-                    return d.IpAddress.Contains(filter, StringComparison.OrdinalIgnoreCase)
-                        || d.Hostname.Contains(filter, StringComparison.OrdinalIgnoreCase)
-                        || d.MacAddress.Contains(filter, StringComparison.OrdinalIgnoreCase)
-                        || d.Vendor.Contains(filter, StringComparison.OrdinalIgnoreCase)
-                        || d.DeviceType.Contains(filter, StringComparison.OrdinalIgnoreCase);
+                    return d.IpAddress.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
+                        || d.Hostname.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
+                        || d.MacAddress.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
+                        || d.Vendor.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
+                        || d.DeviceType.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
                 };
             int shown = _filteredView.Cast<object>().Count();
             DeviceCount.Text = string.IsNullOrEmpty(filter)
