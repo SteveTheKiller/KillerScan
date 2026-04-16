@@ -42,4 +42,4 @@ See `Services/NetworkScanner.cs` → `ClassifyDevice` for the scoring table.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+GPLv3. See [LICENSE](LICENSE). If you fork, modify, or redistribute KillerScan, your version must also be released under GPLv3 with source available. No exceptions for commercial rebrands.

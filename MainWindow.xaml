@@ -362,6 +362,21 @@
                     <TextBlock x:Name="VersionLabel" Text="v1.1.1"
                                Foreground="#444444" FontFamily="Consolas"
                                FontSize="10" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                    <TextBlock FontSize="10" VerticalAlignment="Center" Margin="0,0,12,0">
+                        <Hyperlink NavigateUri="https://github.com/SteveTheKiller/KillerScan"
+                                   RequestNavigate="Hyperlink_RequestNavigate"
+                                   Foreground="#444444" TextDecorations="None">
+                            <Run Text="Source"/>
+                        </Hyperlink>
+                        <Run Text=" &#x00B7; " Foreground="#444444"/>
+                        <Hyperlink NavigateUri="https://www.gnu.org/licenses/gpl-3.0.html"
+                                   RequestNavigate="Hyperlink_RequestNavigate"
+                                   Foreground="#444444" TextDecorations="None"
+                                   ToolTip="KillerScan is free software licensed under GPLv3. It comes with ABSOLUTELY NO WARRANTY. You are free to redistribute it under the terms of the GNU General Public License version 3.">
+                            <Run Text="GPLv3"/>
+                        </Hyperlink>
+                        <Run Text=" &#x00B7; NO WARRANTY" Foreground="#444444"/>
+                    </TextBlock>
                     <TextBlock FontSize="10" VerticalAlignment="Center">
                         <Run Text="&#x00A9; 2026 " Foreground="#444444"/>
                         <Hyperlink NavigateUri="https://thekiller.net"
