@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-04-18
+
+### Fixed
+- Maximize no longer covers the Windows taskbar. Added a `WM_GETMINMAXINFO` hook so the frameless window clamps to the monitor's work area (multi-monitor aware).
+
 ## [1.2.0] - 2026-04-16
 
 ### Changed
@@ -25,6 +30,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 _Historical entries to be backfilled._
 
-[Unreleased]: https://github.com/SteveTheKiller/KillerScan/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/SteveTheKiller/KillerScan/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/SteveTheKiller/KillerScan/releases/tag/v1.2.1
 [1.2.0]: https://github.com/SteveTheKiller/KillerScan/releases/tag/v1.2.0
 [1.1.3]: https://github.com/SteveTheKiller/KillerScan/releases/tag/v1.1.3

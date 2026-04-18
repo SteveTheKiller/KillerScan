@@ -359,7 +359,7 @@
                                  Foreground="{StaticResource PrimaryBrush}"
                                  Background="{StaticResource CardBorderBrush}"
                                  Visibility="Collapsed" Margin="0,0,12,0"/>
-                    <TextBlock x:Name="VersionLabel" Text="v1.2.0"
+                    <TextBlock x:Name="VersionLabel" Text="v1.2.1"
                                Foreground="#444444" FontFamily="Consolas"
                                FontSize="10" VerticalAlignment="Center" Margin="0,0,12,0"/>
                     <TextBlock FontSize="10" VerticalAlignment="Center" Margin="0,0,12,0">
