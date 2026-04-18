@@ -22,8 +22,8 @@ Part of [killertools.net](https://killertools.net).
 
 ## Download
 
-- Prebuilt binary: <https://dl.killertools.net/KillerScan.zip>
-- Source (GPL3 corresponding source for this release): <https://dl.killertools.net/KillerScan-1.2.0-src.zip>
+- Prebuilt binary: <https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.zip>
+- Source (GPL3 corresponding source for this release): <https://github.com/SteveTheKiller/KillerScan/releases/download/v1.2.1/KillerScan-1.2.1-src.zip>
 
 ## Build from source
 
