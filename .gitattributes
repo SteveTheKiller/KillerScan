@@ -1,0 +1,58 @@
+# Default: detect text vs binary, normalize text to LF in the repo
+* text=auto eol=lf
+
+# .NET project / IDE files (Visual Studio expects CRLF)
+*.sln       text eol=crlf
+*.csproj    text eol=crlf
+*.vbproj    text eol=crlf
+*.vcxproj   text eol=crlf
+*.pubxml    text eol=crlf
+*.props     text eol=crlf
+*.targets   text eol=crlf
+
+# C# / XAML source (Windows convention)
+*.cs        text eol=crlf
+*.xaml      text eol=crlf
+
+# Config XML / XSD used by .NET tooling
+*.xml       text eol=crlf
+*.xsd       text eol=crlf
+*.config    text eol=crlf
+
+# PowerShell (Windows native)
+*.ps1       text eol=crlf
+*.psm1      text eol=crlf
+*.psd1      text eol=crlf
+
+# Web / landing page assets
+*.html      text eol=lf
+*.css       text eol=lf
+*.js        text eol=lf
+*.svg       text eol=lf
+
+# Docs / data
+*.md        text eol=lf
+*.json      text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+
+# Shell scripts
+*.sh        text eol=lf
+
+# OUI vendor data (generated/refreshed from Windows tooling)
+oui.txt     text eol=crlf
+oui.csv     text eol=crlf
+
+# Binaries
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.zip       binary
+*.7z        binary
+*.exe       binary
+*.dll       binary
+*.pdb       binary
+*.snk       binary
+*.pfx       binary
