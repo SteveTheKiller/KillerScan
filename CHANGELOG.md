@@ -6,6 +6,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-04-25
+
+### Added
+- Self-installer: on first launch from outside the install location, a launcher dialog offers **Install** or **Run without installing**. Install copies the EXE to `%LOCALAPPDATA%\Programs\KillerScan\`, creates a Start Menu shortcut, and optionally a desktop shortcut.
+- Registers in `HKCU\...\Uninstall\KillerScan` so the app appears in Windows Add/Remove Programs with a working uninstall entry.
+- `KillerScan.exe /uninstall` flag for removal via Add/Remove Programs; self-deletes the install directory via a deferred batch script after exit.
+- Re-running the EXE when already installed shows an **Update** prompt instead of Install.
+- Hostname keyword short-circuits for `iphone`, `ipad`, and `android` in the device classifier.
+- Expanded Android/Mobile OUI vendor list: Google, BBK Electronics (Vivo/OnePlus parent), Realme, Nothing Technology, Fairphone.
+
+### Changed
+- Version bumped to 1.3.0.
+- Second ARP cache read added immediately after the ping sweep, so devices that block ICMP but respond to ARP (phones, tablets, some IoT) are caught without a separate scan pass.
+- Apple device classification renamed from "Apple Device" to "iPhone"; port 62078 now scores toward iPhone regardless of OUI (catches randomized-MAC iDevices when USB-tethered).
+- Android/Mobile vendor match threshold relaxed from `ports == 0` to `ports <= 3`.
+- Randomized/locally-administered MAC fallback relaxed from `ports == 0` to `ports <= 3`.
+- HTTP User-Agent updated to `KillerScan/1.3`.
+
 ## [1.2.1] - 2026-04-18
 
 ### Fixed
@@ -30,7 +48,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 _Historical entries to be backfilled._
 
-[Unreleased]: https://github.com/SteveTheKiller/KillerScan/compare/v1.2.1...HEAD
+[Unreleased]: https://github.com/SteveTheKiller/KillerScan/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/SteveTheKiller/KillerScan/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/SteveTheKiller/KillerScan/releases/tag/v1.2.1
 [1.2.0]: https://github.com/SteveTheKiller/KillerScan/releases/tag/v1.2.0
 [1.1.3]: https://github.com/SteveTheKiller/KillerScan/releases/tag/v1.1.3

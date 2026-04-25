@@ -124,6 +124,16 @@ namespace KillerScan.Services
             await Task.WhenAll(scanTasks);
             ct.ThrowIfCancellationRequested();
 
+            // Second ARP cache read: the ping wave stimulates ARP responses from devices
+            // that are too slow (or don't reply to ICMP at all). Reading the cache again
+            // catches them without requiring a second full scan.
+            var arpCache2 = GetArpCache();
+            foreach (var entry in arpCache2)
+            {
+                if (addressSet.Contains(entry.Key))
+                    discoveredHosts.TryAdd(entry.Key, (IPAddress.Parse(entry.Key), entry.Value));
+            }
+
             // Resolve MAC addresses via ARP for discovered hosts (fast, they're alive)
             StatusChanged?.Invoke($"Resolving {discoveredHosts.Count} MAC addresses...");
             var macTasks = discoveredHosts.Keys.ToList().Select(async ip =>
@@ -338,6 +348,9 @@ namespace KillerScan.Services
         // -------------------------------------------------------------------
         private static readonly (string Pattern, string Type)[] HostnameKeywords =
         {
+            ("iphone",        "iPhone"),
+            ("ipad",          "iPhone"),
+            ("android",       "Android"),
             ("lgwebos",       "Smart TV"),
             ("webostv",       "Smart TV"),
             ("lgtv",          "Smart TV"),
@@ -501,19 +514,24 @@ namespace KillerScan.Services
                 Add("NAS", 15);
             if (ports.Contains(548)) Add("NAS", 4);
 
-            // -- Apple device --
+            // -- Apple iDevice (iPhone / iPad) --
             bool isApple = vendor.Contains("apple");
-            if (isApple && ports.Contains(62078)) Add("Apple Device", 12);
-            if (isApple && ports.Count <= 2) Add("Apple Device", 6);
+            // Port 62078 is the Apple iDevice sync/tether port -- exclusively iPhones and iPads.
+            // Score regardless of OUI so randomized-MAC iDevices are still caught.
+            if (ports.Contains(62078)) Add("iPhone", 15);
+            if (isApple && ports.Contains(62078)) Add("iPhone", 5);  // OUI bonus
+            if (isApple && ports.Count <= 2) Add("iPhone", 6);
             if (device.MdnsServices.Any(s => s.Contains("_airplay") || s.Contains("_raop") || s.Contains("_airport")))
                 Add("Apple Device", 10);
 
-            // -- Mobile (phones, tablets) --
+            // -- Android / Mobile --
             bool isMobileVendor = vendor.Contains("samsung") || vendor.Contains("oneplus")
                 || vendor.Contains("xiaomi") || vendor.Contains("huawei") || vendor.Contains("motorola")
                 || vendor.Contains("oppo") || vendor.Contains("vivo") || vendor.Contains("zte")
-                || vendor.Contains("lg electronics");
-            if (isMobileVendor && ports.Count <= 2) Add("Mobile", 8);
+                || vendor.Contains("lg electronics") || vendor.Contains("google")
+                || vendor.Contains("bbk electronics") || vendor.Contains("realme")
+                || vendor.Contains("nothing technology") || vendor.Contains("fairphone");
+            if (isMobileVendor && ports.Count <= 3) Add("Android", 8);
 
             // -- Surveillance camera --
             if (vendor.Contains("hikvision") || vendor.Contains("dahua") || vendor.Contains("axis")
@@ -561,7 +579,7 @@ namespace KillerScan.Services
             {
                 localAdminMac = (firstByte & 0x02) != 0;
             }
-            if (localAdminMac && ports.Count == 0) return "Mobile";
+            if (localAdminMac && ports.Count <= 3) return "Mobile";
 
             // Fallback heuristics when no candidate cleared threshold.
             if (ports.Contains(22)) return "Linux/SSH";
@@ -598,7 +616,7 @@ namespace KillerScan.Services
                 MaxAutomaticRedirections = 2,
             };
             using var client = new HttpClient(handler) { Timeout = TimeSpan.FromMilliseconds(1500) };
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("KillerScan/1.2");
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("KillerScan/1.3");
 
             foreach (var (port, https) in candidates)
             {

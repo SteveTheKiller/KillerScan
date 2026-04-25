@@ -6,7 +6,8 @@ Part of [killertools.net](https://killertools.net).
 
 ## Features
 
-- ARP cache + parallel ping sweep for fast discovery (catches devices that ignore ICMP)
+- Self-installer: launch the EXE to install to `%LOCALAPPDATA%\Programs\KillerScan\` with Start Menu and optional desktop shortcut, or just run it portable with no install
+- ARP cache + parallel ping sweep for fast discovery; second ARP pass after sweep catches phones and devices that block ICMP
 - TCP port scan across 24 common service ports with 200ms timeout
 - Active fingerprinting: HTTP title/Server header, SSH banner, TLS cert subject, NetBIOS name (UDP 137), SNMPv1 sysDescr (UDP 161), ICMP TTL
 - MAC OUI vendor identification against the IEEE registry
@@ -23,7 +24,7 @@ Part of [killertools.net](https://killertools.net).
 ## Download
 
 - Prebuilt binary: <https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.zip>
-- Source (GPL3 corresponding source for this release): <https://github.com/SteveTheKiller/KillerScan/releases/download/v1.2.1/KillerScan-1.2.1-src.zip>
+- Source (GPL3 corresponding source for this release): <https://github.com/SteveTheKiller/KillerScan/releases/download/v1.3.0/KillerScan-1.3.0-src.zip>
 
 ## Build from source
 
