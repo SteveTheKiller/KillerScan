@@ -18,6 +18,7 @@
 <meta name="twitter:title" content="KillerScan — Free, open-source network scanner for Windows">
 <meta name="twitter:description" content="One exe. No installer, no agent, no account, no telemetry. Fast network scanner built by a field tech, for field techs. GPLv3.">
 <meta name="twitter:image" content="https://scan.killertools.net/og-killerscan.png">
+<script defer src="https://analytics.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
@@ -58,9 +59,13 @@ header { border-bottom: 1px solid var(--card-border); padding: 16px 0; backgroun
 .hero-cta { display: flex; flex-direction: column; align-items: center; }
 @media (max-width: 700px) { .hero-columns { grid-template-columns: 1fr; } }
 .terminal { background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 6px; margin: 0; text-align: left; overflow: hidden; }
-.terminal-bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: #151515; border-bottom: 1px solid #2a2a2a; }
-.terminal-dot { width: 10px; height: 10px; border-radius: 50%; background: #333; }
-.terminal-title { font-family: Consolas, monospace; font-size: 11px; color: #555; margin-left: auto; margin-right: auto; }
+.terminal-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #151515; border-bottom: 1px solid #2a2a2a; }
+.terminal-dots { display: flex; gap: 6px; align-items: center; }
+.terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+.terminal-dot.green  { background: #28c840; }
+.terminal-dot.yellow { background: #febc2e; }
+.terminal-dot.red    { background: #ff5f57; }
+.terminal-title { font-family: Consolas, monospace; font-size: 11px; color: #555; }
 .terminal-body { padding: 18px 20px; font-family: Consolas, monospace; font-size: 13px; line-height: 1.8; }
 .terminal-body .prompt { color: var(--primary-pressed); font-weight: bold; }
 .terminal-body .cmd { color: var(--text); font-weight: bold; }
@@ -82,9 +87,10 @@ header { border-bottom: 1px solid var(--card-border); padding: 16px 0; backgroun
 .verify-download summary:hover { color: var(--text); }
 .verify-download-box { margin-top: 12px; padding: 0; font-family: Consolas, monospace; font-size: 11px; color: var(--muted); text-align: center; overflow-x: auto; white-space: nowrap; }
 .verify-download-box .hash-label { color: var(--primary); margin-right: 8px; }
-.features { padding: 60px 0; border-top: 1px solid var(--card-border); }
+.features { padding: 60px 32px; border-top: 1px solid var(--card-border); }
+.features-inner { max-width: 1400px; margin: 0 auto; }
 .features h2 { font-size: 22px; font-weight: 600; margin-bottom: 32px; text-align: center; }
-.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
 .feature-card { background: var(--surface); border: 1px solid var(--card-border); border-radius: 4px; padding: 20px; }
 .feature-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--primary); }
 .feature-card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
@@ -147,8 +153,8 @@ footer a:hover { color: var(--primary-hover); }
 <div class="hero-terminal">
 <div class="terminal">
 <div class="terminal-bar">
-<span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span>
 <span class="terminal-title">~/killerscan</span>
+<div class="terminal-dots"><span class="terminal-dot green"></span><span class="terminal-dot yellow"></span><span class="terminal-dot red"></span></div>
 </div>
 <div class="terminal-body">
 <span class="prompt">$</span> <span class="cmd">killerscan</span> <span class="flag">--scan</span> <span class="out">192.168.1.0/24</span><br>
@@ -166,10 +172,10 @@ footer a:hover { color: var(--primary-hover); }
 </div>
 </div>
 <div class="hero-cta">
-<a href="https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.zip" class="download-btn">Download for Windows (.zip)</a>
-<div class="download-meta">Windows 10/11 x64 · ~865 KB · <a href="https://github.com/SteveTheKiller/KillerScan/releases/download/v1.3.0/KillerScan-1.3.0-src.zip">source (zip)</a></div>
-<div class="version-badge"><span class="prompt">$</span> KillerScan v1.3.0 &middot; updated 4/25/2026</div>
-<div class="verify-download-box"><span class="hash-label">SHA256</span>f52707176a98bda7f4a4a0855491ef924676200e895636da1dc927c9deff02c9</div>
+<a href="https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe" class="download-btn">Download for Windows (.exe)</a>
+<div class="download-meta">Windows 10/11 x64 · .NET Framework 4.8</div>
+<div class="version-badge"><span class="prompt">$</span> KillerScan v1.3.1 &middot; updated 5/4/2026</div>
+<div class="verify-download-box"><span class="hash-label">SHA256</span>96A0BEE4511CFD532FA30E6E074D6A5659CBD1C8B1604493FEBB55360122B812</div>
 <div class="oss-banner">
 <svg viewBox="0 0 24 24"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.29 3.44 9.77 8.2 11.36.6.11.82-.26.82-.58v-2.04c-3.34.72-4.04-1.61-4.04-1.61-.55-1.38-1.34-1.75-1.34-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.17 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0112 6.8c1.02 0 2.05.14 3 .4 2.29-1.55 3.3-1.23 3.3-1.23.65 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58A12 12 0 0024 12.5C24 5.87 18.63.5 12 .5z"/></svg>
 <span class="oss-text">Now open source under GPLv3.</span>
@@ -178,8 +184,10 @@ footer a:hover { color: var(--primary-hover); }
 </div>
 </div>
 </section>
+</div>
 
 <section class="features">
+<div class="features-inner">
 <h2>What it does</h2>
 <div class="feature-grid">
 <div class="feature-card">
@@ -207,9 +215,8 @@ footer a:hover { color: var(--primary-hover); }
 <p>Run it straight from the EXE for a portable no-install experience, or let it install itself to %LOCALAPPDATA% with a Start Menu shortcut. No runtime, no admin rights, no dependencies.</p>
 </div>
 </div>
-</section>
-
 </div>
+</section>
 
 <footer>
 <div class="container">
