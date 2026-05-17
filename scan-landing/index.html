@@ -25,16 +25,17 @@
   --primary: #1ea54c;
   --primary-hover: #36AD6A;
   --primary-pressed: #0C7A43;
-  --bg: #1c1c1c;
-  --surface: #232323;
-  --card-border: #282828;
+  --bg: #2b2b2b;
+  --surface: #252525;
+  --card-border: #333333;
   --table-header: #353535;
   --text: #ffffff;
   --muted: #a0a0a0;
 }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--bg);
+  background: var(--bg) url('grain.png') repeat;
+  background-size: 256px 256px;
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
@@ -50,7 +51,7 @@ header { border-bottom: 1px solid var(--card-border); padding: 16px 0; backgroun
 .logo-sub { font-size: 12px; color: var(--muted); margin-left: 8px; }
 .header-link { font-size: 13px; color: var(--muted); }
 .header-link:hover { color: var(--primary); }
-.hero { padding: 40px 0 60px; text-align: center; }
+.hero { padding: 40px 0 24px; text-align: center; }
 .hero h1 { font-size: 40px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.5px; }
 .hero h1 span { color: var(--primary); }
 .hero p { font-size: 17px; color: var(--muted); max-width: 560px; margin: 0 auto 16px; }
@@ -58,14 +59,16 @@ header { border-bottom: 1px solid var(--card-border); padding: 16px 0; backgroun
 .hero-columns { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: center; }
 .hero-cta { display: flex; flex-direction: column; align-items: center; }
 @media (max-width: 700px) { .hero-columns { grid-template-columns: 1fr; } }
-.terminal { background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 6px; margin: 0; text-align: left; overflow: hidden; }
-.terminal-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #151515; border-bottom: 1px solid #2a2a2a; }
+.terminal { background: #0a0a0c; border: 1px solid rgba(30,165,76,0.3); border-radius: 6px; margin: 0; text-align: left; overflow: hidden; transition: border-color 0.15s; }
+.terminal:hover { border-color: rgba(30,165,76,0.6); }
+.terminal-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255,255,255,0.07); border-bottom: 1px solid rgba(255,255,255,0.08); transition: background 0.1s; }
+.terminal:hover .terminal-bar { background: rgba(30,165,76,0.14); }
 .terminal-dots { display: flex; gap: 6px; align-items: center; }
 .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
 .terminal-dot.green  { background: #28c840; }
 .terminal-dot.yellow { background: #febc2e; }
 .terminal-dot.red    { background: #ff5f57; }
-.terminal-title { font-family: Consolas, monospace; font-size: 11px; color: #555; }
+.terminal-title { font-family: Consolas, monospace; font-size: 11px; color: rgba(255,255,255,0.40); }
 .terminal-body { padding: 18px 20px; font-family: Consolas, monospace; font-size: 13px; line-height: 1.8; }
 .terminal-body .prompt { color: var(--primary-pressed); font-weight: bold; }
 .terminal-body .cmd { color: var(--text); font-weight: bold; }
@@ -87,7 +90,7 @@ header { border-bottom: 1px solid var(--card-border); padding: 16px 0; backgroun
 .verify-download summary:hover { color: var(--text); }
 .verify-download-box { margin-top: 12px; padding: 0; font-family: Consolas, monospace; font-size: 11px; color: var(--muted); text-align: center; overflow-x: auto; white-space: nowrap; }
 .verify-download-box .hash-label { color: var(--primary); margin-right: 8px; }
-.features { padding: 60px 32px; border-top: 1px solid var(--card-border); }
+.features { padding: 16px 32px; border-top: 1px solid var(--card-border); }
 .features-inner { max-width: 1400px; margin: 0 auto; }
 .features h2 { font-size: 22px; font-weight: 600; margin-bottom: 32px; text-align: center; }
 .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
@@ -110,7 +113,7 @@ footer a:hover { color: var(--primary-hover); }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #1ea54c55; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #1ea54c; }
-.version-badge { display: inline-block; background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 3px; padding: 4px 12px; font-family: Consolas, monospace; font-size: 12px; color: var(--primary); margin-top: 20px; }
+.version-badge { display: inline-block; background: #1a1d22; border: 1px solid rgba(30,165,76,0.25); border-radius: 3px; padding: 4px 12px; font-family: Consolas, monospace; font-size: 12px; color: var(--primary); margin-top: 20px; }
 .version-badge .prompt { color: var(--primary-pressed); font-weight: bold; }
 .updated-date { margin-top: 8px; font-size: 11px; color: var(--muted); font-family: Consolas, monospace; text-align: center; }
 .oss-banner { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 18px; padding: 10px 16px; background: var(--surface); border: 1px solid var(--primary); border-radius: 4px; max-width: 480px; margin-left: auto; margin-right: auto; font-size: 13px; }
@@ -174,8 +177,8 @@ footer a:hover { color: var(--primary-hover); }
 <div class="hero-cta">
 <a href="https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe" class="download-btn">Download for Windows (.exe)</a>
 <div class="download-meta">Windows 10/11 x64 · .NET Framework 4.8</div>
-<div class="version-badge"><span class="prompt">$</span> KillerScan v1.3.1 &middot; updated 5/4/2026</div>
-<div class="verify-download-box"><span class="hash-label">SHA256</span>96A0BEE4511CFD532FA30E6E074D6A5659CBD1C8B1604493FEBB55360122B812</div>
+<div class="version-badge"><span class="prompt">$</span> KillerScan v1.4.0 &middot; updated 5/16/2026</div>
+<div class="verify-download-box"><span class="hash-label">SHA256</span>61CCE53F8CEBEB06B26DF7D6AED8A6B386789122814DCD1BBB4CB1E561D8B924</div>
 <div class="oss-banner">
 <svg viewBox="0 0 24 24"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.29 3.44 9.77 8.2 11.36.6.11.82-.26.82-.58v-2.04c-3.34.72-4.04-1.61-4.04-1.61-.55-1.38-1.34-1.75-1.34-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.17 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0112 6.8c1.02 0 2.05.14 3 .4 2.29-1.55 3.3-1.23 3.3-1.23.65 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58A12 12 0 0024 12.5C24 5.87 18.63.5 12 .5z"/></svg>
 <span class="oss-text">Now open source under GPLv3.</span>

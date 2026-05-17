@@ -99,11 +99,11 @@
         </Border>
 
         <!-- Scan Configuration -->
-        <Border Grid.Row="1" Style="{StaticResource Card}" Margin="16,8,16,0">
+        <Border Grid.Row="1" Style="{StaticResource Card}" Padding="12,6" Margin="16,6,16,0">
             <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="220"/>
+                        <ColumnDefinition Width="200"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
@@ -112,49 +112,55 @@
 
                     <TextBlock Grid.Column="0" Text="Subnet"
                                Foreground="{StaticResource MutedTextBrush}"
-                               FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                               FontSize="11" VerticalAlignment="Center" Margin="0,0,8,0"/>
 
                     <TextBox Grid.Column="1" x:Name="SubnetInput"
                              Style="{StaticResource DarkTextBox}"
+                             Padding="10,5" FontSize="12"
                              Text="192.168.1.0/24"
                              VerticalAlignment="Center"/>
 
                     <Button Grid.Column="2" x:Name="ScanBtn" Content="Scan"
-                            Style="{StaticResource PrimaryButton}"
-                            Click="ScanBtn_Click" Padding="16,6" Margin="16,0,0,0"/>
+                            Style="{StaticResource OutlineButton}"
+                            Click="ScanBtn_Click"
+                            FontSize="12" Padding="14,5" Margin="10,0,0,0"/>
 
-                    <!-- Network info - hacker terminal style -->
+                    <!-- Network info - terminal style -->
                     <Border Grid.Column="3" Background="#0a0a0a" CornerRadius="3"
-                            BorderBrush="#1a1a1a" BorderThickness="1"
-                            Padding="10,2" Margin="16,0,0,0">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="$" Foreground="#0C7A43" FontFamily="Consolas"
-                                       FontSize="11" FontWeight="Bold" Margin="0,0,4,0"
-                                       VerticalAlignment="Center"/>
-                            <TextBlock x:Name="LocalIpLabel" Text="local:--"
+                            BorderBrush="#1e1e1e" BorderThickness="1"
+                            Padding="10,0" Margin="10,0,0,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="local:" Foreground="#1a6b30"
+                                       FontFamily="Consolas" FontSize="12" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="LocalIpLabel" Text="--"
                                        Foreground="{StaticResource PrimaryBrush}" FontFamily="Consolas"
-                                       FontSize="11" VerticalAlignment="Center"/>
-                            <TextBlock Text=" | " Foreground="#0C7A43" FontFamily="Consolas"
-                                       FontSize="11" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="GatewayLabel" Text="gw:--"
+                                       FontSize="12" VerticalAlignment="Center"/>
+                            <TextBlock Text="  |  " Foreground="#1a6b30"
+                                       FontFamily="Consolas" FontSize="12" VerticalAlignment="Center"/>
+                            <TextBlock Text="gw:" Foreground="#1a6b30"
+                                       FontFamily="Consolas" FontSize="12" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="GatewayLabel" Text="--"
                                        Foreground="{StaticResource PrimaryBrush}" FontFamily="Consolas"
-                                       FontSize="11" VerticalAlignment="Center"/>
-                            <TextBlock Text=" | " Foreground="#0C7A43" FontFamily="Consolas"
-                                       FontSize="11" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="DnsLabel" Text="dns:--"
+                                       FontSize="12" VerticalAlignment="Center"/>
+                            <TextBlock Text="  |  " Foreground="#1a6b30"
+                                       FontFamily="Consolas" FontSize="12" VerticalAlignment="Center"/>
+                            <TextBlock Text="dns:" Foreground="#1a6b30"
+                                       FontFamily="Consolas" FontSize="12" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="DnsLabel" Text="--"
                                        Foreground="{StaticResource PrimaryBrush}" FontFamily="Consolas"
-                                       FontSize="11" VerticalAlignment="Center"/>
-                            <TextBlock Text=" | " Foreground="#0C7A43" FontFamily="Consolas"
-                                       FontSize="11" VerticalAlignment="Center"/>
+                                       FontSize="12" VerticalAlignment="Center"/>
+                            <TextBlock Text="  |  " Foreground="#1a6b30"
+                                       FontFamily="Consolas" FontSize="12" VerticalAlignment="Center"/>
                             <TextBlock x:Name="InterfaceLabel" Text="--"
-                                       Foreground="{StaticResource PrimaryBrush}" FontFamily="Consolas"
-                                       FontSize="11" VerticalAlignment="Center"/>
+                                       Foreground="#0C7A43" FontFamily="Consolas"
+                                       FontSize="12" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
                     <Button Grid.Column="5" x:Name="ExportButton"
                             Style="{StaticResource SurfaceButton}"
                             Content="Export &#x25BE;" Margin="8,0,0,0"
+                            FontSize="12" Padding="10,4"
                             IsEnabled="False"
                             Click="ExportButton_Click">
                         <Button.ContextMenu>
@@ -168,7 +174,7 @@
         </Border>
 
         <!-- Results Area -->
-        <Border Grid.Row="2" Style="{StaticResource Card}" Margin="16,6,16,6">
+        <Border Grid.Row="2" Style="{StaticResource Card}" Margin="16,4,16,6">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -211,11 +217,23 @@
                           HeadersVisibility="Column"
                           CanUserSortColumns="True"
                           SelectionMode="Single"
-                          ColumnHeaderHeight="36"
+                          ColumnHeaderHeight="28"
                           RowHeight="28"
                           AlternationCount="2"
                           RowStyle="{StaticResource DarkDataGridRow}"
                           CellStyle="{StaticResource DarkDataGridCell}">
+
+                    <!-- Override WPF system blue selection with green -->
+                    <DataGrid.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                         Color="#1a3a25"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"
+                                         Color="#1ea54c"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                                         Color="#1a3a25"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
+                                         Color="#1ea54c"/>
+                    </DataGrid.Resources>
 
                     <DataGrid.ContextMenu>
                         <ContextMenu>
@@ -257,12 +275,13 @@
 
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Background" Value="{StaticResource TableHeaderBrush}"/>
-                            <Setter Property="Foreground" Value="{StaticResource MutedTextBrush}"/>
-                            <Setter Property="FontSize" Value="12"/>
-                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="Background" Value="#2a2a2a"/>
+                            <Setter Property="Foreground" Value="#999999"/>
+                            <Setter Property="FontSize" Value="11"/>
+                            <Setter Property="FontWeight" Value="Normal"/>
                             <Setter Property="Padding" Value="8,0"/>
-                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource CardBorderBrush}"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
 
@@ -353,26 +372,73 @@
                 <TextBlock x:Name="StatusText" Text="Ready"
                            Foreground="{StaticResource MutedTextBrush}"
                            FontSize="12" VerticalAlignment="Center"/>
+                <!-- Portable mode indicator (hidden when installed) -->
+                <StackPanel x:Name="PortableBadge" Orientation="Horizontal"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Visibility="Collapsed">
+                    <TextBlock Text="PORTABLE" Foreground="#555555"
+                               FontFamily="Consolas" FontSize="9"
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <Button x:Name="InstallBtn" Content="Install KillerScan..."
+                            Click="Install_Click"
+                            FontFamily="Segoe UI" FontSize="10"
+                            Foreground="{StaticResource PrimaryBrush}"
+                            Background="Transparent"
+                            BorderThickness="1" BorderBrush="#2a5a3a"
+                            Padding="8,1" Cursor="Hand"
+                            VerticalAlignment="Center">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="2" Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#1a3a28"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <ProgressBar x:Name="ScanProgress"
                                  Width="200" Height="4" VerticalAlignment="Center"
                                  Foreground="{StaticResource PrimaryBrush}"
                                  Background="{StaticResource CardBorderBrush}"
                                  Visibility="Collapsed" Margin="0,0,12,0"/>
-                    <TextBlock x:Name="VersionLabel" Text="v1.3.1"
-                               Foreground="#444444" FontFamily="Consolas"
+                    <TextBlock x:Name="VersionLabel" Text="v1.4.0"
+                               Foreground="#6a6a6a" FontFamily="Consolas"
                                FontSize="10" VerticalAlignment="Center" Margin="0,0,12,0"/>
                     <TextBlock FontSize="10" VerticalAlignment="Center"
                                FontFamily="Consolas">
-                        <Run Text="&#x00A9; 2026 " Foreground="#444444"/>
+                        <Run Text="&#x00A9; 2026 " Foreground="#6a6a6a"/>
                         <Hyperlink NavigateUri="https://thekiller.net"
                                    RequestNavigate="Hyperlink_RequestNavigate"
-                                   Foreground="#444444" TextDecorations="None">
+                                   Foreground="#6a6a6a" TextDecorations="None">
                             <Run Text="Steve the Killer"/>
                         </Hyperlink>
                     </TextBlock>
                 </StackPanel>
             </Grid>
+        </Border>
+
+        <!-- Film grain overlay - results area only -->
+        <Border x:Name="GrainOverlay"
+                Grid.Row="2"
+                IsHitTestVisible="False"
+                Opacity="0.15"
+                Panel.ZIndex="9999">
+            <Border.Background>
+                <ImageBrush x:Name="GrainBrush"
+                            TileMode="Tile"
+                            ViewportUnits="Absolute"
+                            Viewport="0,0,256,256"
+                            Stretch="None"/>
+            </Border.Background>
         </Border>
     </Grid>
 </Window>

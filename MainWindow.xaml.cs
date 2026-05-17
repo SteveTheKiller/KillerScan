@@ -11,6 +11,9 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Reflection;
 using KillerScan.Models;
 using KillerScan.Services;
@@ -24,13 +27,16 @@ namespace KillerScan
         private readonly ObservableCollection<NetworkDevice> _devices = [];
         private CancellationTokenSource? _cts;
         private ICollectionView? _filteredView;
+        private StackPanel _portableBadge = null!;
+        private ImageBrush _grainBrush = null!;
 
         public MainWindow()
         {
             InitializeComponent();
-            var v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            if (v != null) VersionLabel.Text = $"v{v.Major}.{v.Minor}.{v.Build}";
-            ResultsGrid.ItemsSource = _devices;            _filteredView = CollectionViewSource.GetDefaultView(_devices);
+            _portableBadge = (StackPanel)FindName("PortableBadge")!;
+            _grainBrush    = (ImageBrush)FindName("GrainBrush")!;
+            ResultsGrid.ItemsSource = _devices;
+            _filteredView = CollectionViewSource.GetDefaultView(_devices);
             if (_filteredView is ListCollectionView lcv)
             {
                 lcv.IsLiveSorting = true;
@@ -40,7 +46,7 @@ namespace KillerScan
             OuiLookup.Load();
             DeviceOverrides.Load();
             var ver = Assembly.GetExecutingAssembly()
-                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.1.3";
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.4.0";
             VersionLabel.Text = $"v{ver}";
             PopulateNetworkInfo();
             StatusText.Text = $"Ready -- {OuiLookup.Count:N0} OUI vendors loaded";
@@ -54,7 +60,14 @@ namespace KillerScan
                     _devices.Add(device);
                     DeviceCount.Text = $"{_devices.Count} device{(_devices.Count == 1 ? "" : "s")} found";
                 });
+            ApplyGrainTexture();
             SourceInitialized += MainWindow_SourceInitialized;
+
+            Loaded += (_, _) =>
+            {
+                if (App.IsPortable())
+                    _portableBadge.Visibility = Visibility.Visible;
+            };
         }
 
         // ============================================================
@@ -166,7 +179,7 @@ namespace KillerScan
                     done:
                     string subnet = $"{new IPAddress(netBytes)}/{prefix}";
                     SubnetInput.Text = subnet;
-                    LocalIpLabel.Text = $"local:{ip}";
+                    LocalIpLabel.Text = ip.ToString();
                     InterfaceLabel.Text = iface.NetworkInterfaceType switch
                     {
                         NetworkInterfaceType.Wireless80211 => "Wi-Fi",
@@ -176,11 +189,11 @@ namespace KillerScan
                     var gw = props.GatewayAddresses
                         .FirstOrDefault(g => g.Address.AddressFamily == AddressFamily.InterNetwork);
                     if (gw != null)
-                        GatewayLabel.Text = $"gw:{gw.Address}";
+                        GatewayLabel.Text = gw.Address.ToString();
                     var dns = props.DnsAddresses
                         .FirstOrDefault(d => d.AddressFamily == AddressFamily.InterNetwork);
                     if (dns != null)
-                        DnsLabel.Text = $"dns:{dns}";
+                        DnsLabel.Text = dns.ToString();
                     break;
                 }
             }
@@ -346,6 +359,44 @@ namespace KillerScan
             catch (Exception ex)
             { MessageBox.Show($"Export error: {ex.Message}", "KillerScan", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
+        // ============================================================
+        // Grain texture
+        // ============================================================
+
+        private void ApplyGrainTexture()
+        {
+            const int size = 256;
+            var bmp = new WriteableBitmap(size, size, 96, 96, PixelFormats.Bgra32, null);
+            var pixels = new byte[size * size * 4];
+            var rng = new Random(1337);
+            for (int i = 0; i < pixels.Length; i += 4)
+            {
+                if (rng.Next(4) != 0) continue;
+                byte v = (byte)rng.Next(160, 255);
+                byte a = (byte)rng.Next(30, 80);
+                pixels[i]     = v;
+                pixels[i + 1] = v;
+                pixels[i + 2] = v;
+                pixels[i + 3] = a;
+            }
+            bmp.WritePixels(new System.Windows.Int32Rect(0, 0, size, size), pixels, size * 4, 0);
+            _grainBrush.ImageSource = bmp;
+        }
+
+        // ============================================================
+        // Portable badge
+        // ============================================================
+
+        private void Install_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new ConfirmDialog { Owner = this };
+            dlg.ShowDialog();
+            if (!dlg.Confirmed) return;
+
+            _portableBadge.Visibility = Visibility.Collapsed;
+            App.InstallAndRelaunch(wantDesktop: true);
+        }
+
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2) MaximizeBtn_Click(sender, e);

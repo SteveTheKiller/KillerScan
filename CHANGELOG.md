@@ -6,6 +6,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-05-16
+
+### Added
+- Portable mode detection: app now launches directly without a dialog; if running outside the install location a **PORTABLE** badge and **Install KillerScan...** button appear in the status bar.
+- Custom themed install confirmation dialog replaces the system MessageBox.
+- Film grain overlay on the results area background.
+- `OutlineButton` style (green border, green text, transparent background) matching killertools.net aesthetics.
+
+### Changed
+- Version bumped to 1.4.0.
+- Startup flow simplified: removed the launch dialog entirely; main window opens immediately.
+- Scan button switched to outlined style to match killertools.net.
+- TextBox background darkened to `#1c1c1c` with a visible `#3a3a3a` border so inputs are distinct from card surfaces.
+- Network info bar now labels each value: `local:`, `gw:`, `dns:` prefixes in dim green.
+- Column headers: reduced height, transparent background, dimmer text - cleaner minimal look.
+- Config bar padding tightened; gap between config and results area reduced.
+- DataGrid row selection color corrected from system blue to green (`#1a3a25` / `#1ea54c`).
+- Scrollbar style updated to thin green accent matching killertools.net.
+
 ## [1.3.0] - 2026-04-25
 
 ### Added
@@ -48,7 +67,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 _Historical entries to be backfilled._
 
-[Unreleased]: https://github.com/SteveTheKiller/KillerScan/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/SteveTheKiller/KillerScan/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/SteveTheKiller/KillerScan/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/SteveTheKiller/KillerScan/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/SteveTheKiller/KillerScan/releases/tag/v1.2.1
 [1.2.0]: https://github.com/SteveTheKiller/KillerScan/releases/tag/v1.2.0
