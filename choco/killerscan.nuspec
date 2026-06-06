@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>killerscan</id>
+    <version>REPLACE_VERSION</version>
+    <packageSourceUrl>https://github.com/SteveTheKiller/KillerScan</packageSourceUrl>
+    <owners>SteveTheKiller</owners>
+    <title>KillerScan</title>
+    <authors>Steve / thekiller.net</authors>
+    <projectUrl>https://scan.killertools.net</projectUrl>
+    <licenseUrl>https://github.com/SteveTheKiller/KillerScan/blob/main/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/SteveTheKiller/KillerScan</projectSourceUrl>
+    <docsUrl>https://github.com/SteveTheKiller/KillerScan/blob/main/README.md</docsUrl>
+    <bugTrackerUrl>https://github.com/SteveTheKiller/KillerScan/issues</bugTrackerUrl>
+    <tags>network scanner ip arp lan wifi portable</tags>
+    <summary>Network scanner for field techs. No install required, no telemetry.</summary>
+    <description>Fast local network scanner for Windows. Discover devices on your LAN by IP, MAC, hostname, and vendor without needing admin tools or a subscription.
+
+- ARP-based device discovery
+- MAC vendor lookup
+- Hostname resolution
+- Single Windows EXE, no runtime install required
+- GPLv3, local-only, no account, no telemetry
+    </description>
+    <releaseNotes>https://github.com/SteveTheKiller/KillerScan/releases/tag/vREPLACE_VERSION</releaseNotes>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

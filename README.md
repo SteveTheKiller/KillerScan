@@ -1,6 +1,6 @@
 # KillerScan
 
-Fast network scanner built for field techs. ARP + ping discovery, port probing, active fingerprinting (HTTP title, SSH banner, TLS cert, NetBIOS, SNMP), vendor lookup via OUI, and weighted-score device classification. Single portable EXE, ~865 KB zipped, no runtime install required.
+Fast network scanner built for field techs. ARP + ping discovery, port probing, active fingerprinting (HTTP title, SSH banner, TLS cert, NetBIOS, SNMP), vendor lookup via OUI, and weighted-score device classification. Single portable EXE, ~1.5 MB, no runtime install required.
 
 Part of [killertools.net](https://killertools.net).
 
@@ -24,7 +24,7 @@ Part of [killertools.net](https://killertools.net).
 ## Download
 
 - Prebuilt binary: <https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.zip>
-- Source (GPL3 corresponding source for this release): <https://github.com/SteveTheKiller/KillerScan/releases/download/v1.3.0/KillerScan-1.3.0-src.zip>
+- Source (GPL3 corresponding source for this release): <https://github.com/SteveTheKiller/KillerScan/releases/download/v1.4.0/KillerScan-1.4.0-src.zip>
 
 ## Build from source
 

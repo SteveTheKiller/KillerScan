@@ -1,0 +1,42 @@
+name: Chocolatey Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v1.0.0)'
+        required: true
+
+jobs:
+  push:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and push Chocolatey package
+        shell: pwsh
+        env:
+          CHOCO_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
+        run: |
+          $releaseTag = if ("${{ github.event_name }}" -eq "workflow_dispatch") { "${{ github.event.inputs.tag }}" } else { "${{ github.event.release.tag_name }}" }
+          $version = $releaseTag.TrimStart('v')
+          $exeUrl  = "https://github.com/SteveTheKiller/KillerScan/releases/download/$releaseTag/KillerScan.exe"
+
+          # Download release EXE and compute hash
+          Write-Host "Downloading $exeUrl..."
+          Invoke-WebRequest -Uri $exeUrl -OutFile "$env:RUNNER_TEMP\KillerScan.exe"
+          $hash = (Get-FileHash "$env:RUNNER_TEMP\KillerScan.exe" -Algorithm SHA256).Hash
+          Write-Host "SHA256: $hash"
+
+          # Stamp version and hash into package files
+          $nuspec  = "choco\killerscan.nuspec"
+          $install = "choco\tools\chocolateyInstall.ps1"
+
+          (Get-Content $nuspec)  -replace 'REPLACE_VERSION', $version | Set-Content $nuspec
+          (Get-Content $install) -replace 'REPLACE_HASH',    $hash    | Set-Content $install
+
+          # Pack and push
+          choco pack choco\killerscan.nuspec --out "$env:RUNNER_TEMP"
+          choco push "$env:RUNNER_TEMP\killerscan.$version.nupkg" --source https://push.chocolatey.org --api-key $env:CHOCO_API_KEY

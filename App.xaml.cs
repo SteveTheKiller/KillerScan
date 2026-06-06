@@ -47,6 +47,16 @@ namespace KillerScan
         {
             base.OnStartup(e);
 
+            // Silent install: KillerScan.exe /silent
+            // Installs machine-wide to Program Files, no UI. Used by winget/choco/RMM.
+            if (e.Args.Length > 0 &&
+                string.Equals(e.Args[0], "/silent", StringComparison.OrdinalIgnoreCase))
+            {
+                DoSilentInstall();
+                Shutdown(0);
+                return;
+            }
+
             // Handle uninstall flag (called by Add/Remove Programs)
             if (e.Args.Length > 0 &&
                 string.Equals(e.Args[0], "/uninstall", StringComparison.OrdinalIgnoreCase))
@@ -98,6 +108,58 @@ namespace KillerScan
         // ============================================================
         // Installation
         // ============================================================
+
+        // ============================================================
+        // Silent (machine-wide) install -- used by winget / choco / RMM
+        // ============================================================
+
+        private static void DoSilentInstall()
+        {
+            try
+            {
+                string installDir = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), AppName);
+                string installExe = Path.Combine(installDir, ExeName);
+                string startMenuDir = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.CommonPrograms), AppName);
+                string startMenuLnk = Path.Combine(startMenuDir, $"{AppName}.lnk");
+
+                Directory.CreateDirectory(installDir);
+                string src = Process.GetCurrentProcess().MainModule!.FileName;
+                File.Copy(src, installExe, overwrite: true);
+
+                Directory.CreateDirectory(startMenuDir);
+                CreateShortcut(startMenuLnk, installExe);
+
+                string version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "";
+
+                using (var key = Registry.LocalMachine.CreateSubKey(@"Software\KillerScan"))
+                {
+                    key.SetValue("Installed",   1);
+                    key.SetValue("InstallPath", installExe);
+                    key.SetValue("Version",     version);
+                }
+
+                using (var key = Registry.LocalMachine.CreateSubKey(
+                    @"Software\Microsoft\Windows\CurrentVersion\Uninstall\KillerScan"))
+                {
+                    key.SetValue("DisplayName",          AppName);
+                    key.SetValue("DisplayVersion",       version);
+                    key.SetValue("Publisher",            "Steve / thekiller.net");
+                    key.SetValue("InstallLocation",      installDir);
+                    key.SetValue("DisplayIcon",          $"{installExe},0");
+                    key.SetValue("UninstallString",      $"\"{installExe}\" /uninstall");
+                    key.SetValue("QuietUninstallString", $"\"{installExe}\" /uninstall");
+                    key.SetValue("NoModify",             1);
+                    key.SetValue("NoRepair",             1);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Silent install failed: {ex.Message}");
+                Environment.Exit(1);
+            }
+        }
 
         private static void DoInstall(bool wantDesktop)
         {
