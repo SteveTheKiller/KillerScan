@@ -11,7 +11,3 @@ $packageArgs = @{
 }
 
 Get-ChocolateyWebFile @packageArgs
-
-# Run silent installer -- installs to Program Files, All Users start menu, HKLM registry
-$exe = Join-Path $toolsDir 'KillerScan.exe'
-Start-Process -FilePath $exe -ArgumentList '/silent' -Wait -NoNewWindow
