@@ -8,7 +8,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <!-- [0] Theme COLORS (swapped in place at startup by ThemeManager). -->
                 <ResourceDictionary Source="Themes/Dark.xaml"/>
-                <!-- [1] Strings (added at startup by LocaleManager once en-US.xaml exists). -->
+                <!-- [1] Strings base (chosen locale layered on top at startup by LocaleManager.Initialize). -->
+                <ResourceDictionary Source="Strings/en-US.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <!-- ================================================================
@@ -28,6 +29,35 @@
 
             <!-- Typewriter wordmark font (bundled in Fonts/). -->
             <FontFamily x:Key="WordmarkFont">/KillerScan;component/Fonts/#Typewriter - a602 (dead postman 2004)</FontFamily>
+
+            <!-- Global themed tooltip (replaces the plain system box). Implicit (no key) so every
+                 tooltip app-wide picks it up; brushes are DynamicResource so it follows theme + accent. -->
+            <Style TargetType="ToolTip">
+                <Setter Property="Background" Value="{DynamicResource MenuBackgroundBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource MenuBorderBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="8,4"/>
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="HasDropShadow" Value="False"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToolTip">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="4"
+                                    Padding="{TemplateBinding Padding}">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="Black" BlurRadius="8" ShadowDepth="2" Direction="270" Opacity="0.45"/>
+                                </Border.Effect>
+                                <ContentPresenter/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
             <!-- DataGrid Row Style. Rows are translucent so the pane grain shows through. -->
             <Style x:Key="DarkDataGridRow" TargetType="DataGridRow">

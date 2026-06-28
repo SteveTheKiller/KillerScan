@@ -19,7 +19,7 @@ namespace KillerScan
 
         private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_devices.Count == 0 || ExportButton.ContextMenu is null) return;
+            if (ActiveDevices.Count == 0 || ExportButton.ContextMenu is null) return;
             ExportButton.ContextMenu.PlacementTarget = ExportButton;
             ExportButton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
             ExportButton.ContextMenu.IsOpen = true;
@@ -33,7 +33,7 @@ namespace KillerScan
             {
                 var sb = new StringBuilder();
                 sb.AppendLine("IP Address,Hostname,MAC Address,Vendor,Type,Open Ports");
-                foreach (var d in _devices.OrderBy(d => d.IpSortKey))
+                foreach (var d in ActiveDevices.OrderBy(d => d.IpSortKey))
                     sb.AppendLine($"\"{d.IpAddress}\",\"{d.Hostname}\",\"{d.MacAddress}\",\"{d.Vendor}\",\"{d.DeviceType}\",\"{d.OpenPortsDisplay}\"");
                 File.WriteAllText(dlg.FileName, sb.ToString(), Encoding.UTF8);
                 StatusText.Text = $"Exported to {Path.GetFileName(dlg.FileName)}";
@@ -116,7 +116,7 @@ namespace KillerScan
                 sb.AppendLine("<div class='swrow'><span class='swlabel'>Accent</span><div class='themesw' id='accentsw'></div></div>");
                 sb.AppendLine("</div></div>");
 
-                sb.AppendLine($"<p class='meta'>Subnet <b>{Esc(SubnetInput.Text)}</b> &middot; Scanned <b>{DateTime.Now:yyyy-MM-dd HH:mm}</b> &middot; <b>{_devices.Count}</b> devices</p>");
+                sb.AppendLine($"<p class='meta'>Subnet <b>{Esc(SubnetInput.Text)}</b> &middot; Scanned <b>{DateTime.Now:yyyy-MM-dd HH:mm}</b> &middot; <b>{ActiveDevices.Count}</b> devices</p>");
 
                 sb.AppendLine("<div class='tablewrap'><table id='tbl'><thead><tr>");
                 sb.AppendLine("<th data-type='num'>IP Address <span class='arrow'></span></th>");
@@ -126,7 +126,7 @@ namespace KillerScan
                 sb.AppendLine("<th data-type='text'>Type <span class='arrow'></span></th>");
                 sb.AppendLine("<th data-type='text'>Open Ports <span class='arrow'></span></th>");
                 sb.AppendLine("</tr></thead><tbody>");
-                foreach (var d in _devices.OrderBy(d => d.IpSortKey))
+                foreach (var d in ActiveDevices.OrderBy(d => d.IpSortKey))
                 {
                     string slug = TypeSlug(d.DeviceType);
                     string cls = slug.Length == 0 ? "type" : $"type t-{slug}";
@@ -177,32 +177,31 @@ namespace KillerScan
         }
 
         // ---- Report palette data (the in-report theme switcher embeds all six) ----
-        private readonly struct ReportTheme
+        private readonly struct ReportTheme(string key, string bg, string surface, string pane, string accent,
+                                            string text, string muted, string border, string hover)
         {
-            public readonly string Key, Bg, Surface, Pane, Accent, Text, Muted, Border, Hover;
-            public ReportTheme(string key, string bg, string surface, string pane, string accent,
-                               string text, string muted, string border, string hover)
-            { Key = key; Bg = bg; Surface = surface; Pane = pane; Accent = accent; Text = text; Muted = muted; Border = border; Hover = hover; }
+            public readonly string Key = key, Bg = bg, Surface = surface, Pane = pane, Accent = accent,
+                                   Text = text, Muted = muted, Border = border, Hover = hover;
         }
 
         private static readonly ReportTheme[] ReportThemes =
-        {
-            new ReportTheme("dark",     "#1c1c1c", "#333333", "#3a3a3a", "#1ea54c", "#e0e0e0", "#a0a0a0", "#2e2e2e", "#404040"),
-            new ReportTheme("light",    "#dcdcdc", "#f0f0f0", "#c8c8c8", "#1b5e20", "#1a1a1a", "#555555", "#b0b0b0", "#b2b2b2"),
-            new ReportTheme("black",    "#000000", "#0d0d0d", "#161616", "#00ff66", "#ffffff", "#cccccc", "#2a2a2a", "#242424"),
-            new ReportTheme("blood",    "#240c0d", "#2c1012", "#321416", "#e8485a", "#fffde8", "#f8c99e", "#401d1d", "#54201f"),
-            new ReportTheme("greed",    "#002115", "#002e1c", "#003824", "#3fbf6f", "#fffde8", "#e0d49a", "#0f4a30", "#00593a"),
-            new ReportTheme("cyanotic", "#001a28", "#00263a", "#002e48", "#3aa0d8", "#fffde8", "#e0d49a", "#183450", "#0a5478"),
-        };
+        [
+            new("dark",     "#1c1c1c", "#333333", "#3a3a3a", "#1ea54c", "#e0e0e0", "#a0a0a0", "#2e2e2e", "#404040"),
+            new("light",    "#dcdcdc", "#f0f0f0", "#c8c8c8", "#1b5e20", "#1a1a1a", "#555555", "#b0b0b0", "#b2b2b2"),
+            new("black",    "#000000", "#0d0d0d", "#161616", "#00ff66", "#ffffff", "#cccccc", "#2a2a2a", "#242424"),
+            new("blood",    "#240c0d", "#2c1012", "#321416", "#e8485a", "#fffde8", "#f8c99e", "#401d1d", "#54201f"),
+            new("greed",    "#002115", "#002e1c", "#003824", "#3fbf6f", "#fffde8", "#e0d49a", "#0f4a30", "#00593a"),
+            new("cyanotic", "#001a28", "#00263a", "#002e48", "#3aa0d8", "#fffde8", "#e0d49a", "#183450", "#0a5478"),
+        ];
 
         private static readonly string[] TypeSlugs =
-        { "router","windows","printer","switch","hypervisor","nas","iot","server","linux","dns","ha","mobile","camera","smarttv","media" };
+        ["router","windows","printer","switch","hypervisor","nas","iot","server","linux","dns","ha","mobile","camera","smarttv","media"];
 
         // Bright set (for the dark-paned themes) and the darkened set (for the light pane).
         private static readonly string[] TypeBright =
-        { "#F0A030","#60A0F0","#D080A0","#C0C0C0","#E06060","#40C080","#B060D0","#E08050","#D0C050","#50B0D0","#50D0A0","#A0A0F0","#F0C060","#E0A0E0","#70C0E0" };
+        ["#F0A030","#60A0F0","#D080A0","#C0C0C0","#E06060","#40C080","#B060D0","#E08050","#D0C050","#50B0D0","#50D0A0","#A0A0F0","#F0C060","#E0A0E0","#70C0E0"];
         private static readonly string[] TypeDarkened =
-        { "#B06000","#1D5FB0","#9C3F66","#5A5A5A","#B02A2A","#157A45","#6A2A9C","#B0481A","#7A6A10","#1A6A8C","#157A4F","#4040A8","#9A6800","#864A86","#256A9C" };
+        ["#B06000","#1D5FB0","#9C3F66","#5A5A5A","#B02A2A","#157A45","#6A2A9C","#B0481A","#7A6A10","#1A6A8C","#157A4F","#4040A8","#9A6800","#864A86","#256A9C"];
 
         /// <summary>Per-theme type colour map, mirroring the in-app theme overrides.</summary>
         private static Dictionary<string, string> TypeMapFor(string themeKey)

@@ -1,0 +1,55 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- KillerScan - French (fr-FR). Keys omitted here fall back to en-US. Never change x:Key values. -->
+
+    <sys:String x:Key="Str_Subtitle">Scanner réseau</sys:String>
+    <sys:String x:Key="Str_TT_Language">Langue</sys:String>
+    <sys:String x:Key="Str_TT_Theme">Thème</sys:String>
+    <sys:String x:Key="Str_TT_Export">Exporter</sys:String>
+    <sys:String x:Key="Str_Lbl_Theme">THÈME</sys:String>
+    <sys:String x:Key="Str_Lbl_Accent">ACCENT</sys:String>
+
+    <sys:String x:Key="Str_Lbl_Subnet">Sous-réseau</sys:String>
+    <sys:String x:Key="Str_Btn_Scan">Scanner</sys:String>
+    <sys:String x:Key="Str_Lbl_Local">Local</sys:String>
+    <sys:String x:Key="Str_Lbl_Gateway">Passerelle</sys:String>
+    <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
+
+    <sys:String x:Key="Str_DiscoveredDevices">Appareils détectés</sys:String>
+    <sys:String x:Key="Str_FilterPlaceholder">Filtrer les appareils...</sys:String>
+    <sys:String x:Key="Str_Export_Csv">Exporter en CSV</sys:String>
+    <sys:String x:Key="Str_Export_Html">Exporter en HTML</sys:String>
+
+    <sys:String x:Key="Str_Col_Ip">Adresse IP</sys:String>
+    <sys:String x:Key="Str_Col_Host">Nom d'hôte</sys:String>
+    <sys:String x:Key="Str_Col_Mac">Adresse MAC</sys:String>
+    <sys:String x:Key="Str_Col_Vendor">Fabricant</sys:String>
+    <sys:String x:Key="Str_Col_Type">Type</sys:String>
+    <sys:String x:Key="Str_Col_Ports">Ports ouverts</sys:String>
+
+    <sys:String x:Key="Str_Ctx_CopyIp">Copier l'adresse IP</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyMac">Copier l'adresse MAC</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyHost">Copier le nom d'hôte</sys:String>
+    <sys:String x:Key="Str_Ctx_Ping">Ping</sys:String>
+    <sys:String x:Key="Str_Ctx_OpenBrowser">Ouvrir dans le navigateur</sys:String>
+    <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
+    <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SetType">Définir le type d'appareil</sys:String>
+    <sys:String x:Key="Str_Ctx_ClearOverride">Effacer le remplacement</sys:String>
+
+    <sys:String x:Key="Str_About_Version">VERSION</sys:String>
+    <sys:String x:Key="Str_About_Publisher">ÉDITEUR</sys:String>
+    <sys:String x:Key="Str_About_Thumbprint">EMPREINTE</sys:String>
+    <sys:String x:Key="Str_About_Sha">SHA-256 DE L'EXE</sys:String>
+    <sys:String x:Key="Str_About_Db">BASE DE DONNÉES DES FABRICANTS</sys:String>
+    <sys:String x:Key="Str_About_DbUpdate">Mettre à jour depuis les derniers registres</sys:String>
+    <sys:String x:Key="Str_About_DbHint">Depuis la liste OUI de Wireshark.</sys:String>
+
+    <sys:String x:Key="Str_Btn_Stop">Arrêter</sys:String>
+    <sys:String x:Key="Str_Status_Ready">Prêt - {0} fabricants OUI chargés</sys:String>
+    <sys:String x:Key="Str_Count_Found">{0} appareils trouvés</sys:String>
+    <sys:String x:Key="Str_Count_Shown">{0} sur {1} affichés</sys:String>
+
+</ResourceDictionary>

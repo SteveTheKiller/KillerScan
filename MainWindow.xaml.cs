@@ -27,7 +27,7 @@ namespace KillerScan
     public partial class MainWindow : Window
     {
         // Each tab is a ScanSession; _active is the one shown in the grid. Proxies for the
-        // active session's collection/state live in Tabs.cs (_devices, _scannedSubnet, ...).
+        // active session's collection/state live in Tabs.cs (ActiveDevices, ActiveSubnet, ...).
         private readonly ObservableCollection<ScanSession> _sessions = [];
         private ScanSession _active = null!;
         private ICollectionView? _filteredView;
@@ -52,7 +52,7 @@ namespace KillerScan
             // First tab, seeded with the detected subnet.
             var first = new ScanSession(SubnetInput.Text)
             {
-                Status = $"Ready -- {OuiLookup.Count:N0} OUI vendors loaded"
+                Status = string.Format(Loc("Str_Status_Ready"), OuiLookup.Count.ToString("N0"))
             };
             WireSession(first);                                     // Scanning.cs
             _sessions.Add(first);

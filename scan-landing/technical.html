@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<script>/* Apply saved theme + accent before first paint to avoid a reload flash */(function(){try{var d=document.documentElement,t=localStorage.getItem('kscan-theme');if(t){d.setAttribute('data-theme',t);if({dark:1,light:1,hc:1}[t]){var v=localStorage.getItem('kscan-av');if(v){var s=v.split('|');d.style.setProperty('--accent',s[0]);d.style.setProperty('--btn',s[1]);}}}}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="darkreader-lock">
+<title>KillerScan - Technical</title>
+<link rel="canonical" href="https://killerscan.net/technical.html">
+<meta name="description" content="How KillerScan works under the hood: how it scans your network, works out who made each device, and figures out what every device is.">
+<link rel="icon" type="image/x-icon" href="brand/ks-icon.ico">
+<script defer src="https://koya.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
+<link rel="stylesheet" href="ks.css?v=4">
+<style>
+.page-hero { text-align: center; padding: 44px 16px 8px; }
+.page-hero .wm-logo { font-size: clamp(34px, 6vw, 60px); margin: 0 auto 6px; }
+.page-hero p { color: var(--muted); font-size: 15px; margin: 4px auto 0; max-width: 540px; }
+.content-inner { max-width: 860px; margin: 0 auto; padding: 0 28px 56px; }
+.tech-sec { scroll-margin-top: 84px; }
+@media (min-width: 901px){ .shell { grid-template-columns: 268px 1fr; } .frame-shadow { left: 268px; right: 0; border-left: 1px solid var(--dragline); border-right: 0; } }
+.sb-tabs .on { border-bottom: 0; }
+.outline { padding: 8px 0; overflow-y: auto; flex: 1; }
+.outline a { display: block; padding: 8px 16px 8px 18px; font-size: 13px; color: var(--text2); border-left: 2px solid transparent; }
+.outline a:hover { color: var(--text); background: color-mix(in srgb, var(--accent) 8%, transparent); filter: none; }
+.outline a.on { color: var(--accent); border-left-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, var(--sidebar)); }
+@media (max-width: 900px) { .outline { display:flex; flex-direction:row; flex-wrap:wrap; padding:8px; gap:4px; } .outline a { border-left:0; border-radius:5px; padding:6px 10px; } .outline a.on { border-left:0; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+<a href="index.html" class="tb-home" title="KillerScan home">
+<img class="tb-icon" src="brand/ks-icon.png" alt="KillerScan" width="44" height="44">
+<span class="wm-logo tb-wm"><span class="wmk">Killer</span><span class="wms">Scan</span></span>
+</a>
+<a class="tb-dl" href="https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe"><svg viewBox="0 0 24 24"><path d="M11 4h2v7h3l-4 5-4-5h3V4zM5 18h14v2H5z"/></svg><span data-i18n="nav_dl">Download</span></a>
+<span class="tb-spacer"></span>
+<nav class="tb-nav">
+<a href="about.html" data-i18n="nav_about">About</a>
+<a href="technical.html" class="on" data-i18n="nav_tech">Technical</a>
+</nav>
+<div class="tgrp" role="group" aria-label="Theme">
+<button class="swatch sw-dark"     data-theme="dark"     title="Dark"></button>
+<button class="swatch sw-light"    data-theme="light"    title="Light"></button>
+<button class="swatch sw-hc"       data-theme="hc"       title="High Contrast"></button>
+<button class="swatch sw-blood"    data-theme="blood"    title="Blood"></button>
+<button class="swatch sw-greed"    data-theme="greed"    title="Greed"></button>
+<button class="swatch sw-cyanotic" data-theme="cyanotic" title="Cyanotic"></button>
+</div>
+<div class="acc-fly accent-switch" id="accentSwitch">
+<button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="Accent color"></button>
+<div class="acc-pop" id="accentPop" hidden role="group" aria-label="Accent color">
+<span class="acc-pop-label" data-i18n="accent_label">accent:</span>
+<button class="acc" data-accent="red"    style="background:#DD504B;color:#DD504B" title="Red"></button>
+<button class="acc" data-accent="orange" style="background:#E8962C;color:#E8962C" title="Orange"></button>
+<button class="acc" data-accent="green"  style="background:#1EA54C;color:#1EA54C" title="Green"></button>
+<button class="acc" data-accent="teal"   style="background:#1FB8A8;color:#1FB8A8" title="Teal"></button>
+<button class="acc" data-accent="blue"   style="background:#50AEE8;color:#50AEE8" title="Blue"></button>
+<button class="acc" data-accent="purple" style="background:#B982E3;color:#B982E3" title="Purple"></button>
+</div>
+</div>
+<div class="lang-switch" role="group" aria-label="Language">
+<button class="lang-toggle" id="langToggle" aria-haspopup="true" aria-expanded="false" title="Language" aria-label="Language">&#127760;</button>
+<div class="lang-menu" id="langMenu" hidden>
+<button class="lang-item" data-lang="en">English</button>
+<button class="lang-item" data-lang="es">Espanol</button>
+<button class="lang-item" data-lang="de">Deutsch</button>
+<button class="lang-item" data-lang="fr">Francais</button>
+<button class="lang-item" data-lang="tr">Turkce</button>
+<button class="lang-item" data-lang="zh">&#20013;&#25991; (&#32321;&#39636;)</button>
+<button class="lang-item" data-lang="zh-cn">&#20013;&#25991; (&#31616;&#20307;)</button>
+<button class="lang-item" data-lang="bn">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
+</div>
+</div>
+</div>
+
+<div class="frame-shadow" aria-hidden="true"></div>
+<div class="shell">
+<aside class="sidebar">
+<div class="sb-tabs"><span class="on">Technical</span></div>
+<nav class="outline">
+<a href="#stack" class="on">Tech stack</a>
+<a href="#install">Install &amp; data</a>
+<a href="#pipeline">The scan pipeline</a>
+<a href="#ports">Ports probed</a>
+<a href="#vendor">Vendor resolution</a>
+<a href="#classify">Device classification</a>
+<a href="#privacy">Privacy &amp; footprint</a>
+<a href="#oui">Vendor database</a>
+</nav>
+</aside>
+<div class="content">
+<div class="content-inner">
+
+<section class="page-hero">
+<span class="page-title">The Tech of</span>
+<span class="wm-logo"><span class="wmk">Killer</span><span class="wms">Scan</span></span>
+<p>A look under the hood at how KillerScan finds every device on your network, works out who made it, and figures out what it is.</p>
+</section>
+
+<div class="tech-sec" id="stack">
+<h2>Tech stack</h2>
+<p>KillerScan is a native Windows app. There is no Electron, no browser engine, no runtime to install, and no separate scanner program running behind the scenes. Everything listed below ships inside a single .exe that runs on its own:</p>
+<table class="spec-table"><tr><th>Component</th><th>Detail</th></tr>
+<tr><td>UI</td><td>WPF on .NET Framework 4.8 (net48), x64, custom window chrome</td></tr>
+<tr><td>Host discovery</td><td>ARP cache parse + <code>SendARP</code> P/Invoke (iphlpapi.dll), async parallel ICMP ping sweep</td></tr>
+<tr><td>Port scan</td><td>Raw async <code>TcpClient</code> connect probes, throttled</td></tr>
+<tr><td>Service discovery</td><td>mDNS and SSDP over raw <code>UdpClient</code> multicast sockets. The underlying network packets are built and read by hand.</td></tr>
+<tr><td>Vendor data</td><td>Full IEEE manufacturer database (~57,000 entries across MA-L, MA-M, and MA-S) built into the app</td></tr>
+<tr><td>Packaging</td><td>Single executable. Install it for your user account or run it portable.</td></tr>
+</table>
+</div>
+
+<div class="tech-sec" id="install">
+<h2>Install &amp; data</h2>
+<p>KillerScan is a single .exe. Put it anywhere and run it as is, or use the built-in installer, which copies the app into your user folder, adds a Start Menu shortcut, and registers a normal Windows uninstall entry just for your account. It needs no admin rights, no .NET runtime, and nothing else installed. When you run it from outside its installed location, a <b>PORTABLE</b> badge and an <b>Install KillerScan...</b> button appear in the status bar.</p>
+</div>
+
+<div class="tech-sec" id="pipeline">
+<h2>The scan pipeline</h2>
+<p>A scan runs in two stages. First KillerScan finds every device that is switched on and connected. Then it takes a closer look at each of those devices at the same time. Doing it in that order means the slow, detailed work only happens for addresses that actually replied, which keeps the whole scan fast.</p>
+
+<h3 id="phase0">Phase 0: building the address list</h3>
+<p>You give KillerScan a range of addresses to check, written in the usual shorthand like <code>192.168.8.0/24</code>. That "/24" simply means the block of 256 addresses on your local network. KillerScan turns it into the full list of addresses worth testing. It also reads three things from your active network connection: your own address, your router's address (the gateway), and the DNS server you are set to use. Those are passed to the classifier so the router can be labelled correctly later on.</p>
+
+<h3 id="phase1">Phase 1: discovery (who is out there?)</h3>
+<p>Three things happen at roughly the same time:</p>
+<ul class="blurb-list">
+<li><b>Reading the ARP cache.</b> Windows keeps a small table that matches recently seen addresses to the hardware ID (the MAC address) of each device. ARP is the protocol that builds that table. KillerScan reads it first to get an instant list of devices Windows has talked to lately.</li>
+<li><b>Ping sweep.</b> KillerScan pings every address on the list at once, where a ping is just the "are you there?" message that the <code>ping</code> command sends. It keeps around 200 going at a time and gives each one half a second to answer, so a typical home network finishes in a couple of seconds.</li>
+<li><b>A second ARP read.</b> Many devices ignore pings but still respond at the lower hardware level, including a lot of phones, tablets, and smart-home gadgets. The pings quietly prompt Windows to record those devices in its table, so reading it again right after the sweep catches devices the ping alone would have missed. A direct hardware request fills in anything still missing.</li>
+</ul>
+<p>At the same time, KillerScan sends out two broadcast questions that many devices answer automatically. The first is <b>mDNS</b> (also called Bonjour), which Apple devices, printers, and Chromecasts use to announce themselves on a network. The second is <b>SSDP</b> (part of UPnP), used by smart TVs, media players, and similar gear. KillerScan listens a short, fixed time for each (about a second and a half) and matches every reply back to the device that sent it. Because the listening windows are short, this finishes about when the ping sweep does and the scan stays quick.</p>
+
+<h3 id="phase2">Phase 2: taking a closer look at each device</h3>
+<p>Every device found in Phase 1 is now examined at the same time, with a sensible limit so a large network does not try to open thousands of connections at once. For each device, KillerScan:</p>
+<ul class="blurb-list">
+<li>Checks a short list of network ports to see which are open. A port is like a numbered door into a device, and each common service (web, file sharing, remote desktop, and so on) sits behind a known door number. Each check is given a fifth of a second.</li>
+<li>Tries to find the device's name. It first asks DNS for the name attached to the address, and if that comes back empty it falls back to the name the device announced over mDNS, then to its older Windows (NetBIOS) name.</li>
+<li>Gathers identifying clues from anything that answers: the title and server type of any web page it serves, the greeting text an SSH login returns, the name on its security certificate, its Windows name, and its SNMP description (a standard "what am I" line that network gear and printers report). It also notes the TTL, a small number attached to replies that hints at the device's operating system.</li>
+<li>Looks up who made the device from its hardware ID, and attaches the mDNS and SSDP details gathered back in Phase 1.</li>
+</ul>
+<p>Only once all of that is collected does KillerScan decide what the device actually is, weighing every one of those clues together.</p>
+</div>
+
+<div class="tech-sec" id="ports">
+<h2>Ports probed</h2>
+<p>Rather than testing all 65,000 possible ports, KillerScan checks only the handful that genuinely tell you something about what a device is:</p>
+<table class="spec-table"><tr><th>Ports</th><th>What they suggest</th></tr>
+<tr><td>22, 23, 21</td><td>SSH / Telnet / FTP: Linux hosts and network gear</td></tr>
+<tr><td>53</td><td>DNS: resolvers, Pi-hole, routers</td></tr>
+<tr><td>80, 443, 8080, 8443</td><td>HTTP / HTTPS admin pages and web interfaces</td></tr>
+<tr><td>139, 445</td><td>NetBIOS / SMB: Windows PCs and NAS boxes</td></tr>
+<tr><td>3389, 2179</td><td>RDP / Hyper-V: Windows workstations and hosts</td></tr>
+<tr><td>515, 631, 9100</td><td>LPR / IPP / RAW: printers</td></tr>
+<tr><td>554</td><td>RTSP: IP cameras</td></tr>
+<tr><td>1883, 8883</td><td>MQTT: smart-home message brokers</td></tr>
+<tr><td>5357</td><td>WSD: Web Services for Devices</td></tr>
+<tr><td>5000, 5001, 548</td><td>Synology DSM / AFP: NAS boxes</td></tr>
+<tr><td>902, 8006</td><td>VMware ESXi / Proxmox: hypervisors</td></tr>
+<tr><td>8123</td><td>Home Assistant</td></tr>
+<tr><td>32400</td><td>Plex media server</td></tr>
+<tr><td>161</td><td>SNMP: managed switches, printers, network gear</td></tr>
+<tr><td>5353, 1900, 62078</td><td>mDNS / SSDP / Apple device sync</td></tr>
+</table>
+</div>
+
+<div class="tech-sec" id="vendor">
+<h2>Vendor resolution</h2>
+<p>Every network device has a MAC address, a hardware ID built in by its maker. The first half of that ID is assigned to a specific manufacturer, so it is the strongest clue to who built the device. A plain lookup is not always enough on its own, so KillerScan works through a fixed set of rules and uses the first one that matches:</p>
+<div class="codeblock">resolveVendor(mac):
+  1. brand override?    first 24 bits in a hand-maintained table  -> that brand
+  2. randomized MAC?    "locally administered" bit set            -> "(Randomized)"
+  3. OUI lookup         longest prefix first: MA-S - MA-M - MA-L    -> registered vendor
+  4. otherwise          -> blank</div>
+
+<h3 id="brand">1. Brand overrides</h3>
+<p>Some makers register their address ranges with the IEEE (the body that hands them out) as <b>"Private"</b>, or leave them unnamed, so an ordinary lookup returns nothing useful. KillerScan keeps a small table, maintained by hand, that maps those ranges to the real brand. Several Govee ranges are handled this way, for example, so the device shows the right name even when the official record will not.</p>
+
+<h3 id="random">2. Randomized MACs</h3>
+<p>Modern phones regularly invent a fake Wi-Fi address to protect your privacy (Apple calls this "Private Wi-Fi Address"; Android does much the same). These made-up addresses carry a marker showing they were <i>not</i> handed out by a real manufacturer. Rather than guess a brand from an address that only matches by coincidence, KillerScan simply labels the device <b>(Randomized)</b>, which is the honest answer: the real maker is hidden.</p>
+
+<h3 id="oui">3. Most-specific match first</h3>
+<p>The IEEE hands out address ranges in three sizes, and a small manufacturer can be given a slice of a larger range, sharing its opening digits with the bigger company that owns the parent range. To avoid crediting the wrong one, KillerScan always checks the <b>smallest, most specific range first</b>:</p>
+<table class="spec-table"><tr><th>Registry</th><th>Block size</th><th>Key length</th></tr>
+<tr><td>MA-S</td><td>36-bit</td><td>9 hex digits</td></tr>
+<tr><td>MA-M</td><td>28-bit</td><td>7 hex digits</td></tr>
+<tr><td>MA-L</td><td>24-bit</td><td>6 hex digits</td></tr>
+</table>
+<p>A 9-digit match beats a 7-digit match, which beats a 6-digit match, so the smaller, more specific owner always wins over the larger company that holds the parent range.</p>
+</div>
+
+<div class="tech-sec" id="classify">
+<h2>Device classification</h2>
+<p>Working out what a device is uses a <b>points system</b> rather than a single rule. Every clue (its name, its maker, its open ports, the banners its services return, and the mDNS and SSDP details) adds points to the device types it fits, and the type with the highest score wins, as long as it clears a minimum. A few clues are so reliable that KillerScan acts on them straight away, before any scoring. The order is:</p>
+<div class="codeblock">classify(device):
+  1. manual override        user set a type by hand        -> that type
+  2. gateway / DNS          is this the gateway?           -> Router | DNS Server | Router/DNS
+  3. hostname keywords      "iphone", "pihole", "synology" -> matched type
+  4. weighted scoring       sum points from every signal
+                            highest score >= threshold     -> winner
+  5. fallbacks              when nothing scored high enough</div>
+
+<h3 id="gateway">Gateway, DNS, and the Pi-hole case</h3>
+<p>The device sitting at the gateway address is your router. Routers often pass along DNS traffic (port 53), which used to make them look like the DNS server even when they were not. KillerScan only calls the gateway <b>Router/DNS</b> when it really is the DNS server your computer is set to use. If DNS is handled somewhere else, such as a Pi-hole, the gateway stays labelled <b>Router</b> and the Pi-hole is labelled <b>DNS Server</b>. That gives three honest labels instead of one wrong guess.</p>
+
+<h3 id="signals">Weighted signals</h3>
+<p>The more specific a clue, the more points it is worth. Here is a rough guide:</p>
+<table class="spec-table"><tr><th>Strength</th><th>Example signals</th></tr>
+<tr><td>14-15 (near certain)</td><td>SSH banner says <code>RouterOS</code>; HTTP title says <code>UniFi</code>; SNMP says <code>LaserJet</code>; mDNS <code>_googlecast</code> (Smart TV) or <code>_ipp</code> (printer); port 8006 (Proxmox)</td></tr>
+<tr><td>8-12 (strong combo)</td><td>vendor is Synology + a NAS port; vendor is Hikvision (camera); SSDP <code>SERVER</code> says Roku or Plex; port 32400 (Plex)</td></tr>
+<tr><td>4-7 (supporting)</td><td>a printer port open; TTL in the Windows range with SMB; port 554 (camera); generic DNS + HTTP together</td></tr>
+<tr><td>1-3 (tie breaker)</td><td>a single web port open, suggesting "probably a web device"</td></tr>
+</table>
+<p>Some clues deliberately ignore the maker. Port 62078 (used to sync iPhones) counts toward iPhone no matter what the address says, so an iPhone hiding behind a randomized address is still spotted. Networking gear that gives no sign of being a specific router or switch is labelled <b>Switch/AP</b>.</p>
+
+<h3 id="fallbacks">When nothing scores</h3>
+<p>A device that is idle or locked down may answer at the hardware level and nothing else. Rather than give up, KillerScan makes its best honest guess, working down this list:</p>
+<div class="codeblock">randomized MAC + few ports     -> Mobile      (a phone on a privacy address)
+known PC/workstation vendor,
+  no open ports                -> Windows     (a Dell/HP/Lenovo asleep, not "IoT")
+port 22 open                   -> Linux/SSH
+port 445 or 3389 open          -> Windows
+port 80 or 443 open            -> Web Device
+zero ports, has a MAC          -> IoT         (smart bulbs, plugs, sensors)
+nothing at all                 -> Unknown</div>
+<p>That rule about PC makers exists for a real situation: a small business desktop in modern standby still answers at the hardware level but refuses every incoming connection. Without the rule, the catch-all would label your Dell a smart-home gadget.</p>
+</div>
+
+<div class="tech-sec" id="privacy">
+<h2>Privacy &amp; footprint</h2>
+<p>Everything happens on your own machine. There is no account, no background agent, no cloud lookup, and no usage tracking. The vendor database is built into the app, so even manufacturer names are looked up offline. Nothing about your network ever leaves your computer.</p>
+<p>The one thing you may notice the first time you scan is a <b>Windows Firewall prompt</b>. That is the mDNS and SSDP discovery asking to listen for replies, which it has to do in order to hear Chromecasts, printers, and similar devices. Allow it on private networks and you will not be asked again. Deny it and those two discovery methods simply find nothing, while the rest of the scan carries on as normal.</p>
+</div>
+
+<div class="tech-sec" id="oui">
+<h2>Vendor database</h2>
+<p>The full IEEE manufacturer list, roughly 57,000 entries across all three registries (MA-L, MA-M, and MA-S), ships inside the .exe, so manufacturer names appear instantly and without any internet connection.</p>
+<p>You can update it to the latest data from inside the app. The <b>About</b> screen shows how many entries you have and when they were last refreshed, with a one-click update that downloads the newest list. The update is built so it can never leave you worse off: if a download is blocked or incomplete, a safety check refuses to replace your list with a smaller one, so an update can never wipe out or shrink what you already have.</p>
+</div>
+
+</div>
+</div>
+</div>
+<footer class="statusbar">
+<span class="left"><a href="https://github.com/SteveTheKiller/KillerScan" target="_blank" rel="noopener">Source on GitHub</a> &middot; GPLv3 &middot; Part of <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
+<span class="right"><span id="verEgg" title="click me">v1.5.0</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
+</footer>
+<div class="egg-toast" id="eggToast"></div>
+<script src="ks.js?v=2"></script>
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('.outline a'));
+  var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));}).filter(Boolean);
+  var sc=document.querySelector('.content');
+  function onScroll(){ var y=(sc?sc.scrollTop:window.scrollY)+100, cur=secs[0]; secs.forEach(function(s){ if(s&&s.offsetTop<=y) cur=s; });
+    links.forEach(function(a){ a.classList.toggle('on', cur && a.getAttribute('href')==='#'+cur.id); }); }
+  (sc||window).addEventListener('scroll',onScroll,{passive:true}); onScroll();
+})();
+</script>
+</body>
+</html>

@@ -23,10 +23,26 @@ namespace KillerScan
                         || d.Vendor.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
                         || d.DeviceType.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
                 };
-            int shown = _filteredView.Cast<object>().Count();
-            DeviceCount.Text = CountLabel(string.IsNullOrEmpty(filter)
-                ? $"{_devices.Count} device{(_devices.Count == 1 ? "" : "s")} found"
-                : $"{shown} of {_devices.Count} shown");
+            RefreshDeviceCount();
+        }
+
+        /// <summary>Rebuilds the device-count readout from current state, in the active language.</summary>
+        private void RefreshDeviceCount()
+        {
+            if (DeviceCount == null) return;
+            int total = ActiveDevices?.Count ?? 0;
+            string flt = FilterInput?.Text.Trim() ?? "";
+            string tail;
+            if (!string.IsNullOrEmpty(flt) && _filteredView != null)
+            {
+                int shown = _filteredView.Cast<object>().Count();
+                tail = string.Format(Loc("Str_Count_Shown"), shown, total);
+            }
+            else
+            {
+                tail = string.Format(Loc("Str_Count_Found"), total);
+            }
+            DeviceCount.Text = CountLabel(tail);
         }
     }
 }

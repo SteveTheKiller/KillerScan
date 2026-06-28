@@ -73,14 +73,104 @@ namespace KillerScan
         {
             if (sender is Button b && b.ContextMenu != null)
             {
+                BuildLanguageMenu(b.ContextMenu);
                 b.ContextMenu.PlacementTarget = b;
                 b.ContextMenu.IsOpen = true;
             }
         }
 
+        // English pinned on top; the rest alphabetical by locale code (the file name). Native name on
+        // the left, code right-aligned in the flyout.
+        private static readonly (Services.Locale Loc, string Name, string Code)[] Languages =
+        [
+            (Services.Locale.EnUS, "English",    "en-US"),
+            (Services.Locale.Bn,   "বাংলা",       "bn"),
+            (Services.Locale.De,   "Deutsch",    "de-DE"),
+            (Services.Locale.Es,   "Español",    "es"),
+            (Services.Locale.Fr,   "Français",   "fr-FR"),
+            (Services.Locale.TrTR, "Türkçe",     "tr-TR"),
+            (Services.Locale.ZhCN, "中文 (简体)", "zh-CN"),
+            (Services.Locale.ZhTW, "中文 (繁體)", "zh-TW"),
+        ];
+
+        private void BuildLanguageMenu(ContextMenu menu)
+        {
+            menu.Items.Clear();
+            var current = Services.LocaleManager.Current;
+
+            foreach (var (loc, name, code) in Languages)
+            {
+                var grid = new Grid { MinWidth = 160 };
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                var nameBlock = new TextBlock { Text = name, VerticalAlignment = VerticalAlignment.Center };
+                var codeBlock = new TextBlock
+                {
+                    Text = "(" + code + ")",
+                    Opacity = 0.5,
+                    Margin = new Thickness(22, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                Grid.SetColumn(codeBlock, 1);
+                grid.Children.Add(nameBlock);
+                grid.Children.Add(codeBlock);
+
+                var item = new MenuItem
+                {
+                    Header = grid,
+                    Tag = loc.ToString(),
+                    HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                    IsChecked = loc == current,
+                };
+                if (loc == current && TryFindResource("PrimaryBrush") is Brush accent)
+                {
+                    nameBlock.Foreground = accent;
+                    nameBlock.FontWeight = FontWeights.SemiBold;
+                    codeBlock.Foreground = accent;
+                    codeBlock.Opacity = 0.85;
+                }
+                item.Click += Lang_Click;
+                menu.Items.Add(item);
+            }
+        }
+
         private void Lang_Click(object sender, RoutedEventArgs e)
         {
-            // Locale switching lands with the i18n pass; English is the only option for now.
+            if (sender is MenuItem mi && mi.Tag is string tag
+                && Enum.TryParse<Services.Locale>(tag, out var loc))
+            {
+                Services.LocaleManager.Apply(loc);
+                RelocalizeDynamicUi();
+            }
+        }
+
+        /// <summary>Look up a localized string; falls back to the key name if missing.</summary>
+        private string Loc(string key) => Application.Current.TryFindResource(key) as string ?? key;
+
+        /// <summary>Re-applies strings to UI built in code (column headers, status, count, scan button),
+        /// so a live language switch updates them. Static {DynamicResource Str_*} XAML updates itself.</summary>
+        private void RelocalizeDynamicUi()
+        {
+            // DataGridColumn.Header DynamicResource does not refresh on a live dictionary swap - re-set it.
+            if (ColIp != null)     ColIp.Header     = Loc("Str_Col_Ip");
+            if (ColHost != null)   ColHost.Header   = Loc("Str_Col_Host");
+            if (ColMac != null)    ColMac.Header    = Loc("Str_Col_Mac");
+            if (ColVendor != null) ColVendor.Header = Loc("Str_Col_Vendor");
+            if (ColType != null)   ColType.Header   = Loc("Str_Col_Type");
+            if (ColPorts != null)  ColPorts.Header  = Loc("Str_Col_Ports");
+
+            if (_active != null)
+            {
+                ScanBtn.Content = Loc(_active.IsScanning ? "Str_Btn_Stop" : "Str_Btn_Scan");
+                RefreshDeviceCount();
+                if (!_active.IsScanning)
+                {
+                    var ready = string.Format(Loc("Str_Status_Ready"), Services.OuiLookup.Count.ToString("N0"));
+                    _active.Status = ready;
+                    StatusText.Text = ready;
+                }
+            }
         }
 
         // The theme flyout and context menus take mouse capture while open (StaysOpen=False),

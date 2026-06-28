@@ -1,0 +1,68 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ================================================================
+         KillerScan  -  English (en-US) strings.
+         x:Key values are looked up at runtime - never change them.
+         Other locales layer over this file; any key they omit falls back here.
+         ================================================================ -->
+
+    <!-- Title bar / chrome -->
+    <sys:String x:Key="Str_Subtitle">Network Scanner</sys:String>
+    <sys:String x:Key="Str_TT_Language">Language</sys:String>
+    <sys:String x:Key="Str_TT_Theme">Theme</sys:String>
+    <sys:String x:Key="Str_TT_Export">Export</sys:String>
+    <sys:String x:Key="Str_Lbl_Theme">THEME</sys:String>
+    <sys:String x:Key="Str_Lbl_Accent">ACCENT</sys:String>
+
+    <!-- Scan bar -->
+    <sys:String x:Key="Str_Lbl_Subnet">Subnet</sys:String>
+    <sys:String x:Key="Str_Btn_Scan">Scan</sys:String>
+    <sys:String x:Key="Str_Lbl_Local">Local</sys:String>
+    <sys:String x:Key="Str_Lbl_Gateway">Gateway</sys:String>
+    <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
+
+    <!-- Status bar + counts ({0}/{1} are filled in by the app - keep them) -->
+    <sys:String x:Key="Str_Btn_Stop">Stop</sys:String>
+    <sys:String x:Key="Str_Status_Ready">Ready - {0} OUI vendors loaded</sys:String>
+    <sys:String x:Key="Str_Count_Found">{0} devices found</sys:String>
+    <sys:String x:Key="Str_Count_Shown">{0} of {1} shown</sys:String>
+
+    <!-- Results pane -->
+    <sys:String x:Key="Str_DiscoveredDevices">Discovered Devices</sys:String>
+    <sys:String x:Key="Str_FilterPlaceholder">Filter devices...</sys:String>
+    <sys:String x:Key="Str_Export_Csv">Export as CSV</sys:String>
+    <sys:String x:Key="Str_Export_Html">Export as HTML</sys:String>
+
+    <!-- Results columns -->
+    <sys:String x:Key="Str_Col_Ip">IP Address</sys:String>
+    <sys:String x:Key="Str_Col_Host">Hostname</sys:String>
+    <sys:String x:Key="Str_Col_Mac">MAC Address</sys:String>
+    <sys:String x:Key="Str_Col_Vendor">Vendor</sys:String>
+    <sys:String x:Key="Str_Col_Type">Type</sys:String>
+    <sys:String x:Key="Str_Col_Ports">Open Ports</sys:String>
+
+    <!-- Right-click device menu -->
+    <sys:String x:Key="Str_Ctx_CopyIp">Copy IP Address</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyMac">Copy MAC Address</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyHost">Copy Hostname</sys:String>
+    <sys:String x:Key="Str_Ctx_Ping">Ping</sys:String>
+    <sys:String x:Key="Str_Ctx_OpenBrowser">Open in Browser</sys:String>
+    <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
+    <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SetType">Set Device Type</sys:String>
+    <sys:String x:Key="Str_Ctx_ClearOverride">Clear Override</sys:String>
+
+    <!-- About overlay -->
+    <sys:String x:Key="Str_About_Version">VERSION</sys:String>
+    <sys:String x:Key="Str_About_Publisher">PUBLISHER</sys:String>
+    <sys:String x:Key="Str_About_Thumbprint">THUMBPRINT</sys:String>
+    <sys:String x:Key="Str_About_Sha">EXE SHA-256</sys:String>
+    <sys:String x:Key="Str_About_Db">VENDOR DATABASE</sys:String>
+    <sys:String x:Key="Str_About_DbUpdate">Update from the latest registries</sys:String>
+    <sys:String x:Key="Str_About_DbHint">From the Wireshark OUI list.</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">ARP + IP sweep with vendor lookup, device classification, and a themeable, sortable HTML export. A </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve"> utility.</sys:String>
+
+</ResourceDictionary>

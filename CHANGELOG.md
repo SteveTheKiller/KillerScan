@@ -11,7 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Added
 - **mDNS (Bonjour) and SSDP (UPnP) discovery** (`MulticastDiscovery.cs`): a network-wide multicast pass runs alongside the ping sweep, mapping service types and SSDP SERVER strings back to hosts for much stronger device identification.
 - **MA-M (28-bit) and MA-S (36-bit) OUI support**: vendor lookup now matches longest-prefix first (MA-S -> MA-M -> MA-L) so small vendors sharing a 24-bit block resolve correctly.
-- `build/update-oui.ps1`: refreshes the embedded OUI database from multiple sources (Wireshark `manuf`, the IEEE registries, Nmap mac-prefixes) with automatic gzip handling, a browser User-Agent, dynamic CSV column detection, and a never-shrink guard so a blocked or partial download can never wipe or downgrade the list. Database refreshed to ~41.6k entries (MA-L + MA-M + MA-S).
+- **In-app vendor database updater**: the About screen shows the current OUI entry count and last-refresh date, with a one-click refresh that pulls the latest data (Wireshark `manuf`, with an Nmap fallback), is gzip-aware, and applies a never-shrink guard so a blocked or partial download can never wipe or downgrade the list.
 - New probe ports: 139 (NetBIOS), 554 (RTSP), 1883 / 8883 (MQTT), 5357 (WSD), 32400 (Plex).
 - Hostname fallback to the mDNS `.local` name and the NetBIOS name when reverse DNS returns nothing.
 - In-window **About** overlay matching KillerPDF: dims the window behind it, shows the app icon and typewriter wordmark, a merged description / tagline, and a lifted info panel (version, publisher, certificate thumbprint, SHA-256), with a GitHub release link and update checker, and a blended close-X that turns red on hover.
@@ -30,7 +30,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Install button adopts the same OutlineButton hover / press behaviour as the Scan button.
 - RGB-theme button outlines, footer / status text, scrollbar hover, and input hover colours corrected; scrollbars thinned and lightened on hover.
 - Collection initializers across `NetworkScanner.cs` simplified to C# 12 collection expressions.
-
 
 ## [1.4.0] - 2026-05-16
 

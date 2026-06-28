@@ -12,7 +12,7 @@ namespace KillerScan
     {
         // Prefix the device-count readout with the active tab's scanned subnet.
         private string CountLabel(string tail) =>
-            string.IsNullOrEmpty(_scannedSubnet) ? tail : $"{_scannedSubnet}  ·  {tail}";
+            string.IsNullOrEmpty(ActiveSubnet) ? tail : $"{ActiveSubnet}  ·  {tail}";
 
         /// <summary>Subscribe a session's scanner engine to the UI (only writes when that tab is active).</summary>
         private void WireSession(ScanSession s)
@@ -26,7 +26,7 @@ namespace KillerScan
                 {
                     s.Devices.Add(device);
                     if (s == _active)
-                        DeviceCount.Text = CountLabel($"{s.Devices.Count} device{(s.Devices.Count == 1 ? "" : "s")} found");
+                        RefreshDeviceCount();
                 });
         }
 
@@ -40,7 +40,7 @@ namespace KillerScan
                 s.Cts.Cancel(); s.Cts = null;
                 if (s == _active)
                 {
-                    ScanBtn.Content = "Scan";
+                    ScanBtn.Content = Loc("Str_Btn_Scan");
                     ScanProgress.Visibility = Visibility.Collapsed;
                     ExportButton.IsEnabled = s.Devices.Count > 0;
                 }
@@ -52,11 +52,11 @@ namespace KillerScan
             s.ScannedSubnet = SubnetInput.Text.Trim();           // updates the tab caption
             if (s == _active)
             {
-                DeviceCount.Text = CountLabel("0 devices found");
+                RefreshDeviceCount();
                 ScanProgress.Value = 0;
                 ScanProgress.Visibility = Visibility.Visible;
                 ExportButton.IsEnabled = false;
-                ScanBtn.Content = "Stop";
+                ScanBtn.Content = Loc("Str_Btn_Stop");
             }
             s.Cts = new CancellationTokenSource();
             try
@@ -71,7 +71,7 @@ namespace KillerScan
                 // Re-enable export on ANY scan end (completed, cancelled, errored) when we have results.
                 if (s == _active)
                 {
-                    ScanBtn.Content = "Scan";
+                    ScanBtn.Content = Loc("Str_Btn_Scan");
                     ScanProgress.Visibility = Visibility.Collapsed;
                     ExportButton.IsEnabled = s.Devices.Count > 0;
                 }

@@ -21,7 +21,7 @@
 param(
     [string]$CertName   = "Open Source Developer Stephen Riley",
     [switch]$SkipSign,
-    [switch]$SkipChoco,
+    [switch]$Choco,
     [string]$ChocoApiKey = $env:CHOCO_API_KEY
 )
 
@@ -79,7 +79,7 @@ if (-not $SkipSign) {
         /td  sha256 `
         /n   $CertName `
         /d   "KillerScan" `
-        /du  "https://scan.killertools.net" `
+        /du  "https://killerscan.net" `
         /v   $exe
 
     if ($LASTEXITCODE -ne 0) { throw "Signing failed. Is Certum SimplySign Desktop running?" }
@@ -93,18 +93,23 @@ Write-Host "`n==> Computing SHA256..." -ForegroundColor Cyan
 $hash = (Get-FileHash $exe -Algorithm SHA256).Hash
 Write-Host "    SHA256: $hash" -ForegroundColor Green
 
-# -- 4. Source zip -------------------------------------------------------------
-$srcZip = Get-ChildItem $publishDir -Filter "*-src.zip" -ErrorAction SilentlyContinue |
-          Sort-Object LastWriteTime -Descending | Select-Object -First 1
+# -- 4. Source zip --------------------------------------------------------------
+Write-Host "`n==> Bundling source zip..." -ForegroundColor Cyan
+# Create the source zip for THIS version only if it's missing, then pick it by
+# exact name. bundle-source.ps1 never overwrites or deletes an existing source
+# bundle, and old-version zips in the folder are left untouched - only the build
+# artifacts (exe / nupkg) get overwritten on a re-run.
+& (Join-Path $PSScriptRoot "build\bundle-source.ps1") -ProjectDir $PSScriptRoot -Version $version -AppName "KillerScan" -PublishDir $publishDir
+$srcZip = Get-ChildItem $publishDir -Filter "KillerScan-$version-src.zip" -ErrorAction SilentlyContinue | Select-Object -First 1
 if ($srcZip) {
-    Write-Host "`n==> Source zip: $($srcZip.FullName)" -ForegroundColor Green
+    Write-Host "    Source zip: $($srcZip.FullName)" -ForegroundColor Green
 } else {
-    Write-Host "`n    (No source zip found -- did bundle-source.ps1 run?)" -ForegroundColor Yellow
+    Write-Host "    (Source bundle failed -- is git installed and is this a repo?)" -ForegroundColor Yellow
 }
 
 # -- 5. Chocolatey pack/push ---------------------------------------------------
 $nupkg = $null
-if (-not $SkipChoco) {
+if ($Choco) {   # Chocolatey is opt-in: pass -Choco to pack/push. Default release skips it.
     Write-Host "`n==> Packing Chocolatey package..." -ForegroundColor Cyan
     $chocoDir    = Join-Path $PSScriptRoot "choco"
     $nuspec      = Join-Path $chocoDir "killerscan.nuspec"

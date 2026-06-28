@@ -8,13 +8,13 @@ namespace KillerScan
 {
     // One scan tab: its own device list, scanner engine, subnet and scan state. Tabs run
     // independently, so a background tab keeps scanning while you look at another.
-    internal sealed class ScanSession : INotifyPropertyChanged
+    internal sealed class ScanSession(string subnet) : INotifyPropertyChanged
     {
-        public ObservableCollection<NetworkDevice> Devices { get; } = new();
+        public ObservableCollection<NetworkDevice> Devices { get; } = [];
         public NetworkScanner Scanner { get; } = new();
         public CancellationTokenSource? Cts { get; set; }
 
-        public string SubnetText { get; set; }
+        public string SubnetText { get; set; } = subnet;
         public string Status { get; set; } = "Ready";
         public double Progress { get; set; }
 
@@ -36,8 +36,6 @@ namespace KillerScan
 
         // Tab caption: the scanned subnet once a scan has run, otherwise a placeholder.
         public string Title => string.IsNullOrEmpty(ScannedSubnet) ? "New scan" : ScannedSubnet;
-
-        public ScanSession(string subnet) { SubnetText = subnet; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

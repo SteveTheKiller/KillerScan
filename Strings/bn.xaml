@@ -1,0 +1,55 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- KillerScan - Bengali (bn). First-pass, native review welcome. Omitted keys fall back to en-US. -->
+
+    <sys:String x:Key="Str_Subtitle">নেটওয়ার্ক স্ক্যানার</sys:String>
+    <sys:String x:Key="Str_TT_Language">ভাষা</sys:String>
+    <sys:String x:Key="Str_TT_Theme">থিম</sys:String>
+    <sys:String x:Key="Str_TT_Export">এক্সপোর্ট</sys:String>
+    <sys:String x:Key="Str_Lbl_Theme">থিম</sys:String>
+    <sys:String x:Key="Str_Lbl_Accent">অ্যাকসেন্ট</sys:String>
+
+    <sys:String x:Key="Str_Lbl_Subnet">সাবনেট</sys:String>
+    <sys:String x:Key="Str_Btn_Scan">স্ক্যান</sys:String>
+    <sys:String x:Key="Str_Lbl_Local">লোকাল</sys:String>
+    <sys:String x:Key="Str_Lbl_Gateway">গেটওয়ে</sys:String>
+    <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
+
+    <sys:String x:Key="Str_DiscoveredDevices">শনাক্ত করা ডিভাইস</sys:String>
+    <sys:String x:Key="Str_FilterPlaceholder">ডিভাইস ফিল্টার করুন...</sys:String>
+    <sys:String x:Key="Str_Export_Csv">CSV হিসেবে এক্সপোর্ট</sys:String>
+    <sys:String x:Key="Str_Export_Html">HTML হিসেবে এক্সপোর্ট</sys:String>
+
+    <sys:String x:Key="Str_Col_Ip">IP ঠিকানা</sys:String>
+    <sys:String x:Key="Str_Col_Host">হোস্টনেম</sys:String>
+    <sys:String x:Key="Str_Col_Mac">MAC ঠিকানা</sys:String>
+    <sys:String x:Key="Str_Col_Vendor">প্রস্তুতকারক</sys:String>
+    <sys:String x:Key="Str_Col_Type">ধরন</sys:String>
+    <sys:String x:Key="Str_Col_Ports">খোলা পোর্ট</sys:String>
+
+    <sys:String x:Key="Str_Ctx_CopyIp">IP ঠিকানা কপি করুন</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyMac">MAC ঠিকানা কপি করুন</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyHost">হোস্টনেম কপি করুন</sys:String>
+    <sys:String x:Key="Str_Ctx_Ping">Ping</sys:String>
+    <sys:String x:Key="Str_Ctx_OpenBrowser">ব্রাউজারে খুলুন</sys:String>
+    <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
+    <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SetType">ডিভাইসের ধরন সেট করুন</sys:String>
+    <sys:String x:Key="Str_Ctx_ClearOverride">ওভাররাইড সাফ করুন</sys:String>
+
+    <sys:String x:Key="Str_About_Version">সংস্করণ</sys:String>
+    <sys:String x:Key="Str_About_Publisher">প্রকাশক</sys:String>
+    <sys:String x:Key="Str_About_Thumbprint">থাম্বপ্রিন্ট</sys:String>
+    <sys:String x:Key="Str_About_Sha">EXE SHA-256</sys:String>
+    <sys:String x:Key="Str_About_Db">প্রস্তুতকারক ডেটাবেস</sys:String>
+    <sys:String x:Key="Str_About_DbUpdate">সর্বশেষ রেজিস্ট্রি থেকে আপডেট করুন</sys:String>
+    <sys:String x:Key="Str_About_DbHint">Wireshark OUI তালিকা থেকে।</sys:String>
+
+    <sys:String x:Key="Str_Btn_Stop">থামুন</sys:String>
+    <sys:String x:Key="Str_Status_Ready">প্রস্তুত - {0} OUI প্রস্তুতকারক লোড হয়েছে</sys:String>
+    <sys:String x:Key="Str_Count_Found">{0}টি ডিভাইস পাওয়া গেছে</sys:String>
+    <sys:String x:Key="Str_Count_Shown">{1}টির মধ্যে {0}টি দেখানো হচ্ছে</sys:String>
+
+</ResourceDictionary>

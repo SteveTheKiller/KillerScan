@@ -1,0 +1,55 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- KillerScan - Simplified Chinese (zh-CN). First-pass, native review welcome. Omitted keys fall back to en-US. -->
+
+    <sys:String x:Key="Str_Subtitle">网络扫描器</sys:String>
+    <sys:String x:Key="Str_TT_Language">语言</sys:String>
+    <sys:String x:Key="Str_TT_Theme">主题</sys:String>
+    <sys:String x:Key="Str_TT_Export">导出</sys:String>
+    <sys:String x:Key="Str_Lbl_Theme">主题</sys:String>
+    <sys:String x:Key="Str_Lbl_Accent">强调色</sys:String>
+
+    <sys:String x:Key="Str_Lbl_Subnet">子网</sys:String>
+    <sys:String x:Key="Str_Btn_Scan">扫描</sys:String>
+    <sys:String x:Key="Str_Lbl_Local">本地</sys:String>
+    <sys:String x:Key="Str_Lbl_Gateway">网关</sys:String>
+    <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
+
+    <sys:String x:Key="Str_DiscoveredDevices">发现的设备</sys:String>
+    <sys:String x:Key="Str_FilterPlaceholder">筛选设备...</sys:String>
+    <sys:String x:Key="Str_Export_Csv">导出为 CSV</sys:String>
+    <sys:String x:Key="Str_Export_Html">导出为 HTML</sys:String>
+
+    <sys:String x:Key="Str_Col_Ip">IP 地址</sys:String>
+    <sys:String x:Key="Str_Col_Host">主机名</sys:String>
+    <sys:String x:Key="Str_Col_Mac">MAC 地址</sys:String>
+    <sys:String x:Key="Str_Col_Vendor">厂商</sys:String>
+    <sys:String x:Key="Str_Col_Type">类型</sys:String>
+    <sys:String x:Key="Str_Col_Ports">开放端口</sys:String>
+
+    <sys:String x:Key="Str_Ctx_CopyIp">复制 IP 地址</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyMac">复制 MAC 地址</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyHost">复制主机名</sys:String>
+    <sys:String x:Key="Str_Ctx_Ping">Ping</sys:String>
+    <sys:String x:Key="Str_Ctx_OpenBrowser">在浏览器中打开</sys:String>
+    <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
+    <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SetType">设置设备类型</sys:String>
+    <sys:String x:Key="Str_Ctx_ClearOverride">清除覆盖</sys:String>
+
+    <sys:String x:Key="Str_About_Version">版本</sys:String>
+    <sys:String x:Key="Str_About_Publisher">发布者</sys:String>
+    <sys:String x:Key="Str_About_Thumbprint">指纹</sys:String>
+    <sys:String x:Key="Str_About_Sha">EXE SHA-256</sys:String>
+    <sys:String x:Key="Str_About_Db">厂商数据库</sys:String>
+    <sys:String x:Key="Str_About_DbUpdate">从最新注册表更新</sys:String>
+    <sys:String x:Key="Str_About_DbHint">来自 Wireshark OUI 列表。</sys:String>
+
+    <sys:String x:Key="Str_Btn_Stop">停止</sys:String>
+    <sys:String x:Key="Str_Status_Ready">就绪 - 已加载 {0} 个 OUI 厂商</sys:String>
+    <sys:String x:Key="Str_Count_Found">找到 {0} 个设备</sys:String>
+    <sys:String x:Key="Str_Count_Shown">显示 {1} 个中的 {0} 个</sys:String>
+
+</ResourceDictionary>

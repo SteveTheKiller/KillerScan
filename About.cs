@@ -32,6 +32,9 @@ namespace KillerScan
             AboutSha256Block.Text     = "computing…";
             AboutUpdateButton.Visibility = Visibility.Collapsed;
 
+            RefreshDbInfo();
+            AboutDbStatus.Text = Loc("Str_About_DbHint");
+
             FadeOverlayIn(AboutOverlay);
 
             // SHA-256 is slow on a large EXE; compute off the UI thread.
@@ -75,6 +78,32 @@ namespace KillerScan
         {
             if (!string.IsNullOrEmpty(_updateTag))
                 OpenUrl($"https://github.com/{GitHubRepo}/releases/tag/{_updateTag}");
+        }
+
+        // Shows the current vendor-database size and where it came from (bundled vs last refresh date).
+        private void RefreshDbInfo()
+        {
+            AboutDbBlock.Text = $"{Services.OuiLookup.Count:N0} entries · {Services.OuiLookup.LastRefreshedDisplay}";
+        }
+
+        // Downloads a fresh OUI list and reloads it in place. Never shrinks the list; all status
+        // is reported inline under the link.
+        private async void AboutDbUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            AboutDbUpdateLink.IsEnabled = false;
+            AboutDbStatus.Text = "Checking for newer vendor data...";
+            var progress = new Progress<string>(s => AboutDbStatus.Text = s);
+            try
+            {
+                var (_, _, msg) = await Services.VendorDbUpdater.UpdateAsync(progress);
+                AboutDbStatus.Text = msg;
+            }
+            catch (Exception ex)
+            {
+                AboutDbStatus.Text = "Update failed: " + ex.Message;
+            }
+            RefreshDbInfo();
+            AboutDbUpdateLink.IsEnabled = true;
         }
 
         // Quietly checks GitHub for a newer release when About opens. Times out fast and fails

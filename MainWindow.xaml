@@ -64,7 +64,7 @@
                         </StackPanel>
                         <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="18"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="21.5" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
                     </Grid>
-                    <TextBlock Text="Network Scanner" Foreground="{DynamicResource MutedTextBrush}"
+                    <TextBlock Text="{DynamicResource Str_Subtitle}" Foreground="{DynamicResource MutedTextBrush}"
                                FontFamily="Consolas" FontSize="11" VerticalAlignment="Center" Margin="10,2,0,0"/>
                 </StackPanel>
 
@@ -75,7 +75,7 @@
                     <!-- Language picker -->
                     <Button x:Name="LangButton" Click="LangButton_Click" Cursor="Hand"
                             Background="Transparent" BorderThickness="0" Width="30" Height="26"
-                            Margin="0,0,12,0" ToolTip="Language">
+                            Margin="0,0,12,0" ToolTip="{DynamicResource Str_TT_Language}">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border x:Name="bg" Background="Transparent" CornerRadius="4">
@@ -92,15 +92,13 @@
                             </ControlTemplate>
                         </Button.Template>
                         <Button.ContextMenu>
-                            <ContextMenu Placement="Bottom" PreviewMouseWheel="Menu_ForwardWheelToGrid">
-                                <MenuItem Header="English" IsCheckable="True" IsChecked="True" Tag="en" Click="Lang_Click"/>
-                            </ContextMenu>
+                            <ContextMenu x:Name="LangMenu" Placement="Bottom" PreviewMouseWheel="Menu_ForwardWheelToGrid"/>
                         </Button.ContextMenu>
                     </Button>
 
                     <!-- Theme picker button (opens a flyout, keeping the title bar grabbable) -->
                     <Button x:Name="ThemeButton" Click="ThemeButton_Click" Cursor="Hand"
-                            Background="Transparent" BorderThickness="0" Width="30" Height="26" ToolTip="Theme">
+                            Background="Transparent" BorderThickness="0" Width="30" Height="26" ToolTip="{DynamicResource Str_TT_Theme}">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border x:Name="bg" Background="Transparent" CornerRadius="4">
@@ -136,7 +134,7 @@
                                 </Border.Background>
                             </Border>
                             <StackPanel>
-                            <TextBlock Text="THEME" Foreground="{DynamicResource DimTextBrush}" FontSize="10"
+                            <TextBlock Text="{DynamicResource Str_Lbl_Theme}" Foreground="{DynamicResource DimTextBrush}" FontSize="10"
                                        FontWeight="SemiBold" Margin="2,0,0,6"/>
                             <StackPanel x:Name="ThemeSwatches" Orientation="Horizontal">
                                 <Button Style="{StaticResource ThemeSwatch}" Tag="Dark"     Background="#3a3a3a" Click="ThemeSwatch_Click" ToolTip="Dark"/>
@@ -146,7 +144,7 @@
                                 <Button Style="{StaticResource ThemeSwatch}" Tag="Greed"    Background="#0a5234" Click="ThemeSwatch_Click" ToolTip="Greed"/>
                                 <Button Style="{StaticResource ThemeSwatch}" Tag="Cyanotic" Background="#0a4a6e" Click="ThemeSwatch_Click" ToolTip="Cyanotic"/>
                             </StackPanel>
-                            <TextBlock x:Name="AccentLabel" Text="ACCENT" Foreground="{DynamicResource DimTextBrush}" FontSize="10"
+                            <TextBlock x:Name="AccentLabel" Text="{DynamicResource Str_Lbl_Accent}" Foreground="{DynamicResource DimTextBrush}" FontSize="10"
                                        FontWeight="SemiBold" Margin="2,10,0,6" Visibility="Collapsed"/>
                             <!-- Accent dots in ROYGBIV order; revealed only for accent-capable themes -->
                             <StackPanel x:Name="AccentSwatches" Orientation="Horizontal" Visibility="Collapsed">
@@ -192,7 +190,7 @@
                         </Border.Background>
                     </Border>
 
-                    <TextBlock Grid.Column="0" Text="Subnet"
+                    <TextBlock Grid.Column="0" Text="{DynamicResource Str_Lbl_Subnet}"
                                Foreground="{DynamicResource MutedTextBrush}"
                                FontSize="11" VerticalAlignment="Center" Margin="0,0,8,0"/>
 
@@ -202,22 +200,22 @@
                              Text="192.168.1.0/24"
                              VerticalAlignment="Center"/>
 
-                    <Button Grid.Column="2" x:Name="ScanBtn" Content="Scan"
+                    <Button Grid.Column="2" x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}"
                             Style="{StaticResource OutlineButton}"
                             Click="ScanBtn_Click"
                             FontSize="12" Padding="14,5" Margin="10,0,0,0"/>
 
                     <!-- Local network info - clean label/value pairs + an accent interface badge -->
                     <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
-                        <TextBlock Text="Local" Foreground="{DynamicResource ChromeTextBrush}"
+                        <TextBlock Text="{DynamicResource Str_Lbl_Local}" Foreground="{DynamicResource ChromeTextBrush}"
                                    FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <TextBlock x:Name="LocalIpLabel" Text="--" Foreground="{DynamicResource TextBrush}"
                                    FontFamily="Consolas" FontSize="12.5" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                        <TextBlock Text="Gateway" Foreground="{DynamicResource ChromeTextBrush}"
+                        <TextBlock Text="{DynamicResource Str_Lbl_Gateway}" Foreground="{DynamicResource ChromeTextBrush}"
                                    FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <TextBlock x:Name="GatewayLabel" Text="--" Foreground="{DynamicResource TextBrush}"
                                    FontFamily="Consolas" FontSize="12.5" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                        <TextBlock Text="DNS" Foreground="{DynamicResource ChromeTextBrush}"
+                        <TextBlock Text="{DynamicResource Str_Lbl_Dns}" Foreground="{DynamicResource ChromeTextBrush}"
                                    FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <TextBlock x:Name="DnsLabel" Text="--" Foreground="{DynamicResource TextBrush}"
                                    FontFamily="Consolas" FontSize="12.5" VerticalAlignment="Center" Margin="0,0,20,0"/>
@@ -265,7 +263,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="Discovered Devices"
+                    <TextBlock Grid.Column="0" Text="{DynamicResource Str_DiscoveredDevices}"
                                Foreground="{DynamicResource TextBrush}" FontFamily="Consolas"
                                FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
                     <!-- Search/filter box - magnifier + placeholder so it's clearly a search -->
@@ -293,7 +291,7 @@
                             <TextBlock Grid.Column="0" Text="&#xE71C;" FontFamily="Segoe MDL2 Assets" FontSize="11"
                                        Foreground="{DynamicResource DimTextBrush}" Margin="8,0,5,0" VerticalAlignment="Center"/>
                             <Grid Grid.Column="1">
-                                <TextBlock Text="Filter devices..." Foreground="{DynamicResource DimTextBrush}"
+                                <TextBlock Text="{DynamicResource Str_FilterPlaceholder}" Foreground="{DynamicResource DimTextBrush}"
                                            FontSize="12" VerticalAlignment="Center" IsHitTestVisible="False" Margin="0,0,8,0">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
@@ -320,7 +318,7 @@
                                FontSize="12" VerticalAlignment="Center" Margin="0,0,12,0"/>
                     <Button Grid.Column="4" x:Name="ExportButton"
                             Click="ExportButton_Click" IsEnabled="False"
-                            ToolTip="Export" Cursor="Hand"
+                            ToolTip="{DynamicResource Str_TT_Export}" Cursor="Hand"
                             Background="Transparent" BorderThickness="0"
                             Width="32" Height="26" VerticalAlignment="Center">
                         <Button.Template>
@@ -344,8 +342,8 @@
                         <Button.ContextMenu>
                             <ContextMenu Placement="Bottom" HorizontalOffset="0" VerticalOffset="2"
                                          PreviewMouseWheel="Menu_ForwardWheelToGrid">
-                                <MenuItem Header="Export as CSV" Click="ExportCsv_Click"/>
-                                <MenuItem Header="Export as HTML" Click="ExportHtml_Click"/>
+                                <MenuItem Header="{DynamicResource Str_Export_Csv}" Click="ExportCsv_Click"/>
+                                <MenuItem Header="{DynamicResource Str_Export_Html}" Click="ExportHtml_Click"/>
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
@@ -433,16 +431,16 @@
 
                     <DataGrid.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Copy IP Address" Click="CopyIp_Click"/>
-                            <MenuItem Header="Copy MAC Address" Click="CopyMac_Click"/>
-                            <MenuItem Header="Copy Hostname" Click="CopyHostname_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyIp}" Click="CopyIp_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyMac}" Click="CopyMac_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyHost}" Click="CopyHostname_Click"/>
                             <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
                             <MenuItem Header="Ping" Click="PingDevice_Click"/>
-                            <MenuItem Header="Open in Browser" Click="OpenBrowser_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_OpenBrowser}" Click="OpenBrowser_Click"/>
                             <MenuItem Header="RDP" Click="RdpDevice_Click"/>
                             <MenuItem Header="SSH" Click="SshDevice_Click"/>
                             <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
-                            <MenuItem Header="Set Device Type">
+                            <MenuItem Header="{DynamicResource Str_Ctx_SetType}">
                                 <MenuItem Header="Router" Click="SetType_Click" Tag="Router"/>
                                 <MenuItem Header="Switch/AP" Click="SetType_Click" Tag="Switch/AP"/>
                                 <MenuItem Header="Network" Click="SetType_Click" Tag="Network"/>
@@ -465,7 +463,7 @@
                                 <MenuItem Header="Web Device" Click="SetType_Click" Tag="Web Device"/>
                                 <MenuItem Header="Other" Click="SetType_Click" Tag="Other"/>
                             </MenuItem>
-                            <MenuItem Header="Clear Override" Click="ClearOverride_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_ClearOverride}" Click="ClearOverride_Click"/>
                         </ContextMenu>
                     </DataGrid.ContextMenu>
 
@@ -528,11 +526,11 @@
                     </DataGrid.ColumnHeaderStyle>
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="IP Address" Binding="{Binding IpAddress}" Width="120" SortMemberPath="IpSortKey"/>
-                        <DataGridTextColumn Header="Hostname" Binding="{Binding Hostname}" Width="170"/>
-                        <DataGridTextColumn Header="MAC Address" Binding="{Binding MacAddress}" Width="145"/>
-                        <DataGridTextColumn Header="Vendor" Binding="{Binding Vendor}" Width="*"/>
-                        <DataGridTemplateColumn Header="Type" Width="120" SortMemberPath="DeviceType">
+                        <DataGridTextColumn x:Name="ColIp" Header="{DynamicResource Str_Col_Ip}" Binding="{Binding IpAddress}" Width="120" SortMemberPath="IpSortKey"/>
+                        <DataGridTextColumn x:Name="ColHost" Header="{DynamicResource Str_Col_Host}" Binding="{Binding Hostname}" Width="170"/>
+                        <DataGridTextColumn x:Name="ColMac" Header="{DynamicResource Str_Col_Mac}" Binding="{Binding MacAddress}" Width="145"/>
+                        <DataGridTextColumn x:Name="ColVendor" Header="{DynamicResource Str_Col_Vendor}" Binding="{Binding Vendor}" Width="*"/>
+                        <DataGridTemplateColumn x:Name="ColType" Header="{DynamicResource Str_Col_Type}" Width="120" SortMemberPath="DeviceType">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding DeviceType}" FontWeight="Medium">
@@ -604,7 +602,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="Open Ports" Binding="{Binding OpenPortsDisplay}" Width="180"/>
+                        <DataGridTextColumn x:Name="ColPorts" Header="{DynamicResource Str_Col_Ports}" Binding="{Binding OpenPortsDisplay}" Width="180"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
@@ -741,7 +739,7 @@
                                                    Opacity="{DynamicResource IconShadowOpacity}"><TextBlock.Effect><BlurEffect Radius="2"/></TextBlock.Effect><Run Text="Killer" FontSize="22" Foreground="#C0000000"/><Run Text="Scan" FontSize="26" FontWeight="Bold" Foreground="#C0000000"/></TextBlock>
                                         <TextBlock FontFamily="{DynamicResource WordmarkFont}"><Run Text="Killer" FontSize="22" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="26" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
                                     </Grid>
-                                    <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"><Run Text="ARP + IP sweep with vendor lookup, device classification, and a themeable, sortable HTML export. A "/><Hyperlink NavigateUri="https://killertools.net" RequestNavigate="AboutLink_Navigate" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None">Killer Tools</Hyperlink><Run Text=" utility."/></TextBlock>
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"><Run Text="{DynamicResource Str_About_DescA}"/><Hyperlink NavigateUri="https://killertools.net" RequestNavigate="AboutLink_Navigate" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None">Killer Tools</Hyperlink><Run Text="{DynamicResource Str_About_DescB}"/></TextBlock>
                                 </StackPanel>
                             </Grid>
 
@@ -755,22 +753,30 @@
                                 <Border Background="{DynamicResource PaneBrush}" CornerRadius="4" Padding="14,12,14,4">
                                     <StackPanel>
                                         <StackPanel Margin="0,0,0,10">
-                                            <TextBlock Text="VERSION" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>
+                                            <TextBlock Text="{DynamicResource Str_About_Version}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>
                                             <TextBlock x:Name="AboutVersionBlock" Foreground="{DynamicResource PrimaryBrush}"
                                                        FontFamily="Consolas" FontSize="13" Cursor="Hand"
                                                        MouseLeftButtonUp="AboutVersion_Click" Margin="0,1,0,0"/>
                                         </StackPanel>
                                         <StackPanel Margin="0,0,0,10">
-                                            <TextBlock Text="PUBLISHER" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>
+                                            <TextBlock Text="{DynamicResource Str_About_Publisher}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>
                                             <TextBlock x:Name="AboutPublisherBlock" Foreground="{DynamicResource TextBrush}" FontSize="12" Margin="0,1,0,0"/>
                                         </StackPanel>
                                         <StackPanel Margin="0,0,0,10">
-                                            <TextBlock Text="THUMBPRINT" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>
+                                            <TextBlock Text="{DynamicResource Str_About_Thumbprint}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>
                                             <TextBlock x:Name="AboutThumbprintBlock" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11" TextWrapping="Wrap" Margin="0,1,0,0"/>
                                         </StackPanel>
                                         <StackPanel Margin="0,0,0,10">
-                                            <TextBlock Text="EXE SHA-256" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>
+                                            <TextBlock Text="{DynamicResource Str_About_Sha}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>
                                             <TextBlock x:Name="AboutSha256Block" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11" TextWrapping="NoWrap" Margin="0,1,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,0,10">
+                                            <TextBlock Text="{DynamicResource Str_About_Db}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>
+                                            <TextBlock x:Name="AboutDbBlock" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11" TextWrapping="Wrap" Margin="0,1,0,0"/>
+                                            <TextBlock FontFamily="Consolas" FontSize="11" Margin="0,2,0,0">
+                                                <Hyperlink x:Name="AboutDbUpdateLink" Click="AboutDbUpdate_Click" Foreground="{DynamicResource PrimaryBrush}"><Run Text="{DynamicResource Str_About_DbUpdate}"/></Hyperlink>
+                                            </TextBlock>
+                                            <TextBlock x:Name="AboutDbStatus" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10.5" TextWrapping="Wrap" Margin="0,3,0,0"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </Border>

@@ -23,14 +23,14 @@ namespace KillerScan.Services
 
         // Service types we explicitly ask about (responders also volunteer extras).
         private static readonly string[] MdnsQueries =
-        {
+        [
             "_services._dns-sd._udp.local",
             "_googlecast._tcp.local", "_airplay._tcp.local", "_raop._tcp.local",
             "_ipp._tcp.local", "_ipps._tcp.local", "_printer._tcp.local", "_pdl-datastream._tcp.local",
             "_sonos._tcp.local", "_spotify-connect._tcp.local", "_hap._tcp.local",
             "_homekit._tcp.local", "_hue._tcp.local", "_companion-link._tcp.local",
             "_device-info._tcp.local", "_smb._tcp.local", "_afpovertcp._tcp.local",
-        };
+        ];
 
         /// <summary>Multicast-query mDNS, collect responses for ~listenMs, map source IP -> services + name.</summary>
         public static async Task<Dictionary<string, MdnsInfo>> CollectMdnsAsync(CancellationToken ct, int listenMs = 1500)
@@ -106,8 +106,8 @@ namespace KillerScan.Services
             foreach (var line in text.Split('\n'))
             {
                 int c = line.IndexOf(':');
-                if (c > 0 && line.Substring(0, c).Trim().Equals(header, StringComparison.OrdinalIgnoreCase))
-                    return line.Substring(c + 1).Trim();
+                if (c > 0 && line[..c].Trim().Equals(header, StringComparison.OrdinalIgnoreCase))
+                    return line[(c + 1)..].Trim();
             }
             return "";
         }
@@ -117,7 +117,7 @@ namespace KillerScan.Services
         private static byte[] BuildQuery(string name)
         {
             using var ms = new MemoryStream();
-            ms.Write(new byte[] { 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 }, 0, 12); // id+flags, qd=1
+            ms.Write([0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0], 0, 12); // id+flags, qd=1
             foreach (var label in name.Split('.'))
             {
                 var lb = Encoding.UTF8.GetBytes(label);
@@ -125,7 +125,7 @@ namespace KillerScan.Services
                 ms.Write(lb, 0, lb.Length);
             }
             ms.WriteByte(0);
-            ms.Write(new byte[] { 0, 12, 0, 1 }, 0, 4); // QTYPE=PTR, QCLASS=IN
+            ms.Write([0, 12, 0, 1], 0, 4); // QTYPE=PTR, QCLASS=IN
             return ms.ToArray();
         }
 
@@ -155,7 +155,7 @@ namespace KillerScan.Services
                 if (type == 1 && rdlen == 4)                      // A record -> hostname
                 {
                     if (info.Name.Length == 0 && name.EndsWith(".local", StringComparison.OrdinalIgnoreCase))
-                        info.Name = name.Substring(0, name.Length - 6);
+                        info.Name = name[..^6];
                 }
                 else if (type == 12)                              // PTR -> service instance
                 {
@@ -168,7 +168,7 @@ namespace KillerScan.Services
                     int p = rdStart + 6;
                     string target = ReadName(buf, ref p);
                     if (info.Name.Length == 0 && target.EndsWith(".local", StringComparison.OrdinalIgnoreCase))
-                        info.Name = target.Substring(0, target.Length - 6);
+                        info.Name = target[..^6];
                 }
 
                 pos = rdStart + rdlen;

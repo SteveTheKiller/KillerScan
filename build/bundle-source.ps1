@@ -22,7 +22,11 @@ if (-not (Test-Path $publishDirFull)) {
 }
 
 $zip = Join-Path $publishDirFull "$AppName-$Version-src.zip"
-if (Test-Path $zip) { Remove-Item $zip -Force }
+# Never overwrite or delete an existing source bundle - keep it as-is.
+if (Test-Path $zip) {
+    Write-Host "Source bundle already present, keeping it: $zip" -ForegroundColor DarkGray
+    return
+}
 
 $staging = Join-Path $env:TEMP "$AppName-src-$([guid]::NewGuid())"
 try {
@@ -35,6 +39,8 @@ try {
             return
         }
         foreach ($f in $files) {
+            # git ls-files still lists files that were deleted but not yet committed; skip those.
+            if (-not (Test-Path $f)) { continue }
             $dst = Join-Path $staging $f
             $parent = Split-Path $dst -Parent
             if (-not (Test-Path $parent)) { New-Item -ItemType Directory -Force -Path $parent | Out-Null }

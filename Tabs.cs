@@ -13,9 +13,9 @@ namespace KillerScan
     public partial class MainWindow
     {
         // ---- Active-session proxies (the scanner core reads/writes the current tab through these) ----
-        private ObservableCollection<NetworkDevice> _devices => _active.Devices;
+        private ObservableCollection<NetworkDevice> ActiveDevices => _active.Devices;
 
-        private string _scannedSubnet
+        private string ActiveSubnet
         {
             get => _active.ScannedSubnet;
             set => _active.ScannedSubnet = value;
@@ -45,7 +45,7 @@ namespace KillerScan
             StatusText.Text = s.Status;
             ScanProgress.Value = s.Progress;
             ScanProgress.Visibility = s.IsScanning ? Visibility.Visible : Visibility.Collapsed;
-            ScanBtn.Content = s.IsScanning ? "Stop" : "Scan";
+            ScanBtn.Content = Loc(s.IsScanning ? "Str_Btn_Stop" : "Str_Btn_Scan");
             ExportButton.IsEnabled = s.Devices.Count > 0;
 
             // Re-apply the current filter to the new collection (also refreshes the device count).

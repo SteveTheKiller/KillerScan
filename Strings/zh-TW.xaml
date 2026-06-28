@@ -1,0 +1,55 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- KillerScan - Traditional Chinese (zh-TW). First-pass, native review welcome. Omitted keys fall back to en-US. -->
+
+    <sys:String x:Key="Str_Subtitle">網路掃描器</sys:String>
+    <sys:String x:Key="Str_TT_Language">語言</sys:String>
+    <sys:String x:Key="Str_TT_Theme">主題</sys:String>
+    <sys:String x:Key="Str_TT_Export">匯出</sys:String>
+    <sys:String x:Key="Str_Lbl_Theme">主題</sys:String>
+    <sys:String x:Key="Str_Lbl_Accent">強調色</sys:String>
+
+    <sys:String x:Key="Str_Lbl_Subnet">子網路</sys:String>
+    <sys:String x:Key="Str_Btn_Scan">掃描</sys:String>
+    <sys:String x:Key="Str_Lbl_Local">本機</sys:String>
+    <sys:String x:Key="Str_Lbl_Gateway">閘道</sys:String>
+    <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
+
+    <sys:String x:Key="Str_DiscoveredDevices">發現的裝置</sys:String>
+    <sys:String x:Key="Str_FilterPlaceholder">篩選裝置...</sys:String>
+    <sys:String x:Key="Str_Export_Csv">匯出為 CSV</sys:String>
+    <sys:String x:Key="Str_Export_Html">匯出為 HTML</sys:String>
+
+    <sys:String x:Key="Str_Col_Ip">IP 位址</sys:String>
+    <sys:String x:Key="Str_Col_Host">主機名稱</sys:String>
+    <sys:String x:Key="Str_Col_Mac">MAC 位址</sys:String>
+    <sys:String x:Key="Str_Col_Vendor">廠商</sys:String>
+    <sys:String x:Key="Str_Col_Type">類型</sys:String>
+    <sys:String x:Key="Str_Col_Ports">開放連接埠</sys:String>
+
+    <sys:String x:Key="Str_Ctx_CopyIp">複製 IP 位址</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyMac">複製 MAC 位址</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyHost">複製主機名稱</sys:String>
+    <sys:String x:Key="Str_Ctx_Ping">Ping</sys:String>
+    <sys:String x:Key="Str_Ctx_OpenBrowser">在瀏覽器中開啟</sys:String>
+    <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
+    <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SetType">設定裝置類型</sys:String>
+    <sys:String x:Key="Str_Ctx_ClearOverride">清除覆寫</sys:String>
+
+    <sys:String x:Key="Str_About_Version">版本</sys:String>
+    <sys:String x:Key="Str_About_Publisher">發行者</sys:String>
+    <sys:String x:Key="Str_About_Thumbprint">指紋</sys:String>
+    <sys:String x:Key="Str_About_Sha">EXE SHA-256</sys:String>
+    <sys:String x:Key="Str_About_Db">廠商資料庫</sys:String>
+    <sys:String x:Key="Str_About_DbUpdate">從最新登錄檔更新</sys:String>
+    <sys:String x:Key="Str_About_DbHint">來自 Wireshark OUI 清單。</sys:String>
+
+    <sys:String x:Key="Str_Btn_Stop">停止</sys:String>
+    <sys:String x:Key="Str_Status_Ready">就緒 - 已載入 {0} 個 OUI 廠商</sys:String>
+    <sys:String x:Key="Str_Count_Found">找到 {0} 個裝置</sys:String>
+    <sys:String x:Key="Str_Count_Shown">顯示 {1} 個中的 {0} 個</sys:String>
+
+</ResourceDictionary>

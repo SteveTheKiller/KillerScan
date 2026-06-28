@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<script>/* Apply saved theme + accent before first paint to avoid a reload flash */(function(){try{var d=document.documentElement,t=localStorage.getItem('kscan-theme');if(t){d.setAttribute('data-theme',t);if({dark:1,light:1,hc:1}[t]){var v=localStorage.getItem('kscan-av');if(v){var s=v.split('|');d.style.setProperty('--accent',s[0]);d.style.setProperty('--btn',s[1]);}}}}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="darkreader-lock">
+<title>KillerScan - About</title>
+<link rel="canonical" href="https://killerscan.net/about.html">
+<meta name="description" content="About KillerScan and its maker, Steve the Killer - a field tech who got tired of not knowing what was on the network.">
+<link rel="icon" type="image/x-icon" href="brand/ks-icon.ico">
+<script defer src="https://koya.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
+<link rel="stylesheet" href="ks.css?v=4">
+<style>
+.page-hero { text-align: center; padding: 44px 16px 8px; }
+.page-hero .wm-logo { font-size: clamp(34px, 6vw, 60px); margin: 0 auto 6px; }
+.page-hero p { color: var(--muted); font-size: 15px; margin-top: 4px; }
+.content-inner { max-width: 880px; margin: 0 auto; padding: 0 28px 56px; }
+.sb-tabs .on { border-bottom: 0; }
+.outline { padding: 8px 0; overflow-y: auto; flex: 1; }
+.outline a { display: block; padding: 8px 16px 8px 18px; font-size: 13px; color: var(--text2); border-left: 2px solid transparent; }
+.outline a:hover { color: var(--text); background: color-mix(in srgb, var(--accent) 8%, transparent); filter: none; }
+.outline a.on { color: var(--accent); border-left-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, var(--sidebar)); }
+@media (max-width: 900px) { .outline { display:flex; flex-direction:row; flex-wrap:wrap; padding:8px; gap:4px; } .outline a { border-left:0; border-radius:5px; padding:6px 10px; } .outline a.on { border-left:0; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+<a href="index.html" class="tb-home" title="KillerScan home">
+<img class="tb-icon" src="brand/ks-icon.png" alt="KillerScan" width="44" height="44">
+<span class="wm-logo tb-wm"><span class="wmk">Killer</span><span class="wms">Scan</span></span>
+</a>
+<a class="tb-dl" href="https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe"><svg viewBox="0 0 24 24"><path d="M11 4h2v7h3l-4 5-4-5h3V4zM5 18h14v2H5z"/></svg><span data-i18n="nav_dl">Download</span></a>
+<span class="tb-spacer"></span>
+<nav class="tb-nav">
+<a href="about.html" class="on" data-i18n="nav_about">About</a>
+<a href="technical.html" data-i18n="nav_tech">Technical</a>
+</nav>
+<div class="tgrp" role="group" aria-label="Theme">
+<button class="swatch sw-dark"     data-theme="dark"     title="Dark"></button>
+<button class="swatch sw-light"    data-theme="light"    title="Light"></button>
+<button class="swatch sw-hc"       data-theme="hc"       title="High Contrast"></button>
+<button class="swatch sw-blood"    data-theme="blood"    title="Blood"></button>
+<button class="swatch sw-greed"    data-theme="greed"    title="Greed"></button>
+<button class="swatch sw-cyanotic" data-theme="cyanotic" title="Cyanotic"></button>
+</div>
+<div class="acc-fly accent-switch" id="accentSwitch">
+<button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="Accent color"></button>
+<div class="acc-pop" id="accentPop" hidden role="group" aria-label="Accent color">
+<span class="acc-pop-label" data-i18n="accent_label">accent:</span>
+<button class="acc" data-accent="red"    style="background:#DD504B;color:#DD504B" title="Red"></button>
+<button class="acc" data-accent="orange" style="background:#E8962C;color:#E8962C" title="Orange"></button>
+<button class="acc" data-accent="green"  style="background:#1EA54C;color:#1EA54C" title="Green"></button>
+<button class="acc" data-accent="teal"   style="background:#1FB8A8;color:#1FB8A8" title="Teal"></button>
+<button class="acc" data-accent="blue"   style="background:#50AEE8;color:#50AEE8" title="Blue"></button>
+<button class="acc" data-accent="purple" style="background:#B982E3;color:#B982E3" title="Purple"></button>
+</div>
+</div>
+<div class="lang-switch" role="group" aria-label="Language">
+<button class="lang-toggle" id="langToggle" aria-haspopup="true" aria-expanded="false" title="Language" aria-label="Language">&#127760;</button>
+<div class="lang-menu" id="langMenu" hidden>
+<button class="lang-item" data-lang="en">English</button>
+<button class="lang-item" data-lang="es">Espanol</button>
+<button class="lang-item" data-lang="de">Deutsch</button>
+<button class="lang-item" data-lang="fr">Francais</button>
+<button class="lang-item" data-lang="tr">Turkce</button>
+<button class="lang-item" data-lang="zh">&#20013;&#25991; (&#32321;&#39636;)</button>
+<button class="lang-item" data-lang="zh-cn">&#20013;&#25991; (&#31616;&#20307;)</button>
+<button class="lang-item" data-lang="bn">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
+</div>
+</div>
+</div>
+
+<div class="frame-shadow" aria-hidden="true"></div>
+<div class="shell">
+<div class="content">
+<div class="content-inner">
+
+<section class="page-hero">
+<span class="page-title" data-i18n="about_kicker">About</span>
+<span class="wm-logo"><span class="wmk">Killer</span><span class="wms">Scan</span></span>
+<p data-i18n="about_sub">The story behind the scanner, and the field tech who built it.</p>
+</section>
+
+<div class="about-card" id="maker">
+<h2 data-i18n="maker_h">The maker</h2>
+<p class="about-quote" data-i18n="maker_q">"I walk onto a network I've never seen and the first question is always the same: what is actually on here? So I wrote the tool that answers it - in seconds, with no agent and no login."</p>
+<p data-i18n="maker_p1">I'm <b>Steve the Killer</b> - a field technician and systems administrator at a large MSP. A big part of the job is showing up to a site I don't know and having to understand it fast: which box is the router, where the DNS actually lives, what that one device hammering the network even is. The existing answers were heavy network suites that want an agent, a server, a license, or an account before they'll tell you a single MAC address.</p>
+<p data-i18n="maker_p2">I wanted something I could drop on any machine, double-click, and read in a few seconds. So I built it, and KillerScan is the result.</p>
+</div>
+
+<div class="about-card" id="app">
+<h2 data-i18n="app_h">The app</h2>
+<p data-i18n="app_p1"><b>KillerScan</b> is a native Windows network scanner that ships as a single self-contained executable - no installer required, no agent to deploy, no account, no subscription. Hand someone the .exe and they can map a subnet.</p>
+<p data-i18n="app_p2">It is built for a field tech's reality: it finds devices that ignore ping, identifies vendors from the full IEEE OUI registries, and works out what each device is from a weighted blend of hostname, ports, banners, mDNS and SSDP - all locally, with no telemetry and no ads. It even calls out randomized privacy MACs instead of guessing a maker that isn't real.</p>
+<p data-i18n="app_p3">Much of what it does was driven by the devices it ran into in the wild. The <a href="https://github.com/SteveTheKiller/KillerScan/issues" target="_blank" rel="noopener">GitHub issues</a> page stays open to anyone, and your suggestions genuinely shape where it goes next. KillerScan is free software under the <b>GPL-3.0</b> licence. For the deep technical details, see the <a href="technical.html">Technical</a> page.</p>
+</div>
+
+<div class="about-card" id="contact">
+<h2 data-i18n="contact_h">Contact &amp; links</h2>
+<p data-i18n="contact_p">Find me, file a bug, or just say hi:</p>
+<div class="contact-grid">
+<a href="https://thekiller.net" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm6.9 8h-3a16 16 0 00-1-4.2A8 8 0 0118.9 10zM12 4c.8 0 2 1.7 2.5 4.5h-5C10 5.7 11.2 4 12 4zM4.6 14a8 8 0 010-4h3.2a18 18 0 000 4H4.6zm.5 2h3a16 16 0 001 4.2A8 8 0 015.1 16zM7.8 10H4.6a8 8 0 013.2-4.2 16 16 0 00-1 4.2zM12 20c-.8 0-2-1.7-2.5-4.5h5C14 18.3 12.8 20 12 20zm.5-6.5h-1A16 16 0 0110 12c0-.7 .2-1.4 .5-2h3c.3 .6 .5 1.3 .5 2a16 16 0 01-1.5 1.5zm3.7 2.7a16 16 0 001-4.2h3.2a8 8 0 01-4.2 4.2z"/></svg><span>Steve the Killer<span class="sub">thekiller.net</span></span></a>
+<a href="https://killertools.net" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/></svg><span>KillerTools<span class="sub">killertools.net</span></span></a>
+<a href="https://github.com/SteveTheKiller/KillerScan" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.29 3.44 9.77 8.2 11.36.6.11.82-.26.82-.58v-2.04c-3.34.72-4.04-1.61-4.04-1.61-.55-1.38-1.34-1.75-1.34-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.17 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0112 6.8c1.02 0 2.05.14 3 .4 2.29-1.55 3.3-1.23 3.3-1.23.65 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58A12 12 0 0024 12.5C24 5.87 18.63.5 12 .5z"/></svg><span>Source on GitHub<span class="sub">github.com/SteveTheKiller</span></span></a>
+<a href="https://github.com/SteveTheKiller/KillerScan/issues" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M20 8h-2.8a5 5 0 00-1.2-1.6l1.3-1.3-1.4-1.4-1.6 1.6a5 5 0 00-4.6 0L8.1 3.7 6.7 5.1 8 6.4A5 5 0 006.8 8H4v2h2.1a5 5 0 000 1H4v2h2.1a5 5 0 00.5 1.6L5 17.3l1.4 1.4 1.6-1.6a5 5 0 008 0l1.6 1.6 1.4-1.4-1.6-1.7a5 5 0 00.5-1.6H20v-2h-2.1a5 5 0 000-1H20V8zm-7 8h-2v-5h2v5z"/></svg><span>Report an issue<span class="sub">github issues</span></span></a>
+<a href="https://reddit.com/u/smilaise" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 012 2v9a2 2 0 01-2 2H9l-5 4V6a2 2 0 012-2zm3 6h10V8H7v2zm0 4h7v-2H7v2z"/></svg><span>Reddit<span class="sub">u/smilaise</span></span></a>
+<a href="https://facebook.com/StevetheKiller" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M13 22v-8h2.7l.4-3H13V9c0-.9.3-1.5 1.6-1.5H16V4.9A22 22 0 0013.7 4.8C11.4 4.8 10 6.2 10 8.7V11H7.4v3H10v8h3z"/></svg><span>Facebook<span class="sub">StevetheKiller</span></span></a>
+<a href="mailto:steve@thekiller.net" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm0 2v.4l8 5 8-5V6H4zm16 2.8l-8 5-8-5V18h16V8.8z"/></svg><span>Email<span class="sub">steve@thekiller.net</span></span></a>
+<a href="https://buymeacoffee.com/StevetheKiller" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M20 3H4v10a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4v-3h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 5h-2V5h2v3zM4 19h12v2H4z"/></svg><span>Buy me a coffee<span class="sub">buymeacoffee.com</span></span></a>
+<a href="https://t.me/StevetheKiller" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg><span>Telegram<span class="sub">@StevetheKiller</span></span></a>
+</div>
+</div>
+
+</div>
+</div>
+<aside class="sidebar">
+<div class="sb-tabs"><span class="on">About</span></div>
+<nav class="outline">
+<a href="#maker" class="on" data-i18n="maker_h">The maker</a>
+<a href="#app" data-i18n="app_h">The app</a>
+<a href="#contact" data-i18n="contact_h">Contact &amp; links</a>
+</nav>
+</aside>
+</div>
+<footer class="statusbar">
+<span class="left"><a href="https://github.com/SteveTheKiller/KillerScan" target="_blank" rel="noopener">Source on GitHub</a> &middot; GPLv3 &middot; Part of <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
+<span class="right"><span id="verEgg" title="click me">v1.5.0</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
+</footer>
+<div class="egg-toast" id="eggToast"></div>
+<script src="ks.js?v=2"></script>
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('.outline a'));
+  var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));}).filter(Boolean);
+  var sc=document.querySelector('.content');
+  function onScroll(){ var y=(sc?sc.scrollTop:window.scrollY)+100, cur=secs[0]; secs.forEach(function(s){ if(s&&s.offsetTop<=y) cur=s; });
+    links.forEach(function(a){ a.classList.toggle('on', cur && a.getAttribute('href')==='#'+cur.id); }); }
+  (sc||window).addEventListener('scroll',onScroll,{passive:true}); onScroll();
+})();
+</script>
+</body>
+</html>

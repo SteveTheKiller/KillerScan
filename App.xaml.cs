@@ -66,8 +66,9 @@ namespace KillerScan
                 return;
             }
 
-            // Restore the saved theme before the window is built (no first-paint flash).
+            // Restore the saved theme + locale before the window is built (no first-paint flash).
             Services.ThemeManager.Initialize();
+            Services.LocaleManager.Initialize();
 
             ShutdownMode = ShutdownMode.OnLastWindowClose;
             new MainWindow().Show();
