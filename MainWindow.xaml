@@ -8,115 +8,187 @@
         Title="KillerScan"
         Height="700" Width="1100"
         MinHeight="500" MinWidth="800"
-        Background="{StaticResource BackgroundBrush}"
+        Background="{DynamicResource BackgroundBrush}"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
-        AllowsTransparency="True"
-        ResizeMode="CanResizeWithGrip"
+        ResizeMode="CanResize"
         BorderThickness="0"
         BorderBrush="Transparent"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
         Icon="Resources/ks-icon.ico">
 
-    <Grid>
+    <!-- Native custom chrome (no AllowsTransparency): WPF composites on the GPU and Windows
+         draws the drop shadow + rounds the HWND (Win11, via DWMWA_WINDOW_CORNER_PREFERENCE in
+         WindowChrome.cs). The 36px title bar becomes the draggable caption; interactive bits in
+         it opt back in with WindowChrome.IsHitTestVisibleInChrome. -->
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="36"
+                      ResizeBorderThickness="8"
+                      CornerRadius="0"
+                      GlassFrameThickness="0"
+                      UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <Grid x:Name="RootGrid" Opacity="0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="36"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="28"/>
+            <RowDefinition Height="36"/>     <!-- 0: title bar -->
+            <RowDefinition Height="Auto"/>   <!-- 1: scan toolbar -->
+            <RowDefinition Height="*"/>      <!-- 2: devices pane -->
+            <RowDefinition Height="23"/>     <!-- 3: footer / status bar -->
         </Grid.RowDefinitions>
 
         <!-- Custom Title Bar -->
-        <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}"
-                BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,0,0,1"
-                MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+        <Border Grid.Row="0" Background="{DynamicResource BackgroundBrush}">
             <Grid>
+                <!-- Film grain over the bar (behind content) -->
+                <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}">
+                    <Border.Background>
+                        <ImageBrush x:Name="TitleGrainBrush" TileMode="Tile"
+                                    ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
+                    </Border.Background>
+                </Border>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0">
-                    <TextBlock Text="ks" Foreground="{StaticResource PrimaryBrush}"
+                    <TextBlock Text="ks" Foreground="{DynamicResource PrimaryBrush}"
                                FontFamily="Consolas" FontSize="14" FontWeight="Bold"
                                VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <TextBlock Text="KillerScan" Foreground="{StaticResource TextBrush}"
-                               FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                    <TextBlock Text="Network Scanner" Foreground="{StaticResource MutedTextBrush}"
-                               FontSize="11" VerticalAlignment="Center" Margin="8,1,0,0"/>
+                    <TextBlock FontFamily="Consolas" FontSize="13.5" FontWeight="Bold" VerticalAlignment="Center"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
+                    <TextBlock Text="Network Scanner" Foreground="{DynamicResource MutedTextBrush}"
+                               FontFamily="Consolas" FontSize="11" VerticalAlignment="Center" Margin="8,1,0,0"/>
                 </StackPanel>
 
-                <!-- Window Controls -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
-                    <Button x:Name="MinimizeBtn" Content="&#x2015;" Click="MinimizeBtn_Click"
-                            Width="40" FontSize="9" VerticalAlignment="Stretch"
-                            Foreground="{StaticResource MutedTextBrush}" Background="Transparent"
-                            BorderThickness="0" Cursor="Hand">
+                <!-- Appearance + language (sit left of the window controls) -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            WindowChrome.IsHitTestVisibleInChrome="True" Margin="0,0,140,0">
+
+                    <!-- Language picker -->
+                    <Button x:Name="LangButton" Click="LangButton_Click" Cursor="Hand"
+                            Background="Transparent" BorderThickness="0" Width="30" Height="26"
+                            Margin="0,0,12,0" ToolTip="Language">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <Border x:Name="bg" Background="Transparent">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Border x:Name="bg" Background="Transparent" CornerRadius="4">
+                                    <TextBlock x:Name="ico" Text="&#xE774;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                                               Foreground="{DynamicResource MutedTextBrush}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="bg" Property="Background" Value="{StaticResource TableHeaderBrush}"/>
+                                        <Setter TargetName="bg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                        <Setter TargetName="ico" Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <Button.ContextMenu>
+                            <ContextMenu Placement="Bottom">
+                                <MenuItem Header="English" IsCheckable="True" IsChecked="True" Tag="en" Click="Lang_Click"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
+
+                    <!-- Theme picker button (opens a flyout, keeping the title bar grabbable) -->
+                    <Button x:Name="ThemeButton" Click="ThemeButton_Click" Cursor="Hand"
+                            Background="Transparent" BorderThickness="0" Width="30" Height="26" ToolTip="Theme">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="bg" Background="Transparent" CornerRadius="4">
+                                    <TextBlock x:Name="ico" Text="&#xE790;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                                               Foreground="{DynamicResource MutedTextBrush}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="bg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                        <Setter TargetName="ico" Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <Button x:Name="MaximizeBtn" Content="&#x25A1;" Click="MaximizeBtn_Click"
-                            Width="40" FontSize="11" VerticalAlignment="Stretch"
-                            Foreground="{StaticResource MutedTextBrush}" Background="Transparent"
-                            BorderThickness="0" Cursor="Hand">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="bg" Background="Transparent">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="bg" Property="Background" Value="{StaticResource TableHeaderBrush}"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                    <Button x:Name="CloseBtn" Content="&#x2715;" Click="CloseBtn_Click"
-                            Width="40" FontSize="11" VerticalAlignment="Stretch"
-                            Foreground="{StaticResource MutedTextBrush}" Background="Transparent"
-                            BorderThickness="0" Cursor="Hand">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="bg" Background="Transparent">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="bg" Property="Background" Value="#C42B1C"/>
-                                        <Setter Property="Foreground" Value="White"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                </StackPanel>
+
+                <!-- Theme + accent flyout -->
+                <Popup x:Name="ThemePopup" PlacementTarget="{Binding ElementName=ThemeButton}" Placement="Bottom"
+                       StaysOpen="False" AllowsTransparency="True" HorizontalOffset="-92" VerticalOffset="5">
+                    <Border Background="{DynamicResource MenuBackgroundBrush}" BorderBrush="{DynamicResource MenuBorderBrush}"
+                            BorderThickness="1" CornerRadius="6" Padding="12,10" Margin="14">
+                        <Border.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="22" ShadowDepth="4" Direction="270" Opacity="0.55"/>
+                        </Border.Effect>
+                        <Grid>
+                            <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}" CornerRadius="5" Margin="-12,-10">
+                                <Border.Background>
+                                    <ImageBrush x:Name="FlyoutGrainBrush" TileMode="Tile"
+                                                ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
+                                </Border.Background>
+                            </Border>
+                            <StackPanel>
+                            <TextBlock Text="THEME" Foreground="{DynamicResource DimTextBrush}" FontSize="10"
+                                       FontWeight="SemiBold" Margin="2,0,0,6"/>
+                            <StackPanel x:Name="ThemeSwatches" Orientation="Horizontal">
+                                <Button Style="{StaticResource ThemeSwatch}" Tag="Dark"     Background="#3a3a3a" Click="ThemeSwatch_Click" ToolTip="Dark"/>
+                                <Button Style="{StaticResource ThemeSwatch}" Tag="Light"    Background="#e8e8e8" Click="ThemeSwatch_Click" ToolTip="Light"/>
+                                <Button Style="{StaticResource ThemeSwatch}" Tag="Black"    Background="#000000" Click="ThemeSwatch_Click" ToolTip="Black"/>
+                                <Button Style="{StaticResource ThemeSwatch}" Tag="Blood"    Background="#4a1f20" Click="ThemeSwatch_Click" ToolTip="Blood"/>
+                                <Button Style="{StaticResource ThemeSwatch}" Tag="Greed"    Background="#0a5234" Click="ThemeSwatch_Click" ToolTip="Greed"/>
+                                <Button Style="{StaticResource ThemeSwatch}" Tag="Cyanotic" Background="#0a4a6e" Click="ThemeSwatch_Click" ToolTip="Cyanotic"/>
+                            </StackPanel>
+                            <TextBlock x:Name="AccentLabel" Text="ACCENT" Foreground="{DynamicResource DimTextBrush}" FontSize="10"
+                                       FontWeight="SemiBold" Margin="2,10,0,6" Visibility="Collapsed"/>
+                            <!-- Accent dots in ROYGBIV order; revealed only for accent-capable themes -->
+                            <StackPanel x:Name="AccentSwatches" Orientation="Horizontal" Visibility="Collapsed">
+                                <Button Style="{StaticResource ThemeSwatch}" Tag="Red"    Background="#DD504B" Click="AccentSwatch_Click" ToolTip="Red"/>
+                                <Button Style="{StaticResource ThemeSwatch}" Tag="Orange" Background="#E8962C" Click="AccentSwatch_Click" ToolTip="Orange"/>
+                                <Button Style="{StaticResource ThemeSwatch}" Tag="Green"  Background="#1ea54c" Click="AccentSwatch_Click" ToolTip="Green"/>
+                                <Button Style="{StaticResource ThemeSwatch}" Tag="Teal"   Background="#1FB8A8" Click="AccentSwatch_Click" ToolTip="Teal"/>
+                                <Button Style="{StaticResource ThemeSwatch}" Tag="Blue"   Background="#50AEE8" Click="AccentSwatch_Click" ToolTip="Blue"/>
+                                <Button Style="{StaticResource ThemeSwatch}" Tag="Purple" Background="#B982E3" Click="AccentSwatch_Click" ToolTip="Purple"/>
+                            </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Popup>
+
+                <!-- Window Controls (Segoe MDL2 glyphs, matched to KillerPDF) -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch"
+                            WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button Content="&#xE921;" Click="MinimizeBtn_Click" Style="{StaticResource ChromeButton}"/>
+                    <Button x:Name="MaximizeBtn" Content="&#xE922;" Click="MaximizeBtn_Click" Style="{StaticResource ChromeButton}"/>
+                    <Button Content="&#xE8BB;" Click="CloseBtn_Click" Style="{StaticResource ChromeCloseButton}"/>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!-- Scan Configuration -->
-        <Border Grid.Row="1" Style="{StaticResource Card}" Padding="12,6" Margin="16,6,16,0">
+        <!-- Scan / toolbar - part of the chrome, blends with the title bar above -->
+        <Border Grid.Row="1" Background="{DynamicResource BackgroundBrush}" Padding="16,8">
             <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="160"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
+                    <!-- Film grain over the toolbar (behind content), matching the title bar -->
+                    <Border Grid.ColumnSpan="6" IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}" Margin="-16,-8">
+                        <Border.Background>
+                            <ImageBrush x:Name="ToolbarGrainBrush" TileMode="Tile"
+                                        ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
+                        </Border.Background>
+                    </Border>
+
                     <TextBlock Grid.Column="0" Text="Subnet"
-                               Foreground="{StaticResource MutedTextBrush}"
+                               Foreground="{DynamicResource MutedTextBrush}"
                                FontSize="11" VerticalAlignment="Center" Margin="0,0,8,0"/>
 
                     <TextBox Grid.Column="1" x:Name="SubnetInput"
                              Style="{StaticResource DarkTextBox}"
-                             Padding="10,5" FontSize="12"
+                             Padding="9,3" FontSize="12"
                              Text="192.168.1.0/24"
                              VerticalAlignment="Center"/>
 
@@ -125,95 +197,153 @@
                             Click="ScanBtn_Click"
                             FontSize="12" Padding="14,5" Margin="10,0,0,0"/>
 
-                    <!-- Network info - terminal style -->
-                    <Border Grid.Column="3" Background="#0a0a0a" CornerRadius="3"
-                            BorderBrush="#1e1e1e" BorderThickness="1"
-                            Padding="10,0" Margin="10,0,0,0">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="local:" Foreground="#1a6b30"
-                                       FontFamily="Consolas" FontSize="12" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="LocalIpLabel" Text="--"
-                                       Foreground="{StaticResource PrimaryBrush}" FontFamily="Consolas"
-                                       FontSize="12" VerticalAlignment="Center"/>
-                            <TextBlock Text="  |  " Foreground="#1a6b30"
-                                       FontFamily="Consolas" FontSize="12" VerticalAlignment="Center"/>
-                            <TextBlock Text="gw:" Foreground="#1a6b30"
-                                       FontFamily="Consolas" FontSize="12" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="GatewayLabel" Text="--"
-                                       Foreground="{StaticResource PrimaryBrush}" FontFamily="Consolas"
-                                       FontSize="12" VerticalAlignment="Center"/>
-                            <TextBlock Text="  |  " Foreground="#1a6b30"
-                                       FontFamily="Consolas" FontSize="12" VerticalAlignment="Center"/>
-                            <TextBlock Text="dns:" Foreground="#1a6b30"
-                                       FontFamily="Consolas" FontSize="12" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="DnsLabel" Text="--"
-                                       Foreground="{StaticResource PrimaryBrush}" FontFamily="Consolas"
-                                       FontSize="12" VerticalAlignment="Center"/>
-                            <TextBlock Text="  |  " Foreground="#1a6b30"
-                                       FontFamily="Consolas" FontSize="12" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="InterfaceLabel" Text="--"
-                                       Foreground="#0C7A43" FontFamily="Consolas"
-                                       FontSize="12" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
+                    <!-- Local network info - clean label/value pairs + an accent interface badge -->
+                    <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
+                        <TextBlock Text="Local" Foreground="{DynamicResource DimTextBrush}"
+                                   FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBlock x:Name="LocalIpLabel" Text="--" Foreground="{DynamicResource TextBrush}"
+                                   FontFamily="Consolas" FontSize="12.5" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                        <TextBlock Text="Gateway" Foreground="{DynamicResource DimTextBrush}"
+                                   FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBlock x:Name="GatewayLabel" Text="--" Foreground="{DynamicResource TextBrush}"
+                                   FontFamily="Consolas" FontSize="12.5" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                        <TextBlock Text="DNS" Foreground="{DynamicResource DimTextBrush}"
+                                   FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBlock x:Name="DnsLabel" Text="--" Foreground="{DynamicResource TextBrush}"
+                                   FontFamily="Consolas" FontSize="12.5" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                        <TextBlock x:Name="InterfaceIcon" Text="&#xE839;" FontFamily="Segoe MDL2 Assets" FontSize="15"
+                                   Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <TextBlock x:Name="InterfaceLabel" Text="--" Foreground="{DynamicResource MutedTextBrush}"
+                                   FontSize="11.5" VerticalAlignment="Center"/>
+                    </StackPanel>
 
-                    <Button Grid.Column="5" x:Name="ExportButton"
-                            Style="{StaticResource SurfaceButton}"
-                            Content="Export &#x25BE;" Margin="8,0,0,0"
-                            FontSize="12" Padding="10,4"
-                            IsEnabled="False"
-                            Click="ExportButton_Click">
-                        <Button.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Export as CSV" Click="ExportCsv_Click"/>
-                                <MenuItem Header="Export as HTML" Click="ExportHtml_Click"/>
-                            </ContextMenu>
-                        </Button.ContextMenu>
-                    </Button>
             </Grid>
         </Border>
 
-        <!-- Results Area -->
-        <Border Grid.Row="2" Style="{StaticResource Card}" Margin="16,4,16,6">
+        <!-- Devices pane - the lightest tier, lifted above the chrome with an outward drop shadow
+             (kept tight to the bars; the shadow overlays them rather than adding gap) -->
+        <Border Grid.Row="2" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
+                BorderThickness="1" CornerRadius="4" Margin="16,4,16,5" Panel.ZIndex="10">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="16" ShadowDepth="0" Opacity="0.5"/>
+            </Border.Effect>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0" Margin="0,0,0,4">
+                <!-- Film grain over the WHOLE pane (behind content, clipped to the rounded corners) -->
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Opacity="0.20" Panel.ZIndex="-1" CornerRadius="3">
+                    <Border.Background>
+                        <ImageBrush x:Name="GrainBrush" TileMode="Tile"
+                                    ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
+                    </Border.Background>
+                </Border>
+
+                <Grid Grid.Row="0" Margin="12,8,12,4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="Discovered Devices"
-                               Foreground="{StaticResource TextBrush}"
-                               FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                    <TextBox Grid.Column="1" x:Name="FilterInput"
-                             Style="{StaticResource DarkTextBox}"
-                             Width="180" Margin="16,0,0,0"
-                             FontSize="12" Padding="6,4"
-                             VerticalAlignment="Center"
-                             TextChanged="FilterInput_TextChanged">
-                        <TextBox.Tag>Filter...</TextBox.Tag>
-                    </TextBox>
+                               Foreground="{DynamicResource TextBrush}" FontFamily="Consolas"
+                               FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <!-- Search/filter box - magnifier + placeholder so it's clearly a search -->
+                    <Border Grid.Column="1" Margin="16,0,0,0" Width="180" Height="26" VerticalAlignment="Center"
+                            Background="{DynamicResource SurfaceBrush}" BorderThickness="1" CornerRadius="4">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}"/>
+                                <Style.Triggers>
+                                    <!-- Hover first, focus second so a focused box keeps the accent border -->
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="BorderBrush" Value="{DynamicResource InputHoverBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="&#xE71C;" FontFamily="Segoe MDL2 Assets" FontSize="11"
+                                       Foreground="{DynamicResource DimTextBrush}" Margin="8,0,5,0" VerticalAlignment="Center"/>
+                            <Grid Grid.Column="1">
+                                <TextBlock Text="Filter devices..." Foreground="{DynamicResource DimTextBrush}"
+                                           FontSize="12" VerticalAlignment="Center" IsHitTestVisible="False" Margin="0,0,8,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=FilterInput}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBox x:Name="FilterInput" Background="Transparent" BorderThickness="0"
+                                         Foreground="{DynamicResource TextBrush}" CaretBrush="{DynamicResource TextBrush}"
+                                         SelectionBrush="{DynamicResource PrimaryBrush}" SelectionOpacity="0.35"
+                                         FontSize="12" Padding="0,0,8,0" VerticalContentAlignment="Center"
+                                         TextChanged="FilterInput_TextChanged"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
                     <TextBlock Grid.Column="3" x:Name="DeviceCount"
                                Text="0 devices found"
-                               Foreground="{StaticResource MutedTextBrush}"
-                               FontSize="12" VerticalAlignment="Center"/>
+                               Foreground="{DynamicResource MutedTextBrush}"
+                               FontSize="12" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                    <Button Grid.Column="4" x:Name="ExportButton"
+                            Click="ExportButton_Click" IsEnabled="False"
+                            ToolTip="Export" Cursor="Hand"
+                            Background="Transparent" BorderThickness="0"
+                            Width="32" Height="26" VerticalAlignment="Center">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="bg" Background="Transparent" CornerRadius="4">
+                                    <TextBlock x:Name="ico" Text="&#xE896;" FontFamily="Segoe MDL2 Assets"
+                                               FontSize="15" Foreground="{DynamicResource TextBrush}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="bg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                        <Setter TargetName="ico" Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.4"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <Button.ContextMenu>
+                            <ContextMenu Placement="Bottom" HorizontalOffset="0" VerticalOffset="2">
+                                <MenuItem Header="Export as CSV" Click="ExportCsv_Click"/>
+                                <MenuItem Header="Export as HTML" Click="ExportHtml_Click"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
                 </Grid>
 
                 <!-- Results DataGrid -->
                 <DataGrid Grid.Row="1" x:Name="ResultsGrid"
+                          Margin="12,0,3,8"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"
                           Background="Transparent"
-                          Foreground="{StaticResource TextBrush}"
+                          Foreground="{DynamicResource TextBrush}"
                           BorderThickness="0"
                           GridLinesVisibility="Horizontal"
-                          HorizontalGridLinesBrush="{StaticResource CardBorderBrush}"
+                          HorizontalGridLinesBrush="{DynamicResource PaneBorderBrush}"
                           HeadersVisibility="Column"
                           CanUserSortColumns="True"
                           SelectionMode="Single"
@@ -222,6 +352,54 @@
                           AlternationCount="2"
                           RowStyle="{StaticResource DarkDataGridRow}"
                           CellStyle="{StaticResource DarkDataGridCell}">
+
+                    <!-- Custom template: vertical scrollbar gets its own column to the RIGHT of the
+                         rows (with a gap), instead of overlapping the table content. -->
+                    <DataGrid.Template>
+                        <ControlTemplate TargetType="DataGrid">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                                <ScrollViewer x:Name="DG_ScrollViewer" Focusable="false">
+                                    <ScrollViewer.Template>
+                                        <ControlTemplate TargetType="ScrollViewer">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter"
+                                                    Grid.Row="0" Grid.Column="0"
+                                                    Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                                <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
+                                                    Grid.Row="1" Grid.Column="0"
+                                                    CanContentScroll="{TemplateBinding CanContentScroll}"/>
+                                                <ScrollBar x:Name="PART_VerticalScrollBar"
+                                                    Grid.Row="1" Grid.Column="1" Orientation="Vertical" Margin="6,0,0,0"
+                                                    Maximum="{TemplateBinding ScrollableHeight}"
+                                                    ViewportSize="{TemplateBinding ViewportHeight}"
+                                                    Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                    Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                                                <ScrollBar x:Name="PART_HorizontalScrollBar"
+                                                    Grid.Row="2" Grid.Column="0" Orientation="Horizontal"
+                                                    Maximum="{TemplateBinding ScrollableWidth}"
+                                                    ViewportSize="{TemplateBinding ViewportWidth}"
+                                                    Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                    Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ScrollViewer.Template>
+                                    <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                </ScrollViewer>
+                            </Border>
+                        </ControlTemplate>
+                    </DataGrid.Template>
 
                     <!-- Override WPF system blue selection with green -->
                     <DataGrid.Resources>
@@ -275,12 +453,12 @@
 
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Background" Value="#2a2a2a"/>
-                            <Setter Property="Foreground" Value="#999999"/>
+                            <Setter Property="Background" Value="{DynamicResource TableHeaderBrush}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
                             <Setter Property="FontSize" Value="11"/>
                             <Setter Property="FontWeight" Value="Normal"/>
                             <Setter Property="Padding" Value="8,0"/>
-                            <Setter Property="BorderBrush" Value="{StaticResource CardBorderBrush}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource HeaderLineBrush}"/>
                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
@@ -296,61 +474,61 @@
                                     <TextBlock Text="{Binding DeviceType}" FontWeight="Medium">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Router">
-                                                        <Setter Property="Foreground" Value="#F0A030"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeRouter}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Windows">
-                                                        <Setter Property="Foreground" Value="#60A0F0"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeWindows}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Windows Server">
-                                                        <Setter Property="Foreground" Value="#60A0F0"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeWindows}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Printer">
-                                                        <Setter Property="Foreground" Value="#D080A0"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypePrinter}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Switch/AP">
-                                                        <Setter Property="Foreground" Value="#C0C0C0"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeSwitch}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Hypervisor">
-                                                        <Setter Property="Foreground" Value="#E06060"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeHypervisor}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="NAS">
-                                                        <Setter Property="Foreground" Value="#40C080"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeNas}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="IoT">
-                                                        <Setter Property="Foreground" Value="#B060D0"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeIot}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Server">
-                                                        <Setter Property="Foreground" Value="#E08050"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeServer}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Linux/SSH">
-                                                        <Setter Property="Foreground" Value="#D0C050"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeLinux}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="DNS Server">
-                                                        <Setter Property="Foreground" Value="#50B0D0"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeDns}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Home Assistant">
-                                                        <Setter Property="Foreground" Value="#50D0A0"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeHa}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Mobile">
-                                                        <Setter Property="Foreground" Value="#A0A0F0"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeMobile}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Camera">
-                                                        <Setter Property="Foreground" Value="#F0C060"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeCamera}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Apple Device">
-                                                        <Setter Property="Foreground" Value="#C0C0C0"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeSwitch}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Smart TV">
-                                                        <Setter Property="Foreground" Value="#E0A0E0"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeSmarttv}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Apple TV">
-                                                        <Setter Property="Foreground" Value="#C0C0C0"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeSwitch}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Media Streamer">
-                                                        <Setter Property="Foreground" Value="#70C0E0"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeMedia}"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -366,25 +544,31 @@
         </Border>
 
         <!-- Status Bar -->
-        <Border Grid.Row="3" Background="{StaticResource SurfaceBrush}"
-                BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,1,0,0">
+        <Border Grid.Row="3" Background="{DynamicResource BackgroundBrush}">
             <Grid Margin="16,0">
+                <!-- Film grain over the bar (negative margin pulls it to the full width) -->
+                <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}" Margin="-16,0">
+                    <Border.Background>
+                        <ImageBrush x:Name="StatusGrainBrush" TileMode="Tile"
+                                    ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
+                    </Border.Background>
+                </Border>
                 <TextBlock x:Name="StatusText" Text="Ready"
-                           Foreground="{StaticResource MutedTextBrush}"
+                           Foreground="{DynamicResource TextFooter}" FontFamily="Consolas"
                            FontSize="12" VerticalAlignment="Center"/>
                 <!-- Portable mode indicator (hidden when installed) -->
                 <StackPanel x:Name="PortableBadge" Orientation="Horizontal"
                             HorizontalAlignment="Center" VerticalAlignment="Center"
                             Visibility="Collapsed">
-                    <TextBlock Text="PORTABLE" Foreground="#555555"
+                    <TextBlock Text="PORTABLE" Foreground="{DynamicResource TextFooter}"
                                FontFamily="Consolas" FontSize="9"
                                VerticalAlignment="Center" Margin="0,0,8,0"/>
                     <Button x:Name="InstallBtn" Content="Install KillerScan..."
                             Click="Install_Click"
                             FontFamily="Segoe UI" FontSize="10"
-                            Foreground="{StaticResource PrimaryBrush}"
-                            Background="Transparent"
-                            BorderThickness="1" BorderBrush="#2a5a3a"
+                            Foreground="{DynamicResource OutlineBtnBrush}"
+                            Background="{DynamicResource RowSelectedBrush}"
+                            BorderThickness="1" BorderBrush="{DynamicResource OutlineBtnBrush}"
                             Padding="8,1" Cursor="Hand"
                             VerticalAlignment="Center">
                         <Button.Template>
@@ -397,7 +581,12 @@
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#1a3a28"/>
+                                        <Setter Property="Background" Value="{DynamicResource OutlineBtnBrush}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource OnPrimaryBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource OutlineBtnBrush}"/>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -407,18 +596,20 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <ProgressBar x:Name="ScanProgress"
                                  Width="200" Height="4" VerticalAlignment="Center"
-                                 Foreground="{StaticResource PrimaryBrush}"
-                                 Background="{StaticResource CardBorderBrush}"
+                                 Foreground="{DynamicResource PrimaryBrush}"
+                                 Background="{DynamicResource CardBorderBrush}"
                                  Visibility="Collapsed" Margin="0,0,12,0"/>
-                    <TextBlock x:Name="VersionLabel" Text="v1.4.0"
-                               Foreground="#6a6a6a" FontFamily="Consolas"
-                               FontSize="10" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                    <TextBlock x:Name="VersionLabel" Text="v1.5.0"
+                               Foreground="{DynamicResource TextFooter}" FontFamily="Consolas"
+                               FontSize="10" VerticalAlignment="Center" Margin="0,0,12,0"
+                               Cursor="Hand" ToolTip="About KillerScan"
+                               MouseLeftButtonUp="VersionLabel_Click"/>
                     <TextBlock FontSize="10" VerticalAlignment="Center"
                                FontFamily="Consolas">
-                        <Run Text="&#x00A9; 2026 " Foreground="#6a6a6a"/>
+                        <Run Text="&#x00A9; 2026 " Foreground="{DynamicResource TextFooter}"/>
                         <Hyperlink NavigateUri="https://thekiller.net"
                                    RequestNavigate="Hyperlink_RequestNavigate"
-                                   Foreground="#6a6a6a" TextDecorations="None">
+                                   Foreground="{DynamicResource TextFooter}" TextDecorations="None">
                             <Run Text="Steve the Killer"/>
                         </Hyperlink>
                     </TextBlock>
@@ -426,19 +617,19 @@
             </Grid>
         </Border>
 
-        <!-- Film grain overlay - results area only -->
-        <Border x:Name="GrainOverlay"
-                Grid.Row="2"
-                IsHitTestVisible="False"
-                Opacity="0.15"
-                Panel.ZIndex="9999">
-            <Border.Background>
-                <ImageBrush x:Name="GrainBrush"
-                            TileMode="Tile"
-                            ViewportUnits="Absolute"
-                            Viewport="0,0,256,256"
-                            Stretch="None"/>
-            </Border.Background>
-        </Border>
+        <!-- Custom bottom-right resize grip (6 dots), ported from KillerPDF. Sits at the visible
+             content corner and forwards a HTBOTTOMRIGHT resize to Windows on drag. -->
+        <Canvas x:Name="ResizeGripDots" Grid.Row="3" Width="13" Height="13" Panel.ZIndex="50"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,4"
+                Background="Transparent" Cursor="SizeNWSE"
+                MouseLeftButtonDown="ResizeGrip_MouseDown">
+            <Rectangle Canvas.Left="10" Canvas.Top="2"  Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+            <Rectangle Canvas.Left="6"  Canvas.Top="6"  Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+            <Rectangle Canvas.Left="10" Canvas.Top="6"  Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+            <Rectangle Canvas.Left="2"  Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+            <Rectangle Canvas.Left="6"  Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+            <Rectangle Canvas.Left="10" Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+        </Canvas>
+
     </Grid>
 </Window>

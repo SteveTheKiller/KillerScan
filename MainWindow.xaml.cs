@@ -1,31 +1,35 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Reflection;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Media;
 using KillerScan.Models;
 using KillerScan.Services;
-using Microsoft.Win32;
 
 namespace KillerScan
 {
+    // ============================================================
+    // MainWindow - shell composition root.
+    //
+    // The window is intentionally thin: it holds shared fields and wires up the
+    // pieces in the constructor. Everything else lives in focused partials,
+    // split into a reusable UI shell and the scanner core:
+    //
+    //   UI shell:      WindowChrome.cs, Theme.cs, Grain.cs, Install.cs
+    //   Scanner core:  Scanning.cs, NetworkInfo.cs, Filtering.cs,
+    //                  DeviceActions.cs, Export.cs
+    //
+    // The scan engine itself (NetworkScanner, OuiLookup, DeviceOverrides) lives
+    // in Services/; the partials hold only the thin glue to the UI.
+    // ============================================================
     public partial class MainWindow : Window
     {
-        private readonly NetworkScanner _scanner = new();
-        private readonly ObservableCollection<NetworkDevice> _devices = [];
-        private CancellationTokenSource? _cts;
+        // Each tab is a ScanSession; _active is the one shown in the grid. Proxies for the
+        // active session's collection/state live in Tabs.cs (_devices, _scannedSubnet, ...).
+        private readonly ObservableCollection<ScanSession> _sessions = [];
+        private ScanSession _active = null!;
         private ICollectionView? _filteredView;
         private StackPanel _portableBadge = null!;
         private ImageBrush _grainBrush = null!;
@@ -35,358 +39,39 @@ namespace KillerScan
             InitializeComponent();
             _portableBadge = (StackPanel)FindName("PortableBadge")!;
             _grainBrush    = (ImageBrush)FindName("GrainBrush")!;
-            ResultsGrid.ItemsSource = _devices;
-            _filteredView = CollectionViewSource.GetDefaultView(_devices);
-            if (_filteredView is ListCollectionView lcv)
-            {
-                lcv.IsLiveSorting = true;
-                lcv.LiveSortingProperties.Add(nameof(NetworkDevice.IpSortKey));
-                lcv.SortDescriptions.Add(new SortDescription(nameof(NetworkDevice.IpSortKey), ListSortDirection.Ascending));
-            }
+
             OuiLookup.Load();
             DeviceOverrides.Load();
+
             var ver = Assembly.GetExecutingAssembly()
-                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.4.0";
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.5.0";
             VersionLabel.Text = $"v{ver}";
-            PopulateNetworkInfo();
-            StatusText.Text = $"Ready -- {OuiLookup.Count:N0} OUI vendors loaded";
-            _scanner.StatusChanged += status =>
-                Dispatcher.Invoke(() => StatusText.Text = status);
-            _scanner.ProgressChanged += pct =>
-                Dispatcher.Invoke(() => ScanProgress.Value = pct);
-            _scanner.DeviceFound += device =>
-                Dispatcher.Invoke(() =>
-                {
-                    _devices.Add(device);
-                    DeviceCount.Text = $"{_devices.Count} device{(_devices.Count == 1 ? "" : "s")} found";
-                });
-            ApplyGrainTexture();
-            SourceInitialized += MainWindow_SourceInitialized;
+
+            PopulateNetworkInfo();                                   // NetworkInfo.cs (sets SubnetInput.Text)
+
+            // First tab, seeded with the detected subnet.
+            var first = new ScanSession(SubnetInput.Text)
+            {
+                Status = $"Ready -- {OuiLookup.Count:N0} OUI vendors loaded"
+            };
+            WireSession(first);                                     // Scanning.cs
+            _sessions.Add(first);
+            ActivateSession(first);                                 // Tabs.cs (binds grid to the session)
+
+            ApplyGrainTexture();                                    // WindowChrome.cs
+            SourceInitialized += MainWindow_SourceInitialized;      // WindowChrome.cs
 
             Loaded += (_, _) =>
             {
                 if (App.IsPortable())
                     _portableBadge.Visibility = Visibility.Visible;
+                UpdateThemeSwatchSelection();                       // Theme.cs
+                UpdateAccentSwatches();                             // Theme.cs
+                FadeInContent();                                    // WindowChrome.cs
             };
         }
 
-        // ============================================================
-        // Maximize-respects-taskbar fix (WindowStyle=None needs WM_GETMINMAXINFO)
-        // ============================================================
-
-        private void MainWindow_SourceInitialized(object? sender, EventArgs e)
-        {
-            var hwnd = new WindowInteropHelper(this).Handle;
-            HwndSource.FromHwnd(hwnd)?.AddHook(WndProc);
-        }
-
-        private const int WM_GETMINMAXINFO = 0x0024;
-        private const uint MONITOR_DEFAULTTONEAREST = 0x00000002;
-
-        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            if (msg == WM_GETMINMAXINFO)
-            {
-                WmGetMinMaxInfo(hwnd, lParam);
-                handled = true;
-            }
-            return IntPtr.Zero;
-        }
-
-        private static void WmGetMinMaxInfo(IntPtr hwnd, IntPtr lParam)
-        {
-            var mmi = Marshal.PtrToStructure<MINMAXINFO>(lParam);
-            IntPtr monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
-            if (monitor != IntPtr.Zero)
-            {
-                var info = new MONITORINFO { cbSize = Marshal.SizeOf(typeof(MONITORINFO)) };
-                GetMonitorInfo(monitor, ref info);
-                RECT work = info.rcWork;
-                RECT mon = info.rcMonitor;
-                mmi.ptMaxPosition.x = Math.Abs(work.left - mon.left);
-                mmi.ptMaxPosition.y = Math.Abs(work.top - mon.top);
-                mmi.ptMaxSize.x = Math.Abs(work.right - work.left);
-                mmi.ptMaxSize.y = Math.Abs(work.bottom - work.top);
-                mmi.ptMaxTrackSize.x = mmi.ptMaxSize.x;
-                mmi.ptMaxTrackSize.y = mmi.ptMaxSize.y;
-                Marshal.StructureToPtr(mmi, lParam, true);
-            }
-        }
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr MonitorFromWindow(IntPtr handle, uint flags);
-
-        [DllImport("user32.dll")]
-        private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct POINT { public int x; public int y; }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct RECT { public int left, top, right, bottom; }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct MINMAXINFO
-        {
-            public POINT ptReserved;
-            public POINT ptMaxSize;
-            public POINT ptMaxPosition;
-            public POINT ptMinTrackSize;
-            public POINT ptMaxTrackSize;
-        }
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        private struct MONITORINFO
-        {
-            public int cbSize;
-            public RECT rcMonitor;
-            public RECT rcWork;
-            public uint dwFlags;
-        }
-
-        private void PopulateNetworkInfo()
-        {
-            try
-            {
-                // Prefer interfaces that have a gateway (real network, not VPN/virtual)
-                var candidates = NetworkInterface.GetAllNetworkInterfaces()
-                    .Where(i => i.OperationalStatus == OperationalStatus.Up)
-                    .Where(i => i.NetworkInterfaceType is not (NetworkInterfaceType.Loopback or NetworkInterfaceType.Tunnel))
-                    .Where(i => i.GetIPProperties().UnicastAddresses
-                        .Any(a => a.Address.AddressFamily == AddressFamily.InterNetwork))
-                    .OrderByDescending(i => i.GetIPProperties().GatewayAddresses
-                        .Any(g => g.Address.AddressFamily == AddressFamily.InterNetwork))
-                    .ThenByDescending(i => i.NetworkInterfaceType is NetworkInterfaceType.Ethernet)
-                    .ThenByDescending(i => i.NetworkInterfaceType is NetworkInterfaceType.Wireless80211);
-
-                foreach (var iface in candidates)
-                {
-                    var props = iface.GetIPProperties();
-                    var unicast = props.UnicastAddresses
-                        .FirstOrDefault(a => a.Address.AddressFamily == AddressFamily.InterNetwork);
-                    if (unicast == null) continue;                    var ip = unicast.Address;
-                    var mask = unicast.IPv4Mask;
-                    var ipBytes = ip.GetAddressBytes();
-                    var maskBytes = mask.GetAddressBytes();
-                    var netBytes = new byte[4];
-                    for (int i = 0; i < 4; i++)
-                        netBytes[i] = (byte)(ipBytes[i] & maskBytes[i]);
-                    int prefix = 0;
-                    foreach (byte b in maskBytes)
-                        for (int bit = 7; bit >= 0; bit--)
-                            if ((b & (1 << bit)) != 0) prefix++;
-                            else goto done;
-                    done:
-                    string subnet = $"{new IPAddress(netBytes)}/{prefix}";
-                    SubnetInput.Text = subnet;
-                    LocalIpLabel.Text = ip.ToString();
-                    InterfaceLabel.Text = iface.NetworkInterfaceType switch
-                    {
-                        NetworkInterfaceType.Wireless80211 => "Wi-Fi",
-                        NetworkInterfaceType.Ethernet => "Ethernet",
-                        _ => iface.NetworkInterfaceType.ToString()
-                    };
-                    var gw = props.GatewayAddresses
-                        .FirstOrDefault(g => g.Address.AddressFamily == AddressFamily.InterNetwork);
-                    if (gw != null)
-                        GatewayLabel.Text = gw.Address.ToString();
-                    var dns = props.DnsAddresses
-                        .FirstOrDefault(d => d.AddressFamily == AddressFamily.InterNetwork);
-                    if (dns != null)
-                        DnsLabel.Text = dns.ToString();
-                    break;
-                }
-            }
-            catch { }
-        }
-
-        private async void ScanBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (_cts != null)
-            {
-                _cts.Cancel(); _cts = null;
-                ScanBtn.Content = "Scan";
-                ScanProgress.Visibility = Visibility.Collapsed;
-                ExportButton.IsEnabled = _devices.Count > 0;
-                return;
-            }
-            _devices.Clear();
-            DeviceCount.Text = "0 devices found";
-            ScanProgress.Value = 0;
-            ScanProgress.Visibility = Visibility.Visible;
-            ExportButton.IsEnabled = false;
-            ScanBtn.Content = "Stop";
-            _cts = new CancellationTokenSource();
-            try
-            {
-                await _scanner.ScanSubnetAsync(SubnetInput.Text, _cts.Token, fullScan: true);
-                ExportButton.IsEnabled = _devices.Count > 0;
-            }
-            catch (OperationCanceledException) { StatusText.Text = "Scan cancelled"; }
-            catch (Exception ex) { MessageBox.Show($"Scan error: {ex.Message}", "KillerScan", MessageBoxButton.OK, MessageBoxImage.Error); }
-            finally
-            {
-                _cts = null;
-                ScanBtn.Content = "Scan";
-                ScanProgress.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void FilterInput_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            if (_filteredView == null) return;
-            string filter = FilterInput.Text.Trim().ToLowerInvariant();
-            if (string.IsNullOrEmpty(filter))
-                _filteredView.Filter = null;
-            else
-                _filteredView.Filter = obj =>
-                {
-                    if (obj is not NetworkDevice d) return false;
-                    return d.IpAddress.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
-                        || d.Hostname.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
-                        || d.MacAddress.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
-                        || d.Vendor.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
-                        || d.DeviceType.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
-                };
-            int shown = _filteredView.Cast<object>().Count();
-            DeviceCount.Text = string.IsNullOrEmpty(filter)
-                ? $"{_devices.Count} device{(_devices.Count == 1 ? "" : "s")} found"
-                : $"{shown} of {_devices.Count} shown";
-        }
-        private NetworkDevice? GetSelectedDevice() => ResultsGrid.SelectedItem as NetworkDevice;
-
-        private void CopyIp_Click(object sender, RoutedEventArgs e)
-        { var d = GetSelectedDevice(); if (d != null) Clipboard.SetText(d.IpAddress); }
-
-        private void CopyMac_Click(object sender, RoutedEventArgs e)
-        { var d = GetSelectedDevice(); if (d != null && !string.IsNullOrEmpty(d.MacAddress)) Clipboard.SetText(d.MacAddress); }
-
-        private void CopyHostname_Click(object sender, RoutedEventArgs e)
-        { var d = GetSelectedDevice(); if (d != null && !string.IsNullOrEmpty(d.Hostname)) Clipboard.SetText(d.Hostname); }
-
-        private void PingDevice_Click(object sender, RoutedEventArgs e)
-        {
-            var d = GetSelectedDevice(); if (d == null) return;
-            Process.Start(new ProcessStartInfo("cmd", $"/c ping -n 4 {d.IpAddress} & pause") { UseShellExecute = true });
-        }
-
-        private void OpenBrowser_Click(object sender, RoutedEventArgs e)
-        {
-            var d = GetSelectedDevice(); if (d == null) return;
-            Process.Start(new ProcessStartInfo($"http://{d.IpAddress}") { UseShellExecute = true });
-        }
-
-        private void RdpDevice_Click(object sender, RoutedEventArgs e)
-        {
-            var d = GetSelectedDevice(); if (d == null) return;
-            Process.Start(new ProcessStartInfo("mstsc", $"/v:{d.IpAddress}") { UseShellExecute = true });
-        }
-
-        private void SshDevice_Click(object sender, RoutedEventArgs e)
-        {
-            var d = GetSelectedDevice(); if (d == null) return;
-            Process.Start(new ProcessStartInfo("cmd", $"/c ssh {d.IpAddress}") { UseShellExecute = true });
-        }
-
-        private void SetType_Click(object sender, RoutedEventArgs e)
-        {
-            var d = GetSelectedDevice(); if (d == null || string.IsNullOrEmpty(d.MacAddress)) return;
-            if (sender is System.Windows.Controls.MenuItem mi && mi.Tag is string type)
-            {
-                DeviceOverrides.Set(d.MacAddress, type);
-                d.DeviceType = type;
-                _filteredView?.Refresh();
-                StatusText.Text = $"Override set: {d.MacAddress} = {type}";
-            }
-        }
-
-        private void ClearOverride_Click(object sender, RoutedEventArgs e)
-        {
-            var d = GetSelectedDevice(); if (d == null || string.IsNullOrEmpty(d.MacAddress)) return;
-            DeviceOverrides.Set(d.MacAddress, null);
-            // Reclassify without override
-            d.DeviceType = NetworkScanner.ClassifyDevice(d);
-            _filteredView?.Refresh();
-            StatusText.Text = $"Override cleared for {d.MacAddress}";
-        }
-        private void ExportButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (_devices.Count == 0) return;
-            ExportButton.ContextMenu!.IsOpen = true;
-        }
-
-        private void ExportCsv_Click(object sender, RoutedEventArgs e)
-        {
-            var dlg = new SaveFileDialog { Filter = "CSV File|*.csv", FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.csv" };
-            if (dlg.ShowDialog() != true) return;
-            try
-            {
-                var sb = new StringBuilder();
-                sb.AppendLine("IP Address,Hostname,MAC Address,Vendor,Type,Open Ports");
-                foreach (var d in _devices.OrderBy(d => d.IpSortKey))
-                    sb.AppendLine($"\"{d.IpAddress}\",\"{d.Hostname}\",\"{d.MacAddress}\",\"{d.Vendor}\",\"{d.DeviceType}\",\"{d.OpenPortsDisplay}\"");
-                File.WriteAllText(dlg.FileName, sb.ToString(), Encoding.UTF8);
-                StatusText.Text = $"Exported to {Path.GetFileName(dlg.FileName)}";
-            }
-            catch (Exception ex)
-            { MessageBox.Show($"Export error: {ex.Message}", "KillerScan", MessageBoxButton.OK, MessageBoxImage.Error); }
-        }
-        private void ExportHtml_Click(object sender, RoutedEventArgs e)
-        {
-            var dlg = new SaveFileDialog { Filter = "HTML Report|*.html", FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.html" };
-            if (dlg.ShowDialog() != true) return;
-            try
-            {
-                var sb = new StringBuilder();
-                sb.AppendLine("<!DOCTYPE html><html><head><meta charset='utf-8'/><title>KillerScan Report</title>");
-                sb.AppendLine("<style>body{background:#1c1c1c;color:#e0e0e0;font-family:'Segoe UI',sans-serif;padding:24px}");
-                sb.AppendLine("h1{color:#1ea54c;font-size:22px}table{border-collapse:collapse;width:100%;margin-top:16px}");
-                sb.AppendLine("th{background:#353535;color:#999;text-align:left;padding:8px 12px;font-size:12px}");
-                sb.AppendLine("td{border-bottom:1px solid #282828;padding:8px 12px;font-size:13px}tr:hover{background:#1a3a25}");
-                sb.AppendLine(".meta{color:#999;font-size:12px;margin-top:8px}.footer{color:#444;font-size:10px;margin-top:24px}");
-                sb.AppendLine("</style></head><body>");
-                sb.AppendLine($"<h1>KillerScan Report</h1>");
-                sb.AppendLine($"<p class='meta'>Subnet: {SubnetInput.Text} | Scanned: {DateTime.Now:yyyy-MM-dd HH:mm} | Devices: {_devices.Count}</p>");
-                sb.AppendLine("<table><tr><th>IP Address</th><th>Hostname</th><th>MAC Address</th><th>Vendor</th><th>Type</th><th>Open Ports</th></tr>");
-                foreach (var d in _devices.OrderBy(d => d.IpSortKey))
-                    sb.AppendLine($"<tr><td>{d.IpAddress}</td><td>{d.Hostname}</td><td>{d.MacAddress}</td><td>{d.Vendor}</td><td>{d.DeviceType}</td><td>{d.OpenPortsDisplay}</td></tr>");
-                sb.AppendLine("</table>");
-                sb.AppendLine("<p class='footer'>&copy; 2026 Steve the Killer</p>");
-                sb.AppendLine("</body></html>");
-                File.WriteAllText(dlg.FileName, sb.ToString(), Encoding.UTF8);
-                StatusText.Text = $"Exported to {Path.GetFileName(dlg.FileName)}";
-            }
-            catch (Exception ex)
-            { MessageBox.Show($"Export error: {ex.Message}", "KillerScan", MessageBoxButton.OK, MessageBoxImage.Error); }
-        }
-        // ============================================================
-        // Grain texture
-        // ============================================================
-
-        private void ApplyGrainTexture()
-        {
-            const int size = 256;
-            var bmp = new WriteableBitmap(size, size, 96, 96, PixelFormats.Bgra32, null);
-            var pixels = new byte[size * size * 4];
-            var rng = new Random(1337);
-            for (int i = 0; i < pixels.Length; i += 4)
-            {
-                if (rng.Next(4) != 0) continue;
-                byte v = (byte)rng.Next(160, 255);
-                byte a = (byte)rng.Next(30, 80);
-                pixels[i]     = v;
-                pixels[i + 1] = v;
-                pixels[i + 2] = v;
-                pixels[i + 3] = a;
-            }
-            bmp.WritePixels(new System.Windows.Int32Rect(0, 0, size, size), pixels, size * 4, 0);
-            _grainBrush.ImageSource = bmp;
-        }
-
-        // ============================================================
-        // Portable badge
-        // ============================================================
-
+        // Portable-mode install button
         private void Install_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new ConfirmDialog { Owner = this };
@@ -397,25 +82,10 @@ namespace KillerScan
             App.InstallAndRelaunch(wantDesktop: true);
         }
 
-        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        // Footer version number -> About dialog.
+        private void VersionLabel_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (e.ClickCount == 2) MaximizeBtn_Click(sender, e);
-            else DragMove();
+            new AboutDialog { Owner = this }.ShowDialog();
         }
-
-        private void MinimizeBtn_Click(object sender, RoutedEventArgs e)
-            => WindowState = WindowState.Minimized;
-
-        private void MaximizeBtn_Click(object sender, RoutedEventArgs e)
-            => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
-
-        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
-            e.Handled = true;
-        }
-
-        private void CloseBtn_Click(object sender, RoutedEventArgs e)
-            => Close();
     }
 }

@@ -1,0 +1,13 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+    <!-- Black family - BLUE accent overlay. -->
+    <SolidColorBrush x:Key="PrimaryBrush"        Color="#298DFF" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#298DFF" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#298DFF" po:Freeze="True"/>
+    <SolidColorBrush x:Key="HeaderLineBrush"     Color="#298DFF" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#298DFF" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#081a33" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlinePressedBrush" Color="#081a33" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#88298DFF" po:Freeze="True"/>
+</ResourceDictionary>

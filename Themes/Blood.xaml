@@ -1,0 +1,60 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:Double x:Key="GrainOpacity">0.34</sys:Double>
+
+    <!-- KillerScan - BLOOD theme. Ported from KillerPDF Themes/Blood.xaml.
+         Primary = HeaderAccent so the accent reads as colour, not the white base Accent. -->
+    <SolidColorBrush x:Key="PrimaryBrush"        Color="#e8485a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#e8485a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#e8485a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="HeaderLineBrush"     Color="#8f3640" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OnPrimaryBrush"      Color="#2a1012" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#f8c99e" po:Freeze="True"/>
+    <SolidColorBrush x:Key="InputHoverBrush"     Color="#8a6e6a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TextFooter"          Color="#a85a5a" po:Freeze="True"/>
+
+    <SolidColorBrush x:Key="BackgroundBrush"     Color="#240c0d" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SurfaceBrush"        Color="#2c1012" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PaneBrush"           Color="#321416" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TableHeaderBrush"    Color="#2c1012" po:Freeze="True"/>
+    <SolidColorBrush x:Key="CardBorderBrush"     Color="#401d1d" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PaneBorderBrush"     Color="#401d1d" po:Freeze="True"/>
+
+    <SolidColorBrush x:Key="TextBrush"           Color="#fffde8" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MutedTextBrush"      Color="#f8c99e" po:Freeze="True"/>
+    <SolidColorBrush x:Key="DimTextBrush"        Color="#e2b58a" po:Freeze="True"/>
+
+    <SolidColorBrush x:Key="RowAltBrush"         Color="#18FFFFFF" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowHoverBrush"       Color="#54201f" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#44ffffff" po:Freeze="True"/>
+
+    <SolidColorBrush x:Key="InputBorderBrush"    Color="#401d1d" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#301315" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuBorderBrush"     Color="#401d1d" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuTextBrush"       Color="#f8c99e" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuHoverBrush"      Color="#54201f" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlinePressedBrush" Color="#44ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#aaf8c99e" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#fce6d2" po:Freeze="True"/>
+
+    <!-- Device-type label colours (bright, for dark panes) -->
+    <SolidColorBrush x:Key="TypeRouter"     Color="#F0A030" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeWindows"    Color="#60A0F0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypePrinter"    Color="#D080A0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeSwitch"     Color="#C0C0C0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeHypervisor" Color="#E83C50" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeNas"        Color="#40C080" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeIot"        Color="#B060D0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeServer"     Color="#E08050" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeLinux"      Color="#D0C050" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeDns"        Color="#50B0D0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeHa"         Color="#50D0A0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeMobile"     Color="#A0A0F0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeCamera"     Color="#F0C060" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeSmarttv"    Color="#E0A0E0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeMedia"      Color="#70C0E0" po:Freeze="True"/>
+
+</ResourceDictionary>

@@ -2,12 +2,13 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
   <metadata>
     <id>killerscan</id>
-    <version>REPLACE_VERSION</version>
+    <version>1.4.0</version>
     <packageSourceUrl>https://github.com/SteveTheKiller/KillerScan</packageSourceUrl>
     <owners>SteveTheKiller</owners>
     <title>KillerScan</title>
     <authors>Steve / thekiller.net</authors>
     <projectUrl>https://scan.killertools.net</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/SteveTheKiller/KillerScan/main/Resources/ks-icon.ico</iconUrl>
     <licenseUrl>https://github.com/SteveTheKiller/KillerScan/blob/main/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectSourceUrl>https://github.com/SteveTheKiller/KillerScan</projectSourceUrl>
@@ -23,7 +24,7 @@
 - Single Windows EXE, no runtime install required
 - GPLv3, local-only, no account, no telemetry
     </description>
-    <releaseNotes>https://github.com/SteveTheKiller/KillerScan/releases/tag/vREPLACE_VERSION</releaseNotes>
+    <releaseNotes>https://github.com/SteveTheKiller/KillerScan/releases/tag/v1.4.0</releaseNotes>
   </metadata>
   <files>
     <file src="tools\**" target="tools" />

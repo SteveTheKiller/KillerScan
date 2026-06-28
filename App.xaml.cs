@@ -66,6 +66,9 @@ namespace KillerScan
                 return;
             }
 
+            // Restore the saved theme before the window is built (no first-paint flash).
+            Services.ThemeManager.Initialize();
+
             ShutdownMode = ShutdownMode.OnLastWindowClose;
             new MainWindow().Show();
         }
@@ -103,6 +106,42 @@ namespace KillerScan
             using var key = Registry.CurrentUser.OpenSubKey(@"Software\KillerScan");
             if (key is null) return false;
             return key.GetValue("Installed") is int i && i == 1;
+        }
+
+        // ============================================================
+        // Preference store  (Software\KillerScan\Settings)
+        // Mirrors KillerPDF: simple per-user string settings, used by
+        // ThemeManager / LocaleManager to persist theme, accent, and locale.
+        // ============================================================
+
+        internal static string? GetSetting(string name)
+        {
+            try
+            {
+                using var key = Registry.CurrentUser.OpenSubKey(@"Software\KillerScan\Settings");
+                return key?.GetValue(name) as string;
+            }
+            catch { return null; }
+        }
+
+        internal static void SetSetting(string name, string value)
+        {
+            try
+            {
+                using var key = Registry.CurrentUser.CreateSubKey(@"Software\KillerScan\Settings");
+                key?.SetValue(name, value);
+            }
+            catch { /* best-effort */ }
+        }
+
+        internal static void RemoveSetting(string name)
+        {
+            try
+            {
+                using var key = Registry.CurrentUser.OpenSubKey(@"Software\KillerScan\Settings", writable: true);
+                key?.DeleteValue(name, throwOnMissingValue: false);
+            }
+            catch { /* best-effort */ }
         }
 
         // ============================================================

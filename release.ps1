@@ -20,7 +20,9 @@
 #>
 param(
     [string]$CertName   = "Open Source Developer Stephen Riley",
-    [switch]$SkipSign
+    [switch]$SkipSign,
+    [switch]$SkipChoco,
+    [string]$ChocoApiKey = $env:CHOCO_API_KEY
 )
 
 $ErrorActionPreference = 'Stop'
@@ -100,11 +102,48 @@ if ($srcZip) {
     Write-Host "`n    (No source zip found -- did bundle-source.ps1 run?)" -ForegroundColor Yellow
 }
 
-# -- 5. Summary ----------------------------------------------------------------
+# -- 5. Chocolatey pack/push ---------------------------------------------------
+$nupkg = $null
+if (-not $SkipChoco) {
+    Write-Host "`n==> Packing Chocolatey package..." -ForegroundColor Cyan
+    $chocoDir    = Join-Path $PSScriptRoot "choco"
+    $nuspec      = Join-Path $chocoDir "killerscan.nuspec"
+    $installPs1  = Join-Path $chocoDir "tools\chocolateyInstall.ps1"
+
+    $nuspecOrig  = Get-Content $nuspec -Raw
+    $installOrig = Get-Content $installPs1 -Raw
+
+    try {
+        $nuspecOrig  -replace 'REPLACE_VERSION', $version | Set-Content $nuspec -NoNewline
+        $installOrig -replace 'REPLACE_HASH',    $hash    | Set-Content $installPs1 -NoNewline
+
+        Push-Location $chocoDir
+        choco pack killerscan.nuspec
+        if ($LASTEXITCODE -ne 0) { throw "choco pack failed." }
+        $nupkg = Join-Path $chocoDir "killerscan.$version.nupkg"
+        Write-Host "    Packed: $nupkg" -ForegroundColor Green
+        Pop-Location
+    } finally {
+        $nuspecOrig  | Set-Content $nuspec -NoNewline
+        $installOrig | Set-Content $installPs1 -NoNewline
+    }
+
+    if ($ChocoApiKey) {
+        Write-Host "`n==> Pushing to Chocolatey community repo..." -ForegroundColor Cyan
+        choco push $nupkg --source https://push.chocolatey.org --api-key $ChocoApiKey
+        if ($LASTEXITCODE -ne 0) { throw "choco push failed." }
+        Write-Host "    Pushed OK" -ForegroundColor Green
+    } else {
+        Write-Host "`n    Skipping push -- set CHOCO_API_KEY env var or pass -ChocoApiKey to push automatically." -ForegroundColor Yellow
+    }
+}
+
+# -- 6. Summary ----------------------------------------------------------------
 Write-Host "`n+================================================================+" -ForegroundColor Cyan
 Write-Host   "  KillerScan v$version release artifacts" -ForegroundColor White
 Write-Host   "  EXE   : $exe"
 if ($srcZip) { Write-Host "  SRC   : $($srcZip.FullName)" }
+if ($nupkg)  { Write-Host "  NUPKG : $nupkg" }
 Write-Host   "  SHA256: $hash" -ForegroundColor Green
 Write-Host   ""
 Write-Host   "  Paste SHA256 into:"
