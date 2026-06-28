@@ -4,6 +4,7 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <sys:Double x:Key="GrainOpacity">0.32</sys:Double>
+    <sys:Double x:Key="IconShadowOpacity">1.0</sys:Double>
 
     <!-- KillerScan - CYANOTIC theme. Ported from KillerPDF Themes/Cyanotic.xaml. -->
     <SolidColorBrush x:Key="PrimaryBrush"        Color="#3aa0d8" po:Freeze="True"/>
@@ -24,6 +25,7 @@
 
     <SolidColorBrush x:Key="TextBrush"           Color="#fffde8" po:Freeze="True"/>
     <SolidColorBrush x:Key="MutedTextBrush"      Color="#e0d49a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ChromeTextBrush"     Color="#ece2bc" po:Freeze="True"/>
     <SolidColorBrush x:Key="DimTextBrush"        Color="#c0aa68" po:Freeze="True"/>
 
     <SolidColorBrush x:Key="RowAltBrush"         Color="#18FFFFFF" po:Freeze="True"/>

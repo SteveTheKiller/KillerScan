@@ -45,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ks-icon.ico" />
+    <Resource Include="Resources\ks-icon.png" />
+    <Resource Include="Fonts\KillerScan.ttf" />
   </ItemGroup>
 
   <!-- GPL3 source bundle: produces <AppName>-<Version>-src.zip in the publish folder every time you Publish. -->

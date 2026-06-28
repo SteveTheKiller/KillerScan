@@ -4,6 +4,7 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <sys:Double x:Key="GrainOpacity">0.34</sys:Double>
+    <sys:Double x:Key="IconShadowOpacity">0.0</sys:Double>
 
     <!-- KillerScan - LIGHT theme. Tiered surfaces ported from KillerPDF Themes/Light.xaml. -->
     <SolidColorBrush x:Key="PrimaryBrush"        Color="#1b5e20" po:Freeze="True"/>
@@ -24,6 +25,7 @@
 
     <SolidColorBrush x:Key="TextBrush"           Color="#1a1a1a" po:Freeze="True"/>
     <SolidColorBrush x:Key="MutedTextBrush"      Color="#555555" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ChromeTextBrush"     Color="#444444" po:Freeze="True"/>
     <SolidColorBrush x:Key="DimTextBrush"        Color="#666666" po:Freeze="True"/>
 
     <SolidColorBrush x:Key="RowAltBrush"         Color="#14000000" po:Freeze="True"/>

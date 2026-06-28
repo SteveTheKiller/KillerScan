@@ -4,6 +4,7 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <sys:Double x:Key="GrainOpacity">0.34</sys:Double>
+    <sys:Double x:Key="IconShadowOpacity">1.0</sys:Double>
 
     <!-- KillerScan - BLOOD theme. Ported from KillerPDF Themes/Blood.xaml.
          Primary = HeaderAccent so the accent reads as colour, not the white base Accent. -->
@@ -25,6 +26,7 @@
 
     <SolidColorBrush x:Key="TextBrush"           Color="#fffde8" po:Freeze="True"/>
     <SolidColorBrush x:Key="MutedTextBrush"      Color="#f8c99e" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ChromeTextBrush"     Color="#fbdcbc" po:Freeze="True"/>
     <SolidColorBrush x:Key="DimTextBrush"        Color="#e2b58a" po:Freeze="True"/>
 
     <SolidColorBrush x:Key="RowAltBrush"         Color="#18FFFFFF" po:Freeze="True"/>

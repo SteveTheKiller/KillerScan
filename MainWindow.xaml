@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KillerScan"
+        xmlns:cm="clr-namespace:System.ComponentModel;assembly=System"
         mc:Ignorable="d"
         Title="KillerScan"
         Height="700" Width="1100"
@@ -50,13 +51,21 @@
                                     ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
                     </Border.Background>
                 </Border>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0">
-                    <TextBlock Text="ks" Foreground="{DynamicResource PrimaryBrush}"
-                               FontFamily="Consolas" FontSize="14" FontWeight="Bold"
-                               VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <TextBlock FontFamily="Consolas" FontSize="13.5" FontWeight="Bold" VerticalAlignment="Center"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0">
+                    <Image Source="pack://application:,,,/Resources/ks-icon.png" Width="27" Height="27"
+                           VerticalAlignment="Center" Margin="0,0,7,0"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <!-- Typewriter wordmark with KillerPDF-style soft shadow: a blurred dark copy behind the
+                         crisp text, faded by IconShadowOpacity (0 in light mode = no shadow). -->
+                    <Grid VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Margin="1,2,0,0" Opacity="{DynamicResource IconShadowOpacity}">
+                            <StackPanel.Effect><BlurEffect Radius="3"/></StackPanel.Effect>
+                            <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="18"><Run Text="Killer" Foreground="#D8000000"/><Run Text="Scan" FontSize="21.5" FontWeight="Bold" Foreground="#D8000000"/></TextBlock>
+                        </StackPanel>
+                        <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="18"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="21.5" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
+                    </Grid>
                     <TextBlock Text="Network Scanner" Foreground="{DynamicResource MutedTextBrush}"
-                               FontFamily="Consolas" FontSize="11" VerticalAlignment="Center" Margin="8,1,0,0"/>
+                               FontFamily="Consolas" FontSize="11" VerticalAlignment="Center" Margin="10,2,0,0"/>
                 </StackPanel>
 
                 <!-- Appearance + language (sit left of the window controls) -->
@@ -83,7 +92,7 @@
                             </ControlTemplate>
                         </Button.Template>
                         <Button.ContextMenu>
-                            <ContextMenu Placement="Bottom">
+                            <ContextMenu Placement="Bottom" PreviewMouseWheel="Menu_ForwardWheelToGrid">
                                 <MenuItem Header="English" IsCheckable="True" IsChecked="True" Tag="en" Click="Lang_Click"/>
                             </ContextMenu>
                         </Button.ContextMenu>
@@ -114,7 +123,8 @@
                 <Popup x:Name="ThemePopup" PlacementTarget="{Binding ElementName=ThemeButton}" Placement="Bottom"
                        StaysOpen="False" AllowsTransparency="True" HorizontalOffset="-92" VerticalOffset="5">
                     <Border Background="{DynamicResource MenuBackgroundBrush}" BorderBrush="{DynamicResource MenuBorderBrush}"
-                            BorderThickness="1" CornerRadius="6" Padding="12,10" Margin="14">
+                            BorderThickness="1" CornerRadius="6" Padding="12,10" Margin="14"
+                            PreviewMouseWheel="Menu_ForwardWheelToGrid">
                         <Border.Effect>
                             <DropShadowEffect Color="Black" BlurRadius="22" ShadowDepth="4" Direction="270" Opacity="0.55"/>
                         </Border.Effect>
@@ -199,15 +209,15 @@
 
                     <!-- Local network info - clean label/value pairs + an accent interface badge -->
                     <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
-                        <TextBlock Text="Local" Foreground="{DynamicResource DimTextBrush}"
+                        <TextBlock Text="Local" Foreground="{DynamicResource ChromeTextBrush}"
                                    FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <TextBlock x:Name="LocalIpLabel" Text="--" Foreground="{DynamicResource TextBrush}"
                                    FontFamily="Consolas" FontSize="12.5" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                        <TextBlock Text="Gateway" Foreground="{DynamicResource DimTextBrush}"
+                        <TextBlock Text="Gateway" Foreground="{DynamicResource ChromeTextBrush}"
                                    FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <TextBlock x:Name="GatewayLabel" Text="--" Foreground="{DynamicResource TextBrush}"
                                    FontFamily="Consolas" FontSize="12.5" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                        <TextBlock Text="DNS" Foreground="{DynamicResource DimTextBrush}"
+                        <TextBlock Text="DNS" Foreground="{DynamicResource ChromeTextBrush}"
                                    FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <TextBlock x:Name="DnsLabel" Text="--" Foreground="{DynamicResource TextBrush}"
                                    FontFamily="Consolas" FontSize="12.5" VerticalAlignment="Center" Margin="0,0,20,0"/>
@@ -220,10 +230,16 @@
             </Grid>
         </Border>
 
+        <!-- Chrome strip behind the pane, so the side margins carry the grain like the other bars -->
+        <Border Grid.Row="2" Background="{DynamicResource BackgroundBrush}">
+            <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}"
+                    Background="{DynamicResource GrainTileBrush}"/>
+        </Border>
+
         <!-- Devices pane - the lightest tier, lifted above the chrome with an outward drop shadow
              (kept tight to the bars; the shadow overlays them rather than adding gap) -->
         <Border Grid.Row="2" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
-                BorderThickness="1" CornerRadius="4" Margin="16,4,16,5" Panel.ZIndex="10">
+                BorderThickness="1" CornerRadius="4" Margin="8,4,8,5" Panel.ZIndex="10">
             <Border.Effect>
                 <DropShadowEffect Color="Black" BlurRadius="16" ShadowDepth="0" Opacity="0.5"/>
             </Border.Effect>
@@ -300,7 +316,7 @@
                     </Border>
                     <TextBlock Grid.Column="3" x:Name="DeviceCount"
                                Text="0 devices found"
-                               Foreground="{DynamicResource MutedTextBrush}"
+                               Foreground="{DynamicResource ChromeTextBrush}"
                                FontSize="12" VerticalAlignment="Center" Margin="0,0,12,0"/>
                     <Button Grid.Column="4" x:Name="ExportButton"
                             Click="ExportButton_Click" IsEnabled="False"
@@ -326,7 +342,8 @@
                             </ControlTemplate>
                         </Button.Template>
                         <Button.ContextMenu>
-                            <ContextMenu Placement="Bottom" HorizontalOffset="0" VerticalOffset="2">
+                            <ContextMenu Placement="Bottom" HorizontalOffset="0" VerticalOffset="2"
+                                         PreviewMouseWheel="Menu_ForwardWheelToGrid">
                                 <MenuItem Header="Export as CSV" Click="ExportCsv_Click"/>
                                 <MenuItem Header="Export as HTML" Click="ExportHtml_Click"/>
                             </ContextMenu>
@@ -374,9 +391,10 @@
                                                     <RowDefinition Height="*"/>
                                                     <RowDefinition Height="Auto"/>
                                                 </Grid.RowDefinitions>
-                                                <DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter"
-                                                    Grid.Row="0" Grid.Column="0"
-                                                    Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                                <Border Grid.Row="0" Grid.Column="0" SizeChanged="HeaderStrip_SizeChanged">
+                                                    <DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter"
+                                                        Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                                </Border>
                                                 <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
                                                     Grid.Row="1" Grid.Column="0"
                                                     CanContentScroll="{TemplateBinding CanContentScroll}"/>
@@ -460,6 +478,52 @@
                             <Setter Property="Padding" Value="8,0"/>
                             <Setter Property="BorderBrush" Value="{DynamicResource HeaderLineBrush}"/>
                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridColumnHeader">
+                                        <Border x:Name="hdrBg"
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                Padding="{TemplateBinding Padding}"
+                                                SnapsToDevicePixels="True">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ContentPresenter Grid.Column="0"
+                                                                  VerticalAlignment="Center"
+                                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                                <TextBlock x:Name="sortGlyph" Grid.Column="1"
+                                                           Text="&#x25B2;" FontSize="8"
+                                                           VerticalAlignment="Center" Margin="6,1,0,0"
+                                                           Foreground="{DynamicResource AccentBrush}"
+                                                           Visibility="Collapsed"/>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="SortDirection" Value="{x:Static cm:ListSortDirection.Ascending}">
+                                                <Setter TargetName="sortGlyph" Property="Visibility" Value="Visible"/>
+                                                <Setter TargetName="sortGlyph" Property="Text" Value="&#x25B2;"/>
+                                            </Trigger>
+                                            <Trigger Property="SortDirection" Value="{x:Static cm:ListSortDirection.Descending}">
+                                                <Setter TargetName="sortGlyph" Property="Visibility" Value="Visible"/>
+                                                <Setter TargetName="sortGlyph" Property="Text" Value="&#x25BC;"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="hdrBg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="hdrBg" Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
 
@@ -477,6 +541,9 @@
                                                 <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Router">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeRouter}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Router/DNS">
                                                         <Setter Property="Foreground" Value="{DynamicResource TypeRouter}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Windows">
@@ -554,7 +621,7 @@
                     </Border.Background>
                 </Border>
                 <TextBlock x:Name="StatusText" Text="Ready"
-                           Foreground="{DynamicResource TextFooter}" FontFamily="Consolas"
+                           Foreground="{DynamicResource ChromeTextBrush}" FontFamily="Consolas"
                            FontSize="12" VerticalAlignment="Center"/>
                 <!-- Portable mode indicator (hidden when installed) -->
                 <StackPanel x:Name="PortableBadge" Orientation="Horizontal"
@@ -564,34 +631,9 @@
                                FontFamily="Consolas" FontSize="9"
                                VerticalAlignment="Center" Margin="0,0,8,0"/>
                     <Button x:Name="InstallBtn" Content="Install KillerScan..."
-                            Click="Install_Click"
-                            FontFamily="Segoe UI" FontSize="10"
-                            Foreground="{DynamicResource OutlineBtnBrush}"
-                            Background="{DynamicResource RowSelectedBrush}"
-                            BorderThickness="1" BorderBrush="{DynamicResource OutlineBtnBrush}"
-                            Padding="8,1" Cursor="Hand"
-                            VerticalAlignment="Center">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        CornerRadius="2" Padding="{TemplateBinding Padding}">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="{DynamicResource OutlineBtnBrush}"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource OnPrimaryBrush}"/>
-                                    </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource OutlineBtnBrush}"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                            Click="Install_Click" Style="{StaticResource OutlineButton}"
+                            FontFamily="Segoe UI" FontSize="10" Padding="8,1"
+                            VerticalAlignment="Center"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <ProgressBar x:Name="ScanProgress"
@@ -630,6 +672,136 @@
             <Rectangle Canvas.Left="6"  Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
             <Rectangle Canvas.Left="10" Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
         </Canvas>
+
+        <!-- About overlay: dims the window behind it and shows a centred card (matches KillerPDF).
+             The close X is blended into the card (no separate title bar) with a red hover. -->
+        <Grid x:Name="AboutOverlay" Grid.RowSpan="4" Panel.ZIndex="9000" Visibility="Collapsed"
+              Background="#88000000" MouseLeftButtonDown="AboutOverlay_Click">
+            <Grid Width="468" VerticalAlignment="Center" MouseLeftButtonDown="AboutCard_Click">
+                <!-- Shadow on a separate element so the card text stays crisp -->
+                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="6" IsHitTestVisible="False">
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" BlurRadius="26" ShadowDepth="5" Direction="270" Opacity="0.6"/>
+                    </Border.Effect>
+                </Border>
+                <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1" CornerRadius="6">
+                    <Grid>
+                        <Border IsHitTestVisible="False" CornerRadius="6"
+                                Opacity="{DynamicResource GrainOpacity}" Background="{DynamicResource GrainTileBrush}"/>
+
+                        <!-- Close X: just the glyph turns red on hover (no filled square), like KillerPDF.
+                             Foreground is a Style setter (not a local value) so the hover trigger can win. -->
+                        <Button Content="&#x2715;" Click="AboutClose_Click" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Width="28" Height="26" Margin="0,6,6,0" Panel.ZIndex="2" FontSize="11"
+                                Background="Transparent" BorderThickness="0" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="Transparent">
+                                                    <ContentPresenter x:Name="cp" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Foreground" Value="#E04444"/>
+                                                        <Setter TargetName="cp" Property="Effect">
+                                                            <Setter.Value>
+                                                                <DropShadowEffect Color="#000000" BlurRadius="4" ShadowDepth="1" Direction="270" Opacity="0.5"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <StackPanel Margin="24,22,24,18">
+                            <!-- Header: icon to the left of the wordmark + description + tagline.
+                                 A Grid (not a horizontal StackPanel) so the text column is bounded and wraps. -->
+                            <Grid Margin="0,0,0,14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.Column="0" Source="pack://application:,,,/Resources/ks-icon.png" Width="58" Height="58"
+                                       Margin="0,0,15,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality">
+                                    <Image.Effect>
+                                        <DropShadowEffect Color="Black" BlurRadius="12" ShadowDepth="3" Direction="270" Opacity="0.55"/>
+                                    </Image.Effect>
+                                </Image>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <Grid Margin="0,0,0,4" HorizontalAlignment="Left">
+                                        <TextBlock FontFamily="{DynamicResource WordmarkFont}" Margin="1,2,0,0" IsHitTestVisible="False"
+                                                   Opacity="{DynamicResource IconShadowOpacity}"><TextBlock.Effect><BlurEffect Radius="2"/></TextBlock.Effect><Run Text="Killer" FontSize="22" Foreground="#C0000000"/><Run Text="Scan" FontSize="26" FontWeight="Bold" Foreground="#C0000000"/></TextBlock>
+                                        <TextBlock FontFamily="{DynamicResource WordmarkFont}"><Run Text="Killer" FontSize="22" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="26" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
+                                    </Grid>
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"><Run Text="ARP + IP sweep with vendor lookup, device classification, and a themeable, sortable HTML export. A "/><Hyperlink NavigateUri="https://killertools.net" RequestNavigate="AboutLink_Navigate" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None">Killer Tools</Hyperlink><Run Text=" utility."/></TextBlock>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Info panel - matte, lifted above the grainy card -->
+                            <Grid>
+                                <Border Background="{DynamicResource PaneBrush}" CornerRadius="4" IsHitTestVisible="False">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="Black" BlurRadius="14" ShadowDepth="2" Direction="270" Opacity="0.5"/>
+                                    </Border.Effect>
+                                </Border>
+                                <Border Background="{DynamicResource PaneBrush}" CornerRadius="4" Padding="14,12,14,4">
+                                    <StackPanel>
+                                        <StackPanel Margin="0,0,0,10">
+                                            <TextBlock Text="VERSION" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>
+                                            <TextBlock x:Name="AboutVersionBlock" Foreground="{DynamicResource PrimaryBrush}"
+                                                       FontFamily="Consolas" FontSize="13" Cursor="Hand"
+                                                       MouseLeftButtonUp="AboutVersion_Click" Margin="0,1,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,0,10">
+                                            <TextBlock Text="PUBLISHER" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>
+                                            <TextBlock x:Name="AboutPublisherBlock" Foreground="{DynamicResource TextBrush}" FontSize="12" Margin="0,1,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,0,10">
+                                            <TextBlock Text="THUMBPRINT" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>
+                                            <TextBlock x:Name="AboutThumbprintBlock" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11" TextWrapping="Wrap" Margin="0,1,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,0,10">
+                                            <TextBlock Text="EXE SHA-256" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>
+                                            <TextBlock x:Name="AboutSha256Block" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11" TextWrapping="NoWrap" Margin="0,1,0,0"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <!-- Update notice: shown only when a newer release is found -->
+                            <Button x:Name="AboutUpdateButton" Visibility="Collapsed" Margin="0,14,0,0"
+                                    HorizontalAlignment="Left" Cursor="Hand" Click="AboutUpdateButton_Click">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="ub" Background="Transparent" BorderBrush="{DynamicResource PrimaryBrush}"
+                                                BorderThickness="1" CornerRadius="4" Padding="14,7">
+                                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="ub" Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <TextBlock x:Name="AboutUpdateText" Text="Update available" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}"/>
+                            </Button>
+
+                            <!-- Footer -->
+                            <TextBlock Margin="0,14,0,0" Foreground="{DynamicResource TextFooter}" FontFamily="Consolas" FontSize="10.5"><Run Text="&#x00A9; 2026 "/><Hyperlink NavigateUri="https://thekiller.net" RequestNavigate="AboutLink_Navigate" Foreground="{DynamicResource TextFooter}" TextDecorations="None">Steve the Killer</Hyperlink><Run Text="  &#183;  GPLv3"/></TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
 
     </Grid>
 </Window>

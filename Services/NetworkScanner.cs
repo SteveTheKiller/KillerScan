@@ -15,7 +15,7 @@ namespace KillerScan.Services
     public class NetworkScanner
     {
         // Common ports to probe for device type detection
-        private static readonly int[] ProbePorts = {
+        private static readonly int[] ProbePorts = [
             22,    // SSH
             53,    // DNS
             80,    // HTTP
@@ -40,7 +40,13 @@ namespace KillerScan.Services
             5353,  // mDNS
             1900,  // SSDP/UPnP
             62078, // Apple iDevice
-        };
+            139,   // NetBIOS session (SMB legacy)
+            554,   // RTSP (IP cameras)
+            1883,  // MQTT (IoT brokers)
+            8883,  // MQTT over TLS
+            5357,  // WSD (Web Services for Devices)
+            32400, // Plex media server
+        ];
 
         // ARP table import for MAC address resolution
         [DllImport("iphlpapi.dll", ExactSpelling = true)]
@@ -49,6 +55,10 @@ namespace KillerScan.Services
         public event Action<string>? StatusChanged;
         public event Action<int>? ProgressChanged;
         public event Action<NetworkDevice>? DeviceFound;
+
+        // Network-wide service discovery results (collected once per scan, keyed by IP).
+        private Dictionary<string, MulticastDiscovery.MdnsInfo> _mdns = [];
+        private Dictionary<string, string> _ssdp = [];
 
         /// <summary>
         /// Parse a CIDR subnet string into a list of IP addresses.
@@ -69,10 +79,10 @@ namespace KillerScan.Services
             var addresses = new List<IPAddress>();
             for (uint addr = network + 1; addr < broadcast; addr++)
             {
-                addresses.Add(new IPAddress(new byte[] {
+                addresses.Add(new IPAddress([
                     (byte)(addr >> 24), (byte)(addr >> 16),
                     (byte)(addr >> 8), (byte)addr
-                }));
+                ]));
             }
             return addresses;
         }
@@ -99,6 +109,11 @@ namespace KillerScan.Services
                 if (addressSet.Contains(entry.Key))
                     discoveredHosts.TryAdd(entry.Key, (IPAddress.Parse(entry.Key), entry.Value));
             }
+
+            // Kick off network-wide service discovery (mDNS + SSDP) to run alongside the ping sweep;
+            // results are awaited before the probe phase and mapped to hosts by source IP.
+            var mdnsTask = MulticastDiscovery.CollectMdnsAsync(ct);
+            var ssdpTask = MulticastDiscovery.CollectSsdpAsync(ct);
 
             // Fast parallel ping sweep (async, no blocking ARP calls)
             var semaphore = new SemaphoreSlim(200);
@@ -149,10 +164,14 @@ namespace KillerScan.Services
 
             // Phase 2: Probe discovered hosts for details (parallel, throttled)
             var sortedHosts = discoveredHosts.Values
-                .OrderBy(h => BitConverter.ToUInt32(h.Addr.GetAddressBytes().Reverse().ToArray(), 0))
+                .OrderBy(h => BitConverter.ToUInt32([.. h.Addr.GetAddressBytes().Reverse()], 0))
                 .ToList();
             completed = 0;
             total = sortedHosts.Count;
+
+            // Collect the mDNS/SSDP results before probing (best-effort; empty maps on failure).
+            try { _mdns = await mdnsTask; } catch { }
+            try { _ssdp = await ssdpTask; } catch { }
 
             if (fullScan)
             {
@@ -199,7 +218,7 @@ namespace KillerScan.Services
                         catch { }
 
                         if (!string.IsNullOrEmpty(entry.Mac))
-                            device.Vendor = OuiLookup.GetVendor(entry.Mac);
+                            device.Vendor = ResolveVendor(entry.Mac);
 
                         // Classify even in quick scan (hostname + OUI, no ports)
                         device.DeviceType = ClassifyDevice(device);
@@ -247,7 +266,7 @@ namespace KillerScan.Services
                     if (string.IsNullOrEmpty(trimmed)) continue;
 
                     // Parse lines like: 192.168.8.1     94-83-c4-a4-78-82     dynamic
-                    var parts = trimmed.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    var parts = trimmed.Split([' '], StringSplitOptions.RemoveEmptyEntries);
                     if (parts.Length >= 2)
                     {
                         string ip = parts[0];
@@ -313,14 +332,24 @@ namespace KillerScan.Services
             });
 
             var results = await Task.WhenAll(portTasks);
-            device.OpenPorts = results.Where(p => p > 0).OrderBy(p => p).ToList();
+            device.OpenPorts = [.. results.Where(p => p > 0).OrderBy(p => p)];
 
             // Wait for hostname + TTL probes to finish before fingerprinting.
             await Task.WhenAll(dnsTask, ttlTask);
 
             // Look up vendor from MAC OUI (used by later probes + classifier).
             if (!string.IsNullOrEmpty(device.MacAddress))
-                device.Vendor = OuiLookup.GetVendor(device.MacAddress);
+                device.Vendor = ResolveVendor(device.MacAddress);
+
+            // Attach network-wide discovery results + name fallback (reverse DNS -> mDNS .local name).
+            if (_mdns.TryGetValue(device.IpAddress, out var md))
+            {
+                device.MdnsServices = [.. md.Services];
+                if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(md.Name))
+                    device.Hostname = md.Name;
+            }
+            if (_ssdp.TryGetValue(device.IpAddress, out var srv))
+                device.SsdpServer = srv;
 
             // -- Fingerprint probes: run in parallel, each is gated on relevant open ports --
             var fpTasks = new List<Task>();
@@ -336,6 +365,10 @@ namespace KillerScan.Services
 
             await Task.WhenAll(fpTasks);
 
+            // Last-resort name: NetBIOS computer name when reverse DNS and mDNS both came up empty.
+            if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(device.NetbiosName))
+                device.Hostname = device.NetbiosName;
+
             // Classify device type using weighted scoring over all signals.
             device.DeviceType = ClassifyDevice(device);
 
@@ -347,7 +380,7 @@ namespace KillerScan.Services
         // Each entry maps a hostname substring (lowercase) to a device type.
         // -------------------------------------------------------------------
         private static readonly (string Pattern, string Type)[] HostnameKeywords =
-        {
+        [
             ("iphone",        "iPhone"),
             ("ipad",          "iPhone"),
             ("android",       "Android"),
@@ -378,7 +411,7 @@ namespace KillerScan.Services
             ("diskstation",   "NAS"),
             ("freenas",       "NAS"),
             ("truenas",       "NAS"),
-        };
+        ];
 
         // -------------------------------------------------------------------
         // Known-bad OUI overrides: MAC prefixes where the IEEE OUI vendor
@@ -392,6 +425,48 @@ namespace KillerScan.Services
             { "C4:F7:C1", "Linkplay" },
             { "58:CF:79", "Linkplay" },
         };
+
+        // -------------------------------------------------------------------
+        // Brand overrides by MAC prefix for /24 blocks IEEE lists as "Private"
+        // or leaves unnamed. Unlike OuiBadMap (classification only), these
+        // REPLACE the displayed vendor too. Key = first 8 chars (XX:XX:XX).
+        // -------------------------------------------------------------------
+        private static readonly Dictionary<string, string> VendorPrefixOverrides = new(StringComparer.OrdinalIgnoreCase)
+        {
+            // Govee smart lights + air purifier - registered "Private" / unlisted in the IEEE data
+            { "D0:C9:07", "Govee" },
+            { "98:17:3C", "Govee" },
+            { "60:74:F4", "Govee" },
+            { "7C:A6:B0", "Govee" },
+            { "E0:72:A1", "Govee" },
+        };
+
+        /// <summary>OUI vendor lookup with brand-prefix overrides applied (used for display + classification).</summary>
+        private static string ResolveVendor(string mac)
+        {
+            if (string.IsNullOrEmpty(mac)) return "";
+
+            // Brand overrides for real OUI blocks IEEE lists as "Private"/unnamed.
+            if (mac.Length >= 8 && VendorPrefixOverrides.TryGetValue(mac[..8].ToUpperInvariant(), out var brand))
+                return brand;
+
+            // Locally-administered (randomized/private) MAC: the first octet's bit 1 is set, so the
+            // prefix is NOT a real manufacturer assignment. Label it instead of guessing a vendor.
+            // iOS "Private Wi-Fi Address" and Android MAC randomization both use these.
+            if (byte.TryParse(mac[..2], System.Globalization.NumberStyles.HexNumber, null, out var b0)
+                && (b0 & 0x02) != 0)
+                return "(Randomized)";
+
+            return OuiLookup.GetVendor(mac);
+        }
+
+        /// <summary>The host's default-gateway IP, set from the detected network info before a scan.
+        /// The device at this IP is the router, so it's labelled Router (or Router/DNS if it IS the DNS server).</summary>
+        public static string GatewayIp = "";
+
+        /// <summary>The host's configured DNS server IP. Only this device is the actual DNS server, so a
+        /// router that merely has port 53 open (forwarding) isn't mislabelled when DNS lives elsewhere (Pi-hole).</summary>
+        public static string DnsIp = "";
 
         /// <summary>
         /// Weighted-score classifier. Each signal contributes points to candidate
@@ -419,6 +494,17 @@ namespace KillerScan.Services
             string ssh = device.SshBanner.ToLowerInvariant();
             string snmp = device.SnmpDescr.ToLowerInvariant();
             string nbName = device.NetbiosName.ToLowerInvariant();
+            string ssdp = device.SsdpServer.ToLowerInvariant();
+
+            // 1b. The default gateway is the router. Surface that role (plus DNS when it serves it),
+            //     ahead of the port heuristics that would otherwise label it just "DNS Server".
+            if (!string.IsNullOrEmpty(GatewayIp) && device.IpAddress == GatewayIp)
+            {
+                // Only "Router/DNS" when the gateway IS the configured DNS server. A router that just
+                // has port 53 open (forwarding) but points DNS at a Pi-hole stays plain "Router".
+                bool isDnsServer = !string.IsNullOrEmpty(DnsIp) && device.IpAddress == DnsIp;
+                return isDnsServer ? "Router/DNS" : "Router";
+            }
 
             // 2. Hostname keyword short-circuit (explicit user-set suffix beats scoring).
             foreach (var (pattern, type) in HostnameKeywords)
@@ -547,7 +633,7 @@ namespace KillerScan.Services
                 || vendor.Contains("shelly") || vendor.Contains("nest") || vendor.Contains("ecobee")
                 || vendor.Contains("signify") || vendor.Contains("lutron") || vendor.Contains("wemo")
                 || vendor.Contains("wyze") || vendor.Contains("aqara") || vendor.Contains("linkplay")
-                || vendor.Contains("wiim"))
+                || vendor.Contains("wiim") || vendor.Contains("govee"))
                 Add("IoT", 10);
 
             // -- Home Assistant --
@@ -560,6 +646,25 @@ namespace KillerScan.Services
             if (title.Contains("adguard")) Add("DNS Server", 15);
             if (ports.Contains(53) && ports.Contains(80) && !isNetworkVendor) Add("DNS Server", 6);
 
+            // -- mDNS (Bonjour) service types: the strongest, most specific signals --
+            bool HasSvc(string s) => device.MdnsServices.Any(x => x.Contains(s));
+            if (HasSvc("_googlecast")) Add("Smart TV", 14);
+            if (HasSvc("_printer") || HasSvc("_ipp") || HasSvc("_pdl-datastream")) Add("Printer", 14);
+            if (HasSvc("_sonos") || HasSvc("_spotify-connect")) Add("Media Streamer", 12);
+            if (HasSvc("_airplay") || HasSvc("_raop")) Add("Media Streamer", 8);
+            if (HasSvc("_hap") || HasSvc("_homekit") || HasSvc("_hue")) Add("IoT", 10);
+
+            // -- SSDP / UPnP SERVER string --
+            if (ssdp.Contains("roku")) Add("Smart TV", 12);
+            if (ssdp.Contains("synology") || ssdp.Contains("qnap")) Add("NAS", 12);
+            if (ssdp.Contains("plex")) Add("Media Streamer", 12);
+            if (ssdp.Contains("sonos") || ssdp.Contains("dlna") || ssdp.Contains("mediaserver")) Add("Media Streamer", 8);
+            if (ssdp.Contains("samsung") && ssdp.Contains("tv")) Add("Smart TV", 10);
+
+            // -- New ports --
+            if (ports.Contains(32400)) Add("Media Streamer", 12);          // Plex
+            if (ports.Contains(1883) || ports.Contains(8883)) Add("IoT", 6); // MQTT brokers
+
             // -- Generic web device (catch-all) --
             if (ports.Contains(80) || ports.Contains(443) || ports.Contains(8080)) Add("Web Device", 2);
 
@@ -568,7 +673,8 @@ namespace KillerScan.Services
             {
                 var winner = scores.OrderByDescending(kvp => kvp.Value).First();
                 if (winner.Value >= 6)
-                    return winner.Key;
+                    // Generic "Network" gear with no Router/Switch disambiguation is most likely a switch/AP.
+                    return winner.Key == "Network" ? "Switch/AP" : winner.Key;
             }
 
             // Randomized / locally-administered MAC with no responsive ports is almost
@@ -585,6 +691,15 @@ namespace KillerScan.Services
             if (ports.Contains(22)) return "Linux/SSH";
             if (ports.Contains(445) || ports.Contains(3389)) return "Windows";
             if (ports.Contains(80) || ports.Contains(443)) return "Web Device";
+            // Known PC/workstation makers with no open ports are idle/standby computers, not IoT.
+            // (A business micro in modern standby still answers ARP but blocks every inbound TCP port.)
+            bool isPcVendor = vendor.Contains("dell") || vendor.Contains("hewlett") || vendor.Contains("hp inc")
+                || vendor.Contains("lenovo") || vendor.Contains("micro-star") || vendor.Contains("asustek")
+                || vendor.Contains("asrock") || vendor.Contains("gigabyte") || vendor.Contains("giga-byte")
+                || vendor.Contains("framework") || vendor.Contains("fujitsu") || vendor.Contains("acer")
+                || vendor.Contains("clevo");
+            if (ports.Count == 0 && isPcVendor) return "Windows";
+
             // Responds to ARP/ping but exposes zero TCP ports -- almost always a
             // smart bulb, plug, sensor, or other IoT endpoint. Even with a blank
             // OUI (Govee and similar use unregistered prefixes), IoT beats Unknown.
@@ -604,10 +719,10 @@ namespace KillerScan.Services
         private static async Task ProbeHttpAsync(NetworkDevice device, IPAddress addr)
         {
             (int port, bool https)[] candidates =
-            {
+            [
                 (80, false), (8080, false), (5000, false), (8123, false),
                 (443, true), (8443, true), (8006, true), (5001, true),
-            };
+            ];
 
             using var handler = new HttpClientHandler
             {
@@ -663,7 +778,7 @@ namespace KillerScan.Services
                 string banner = Encoding.ASCII.GetString(buf, 0, n).Trim();
                 if (banner.StartsWith("SSH-"))
                 {
-                    int nl = banner.IndexOfAny(new[] { '\r', '\n' });
+                    int nl = banner.IndexOfAny(['\r', '\n']);
                     device.SshBanner = nl > 0 ? banner[..nl] : banner;
                 }
             }
@@ -675,7 +790,7 @@ namespace KillerScan.Services
         /// </summary>
         private static async Task ProbeTlsCertAsync(NetworkDevice device, IPAddress addr)
         {
-            int[] tlsPorts = { 443, 8443, 8006, 902, 5001 };
+            int[] tlsPorts = [443, 8443, 8006, 902, 5001];
             foreach (var port in tlsPorts)
             {
                 if (!device.OpenPorts.Contains(port)) continue;
@@ -706,7 +821,7 @@ namespace KillerScan.Services
         {
             // NBSTAT query for the wildcard name "*" (encoded as 32-byte level-2 name).
             byte[] query =
-            {
+            [
                 0x00, 0x00, 0x00, 0x10, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x20,
                 0x43, 0x4B, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
@@ -714,7 +829,7 @@ namespace KillerScan.Services
                 0x00,
                 0x00, 0x21,
                 0x00, 0x01,
-            };
+            ];
 
             try
             {
@@ -755,7 +870,7 @@ namespace KillerScan.Services
         {
             // Precomputed SNMPv1 GetRequest for sysDescr.0, community "public".
             byte[] query =
-            {
+            [
                 0x30, 0x29,
                 0x02, 0x01, 0x00,
                 0x04, 0x06, 0x70, 0x75, 0x62, 0x6C, 0x69, 0x63,
@@ -767,7 +882,7 @@ namespace KillerScan.Services
                 0x30, 0x0C,
                 0x06, 0x08, 0x2B, 0x06, 0x01, 0x02, 0x01, 0x01, 0x01, 0x00,
                 0x05, 0x00,
-            };
+            ];
 
             try
             {

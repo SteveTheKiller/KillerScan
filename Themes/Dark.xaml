@@ -4,6 +4,7 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <sys:Double x:Key="GrainOpacity">0.24</sys:Double>
+    <sys:Double x:Key="IconShadowOpacity">0.9</sys:Double>
 
     <!-- ================================================================
          KillerScan - DARK theme (colours + brushes only). Tiered surface
@@ -36,6 +37,7 @@
     <!-- Text -->
     <SolidColorBrush x:Key="TextBrush"           Color="#e0e0e0" po:Freeze="True"/>
     <SolidColorBrush x:Key="MutedTextBrush"      Color="#a0a0a0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ChromeTextBrush"     Color="#b6b6b6" po:Freeze="True"/>
     <SolidColorBrush x:Key="DimTextBrush"        Color="#6a6a6a" po:Freeze="True"/>
 
     <!-- Grid rows -->

@@ -55,11 +55,17 @@ namespace KillerScan
                     var gw = props.GatewayAddresses
                         .FirstOrDefault(g => g.Address.AddressFamily == AddressFamily.InterNetwork);
                     if (gw != null)
+                    {
                         GatewayLabel.Text = gw.Address.ToString();
+                        Services.NetworkScanner.GatewayIp = gw.Address.ToString();   // so the classifier flags the router
+                    }
                     var dns = props.DnsAddresses
                         .FirstOrDefault(d => d.AddressFamily == AddressFamily.InterNetwork);
                     if (dns != null)
+                    {
                         DnsLabel.Text = dns.ToString();
+                        Services.NetworkScanner.DnsIp = dns.ToString();   // distinguishes a real DNS server from a router that just forwards
+                    }
                     break;
                 }
             }

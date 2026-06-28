@@ -26,6 +26,9 @@
             <!-- Floors the scrollbar thumb at a grabbable minimum (ported from KillerPDF). -->
             <local:ThumbViewportFloorConverter x:Key="ThumbFloor"/>
 
+            <!-- Typewriter wordmark font (bundled in Fonts/). -->
+            <FontFamily x:Key="WordmarkFont">/KillerScan;component/Fonts/#Typewriter - a602 (dead postman 2004)</FontFamily>
+
             <!-- DataGrid Row Style. Rows are translucent so the pane grain shows through. -->
             <Style x:Key="DarkDataGridRow" TargetType="DataGridRow">
                 <Setter Property="Background" Value="Transparent"/>

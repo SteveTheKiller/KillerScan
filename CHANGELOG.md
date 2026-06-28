@@ -6,6 +6,32 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-06-28
+
+### Added
+- **mDNS (Bonjour) and SSDP (UPnP) discovery** (`MulticastDiscovery.cs`): a network-wide multicast pass runs alongside the ping sweep, mapping service types and SSDP SERVER strings back to hosts for much stronger device identification.
+- **MA-M (28-bit) and MA-S (36-bit) OUI support**: vendor lookup now matches longest-prefix first (MA-S -> MA-M -> MA-L) so small vendors sharing a 24-bit block resolve correctly.
+- `build/update-oui.ps1`: refreshes the embedded OUI database from multiple sources (Wireshark `manuf`, the IEEE registries, Nmap mac-prefixes) with automatic gzip handling, a browser User-Agent, dynamic CSV column detection, and a never-shrink guard so a blocked or partial download can never wipe or downgrade the list. Database refreshed to ~41.6k entries (MA-L + MA-M + MA-S).
+- New probe ports: 139 (NetBIOS), 554 (RTSP), 1883 / 8883 (MQTT), 5357 (WSD), 32400 (Plex).
+- Hostname fallback to the mDNS `.local` name and the NetBIOS name when reverse DNS returns nothing.
+- In-window **About** overlay matching KillerPDF: dims the window behind it, shows the app icon and typewriter wordmark, a merged description / tagline, and a lifted info panel (version, publisher, certificate thumbprint, SHA-256), with a GitHub release link and update checker, and a blended close-X that turns red on hover.
+- Typewriter **KillerScan wordmark** in the title bar (bundled font), paired with the new app icon, "Scan" in the accent colour with a drop shadow (off in light mode).
+- New transparent app icon and multi-resolution `.ico`.
+- Per-theme **device-type colour palettes** (15 type colours tuned per theme).
+- RJ-45 / Wi-Fi **interface badge** in the network info bar.
+- Govee brand overrides for five MAC prefixes that IEEE registers as "Private", and a `(Randomized)` vendor label for locally-administered (privacy) MACs.
+- Column-header sort-direction chevron plus hover and press states, and rounded top corners on the header strip.
+
+### Changed
+- **Gateway / DNS-aware classification**: the gateway is labelled Router, DNS Server, or Router/DNS, with Router/DNS used only when the gateway *is* the configured DNS server.
+- Classifier gained mDNS service-type signals (Chromecast, printers, Sonos/Spotify, AirPlay, HomeKit/Hue), SSDP SERVER signals (Roku, Synology/QNAP, Plex, DLNA, Samsung TV), and new port signals.
+- Known PC / workstation vendors (Dell, HP, Lenovo, MSI, Asus, and similar) with no open ports now classify as Windows instead of falling through to the IoT catch-all during standby.
+- Vendor resolution centralised through `ResolveVendor` (OUI lookup + brand overrides + randomized-MAC labelling), applied on both the quick and full scan paths.
+- Install button adopts the same OutlineButton hover / press behaviour as the Scan button.
+- RGB-theme button outlines, footer / status text, scrollbar hover, and input hover colours corrected; scrollbars thinned and lightened on hover.
+- Collection initializers across `NetworkScanner.cs` simplified to C# 12 collection expressions.
+
+
 ## [1.4.0] - 2026-05-16
 
 ### Added
@@ -67,7 +93,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 _Historical entries to be backfilled._
 
-[Unreleased]: https://github.com/SteveTheKiller/KillerScan/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/SteveTheKiller/KillerScan/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/SteveTheKiller/KillerScan/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/SteveTheKiller/KillerScan/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/SteveTheKiller/KillerScan/compare/v1.2.1...v1.3.0
 [1.2.1]: https://github.com/SteveTheKiller/KillerScan/releases/tag/v1.2.1

@@ -32,7 +32,10 @@ namespace KillerScan.Services
                 var parts = line.Split(new[] { '\t' }, 2);
                 if (parts.Length == 2)
                 {
-                    OuiTable[parts[0]] = parts[1];
+                    // Normalise the key to raw uppercase hex so MA-L (6 hex / 24-bit), MA-M (7 / 28-bit)
+                    // and MA-S (9 / 36-bit) prefixes all live in one table and longest-match wins.
+                    var key = parts[0].Replace(":", "").Replace("-", "").Trim().ToUpperInvariant();
+                    if (key.Length >= 6) OuiTable[key] = parts[1];
                 }
             }
             _loaded = true;
@@ -41,13 +44,15 @@ namespace KillerScan.Services
         public static string GetVendor(string macAddress)
         {
             if (!_loaded) Load();
+            if (string.IsNullOrEmpty(macAddress)) return string.Empty;
 
-            if (string.IsNullOrEmpty(macAddress) || macAddress.Length < 8)
-                return string.Empty;
-
-            // Try the first 3 octets (XX:XX:XX)
-            string prefix = macAddress[..8].ToUpperInvariant();
-            return OuiTable.TryGetValue(prefix, out var vendor) ? vendor : string.Empty;
+            // Normalise the MAC to raw uppercase hex, then try the most specific block first:
+            // MA-S (36-bit / 9 hex) -> MA-M (28-bit / 7 hex) -> MA-L (24-bit / 6 hex).
+            var hex = new string(macAddress.Where(Uri.IsHexDigit).ToArray()).ToUpperInvariant();
+            if (hex.Length < 6) return string.Empty;
+            if (hex.Length >= 9 && OuiTable.TryGetValue(hex.Substring(0, 9), out var v9)) return v9;
+            if (hex.Length >= 7 && OuiTable.TryGetValue(hex.Substring(0, 7), out var v7)) return v7;
+            return OuiTable.TryGetValue(hex.Substring(0, 6), out var v6) ? v6 : string.Empty;
         }
 
         public static int Count => OuiTable.Count;

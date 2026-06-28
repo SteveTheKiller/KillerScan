@@ -82,10 +82,10 @@ namespace KillerScan
             App.InstallAndRelaunch(wantDesktop: true);
         }
 
-        // Footer version number -> About dialog.
+        // Footer version number -> About overlay (About.cs).
         private void VersionLabel_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            new AboutDialog { Owner = this }.ShowDialog();
+            ShowAboutOverlay();
         }
     }
 }
