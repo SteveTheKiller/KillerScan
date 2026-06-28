@@ -10,7 +10,7 @@
 <meta name="description" content="How KillerScan works under the hood: how it scans your network, works out who made each device, and figures out what every device is.">
 <link rel="icon" type="image/x-icon" href="brand/ks-icon.ico">
 <script defer src="https://koya.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
-<link rel="stylesheet" href="ks.css?v=4">
+<link rel="stylesheet" href="ks.css?v=5">
 <style>
 .page-hero { text-align: center; padding: 44px 16px 8px; }
 .page-hero .wm-logo { font-size: clamp(34px, 6vw, 60px); margin: 0 auto 6px; }
@@ -201,8 +201,8 @@
                             highest score >= threshold     -> winner
   5. fallbacks              when nothing scored high enough</div>
 
-<h3 id="gateway">Gateway, DNS, and the Pi-hole case</h3>
-<p>The device sitting at the gateway address is your router. Routers often pass along DNS traffic (port 53), which used to make them look like the DNS server even when they were not. KillerScan only calls the gateway <b>Router/DNS</b> when it really is the DNS server your computer is set to use. If DNS is handled somewhere else, such as a Pi-hole, the gateway stays labelled <b>Router</b> and the Pi-hole is labelled <b>DNS Server</b>. That gives three honest labels instead of one wrong guess.</p>
+<h3 id="gateway">Gateway, DNS, and three honest labels</h3>
+<p>The device sitting at the gateway address is your router. Routers often pass along DNS traffic (port 53), which used to make them look like the DNS server even when they were not. KillerScan only calls the gateway <b>Router/DNS</b> when it really is the DNS server your computer is set to use. If DNS is handled by a separate machine, the gateway stays labelled <b>Router</b> and that machine is labelled <b>DNS Server</b>. That gives three honest labels instead of one wrong guess.</p>
 
 <h3 id="signals">Weighted signals</h3>
 <p>The more specific a clue, the more points it is worth. Here is a rough guide:</p>

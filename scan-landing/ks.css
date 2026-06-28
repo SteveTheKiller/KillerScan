@@ -160,7 +160,8 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 
 /* ============ Header nav + appearance flyout (shared) ============ */
 .tb-nav { display: inline-flex; align-items: center; gap: 1px; }
-.tb-nav a { color: var(--text2); font-size: 13.5px; font-weight: 600; padding: 6px 11px; border-radius: 6px; }
+.tb-nav a { font-family: 'KillerScan', 'Courier New', monospace; color: var(--text2); font-size: 18px; font-weight: normal; letter-spacing: .3px; padding: 6px 11px; border-radius: 6px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+html[data-theme="light"] .tb-nav a { text-shadow: none; }
 .tb-nav a:hover { color: var(--text); background: color-mix(in srgb, var(--accent) 12%, transparent); filter: none; }
 .tb-nav a.on { color: var(--accent); }
 
@@ -204,6 +205,8 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 .tech-sec { margin-bottom: 30px; scroll-margin-top: 74px; }
 /* Universal content-header style: typewriter wordmark font across all pages */
 .tech-sec h2, .about-card h2 { font-family: 'KillerScan', 'Courier New', monospace; font-size: 24px; font-weight: normal; letter-spacing: .5px; margin: 6px 0 12px; color: var(--text); }
+.tech-sec h2, .about-card h2, .features h2 { text-shadow: 0 1px 1px rgba(0,0,0,0.45), 0 2px 6px rgba(0,0,0,0.32); }
+html[data-theme="light"] .tech-sec h2, html[data-theme="light"] .about-card h2, html[data-theme="light"] .features h2 { text-shadow: none; }
 .tech-sec h3 { font-family: 'KillerScan', 'Courier New', monospace; font-size: 15px; font-weight: normal; letter-spacing: .5px; color: var(--accent); margin: 16px 0 7px;
   text-shadow: 0 2px 5px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.5); }
 html[data-theme="light"] .tech-sec h3 { text-shadow: none; }
