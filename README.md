@@ -9,6 +9,7 @@ One-click, fast network scanner built for field techs.
 - Weighted-score device classifier
 
 Single portable EXE, no runtime install required.
+Free, open-source, GPLv3.
 
 Homepage: <https://killerscan.net> · Part of [killertools.net](https://killertools.net).
 
@@ -35,7 +36,7 @@ Homepage: <https://killerscan.net> · Part of [killertools.net](https://killerto
 ## Download
 
 - Prebuilt binary: <https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe>
-- Source (GPL3 corresponding source for this release): <https://github.com/SteveTheKiller/KillerScan/releases/download/v1.5.0/KillerScan-1.5.0-src.zip>
+- Source (GPL3 corresponding source for this release): <https://github.com/SteveTheKiller/KillerScan/releases/download/v1.5.1/KillerScan-1.5.1-src.zip>
 
 Or install from a package manager:
 
