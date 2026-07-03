@@ -58,18 +58,7 @@ namespace KillerScan
 
         // ---- Content fade-in on open ----
 
-        private void FadeInContent()
-        {
-            var fade = new System.Windows.Media.Animation.DoubleAnimation(0, 1,
-                new Duration(TimeSpan.FromMilliseconds(180)))
-            {
-                EasingFunction = new System.Windows.Media.Animation.QuadraticEase
-                {
-                    EasingMode = System.Windows.Media.Animation.EasingMode.EaseOut
-                }
-            };
-            RootGrid.BeginAnimation(OpacityProperty, fade);
-        }
+        private void FadeInContent() => Anim.FadeIn(RootGrid);
 
         private const int WM_GETMINMAXINFO = 0x0024;
         private const uint MONITOR_DEFAULTTONEAREST = 0x00000002;

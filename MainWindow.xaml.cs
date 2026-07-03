@@ -44,7 +44,7 @@ namespace KillerScan
             DeviceOverrides.Load();
 
             var ver = Assembly.GetExecutingAssembly()
-                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.5.1";
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.5.2";
             VersionLabel.Text = $"v{ver}";
 
             PopulateNetworkInfo();                                   // NetworkInfo.cs (sets SubnetInput.Text)

@@ -47,6 +47,16 @@ namespace KillerScan
         {
             base.OnStartup(e);
 
+            // Force CPU (software) rendering. WPF composites through the GPU by default, and
+            // console-session screen scrapers (ScreenConnect, LiveConnect, VNC, TeamViewer) can't
+            // capture GPU-composited surfaces, so the window renders black in the remote view while
+            // looking fine on the physical machine. Those tools aren't Terminal Services sessions,
+            // so SM_REMOTESESSION is false and WPF never auto-falls-back on its own. Software
+            // rendering lands every surface in the normal desktop framebuffer they can capture.
+            // Cost is negligible for an app this light (static shadows/grain, short opacity fades).
+            System.Windows.Media.RenderOptions.ProcessRenderMode =
+                System.Windows.Interop.RenderMode.SoftwareOnly;
+
             // Silent install: KillerScan.exe /silent
             // Installs machine-wide to Program Files, no UI. Used by winget/choco/RMM.
             if (e.Args.Length > 0 &&

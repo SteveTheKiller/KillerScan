@@ -10,6 +10,7 @@ namespace KillerScan
         public ConfirmDialog()
         {
             InitializeComponent();
+            Loaded += (_, _) => Anim.FadeIn(RootBorder);
         }
 
         private void OK_Click(object sender, RoutedEventArgs e)

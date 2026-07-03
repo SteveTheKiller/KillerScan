@@ -37,7 +37,10 @@ namespace KillerScan
         private void ThemeButton_Click(object sender, RoutedEventArgs e)
         {
             if (FindName("ThemePopup") is System.Windows.Controls.Primitives.Popup p)
+            {
                 p.IsOpen = !p.IsOpen;
+                if (p.IsOpen && p.Child is UIElement child) Anim.FadeIn(child);
+            }
         }
 
         /// <summary>Shows the accent dots for accent-capable themes and highlights the active accent.</summary>
@@ -76,6 +79,7 @@ namespace KillerScan
                 BuildLanguageMenu(b.ContextMenu);
                 b.ContextMenu.PlacementTarget = b;
                 b.ContextMenu.IsOpen = true;
+                Anim.FadeIn(b.ContextMenu);
             }
         }
 

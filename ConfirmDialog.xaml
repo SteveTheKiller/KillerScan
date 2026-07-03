@@ -12,7 +12,8 @@
 
     <!-- Margin is a transparent halo so the drop shadow has room to render (AllowsTransparency window,
          so WPF draws the shadow rather than the OS). Same shadow language as the KillerPDF KillerDialog. -->
-    <Border Background="{StaticResource SurfaceBrush}"
+    <Border x:Name="RootBorder" Opacity="0"
+            Background="{StaticResource SurfaceBrush}"
             BorderBrush="{StaticResource CardBorderBrush}"
             BorderThickness="1"
             CornerRadius="6"

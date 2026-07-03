@@ -20,7 +20,7 @@ namespace KillerScan
 
         private static string CurrentVersion =>
             Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-            ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.5.1";
+            ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.5.2";
 
         private void ShowAboutOverlay()
         {
@@ -49,13 +49,18 @@ namespace KillerScan
         private static void FadeOverlayIn(UIElement o)
         {
             o.Visibility = Visibility.Visible;
-            o.BeginAnimation(UIElement.OpacityProperty,
-                new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(120))));
+            Anim.FadeIn(o);
         }
 
         private static void FadeOverlayOut(UIElement o)
         {
-            var a = new DoubleAnimation(o.Opacity, 0, new Duration(TimeSpan.FromMilliseconds(120)));
+            var a = new DoubleAnimation(o.Opacity, 0, new Duration(TimeSpan.FromMilliseconds(Anim.FadeMs)))
+            {
+                EasingFunction = new System.Windows.Media.Animation.QuadraticEase
+                {
+                    EasingMode = System.Windows.Media.Animation.EasingMode.EaseIn
+                }
+            };
             a.Completed += (_, _) => o.Visibility = Visibility.Collapsed;
             o.BeginAnimation(UIElement.OpacityProperty, a);
         }

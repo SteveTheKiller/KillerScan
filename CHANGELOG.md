@@ -4,7 +4,13 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.5.2] - Unreleased
+
+### Changed
+- Window, dialog and flyout animations are now consistent. The theme flyout, language menu and install dialog previously appeared instantly; they now fade in over 150ms with an ease-out curve, matching the main window (retimed from 180ms) and the About overlay (retimed from 120ms). The shared timing lives in `Anim.cs`.
+
+### Fixed
+- The window no longer renders black over console-session screen-sharing tools (ScreenConnect, Kaseya LiveConnect, VNC, TeamViewer). WPF composited through the GPU, whose surfaces those tools can't capture, and because they aren't Terminal Services sessions WPF never fell back on its own. Rendering is now forced to software mode (`RenderOptions.ProcessRenderMode`) at startup.
 
 ## [1.5.1] - 2026-07-02
 
@@ -99,7 +105,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 _Historical entries to be backfilled._
 
-[Unreleased]: https://github.com/SteveTheKiller/KillerScan/compare/v1.5.1...HEAD
+[Unreleased]: https://github.com/SteveTheKiller/KillerScan/compare/v1.5.2...HEAD
+[1.5.2]: https://github.com/SteveTheKiller/KillerScan/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/SteveTheKiller/KillerScan/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/SteveTheKiller/KillerScan/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/SteveTheKiller/KillerScan/compare/v1.3.0...v1.4.0
