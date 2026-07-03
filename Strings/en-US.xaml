@@ -62,6 +62,9 @@
     <sys:String x:Key="Str_About_Db">VENDOR DATABASE</sys:String>
     <sys:String x:Key="Str_About_DbUpdate">Update from the latest registries</sys:String>
     <sys:String x:Key="Str_About_DbHint">From the Wireshark OUI list.</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} entries</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">refreshed {0}</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">bundled with the app</sys:String>
     <sys:String x:Key="Str_About_DescA" xml:space="preserve">ARP + IP sweep with vendor lookup, device classification, and a themeable, sortable HTML export. A </sys:String>
     <sys:String x:Key="Str_About_DescB" xml:space="preserve"> utility.</sys:String>
 

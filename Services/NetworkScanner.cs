@@ -48,6 +48,16 @@ namespace KillerScan.Services
             32400, // Plex media server
         ];
 
+        // Ports probed to decide a host is alive when ICMP is filtered. Kept short and high-signal
+        // (SMB, RDP, web, SSH) so the discovery sweep stays fast; the full ProbePorts scan runs later
+        // only for hosts already found alive.
+        private static readonly int[] LivenessPorts = [445, 3389, 80, 443, 22];
+
+        // A MAC resolved for more than this many distinct IPs is treated as a next-hop/gateway artifact
+        // (routed or VPN link) rather than a real per-host address, and is discarded. Real LAN hosts each
+        // have a unique MAC, so a low ceiling is safe; 2 tolerates the odd multi-homed NIC.
+        private const int MaxIpsPerMac = 2;
+
         // ARP table import for MAC address resolution
         [DllImport("iphlpapi.dll", ExactSpelling = true)]
         private static extern int SendARP(int destIp, int srcIp, byte[] macAddr, ref int macLen);
@@ -122,9 +132,19 @@ namespace KillerScan.Services
                 await semaphore.WaitAsync(ct);
                 try
                 {
-                    using var ping = new Ping();
-                    var reply = await ping.SendPingAsync(addr, 500);
-                    if (reply.Status == IPStatus.Success)
+                    bool alive;
+                    using (var ping = new Ping())
+                    {
+                        var reply = await ping.SendPingAsync(addr, 500);
+                        alive = reply.Status == IPStatus.Success;
+                    }
+                    // ICMP is commonly blocked (Windows Firewall default), and ARP can't reach a host
+                    // across a routed/VPN link, so a silent host isn't necessarily down. Fall back to a
+                    // quick TCP connect on a few common ports - anything that answers is alive even when
+                    // it drops ping. This is what closes the "20 found vs 200 real" gap over a VPN.
+                    if (!alive)
+                        alive = await TcpAliveAsync(addr);
+                    if (alive)
                         discoveredHosts.TryAdd(addr.ToString(), (addr, ""));
                 }
                 catch { }
@@ -161,6 +181,27 @@ namespace KillerScan.Services
             });
             await Task.WhenAll(macTasks);
             ct.ThrowIfCancellationRequested();
+
+            // Drop next-hop / gateway MACs. ARP only resolves hosts on the local L2 segment; for an IP
+            // reached over a router or a Forti/SSL VPN tunnel, SendARP returns the MAC of the next hop
+            // (the VPN virtual adapter), so every remote host resolves to the SAME MAC - and its OUI
+            // (e.g. Fortinet) would otherwise stamp every device with the wrong vendor and device type.
+            // A real LAN gives each host a unique MAC, so a MAC shared across several IPs is an artifact:
+            // blank it and let the port/fingerprint signals classify those hosts instead.
+            var bogusMacs = new HashSet<string>(discoveredHosts.Values
+                .Where(h => !string.IsNullOrEmpty(h.Mac))
+                .GroupBy(h => h.Mac)
+                .Where(g => g.Count() > MaxIpsPerMac)
+                .Select(g => g.Key));
+            if (bogusMacs.Count > 0)
+            {
+                foreach (var ip in discoveredHosts.Keys.ToList())
+                {
+                    var h = discoveredHosts[ip];
+                    if (!string.IsNullOrEmpty(h.Mac) && bogusMacs.Contains(h.Mac))
+                        discoveredHosts[ip] = (h.Addr, "");
+                }
+            }
 
             // Phase 2: Probe discovered hosts for details (parallel, throttled)
             var sortedHosts = discoveredHosts.Values
@@ -912,6 +953,31 @@ namespace KillerScan.Services
                 }
             }
             catch { }
+        }
+
+        /// <summary>
+        /// Quick liveness check for hosts that don't answer ICMP: try to open a TCP connection to a few
+        /// common ports in parallel and report alive on the first that connects. Catches firewalled-but-
+        /// serving hosts, and remote hosts over a VPN where ping/ARP don't reach. Each attempt is bounded
+        /// by a short delay race; disposing the client aborts any still-pending connect, so nothing leaks.
+        /// </summary>
+        private static async Task<bool> TcpAliveAsync(IPAddress addr)
+        {
+            var tasks = LivenessPorts.Select(async port =>
+            {
+                try
+                {
+                    using var client = new TcpClient();
+                    var connect = client.ConnectAsync(addr, port);
+                    if (await Task.WhenAny(connect, Task.Delay(300)) == connect && client.Connected)
+                        return true;
+                }
+                catch { }
+                return false;
+            });
+
+            var results = await Task.WhenAll(tasks);
+            return results.Any(r => r);
         }
 
         /// <summary>

@@ -46,6 +46,11 @@
     <sys:String x:Key="Str_About_Db">廠商資料庫</sys:String>
     <sys:String x:Key="Str_About_DbUpdate">從最新登錄檔更新</sys:String>
     <sys:String x:Key="Str_About_DbHint">來自 Wireshark OUI 清單。</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} 個項目</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">更新於 {0}</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">隨應用程式一併提供</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">ARP + IP 掃描，具備廠商查詢、裝置分類，以及可切換主題、可排序的 HTML 匯出。</sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve"> 出品的實用工具。</sys:String>
 
     <sys:String x:Key="Str_Btn_Stop">停止</sys:String>
     <sys:String x:Key="Str_Status_Ready">就緒 - 已載入 {0} 個 OUI 廠商</sys:String>

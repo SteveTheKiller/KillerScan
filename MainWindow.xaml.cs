@@ -44,7 +44,7 @@ namespace KillerScan
             DeviceOverrides.Load();
 
             var ver = Assembly.GetExecutingAssembly()
-                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.5.0";
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.5.1";
             VersionLabel.Text = $"v{ver}";
 
             PopulateNetworkInfo();                                   // NetworkInfo.cs (sets SubnetInput.Text)
@@ -68,6 +68,7 @@ namespace KillerScan
                 UpdateThemeSwatchSelection();                       // Theme.cs
                 UpdateAccentSwatches();                             // Theme.cs
                 FadeInContent();                                    // WindowChrome.cs
+                if (DemoMode) GenerateDemoScan();                   // DemoMode.cs (--demo: initial roll)
             };
         }
 

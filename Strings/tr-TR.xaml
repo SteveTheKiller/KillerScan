@@ -46,6 +46,11 @@
     <sys:String x:Key="Str_About_Db">ÜRETİCİ VERİTABANI</sys:String>
     <sys:String x:Key="Str_About_DbUpdate">En son kayıtlardan güncelle</sys:String>
     <sys:String x:Key="Str_About_DbHint">Wireshark OUI listesinden.</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} giriş</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">{0} tarihinde güncellendi</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">uygulamayla birlikte gelir</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">Üretici aramalı ve cihaz sınıflandırmalı ARP + IP taraması, ayrıca temalandırılabilir ve sıralanabilir HTML dışa aktarma. Bir </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve"> aracı.</sys:String>
 
     <sys:String x:Key="Str_Btn_Stop">Durdur</sys:String>
     <sys:String x:Key="Str_Status_Ready">Hazır - {0} OUI üreticisi yüklendi</sys:String>

@@ -46,6 +46,11 @@
     <sys:String x:Key="Str_About_Db">HERSTELLERDATENBANK</sys:String>
     <sys:String x:Key="Str_About_DbUpdate">Aus den neuesten Registern aktualisieren</sys:String>
     <sys:String x:Key="Str_About_DbHint">Aus der Wireshark-OUI-Liste.</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} Einträge</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">aktualisiert {0}</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">mit der App gebündelt</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">ARP- + IP-Scan mit Herstellersuche, Geräteklassifizierung und einem anpassbaren, sortierbaren HTML-Export. Ein Dienstprogramm von </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve">.</sys:String>
 
     <sys:String x:Key="Str_Btn_Stop">Stopp</sys:String>
     <sys:String x:Key="Str_Status_Ready">Bereit - {0} OUI-Hersteller geladen</sys:String>

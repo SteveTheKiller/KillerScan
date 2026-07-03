@@ -6,6 +6,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-07-02
+
+### Fixed
+- Scanning over a routed link or VPN (e.g. FortiClient SSL VPN) no longer collapses every device to the same MAC and vendor. ARP can't resolve hosts across the tunnel, so `SendARP` returns the next-hop (VPN adapter) MAC for every remote IP; a MAC returned for more than two distinct IPs is now treated as that artifact and discarded, letting those hosts classify by their port and fingerprint signals instead of being mislabelled as the VPN's vendor.
+- Host discovery no longer misses devices that block ICMP. A host that doesn't answer ping now gets a quick TCP-connect probe on a few common ports (445, 3389, 80, 443, 22) and counts as alive if any responds, closing the large undercount seen when scanning over a VPN where ARP can't help.
+- Install confirmation dialog now matches the KillerDialog style: the title bar is transparent so it blends into the window with the shared film grain, and it carries the KillerScan wordmark instead of a flat solid bar with plain text.
+
 ## [1.5.0] - 2026-06-28
 
 ### Added
@@ -92,7 +99,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 _Historical entries to be backfilled._
 
-[Unreleased]: https://github.com/SteveTheKiller/KillerScan/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/SteveTheKiller/KillerScan/compare/v1.5.1...HEAD
+[1.5.1]: https://github.com/SteveTheKiller/KillerScan/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/SteveTheKiller/KillerScan/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/SteveTheKiller/KillerScan/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/SteveTheKiller/KillerScan/compare/v1.2.1...v1.3.0

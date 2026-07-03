@@ -46,6 +46,11 @@
     <sys:String x:Key="Str_About_Db">BASE DE DATOS DE FABRICANTES</sys:String>
     <sys:String x:Key="Str_About_DbUpdate">Actualizar desde los registros más recientes</sys:String>
     <sys:String x:Key="Str_About_DbHint">De la lista OUI de Wireshark.</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} entradas</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">actualizado {0}</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">incluido con la aplicación</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">Barrido ARP + IP con búsqueda de fabricante, clasificación de dispositivos y exportación HTML con temas y ordenable. Una utilidad de </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve">.</sys:String>
 
     <sys:String x:Key="Str_Btn_Stop">Detener</sys:String>
     <sys:String x:Key="Str_Status_Ready">Listo - {0} fabricantes OUI cargados</sys:String>

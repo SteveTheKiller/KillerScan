@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="hc">
 <head>
 <meta charset="utf-8">
 <script>/* Apply saved theme + accent before first paint to avoid a reload flash */(function(){try{var d=document.documentElement,t=localStorage.getItem('kscan-theme');if(t){d.setAttribute('data-theme',t);if({dark:1,light:1,hc:1}[t]){var v=localStorage.getItem('kscan-av');if(v){var s=v.split('|');d.style.setProperty('--accent',s[0]);d.style.setProperty('--btn',s[1]);}}}}catch(e){}})();</script>
+<link rel="preload" href="brand/KillerScan.ttf" as="font" type="font/ttf" crossorigin>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="darkreader-lock">
 <title>KillerScan - Technical</title>
@@ -10,10 +11,10 @@
 <meta name="description" content="How KillerScan works under the hood: how it scans your network, works out who made each device, and figures out what every device is.">
 <link rel="icon" type="image/x-icon" href="brand/ks-icon.ico">
 <script defer src="https://koya.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
-<link rel="stylesheet" href="ks.css?v=5">
+<link rel="stylesheet" href="ks.css?v=9">
 <style>
 .page-hero { text-align: center; padding: 44px 16px 8px; }
-.page-hero .wm-logo { font-size: clamp(34px, 6vw, 60px); margin: 0 auto 6px; }
+.page-hero .wm-logo { height: clamp(46px, 8vw, 76px); width: auto; margin: 0 auto 8px; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.55)); }
 .page-hero p { color: var(--muted); font-size: 15px; margin: 4px auto 0; max-width: 540px; }
 .content-inner { max-width: 860px; margin: 0 auto; padding: 0 28px 56px; }
 .tech-sec { scroll-margin-top: 84px; }
@@ -31,18 +32,18 @@
 <div class="topbar">
 <a href="index.html" class="tb-home" title="KillerScan home">
 <img class="tb-icon" src="brand/ks-icon.png" alt="KillerScan" width="44" height="44">
-<span class="wm-logo tb-wm"><span class="wmk">Killer</span><span class="wms">Scan</span></span>
+<img class="wm-logo tb-wm" src="brand/killerscan-logo-dark-orange.svg" alt="KillerScan">
 </a>
 <a class="tb-dl" href="https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe"><svg viewBox="0 0 24 24"><path d="M11 4h2v7h3l-4 5-4-5h3V4zM5 18h14v2H5z"/></svg><span data-i18n="nav_dl">Download</span></a>
 <span class="tb-spacer"></span>
 <nav class="tb-nav">
-<a href="about.html" data-i18n="nav_about">About</a>
 <a href="technical.html" class="on" data-i18n="nav_tech">Technical</a>
+<a href="about.html" data-i18n="nav_about">About</a>
 </nav>
 <div class="tgrp" role="group" aria-label="Theme">
 <button class="swatch sw-dark"     data-theme="dark"     title="Dark"></button>
 <button class="swatch sw-light"    data-theme="light"    title="Light"></button>
-<button class="swatch sw-hc"       data-theme="hc"       title="High Contrast"></button>
+<button class="swatch sw-hc"       data-theme="hc"       title="Black"></button>
 <button class="swatch sw-blood"    data-theme="blood"    title="Blood"></button>
 <button class="swatch sw-greed"    data-theme="greed"    title="Greed"></button>
 <button class="swatch sw-cyanotic" data-theme="cyanotic" title="Cyanotic"></button>
@@ -63,13 +64,13 @@
 <button class="lang-toggle" id="langToggle" aria-haspopup="true" aria-expanded="false" title="Language" aria-label="Language">&#127760;</button>
 <div class="lang-menu" id="langMenu" hidden>
 <button class="lang-item" data-lang="en">English</button>
-<button class="lang-item" data-lang="es">Espanol</button>
+<button class="lang-item" data-lang="bn">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
 <button class="lang-item" data-lang="de">Deutsch</button>
+<button class="lang-item" data-lang="es">Espanol</button>
 <button class="lang-item" data-lang="fr">Francais</button>
 <button class="lang-item" data-lang="tr">Turkce</button>
-<button class="lang-item" data-lang="zh">&#20013;&#25991; (&#32321;&#39636;)</button>
 <button class="lang-item" data-lang="zh-cn">&#20013;&#25991; (&#31616;&#20307;)</button>
-<button class="lang-item" data-lang="bn">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
+<button class="lang-item" data-lang="zh">&#20013;&#25991; (&#32321;&#39636;)</button>
 </div>
 </div>
 </div>
@@ -79,120 +80,219 @@
 <aside class="sidebar">
 <div class="sb-tabs"><span class="on">Technical</span></div>
 <nav class="outline">
-<a href="#stack" class="on">Tech stack</a>
-<a href="#install">Install &amp; data</a>
-<a href="#pipeline">The scan pipeline</a>
-<a href="#ports">Ports probed</a>
-<a href="#vendor">Vendor resolution</a>
-<a href="#classify">Device classification</a>
-<a href="#privacy">Privacy &amp; footprint</a>
-<a href="#oui">Vendor database</a>
+<a href="#stack" class="on" data-i18n="tk_164">Tech stack</a>
+<a href="#install" data-i18n="tk_165">Install &amp; data</a>
+<a href="#pipeline" data-i18n="tk_166">The scan pipeline</a>
+<a href="#ports" data-i18n="tk_167">Ports probed</a>
+<a href="#vendor" data-i18n="tk_168">Vendor resolution</a>
+<a href="#classify" data-i18n="tk_169">Device classification</a>
+<a href="#privacy" data-i18n="tk_170">Privacy &amp; footprint</a>
+<a href="#glossary" data-i18n="tk_171">Glossary</a>
 </nav>
 </aside>
 <div class="content">
 <div class="content-inner">
 
 <section class="page-hero">
-<span class="page-title">The Tech of</span>
-<span class="wm-logo"><span class="wmk">Killer</span><span class="wms">Scan</span></span>
-<p>A look under the hood at how KillerScan finds every device on your network, works out who made it, and figures out what it is.</p>
+<span class="page-title" data-i18n="tk_1">The Tech of</span>
+<img class="wm-logo" src="brand/killerscan-logo-dark-orange.svg" alt="KillerScan">
+<p data-i18n="tk_2">A look under the hood at how KillerScan finds every device on your network, works out who made it, and figures out what it is.</p>
 </section>
 
 <div class="tech-sec" id="stack">
-<h2>Tech stack</h2>
-<p>KillerScan is a native Windows app. There is no Electron, no browser engine, no runtime to install, and no separate scanner program running behind the scenes. Everything listed below ships inside a single .exe that runs on its own:</p>
-<table class="spec-table"><tr><th>Component</th><th>Detail</th></tr>
-<tr><td>UI</td><td>WPF on .NET Framework 4.8 (net48), x64, custom window chrome</td></tr>
-<tr><td>Host discovery</td><td>ARP cache parse + <code>SendARP</code> P/Invoke (iphlpapi.dll), async parallel ICMP ping sweep</td></tr>
-<tr><td>Port scan</td><td>Raw async <code>TcpClient</code> connect probes, throttled</td></tr>
-<tr><td>Service discovery</td><td>mDNS and SSDP over raw <code>UdpClient</code> multicast sockets. The underlying network packets are built and read by hand.</td></tr>
-<tr><td>Vendor data</td><td>Full IEEE manufacturer database (~57,000 entries across MA-L, MA-M, and MA-S) built into the app</td></tr>
-<tr><td>Packaging</td><td>Single executable. Install it for your user account or run it portable.</td></tr>
+<h2 data-i18n="tk_3">Tech stack</h2>
+<p data-i18n="tk_4">KillerScan is a native Windows app. There is no Electron, no browser engine, no runtime to install, and no separate scanner program running behind the scenes. Everything listed below ships inside a single .exe that runs on its own:</p>
+<table class="spec-table"><tr><th data-i18n="tk_5">Component</th><th data-i18n="tk_6">Detail</th></tr>
+<tr><td data-i18n="tk_7">UI</td><td data-i18n="tk_8">WPF on .NET Framework 4.8 (net48), x64, custom window chrome</td></tr>
+<tr><td data-i18n="tk_9">Host discovery</td><td data-i18n="tk_10">ARP cache parse + <code>SendARP</code> P/Invoke (iphlpapi.dll), async parallel ICMP ping sweep with a <code>TcpClient</code> connect fallback for hosts that block ping</td></tr>
+<tr><td data-i18n="tk_11">Port scan</td><td data-i18n="tk_12">Raw async <code>TcpClient</code> connect probes, throttled</td></tr>
+<tr><td data-i18n="tk_13">Service discovery</td><td data-i18n="tk_14">mDNS and SSDP over raw <code>UdpClient</code> multicast sockets. The underlying network packets are built and read by hand.</td></tr>
+<tr><td data-i18n="tk_15">Vendor data</td><td data-i18n="tk_16">Full IEEE manufacturer database (~57,000 entries across MA-L, MA-M, and MA-S) built into the app</td></tr>
+<tr><td data-i18n="tk_17">Packaging</td><td data-i18n="tk_18">Single executable. Install it for your user account or run it portable.</td></tr>
 </table>
 </div>
 
 <div class="tech-sec" id="install">
-<h2>Install &amp; data</h2>
-<p>KillerScan is a single .exe. Put it anywhere and run it as is, or use the built-in installer, which copies the app into your user folder, adds a Start Menu shortcut, and registers a normal Windows uninstall entry just for your account. It needs no admin rights, no .NET runtime, and nothing else installed. When you run it from outside its installed location, a <b>PORTABLE</b> badge and an <b>Install KillerScan...</b> button appear in the status bar.</p>
+<h2 data-i18n="tk_19">Install &amp; data</h2>
+<p data-i18n="tk_20">KillerScan is a single .exe. Put it anywhere and run it as is, or use the built-in installer, which copies the app into your user folder, adds a Start Menu shortcut, and registers a normal Windows uninstall entry just for your account. It needs no admin rights, no .NET runtime, and nothing else installed. When you run it from outside its installed location, a <b>PORTABLE</b> badge and an <b>Install KillerScan...</b> button appear in the status bar.</p>
 </div>
 
 <div class="tech-sec" id="pipeline">
-<h2>The scan pipeline</h2>
-<p>A scan runs in two stages. First KillerScan finds every device that is switched on and connected. Then it takes a closer look at each of those devices at the same time. Doing it in that order means the slow, detailed work only happens for addresses that actually replied, which keeps the whole scan fast.</p>
+<h2 data-i18n="tk_21">The scan pipeline</h2>
+<p data-i18n="tk_22">A scan runs in two stages. First KillerScan finds every device that is switched on and connected. Then it takes a closer look at each of those devices at the same time. Doing it in that order means the slow, detailed work only happens for addresses that actually replied, which keeps the whole scan fast.</p>
 
-<h3 id="phase0">Phase 0: building the address list</h3>
-<p>You give KillerScan a range of addresses to check, written in the usual shorthand like <code>192.168.8.0/24</code>. That "/24" simply means the block of 256 addresses on your local network. KillerScan turns it into the full list of addresses worth testing. It also reads three things from your active network connection: your own address, your router's address (the gateway), and the DNS server you are set to use. Those are passed to the classifier so the router can be labelled correctly later on.</p>
+<h3 id="phase0" data-i18n="tk_23">Phase 0: building the address list</h3>
+<p data-i18n="tk_24">You give KillerScan a range of addresses to check, written in the usual shorthand like <code>192.168.8.0/24</code>. That "/24" simply means the block of 256 addresses on your local network. KillerScan turns it into the full list of addresses worth testing. It also reads three things from your active network connection: your own address, your router's address (the gateway), and the DNS server you are set to use. Those are passed to the classifier so the router can be labelled correctly later on.</p>
 
-<h3 id="phase1">Phase 1: discovery (who is out there?)</h3>
-<p>Three things happen at roughly the same time:</p>
+<h3 id="phase1" data-i18n="tk_25">Phase 1: discovery (who is out there?)</h3>
+<p data-i18n="tk_26">Three things happen at roughly the same time:</p>
 <ul class="blurb-list">
-<li><b>Reading the ARP cache.</b> Windows keeps a small table that matches recently seen addresses to the hardware ID (the MAC address) of each device. ARP is the protocol that builds that table. KillerScan reads it first to get an instant list of devices Windows has talked to lately.</li>
-<li><b>Ping sweep.</b> KillerScan pings every address on the list at once, where a ping is just the "are you there?" message that the <code>ping</code> command sends. It keeps around 200 going at a time and gives each one half a second to answer, so a typical home network finishes in a couple of seconds.</li>
-<li><b>A second ARP read.</b> Many devices ignore pings but still respond at the lower hardware level, including a lot of phones, tablets, and smart-home gadgets. The pings quietly prompt Windows to record those devices in its table, so reading it again right after the sweep catches devices the ping alone would have missed. A direct hardware request fills in anything still missing.</li>
+<li data-i18n="tk_27"><b>Reading the ARP cache.</b> Windows keeps a small table that matches recently seen addresses to the hardware ID (the MAC address) of each device. ARP is the protocol that builds that table. KillerScan reads it first to get an instant list of devices Windows has talked to lately.</li>
+<li data-i18n="tk_28"><b>Ping sweep.</b> KillerScan pings every address on the list at once, where a ping is just the "are you there?" message that the <code>ping</code> command sends. It keeps around 200 going at a time and gives each one half a second to answer, so a typical home network finishes in a couple of seconds. Any address that stays quiet then gets a second chance: KillerScan quietly tries to open a connection on a few common ports (file sharing, remote desktop, web, SSH), and if any of them answers, the device still counts as present. That picks up machines set to ignore pings, and devices reached across a VPN, where the hardware-level ARP trick below cannot see them at all.</li>
+<li data-i18n="tk_29"><b>A second ARP read.</b> Many devices ignore pings but still respond at the lower hardware level, including a lot of phones, tablets, and smart-home gadgets. The pings quietly prompt Windows to record those devices in its table, so reading it again right after the sweep catches devices the ping alone would have missed. A direct hardware request fills in anything still missing.</li>
 </ul>
-<p>At the same time, KillerScan sends out two broadcast questions that many devices answer automatically. The first is <b>mDNS</b> (also called Bonjour), which Apple devices, printers, and Chromecasts use to announce themselves on a network. The second is <b>SSDP</b> (part of UPnP), used by smart TVs, media players, and similar gear. KillerScan listens a short, fixed time for each (about a second and a half) and matches every reply back to the device that sent it. Because the listening windows are short, this finishes about when the ping sweep does and the scan stays quick.</p>
+<p data-i18n="tk_30">At the same time, KillerScan sends out two broadcast questions that many devices answer automatically. The first is <b>mDNS</b> (also called Bonjour), which Apple devices, printers, and Chromecasts use to announce themselves on a network. The second is <b>SSDP</b> (part of UPnP), used by smart TVs, media players, and similar gear. KillerScan listens a short, fixed time for each (about a second and a half) and matches every reply back to the device that sent it. Because the listening windows are short, this finishes about when the ping sweep does and the scan stays quick.</p>
 
-<h3 id="phase2">Phase 2: taking a closer look at each device</h3>
-<p>Every device found in Phase 1 is now examined at the same time, with a sensible limit so a large network does not try to open thousands of connections at once. For each device, KillerScan:</p>
+<p data-i18n="tk_31">Once the live devices are known, KillerScan looks up each one's <b>MAC address</b>, the hardware ID it uses to name the maker. There is a catch on routed networks: a MAC address only travels within your local network segment, so for a device reached through a router or a VPN, Windows hands back the address of the tunnel or gateway instead of the device's own. Left unchecked, every device on the far side of a VPN would share one address and all be mislabelled as the same maker (a Fortinet SSL VPN connection is a common example). KillerScan spots this by discarding any MAC that turns up for several different addresses at once, treating those devices as having no reliable hardware ID and identifying them from their ports and services instead.</p>
+
+<figure class="diagram">
+<svg viewBox="0 0 740 470" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="ksp1a" markerWidth="9" markerHeight="9" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="var(--accent)"/></marker>
+<marker id="ksp1m" markerWidth="8" markerHeight="8" refX="5" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z" fill="var(--muted)"/></marker>
+</defs>
+<rect x="230" y="20" width="280" height="46" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+<text x="370" y="39" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700">Address list</text>
+<text x="370" y="55" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-family="Consolas, monospace">e.g. 192.168.8.0/24</text>
+<rect x="230" y="86" width="280" height="46" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+<text x="370" y="105" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700">Read the ARP cache</text>
+<text x="370" y="121" text-anchor="middle" fill="var(--muted)" font-size="10.5">devices Windows already knows</text>
+<rect x="230" y="152" width="280" height="50" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+<text x="370" y="172" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700">Ping sweep</text>
+<text x="370" y="188" text-anchor="middle" fill="var(--muted)" font-size="10.5">200 at a time, half a second each</text>
+<rect x="230" y="258" width="280" height="46" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+<text x="370" y="277" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700">Second ARP read</text>
+<text x="370" y="293" text-anchor="middle" fill="var(--muted)" font-size="10.5">catches devices that ignore ping</text>
+<rect x="230" y="324" width="280" height="58" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+<text x="370" y="343" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700">Resolve each device's MAC</text>
+<text x="370" y="359" text-anchor="middle" fill="var(--muted)" font-size="10.5">discard a MAC shared by many addresses</text>
+<text x="370" y="373" text-anchor="middle" fill="var(--muted)" font-size="10.5">(a router or VPN next-hop, not the device)</text>
+<rect x="230" y="400" width="280" height="46" rx="8" fill="var(--modal)" stroke="var(--accent)"/>
+<text x="370" y="419" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700">Alive device list</text>
+<text x="370" y="435" text-anchor="middle" fill="var(--muted)" font-size="10.5">handed to Phase 2</text>
+<line x1="370" y1="66" x2="370" y2="84" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ksp1a)"/>
+<line x1="370" y1="132" x2="370" y2="150" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ksp1a)"/>
+<line x1="370" y1="202" x2="370" y2="256" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ksp1a)"/>
+<line x1="370" y1="304" x2="370" y2="322" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ksp1a)"/>
+<line x1="370" y1="382" x2="370" y2="398" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ksp1a)"/>
+<rect x="540" y="152" width="176" height="50" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+<text x="628" y="172" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="700">Silent? TCP knock</text>
+<text x="628" y="188" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Consolas, monospace">445 / 3389 / 80 / 443 / 22</text>
+<line x1="510" y1="177" x2="536" y2="177" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ksp1m)"/>
+<text x="524" y="170" text-anchor="middle" fill="var(--muted)" font-size="9">no reply</text>
+<path d="M628 202 C628 244 572 281 513 281" fill="none" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ksp1m)"/>
+<text x="612" y="250" text-anchor="middle" fill="var(--muted)" font-size="9">answered = alive</text>
+<rect x="24" y="256" width="182" height="60" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+<text x="115" y="278" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="700">mDNS + SSDP</text>
+<text x="115" y="294" text-anchor="middle" fill="var(--muted)" font-size="10">broadcast, about 1.5s</text>
+<text x="115" y="308" text-anchor="middle" fill="var(--muted)" font-size="10">names &amp; services</text>
+<path d="M230 177 C150 177 115 205 115 254" fill="none" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ksp1m)"/>
+<text x="152" y="205" text-anchor="middle" fill="var(--muted)" font-size="9">at the same time</text>
+<path d="M115 316 C115 376 156 423 227 423" fill="none" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ksp1m)"/>
+</svg>
+<figcaption data-i18n="tk_32">Phase 1 works out which addresses are alive. A silent host gets a second chance through a quick TCP connection, so firewalled machines and devices reached over a VPN are still found. mDNS and SSDP run at the same time to collect names and services, and any MAC that turns up for many addresses (a router or VPN next-hop rather than a real device) is thrown out instead of trusted.</figcaption>
+</figure>
+
+<h3 id="phase2" data-i18n="tk_33">Phase 2: taking a closer look at each device</h3>
+<p data-i18n="tk_34">Every device found in Phase 1 is now examined at the same time, with a sensible limit so a large network does not try to open thousands of connections at once. For each device, KillerScan:</p>
 <ul class="blurb-list">
-<li>Checks a short list of network ports to see which are open. A port is like a numbered door into a device, and each common service (web, file sharing, remote desktop, and so on) sits behind a known door number. Each check is given a fifth of a second.</li>
-<li>Tries to find the device's name. It first asks DNS for the name attached to the address, and if that comes back empty it falls back to the name the device announced over mDNS, then to its older Windows (NetBIOS) name.</li>
-<li>Gathers identifying clues from anything that answers: the title and server type of any web page it serves, the greeting text an SSH login returns, the name on its security certificate, its Windows name, and its SNMP description (a standard "what am I" line that network gear and printers report). It also notes the TTL, a small number attached to replies that hints at the device's operating system.</li>
-<li>Looks up who made the device from its hardware ID, and attaches the mDNS and SSDP details gathered back in Phase 1.</li>
+<li data-i18n="tk_35">Checks a short list of network ports to see which are open. A port is like a numbered door into a device, and each common service (web, file sharing, remote desktop, and so on) sits behind a known door number. Each check is given a fifth of a second.</li>
+<li data-i18n="tk_36">Tries to find the device's name. It first asks DNS for the name attached to the address, and if that comes back empty it falls back to the name the device announced over mDNS, then to its older Windows (NetBIOS) name.</li>
+<li data-i18n="tk_37">Gathers identifying clues from anything that answers: the title and server type of any web page it serves, the greeting text an SSH login returns, the name on its security certificate, its Windows name, and its SNMP description (a standard "what am I" line that network gear and printers report). It also notes the TTL, a small number attached to replies that hints at the device's operating system.</li>
+<li data-i18n="tk_38">Looks up who made the device from its hardware ID, and attaches the mDNS and SSDP details gathered back in Phase 1.</li>
 </ul>
-<p>Only once all of that is collected does KillerScan decide what the device actually is, weighing every one of those clues together.</p>
+<p data-i18n="tk_39">Only once all of that is collected does KillerScan decide what the device actually is, weighing every one of those clues together.</p>
+
+<figure class="diagram">
+<svg viewBox="0 0 740 480" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="ksp2a" markerWidth="9" markerHeight="9" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="var(--accent)"/></marker>
+<marker id="ksp2m" markerWidth="8" markerHeight="8" refX="5" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z" fill="var(--muted)"/></marker>
+</defs>
+<rect x="285" y="18" width="170" height="46" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+<text x="370" y="40" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700">One alive device</text>
+<text x="370" y="55" text-anchor="middle" fill="var(--muted)" font-size="10">all devices examined at once</text>
+<rect x="40" y="100" width="190" height="50" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+<text x="135" y="120" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Check open ports</text>
+<text x="135" y="136" text-anchor="middle" fill="var(--muted)" font-size="10">short list, a fifth of a second each</text>
+<rect x="275" y="100" width="190" height="60" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+<text x="370" y="124" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Find its name</text>
+<text x="370" y="140" text-anchor="middle" fill="var(--muted)" font-size="10">DNS, then mDNS,</text>
+<text x="370" y="153" text-anchor="middle" fill="var(--muted)" font-size="10">then NetBIOS</text>
+<rect x="510" y="100" width="190" height="50" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+<text x="605" y="120" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Look up the maker</text>
+<text x="605" y="136" text-anchor="middle" fill="var(--muted)" font-size="10">from the MAC address</text>
+<line x1="370" y1="64" x2="150" y2="97" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ksp2a)"/>
+<line x1="370" y1="64" x2="370" y2="97" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ksp2a)"/>
+<line x1="370" y1="64" x2="590" y2="97" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ksp2a)"/>
+<rect x="40" y="196" width="250" height="76" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+<text x="165" y="216" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Fingerprint probes</text>
+<text x="165" y="233" text-anchor="middle" fill="var(--muted)" font-size="10">picked by which ports are open:</text>
+<text x="165" y="249" text-anchor="middle" fill="var(--muted)" font-size="10">HTTP title/server &middot; SSH banner &middot; TLS cert</text>
+<text x="165" y="263" text-anchor="middle" fill="var(--muted)" font-size="10">SNMP description &middot; NetBIOS name &middot; TTL</text>
+<line x1="135" y1="150" x2="135" y2="194" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ksp2a)"/>
+<rect x="250" y="306" width="240" height="46" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+<text x="370" y="326" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Collect every clue</text>
+<text x="370" y="342" text-anchor="middle" fill="var(--muted)" font-size="10">ports, name, maker, banners, services</text>
+<path d="M165 272 C165 310 205 329 246 329" fill="none" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ksp2m)"/>
+<line x1="370" y1="160" x2="370" y2="304" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ksp2m)"/>
+<path d="M605 150 C605 262 560 329 494 329" fill="none" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ksp2m)"/>
+<rect x="250" y="380" width="240" height="46" rx="8" fill="var(--panel)" stroke="var(--border)"/>
+<text x="370" y="400" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Weighted scoring</text>
+<text x="370" y="416" text-anchor="middle" fill="var(--muted)" font-size="10">every clue adds points; highest wins</text>
+<line x1="370" y1="352" x2="370" y2="378" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ksp2a)"/>
+<rect x="285" y="440" width="170" height="34" rx="8" fill="var(--modal)" stroke="var(--accent)"/>
+<text x="370" y="461" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Device type</text>
+<line x1="370" y1="426" x2="370" y2="438" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ksp2a)"/>
+</svg>
+<figcaption data-i18n="tk_40">Phase 2 examines each alive device in parallel: it checks open ports, finds a name, and looks up the maker at the same time; the open ports decide which deeper fingerprint probes are worth running. Every clue is then gathered and scored, and the highest-scoring device type wins.</figcaption>
+</figure>
 </div>
 
 <div class="tech-sec" id="ports">
-<h2>Ports probed</h2>
-<p>Rather than testing all 65,000 possible ports, KillerScan checks only the handful that genuinely tell you something about what a device is:</p>
-<table class="spec-table"><tr><th>Ports</th><th>What they suggest</th></tr>
-<tr><td>22, 23, 21</td><td>SSH / Telnet / FTP: Linux hosts and network gear</td></tr>
-<tr><td>53</td><td>DNS: resolvers, Pi-hole, routers</td></tr>
-<tr><td>80, 443, 8080, 8443</td><td>HTTP / HTTPS admin pages and web interfaces</td></tr>
-<tr><td>139, 445</td><td>NetBIOS / SMB: Windows PCs and NAS boxes</td></tr>
-<tr><td>3389, 2179</td><td>RDP / Hyper-V: Windows workstations and hosts</td></tr>
-<tr><td>515, 631, 9100</td><td>LPR / IPP / RAW: printers</td></tr>
-<tr><td>554</td><td>RTSP: IP cameras</td></tr>
-<tr><td>1883, 8883</td><td>MQTT: smart-home message brokers</td></tr>
-<tr><td>5357</td><td>WSD: Web Services for Devices</td></tr>
-<tr><td>5000, 5001, 548</td><td>Synology DSM / AFP: NAS boxes</td></tr>
-<tr><td>902, 8006</td><td>VMware ESXi / Proxmox: hypervisors</td></tr>
-<tr><td>8123</td><td>Home Assistant</td></tr>
-<tr><td>32400</td><td>Plex media server</td></tr>
-<tr><td>161</td><td>SNMP: managed switches, printers, network gear</td></tr>
-<tr><td>5353, 1900, 62078</td><td>mDNS / SSDP / Apple device sync</td></tr>
+<h2 data-i18n="tk_41">Ports probed</h2>
+<p data-i18n="tk_42">Rather than testing all 65,000 possible ports, KillerScan checks only the handful that genuinely tell you something about what a device is:</p>
+<table class="spec-table"><tr><th data-i18n="tk_43">Ports</th><th data-i18n="tk_44">What they suggest</th></tr>
+<tr><td>22, 23, 21</td><td data-i18n="tk_45">SSH / Telnet / FTP: Linux hosts and network gear</td></tr>
+<tr><td>53</td><td data-i18n="tk_46">DNS: resolvers, Pi-hole, routers</td></tr>
+<tr><td>80, 443, 8080, 8443</td><td data-i18n="tk_47">HTTP / HTTPS admin pages and web interfaces</td></tr>
+<tr><td>139, 445</td><td data-i18n="tk_48">NetBIOS / SMB: Windows PCs and NAS boxes</td></tr>
+<tr><td>3389, 2179</td><td data-i18n="tk_49">RDP / Hyper-V: Windows workstations and hosts</td></tr>
+<tr><td>515, 631, 9100</td><td data-i18n="tk_50">LPR / IPP / RAW: printers</td></tr>
+<tr><td>554</td><td data-i18n="tk_51">RTSP: IP cameras</td></tr>
+<tr><td>1883, 8883</td><td data-i18n="tk_52">MQTT: smart-home message brokers</td></tr>
+<tr><td>5357</td><td data-i18n="tk_53">WSD: Web Services for Devices</td></tr>
+<tr><td>5000, 5001, 548</td><td data-i18n="tk_54">Synology DSM / AFP: NAS boxes</td></tr>
+<tr><td>902, 8006</td><td data-i18n="tk_55">VMware ESXi / Proxmox: hypervisors</td></tr>
+<tr><td>8123</td><td data-i18n="tk_56">Home Assistant</td></tr>
+<tr><td>32400</td><td data-i18n="tk_57">Plex media server</td></tr>
+<tr><td>161</td><td data-i18n="tk_58">SNMP: managed switches, printers, network gear</td></tr>
+<tr><td>5353, 1900, 62078</td><td data-i18n="tk_59">mDNS / SSDP / Apple device sync</td></tr>
 </table>
 </div>
 
 <div class="tech-sec" id="vendor">
-<h2>Vendor resolution</h2>
-<p>Every network device has a MAC address, a hardware ID built in by its maker. The first half of that ID is assigned to a specific manufacturer, so it is the strongest clue to who built the device. A plain lookup is not always enough on its own, so KillerScan works through a fixed set of rules and uses the first one that matches:</p>
+<h2 data-i18n="tk_60">Vendor resolution</h2>
+<p data-i18n="tk_61">Every network device has a MAC address, a hardware ID built in by its maker. The first half of that ID is assigned to a specific manufacturer, so it is the strongest clue to who built the device. A plain lookup is not always enough on its own, so KillerScan works through a fixed set of rules and uses the first one that matches:</p>
 <div class="codeblock">resolveVendor(mac):
   1. brand override?    first 24 bits in a hand-maintained table  -> that brand
   2. randomized MAC?    "locally administered" bit set            -> "(Randomized)"
   3. OUI lookup         longest prefix first: MA-S - MA-M - MA-L    -> registered vendor
   4. otherwise          -> blank</div>
 
-<h3 id="brand">1. Brand overrides</h3>
-<p>Some makers register their address ranges with the IEEE (the body that hands them out) as <b>"Private"</b>, or leave them unnamed, so an ordinary lookup returns nothing useful. KillerScan keeps a small table, maintained by hand, that maps those ranges to the real brand. Several Govee ranges are handled this way, for example, so the device shows the right name even when the official record will not.</p>
+<h3 id="brand" data-i18n="tk_62">1. Brand overrides</h3>
+<p data-i18n="tk_63">Some makers register their address ranges with the IEEE (the body that hands them out) as <b>"Private"</b>, or leave them unnamed, so an ordinary lookup returns nothing useful. KillerScan keeps a small table, maintained by hand, that maps those ranges to the real brand. Several Govee ranges are handled this way, for example, so the device shows the right name even when the official record will not.</p>
 
-<h3 id="random">2. Randomized MACs</h3>
-<p>Modern phones regularly invent a fake Wi-Fi address to protect your privacy (Apple calls this "Private Wi-Fi Address"; Android does much the same). These made-up addresses carry a marker showing they were <i>not</i> handed out by a real manufacturer. Rather than guess a brand from an address that only matches by coincidence, KillerScan simply labels the device <b>(Randomized)</b>, which is the honest answer: the real maker is hidden.</p>
+<h3 id="random" data-i18n="tk_64">2. Randomized MACs</h3>
+<p data-i18n="tk_65">Modern phones regularly invent a fake Wi-Fi address to protect your privacy (Apple calls this "Private Wi-Fi Address"; Android does much the same). These made-up addresses carry a marker showing they were <i>not</i> handed out by a real manufacturer. Rather than guess a brand from an address that only matches by coincidence, KillerScan simply labels the device <b>(Randomized)</b>, which is the honest answer: the real maker is hidden.</p>
 
-<h3 id="oui">3. Most-specific match first</h3>
-<p>The IEEE hands out address ranges in three sizes, and a small manufacturer can be given a slice of a larger range, sharing its opening digits with the bigger company that owns the parent range. To avoid crediting the wrong one, KillerScan always checks the <b>smallest, most specific range first</b>:</p>
-<table class="spec-table"><tr><th>Registry</th><th>Block size</th><th>Key length</th></tr>
-<tr><td>MA-S</td><td>36-bit</td><td>9 hex digits</td></tr>
-<tr><td>MA-M</td><td>28-bit</td><td>7 hex digits</td></tr>
-<tr><td>MA-L</td><td>24-bit</td><td>6 hex digits</td></tr>
+<h3 id="oui" data-i18n="tk_66">3. Most-specific match first</h3>
+<p data-i18n="tk_67">The IEEE hands out address ranges in three sizes, and a small manufacturer can be given a slice of a larger range, sharing its opening digits with the bigger company that owns the parent range. To avoid crediting the wrong one, KillerScan always checks the <b>smallest, most specific range first</b>:</p>
+<table class="spec-table"><tr><th data-i18n="tk_68">Registry</th><th data-i18n="tk_69">Block size</th><th data-i18n="tk_70">Key length</th></tr>
+<tr><td>MA-S</td><td data-i18n="tk_71">36-bit</td><td data-i18n="tk_72">9 hex digits</td></tr>
+<tr><td>MA-M</td><td data-i18n="tk_73">28-bit</td><td data-i18n="tk_74">7 hex digits</td></tr>
+<tr><td>MA-L</td><td data-i18n="tk_75">24-bit</td><td data-i18n="tk_76">6 hex digits</td></tr>
 </table>
-<p>A 9-digit match beats a 7-digit match, which beats a 6-digit match, so the smaller, more specific owner always wins over the larger company that holds the parent range.</p>
+<p data-i18n="tk_77">A 9-digit match beats a 7-digit match, which beats a 6-digit match, so the smaller, more specific owner always wins over the larger company that holds the parent range.</p>
+
+<h3 id="database" data-i18n="tk_78">The database itself</h3>
+<p data-i18n="tk_79">The full IEEE manufacturer list, roughly 57,000 entries across all three registries (MA-L, MA-M, and MA-S), ships inside the .exe, so manufacturer names appear instantly and without any internet connection.</p>
+<p data-i18n="tk_80">You can update it to the latest data from inside the app. The <b>About</b> screen shows how many entries you have and when they were last refreshed, with a one-click update that downloads the newest list. The update is built so it can never leave you worse off: if a download is blocked or incomplete, a safety check refuses to replace your list with a smaller one, so an update can never wipe out or shrink what you already have.</p>
 </div>
 
 <div class="tech-sec" id="classify">
-<h2>Device classification</h2>
-<p>Working out what a device is uses a <b>points system</b> rather than a single rule. Every clue (its name, its maker, its open ports, the banners its services return, and the mDNS and SSDP details) adds points to the device types it fits, and the type with the highest score wins, as long as it clears a minimum. A few clues are so reliable that KillerScan acts on them straight away, before any scoring. The order is:</p>
+<h2 data-i18n="tk_81">Device classification</h2>
+<p data-i18n="tk_82">Working out what a device is uses a <b>points system</b> rather than a single rule. Every clue (its name, its maker, its open ports, the banners its services return, and the mDNS and SSDP details) adds points to the device types it fits, and the type with the highest score wins, as long as it clears a minimum. A few clues are so reliable that KillerScan acts on them straight away, before any scoring. The order is:</p>
 <div class="codeblock">classify(device):
   1. manual override        user set a type by hand        -> that type
   2. gateway / DNS          is this the gateway?           -> Router | DNS Server | Router/DNS
@@ -201,42 +301,72 @@
                             highest score >= threshold     -> winner
   5. fallbacks              when nothing scored high enough</div>
 
-<h3 id="gateway">Gateway, DNS, and three honest labels</h3>
-<p>The device sitting at the gateway address is your router. Routers often pass along DNS traffic (port 53), which used to make them look like the DNS server even when they were not. KillerScan only calls the gateway <b>Router/DNS</b> when it really is the DNS server your computer is set to use. If DNS is handled by a separate machine, the gateway stays labelled <b>Router</b> and that machine is labelled <b>DNS Server</b>. That gives three honest labels instead of one wrong guess.</p>
+<h3 id="gateway" data-i18n="tk_83">Gateway, DNS, and three honest labels</h3>
+<p data-i18n="tk_84">The device sitting at the gateway address is your router. Routers often pass along DNS traffic (port 53), which used to make them look like the DNS server even when they were not. KillerScan only calls the gateway <b>Router/DNS</b> when it really is the DNS server your computer is set to use. If DNS is handled by a separate machine, the gateway stays labelled <b>Router</b> and that machine is labelled <b>DNS Server</b>. That gives three honest labels instead of one wrong guess.</p>
 
-<h3 id="signals">Weighted signals</h3>
-<p>The more specific a clue, the more points it is worth. Here is a rough guide:</p>
-<table class="spec-table"><tr><th>Strength</th><th>Example signals</th></tr>
-<tr><td>14-15 (near certain)</td><td>SSH banner says <code>RouterOS</code>; HTTP title says <code>UniFi</code>; SNMP says <code>LaserJet</code>; mDNS <code>_googlecast</code> (Smart TV) or <code>_ipp</code> (printer); port 8006 (Proxmox)</td></tr>
-<tr><td>8-12 (strong combo)</td><td>vendor is Synology + a NAS port; vendor is Hikvision (camera); SSDP <code>SERVER</code> says Roku or Plex; port 32400 (Plex)</td></tr>
-<tr><td>4-7 (supporting)</td><td>a printer port open; TTL in the Windows range with SMB; port 554 (camera); generic DNS + HTTP together</td></tr>
-<tr><td>1-3 (tie breaker)</td><td>a single web port open, suggesting "probably a web device"</td></tr>
+<h3 id="signals" data-i18n="tk_85">Weighted signals</h3>
+<p data-i18n="tk_86">The more specific a clue, the more points it is worth. Here is a rough guide:</p>
+<table class="spec-table"><tr><th data-i18n="tk_87">Strength</th><th data-i18n="tk_88">Example signals</th></tr>
+<tr><td data-i18n="tk_89">14-15 (near certain)</td><td data-i18n="tk_90">SSH banner says <code>RouterOS</code>; HTTP title says <code>UniFi</code>; SNMP says <code>LaserJet</code>; mDNS <code>_googlecast</code> (Smart TV) or <code>_ipp</code> (printer); port 8006 (Proxmox)</td></tr>
+<tr><td data-i18n="tk_91">8-12 (strong combo)</td><td data-i18n="tk_92">vendor is Synology + a NAS port; vendor is Hikvision (camera); SSDP <code>SERVER</code> says Roku or Plex; port 32400 (Plex)</td></tr>
+<tr><td data-i18n="tk_93">4-7 (supporting)</td><td data-i18n="tk_94">a printer port open; TTL in the Windows range with SMB; port 554 (camera); generic DNS + HTTP together</td></tr>
+<tr><td data-i18n="tk_95">1-3 (tie breaker)</td><td data-i18n="tk_96">a single web port open, suggesting "probably a web device"</td></tr>
 </table>
-<p>Some clues deliberately ignore the maker. Port 62078 (used to sync iPhones) counts toward iPhone no matter what the address says, so an iPhone hiding behind a randomized address is still spotted. Networking gear that gives no sign of being a specific router or switch is labelled <b>Switch/AP</b>.</p>
+<p data-i18n="tk_97">Some clues deliberately ignore the maker. Port 62078 (used to sync iPhones) counts toward iPhone no matter what the address says, so an iPhone hiding behind a randomized address is still spotted. Networking gear that gives no sign of being a specific router or switch is labelled <b>Switch/AP</b>.</p>
 
-<h3 id="fallbacks">When nothing scores</h3>
-<p>A device that is idle or locked down may answer at the hardware level and nothing else. Rather than give up, KillerScan makes its best honest guess, working down this list:</p>
+<h3 id="fallbacks" data-i18n="tk_98">When nothing scores</h3>
+<p data-i18n="tk_99">A device that is idle or locked down may answer at the hardware level and nothing else. Rather than give up, KillerScan makes its best honest guess, working down this list:</p>
 <div class="codeblock">randomized MAC + few ports     -> Mobile      (a phone on a privacy address)
-known PC/workstation vendor,
-  no open ports                -> Windows     (a Dell/HP/Lenovo asleep, not "IoT")
 port 22 open                   -> Linux/SSH
 port 445 or 3389 open          -> Windows
 port 80 or 443 open            -> Web Device
-zero ports, has a MAC          -> IoT         (smart bulbs, plugs, sensors)
-nothing at all                 -> Unknown</div>
-<p>That rule about PC makers exists for a real situation: a small business desktop in modern standby still answers at the hardware level but refuses every incoming connection. Without the rule, the catch-all would label your Dell a smart-home gadget.</p>
+known PC/laptop maker,
+  no open ports                -> Windows     (a Dell/HP/Lenovo asleep, not "IoT")
+no open ports, has a MAC       -> IoT         (smart bulbs, plugs, sensors)
+no open ports at all           -> Unknown
+some ports open, none telling  -> Other</div>
+<p data-i18n="tk_100">That rule about PC makers exists for a real situation: a small business desktop in modern standby still answers at the hardware level but refuses every incoming connection. Without the rule, the catch-all would label your Dell a smart-home gadget.</p>
 </div>
 
 <div class="tech-sec" id="privacy">
-<h2>Privacy &amp; footprint</h2>
-<p>Everything happens on your own machine. There is no account, no background agent, no cloud lookup, and no usage tracking. The vendor database is built into the app, so even manufacturer names are looked up offline. Nothing about your network ever leaves your computer.</p>
-<p>The one thing you may notice the first time you scan is a <b>Windows Firewall prompt</b>. That is the mDNS and SSDP discovery asking to listen for replies, which it has to do in order to hear Chromecasts, printers, and similar devices. Allow it on private networks and you will not be asked again. Deny it and those two discovery methods simply find nothing, while the rest of the scan carries on as normal.</p>
+<h2 data-i18n="tk_101">Privacy &amp; footprint</h2>
+<p data-i18n="tk_102">Everything happens on your own machine. There is no account, no background agent, no cloud lookup, and no usage tracking. The vendor database is built into the app, so even manufacturer names are looked up offline. Nothing about your network ever leaves your computer.</p>
+<p data-i18n="tk_103">The one thing you may notice the first time you scan is a <b>Windows Firewall prompt</b>. That is the mDNS and SSDP discovery asking to listen for replies, which it has to do in order to hear Chromecasts, printers, and similar devices. Allow it on private networks and you will not be asked again. Deny it and those two discovery methods simply find nothing, while the rest of the scan carries on as normal.</p>
 </div>
 
-<div class="tech-sec" id="oui">
-<h2>Vendor database</h2>
-<p>The full IEEE manufacturer list, roughly 57,000 entries across all three registries (MA-L, MA-M, and MA-S), ships inside the .exe, so manufacturer names appear instantly and without any internet connection.</p>
-<p>You can update it to the latest data from inside the app. The <b>About</b> screen shows how many entries you have and when they were last refreshed, with a one-click update that downloads the newest list. The update is built so it can never leave you worse off: if a download is blocked or incomplete, a safety check refuses to replace your list with a smaller one, so an update can never wipe out or shrink what you already have.</p>
+<div class="tech-sec" id="glossary">
+<h2 data-i18n="tk_104">Glossary</h2>
+<p data-i18n="tk_105">Plain-language definitions of the networking terms and abbreviations used on this page, in alphabetical order.</p>
+<table class="spec-table"><tr><th data-i18n="tk_106">Term</th><th data-i18n="tk_107">What it means</th></tr>
+<tr><td data-i18n="tk_108">ARP (Address Resolution Protocol)</td><td data-i18n="tk_109">How a computer finds the hardware ID (MAC) of another device on the same local network. Windows keeps a short-lived table of these, which KillerScan reads for an instant device list.</td></tr>
+<tr><td data-i18n="tk_110">DNS (Domain Name System)</td><td data-i18n="tk_111">The system that turns names into addresses and back. KillerScan asks it for the name attached to each address.</td></tr>
+<tr><td data-i18n="tk_112">Fingerprint probe</td><td data-i18n="tk_113">A small, targeted request that gets a device to reveal something identifying, such as a web page title, an SSH greeting, a certificate name, or an SNMP description.</td></tr>
+<tr><td data-i18n="tk_114">Gateway</td><td data-i18n="tk_115">The address of your router, the device that links your local network to the internet.</td></tr>
+<tr><td data-i18n="tk_116">Hostname</td><td data-i18n="tk_117">The human-readable name a device goes by on the network, such as "living-room-tv".</td></tr>
+<tr><td data-i18n="tk_118">HTTP / HTTPS</td><td data-i18n="tk_119">The protocol web pages use (HTTPS is the encrypted version). An admin web page is a strong clue to what a device is.</td></tr>
+<tr><td data-i18n="tk_120">ICMP / ping</td><td data-i18n="tk_121">ICMP is a low-level messaging protocol; a "ping" is its "are you there?" message, used to see whether an address answers.</td></tr>
+<tr><td data-i18n="tk_122">IEEE</td><td data-i18n="tk_123">The standards body that hands out MAC address ranges to manufacturers.</td></tr>
+<tr><td data-i18n="tk_124">MAC address</td><td data-i18n="tk_125">A hardware ID built into every network device by its maker. The first half identifies the manufacturer.</td></tr>
+<tr><td data-i18n="tk_126">MA-L / MA-M / MA-S</td><td data-i18n="tk_127">The three sizes of MAC address block the IEEE assigns (large, medium, small). A smaller block points to a more specific maker.</td></tr>
+<tr><td data-i18n="tk_128">mDNS (Bonjour)</td><td data-i18n="tk_129">A way devices announce their name and services on the local network with no central server. Used by Apple devices, printers, and Chromecasts.</td></tr>
+<tr><td data-i18n="tk_130">NetBIOS</td><td data-i18n="tk_131">An older Windows naming service. KillerScan uses it as a last resort to get a machine's name.</td></tr>
+<tr><td data-i18n="tk_132">Next-hop</td><td data-i18n="tk_133">The next device your traffic passes through toward a destination (your router, or a VPN's gateway). Its MAC is what you get back for anything beyond your local segment.</td></tr>
+<tr><td data-i18n="tk_134">OUI (Organizationally Unique Identifier)</td><td data-i18n="tk_135">The manufacturer-specific front part of a MAC address. Looking it up gives the maker's name.</td></tr>
+<tr><td data-i18n="tk_136">Ping sweep</td><td data-i18n="tk_137">Pinging every address in a range at once to see which ones are alive.</td></tr>
+<tr><td data-i18n="tk_138">Port</td><td data-i18n="tk_139">A numbered "door" on a device. Each common service (web, file sharing, remote desktop) listens on a known port number.</td></tr>
+<tr><td data-i18n="tk_140">Randomized MAC</td><td data-i18n="tk_141">A fake, temporary MAC address a phone invents for privacy, so it cannot be tracked by hardware ID.</td></tr>
+<tr><td data-i18n="tk_142">RDP (Remote Desktop Protocol)</td><td data-i18n="tk_143">The Windows remote-desktop service (port 3389). Its presence is a sign of a Windows machine.</td></tr>
+<tr><td data-i18n="tk_144">SMB (Server Message Block)</td><td data-i18n="tk_145">Windows file-and-printer sharing (port 445). Common on PCs and NAS boxes.</td></tr>
+<tr><td data-i18n="tk_146">SNMP (Simple Network Management Protocol)</td><td data-i18n="tk_147">A standard way network gear and printers report "what I am". KillerScan reads the description line.</td></tr>
+<tr><td data-i18n="tk_148">SSDP (part of UPnP)</td><td data-i18n="tk_149">A discovery broadcast used by smart TVs, media players, and similar gear to announce themselves.</td></tr>
+<tr><td data-i18n="tk_150">SSH (Secure Shell)</td><td data-i18n="tk_151">A secure remote-login service (port 22), common on Linux hosts and network gear. Its greeting text names the software.</td></tr>
+<tr><td data-i18n="tk_152">Subnet</td><td data-i18n="tk_153">A block of addresses on one local network, written like 192.168.8.0/24 (the "/24" meaning 256 addresses).</td></tr>
+<tr><td data-i18n="tk_154">TCP</td><td data-i18n="tk_155">The connection-based part of internet traffic. KillerScan opens TCP connections to test ports and to check whether a silent host is alive.</td></tr>
+<tr><td data-i18n="tk_156">TLS</td><td data-i18n="tk_157">The encryption behind HTTPS. The certificate it presents often carries the device's name.</td></tr>
+<tr><td data-i18n="tk_158">TTL (time to live)</td><td data-i18n="tk_159">A small countdown number attached to network replies. Its starting value hints at the operating system.</td></tr>
+<tr><td data-i18n="tk_160">UPnP (Universal Plug and Play)</td><td data-i18n="tk_161">The family of protocols (including SSDP) that lets home devices discover each other.</td></tr>
+<tr><td data-i18n="tk_162">VPN (Virtual Private Network)</td><td data-i18n="tk_163">An encrypted tunnel that places you on a remote network. Because it is routed, local tricks like ARP cannot reach the devices on the far side.</td></tr>
+</table>
 </div>
 
 </div>
@@ -244,10 +374,12 @@ nothing at all                 -> Unknown</div>
 </div>
 <footer class="statusbar">
 <span class="left"><a href="https://github.com/SteveTheKiller/KillerScan" target="_blank" rel="noopener">Source on GitHub</a> &middot; GPLv3 &middot; Part of <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
-<span class="right"><span id="verEgg" title="click me">v1.5.0</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
+<span class="right"><span id="verEgg" title="click me">v1.5.1</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
 </footer>
 <div class="egg-toast" id="eggToast"></div>
-<script src="ks.js?v=2"></script>
+<div class="dlightbox" id="diagram-lightbox" hidden><div class="dlb-inner"></div></div>
+<script src="ks-i18n.js?v=1"></script>
+<script src="ks.js?v=3"></script>
 <script>
 (function(){
   var links=[].slice.call(document.querySelectorAll('.outline a'));
@@ -256,6 +388,18 @@ nothing at all                 -> Unknown</div>
   function onScroll(){ var y=(sc?sc.scrollTop:window.scrollY)+100, cur=secs[0]; secs.forEach(function(s){ if(s&&s.offsetTop<=y) cur=s; });
     links.forEach(function(a){ a.classList.toggle('on', cur && a.getAttribute('href')==='#'+cur.id); }); }
   (sc||window).addEventListener('scroll',onScroll,{passive:true}); onScroll();
+})();
+(function(){
+  var diagrams=[].slice.call(document.querySelectorAll('.diagram svg'));
+  var lb=document.getElementById('diagram-lightbox');
+  if(!diagrams.length||!lb) return;
+  var inner=lb.querySelector('.dlb-inner');
+  function close(){ lb.hidden=true; inner.innerHTML=''; document.body.style.overflow=''; }
+  diagrams.forEach(function(svg){
+    svg.addEventListener('click',function(){ inner.innerHTML=svg.outerHTML; lb.hidden=false; document.body.style.overflow='hidden'; });
+  });
+  lb.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!lb.hidden) close(); });
 })();
 </script>
 </body>

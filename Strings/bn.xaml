@@ -46,6 +46,11 @@
     <sys:String x:Key="Str_About_Db">প্রস্তুতকারক ডেটাবেস</sys:String>
     <sys:String x:Key="Str_About_DbUpdate">সর্বশেষ রেজিস্ট্রি থেকে আপডেট করুন</sys:String>
     <sys:String x:Key="Str_About_DbHint">Wireshark OUI তালিকা থেকে।</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0}টি এন্ট্রি</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">{0} তারিখে রিফ্রেশ করা হয়েছে</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">অ্যাপের সাথে অন্তর্ভুক্ত</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">ভেন্ডর লুকআপ, ডিভাইস শ্রেণিবিন্যাস এবং থিমযোগ্য, সাজানো-যোগ্য HTML এক্সপোর্ট সহ ARP + IP স্ক্যান। একটি </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve"> ইউটিলিটি।</sys:String>
 
     <sys:String x:Key="Str_Btn_Stop">থামুন</sys:String>
     <sys:String x:Key="Str_Status_Ready">প্রস্তুত - {0} OUI প্রস্তুতকারক লোড হয়েছে</sys:String>

@@ -10,73 +10,92 @@
         Background="Transparent"
         ShowInTaskbar="False">
 
+    <!-- Margin is a transparent halo so the drop shadow has room to render (AllowsTransparency window,
+         so WPF draws the shadow rather than the OS). Same shadow language as the KillerPDF KillerDialog. -->
     <Border Background="{StaticResource SurfaceBrush}"
             BorderBrush="{StaticResource CardBorderBrush}"
             BorderThickness="1"
-            CornerRadius="6">
+            CornerRadius="6"
+            Margin="10">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="3" Direction="270" Opacity="0.6"/>
+        </Border.Effect>
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="36"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+            <!-- Film grain over the whole dialog (behind content), so it reads as one continuous
+                 surface like the KillerPDF KillerDialog / the main window chrome. -->
+            <Border IsHitTestVisible="False" CornerRadius="6"
+                    Opacity="{DynamicResource GrainOpacity}"
+                    Background="{DynamicResource GrainTileBrush}"/>
 
-            <!-- Title bar -->
-            <Border Grid.Row="0"
-                    Background="{StaticResource BackgroundBrush}"
-                    CornerRadius="6,6,0,0"
-                    MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
-                <Grid Margin="14,0">
-                    <TextBlock Text="Install KillerScan"
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="36"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Title bar: transparent so the dialog grain + surface show through and the bar blends
+                     into the window instead of reading as a separate strip. Carries the KillerScan wordmark
+                     (Killer in text color, Scan bold in the accent) like the main window title bar. -->
+                <Border Grid.Row="0" Background="Transparent"
+                        MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                    <Grid Margin="14,0">
+                        <!-- Wordmark with the same soft dark shadow copy the main title bar uses. -->
+                        <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Margin="1,2,0,0"
+                                        Opacity="{DynamicResource IconShadowOpacity}">
+                                <StackPanel.Effect><BlurEffect Radius="3"/></StackPanel.Effect>
+                                <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15"><Run Text="Killer" Foreground="#D8000000"/><Run Text="Scan" FontSize="19.5" FontWeight="Bold" Foreground="#D8000000"/></TextBlock>
+                            </StackPanel>
+                            <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="19.5" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
+                        </Grid>
+                        <Button Content="&#x2715;" Click="Cancel_Click"
+                                HorizontalAlignment="Right"
+                                Width="28" FontSize="10"
+                                Foreground="{StaticResource MutedTextBrush}"
+                                Background="Transparent" BorderThickness="0"
+                                Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="bg" Background="Transparent" CornerRadius="3">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="bg" Property="Background" Value="#C42B1C"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <!-- Body -->
+                <StackPanel Grid.Row="1" Margin="24,20,24,16">
+                    <TextBlock Text="Install KillerScan to your user profile?"
                                Foreground="{StaticResource TextBrush}"
-                               FontSize="12" FontWeight="SemiBold"
-                               VerticalAlignment="Center"/>
-                    <Button Content="&#x2715;" Click="Cancel_Click"
-                            HorizontalAlignment="Right"
-                            Width="28" FontSize="10"
-                            Foreground="{StaticResource MutedTextBrush}"
-                            Background="Transparent" BorderThickness="0"
-                            Cursor="Hand">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="bg" Background="Transparent" CornerRadius="3">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="bg" Property="Background" Value="#C42B1C"/>
-                                        <Setter Property="Foreground" Value="White"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </Grid>
-            </Border>
+                               FontSize="13" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                    <TextBlock Foreground="{StaticResource MutedTextBrush}"
+                               FontSize="12" LineHeight="20">
+                        <Run Text="- Start Menu shortcut"/>
+                        <LineBreak/>
+                        <Run Text="- Appears in Add/Remove Programs"/>
+                    </TextBlock>
+                </StackPanel>
 
-            <!-- Body -->
-            <StackPanel Grid.Row="1" Margin="24,20,24,16">
-                <TextBlock Text="Install KillerScan to your user profile?"
-                           Foreground="{StaticResource TextBrush}"
-                           FontSize="13" TextWrapping="Wrap" Margin="0,0,0,12"/>
-                <TextBlock Foreground="{StaticResource MutedTextBrush}"
-                           FontSize="12" LineHeight="20">
-                    <Run Text="- Start Menu shortcut"/>
-                    <LineBreak/>
-                    <Run Text="- Appears in Add/Remove Programs"/>
-                </TextBlock>
-            </StackPanel>
-
-            <!-- Buttons -->
-            <StackPanel Grid.Row="2" Orientation="Horizontal"
-                        HorizontalAlignment="Right" Margin="24,0,24,20">
-                <Button Content="Cancel" Click="Cancel_Click"
-                        Style="{StaticResource SurfaceButton}"
-                        Width="80" Margin="0,0,8,0"/>
-                <Button Content="Install" Click="OK_Click"
-                        Style="{StaticResource PrimaryButton}"
-                        Width="80"/>
-            </StackPanel>
+                <!-- Buttons -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal"
+                            HorizontalAlignment="Right" Margin="24,0,24,20">
+                    <Button Content="Cancel" Click="Cancel_Click"
+                            Style="{StaticResource SurfaceButton}"
+                            Width="80" Margin="0,0,8,0"/>
+                    <Button Content="Install" Click="OK_Click"
+                            Style="{StaticResource PrimaryButton}"
+                            Width="80"/>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Border>
 </Window>

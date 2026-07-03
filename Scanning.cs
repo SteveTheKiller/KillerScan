@@ -32,6 +32,8 @@ namespace KillerScan
 
         private async void ScanBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (DemoMode) { GenerateDemoScan(); return; }   // --demo: re-roll a fake network instead of scanning
+
             var s = _active;
 
             // Stop a scan already running on this tab.

@@ -20,11 +20,11 @@ namespace KillerScan.Services
     /// </summary>
     internal static class ThemeManager
     {
-        private static Theme _current = Theme.Dark;
+        private static Theme _current = Theme.Black;
         // Dark, Light, and Black each remember their own accent independently.
         private static Accent _darkAccent  = Accent.Green;
         private static Accent _lightAccent = Accent.Green;
-        private static Accent _blackAccent = Accent.Green;
+        private static Accent _blackAccent = Accent.Orange;
 
         public static Theme Current => _current;
         public static Accent AccentChoiceFor(Theme t) => AccentFor(t);
@@ -44,10 +44,10 @@ namespace KillerScan.Services
         /// </summary>
         public static void Initialize()
         {
-            _current     = Enum.TryParse<Theme>(App.GetSetting("Theme"),        out var t)  ? t  : Theme.Dark;
+            _current     = Enum.TryParse<Theme>(App.GetSetting("Theme"),        out var t)  ? t  : Theme.Black;
             _darkAccent  = Enum.TryParse<Accent>(App.GetSetting("DarkAccent"),  out var da) ? da : Accent.Green;
             _lightAccent = Enum.TryParse<Accent>(App.GetSetting("LightAccent"), out var la) ? la : Accent.Green;
-            _blackAccent = Enum.TryParse<Accent>(App.GetSetting("BlackAccent"), out var ba) ? ba : Accent.Green;
+            _blackAccent = Enum.TryParse<Accent>(App.GetSetting("BlackAccent"), out var ba) ? ba : Accent.Orange;
             LoadDict(_current);
         }
 

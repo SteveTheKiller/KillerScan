@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script>/* Apply saved theme + accent before first paint to avoid a reload flash */(function(){try{var d=document.documentElement,t=localStorage.getItem('kscan-theme');if(t){d.setAttribute('data-theme',t);if({dark:1,light:1,hc:1}[t]){var v=localStorage.getItem('kscan-av');if(v){var s=v.split('|');d.style.setProperty('--accent',s[0]);d.style.setProperty('--btn',s[1]);}}}}catch(e){}})();</script>
+<link rel="preload" href="brand/KillerScan.ttf" as="font" type="font/ttf" crossorigin>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="darkreader-lock">
 <title>KillerScan - About</title>
@@ -13,7 +14,7 @@
 <link rel="stylesheet" href="ks.css?v=9">
 <style>
 .page-hero { text-align: center; padding: 44px 16px 8px; }
-.page-hero .wm-logo { font-size: clamp(34px, 6vw, 60px); margin: 0 auto 6px; }
+.page-hero .wm-logo { height: clamp(46px, 8vw, 76px); width: auto; margin: 0 auto 8px; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.55)); }
 .page-hero p { color: var(--muted); font-size: 15px; margin-top: 4px; }
 .content-inner { max-width: 880px; margin: 0 auto; padding: 0 28px 56px; }
 .sb-tabs .on { border-bottom: 0; }
@@ -41,18 +42,18 @@ html[data-theme="light"] .also-wm.light { display: block; }
 <div class="topbar">
 <a href="index.html" class="tb-home" title="KillerScan home">
 <img class="tb-icon" src="brand/ks-icon.png" alt="KillerScan" width="44" height="44">
-<span class="wm-logo tb-wm"><span class="wmk">Killer</span><span class="wms">Scan</span></span>
+<img class="wm-logo tb-wm" src="brand/killerscan-logo-dark-orange.svg" alt="KillerScan">
 </a>
 <a class="tb-dl" href="https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe"><svg viewBox="0 0 24 24"><path d="M11 4h2v7h3l-4 5-4-5h3V4zM5 18h14v2H5z"/></svg><span data-i18n="nav_dl">Download</span></a>
 <span class="tb-spacer"></span>
 <nav class="tb-nav">
-<a href="about.html" class="on" data-i18n="nav_about">About</a>
 <a href="technical.html" data-i18n="nav_tech">Technical</a>
+<a href="about.html" class="on" data-i18n="nav_about">About</a>
 </nav>
 <div class="tgrp" role="group" aria-label="Theme">
 <button class="swatch sw-dark"     data-theme="dark"     title="Dark"></button>
 <button class="swatch sw-light"    data-theme="light"    title="Light"></button>
-<button class="swatch sw-hc"       data-theme="hc"       title="High Contrast"></button>
+<button class="swatch sw-hc"       data-theme="hc"       title="Black"></button>
 <button class="swatch sw-blood"    data-theme="blood"    title="Blood"></button>
 <button class="swatch sw-greed"    data-theme="greed"    title="Greed"></button>
 <button class="swatch sw-cyanotic" data-theme="cyanotic" title="Cyanotic"></button>
@@ -73,13 +74,13 @@ html[data-theme="light"] .also-wm.light { display: block; }
 <button class="lang-toggle" id="langToggle" aria-haspopup="true" aria-expanded="false" title="Language" aria-label="Language">&#127760;</button>
 <div class="lang-menu" id="langMenu" hidden>
 <button class="lang-item" data-lang="en">English</button>
-<button class="lang-item" data-lang="es">Espanol</button>
+<button class="lang-item" data-lang="bn">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
 <button class="lang-item" data-lang="de">Deutsch</button>
+<button class="lang-item" data-lang="es">Espanol</button>
 <button class="lang-item" data-lang="fr">Francais</button>
 <button class="lang-item" data-lang="tr">Turkce</button>
-<button class="lang-item" data-lang="zh">&#20013;&#25991; (&#32321;&#39636;)</button>
 <button class="lang-item" data-lang="zh-cn">&#20013;&#25991; (&#31616;&#20307;)</button>
-<button class="lang-item" data-lang="bn">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
+<button class="lang-item" data-lang="zh">&#20013;&#25991; (&#32321;&#39636;)</button>
 </div>
 </div>
 </div>
@@ -91,14 +92,15 @@ html[data-theme="light"] .also-wm.light { display: block; }
 
 <section class="page-hero">
 <span class="page-title" data-i18n="about_kicker">About</span>
-<span class="wm-logo"><span class="wmk">Killer</span><span class="wms">Scan</span></span>
+<img class="wm-logo" src="brand/killerscan-logo-dark-orange.svg" alt="KillerScan">
 <p data-i18n="about_sub">The story behind the scanner, and the field tech who built it.</p>
 </section>
 
 <div class="about-card" id="maker">
 <h2 data-i18n="maker_h">The maker</h2>
 <p class="about-quote" data-i18n="maker_q">"I walk onto a network I've never seen and the first question is always the same: what is actually on here? So I wrote the tool that answers it - in seconds, with no agent and no login."</p>
-<p data-i18n="maker_p1">I'm <b>Steve the Killer</b> - a field technician and systems administrator at a large MSP. A big part of the job is showing up to a site I don't know and having to understand it fast: which box is the router, where the DNS actually lives, what that one device hammering the network even is. The existing answers were heavy network suites that want an agent, a server, a license, or an account before they'll tell you a single MAC address.</p>
+<p data-i18n="maker_p1">I'm <b>Steve the Killer</b> - a field technician and systems administrator at a large MSP, working in IT since 2017. I did not start there, though: I have been building websites since the 90s and spent roughly six years as a full-stack developer before I moved into IT, so building the tool I need comes as naturally to me as fixing the network in front of me.</p>
+<p data-i18n="ak_1">A big part of the job is showing up to a site I don't know and having to understand it fast: which box is the router, where the DNS actually lives, what that one device hammering the network even is. The existing answers were heavy network suites that want an agent, a server, a license, or an account before they'll tell you a single MAC address.</p>
 <p data-i18n="maker_p2">I wanted something I could drop on any machine, double-click, and read in a few seconds. So I built it, and KillerScan is the result.</p>
 </div>
 
@@ -126,14 +128,14 @@ html[data-theme="light"] .also-wm.light { display: block; }
 </div>
 
 <div class="about-card" id="also">
-<h2>Also try...</h2>
+<h2 data-i18n="ak_2">Also try...</h2>
 <div class="also-grid">
 <a class="also-card" href="https://killerpdf.net" target="_blank" rel="noopener">
-<img class="also-icon" src="brand/kp-icon.png" alt="KillerPDF" width="46" height="46">
+<img class="also-icon" src="https://killerpdf.net/kp-icon.png" alt="KillerPDF" width="46" height="46">
 <span class="also-body">
 <img class="also-wm dark" src="brand/killerpdf-wordmark-dark.png" alt="KillerPDF">
 <img class="also-wm light" src="brand/killerpdf-wordmark-light.png" alt="KillerPDF">
-<span class="also-tag">Open-source PDF editor for Windows</span>
+<span class="also-tag" data-i18n="ak_3">Open-source PDF editor for Windows</span>
 </span>
 </a>
 </div>
@@ -153,9 +155,10 @@ html[data-theme="light"] .also-wm.light { display: block; }
 </div>
 <footer class="statusbar">
 <span class="left"><a href="https://github.com/SteveTheKiller/KillerScan" target="_blank" rel="noopener">Source on GitHub</a> &middot; GPLv3 &middot; Part of <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
-<span class="right"><span id="verEgg" title="click me">v1.5.0</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
+<span class="right"><span id="verEgg" title="click me">v1.5.1</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
 </footer>
 <div class="egg-toast" id="eggToast"></div>
+<script src="ks-i18n.js?v=1"></script>
 <script src="ks.js?v=3"></script>
 <script>
 (function(){

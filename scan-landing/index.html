@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="hc">
 <head>
 <meta charset="utf-8">
 <script>/* Apply saved theme + accent before first paint to avoid a reload flash */(function(){try{var d=document.documentElement,t=localStorage.getItem('kscan-theme');if(t){d.setAttribute('data-theme',t);if({dark:1,light:1,hc:1}[t]){var v=localStorage.getItem('kscan-av');if(v){var s=v.split('|');d.style.setProperty('--accent',s[0]);d.style.setProperty('--btn',s[1]);}}}}catch(e){}})();</script>
+<link rel="preload" href="brand/KillerScan.ttf" as="font" type="font/ttf" crossorigin>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="darkreader-lock">
 <title>KillerScan - Free, open-source network scanner for Windows</title>
@@ -22,14 +23,14 @@
 <meta name="twitter:description" content="One exe. No installer, no agent, no account, no telemetry. A fast local network scanner built by a field tech, for field techs. GPLv3.">
 <meta name="twitter:image" content="https://killerscan.net/og-image.png">
 <script defer src="https://koya.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
-<link rel="stylesheet" href="ks.css?v=5">
+<link rel="stylesheet" href="ks.css?v=10">
 <style>
 /* ---- Page-specific (landing) ---- */
 .content-inner { max-width: 1100px; margin: 0 auto; padding: 0 28px 50px; }
 
 /* Hero */
 .hero { padding: 46px 0 28px; text-align: center; }
-.hero .wm-logo { font-size: clamp(42px, 8vw, 82px); margin: 0 auto; }
+.hero .wm-logo { height: clamp(54px, 10vw, 104px); margin: 0 auto; filter: drop-shadow(0 4px 7px rgba(0,0,0,0.5)); }
 .hero .tagline { margin: 18px auto 0; max-width: 620px; font-size: 16px; color: var(--text2); }
 
 .hero-blurbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 980px; margin: 30px auto 0; text-align: left; }
@@ -92,18 +93,18 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <div class="topbar">
 <a href="index.html" class="tb-home" title="KillerScan">
 <img class="tb-icon" src="brand/ks-icon.png" alt="KillerScan" width="44" height="44">
-<span class="wm-logo tb-wm"><span class="wmk">Killer</span><span class="wms">Scan</span></span>
+<img class="wm-logo tb-wm" src="brand/killerscan-logo-dark-orange.svg" alt="KillerScan">
 </a>
 <a class="tb-dl" href="https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe"><svg viewBox="0 0 24 24"><path d="M11 4h2v7h3l-4 5-4-5h3V4zM5 18h14v2H5z"/></svg><span data-i18n="nav_dl">Download</span></a>
 <span class="tb-spacer"></span>
 <nav class="tb-nav">
-<a href="about.html" data-i18n="nav_about">About</a>
 <a href="technical.html" data-i18n="nav_tech">Technical</a>
+<a href="about.html" data-i18n="nav_about">About</a>
 </nav>
 <div class="tgrp" role="group" aria-label="Theme">
 <button class="swatch sw-dark"     data-theme="dark"     title="Dark"></button>
 <button class="swatch sw-light"    data-theme="light"    title="Light"></button>
-<button class="swatch sw-hc"       data-theme="hc"       title="High Contrast"></button>
+<button class="swatch sw-hc"       data-theme="hc"       title="Black"></button>
 <button class="swatch sw-blood"    data-theme="blood"    title="Blood"></button>
 <button class="swatch sw-greed"    data-theme="greed"    title="Greed"></button>
 <button class="swatch sw-cyanotic" data-theme="cyanotic" title="Cyanotic"></button>
@@ -124,13 +125,13 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <button class="lang-toggle" id="langToggle" aria-haspopup="true" aria-expanded="false" title="Language" aria-label="Language">&#127760;</button>
 <div class="lang-menu" id="langMenu" hidden>
 <button class="lang-item" data-lang="en">English</button>
-<button class="lang-item" data-lang="es">Espanol</button>
+<button class="lang-item" data-lang="bn">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
 <button class="lang-item" data-lang="de">Deutsch</button>
+<button class="lang-item" data-lang="es">Espanol</button>
 <button class="lang-item" data-lang="fr">Francais</button>
 <button class="lang-item" data-lang="tr">Turkce</button>
-<button class="lang-item" data-lang="zh">&#20013;&#25991; (&#32321;&#39636;)</button>
 <button class="lang-item" data-lang="zh-cn">&#20013;&#25991; (&#31616;&#20307;)</button>
-<button class="lang-item" data-lang="bn">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
+<button class="lang-item" data-lang="zh">&#20013;&#25991; (&#32321;&#39636;)</button>
 </div>
 </div>
 </div>
@@ -141,7 +142,7 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <div class="content-inner">
 
 <section class="hero">
-<span class="wm-logo"><span class="wmk">Killer</span><span class="wms">Scan</span></span>
+<img class="wm-logo" src="brand/killerscan-logo-dark-orange.svg" alt="KillerScan">
 <p class="tagline" data-i18n="tagline">A fast, local network scanner that finds every device on the LAN, identifies who made it, and works out what it is - all from one portable .exe.</p>
 <div class="hero-blurbs">
 <div class="blurb"><h3 data-i18n="b1_t">Fully featured</h3><ul class="blurb-list" data-i18n="b1_d">
@@ -164,11 +165,11 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 </div>
 </div>
 <div class="hero-info">
-<div class="row"><span class="k">version</span>&nbsp;<span class="v">KillerScan v1.5.0</span></div>
-<div class="row"><span class="k">released</span>&nbsp;<span class="v">2026-06-28</span></div>
+<div class="row"><span class="k">version</span>&nbsp;<span class="v">KillerScan v1.5.1</span></div>
+<div class="row"><span class="k">released</span>&nbsp;<span class="v">2026-07-02</span></div>
 <div class="row"><span class="k">size</span>&nbsp;<span class="v">2.63 MB exe</span></div>
 <div class="row"><span class="k">platform</span>&nbsp;<span class="v">Windows 10/11 x64</span></div>
-<div class="row"><span class="k">sha256</span>&nbsp;<span class="v hash">c9c292ebd969252abdbff597a6c434a9<br>bf48722a114d809d60db00bea444c7af</span></div>
+<div class="row"><span class="k">sha256</span>&nbsp;<span class="v hash">67d1527ba0f17998c77fef4c08b464ae<br>c91e792a80e35560f43a0c68cfbea4eb</span></div>
 <p class="note" data-i18n="hero_note">Install or run portable. Free, open source, GPLv3.<br>No agent, no account, no subscription.<br>No telemetry is sent and no ads... ever.</p>
 </div>
 </div>
@@ -177,18 +178,18 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <section class="features">
 <h2 data-i18n="features_h">What it does</h2>
 <div class="feature-grid">
-<div class="feature-card"><h3 data-i18n="f_discover_t">Discover hosts</h3><p data-i18n="f_discover_d">Reads the ARP cache and runs a parallel ICMP ping sweep, then reads ARP a second time so devices that ignore ping but answer ARP - phones, tablets, some IoT - still show up.</p></div>
+<div class="feature-card"><h3 data-i18n="f_discover_t">Discover hosts</h3><p data-i18n="f_discover_d">KillerScan Reads the ARP cache and runs a parallel ICMP ping sweep, then reads ARP a second time so devices that ignore ping but answer ARP (phones, tablets, some IoT...) still show up.</p></div>
 <div class="feature-card"><h3 data-i18n="f_ports_t">Port fingerprinting</h3><p data-i18n="f_ports_d">A throttled TCP connect scan across 30+ service ports (SSH, RDP, SMB, HTTP, printing, RTSP, MQTT, hypervisor, NAS, and more), with banner, HTTP, TLS, NetBIOS and SNMP probes for stronger identification.</p></div>
-<div class="feature-card"><h3 data-i18n="f_mdns_t">mDNS &amp; SSDP</h3><p data-i18n="f_mdns_d">A network-wide multicast pass runs alongside the sweep - Bonjour service types and UPnP SERVER strings reveal Chromecasts, printers, Sonos, AirPlay, HomeKit, Roku, Plex and Synology boxes.</p></div>
+<div class="feature-card"><h3 data-i18n="f_mdns_t">mDNS &amp; SSDP</h3><p data-i18n="f_mdns_d">A network-wide multicast pass runs alongside the sweep.<br>Bonjour service types and UPnP SERVER strings reveal Chromecasts, printers, Sonos, AirPlay, HomeKit, Roku, Plex and Synology boxes.</p></div>
 <div class="feature-card"><h3 data-i18n="f_vendor_t">Vendor identification</h3><p data-i18n="f_vendor_d">Longest-prefix MAC OUI lookup across the full IEEE registries - MA-L, MA-M and MA-S - with brand overrides for blocks IEEE hides as "Private", and a clear label for randomized privacy MACs.</p></div>
-<div class="feature-card"><h3 data-i18n="f_classify_t">Device classification</h3><p data-i18n="f_classify_d">A weighted scorer combines hostname, vendor, open ports, banners, mDNS and SSDP into a best-guess type: router, switch/AP, NAS, printer, camera, hypervisor, phone, IoT and more.</p></div>
-<div class="feature-card"><h3 data-i18n="f_gateway_t">Gateway &amp; DNS aware</h3><p data-i18n="f_gateway_d">The gateway is labelled Router, DNS Server, or Router/DNS - and only Router/DNS when the gateway really is your configured DNS, so a Pi-hole setup is never mislabelled.</p></div>
-<div class="feature-card"><h3 data-i18n="f_export_t">Export</h3><p data-i18n="f_export_d">Export the full device list to CSV or a styled HTML report. Right-click a device to copy its IP, MAC or hostname, or jump straight to it.</p></div>
-<div class="feature-card"><h3 data-i18n="f_themes_t">Themes &amp; accents</h3><p data-i18n="f_themes_d">Six themes - Dark, Light, High Contrast, Blood, Greed and Cyanotic - with per-theme accent colors, all switchable live, plus per-theme device-type coloring in the results table.</p></div>
-<div class="feature-card"><h3 data-i18n="f_install_t">Install or run portable</h3><p data-i18n="f_install_d">Drop the .exe anywhere and run it, or use the built-in per-user installer - no admin rights, runtime or dependencies. A PORTABLE badge and an Install button appear when you're running it loose.</p></div>
-<div class="feature-card"><h3 data-i18n="f_oui_t">Vendor database</h3><p data-i18n="f_oui_d">The full IEEE OUI registries - MA-L, MA-M and MA-S, around 57,000 entries - ship embedded so vendor names resolve offline, and are kept current from the latest IEEE data so they don't go stale.</p></div>
-<div class="feature-card"><h3 data-i18n="f_actions_t">Quick actions</h3><p data-i18n="f_actions_d">Right-click any device to copy its IP, MAC or hostname, or jump straight to it - open its web UI, or launch RDP or SSH - and set a manual device type that sticks.</p></div>
-<div class="feature-card"><h3 data-i18n="f_private_t">Private by design</h3><p data-i18n="f_private_d">Everything runs on your machine. No agent, no account, no cloud lookups and no telemetry - even vendor names resolve offline from the embedded database. Nothing about your network leaves the device.</p></div>
+<div class="feature-card"><h3 data-i18n="f_classify_t">Device classification</h3><p data-i18n="f_classify_d">A weighted scorer combines hostname, vendor, open ports, banners, mDNS and SSDP into a best-guess type:<br>Router, switch/AP, NAS, printer, camera, hypervisor, phone, IoT and more.</p></div>
+<div class="feature-card"><h3 data-i18n="f_gateway_t">Gateway &amp; DNS aware</h3><p data-i18n="f_gateway_d">The gateway is labelled Router, DNS Server, or Router/DNS - and only Router/DNS when the gateway really is your configured DNS, so a dedicated DNS server is never mislabelled.</p></div>
+<div class="feature-card"><h3 data-i18n="f_export_t">Export</h3><p data-i18n="f_export_d">Export the full device list to CSV, or to a self-contained HTML report that stays fully re-sortable by any column and re-themeable with the same six themes and accent colors as the app. Right-click any device to copy its IP, MAC or hostname, or jump straight to it.</p></div>
+<div class="feature-card"><h3 data-i18n="f_themes_t">Themes &amp; accents</h3><p data-i18n="f_themes_d">Six themes (Dark, Light, Black, Blood, Greed and Cyanotic) with per-theme accent colors, all switchable live, plus per-theme device-type coloring in the results table.</p></div>
+<div class="feature-card"><h3 data-i18n="f_install_t">Install or run portable</h3><p data-i18n="f_install_d">Drop the .exe anywhere and run it, or use the built-in per-user installer.<br>No admin rights, extra runtimes or dependencies are required.<br>A "PORTABLE" badge and an Install button appear when you're running it loose.</p></div>
+<div class="feature-card"><h3 data-i18n="f_oui_t">Vendor database</h3><p data-i18n="f_oui_d">The full IEEE OUI registries, MA-L, MA-M and MA-S (around 57,000 entries), ship embedded so vendor names resolve offline, and are kept current from the latest IEEE data so they don't go stale.</p></div>
+<div class="feature-card"><h3 data-i18n="f_actions_t">Quick actions</h3><p data-i18n="f_actions_d">Right-click any device to copy its IP, MAC or hostname, or jump straight to it.<br>Open its web UI, or launch RDP or SSH directly, and set a manual device type that sticks.</p></div>
+<div class="feature-card"><h3 data-i18n="f_private_t">Private by design</h3><p data-i18n="f_private_d">Everything runs on your machine. No extra agent is installed, no account is required, no cloud lookups (Vendor names resolve offline from the embedded database), and no telemetry is sent anywhere.<br>Nothing about your network leaves the device.</p></div>
 </div>
 </section>
 
@@ -204,13 +205,14 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 
 <footer class="statusbar">
 <span class="left"><a href="https://github.com/SteveTheKiller/KillerScan" target="_blank" rel="noopener" data-i18n="footer_src">Source on GitHub</a> &middot; GPLv3 &middot; Part of <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
-<span class="right"><span id="verEgg" title="click me">v1.5.0</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
+<span class="right"><span id="verEgg" title="click me">v1.5.1</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
 </footer>
 
-<div class="lightbox" id="lightbox" hidden><img id="lightboxImg" src="" alt="KillerScan screenshot"></div>
+<div class="lightbox" id="lightbox"><img id="lightboxImg" src="" alt="KillerScan screenshot"></div>
 <div class="egg-toast" id="eggToast"></div>
 
-<script src="ks.js?v=2"></script>
+<script src="ks-i18n.js?v=1"></script>
+<script src="ks.js?v=3"></script>
 <script>
 (function () {
   // Screenshot strip: tries screenshots/01.png .. NN.png, drops any that 404, and shows a
@@ -222,9 +224,9 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
   var lightboxImg = document.getElementById('lightboxImg');
   var loaded = 0;
 
-  function openLightbox(src) { lightboxImg.src = src; lightbox.hidden = false; }
-  lightbox.addEventListener('click', function () { lightbox.hidden = true; });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lightbox.hidden = true; });
+  function openLightbox(src) { lightboxImg.src = src; lightbox.classList.add('show'); }
+  lightbox.addEventListener('click', function () { lightbox.classList.remove('show'); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lightbox.classList.remove('show'); });
 
   for (var i = 1; i <= MAX; i++) {
     (function (n) {
@@ -233,14 +235,18 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
       img.onload = function () {
         if (empty) { empty.remove(); empty = null; }
         var b = document.createElement('button');
-        b.className = 'sb-thumb'; b.title = 'Screenshot ' + n;
+        b.className = 'sb-thumb'; b.title = 'Screenshot ' + n; b.dataset.idx = n;
         b.appendChild(img);
         b.addEventListener('click', function () { openLightbox(src); });
-        sbThumbs.appendChild(b);
+        // Insert in numeric order regardless of which image finishes loading first.
+        var next = null, kids = sbThumbs.children;
+        for (var k = 0; k < kids.length; k++) {
+          if (kids[k].dataset && +kids[k].dataset.idx > n) { next = kids[k]; break; }
+        }
+        sbThumbs.insertBefore(b, next);
         loaded++;
       };
       img.alt = 'KillerScan screenshot ' + n;
-      img.loading = 'lazy';
       img.src = src;
     })(i);
   }

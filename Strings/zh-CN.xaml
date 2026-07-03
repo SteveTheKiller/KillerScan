@@ -46,6 +46,11 @@
     <sys:String x:Key="Str_About_Db">厂商数据库</sys:String>
     <sys:String x:Key="Str_About_DbUpdate">从最新注册表更新</sys:String>
     <sys:String x:Key="Str_About_DbHint">来自 Wireshark OUI 列表。</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} 个条目</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">更新于 {0}</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">随应用捆绑</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">ARP + IP 扫描，带厂商查询、设备分类，以及可切换主题、可排序的 HTML 导出。</sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve"> 出品的实用工具。</sys:String>
 
     <sys:String x:Key="Str_Btn_Stop">停止</sys:String>
     <sys:String x:Key="Str_Status_Ready">就绪 - 已加载 {0} 个 OUI 厂商</sys:String>

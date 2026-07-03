@@ -20,7 +20,7 @@ namespace KillerScan
 
         private static string CurrentVersion =>
             Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-            ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.5.0";
+            ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.5.1";
 
         private void ShowAboutOverlay()
         {
@@ -74,16 +74,114 @@ namespace KillerScan
             e.Handled = true;
         }
 
-        private void AboutUpdateButton_Click(object sender, RoutedEventArgs e)
+        private void AboutUpdateButton_Click(object sender, RoutedEventArgs e) => DoSelfUpdateAsync();
+
+        // One-click self-update (ported from KillerPDF): downloads the released exe, verifies it against
+        // the published SHA256SUMS.txt at the tag, then hands off to a small batch that waits for this
+        // process to exit, swaps the exe in place, and relaunches. Falls back to opening the releases
+        // page if anything fails (offline, checksum mismatch, unwritable location) so the user can still
+        // update by hand.
+        private async void DoSelfUpdateAsync()
         {
-            if (!string.IsNullOrEmpty(_updateTag))
-                OpenUrl($"https://github.com/{GitHubRepo}/releases/tag/{_updateTag}");
+            var tag = _updateTag;
+            if (string.IsNullOrEmpty(tag)) return;
+
+            var confirm = MessageBox.Show(this,
+                $"Download and install KillerScan {tag}?\n\nThe app will close and reopen automatically.",
+                "KillerScan", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (confirm != MessageBoxResult.OK) return;
+
+            AboutUpdateButton.IsEnabled = false;
+            AboutUpdateText.Text = "Downloading...";
+
+            string? newExe = null;
+            try
+            {
+                System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
+                using var http = new System.Net.Http.HttpClient { Timeout = TimeSpan.FromSeconds(90) };
+                http.DefaultRequestHeaders.UserAgent.ParseAdd("KillerScan-UpdateCheck");
+
+                var exeUrl  = $"https://github.com/{GitHubRepo}/releases/download/{tag}/KillerScan.exe";
+                // Read the checksums from the release ASSET next to the exe, not from raw.githubusercontent
+                // at the tag. Both files are uploaded to the release together, so the hash can never drift
+                // from the exe the way a repo-committed file does when the tag/commit order gets muddled.
+                var sumsUrl = $"https://github.com/{GitHubRepo}/releases/download/{tag}/SHA256SUMS.txt";
+
+                var exeBytes = await http.GetByteArrayAsync(exeUrl);
+                var sumsTxt  = await http.GetStringAsync(sumsUrl);
+
+                // Find the expected hash for KillerScan.exe in the checksums file.
+                string? expected = null;
+                foreach (var line in sumsTxt.Replace("\r", "").Split('\n'))
+                {
+                    if (line.TrimStart().StartsWith("KillerScan.exe", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var parts = line.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries);
+                        if (parts.Length >= 2) expected = parts[^1];
+                        break;
+                    }
+                }
+                if (string.IsNullOrEmpty(expected)) throw new Exception("checksum entry not found");
+
+                string actual;
+                using (var sha = SHA256.Create())
+                    actual = BitConverter.ToString(sha.ComputeHash(exeBytes)).Replace("-", "");
+                if (!actual.Equals(expected, StringComparison.OrdinalIgnoreCase))
+                    throw new Exception("checksum mismatch");
+
+                newExe = Path.Combine(Path.GetTempPath(), $"KillerScan_update_{Guid.NewGuid():N}.exe");
+                File.WriteAllBytes(newExe, exeBytes);
+            }
+            catch
+            {
+                // Offline, timed out, or verification failed: restore the button and open the releases
+                // page so the user can update manually.
+                AboutUpdateButton.IsEnabled = true;
+                AboutUpdateText.Text = $"Update available: {tag}";
+                OpenUrl($"https://github.com/{GitHubRepo}/releases/latest");
+                return;
+            }
+
+            // Apply the update after we exit, then relaunch.
+            try
+            {
+                var curExe = Process.GetCurrentProcess().MainModule!.FileName;
+                var pid    = Process.GetCurrentProcess().Id;
+                var bat    = Path.Combine(Path.GetTempPath(), $"killerscan_update_{Guid.NewGuid():N}.bat");
+
+                File.WriteAllText(bat,
+                    "@echo off\r\n" +
+                    ":wait\r\n" +
+                    $"tasklist /fi \"PID eq {pid}\" 2>nul | find \"{pid}\" >nul\r\n" +
+                    "if not errorlevel 1 ( ping -n 2 127.0.0.1 >nul & goto wait )\r\n" +
+                    $"copy /y \"{newExe}\" \"{curExe}\" >nul\r\n" +
+                    $"start \"\" \"{curExe}\"\r\n" +
+                    $"del \"{newExe}\" >nul 2>&1\r\n" +
+                    "del \"%~f0\" >nul 2>&1\r\n");
+
+                Process.Start(new ProcessStartInfo("cmd.exe", $"/c \"{bat}\"")
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = true
+                });
+
+                Application.Current.Shutdown();
+            }
+            catch
+            {
+                AboutUpdateButton.IsEnabled = true;
+                AboutUpdateText.Text = $"Update available: {tag}";
+            }
         }
 
         // Shows the current vendor-database size and where it came from (bundled vs last refresh date).
         private void RefreshDbInfo()
         {
-            AboutDbBlock.Text = $"{Services.OuiLookup.Count:N0} entries · {Services.OuiLookup.LastRefreshedDisplay}";
+            var entries = string.Format(Loc("Str_About_DbEntries"), Services.OuiLookup.Count.ToString("N0"));
+            var origin  = Services.OuiLookup.LastRefreshed.HasValue
+                ? string.Format(Loc("Str_About_DbRefreshed"), Services.OuiLookup.LastRefreshed.Value.ToString("yyyy-MM-dd"))
+                : Loc("Str_About_DbBundled");
+            AboutDbBlock.Text = $"{entries} · {origin}";
         }
 
         // Downloads a fresh OUI list and reloads it in place. Never shrinks the list; all status

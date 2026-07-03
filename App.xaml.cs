@@ -66,6 +66,12 @@ namespace KillerScan
                 return;
             }
 
+            // Demo / screenshot mode: KillerScan.exe --demo fills the grid with fabricated
+            // devices so screenshots carry no real network data.
+            KillerScan.MainWindow.DemoMode = Array.Exists(e.Args, a =>
+                string.Equals(a, "--demo", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(a, "/demo",  StringComparison.OrdinalIgnoreCase));
+
             // Restore the saved theme + locale before the window is built (no first-paint flash).
             Services.ThemeManager.Initialize();
             Services.LocaleManager.Initialize();

@@ -46,6 +46,11 @@
     <sys:String x:Key="Str_About_Db">BASE DE DONNÉES DES FABRICANTS</sys:String>
     <sys:String x:Key="Str_About_DbUpdate">Mettre à jour depuis les derniers registres</sys:String>
     <sys:String x:Key="Str_About_DbHint">Depuis la liste OUI de Wireshark.</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} entrées</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">actualisé le {0}</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">fourni avec l'application</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">Balayage ARP + IP avec recherche de fabricant, classification des appareils et un export HTML thématisable et triable. Un utilitaire </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve">.</sys:String>
 
     <sys:String x:Key="Str_Btn_Stop">Arrêter</sys:String>
     <sys:String x:Key="Str_Status_Ready">Prêt - {0} fabricants OUI chargés</sys:String>

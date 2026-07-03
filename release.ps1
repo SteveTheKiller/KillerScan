@@ -107,6 +107,24 @@ if ($srcZip) {
     Write-Host "    (Source bundle failed -- is git installed and is this a repo?)" -ForegroundColor Yellow
 }
 
+# -- 4b. SHA256SUMS.txt (consumed by the in-app self-updater) ------------------
+# The About-screen updater downloads the target release's KillerScan.exe and verifies it
+# against this file. The updater reads SHA256SUMS.txt from the RELEASE ASSETS (right next to
+# the exe), so just UPLOAD this file to the GitHub release alongside KillerScan.exe. No need
+# to commit it or worry about tag/commit order - the two files ride together on the release.
+Write-Host "`n==> Writing SHA256SUMS.txt..." -ForegroundColor Cyan
+# Written into the publish folder next to KillerScan.exe and the -src.zip, so every file you
+# upload to the GitHub release is in one place. The updater reads this from the release assets.
+$sumsPath  = Join-Path $publishDir "SHA256SUMS.txt"
+$sumsLines = @()
+$sumsLines += ("{0,-26} {1}" -f "KillerScan.exe", $hash)
+if ($srcZip) {
+    $srcHash = (Get-FileHash $srcZip.FullName -Algorithm SHA256).Hash
+    $sumsLines += ("{0,-26} {1}" -f $srcZip.Name, $srcHash)
+}
+Set-Content -Path $sumsPath -Value $sumsLines -Encoding ascii
+Write-Host "    Wrote: $sumsPath" -ForegroundColor Green
+
 # -- 5. Chocolatey pack/push ---------------------------------------------------
 $nupkg = $null
 if ($Choco) {   # Chocolatey is opt-in: pass -Choco to pack/push. Default release skips it.
@@ -150,6 +168,10 @@ Write-Host   "  EXE   : $exe"
 if ($srcZip) { Write-Host "  SRC   : $($srcZip.FullName)" }
 if ($nupkg)  { Write-Host "  NUPKG : $nupkg" }
 Write-Host   "  SHA256: $hash" -ForegroundColor Green
+Write-Host   "  SUMS  : $sumsPath" -ForegroundColor Green
+Write-Host   ""
+Write-Host   "  >> UPLOAD SHA256SUMS.txt to the GitHub release alongside KillerScan.exe." -ForegroundColor Yellow
+Write-Host   "     The in-app updater reads it from the release assets; no commit/tag order to get right." -ForegroundColor Yellow
 Write-Host   ""
 Write-Host   "  Paste SHA256 into:"
 Write-Host   "    KillerScan\scan-landing\index.html (line ~181)"
