@@ -58,8 +58,8 @@
 .features { padding: 40px 0 24px; }
 .features h2 { font-family: 'KillerScan', 'Courier New', monospace; font-size: 24px; font-weight: normal; letter-spacing: .5px; color: var(--text); text-align: center; margin-bottom: 26px; }
 .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 14px; }
-.feature-card { background: var(--modal) url('grain.png') repeat; background-size: 256px 256px; border: 1px solid var(--border); border-top: 2px solid var(--tab-edge); border-radius: 6px; padding: 18px 20px; transition: transform 0.12s, box-shadow 0.12s; }
-.feature-card:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(0,0,0,0.4); }
+.feature-card { background: var(--modal) url('grain.png') repeat; background-size: 256px 256px; border: 1px solid var(--pane-border); border-top: 2px solid var(--tab-edge); border-radius: 6px; padding: 18px 20px; transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s; }
+.feature-card:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(0,0,0,0.4); border-right-color: var(--dragline); border-bottom-color: var(--dragline); border-left-color: var(--dragline); }
 .feature-card h3 { font-family: 'KillerScan', 'Courier New', monospace; font-size: 15px; font-weight: normal; letter-spacing: .5px; margin-bottom: 8px; color: var(--accent); text-shadow: 0 2px 5px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.5); }
 html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { text-shadow: none; }
 .feature-card p { font-size: 13px; color: var(--muted); line-height: 1.55; }

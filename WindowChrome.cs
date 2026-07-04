@@ -22,6 +22,7 @@ namespace KillerScan
             var hwnd = new WindowInteropHelper(this).Handle;
             HwndSource.FromHwnd(hwnd)?.AddHook(WndProc);
             ApplyWindowCorners(rounded: WindowState == WindowState.Normal);
+            ApplyThemeBorder(this);
         }
 
         // ---- Windows 11 rounded corners (DWMWA_WINDOW_CORNER_PREFERENCE = 33) ----
@@ -33,6 +34,29 @@ namespace KillerScan
         private const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
         private const int DWMWCP_DONOTROUND = 1;
         private const int DWMWCP_ROUND      = 2;
+        private const int DWMWA_BORDER_COLOR = 34;
+
+        /// <summary>Tints the Win11 DWM frame border to the theme's PaneBorderBrush
+        /// (AppBorderBrush overrides per theme, e.g. Black), so the 1px window outline
+        /// follows the palette instead of staying system gray. Call at SourceInitialized
+        /// and again after every theme change. (Family standard, ported from KillerFind.)</summary>
+        internal static void ApplyThemeBorder(Window w)
+        {
+            try
+            {
+                var hwnd = new WindowInteropHelper(w).Handle;
+                if (hwnd == IntPtr.Zero) return;
+                if ((Application.Current.TryFindResource("AppBorderBrush")
+                     ?? Application.Current.TryFindResource("PaneBorderBrush"))
+                    is System.Windows.Media.SolidColorBrush b)
+                {
+                    // COLORREF is 0x00BBGGRR
+                    int colorref = b.Color.R | (b.Color.G << 8) | (b.Color.B << 16);
+                    DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, ref colorref, sizeof(int));
+                }
+            }
+            catch { /* pre-Win11: attribute unsupported */ }
+        }
 
         private void ApplyWindowCorners(bool rounded)
         {
@@ -61,10 +85,18 @@ namespace KillerScan
         private void FadeInContent() => Anim.FadeIn(RootGrid);
 
         private const int WM_GETMINMAXINFO = 0x0024;
-        private const uint MONITOR_DEFAULTTONEAREST = 0x00000002;
+        private const int WM_ERASEBKGND    = 0x0014;
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
+            if (msg == WM_ERASEBKGND)
+            {
+                // KillerPDF's anti-flash trick: WPF paints the whole client area itself, so
+                // let nothing erase the background to a flat fill during a resize - that
+                // erase is the white flash. Claim the message and report success.
+                handled = true;
+                return new IntPtr(1);
+            }
             if (msg == WM_GETMINMAXINFO)
             {
                 WmGetMinMaxInfo(hwnd, lParam);
@@ -155,6 +187,13 @@ namespace KillerScan
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
+        }
+
+        // Titlebar wordmark opens the website (same rule as KillerPDF/KillerFind).
+        private void Wordmark_Click(object sender, MouseButtonEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://scan.killertools.net") { UseShellExecute = true });
             e.Handled = true;
         }
 

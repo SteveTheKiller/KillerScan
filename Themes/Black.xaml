@@ -23,6 +23,9 @@
     <SolidColorBrush x:Key="TableHeaderBrush"    Color="#0d0d0d" po:Freeze="True"/>
     <SolidColorBrush x:Key="CardBorderBrush"     Color="#2a2a2a" po:Freeze="True"/>
     <SolidColorBrush x:Key="PaneBorderBrush"     Color="#1c1c1c" po:Freeze="True"/>
+    <!-- DWM window frame: pane borders are intentionally near-black here, so the
+         frame uses the card border tone instead. -->
+    <SolidColorBrush x:Key="AppBorderBrush"      Color="#2a2a2a" po:Freeze="True"/>
 
     <SolidColorBrush x:Key="TextBrush"           Color="#ffffff" po:Freeze="True"/>
     <SolidColorBrush x:Key="MutedTextBrush"      Color="#cccccc" po:Freeze="True"/>

@@ -56,8 +56,10 @@
                            VerticalAlignment="Center" Margin="0,0,7,0"
                            RenderOptions.BitmapScalingMode="HighQuality"/>
                     <!-- Typewriter wordmark with KillerPDF-style soft shadow: a blurred dark copy behind the
-                         crisp text, faded by IconShadowOpacity (0 in light mode = no shadow). -->
-                    <Grid VerticalAlignment="Center">
+                         crisp text, faded by IconShadowOpacity (0 in light mode = no shadow).
+                         Clicking it opens the website (same rule as KillerPDF/KillerFind). -->
+                    <Grid VerticalAlignment="Center" WindowChrome.IsHitTestVisibleInChrome="True"
+                          Cursor="Hand" ToolTip="scan.killertools.net" Background="Transparent" MouseLeftButtonUp="Wordmark_Click">
                         <StackPanel Orientation="Horizontal" Margin="1,2,0,0" Opacity="{DynamicResource IconShadowOpacity}">
                             <StackPanel.Effect><BlurEffect Radius="3"/></StackPanel.Effect>
                             <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="18"><Run Text="Killer" Foreground="#D8000000"/><Run Text="Scan" FontSize="23.4" FontWeight="Bold" Foreground="#D8000000"/></TextBlock>
@@ -644,8 +646,9 @@
                                FontSize="10" VerticalAlignment="Center" Margin="0,0,12,0"
                                Cursor="Hand" ToolTip="About KillerScan"
                                MouseLeftButtonUp="VersionLabel_Click"/>
+                    <!-- 14px trailing margin keeps the copyright clear of the corner grip (family standard) -->
                     <TextBlock FontSize="10" VerticalAlignment="Center"
-                               FontFamily="Consolas">
+                               FontFamily="Consolas" Margin="0,0,14,0">
                         <Run Text="&#x00A9; 2026 " Foreground="{DynamicResource TextFooter}"/>
                         <Hyperlink NavigateUri="https://thekiller.net"
                                    RequestNavigate="Hyperlink_RequestNavigate"
