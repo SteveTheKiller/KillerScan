@@ -13,7 +13,7 @@ Free, open-source, GPLv3.
 
 Homepage: <https://killerscan.net> · Part of [killertools.net](https://killertools.net).
 
-![KillerScan](scan-landing/screenshots/screenshots.png)
+![KillerScan](scan-landing/og-image.png)
 
 ## Features
 
