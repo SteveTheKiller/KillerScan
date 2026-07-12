@@ -87,7 +87,7 @@ namespace KillerScan
 
             _active.ScannedSubnet = $"{net}.0/24";
             RefreshDeviceCount();
-            var done = $"Scan complete -- {_active.Devices.Count} devices found";
+            var done = string.Format(Loc("Str_St_ScanComplete"), _active.Devices.Count);
             _active.Status = done;
             StatusText.Text = done;
             ExportButton.IsEnabled = true;

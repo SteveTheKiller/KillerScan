@@ -57,4 +57,19 @@
     <sys:String x:Key="Str_Count_Found">找到 {0} 個裝置</sys:String>
     <sys:String x:Key="Str_Count_Shown">顯示 {1} 個中的 {0} 個</sys:String>
 
+    <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
+    <sys:String x:Key="Str_St_Discovering">正在探索 {0} 上的主機...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingMacs">正在解析 {0} 個 MAC 位址...</sys:String>
+    <sys:String x:Key="Str_St_Probing">正在探測 {0} 個線上主機...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingHosts">正在解析 {0} 個主機...</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">掃描完成 -- 找到 {0} 台裝置</sys:String>
+    <sys:String x:Key="Str_St_ScanCancelled">掃描已取消</sys:String>
+    <sys:String x:Key="Str_St_Exported">已匯出至 {0}</sys:String>
+    <sys:String x:Key="Str_St_OverrideSet">已設定覆寫：{0} = {1}</sys:String>
+    <sys:String x:Key="Str_St_OverrideCleared">已清除 {0} 的覆寫</sys:String>
+
+    <!-- Portable footer badge -->
+    <sys:String x:Key="Str_Portable">可攜版</sys:String>
+    <sys:String x:Key="Str_InstallBtn">安裝 KillerScan...</sys:String>
+
 </ResourceDictionary>

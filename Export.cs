@@ -36,7 +36,7 @@ namespace KillerScan
                 foreach (var d in ActiveDevices.OrderBy(d => d.IpSortKey))
                     sb.AppendLine($"\"{d.IpAddress}\",\"{d.Hostname}\",\"{d.MacAddress}\",\"{d.Vendor}\",\"{d.DeviceType}\",\"{d.OpenPortsDisplay}\"");
                 File.WriteAllText(dlg.FileName, sb.ToString(), Encoding.UTF8);
-                StatusText.Text = $"Exported to {Path.GetFileName(dlg.FileName)}";
+                StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }
             catch (Exception ex)
             { MessageBox.Show($"Export error: {ex.Message}", "KillerScan", MessageBoxButton.OK, MessageBoxImage.Error); }
@@ -170,7 +170,7 @@ namespace KillerScan
                 sb.AppendLine("</body></html>");
 
                 File.WriteAllText(dlg.FileName, sb.ToString(), Encoding.UTF8);
-                StatusText.Text = $"Exported to {Path.GetFileName(dlg.FileName)}";
+                StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }
             catch (Exception ex)
             { MessageBox.Show($"Export error: {ex.Message}", "KillerScan", MessageBoxButton.OK, MessageBoxImage.Error); }

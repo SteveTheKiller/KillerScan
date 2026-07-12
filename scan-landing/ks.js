@@ -10,6 +10,12 @@
     light: { red:['#931A1A','#931A1A'], orange:['#C7710F','#C7710F'], green:['#1B5E20','#1B5E20'], teal:['#0D827E','#0D827E'], blue:['#18608E','#18608E'], purple:['#5A1690','#5A1690'] },
     hc:    { red:['#FF2929','#FF2929'], orange:['#FF910A','#FF910A'], green:['#00FF66','#00FF66'], teal:['#0AFFE7','#0AFFE7'], blue:['#298DFF','#298DFF'], purple:['#B829FF','#B829FF'] }
   };
+  // SelectionBg (muted accent) for inactive tab/card edges; brightens to accent on hover. Mirrors KillerTools themes.ts.
+  var SEL = {
+    dark:  { red:'#5E1C1C', orange:'#5E3B16', green:'#1C5E38', teal:'#1C5E5C', blue:'#1C3B5E', purple:'#411C5E' },
+    light: { red:'#931A1A', orange:'#C7710F', green:'#1B5E20', teal:'#0D827E', blue:'#18608E', purple:'#5A1690' },
+    hc:    { red:'#380000', orange:'#4E2900', green:'#003314', teal:'#003832', blue:'#0A2C50', purple:'#250038' }
+  };
   function famFor(t) { return t === 'light' ? 'light' : t === 'hc' ? 'hc' : 'dark'; }
 
   var swatches = [].slice.call(document.querySelectorAll('.swatch'));
@@ -29,10 +35,12 @@
     if (neutral) {
       root.style.setProperty('--accent', pair[0]);
       root.style.setProperty('--btn', pair[1]);
+      root.style.setProperty('--sel', (SEL[fam] && SEL[fam][name]) || pair[1]);
       try { localStorage.setItem('kscan-av', pair[0] + '|' + pair[1]); } catch (e) {}
     } else {
       root.style.removeProperty('--accent');
       root.style.removeProperty('--btn');
+      root.style.removeProperty('--sel');
     }
     accDots.forEach(function (d) {
       var p = ACCENTS[fam][d.dataset.accent];
@@ -85,7 +93,7 @@
     var dragDx = 0, dragging = false, dragStartX = 0, dragStartDx = 0;
     function dragClamp(v) {
       var vw = window.innerWidth, pw = pill.offsetWidth, pad = 6, left = 8, right = vw - 8;
-      var f = document.querySelector('.frame-shadow');
+      var f = document.querySelector('.content');
       // Extra inset on the right so the pill clears the content scrollbar at its max position.
       if (f) { var fr = f.getBoundingClientRect(); if (fr.width > 0) { left = fr.left + pad; right = fr.right - pad - 12; } }
       var centerLeft = vw / 2 - pw / 2, min = left - centerLeft, max = right - pw - centerLeft;

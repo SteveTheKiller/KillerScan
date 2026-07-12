@@ -1,0 +1,86 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ================================================================
+         KillerScan  -  Japanese (ja-JP) strings.
+         x:Key values are looked up at runtime - never change them.
+         Layers over en-US.xaml; any key omitted here falls back to English.
+         ================================================================ -->
+
+    <!-- Title bar / chrome -->
+    <sys:String x:Key="Str_Subtitle">ネットワークスキャナー</sys:String>
+    <sys:String x:Key="Str_TT_Language">言語</sys:String>
+    <sys:String x:Key="Str_TT_Theme">テーマ</sys:String>
+    <sys:String x:Key="Str_TT_Export">エクスポート</sys:String>
+    <sys:String x:Key="Str_Lbl_Theme">テーマ</sys:String>
+    <sys:String x:Key="Str_Lbl_Accent">アクセント</sys:String>
+
+    <!-- Scan bar -->
+    <sys:String x:Key="Str_Lbl_Subnet">サブネット</sys:String>
+    <sys:String x:Key="Str_Btn_Scan">スキャン</sys:String>
+    <sys:String x:Key="Str_Lbl_Local">ローカル</sys:String>
+    <sys:String x:Key="Str_Lbl_Gateway">ゲートウェイ</sys:String>
+    <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
+
+    <!-- Status bar + counts ({0}/{1} are filled in by the app - keep them) -->
+    <sys:String x:Key="Str_Btn_Stop">停止</sys:String>
+    <sys:String x:Key="Str_Status_Ready">準備完了 - {0} 件の OUI ベンダーを読み込み済み</sys:String>
+    <sys:String x:Key="Str_Count_Found">{0} 台のデバイスを検出</sys:String>
+    <sys:String x:Key="Str_Count_Shown">{1} 台中 {0} 台を表示</sys:String>
+
+    <!-- Results pane -->
+    <sys:String x:Key="Str_DiscoveredDevices">検出されたデバイス</sys:String>
+    <sys:String x:Key="Str_FilterPlaceholder">デバイスを絞り込み...</sys:String>
+    <sys:String x:Key="Str_Export_Csv">CSV としてエクスポート</sys:String>
+    <sys:String x:Key="Str_Export_Html">HTML としてエクスポート</sys:String>
+
+    <!-- Results columns -->
+    <sys:String x:Key="Str_Col_Ip">IP アドレス</sys:String>
+    <sys:String x:Key="Str_Col_Host">ホスト名</sys:String>
+    <sys:String x:Key="Str_Col_Mac">MAC アドレス</sys:String>
+    <sys:String x:Key="Str_Col_Vendor">ベンダー</sys:String>
+    <sys:String x:Key="Str_Col_Type">種類</sys:String>
+    <sys:String x:Key="Str_Col_Ports">開放ポート</sys:String>
+
+    <!-- Right-click device menu -->
+    <sys:String x:Key="Str_Ctx_CopyIp">IP アドレスをコピー</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyMac">MAC アドレスをコピー</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyHost">ホスト名をコピー</sys:String>
+    <sys:String x:Key="Str_Ctx_Ping">Ping</sys:String>
+    <sys:String x:Key="Str_Ctx_OpenBrowser">ブラウザーで開く</sys:String>
+    <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
+    <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SetType">デバイスの種類を設定</sys:String>
+    <sys:String x:Key="Str_Ctx_ClearOverride">上書きをクリア</sys:String>
+
+    <!-- About overlay -->
+    <sys:String x:Key="Str_About_Version">バージョン</sys:String>
+    <sys:String x:Key="Str_About_Publisher">発行元</sys:String>
+    <sys:String x:Key="Str_About_Thumbprint">拇印</sys:String>
+    <sys:String x:Key="Str_About_Sha">EXE SHA-256</sys:String>
+    <sys:String x:Key="Str_About_Db">ベンダーデータベース</sys:String>
+    <sys:String x:Key="Str_About_DbUpdate">最新のレジストリから更新</sys:String>
+    <sys:String x:Key="Str_About_DbHint">Wireshark の OUI リストより。</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} 件</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">{0} に更新</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">アプリに同梱</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">ARP + IP スイープにベンダー特定、デバイス分類、テーマ対応でソート可能な HTML エクスポートを備えた </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve"> ユーティリティ。</sys:String>
+
+    <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
+    <sys:String x:Key="Str_St_Discovering">{0} のホストを検出中...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingMacs">{0} 件の MAC アドレスを解決中...</sys:String>
+    <sys:String x:Key="Str_St_Probing">{0} 台のアクティブなホストを調査中...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingHosts">{0} 台のホストを解決中...</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">スキャン完了 -- {0} 台のデバイスを検出</sys:String>
+    <sys:String x:Key="Str_St_ScanCancelled">スキャンをキャンセルしました</sys:String>
+    <sys:String x:Key="Str_St_Exported">{0} にエクスポートしました</sys:String>
+    <sys:String x:Key="Str_St_OverrideSet">上書きを設定: {0} = {1}</sys:String>
+    <sys:String x:Key="Str_St_OverrideCleared">{0} の上書きをクリアしました</sys:String>
+
+    <!-- Portable footer badge -->
+    <sys:String x:Key="Str_Portable">ポータブル</sys:String>
+    <sys:String x:Key="Str_InstallBtn">KillerScan をインストール...</sys:String>
+
+</ResourceDictionary>

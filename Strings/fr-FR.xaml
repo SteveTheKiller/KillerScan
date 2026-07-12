@@ -57,4 +57,19 @@
     <sys:String x:Key="Str_Count_Found">{0} appareils trouvés</sys:String>
     <sys:String x:Key="Str_Count_Shown">{0} sur {1} affichés</sys:String>
 
+    <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
+    <sys:String x:Key="Str_St_Discovering">Découverte des hôtes sur {0}...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingMacs">Résolution de {0} adresses MAC...</sys:String>
+    <sys:String x:Key="Str_St_Probing">Sondage de {0} hôtes actifs...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingHosts">Résolution de {0} hôtes...</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">Analyse terminée -- {0} appareils trouvés</sys:String>
+    <sys:String x:Key="Str_St_ScanCancelled">Analyse annulée</sys:String>
+    <sys:String x:Key="Str_St_Exported">Exporté vers {0}</sys:String>
+    <sys:String x:Key="Str_St_OverrideSet">Remplacement défini : {0} = {1}</sys:String>
+    <sys:String x:Key="Str_St_OverrideCleared">Remplacement effacé pour {0}</sys:String>
+
+    <!-- Portable footer badge -->
+    <sys:String x:Key="Str_Portable">PORTABLE</sys:String>
+    <sys:String x:Key="Str_InstallBtn">Installer KillerScan...</sys:String>
+
 </ResourceDictionary>

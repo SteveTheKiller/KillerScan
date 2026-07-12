@@ -4,10 +4,22 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.2] - Unreleased
+## [1.5.2] - 2026-07-12
+
+### Added
+- Japanese (ja-JP) interface translation, selectable from the language picker.
+- Status-bar messages now follow the selected language: scan progress (discovering/resolving/probing), scan complete/cancelled, export confirmations, device-type overrides, and the PORTABLE badge with its install button were hardcoded English and are now translated across all nine locales.
+- Column widths in the results table are user-resizable again (the custom header style had dropped the resize grips).
+- The window can be dragged from anywhere on the title bar or the scan toolbar's empty space, and the wordmark no longer opens the website on click (that link lives in About).
+- The window remembers its size, position, and maximized state, and the results table remembers your column order and any widths you resized, restoring both on the next launch.
 
 ### Changed
+- Footer/status bar matched to the family standard set by KillerPDF and killerpdf.net: 24px row, 11.5 status text, 10.5 corner version/copyright. The devices pane sits flush against the toolbar and footer (its shadow overlays them), spacing around the subnet box and the Discovered Devices header is an even 8px, and the table keeps an even 8px to both pane edges with the scrollbar hugging the pane edge, clear of the header, scrolling by pixel so no dead band is left after the last row.
+- Bundled MAC vendor database refreshed from the current Wireshark OUI list: 57,591 entries (was 57,430). The app now loads whichever list is larger - the bundle or your last in-app refresh - so upgrading to a version with a fresher bundled database takes effect immediately instead of being shadowed by an older local copy.
 - Window, dialog and flyout animations are now consistent. The theme flyout, language menu and install dialog previously appeared instantly; they now fade in over 150ms with an ease-out curve, matching the main window (retimed from 180ms) and the About overlay (retimed from 120ms). The shared timing lives in `Anim.cs`.
+- Results columns now size to their content: IP Address, Hostname (capped at 220px), MAC Address, and Type fit their widest value, while Vendor and Open Ports flex to fill the remaining space. Fresh launches start at the settled widths so the table no longer jumps as the first results land.
+- Default window size trimmed from 1100x700 to 1025x700 to match the tighter columns.
+- About card: the description now reads "A GPLv3 Killer Tools utility", the card's own copyright footer is gone (the app footer already carries it), and the card padding is an even 18px with the width trimmed so the SHA-256 line fits exactly.
 
 ### Fixed
 - The window no longer renders black over console-session screen-sharing tools (ScreenConnect, Kaseya LiveConnect, VNC, TeamViewer). WPF composited through the GPU, whose surfaces those tools can't capture, and because they aren't Terminal Services sessions WPF never fell back on its own. Rendering is now forced to software mode (`RenderOptions.ProcessRenderMode`) at startup.

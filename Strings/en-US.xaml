@@ -68,4 +68,19 @@
     <sys:String x:Key="Str_About_DescA" xml:space="preserve">ARP + IP sweep with vendor lookup, device classification, and a themeable, sortable HTML export. A </sys:String>
     <sys:String x:Key="Str_About_DescB" xml:space="preserve"> utility.</sys:String>
 
+    <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
+    <sys:String x:Key="Str_St_Discovering">Discovering hosts on {0}...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingMacs">Resolving {0} MAC addresses...</sys:String>
+    <sys:String x:Key="Str_St_Probing">Probing {0} alive hosts...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingHosts">Resolving {0} hosts...</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">Scan complete -- {0} devices found</sys:String>
+    <sys:String x:Key="Str_St_ScanCancelled">Scan cancelled</sys:String>
+    <sys:String x:Key="Str_St_Exported">Exported to {0}</sys:String>
+    <sys:String x:Key="Str_St_OverrideSet">Override set: {0} = {1}</sys:String>
+    <sys:String x:Key="Str_St_OverrideCleared">Override cleared for {0}</sys:String>
+
+    <!-- Portable footer badge -->
+    <sys:String x:Key="Str_Portable">PORTABLE</sys:String>
+    <sys:String x:Key="Str_InstallBtn">Install KillerScan...</sys:String>
+
 </ResourceDictionary>

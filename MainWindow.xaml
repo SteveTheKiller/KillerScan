@@ -7,7 +7,7 @@
         xmlns:cm="clr-namespace:System.ComponentModel;assembly=System"
         mc:Ignorable="d"
         Title="KillerScan"
-        Height="700" Width="1100"
+        Height="700" Width="1025"
         MinHeight="500" MinWidth="800"
         Background="{DynamicResource BackgroundBrush}"
         WindowStartupLocation="CenterScreen"
@@ -38,7 +38,7 @@
             <RowDefinition Height="36"/>     <!-- 0: title bar -->
             <RowDefinition Height="Auto"/>   <!-- 1: scan toolbar -->
             <RowDefinition Height="*"/>      <!-- 2: devices pane -->
-            <RowDefinition Height="23"/>     <!-- 3: footer / status bar -->
+            <RowDefinition Height="24"/>     <!-- 3: footer / status bar (24px + 11.5/10.5 type, family standard) -->
         </Grid.RowDefinitions>
 
         <!-- Custom Title Bar -->
@@ -57,9 +57,9 @@
                            RenderOptions.BitmapScalingMode="HighQuality"/>
                     <!-- Typewriter wordmark with KillerPDF-style soft shadow: a blurred dark copy behind the
                          crisp text, faded by IconShadowOpacity (0 in light mode = no shadow).
-                         Clicking it opens the website (same rule as KillerPDF/KillerFind). -->
-                    <Grid VerticalAlignment="Center" WindowChrome.IsHitTestVisibleInChrome="True"
-                          Cursor="Hand" ToolTip="scan.killertools.net" Background="Transparent" MouseLeftButtonUp="Wordmark_Click">
+                         Plain chrome: no hit-test opt-in, so clicking it (like any empty title-bar
+                         area) drags the window. The website link lives in About. -->
+                    <Grid VerticalAlignment="Center" Background="Transparent">
                         <StackPanel Orientation="Horizontal" Margin="1,2,0,0" Opacity="{DynamicResource IconShadowOpacity}">
                             <StackPanel.Effect><BlurEffect Radius="3"/></StackPanel.Effect>
                             <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="18"><Run Text="Killer" Foreground="#D8000000"/><Run Text="Scan" FontSize="23.4" FontWeight="Bold" Foreground="#D8000000"/></TextBlock>
@@ -173,7 +173,12 @@
         </Border>
 
         <!-- Scan / toolbar - part of the chrome, blends with the title bar above -->
-        <Border Grid.Row="1" Background="{DynamicResource BackgroundBrush}" Padding="16,8">
+        <!-- Top padding 0 + a 1px pull-up: the title bar's fixed 36px row leaves ~9px of slack under
+             the wordmark, so the toolbar's own 8px top padding read as ~17px above the subnet box vs
+             8px below. Removing the 8 and overlapping the title row by 1 equalizes it at 8/8; both
+             bars share the same background+grain, so the 1px overlap is invisible. -->
+        <Border Grid.Row="1" Background="{DynamicResource BackgroundBrush}" Padding="16,0,16,8" Margin="0,-1,0,0"
+                MouseLeftButtonDown="Toolbar_MouseDown">
             <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -184,8 +189,10 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Film grain over the toolbar (behind content), matching the title bar -->
-                    <Border Grid.ColumnSpan="6" IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}" Margin="-16,-8">
+                    <!-- Film grain over the toolbar (behind content), matching the title bar.
+                         Negative margin mirrors the Border's padding (16,0,16,8) so the grain
+                         covers the bar exactly once - no double-grain band. -->
+                    <Border Grid.ColumnSpan="6" IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}" Margin="-16,0,-16,-8">
                         <Border.Background>
                             <ImageBrush x:Name="ToolbarGrainBrush" TileMode="Tile"
                                         ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
@@ -239,7 +246,7 @@
         <!-- Devices pane - the lightest tier, lifted above the chrome with an outward drop shadow
              (kept tight to the bars; the shadow overlays them rather than adding gap) -->
         <Border Grid.Row="2" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
-                BorderThickness="1" CornerRadius="4" Margin="8,4,8,5" Panel.ZIndex="10">
+                BorderThickness="1" CornerRadius="4" Margin="8,0,8,0" Panel.ZIndex="10">
             <Border.Effect>
                 <DropShadowEffect Color="Black" BlurRadius="16" ShadowDepth="0" Opacity="0.5"/>
             </Border.Effect>
@@ -257,7 +264,7 @@
                     </Border.Background>
                 </Border>
 
-                <Grid Grid.Row="0" Margin="12,8,12,4">
+                <Grid Grid.Row="0" Margin="12,8,12,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
@@ -353,7 +360,7 @@
 
                 <!-- Results DataGrid -->
                 <DataGrid Grid.Row="1" x:Name="ResultsGrid"
-                          Margin="12,0,3,8"
+                          Margin="8,0,0,8"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"
                           Background="Transparent"
@@ -363,6 +370,8 @@
                           HorizontalGridLinesBrush="{DynamicResource PaneBorderBrush}"
                           HeadersVisibility="Column"
                           CanUserSortColumns="True"
+                          CanUserResizeColumns="True"
+                          VirtualizingPanel.ScrollUnit="Pixel"
                           SelectionMode="Single"
                           ColumnHeaderHeight="28"
                           RowHeight="28"
@@ -370,8 +379,8 @@
                           RowStyle="{StaticResource DarkDataGridRow}"
                           CellStyle="{StaticResource DarkDataGridCell}">
 
-                    <!-- Custom template: vertical scrollbar gets its own column to the RIGHT of the
-                         rows (with a gap), instead of overlapping the table content. -->
+                    <!-- Custom template: vertical scrollbar overlays the table's 8px right inset
+                         at the pane edge, so it never takes layout space from the rows. -->
                     <DataGrid.Template>
                         <ControlTemplate TargetType="DataGrid">
                             <Border Background="{TemplateBinding Background}"
@@ -391,21 +400,28 @@
                                                     <RowDefinition Height="*"/>
                                                     <RowDefinition Height="Auto"/>
                                                 </Grid.RowDefinitions>
-                                                <Border Grid.Row="0" Grid.Column="0" SizeChanged="HeaderStrip_SizeChanged">
+                                                <Border Grid.Row="0" Grid.Column="0" Margin="0,0,8,0" SizeChanged="HeaderStrip_SizeChanged">
                                                     <DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter"
                                                         Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
                                                 </Border>
                                                 <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
-                                                    Grid.Row="1" Grid.Column="0"
+                                                    Grid.Row="1" Grid.Column="0" Margin="0,0,8,0"
                                                     CanContentScroll="{TemplateBinding CanContentScroll}"/>
+                                                <!-- Overlay bar: the DataGrid itself now runs to the pane edge
+                                                     (no right margin) while header/content keep an 8px right
+                                                     inset above. The bar sits in the SAME cell as the content,
+                                                     right-aligned, so it floats in that 8px gap at the pane edge
+                                                     (like the website) and showing/hiding it never reflows the
+                                                     table. 8px top margin keeps it off the header strip. -->
                                                 <ScrollBar x:Name="PART_VerticalScrollBar"
-                                                    Grid.Row="1" Grid.Column="1" Orientation="Vertical" Margin="6,0,0,0"
+                                                    Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"
+                                                    Orientation="Vertical" Margin="0,8,0,0"
                                                     Maximum="{TemplateBinding ScrollableHeight}"
                                                     ViewportSize="{TemplateBinding ViewportHeight}"
                                                     Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
                                                     Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
                                                 <ScrollBar x:Name="PART_HorizontalScrollBar"
-                                                    Grid.Row="2" Grid.Column="0" Orientation="Horizontal"
+                                                    Grid.Row="2" Grid.Column="0" Margin="0,0,8,0" Orientation="Horizontal"
                                                     Maximum="{TemplateBinding ScrollableWidth}"
                                                     ViewportSize="{TemplateBinding ViewportWidth}"
                                                     Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
@@ -482,6 +498,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="DataGridColumnHeader">
+                                        <Grid>
                                         <Border x:Name="hdrBg"
                                                 Background="{TemplateBinding Background}"
                                                 BorderBrush="{TemplateBinding BorderBrush}"
@@ -504,6 +521,23 @@
                                                            Visibility="Collapsed"/>
                                             </Grid>
                                         </Border>
+                                        <!-- Column-resize grippers: WPF wires resize drags to these exact
+                                             PART_ names; the old template dropped them, which killed column
+                                             resizing. Invisible 8px grab zones straddling each column edge,
+                                             so defaults stay as designed but users can drag. -->
+                                        <Thumb x:Name="PART_LeftHeaderGripper" HorizontalAlignment="Left"
+                                               Width="8" Margin="-4,0,0,0" Cursor="SizeWE">
+                                            <Thumb.Template>
+                                                <ControlTemplate TargetType="Thumb"><Border Background="Transparent"/></ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                        <Thumb x:Name="PART_RightHeaderGripper" HorizontalAlignment="Right"
+                                               Width="8" Margin="0,0,-4,0" Cursor="SizeWE">
+                                            <Thumb.Template>
+                                                <ControlTemplate TargetType="Thumb"><Border Background="Transparent"/></ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                        </Grid>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="SortDirection" Value="{x:Static cm:ListSortDirection.Ascending}">
                                                 <Setter TargetName="sortGlyph" Property="Visibility" Value="Visible"/>
@@ -528,11 +562,11 @@
                     </DataGrid.ColumnHeaderStyle>
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn x:Name="ColIp" Header="{DynamicResource Str_Col_Ip}" Binding="{Binding IpAddress}" Width="120" SortMemberPath="IpSortKey"/>
-                        <DataGridTextColumn x:Name="ColHost" Header="{DynamicResource Str_Col_Host}" Binding="{Binding Hostname}" Width="170"/>
-                        <DataGridTextColumn x:Name="ColMac" Header="{DynamicResource Str_Col_Mac}" Binding="{Binding MacAddress}" Width="145"/>
-                        <DataGridTextColumn x:Name="ColVendor" Header="{DynamicResource Str_Col_Vendor}" Binding="{Binding Vendor}" Width="*"/>
-                        <DataGridTemplateColumn x:Name="ColType" Header="{DynamicResource Str_Col_Type}" Width="120" SortMemberPath="DeviceType">
+                        <DataGridTextColumn x:Name="ColIp" Header="{DynamicResource Str_Col_Ip}" Binding="{Binding IpAddress}" Width="Auto" MinWidth="92" SortMemberPath="IpSortKey"/>
+                        <DataGridTextColumn x:Name="ColHost" Header="{DynamicResource Str_Col_Host}" Binding="{Binding Hostname}" Width="Auto" MinWidth="142" MaxWidth="220"/>
+                        <DataGridTextColumn x:Name="ColMac" Header="{DynamicResource Str_Col_Mac}" Binding="{Binding MacAddress}" Width="Auto" MinWidth="110"/>
+                        <DataGridTextColumn x:Name="ColVendor" Header="{DynamicResource Str_Col_Vendor}" Binding="{Binding Vendor}" Width="2*"/>
+                        <DataGridTemplateColumn x:Name="ColType" Header="{DynamicResource Str_Col_Type}" Width="Auto" MinWidth="95" SortMemberPath="DeviceType">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding DeviceType}" FontWeight="Medium">
@@ -604,7 +638,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn x:Name="ColPorts" Header="{DynamicResource Str_Col_Ports}" Binding="{Binding OpenPortsDisplay}" Width="180"/>
+                        <DataGridTextColumn x:Name="ColPorts" Header="{DynamicResource Str_Col_Ports}" Binding="{Binding OpenPortsDisplay}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
@@ -622,15 +656,15 @@
                 </Border>
                 <TextBlock x:Name="StatusText" Text="Ready"
                            Foreground="{DynamicResource ChromeTextBrush}" FontFamily="Consolas"
-                           FontSize="12" VerticalAlignment="Center"/>
+                           FontSize="11.5" VerticalAlignment="Center"/>
                 <!-- Portable mode indicator (hidden when installed) -->
                 <StackPanel x:Name="PortableBadge" Orientation="Horizontal"
                             HorizontalAlignment="Center" VerticalAlignment="Center"
                             Visibility="Collapsed">
-                    <TextBlock Text="PORTABLE" Foreground="{DynamicResource TextFooter}"
+                    <TextBlock Text="{DynamicResource Str_Portable}" Foreground="{DynamicResource TextFooter}"
                                FontFamily="Consolas" FontSize="9"
                                VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <Button x:Name="InstallBtn" Content="Install KillerScan..."
+                    <Button x:Name="InstallBtn" Content="{DynamicResource Str_InstallBtn}"
                             Click="Install_Click" Style="{StaticResource OutlineButton}"
                             FontFamily="Segoe UI" FontSize="10" Padding="8,1"
                             VerticalAlignment="Center"/>
@@ -643,11 +677,11 @@
                                  Visibility="Collapsed" Margin="0,0,12,0"/>
                     <TextBlock x:Name="VersionLabel" Text="v1.5.2"
                                Foreground="{DynamicResource TextFooter}" FontFamily="Consolas"
-                               FontSize="10" VerticalAlignment="Center" Margin="0,0,12,0"
+                               FontSize="10.5" VerticalAlignment="Center" Margin="0,0,12,0"
                                Cursor="Hand" ToolTip="About KillerScan"
                                MouseLeftButtonUp="VersionLabel_Click"/>
                     <!-- 14px trailing margin keeps the copyright clear of the corner grip (family standard) -->
-                    <TextBlock FontSize="10" VerticalAlignment="Center"
+                    <TextBlock FontSize="10.5" VerticalAlignment="Center"
                                FontFamily="Consolas" Margin="0,0,14,0">
                         <Run Text="&#x00A9; 2026 " Foreground="{DynamicResource TextFooter}"/>
                         <Hyperlink NavigateUri="https://thekiller.net"
@@ -678,7 +712,7 @@
              The close X is blended into the card (no separate title bar) with a red hover. -->
         <Grid x:Name="AboutOverlay" Grid.RowSpan="4" Panel.ZIndex="9000" Visibility="Collapsed"
               Background="#88000000" MouseLeftButtonDown="AboutOverlay_Click">
-            <Grid Width="468" VerticalAlignment="Center" MouseLeftButtonDown="AboutCard_Click">
+            <Grid Width="454" VerticalAlignment="Center" MouseLeftButtonDown="AboutCard_Click">
                 <!-- Shadow on a separate element so the card text stays crisp -->
                 <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="6" IsHitTestVisible="False">
                     <Border.Effect>
@@ -722,7 +756,7 @@
                             </Button.Style>
                         </Button>
 
-                        <StackPanel Margin="24,22,24,18">
+                        <StackPanel Margin="18,10,18,18">
                             <!-- Header: icon to the left of the wordmark + description + tagline.
                                  A Grid (not a horizontal StackPanel) so the text column is bounded and wraps. -->
                             <Grid Margin="0,0,0,14">
@@ -742,7 +776,7 @@
                                                    Opacity="{DynamicResource IconShadowOpacity}"><TextBlock.Effect><BlurEffect Radius="2"/></TextBlock.Effect><Run Text="Killer" FontSize="22" Foreground="#C0000000"/><Run Text="Scan" FontSize="28.6" FontWeight="Bold" Foreground="#C0000000"/></TextBlock>
                                         <TextBlock FontFamily="{DynamicResource WordmarkFont}"><Run Text="Killer" FontSize="22" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="28.6" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
                                     </Grid>
-                                    <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"><Run Text="{DynamicResource Str_About_DescA}"/><Hyperlink NavigateUri="https://killertools.net" RequestNavigate="AboutLink_Navigate" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None">Killer Tools</Hyperlink><Run Text="{DynamicResource Str_About_DescB}"/></TextBlock>
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"><Run Text="{DynamicResource Str_About_DescA}"/><Run Text="GPLv3 "/><Hyperlink NavigateUri="https://killertools.net" RequestNavigate="AboutLink_Navigate" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None">Killer Tools</Hyperlink><Run Text="{DynamicResource Str_About_DescB}"/></TextBlock>
                                 </StackPanel>
                             </Grid>
 
@@ -804,8 +838,6 @@
                                 <TextBlock x:Name="AboutUpdateText" Text="Update available" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}"/>
                             </Button>
 
-                            <!-- Footer -->
-                            <TextBlock Margin="0,14,0,0" Foreground="{DynamicResource TextFooter}" FontFamily="Consolas" FontSize="10.5"><Run Text="&#x00A9; 2026 "/><Hyperlink NavigateUri="https://thekiller.net" RequestNavigate="AboutLink_Navigate" Foreground="{DynamicResource TextFooter}" TextDecorations="None">Steve the Killer</Hyperlink><Run Text="  &#183;  GPLv3"/></TextBlock>
                         </StackPanel>
                     </Grid>
                 </Border>

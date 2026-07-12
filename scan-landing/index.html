@@ -23,15 +23,18 @@
 <meta name="twitter:description" content="One exe. No installer, no agent, no account, no telemetry. A fast local network scanner built by a field tech, for field techs. GPLv3.">
 <meta name="twitter:image" content="https://killerscan.net/og-image.png">
 <script defer src="https://koya.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
-<link rel="stylesheet" href="ks.css?v=10">
+<link rel="stylesheet" href="ks.css?v=13">
 <style>
 /* ---- Page-specific (landing) ---- */
 .content-inner { max-width: 1100px; margin: 0 auto; padding: 0 28px 50px; }
 
 /* Hero */
-.hero { padding: 46px 0 28px; text-align: center; }
+.hero { padding: 12px 0 28px; text-align: center; }
 .hero .wm-logo { height: clamp(54px, 10vw, 104px); margin: 0 auto; filter: drop-shadow(0 4px 7px rgba(0,0,0,0.5)); }
-.hero .tagline { margin: 18px auto 0; max-width: 620px; font-size: 16px; color: var(--text2); }
+.hero .hero-lockup { display: flex; align-items: center; justify-content: center; gap: clamp(10px, 2vw, 22px); flex-wrap: wrap; }
+.hero .hero-lockup .wm-logo { margin: 0; }
+.hero .hero-icon { height: clamp(120px, 24vw, 230px); width: auto; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5)); }
+.hero .tagline { margin: 10px auto 0; max-width: 620px; font-size: 16px; color: var(--text2); }
 
 .hero-blurbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 980px; margin: 30px auto 0; text-align: left; }
 .blurb h3 { font-family: 'KillerScan', 'Courier New', monospace; font-size: 15px; font-weight: normal; letter-spacing: .5px; color: var(--accent); margin-bottom: 7px; text-shadow: 0 2px 5px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.5); }
@@ -47,7 +50,7 @@
 .hero-cta { display: flex; flex-direction: column; align-items: stretch; gap: 14px; flex: 0 1 360px; }
 .cta-row { display: flex; flex-direction: column; gap: 12px; max-width: 360px; }
 .download-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: var(--btn); color: var(--btn-text); font-size: 15px; font-weight: 700; padding: 14px 28px; border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.35); transition: filter 0.15s, transform 0.1s, box-shadow 0.15s; }
-.download-btn:hover { filter: brightness(1.4); transform: translateY(-1px); box-shadow: 0 12px 28px rgba(0,0,0,0.5); color: var(--btn-text); }
+.download-btn:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 12px 28px rgba(0,0,0,0.5); color: var(--btn-text); }
 .download-btn:active { transform: translateY(1px); }
 .download-btn svg { width: 18px; height: 18px; fill: currentColor; }
 .gh-btn { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; border: 1.5px solid var(--accent); color: var(--accent); background: transparent; font-size: 15px; font-weight: 700; padding: 12.5px 24px; border-radius: 6px; transition: background 0.15s, color 0.15s; }
@@ -59,7 +62,7 @@
 .features h2 { font-family: 'KillerScan', 'Courier New', monospace; font-size: 24px; font-weight: normal; letter-spacing: .5px; color: var(--text); text-align: center; margin-bottom: 26px; }
 .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 14px; }
 .feature-card { background: var(--modal) url('grain.png') repeat; background-size: 256px 256px; border: 1px solid var(--pane-border); border-top: 2px solid var(--tab-edge); border-radius: 6px; padding: 18px 20px; transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s; }
-.feature-card:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(0,0,0,0.4); border-right-color: var(--dragline); border-bottom-color: var(--dragline); border-left-color: var(--dragline); }
+.feature-card:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(0,0,0,0.4); border-right-color: var(--dragline); border-bottom-color: var(--dragline); border-left-color: var(--dragline); border-top-color: var(--accent); }
 .feature-card h3 { font-family: 'KillerScan', 'Courier New', monospace; font-size: 15px; font-weight: normal; letter-spacing: .5px; margin-bottom: 8px; color: var(--accent); text-shadow: 0 2px 5px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.5); }
 html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { text-shadow: none; }
 .feature-card p { font-size: 13px; color: var(--muted); line-height: 1.55; }
@@ -136,13 +139,16 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 </div>
 </div>
 
-<div class="frame-shadow" aria-hidden="true"></div>
 <div class="shell">
 <div class="content">
+<div class="content-scroll">
 <div class="content-inner">
 
 <section class="hero">
+<div class="hero-lockup">
+<img class="hero-icon" src="ks-icon.png" alt="" aria-hidden="true" width="230" height="230">
 <img class="wm-logo" src="brand/killerscan-logo-dark-orange.svg" alt="KillerScan">
+</div>
 <p class="tagline" data-i18n="tagline">A fast, local network scanner that finds every device on the LAN, identifies who made it, and works out what it is - all from one portable .exe.</p>
 <div class="hero-blurbs">
 <div class="blurb"><h3 data-i18n="b1_t">Fully featured</h3><ul class="blurb-list" data-i18n="b1_d">
@@ -165,11 +171,11 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 </div>
 </div>
 <div class="hero-info">
-<div class="row"><span class="k">version</span>&nbsp;<span class="v">KillerScan v1.5.1</span></div>
-<div class="row"><span class="k">released</span>&nbsp;<span class="v">2026-07-02</span></div>
-<div class="row"><span class="k">size</span>&nbsp;<span class="v">2.63 MB exe</span></div>
+<div class="row"><span class="k">version</span>&nbsp;<span class="v">KillerScan v1.5.2</span></div>
+<div class="row"><span class="k">released</span>&nbsp;<span class="v">2026-07-12</span></div>
+<div class="row"><span class="k">size</span>&nbsp;<span class="v">2.60 MB exe</span></div>
 <div class="row"><span class="k">platform</span>&nbsp;<span class="v">Windows 10/11 x64</span></div>
-<div class="row"><span class="k">sha256</span>&nbsp;<span class="v hash">67d1527ba0f17998c77fef4c08b464ae<br>c91e792a80e35560f43a0c68cfbea4eb</span></div>
+<div class="row"><span class="k">sha256</span>&nbsp;<span class="v hash">03a03c37245e6c0ebc2c21421d0336c7<br>87cc9e071e792c48736bca46ef9f711d</span></div>
 <p class="note" data-i18n="hero_note">Install or run portable. Free, open source, GPLv3.<br>No agent, no account, no subscription.<br>No telemetry is sent and no ads... ever.</p>
 </div>
 </div>
@@ -195,6 +201,7 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 
 </div>
 </div>
+</div>
 
 <aside class="sidebar">
 <div class="sb-thumbs" id="sbThumbs">
@@ -205,14 +212,14 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 
 <footer class="statusbar">
 <span class="left"><a href="https://github.com/SteveTheKiller/KillerScan" target="_blank" rel="noopener" data-i18n="footer_src">Source on GitHub</a> &middot; GPLv3 &middot; Part of <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
-<span class="right"><span id="verEgg" title="click me">v1.5.1</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
+<span class="right"><span id="verEgg" title="click me">v1.5.2</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
 </footer>
 
 <div class="lightbox" id="lightbox"><img id="lightboxImg" src="" alt="KillerScan screenshot"></div>
 <div class="egg-toast" id="eggToast"></div>
 
 <script src="ks-i18n.js?v=1"></script>
-<script src="ks.js?v=3"></script>
+<script src="ks.js?v=4"></script>
 <script>
 (function () {
   // Screenshot strip: tries screenshots/01.png .. NN.png, drops any that 404, and shows a

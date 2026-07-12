@@ -66,6 +66,14 @@ namespace KillerScan.Services
         public event Action<int>? ProgressChanged;
         public event Action<NetworkDevice>? DeviceFound;
 
+        /// <summary>
+        /// Resolves a Str_* key to the current locale's FORMAT string for status messages. Set by
+        /// the UI (WireSession); when unset (headless/tests) the English fallback passed to L() is
+        /// used, so the scanner never depends on WPF resources itself.
+        /// </summary>
+        public Func<string, string?>? Localizer { get; set; }
+        private string L(string key, string fallback) => Localizer?.Invoke(key) ?? fallback;
+
         // Network-wide service discovery results (collected once per scan, keyed by IP).
         private Dictionary<string, MulticastDiscovery.MdnsInfo> _mdns = [];
         private Dictionary<string, string> _ssdp = [];
@@ -108,7 +116,7 @@ namespace KillerScan.Services
             int total = addresses.Count;
 
             // Phase 1: Fast ping sweep + ARP cache
-            StatusChanged?.Invoke($"Discovering hosts on {cidr}...");
+            StatusChanged?.Invoke(string.Format(L("Str_St_Discovering", "Discovering hosts on {0}..."), cidr));
             var discoveredHosts = new System.Collections.Concurrent.ConcurrentDictionary<string, (IPAddress Addr, string Mac)>();
 
             // Grab existing ARP cache first (instant, catches IoT devices)
@@ -170,7 +178,7 @@ namespace KillerScan.Services
             }
 
             // Resolve MAC addresses via ARP for discovered hosts (fast, they're alive)
-            StatusChanged?.Invoke($"Resolving {discoveredHosts.Count} MAC addresses...");
+            StatusChanged?.Invoke(string.Format(L("Str_St_ResolvingMacs", "Resolving {0} MAC addresses..."), discoveredHosts.Count));
             var macTasks = discoveredHosts.Keys.ToList().Select(async ip =>
             {
                 var addr = IPAddress.Parse(ip);
@@ -216,7 +224,7 @@ namespace KillerScan.Services
 
             if (fullScan)
             {
-                StatusChanged?.Invoke($"Probing {total} alive hosts...");
+                StatusChanged?.Invoke(string.Format(L("Str_St_Probing", "Probing {0} alive hosts..."), total));
                 var probeSemaphore = new SemaphoreSlim(20);
                 var probeTasks = sortedHosts.Select(async entry =>
                 {
@@ -238,7 +246,7 @@ namespace KillerScan.Services
             else
             {
                 // Quick scan: resolve hostname and vendor in parallel, no port scan
-                StatusChanged?.Invoke($"Resolving {total} hosts...");
+                StatusChanged?.Invoke(string.Format(L("Str_St_ResolvingHosts", "Resolving {0} hosts..."), total));
                 var quickSemaphore = new SemaphoreSlim(20);
                 var quickTasks = sortedHosts.Select(async entry =>
                 {
@@ -276,7 +284,7 @@ namespace KillerScan.Services
                 devices.AddRange(quickResults.OrderBy(d => d.IpSortKey));
             }
 
-            StatusChanged?.Invoke($"Scan complete -- {devices.Count} devices found");
+            StatusChanged?.Invoke(string.Format(L("Str_St_ScanComplete", "Scan complete -- {0} devices found"), devices.Count));
             ProgressChanged?.Invoke(100);
             return devices;
         }

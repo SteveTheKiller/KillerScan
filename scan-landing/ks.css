@@ -2,9 +2,9 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 /* ---- Theme palettes (match the KillerScan app) ---- */
-html[data-theme="dark"]     { --bg:#333333; --surface:#2b2b2b; --panel:#3a3a3a; --sidebar:#1c1c1c; --canvas:#3a3a3a; --border:#2e2e2e; --pane-border:#2e2e2e; --dragline:#363636; --tab-edge:var(--btn); --accent:#e8962c; --accent-text:#ffffff; --text:#ededed; --text2:#bcbcbc; --muted:#a2a2a2; --footer-text:#b4b4b4; --danger:#ef4444; --grain:0.26; --btn:var(--accent); --btn-text:#ffffff; --logo-pdf:var(--accent); --chrome:#222222; --modal:#1e1e1e; --fade:rgba(0,0,0,0.55); }
-html[data-theme="light"]    { --bg:#b8b8b8; --surface:#e8e8e8; --panel:#f3f3f3; --sidebar:#dcdcdc; --canvas:#b8b8b8; --border:#c0c0c0; --pane-border:#a8a8a8; --dragline:#a0a0a0; --tab-edge:var(--btn); --accent:#18843d; --accent-text:#ffffff; --text:#1a1a1a; --text2:#555555; --muted:#666666; --footer-text:#555555; --danger:#dc2626; --grain:0.28; --btn:var(--accent); --btn-text:#ffffff; --logo-pdf:var(--accent); --chrome:#dcdcdc; --modal:#ffffff; --fade:rgba(0,0,0,0.22); }
-html[data-theme="hc"]       { --bg:#0d0d0d; --surface:#0a0a0a; --panel:#141414; --sidebar:#000000; --canvas:#0d0d0d; --border:#787878; --pane-border:#333333; --dragline:#373737; --tab-edge:var(--btn); --accent:#00ff66; --accent-text:#000000; --text:#ffffff; --text2:#cccccc; --muted:#cccccc; --footer-text:#aaaaaa; --danger:#ff4444; --grain:0.08; --btn:var(--accent); --btn-text:#000000; --logo-pdf:var(--accent); --chrome:#000000; --modal:#000000; --fade:rgba(0,0,0,0.75); }
+html[data-theme="dark"]     { --bg:#333333; --surface:#2b2b2b; --panel:#3a3a3a; --sidebar:#1c1c1c; --canvas:#3a3a3a; --border:#2e2e2e; --pane-border:#2e2e2e; --dragline:#363636; --tab-edge:var(--sel,var(--btn)); --accent:#e8962c; --accent-text:#ffffff; --text:#ededed; --text2:#bcbcbc; --muted:#a2a2a2; --footer-text:#b4b4b4; --danger:#ef4444; --grain:0.26; --btn:var(--accent); --btn-text:#ffffff; --logo-pdf:var(--accent); --chrome:#222222; --modal:#1e1e1e; --fade:rgba(0,0,0,0.55); }
+html[data-theme="light"]    { --bg:#b8b8b8; --surface:#e8e8e8; --panel:#f3f3f3; --sidebar:#dcdcdc; --canvas:#b8b8b8; --border:#c0c0c0; --pane-border:#a8a8a8; --dragline:#a0a0a0; --tab-edge:var(--sel,var(--btn)); --accent:#18843d; --accent-text:#ffffff; --text:#1a1a1a; --text2:#555555; --muted:#666666; --footer-text:#555555; --danger:#dc2626; --grain:0.28; --btn:var(--accent); --btn-text:#ffffff; --logo-pdf:var(--accent); --chrome:#dcdcdc; --modal:#ffffff; --fade:rgba(0,0,0,0.22); }
+html[data-theme="hc"]       { --bg:#0d0d0d; --surface:#0a0a0a; --panel:#141414; --sidebar:#000000; --canvas:#0d0d0d; --border:#787878; --pane-border:#333333; --dragline:#373737; --tab-edge:var(--sel,var(--btn)); --accent:#00ff66; --accent-text:#000000; --text:#ffffff; --text2:#cccccc; --muted:#cccccc; --footer-text:#aaaaaa; --danger:#ff4444; --grain:0.08; --btn:var(--accent); --btn-text:#000000; --logo-pdf:var(--accent); --chrome:#000000; --modal:#000000; --fade:rgba(0,0,0,0.75); }
 html[data-theme="blood"]    { --bg:#4a1f20; --surface:#321416; --panel:#321416; --sidebar:#1e0a0b; --canvas:#4a1f20; --border:#361619; --pane-border:#3a1a1d; --dragline:#3e1e21; --tab-edge:rgba(255,255,255,0.27); --accent:#ffffff; --accent-text:#450002; --text:#fffde8; --text2:#b09e9c; --muted:#f8c99e; --footer-text:#b09e9c; --danger:#ff6666; --grain:0.32; --btn:#1ea54c; --btn-text:#ffffff; --logo-pdf:#1ea54c; --chrome:#240c0d; --modal:#1e0a0b; --fade:rgba(0,0,0,0.6); }
 html[data-theme="greed"]    { --bg:#0a5234; --surface:#003824; --panel:#003824; --sidebar:#001e13; --canvas:#0a5234; --border:#07371f; --pane-border:#07371f; --dragline:#0b3b23; --tab-edge:rgba(255,255,255,0.27); --accent:#ffffff; --accent-text:#002819; --text:#fffde8; --text2:#a6a99a; --muted:#e0d49a; --footer-text:#a6a99a; --danger:#ff6666; --grain:0.26; --btn:#e6b800; --btn-text:#1a1a1a; --logo-pdf:#1ea54c; --chrome:#002115; --modal:#001e13; --fade:rgba(0,0,0,0.6); }
 html[data-theme="cyanotic"] { --bg:#0a4a6e; --surface:#002e48; --panel:#002e48; --sidebar:#001a28; --canvas:#0a4a6e; --border:#093250; --pane-border:#093250; --dragline:#0d3654; --tab-edge:rgba(255,255,255,0.27); --accent:#ffffff; --accent-text:#001e2e; --text:#fffde8; --text2:#9ba3ac; --muted:#e0d49a; --footer-text:#9ba3ac; --danger:#ff6666; --grain:0.26; --btn:#1ea54c; --btn-text:#ffffff; --logo-pdf:#1ea54c; --chrome:#001a28; --modal:#001624; --fade:rgba(0,0,0,0.6); }
@@ -44,7 +44,7 @@ html[data-theme="cyanotic"] .wm-logo .wms { color: #e8962c; }
 html[data-theme="light"] .page-title { text-shadow: none; }
 
 /* ---- Top bar (single app-style chrome bar) ---- */
-.topbar { position: relative; flex: 0 0 auto; z-index: 100; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; min-height: 62px; padding: 9px 16px; background: var(--sidebar); }
+.topbar { position: relative; flex: 0 0 auto; z-index: 100; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 8px 16px 0; background: var(--sidebar); }
 .topbar::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url('grain.png?v=2') repeat fixed; background-size: 256px 256px; opacity: 1; }
 .topbar > * { position: relative; z-index: 1; }
 .tb-home { display: inline-flex; align-items: center; gap: 9px; color: var(--text); }
@@ -88,10 +88,15 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 .lang-item[aria-pressed="true"] { color: var(--accent); font-weight: 600; }
 
 /* ---- App body: content + right-hand sidebar ---- */
-.shell { display: grid; grid-template-columns: 1fr 268px; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+/* Chrome-toned shell: the gutter around the rounded content pane reads as grained chrome, like the app windows and killertools.net */
+.shell { display: grid; grid-template-columns: 1fr 268px; flex: 1 1 auto; min-height: 0; overflow: hidden; position: relative; background: var(--sidebar); }
+.shell::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url('grain.png?v=2') repeat fixed; background-size: 256px 256px; opacity: 1; }
 @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
-.content { min-width: 0; min-height: 0; overflow-y: auto; position: relative; scroll-behavior: smooth; background-image: url('grain.png?v=2'); background-repeat: repeat; background-size: 256px 256px; background-attachment: fixed; animation: pageFadeIn .28s ease both; }
-.frame-shadow { position: fixed; top: 62px; left: 0; right: 268px; bottom: 30px; pointer-events: none; z-index: 101; border: 1px solid var(--pane-border); border-right-color: var(--dragline); border-bottom-color: var(--dragline); border-left: 0; box-shadow: 0 0 20px 0 rgba(0,0,0,0.42); border-radius: 0; }
+/* Inset rounded pane (killertools.net MenuLayout treatment): 8px chrome gutter on the window edges, 2px hugging the sidebar, none above the statusbar.
+   The pane carries its own frame line + outward shadow (z 6: above the sidebar and the statusbar chrome, below the statusbar text at z 7),
+   and clips the inner scroller so the scrollbar lives INSIDE the rounded pane. */
+.content { min-width: 0; min-height: 0; overflow: hidden; position: relative; z-index: 6; margin: 8px 2px 0 8px; border: 1px solid var(--pane-border); border-radius: 14px; box-shadow: 0 0 20px 0 rgba(0,0,0,0.42); background-color: var(--bg); background-image: url('grain.png?v=2'); background-repeat: repeat; background-size: 256px 256px; background-attachment: fixed; animation: pageFadeIn .28s ease both; }
+.content-scroll { height: 100%; overflow-y: auto; scroll-behavior: smooth; }
 
 /* ---- Sidebar (the app's docked pane) ---- */
 .sidebar { position: relative; height: 100%; min-height: 0; background: var(--sidebar); display: flex; flex-direction: column; z-index: 5; }
@@ -107,11 +112,11 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 .sb-tabs .on { color: var(--accent); border-bottom: 2px solid var(--tab-edge); }
 
 /* ---- Status bar footer (matches the app) ---- */
-.statusbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 6px 16px; background: var(--sidebar); font-family: Consolas, monospace; font-size: 11.5px; color: var(--footer-text); position: relative; flex: 0 0 auto; z-index: 10; }
+.statusbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 3px 16px; background: var(--sidebar); font-family: Consolas, monospace; font-size: 11.5px; color: var(--footer-text); position: relative; flex: 0 0 auto; }
 .statusbar::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: url('grain.png?v=2') repeat fixed; background-size: 256px 256px; opacity: 1; }
 /* Resize-grip dots in the window corner, matching the app chrome (grain owns ::after) */
-.statusbar::before { content: ""; position: absolute; right: 5px; bottom: 5px; width: 2px; height: 2px; background: var(--footer-text); box-shadow: -4px 0 var(--footer-text), -8px 0 var(--footer-text), 0 -4px var(--footer-text), -4px -4px var(--footer-text), 0 -8px var(--footer-text); opacity: .8; pointer-events: none; z-index: 1; }
-.statusbar > * { position: relative; z-index: 1; }
+.statusbar::before { content: ""; position: absolute; right: 5px; bottom: 5px; width: 2px; height: 2px; background: var(--footer-text); box-shadow: -4px 0 var(--footer-text), -8px 0 var(--footer-text), 0 -4px var(--footer-text), -4px -4px var(--footer-text), 0 -8px var(--footer-text); opacity: .8; pointer-events: none; z-index: 7; }
+.statusbar > * { position: relative; z-index: 7; }
 /* Keep the right-side text clear of the corner grip (family standard spacing) */
 .statusbar .right { padding-right: 10px; }
 .statusbar a { color: var(--footer-text); }
@@ -156,10 +161,10 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 @media (max-width: 900px) {
   html, body { height: auto; overflow: visible; display: block; }
   .shell { grid-template-columns: minmax(0, 1fr); overflow: visible; }
-  .content { overflow: visible; min-height: 0; }
+  .content { overflow: visible; min-height: 0; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+  .content-scroll { height: auto; overflow: visible; }
   .sidebar { position: static; height: auto; min-width: 0; overflow: hidden; border-left: 0; border-top: 1px solid var(--border); }
-  .topbar { gap: 10px; }
-  .frame-shadow { display: none; }
+  .topbar { gap: 10px; padding-bottom: 8px; } /* no pane gutter below 900px, so the bar keeps its own bottom air */
 }
 
 /* ---- Phones: reflow the app-chrome topbar into tidy rows + stack the statusbar ---- */
@@ -183,7 +188,7 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 
 /* ============ Header nav + appearance flyout (shared) ============ */
 .tb-nav { display: inline-flex; align-items: center; gap: 1px; }
-.tb-nav a { font-family: 'KillerScan', 'Courier New', monospace; color: var(--text2); font-size: 18px; font-weight: normal; letter-spacing: .3px; padding: 6px 11px; border-radius: 6px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+.tb-nav a { font-family: 'KillerScan', 'Courier New', monospace; color: var(--text2); font-size: 18px; font-weight: normal; letter-spacing: .3px; line-height: 1.2; padding: 6px 11px; border-radius: 6px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 html[data-theme="light"] .tb-nav a { text-shadow: none; }
 .tb-nav a:hover { color: var(--text); background: color-mix(in srgb, var(--accent) 12%, transparent); filter: none; }
 .tb-nav a.on { color: var(--accent); }
@@ -205,6 +210,7 @@ html[data-theme="light"] .tb-nav a { text-shadow: none; }
 
 /* ============ Landing hero info block (replaces the terminal) ============ */
 .hero-info { background: color-mix(in srgb, var(--modal) 80%, transparent) url('grain.png?v=2') repeat; background-size: 256px 256px; -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); border: 1px solid var(--pane-border); border-left: 2px solid var(--tab-edge); border-right: 2px solid var(--tab-edge); border-radius: 8px; box-shadow: 0 14px 32px rgba(0,0,0,0.4); padding: 15px 14px; font-family: Consolas, monospace; font-size: 13px; line-height: 1.9; flex: 0 1 360px; min-width: 308px; transition: transform 0.12s, box-shadow 0.15s, border-color 0.12s; }
+.hero-info:hover { border-left-color: var(--accent); border-right-color: var(--accent); }
 .hero-info:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0,0,0,0.5); border-top-color: var(--dragline); border-bottom-color: var(--dragline); }
 .hero-info .row { display: flex; gap: 8px; }
 .hero-info .k { color: var(--accent); min-width: 56px; }
@@ -275,7 +281,7 @@ html[data-theme="cyanotic"] .spec-table th { background: var(--chrome); color: v
 }
 
 /* ---- Accent bar: drops down under the toolbar when a base theme is picked (like the app's annotate bars) ---- */
-.accent-bar { position: fixed; left: 0; right: 0; top: 62px; z-index: 102; display: flex; justify-content: center; pointer-events: none; opacity: 0; transform: translateY(-12px); transition: opacity 0.18s ease, transform 0.18s ease; }
+.accent-bar { position: fixed; left: 0; right: 0; top: 44px; z-index: 102; display: flex; justify-content: center; pointer-events: none; opacity: 0; transform: translateY(-12px); transition: opacity 0.18s ease, transform 0.18s ease; }
 .accent-bar.show { opacity: 1; transform: translateY(0); }
 .accent-bar .pill { position: relative; overflow: hidden; pointer-events: auto; display: inline-flex; align-items: center; gap: 11px; background: var(--surface); border: 1px solid var(--pane-border); border-radius: 3px; padding: 8px 13px; box-shadow: 0 0 18px 1px rgba(0,0,0,0.45), 0 14px 30px rgba(0,0,0,0.5); }
 .accent-bar .pill::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url('grain.png?v=2') repeat; background-size: 256px 256px; opacity: 1; border-radius: inherit; }

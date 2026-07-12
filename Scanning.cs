@@ -17,6 +17,11 @@ namespace KillerScan
         /// <summary>Subscribe a session's scanner engine to the UI (only writes when that tab is active).</summary>
         private void WireSession(ScanSession s)
         {
+            // Status messages are composed inside the scan engine (it knows the counts); hand it
+            // a resource lookup so they come out in the active locale. Called from the scan's
+            // background thread, so the lookup marshals to the UI thread.
+            s.Scanner.Localizer = key => Application.Current.Dispatcher.Invoke(
+                () => Application.Current.TryFindResource(key) as string);
             s.Scanner.StatusChanged += status =>
                 Dispatcher.Invoke(() => { s.Status = status; if (s == _active) StatusText.Text = status; });
             s.Scanner.ProgressChanged += pct =>
@@ -65,7 +70,7 @@ namespace KillerScan
             {
                 await s.Scanner.ScanSubnetAsync(s.SubnetText, s.Cts.Token, fullScan: true);
             }
-            catch (OperationCanceledException) { s.Status = "Scan cancelled"; if (s == _active) StatusText.Text = "Scan cancelled"; }
+            catch (OperationCanceledException) { s.Status = Loc("Str_St_ScanCancelled"); if (s == _active) StatusText.Text = s.Status; }
             catch (Exception ex) { MessageBox.Show($"Scan error: {ex.Message}", "KillerScan", MessageBoxButton.OK, MessageBoxImage.Error); }
             finally
             {

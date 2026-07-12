@@ -125,6 +125,8 @@ namespace KillerScan
             }
         }
 
+        private const uint MONITOR_DEFAULTTONEAREST = 0x00000002;
+
         [DllImport("user32.dll")]
         private static extern IntPtr MonitorFromWindow(IntPtr handle, uint flags);
 
@@ -136,6 +138,7 @@ namespace KillerScan
         // resize to Windows). Ported from KillerPDF. ----
         private const int WM_NCLBUTTONDOWN = 0x00A1;
         private const int HTBOTTOMRIGHT = 17;
+        private const int HTCAPTION = 2;
 
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
@@ -146,6 +149,18 @@ namespace KillerScan
             e.Handled = true;
             var hwnd = new WindowInteropHelper(this).Handle;
             SendMessage(hwnd, WM_NCLBUTTONDOWN, new IntPtr(HTBOTTOMRIGHT), IntPtr.Zero);
+        }
+
+        // Lets the scan toolbar act like the title bar for dragging: interactive controls
+        // (subnet box, Scan button) handle their own clicks, so only clicks on the bar's empty
+        // space and passive labels bubble up here and forward a native caption drag. Native
+        // HTCAPTION also gives correct restore-from-maximized-and-drag behavior for free.
+        private void Toolbar_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton != System.Windows.Input.MouseButton.Left) return;
+            e.Handled = true;
+            var hwnd = new WindowInteropHelper(this).Handle;
+            SendMessage(hwnd, WM_NCLBUTTONDOWN, new IntPtr(HTCAPTION), IntPtr.Zero);
         }
 
         [StructLayout(LayoutKind.Sequential)]

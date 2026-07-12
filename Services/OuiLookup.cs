@@ -47,38 +47,43 @@ namespace KillerScan.Services
 
         private static void LoadCore()
         {
-            // Prefer the user-refreshed external list; fall back to the embedded resource.
+            // Load whichever list is LARGER. A new app version can bundle a fresher database than
+            // the user's last in-app refresh, and an upgrade should never keep serving older data
+            // just because an external copy exists. A tie goes to the external copy, so a user
+            // refresh that matches the bundle keeps its provenance and refresh date in About.
+            var external = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             try
             {
                 if (File.Exists(ExternalFilePath))
-                {
                     using (var r = new StreamReader(ExternalFilePath))
-                        LoadFrom(r);
-                    if (OuiTable.Count > 0)
-                    {
-                        UsingExternal = true;
-                        LastRefreshed = File.GetLastWriteTime(ExternalFilePath);
-                        return;
-                    }
-                    OuiTable.Clear();
+                        LoadFrom(r, external);
+            }
+            catch { external.Clear(); }
+
+            var bundled = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            try
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceName = assembly.GetManifestResourceNames()
+                    .FirstOrDefault(n => n.EndsWith("oui.txt"));
+                if (resourceName != null)
+                {
+                    using var stream = assembly.GetManifestResourceStream(resourceName);
+                    if (stream != null)
+                        using (var reader = new StreamReader(stream))
+                            LoadFrom(reader, bundled);
                 }
             }
-            catch { OuiTable.Clear(); }
+            catch { bundled.Clear(); }
 
-            UsingExternal = false;
-            LastRefreshed = null;
-
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = assembly.GetManifestResourceNames()
-                .FirstOrDefault(n => n.EndsWith("oui.txt"));
-            if (resourceName == null) return;
-            using var stream = assembly.GetManifestResourceStream(resourceName);
-            if (stream == null) return;
-            using var reader = new StreamReader(stream);
-            LoadFrom(reader);
+            bool useExternal = external.Count > 0 && external.Count >= bundled.Count;
+            var chosen = useExternal ? external : bundled;
+            foreach (var kv in chosen) OuiTable[kv.Key] = kv.Value;
+            UsingExternal = useExternal;
+            LastRefreshed = useExternal ? File.GetLastWriteTime(ExternalFilePath) : (DateTime?)null;
         }
 
-        private static void LoadFrom(StreamReader reader)
+        private static void LoadFrom(StreamReader reader, Dictionary<string, string> table)
         {
             string? line;
             while ((line = reader.ReadLine()) != null)
@@ -89,7 +94,7 @@ namespace KillerScan.Services
                     // Normalise the key to raw uppercase hex so MA-L (6 hex / 24-bit), MA-M (7 / 28-bit)
                     // and MA-S (9 / 36-bit) prefixes all live in one table and longest-match wins.
                     var key = parts[0].Replace(":", "").Replace("-", "").Trim().ToUpperInvariant();
-                    if (key.Length >= 6) OuiTable[key] = parts[1];
+                    if (key.Length >= 6) table[key] = parts[1];
                 }
             }
         }
