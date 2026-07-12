@@ -25,7 +25,7 @@ Homepage: <https://killerscan.net> · Part of [killertools.net](https://killerto
 - Weighted-score classifier identifies hypervisors, Windows boxes, Linux servers, printers, NAS, network gear, cameras, IoT, mobile, Home Assistant and more; gateway/DNS aware (Router, DNS Server, or Router/DNS - Pi-hole safe)
 - Right-click to copy IP/MAC/hostname, launch RDP/SSH/browser, or override a device type
 - CSV and HTML export
-- Six themes with per-theme accent colours, plus a UI scaffolded for 8 languages
+- Six themes with per-theme accent colors, localized in 9 languages (English, Spanish, Traditional and Simplified Chinese, German, French, Turkish, Bengali, Japanese)
 
 ## Requirements
 

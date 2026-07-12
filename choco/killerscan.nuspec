@@ -16,12 +16,17 @@
     <bugTrackerUrl>https://github.com/SteveTheKiller/KillerScan/issues</bugTrackerUrl>
     <tags>network scanner ip arp lan wifi portable</tags>
     <summary>Network scanner for field techs. No install required, no telemetry.</summary>
-    <description>Fast local network scanner for Windows. Discover devices on your LAN by IP, MAC, hostname, and vendor without needing admin tools or a subscription.
+    <description>Fast local network scanner for Windows, built for field techs. One click maps the subnet - IP, hostname, MAC, vendor, device type, and open ports - with no admin console and no subscription.
 
-- ARP-based device discovery
-- MAC vendor lookup
-- Hostname resolution
-- Single Windows EXE, no runtime install required
+- ARP cache + parallel ping sweep discovery; a second ARP pass catches phones and devices that block ICMP
+- TCP port scan across 30+ common service ports with active fingerprinting: HTTP title, SSH banner, TLS cert, NetBIOS, SNMP, ICMP TTL
+- mDNS (Bonjour) and SSDP (UPnP) discovery spots Chromecasts, printers, Sonos, AirPlay, Roku, Plex, and Synology devices
+- MAC vendor lookup across the full IEEE registries (MA-L, MA-M, MA-S) with randomized-MAC detection; vendor database refreshable in-app
+- Weighted-score classifier identifies routers, hypervisors, Windows and Linux boxes, printers, NAS, cameras, IoT, mobile, and more
+- Right-click to copy IP/MAC/hostname, launch RDP/SSH/browser, or override a device type
+- CSV export and a themeable, sortable HTML report
+- Tabs for scanning multiple subnets, six themes, localized in nine languages
+- Single Windows EXE under 3 MB, no runtime install; self-installs per-user or runs portable
 - GPLv3, local-only, no account, no telemetry
     </description>
     <releaseNotes>https://github.com/SteveTheKiller/KillerScan/releases/tag/vREPLACE_VERSION</releaseNotes>
