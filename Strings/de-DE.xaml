@@ -62,7 +62,7 @@
     <sys:String x:Key="Str_St_ResolvingMacs">Löse {0} MAC-Adressen auf...</sys:String>
     <sys:String x:Key="Str_St_Probing">Prüfe {0} aktive Hosts...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Löse {0} Hosts auf...</sys:String>
-    <sys:String x:Key="Str_St_ScanComplete">Scan abgeschlossen -- {0} Geräte gefunden</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">Scan abgeschlossen - {0} Geräte gefunden</sys:String>
     <sys:String x:Key="Str_St_ScanCancelled">Scan abgebrochen</sys:String>
     <sys:String x:Key="Str_St_Exported">Exportiert nach {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Überschreibung gesetzt: {0} = {1}</sys:String>

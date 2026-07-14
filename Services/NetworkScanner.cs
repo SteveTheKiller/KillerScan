@@ -205,9 +205,9 @@ namespace KillerScan.Services
             {
                 foreach (var ip in discoveredHosts.Keys.ToList())
                 {
-                    var h = discoveredHosts[ip];
-                    if (!string.IsNullOrEmpty(h.Mac) && bogusMacs.Contains(h.Mac))
-                        discoveredHosts[ip] = (h.Addr, "");
+                    var (hAddr, hMac) = discoveredHosts[ip];
+                    if (!string.IsNullOrEmpty(hMac) && bogusMacs.Contains(hMac))
+                        discoveredHosts[ip] = (hAddr, "");
                 }
             }
 
@@ -422,6 +422,116 @@ namespace KillerScan.Services
             device.DeviceType = ClassifyDevice(device);
 
             return device;
+        }
+
+        // -------------------------------------------------------------------
+        // Deep single-host rescan (right-click "Rescan"): far more thorough than
+        // the subnet sweep's per-host probe. Every well-known port 1-1024 plus the
+        // curated high service ports, longer connect timeouts with a retry, fresh
+        // MAC/hostname/TTL, then the full fingerprint + classify pass. Slow (seconds
+        // per host) on purpose - it targets one host on demand, not a whole /24.
+        // Reuses the last full scan's multicast (mDNS/SSDP) results for naming.
+        // -------------------------------------------------------------------
+        public async Task<NetworkDevice> DeepProbeHostAsync(string ip, CancellationToken ct)
+        {
+            var addr = IPAddress.Parse(ip);
+            var device = new NetworkDevice { IpAddress = ip };
+
+            // Fresh MAC via ARP.
+            device.MacAddress = await Task.Run(() => GetMacAddress(addr), ct);
+
+            // Hostname + TTL alongside the port sweep.
+            var dnsTask = Task.Run(async () =>
+            {
+                try { var entry = await Dns.GetHostEntryAsync(addr); device.Hostname = entry.HostName; }
+                catch { }
+            }, ct);
+            var ttlTask = Task.Run(async () =>
+            {
+                try
+                {
+                    using var ping = new Ping();
+                    var reply = await ping.SendPingAsync(addr, 800);
+                    if (reply.Status == IPStatus.Success && reply.Options != null)
+                        device.Ttl = reply.Options.Ttl;
+                }
+                catch { }
+            }, ct);
+
+            // Exhaustive TCP sweep. Bounded concurrency keeps the open-socket count sane;
+            // each port gets a generous timeout and one retry so slow/loaded hosts still answer.
+            using var gate = new SemaphoreSlim(256);
+            var portTasks = DeepPortList.Select(async port =>
+            {
+                await gate.WaitAsync(ct);
+                try
+                {
+                    if (await TryConnectAsync(addr, port, 700)) return port;
+                    if (await TryConnectAsync(addr, port, 900)) return port;   // retry catches slow responders
+                    return -1;
+                }
+                finally { gate.Release(); }
+            });
+            var results = await Task.WhenAll(portTasks);
+            device.OpenPorts = [.. results.Where(p => p > 0).OrderBy(p => p)];
+
+            await Task.WhenAll(dnsTask, ttlTask);
+
+            if (!string.IsNullOrEmpty(device.MacAddress))
+                device.Vendor = ResolveVendor(device.MacAddress);
+
+            // Reuse the last full scan's network-wide multicast results for naming.
+            if (_mdns.TryGetValue(ip, out var md))
+            {
+                device.MdnsServices = [.. md.Services];
+                if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(md.Name))
+                    device.Hostname = md.Name;
+            }
+            if (_ssdp.TryGetValue(ip, out var srv))
+                device.SsdpServer = srv;
+
+            // Full fingerprint pass. Deep mode widens HTTP/TLS to every open port (not just the
+            // standard web/TLS ones), so services on non-standard ports still get fingerprinted.
+            var fpTasks = new List<Task> { ProbeNetbiosAsync(device, addr), ProbeSnmpAsync(device, addr) };
+            if (device.OpenPorts.Count > 0)
+            {
+                fpTasks.Add(ProbeHttpAsync(device, addr, deep: true));
+                fpTasks.Add(ProbeTlsCertAsync(device, addr, deep: true));
+            }
+            if (device.OpenPorts.Contains(22))
+                fpTasks.Add(ProbeSshBannerAsync(device, addr));
+            await Task.WhenAll(fpTasks);
+
+            if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(device.NetbiosName))
+                device.Hostname = device.NetbiosName;
+
+            device.DeviceType = ClassifyDevice(device);
+            return device;
+        }
+
+        // Ports probed by the deep rescan: all well-known ports 1-1024 plus the curated
+        // high service ports (Proxmox 8006, Plex 32400, ...). Built once at first use.
+        private static readonly int[] DeepPortList = BuildDeepPortList();
+        private static int[] BuildDeepPortList()
+        {
+            var set = new HashSet<int>();
+            for (int p = 1; p <= 1024; p++) set.Add(p);
+            foreach (var p in ProbePorts) set.Add(p);
+            return [.. set.OrderBy(p => p)];
+        }
+
+        // Single TCP connect attempt with a timeout. True if the port accepts the connection.
+        private static async Task<bool> TryConnectAsync(IPAddress addr, int port, int timeoutMs)
+        {
+            try
+            {
+                using var client = new TcpClient();
+                var connect = client.ConnectAsync(addr, port);
+                if (await Task.WhenAny(connect, Task.Delay(timeoutMs)) == connect && client.Connected)
+                    return true;
+            }
+            catch { }
+            return false;
         }
 
         // -------------------------------------------------------------------
@@ -765,13 +875,30 @@ namespace KillerScan.Services
         /// <summary>
         /// Fetch HTTP title + Server header from the first responsive web port.
         /// </summary>
-        private static async Task ProbeHttpAsync(NetworkDevice device, IPAddress addr)
+        // Ports where a deep rescan should speak TLS rather than plain HTTP when it finds
+        // a web service on a non-standard port.
+        private static readonly int[] TlsLikelyPorts = [443, 8443, 8006, 902, 5001, 9443, 4443, 10000, 8834];
+
+        private static async Task ProbeHttpAsync(NetworkDevice device, IPAddress addr, bool deep = false)
         {
-            (int port, bool https)[] candidates =
+            (int port, bool https)[] standard =
             [
                 (80, false), (8080, false), (5000, false), (8123, false),
                 (443, true), (8443, true), (8006, true), (5001, true),
             ];
+
+            // Normal scan: only the known web ports. Deep rescan: also treat every other open
+            // port as a possible web endpoint (HTTPS on TLS-likely ports, HTTP otherwise), so a
+            // panel on a non-standard port still yields a title/Server. Standard ports go first
+            // for stable results; extras are capped to keep the on-demand probe bounded.
+            var candidates = standard.Where(c => device.OpenPorts.Contains(c.port)).ToList();
+            if (deep)
+            {
+                candidates.AddRange(device.OpenPorts
+                    .Where(p => !standard.Any(s => s.port == p))
+                    .Take(12)
+                    .Select(p => (port: p, https: TlsLikelyPorts.Contains(p))));
+            }
 
             using var handler = new HttpClientHandler
             {
@@ -779,12 +906,11 @@ namespace KillerScan.Services
                 AllowAutoRedirect = true,
                 MaxAutomaticRedirections = 2,
             };
-            using var client = new HttpClient(handler) { Timeout = TimeSpan.FromMilliseconds(1500) };
+            using var client = new HttpClient(handler) { Timeout = TimeSpan.FromMilliseconds(deep ? 1000 : 1500) };
             client.DefaultRequestHeaders.UserAgent.ParseAdd("KillerScan/1.3");
 
             foreach (var (port, https) in candidates)
             {
-                if (!device.OpenPorts.Contains(port)) continue;
                 try
                 {
                     var scheme = https ? "https" : "http";
@@ -837,9 +963,16 @@ namespace KillerScan.Services
         /// <summary>
         /// Pull TLS certificate Subject from the first responsive TLS port.
         /// </summary>
-        private static async Task ProbeTlsCertAsync(NetworkDevice device, IPAddress addr)
+        private static async Task ProbeTlsCertAsync(NetworkDevice device, IPAddress addr, bool deep = false)
         {
-            int[] tlsPorts = [443, 8443, 8006, 902, 5001];
+            int[] standardTls = [443, 8443, 8006, 902, 5001];
+
+            // Normal scan: the known TLS ports only. Deep rescan: attempt a TLS handshake on every
+            // open port (a non-TLS port just fails fast), so certs on non-standard ports are caught.
+            int[] tlsPorts = deep
+                ? [.. standardTls.Where(device.OpenPorts.Contains)
+                    .Concat(device.OpenPorts.Where(p => !standardTls.Contains(p)).Take(12))]
+                : standardTls;
             foreach (var port in tlsPorts)
             {
                 if (!device.OpenPorts.Contains(port)) continue;

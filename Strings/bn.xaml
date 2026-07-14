@@ -62,7 +62,7 @@
     <sys:String x:Key="Str_St_ResolvingMacs">{0}টি MAC ঠিকানা সমাধান করা হচ্ছে...</sys:String>
     <sys:String x:Key="Str_St_Probing">{0}টি সক্রিয় হোস্ট যাচাই করা হচ্ছে...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">{0}টি হোস্ট সমাধান করা হচ্ছে...</sys:String>
-    <sys:String x:Key="Str_St_ScanComplete">স্ক্যান সম্পন্ন -- {0}টি ডিভাইস পাওয়া গেছে</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">স্ক্যান সম্পন্ন - {0}টি ডিভাইস পাওয়া গেছে</sys:String>
     <sys:String x:Key="Str_St_ScanCancelled">স্ক্যান বাতিল করা হয়েছে</sys:String>
     <sys:String x:Key="Str_St_Exported">{0}-এ এক্সপোর্ট করা হয়েছে</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">ওভাররাইড সেট: {0} = {1}</sys:String>

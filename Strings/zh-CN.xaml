@@ -62,7 +62,7 @@
     <sys:String x:Key="Str_St_ResolvingMacs">正在解析 {0} 个 MAC 地址...</sys:String>
     <sys:String x:Key="Str_St_Probing">正在探测 {0} 个在线主机...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">正在解析 {0} 个主机...</sys:String>
-    <sys:String x:Key="Str_St_ScanComplete">扫描完成 -- 找到 {0} 台设备</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">扫描完成 - 找到 {0} 台设备</sys:String>
     <sys:String x:Key="Str_St_ScanCancelled">扫描已取消</sys:String>
     <sys:String x:Key="Str_St_Exported">已导出到 {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">已设置覆盖：{0} = {1}</sys:String>

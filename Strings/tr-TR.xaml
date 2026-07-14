@@ -62,7 +62,7 @@
     <sys:String x:Key="Str_St_ResolvingMacs">{0} MAC adresi çözümleniyor...</sys:String>
     <sys:String x:Key="Str_St_Probing">{0} etkin ana bilgisayar yoklanıyor...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">{0} ana bilgisayar çözümleniyor...</sys:String>
-    <sys:String x:Key="Str_St_ScanComplete">Tarama tamamlandı -- {0} cihaz bulundu</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">Tarama tamamlandı - {0} cihaz bulundu</sys:String>
     <sys:String x:Key="Str_St_ScanCancelled">Tarama iptal edildi</sys:String>
     <sys:String x:Key="Str_St_Exported">{0} konumuna aktarıldı</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Geçersiz kılma ayarlandı: {0} = {1}</sys:String>

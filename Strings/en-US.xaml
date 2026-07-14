@@ -44,6 +44,8 @@
     <sys:String x:Key="Str_Col_Ports">Open Ports</sys:String>
 
     <!-- Right-click device menu -->
+    <sys:String x:Key="Str_Ctx_RescanOne">Rescan IP</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanMany">Rescan IPs</sys:String>
     <sys:String x:Key="Str_Ctx_CopyIp">Copy IP Address</sys:String>
     <sys:String x:Key="Str_Ctx_CopyMac">Copy MAC Address</sys:String>
     <sys:String x:Key="Str_Ctx_CopyHost">Copy Hostname</sys:String>
@@ -73,8 +75,10 @@
     <sys:String x:Key="Str_St_ResolvingMacs">Resolving {0} MAC addresses...</sys:String>
     <sys:String x:Key="Str_St_Probing">Probing {0} alive hosts...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Resolving {0} hosts...</sys:String>
-    <sys:String x:Key="Str_St_ScanComplete">Scan complete -- {0} devices found</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">Scan complete - {0} devices found</sys:String>
     <sys:String x:Key="Str_St_ScanCancelled">Scan cancelled</sys:String>
+    <sys:String x:Key="Str_St_Rescanning">Deep scanning {0} ...</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">Rescan complete - {0} host(s) refreshed</sys:String>
     <sys:String x:Key="Str_St_Exported">Exported to {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Override set: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">Override cleared for {0}</sys:String>

@@ -73,7 +73,7 @@
     <sys:String x:Key="Str_St_ResolvingMacs">{0} 件の MAC アドレスを解決中...</sys:String>
     <sys:String x:Key="Str_St_Probing">{0} 台のアクティブなホストを調査中...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">{0} 台のホストを解決中...</sys:String>
-    <sys:String x:Key="Str_St_ScanComplete">スキャン完了 -- {0} 台のデバイスを検出</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">スキャン完了 - {0} 台のデバイスを検出</sys:String>
     <sys:String x:Key="Str_St_ScanCancelled">スキャンをキャンセルしました</sys:String>
     <sys:String x:Key="Str_St_Exported">{0} にエクスポートしました</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">上書きを設定: {0} = {1}</sys:String>

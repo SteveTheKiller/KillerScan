@@ -31,8 +31,8 @@ namespace KillerScan
         private readonly ObservableCollection<ScanSession> _sessions = [];
         private ScanSession _active = null!;
         private ICollectionView? _filteredView;
-        private StackPanel _portableBadge = null!;
-        private ImageBrush _grainBrush = null!;
+        private readonly StackPanel _portableBadge = null!;
+        private readonly ImageBrush _grainBrush = null!;
 
         public MainWindow()
         {

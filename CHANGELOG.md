@@ -4,6 +4,22 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.4] - Unreleased
+
+### Fixed
+- The self-update prompt now uses the themed KillerScan dialog instead of the plain Windows message box.
+
+## [1.5.3] - 2026-07-13
+
+### Added
+- **Rescan selected hosts** (right-click -> "Rescan IP" / "Rescan IPs"): the results table is now multi-select (shift for a range, ctrl to pick individually), and rescanning re-probes just the chosen hosts and swaps each refreshed result back into its row in place. Runs independently of the subnet scan and is disabled while that tab is mid-scan.
+- **Deep single-host probe** behind the rescan: far more thorough than the subnet sweep's per-host pass. It sweeps every well-known TCP port (1-1024) plus the curated high service ports, with longer connect timeouts and a retry so slow or loaded hosts still answer, then refreshes MAC, hostname, and TTL and runs the full fingerprint pass. Deep mode widens the HTTP and TLS fingerprinters to every open port (not just the standard web/TLS ones), so a panel or certificate on a non-standard port is still identified.
+- Open Ports now show the full list in a hover tooltip, so a long port list no longer has to be read by widening the column.
+
+### Changed
+- Footer: the scan progress bar sits in its own zone and no longer crowds the PORTABLE install button, and the corner version/copyright text is 0.5pt smaller.
+- Bundled MAC vendor database refreshed from the current Wireshark OUI list: 57,644 entries (was 57,591).
+
 ## [1.5.2] - 2026-07-12
 
 ### Added

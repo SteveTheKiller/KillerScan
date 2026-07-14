@@ -75,11 +75,11 @@
 
                 <!-- Body -->
                 <StackPanel Grid.Row="1" Margin="24,20,24,16">
-                    <TextBlock Text="Install KillerScan to your user profile?"
+                    <TextBlock x:Name="HeadingText" Text="Install KillerScan to your user profile?"
                                Foreground="{StaticResource TextBrush}"
                                FontSize="13" TextWrapping="Wrap" Margin="0,0,0,12"/>
-                    <TextBlock Foreground="{StaticResource MutedTextBrush}"
-                               FontSize="12" LineHeight="20">
+                    <TextBlock x:Name="DetailText" Foreground="{StaticResource MutedTextBrush}"
+                               FontSize="12" LineHeight="20" TextWrapping="Wrap">
                         <Run Text="- Start Menu shortcut"/>
                         <LineBreak/>
                         <Run Text="- Appears in Add/Remove Programs"/>
@@ -89,10 +89,10 @@
                 <!-- Buttons -->
                 <StackPanel Grid.Row="2" Orientation="Horizontal"
                             HorizontalAlignment="Right" Margin="24,0,24,20">
-                    <Button Content="Cancel" Click="Cancel_Click"
+                    <Button x:Name="CancelButton" Content="Cancel" Click="Cancel_Click"
                             Style="{StaticResource SurfaceButton}"
                             Width="80" Margin="0,0,8,0"/>
-                    <Button Content="Install" Click="OK_Click"
+                    <Button x:Name="OkButton" Content="Install" Click="OK_Click"
                             Style="{StaticResource PrimaryButton}"
                             Width="80"/>
                 </StackPanel>

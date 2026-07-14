@@ -174,6 +174,5 @@ Write-Host   "  >> UPLOAD SHA256SUMS.txt to the GitHub release alongside KillerS
 Write-Host   "     The in-app updater reads it from the release assets; no commit/tag order to get right." -ForegroundColor Yellow
 Write-Host   ""
 Write-Host   "  Paste SHA256 into:"
-Write-Host   "    KillerScan\scan-landing\index.html (line ~181)"
-Write-Host   "    killer-tools-site\src\tools\killer-scan\killer-scan.vue (line ~74)"
+Write-Host   "    KillerScan\scan-landing\index.html (version, size, sha256 rows)"
 Write-Host "+================================================================+" -ForegroundColor Cyan

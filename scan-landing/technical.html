@@ -68,6 +68,7 @@
 <button class="lang-item" data-lang="de">Deutsch</button>
 <button class="lang-item" data-lang="es">Espanol</button>
 <button class="lang-item" data-lang="fr">Francais</button>
+<button class="lang-item" data-lang="ja">&#26085;&#26412;&#35486;</button>
 <button class="lang-item" data-lang="tr">Turkce</button>
 <button class="lang-item" data-lang="zh-cn">&#20013;&#25991; (&#31616;&#20307;)</button>
 <button class="lang-item" data-lang="zh">&#20013;&#25991; (&#32321;&#39636;)</button>
@@ -77,7 +78,7 @@
 
 <div class="shell">
 <aside class="sidebar">
-<div class="sb-tabs"><span class="on">Technical</span></div>
+<div class="sb-tabs"><span class="on" data-i18n="nav_tech">Technical</span></div>
 <nav class="outline">
 <a href="#stack" class="on" data-i18n="tk_164">Tech stack</a>
 <a href="#install" data-i18n="tk_165">Install &amp; data</a>
@@ -85,6 +86,7 @@
 <a href="#ports" data-i18n="tk_167">Ports probed</a>
 <a href="#vendor" data-i18n="tk_168">Vendor resolution</a>
 <a href="#classify" data-i18n="tk_169">Device classification</a>
+<a href="#deepscan" data-i18n="tk_172">Deep rescan</a>
 <a href="#privacy" data-i18n="tk_170">Privacy &amp; footprint</a>
 <a href="#glossary" data-i18n="tk_171">Glossary</a>
 </nav>
@@ -328,6 +330,20 @@ some ports open, none telling  -> Other</div>
 <p data-i18n="tk_100">That rule about PC makers exists for a real situation: a small business desktop in modern standby still answers at the hardware level but refuses every incoming connection. Without the rule, the catch-all would label your Dell a smart-home gadget.</p>
 </div>
 
+<div class="tech-sec" id="deepscan">
+<h2 data-i18n="tk_173">Deep rescan: one host, in depth</h2>
+<p data-i18n="tk_174">The normal scan is tuned to sweep a whole network quickly, so it checks each device with a short list of common ports and only gives each one a brief moment to answer. When you want everything about one machine instead, select it in the results (hold Shift or Ctrl to pick several) and right-click to choose Rescan. That runs a much more thorough probe against just the hosts you picked, and drops the refreshed result straight back into its row.</p>
+<p data-i18n="tk_175">On a deep rescan, KillerScan:</p>
+<ul class="blurb-list">
+<li data-i18n="tk_176">Checks every well-known port from 1 to 1024, plus its curated list of higher service ports, rather than the short common-port list the sweep uses, so a service listening somewhere unusual is not missed.</li>
+<li data-i18n="tk_177">Gives each port more time to answer and tries once more if it stays quiet, so a slow or busy device that the fast sweep skipped over still shows up.</li>
+<li data-i18n="tk_178">Re-reads the device's hardware ID, name, and TTL from scratch rather than reusing what the first pass found.</li>
+<li data-i18n="tk_179">Runs the full set of fingerprint probes, and widens the web-page and security-certificate checks to every open port instead of only the standard web ports, so an admin panel or certificate sitting on an unusual port is still read and identified.</li>
+<li data-i18n="tk_180">Re-scores the device type from the refreshed clues and updates that device's row in place.</li>
+</ul>
+<p data-i18n="tk_181">Because it favors thoroughness over speed, a deep rescan takes a few seconds per host, so it is meant for spot-checking specific devices rather than re-running the whole network.</p>
+</div>
+
 <div class="tech-sec" id="privacy">
 <h2 data-i18n="tk_101">Privacy &amp; footprint</h2>
 <p data-i18n="tk_102">Everything happens on your own machine. There is no account, no background agent, no cloud lookup, and no usage tracking. The vendor database is built into the app, so even manufacturer names are looked up offline. Nothing about your network ever leaves your computer.</p>
@@ -375,7 +391,7 @@ some ports open, none telling  -> Other</div>
 </div>
 <footer class="statusbar">
 <span class="left"><a href="https://github.com/SteveTheKiller/KillerScan" target="_blank" rel="noopener">Source on GitHub</a> &middot; GPLv3 &middot; Part of <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
-<span class="right"><span id="verEgg" title="click me">v1.5.2</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
+<span class="right"><span id="verEgg" title="click me">v1.5.3</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 <div class="dlightbox" id="diagram-lightbox" hidden><div class="dlb-inner"></div></div>

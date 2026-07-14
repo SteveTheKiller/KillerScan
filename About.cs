@@ -91,10 +91,12 @@ namespace KillerScan
             var tag = _updateTag;
             if (string.IsNullOrEmpty(tag)) return;
 
-            var confirm = MessageBox.Show(this,
-                $"Download and install KillerScan {tag}?\n\nThe app will close and reopen automatically.",
-                "KillerScan", MessageBoxButton.OKCancel, MessageBoxImage.Question);
-            if (confirm != MessageBoxResult.OK) return;
+            var dlg = new ConfirmDialog(
+                $"Download and install KillerScan {tag}?",
+                "The app will close and reopen automatically.",
+                "Update") { Owner = this };
+            dlg.ShowDialog();
+            if (!dlg.Confirmed) return;
 
             AboutUpdateButton.IsEnabled = false;
             AboutUpdateText.Text = "Downloading...";

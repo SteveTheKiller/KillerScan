@@ -372,7 +372,8 @@
                           CanUserSortColumns="True"
                           CanUserResizeColumns="True"
                           VirtualizingPanel.ScrollUnit="Pixel"
-                          SelectionMode="Single"
+                          SelectionMode="Extended"
+                          ContextMenuOpening="ResultsGrid_ContextMenuOpening"
                           ColumnHeaderHeight="28"
                           RowHeight="28"
                           AlternationCount="2"
@@ -449,6 +450,8 @@
 
                     <DataGrid.ContextMenu>
                         <ContextMenu>
+                            <MenuItem x:Name="RescanMenuItem" Header="{DynamicResource Str_Ctx_RescanOne}" Click="RescanSelected_Click"/>
+                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
                             <MenuItem Header="{DynamicResource Str_Ctx_CopyIp}" Click="CopyIp_Click"/>
                             <MenuItem Header="{DynamicResource Str_Ctx_CopyMac}" Click="CopyMac_Click"/>
                             <MenuItem Header="{DynamicResource Str_Ctx_CopyHost}" Click="CopyHostname_Click"/>
@@ -638,7 +641,26 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn x:Name="ColPorts" Header="{DynamicResource Str_Col_Ports}" Binding="{Binding OpenPortsDisplay}" Width="*"/>
+                        <DataGridTextColumn x:Name="ColPorts" Header="{DynamicResource Str_Col_Ports}" Binding="{Binding OpenPortsDisplay}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="ToolTipService.InitialShowDelay" Value="300"/>
+                                    <Setter Property="ToolTipService.ShowDuration" Value="60000"/>
+                                    <!-- Full port list on hover: the cell truncates, the tooltip wraps and shows every open port. -->
+                                    <Setter Property="ToolTip">
+                                        <Setter.Value>
+                                            <TextBlock Text="{Binding OpenPortsDisplay}" TextWrapping="Wrap" MaxWidth="360"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <!-- No open ports: nothing worth a tooltip. -->
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding OpenPortsDisplay}" Value="-">
+                                            <Setter Property="ToolTip" Value="{x:Null}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
@@ -647,18 +669,25 @@
         <!-- Status Bar -->
         <Border Grid.Row="3" Background="{DynamicResource BackgroundBrush}">
             <Grid Margin="16,0">
+                <!-- Three zones so the centered PORTABLE badge and the right-hand version/progress
+                     cluster live in separate columns and can never overlap. -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
                 <!-- Film grain over the bar (negative margin pulls it to the full width) -->
-                <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}" Margin="-16,0">
+                <Border Grid.ColumnSpan="3" IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}" Margin="-16,0">
                     <Border.Background>
                         <ImageBrush x:Name="StatusGrainBrush" TileMode="Tile"
                                     ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
                     </Border.Background>
                 </Border>
-                <TextBlock x:Name="StatusText" Text="Ready"
+                <TextBlock x:Name="StatusText" Grid.Column="0" Text="Ready"
                            Foreground="{DynamicResource ChromeTextBrush}" FontFamily="Consolas"
                            FontSize="11.5" VerticalAlignment="Center"/>
                 <!-- Portable mode indicator (hidden when installed) -->
-                <StackPanel x:Name="PortableBadge" Orientation="Horizontal"
+                <StackPanel x:Name="PortableBadge" Grid.Column="1" Orientation="Horizontal"
                             HorizontalAlignment="Center" VerticalAlignment="Center"
                             Visibility="Collapsed">
                     <TextBlock Text="{DynamicResource Str_Portable}" Foreground="{DynamicResource TextFooter}"
@@ -669,7 +698,7 @@
                             FontFamily="Segoe UI" FontSize="10" Padding="8,1"
                             VerticalAlignment="Center"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <ProgressBar x:Name="ScanProgress"
                                  Width="200" Height="4" VerticalAlignment="Center"
                                  Foreground="{DynamicResource PrimaryBrush}"
@@ -677,11 +706,11 @@
                                  Visibility="Collapsed" Margin="0,0,12,0"/>
                     <TextBlock x:Name="VersionLabel" Text="v1.5.2"
                                Foreground="{DynamicResource TextFooter}" FontFamily="Consolas"
-                               FontSize="10.5" VerticalAlignment="Center" Margin="0,0,12,0"
+                               FontSize="10" VerticalAlignment="Center" Margin="0,0,12,0"
                                Cursor="Hand" ToolTip="About KillerScan"
                                MouseLeftButtonUp="VersionLabel_Click"/>
                     <!-- 14px trailing margin keeps the copyright clear of the corner grip (family standard) -->
-                    <TextBlock FontSize="10.5" VerticalAlignment="Center"
+                    <TextBlock FontSize="10" VerticalAlignment="Center"
                                FontFamily="Consolas" Margin="0,0,14,0">
                         <Run Text="&#x00A9; 2026 " Foreground="{DynamicResource TextFooter}"/>
                         <Hyperlink NavigateUri="https://thekiller.net"
