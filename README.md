@@ -1,4 +1,6 @@
-# KillerScan
+<p align="center">
+  <a href="https://killerscan.net"><img src="docs/wordmark.png" width="640" alt="KillerScan - Free Network Scanner"></a>
+</p>
 
 One-click, fast network scanner built for field techs.
 
@@ -11,9 +13,7 @@ One-click, fast network scanner built for field techs.
 Single portable EXE, no runtime install required.
 Free, open-source, GPLv3.
 
-Homepage: <https://killerscan.net> · Part of [killertools.net](https://killertools.net).
-
-![KillerScan](scan-landing/og-image.png)
+Part of [killertools.net](https://killertools.net).
 
 ## Features
 
