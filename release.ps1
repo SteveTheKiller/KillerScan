@@ -52,18 +52,31 @@ $Version = $Matches[1]
 $Tag = "v$Version"
 Write-Host "Version: $Version (tag $Tag)"
 
-# --- 2. Preflight: clean tree, on main, up to date, tag free ---
+# --- 2. Preflight: clean tree, on the default branch, up to date, tag free ---
+# KillerScan is on master while the other Killer repos are on main, so resolve the default
+# branch from origin instead of hardcoding either name.
 Step "Preflight checks"
+$defaultBranch = $null
+$originHead = git symbolic-ref --quiet refs/remotes/origin/HEAD 2>$null
+if ($originHead) { $defaultBranch = ($originHead -replace '^refs/remotes/origin/', '').Trim() }
+if (-not $defaultBranch) {
+    $heads = @(git branch --format='%(refname:short)')
+    foreach ($candidate in @('master', 'main')) {
+        if ($heads -contains $candidate) { $defaultBranch = $candidate; break }
+    }
+}
+if (-not $defaultBranch) { Fail 'Could not determine the default branch (no origin/HEAD, no local master or main)' }
+
 $branch = (git rev-parse --abbrev-ref HEAD).Trim()
-if ($branch -ne 'main') { Fail "On branch '$branch', expected main" }
+if ($branch -ne $defaultBranch) { Fail "On branch '$branch', expected $defaultBranch" }
 
 $dirty = git status --porcelain
 if ($dirty) { Fail "Working tree is not clean. Commit or stash first:`n$($dirty -join "`n")" }
 
-git fetch origin main --quiet
+git fetch origin $defaultBranch --quiet
 $local = (git rev-parse HEAD).Trim()
-$remote = (git rev-parse origin/main).Trim()
-if ($local -ne $remote) { Fail 'Local main and origin/main differ. Push or pull first.' }
+$remote = (git rev-parse "origin/$defaultBranch").Trim()
+if ($local -ne $remote) { Fail "Local $defaultBranch and origin/$defaultBranch differ. Push or pull first." }
 
 $existing = git tag --list $Tag
 if ($existing) { Fail "Tag $Tag already exists" }
@@ -266,7 +279,7 @@ if ($DryRun) {
     if ($siteDirty) {
         git add scan-landing README.md
         git commit -m "v${Version}: site and README release info" --quiet
-        git push origin main --quiet
+        git push origin $defaultBranch --quiet
         if ($LASTEXITCODE -ne 0) { Fail 'Landing page / README commit failed to push' }
         Write-Host "scan-landing and README updated to v$Version and pushed"
         Write-Host 'Remember: killerscan.net does NOT auto-deploy. Drag scan-landing/ into Cloudflare Pages.' -ForegroundColor Yellow
