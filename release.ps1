@@ -42,6 +42,26 @@ function Step([string]$Message) {
     Write-Host "==> $Message" -ForegroundColor Cyan
 }
 
+# Resolve the repo's default branch instead of hardcoding it, so the same script works across
+# the Killer family. origin/HEAD is the best hint but it can go stale - it keeps naming a
+# branch that was renamed away - so a candidate is only accepted if it still exists on the
+# remote. Order: whatever origin/HEAD claims, then main, then master.
+function Get-DefaultBranch {
+    $remoteHeads = @(git ls-remote --heads origin 2>$null) |
+        ForEach-Object { ($_ -split '\s+')[-1] -replace '^refs/heads/', '' }
+    if (-not $remoteHeads) { return $null }
+
+    $candidates = @()
+    $originHead = git symbolic-ref --quiet refs/remotes/origin/HEAD 2>$null
+    if ($originHead) { $candidates += (($originHead -replace '^refs/remotes/origin/', '').Trim()) }
+    foreach ($c in @('main', 'master')) { if ($candidates -notcontains $c) { $candidates += $c } }
+
+    foreach ($c in $candidates) {
+        if ($c -and $remoteHeads -contains $c) { return $c }
+    }
+    return $null
+}
+
 # --- 1. Read version from the csproj (single source of truth) ---
 Step "Reading version from KillerScan.csproj"
 $csproj = Get-Content -Path 'KillerScan.csproj' -Raw
@@ -53,19 +73,10 @@ $Tag = "v$Version"
 Write-Host "Version: $Version (tag $Tag)"
 
 # --- 2. Preflight: clean tree, on the default branch, up to date, tag free ---
-# KillerScan is on master while the other Killer repos are on main, so resolve the default
-# branch from origin instead of hardcoding either name.
 Step "Preflight checks"
-$defaultBranch = $null
-$originHead = git symbolic-ref --quiet refs/remotes/origin/HEAD 2>$null
-if ($originHead) { $defaultBranch = ($originHead -replace '^refs/remotes/origin/', '').Trim() }
-if (-not $defaultBranch) {
-    $heads = @(git branch --format='%(refname:short)')
-    foreach ($candidate in @('master', 'main')) {
-        if ($heads -contains $candidate) { $defaultBranch = $candidate; break }
-    }
-}
-if (-not $defaultBranch) { Fail 'Could not determine the default branch (no origin/HEAD, no local master or main)' }
+$defaultBranch = Get-DefaultBranch
+if (-not $defaultBranch) { Fail 'Could not determine the default branch from origin' }
+Write-Host "Default branch: $defaultBranch"
 
 $branch = (git rev-parse --abbrev-ref HEAD).Trim()
 if ($branch -ne $defaultBranch) { Fail "On branch '$branch', expected $defaultBranch" }
