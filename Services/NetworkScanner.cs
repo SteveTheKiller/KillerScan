@@ -110,13 +110,20 @@ namespace KillerScan.Services
         /// </summary>
         public async Task<List<NetworkDevice>> ScanSubnetAsync(string cidr, CancellationToken ct, bool fullScan = true)
         {
-            var addresses = GetAddressesInSubnet(cidr);
+            // ScanTargets handles one or many comma-separated targets (CIDR, single host, or a
+            // range) and de-duplicates overlaps. The UI validates the same string before getting
+            // here, so a parse failure at this point yields an empty list rather than throwing.
+            var parsed = ScanTargets.Parse(cidr);
+            var addresses = parsed.Addresses;
+            // Status text uses the short summary ("192.168.9.0/24 +2"), not the raw box contents,
+            // so a long multi-target list does not overrun the status bar.
+            string label = parsed.Summary.Length > 0 ? parsed.Summary : cidr;
             var devices = new List<NetworkDevice>();
             int completed = 0;
             int total = addresses.Count;
 
             // Phase 1: Fast ping sweep + ARP cache
-            StatusChanged?.Invoke(string.Format(L("Str_St_Discovering", "Discovering hosts on {0}..."), cidr));
+            StatusChanged?.Invoke(string.Format(L("Str_St_Discovering", "Discovering hosts on {0}..."), label));
             var discoveredHosts = new System.Collections.Concurrent.ConcurrentDictionary<string, (IPAddress Addr, string Mac)>();
 
             // Grab existing ARP cache first (instant, catches IoT devices)

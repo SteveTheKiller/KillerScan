@@ -72,4 +72,40 @@
     <sys:String x:Key="Str_Portable">可攜版</sys:String>
     <sys:String x:Key="Str_InstallBtn">安裝 KillerScan...</sys:String>
 
+    <!-- Added 1.5.4: app size, multi-target scan errors, all-users install, window menu, shortcuts -->
+    <sys:String x:Key="Str_TT_AppSize">在標誌上捲動滾輪可調整應用程式大小</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanOne">重新掃描 IP</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanMany">重新掃描 IP</sys:String>
+    <sys:String x:Key="Str_St_Rescanning">正在深度掃描 {0} ...</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">重新掃描完成 - 已重新整理 {0} 台主機</sys:String>
+    <sys:String x:Key="Str_St_AppSize">應用程式大小 {0}%</sys:String>
+    <sys:String x:Key="Str_St_BadTarget">目標無效：「{0}」 - 請使用 192.168.1.0/24、192.168.1.7 或 192.168.1.10-50，以逗號分隔</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">這是 {0} 個位址 - 單次掃描過多（上限 {1}）。請縮小範圍或拆分到多個分頁。</sys:String>
+    <sys:String x:Key="Str_St_NoTarget">請輸入要掃描的子網路、位址或範圍</sys:String>
+    <sys:String x:Key="Str_Install_AllUsers">為所有使用者安裝（需要系統管理員權限）</sys:String>
+    <sys:String x:Key="Str_Install_AllUsersNote">為這台電腦上的每個帳戶安裝到 Program Files。Windows 會要求授權。</sys:String>
+    <sys:String x:Key="Str_Install_HeadUser">將 KillerScan 安裝到您的使用者設定檔？</sys:String>
+    <sys:String x:Key="Str_Install_HeadAll">為這台電腦上的所有使用者安裝 KillerScan？</sys:String>
+    <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan 已為這台電腦上的所有使用者安裝，因此將更新該複本。Windows 會要求授權。</sys:String>
+    <sys:String x:Key="Str_St_InstallCancelled">已取消安裝</sys:String>
+    <sys:String x:Key="Str_Sys_Restore">還原</sys:String>
+    <sys:String x:Key="Str_Sys_Move">移動</sys:String>
+    <sys:String x:Key="Str_Sys_Size">大小</sys:String>
+    <sys:String x:Key="Str_Sys_Minimize">最小化</sys:String>
+    <sys:String x:Key="Str_Sys_Maximize">最大化</sys:String>
+    <sys:String x:Key="Str_Sys_Close">關閉</sys:String>
+    <sys:String x:Key="Str_TT_Shortcuts">鍵盤快速鍵 (F1)</sys:String>
+    <sys:String x:Key="Str_Shortcuts_Title">鍵盤快速鍵</sys:String>
+    <sys:String x:Key="Str_Sc_Scan">開始或停止掃描</sys:String>
+    <sys:String x:Key="Str_Sc_Cancel">取消掃描，或關閉此視窗</sys:String>
+    <sys:String x:Key="Str_Sc_Rescan">深度重新掃描所選主機</sys:String>
+    <sys:String x:Key="Str_Sc_Subnet">跳至子網路輸入框</sys:String>
+    <sys:String x:Key="Str_Sc_SelectAll">選取所有裝置</sys:String>
+    <sys:String x:Key="Str_Sc_Export">匯出結果</sys:String>
+    <sys:String x:Key="Str_Sc_AppBigger">放大應用程式</sys:String>
+    <sys:String x:Key="Str_Sc_AppSmaller">縮小應用程式</sys:String>
+    <sys:String x:Key="Str_Sc_AppReset">重設應用程式大小</sys:String>
+    <sys:String x:Key="Str_Sc_Help">顯示此清單</sys:String>
+    <sys:String x:Key="Str_Sc_Hint">在標誌上捲動滑鼠滾輪同樣可以調整應用程式大小。</sys:String>
+
 </ResourceDictionary>

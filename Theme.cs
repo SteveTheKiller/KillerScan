@@ -90,6 +90,7 @@ namespace KillerScan
         [
             (Services.Locale.EnUS, "English",    "en-US"),
             (Services.Locale.Bn,   "বাংলা",       "bn"),
+            (Services.Locale.CsCZ, "Čeština",    "cs-CZ"),
             (Services.Locale.De,   "Deutsch",    "de-DE"),
             (Services.Locale.Es,   "Español",    "es"),
             (Services.Locale.Fr,   "Français",   "fr-FR"),

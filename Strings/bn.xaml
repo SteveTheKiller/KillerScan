@@ -72,4 +72,40 @@
     <sys:String x:Key="Str_Portable">পোর্টেবল</sys:String>
     <sys:String x:Key="Str_InstallBtn">KillerScan ইনস্টল করুন...</sys:String>
 
+    <!-- Added 1.5.4: app size, multi-target scan errors, all-users install, window menu, shortcuts -->
+    <sys:String x:Key="Str_TT_AppSize">অ্যাপের আকার বদলাতে লোগোর উপর স্ক্রোল করুন</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanOne">IP পুনরায় স্ক্যান করুন</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanMany">IP গুলো পুনরায় স্ক্যান করুন</sys:String>
+    <sys:String x:Key="Str_St_Rescanning">{0} গভীরভাবে স্ক্যান করা হচ্ছে ...</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">পুনঃস্ক্যান সম্পন্ন - {0}টি হোস্ট হালনাগাদ হয়েছে</sys:String>
+    <sys:String x:Key="Str_St_AppSize">অ্যাপের আকার {0}%</sys:String>
+    <sys:String x:Key="Str_St_BadTarget">বৈধ লক্ষ্য নয়: “{0}” - কমা দিয়ে আলাদা করে 192.168.1.0/24, 192.168.1.7 বা 192.168.1.10-50 ব্যবহার করুন</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">এটি {0}টি ঠিকানা - একটি স্ক্যানের জন্য অত্যধিক (সীমা {1})। পরিসর ছোট করুন বা ট্যাবে ভাগ করুন।</sys:String>
+    <sys:String x:Key="Str_St_NoTarget">স্ক্যান করতে একটি সাবনেট, ঠিকানা বা পরিসর দিন</sys:String>
+    <sys:String x:Key="Str_Install_AllUsers">সব ব্যবহারকারীর জন্য ইনস্টল করুন (অ্যাডমিন প্রয়োজন)</sys:String>
+    <sys:String x:Key="Str_Install_AllUsersNote">এই পিসির প্রতিটি অ্যাকাউন্টের জন্য Program Files-এ ইনস্টল করে। Windows অনুমতি চাইবে।</sys:String>
+    <sys:String x:Key="Str_Install_HeadUser">KillerScan আপনার ব্যবহারকারী প্রোফাইলে ইনস্টল করবেন?</sys:String>
+    <sys:String x:Key="Str_Install_HeadAll">এই পিসির সব ব্যবহারকারীর জন্য KillerScan ইনস্টল করবেন?</sys:String>
+    <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan ইতিমধ্যেই এই পিসির সব ব্যবহারকারীর জন্য ইনস্টল করা আছে, তাই সেই কপিটিই হালনাগাদ হবে। Windows অনুমতি চাইবে।</sys:String>
+    <sys:String x:Key="Str_St_InstallCancelled">ইনস্টল বাতিল হয়েছে</sys:String>
+    <sys:String x:Key="Str_Sys_Restore">পুনরুদ্ধার</sys:String>
+    <sys:String x:Key="Str_Sys_Move">সরান</sys:String>
+    <sys:String x:Key="Str_Sys_Size">আকার</sys:String>
+    <sys:String x:Key="Str_Sys_Minimize">ছোট করুন</sys:String>
+    <sys:String x:Key="Str_Sys_Maximize">বড় করুন</sys:String>
+    <sys:String x:Key="Str_Sys_Close">বন্ধ করুন</sys:String>
+    <sys:String x:Key="Str_TT_Shortcuts">কীবোর্ড শর্টকাট (F1)</sys:String>
+    <sys:String x:Key="Str_Shortcuts_Title">কীবোর্ড শর্টকাট</sys:String>
+    <sys:String x:Key="Str_Sc_Scan">স্ক্যান শুরু বা বন্ধ করুন</sys:String>
+    <sys:String x:Key="Str_Sc_Cancel">স্ক্যান বাতিল করুন, বা এটি বন্ধ করুন</sys:String>
+    <sys:String x:Key="Str_Sc_Rescan">নির্বাচিত হোস্ট গভীরভাবে পুনরায় স্ক্যান করুন</sys:String>
+    <sys:String x:Key="Str_Sc_Subnet">সাবনেট বাক্সে যান</sys:String>
+    <sys:String x:Key="Str_Sc_SelectAll">সব ডিভাইস নির্বাচন করুন</sys:String>
+    <sys:String x:Key="Str_Sc_Export">ফলাফল এক্সপোর্ট করুন</sys:String>
+    <sys:String x:Key="Str_Sc_AppBigger">অ্যাপ বড় করুন</sys:String>
+    <sys:String x:Key="Str_Sc_AppSmaller">অ্যাপ ছোট করুন</sys:String>
+    <sys:String x:Key="Str_Sc_AppReset">অ্যাপের আকার রিসেট করুন</sys:String>
+    <sys:String x:Key="Str_Sc_Help">এই তালিকা দেখান</sys:String>
+    <sys:String x:Key="Str_Sc_Hint">লোগোর উপর মাউস হুইল ঘোরালেও অ্যাপের আকার বদলায়।</sys:String>
+
 </ResourceDictionary>

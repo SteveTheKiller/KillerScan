@@ -45,6 +45,24 @@ namespace KillerScan
             Process.Start(new ProcessStartInfo("cmd", $"/c ssh {d.IpAddress}") { UseShellExecute = true });
         }
 
+        /// <summary>
+        /// Tick the type the selected device currently has. Recomputed each time the submenu opens
+        /// rather than tracked, because the type can change underneath it - a rescan reclassifies,
+        /// and Clear Override reverts to the auto-detected type. This reflects the device's
+        /// EFFECTIVE type, whether that came from the classifier or from a manual override.
+        /// </summary>
+        private void SetTypeMenu_Opened(object sender, RoutedEventArgs e)
+        {
+            if (sender is not MenuItem parent) return;
+            var d = GetSelectedDevice();
+            foreach (object o in parent.Items)
+            {
+                if (o is not MenuItem mi || mi.Tag is not string type) continue;
+                mi.IsChecked = d != null &&
+                               string.Equals(type, d.DeviceType, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
         private void SetType_Click(object sender, RoutedEventArgs e)
         {
             var d = GetSelectedDevice(); if (d == null || string.IsNullOrEmpty(d.MacAddress)) return;

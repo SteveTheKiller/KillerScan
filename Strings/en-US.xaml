@@ -11,6 +11,7 @@
     <!-- Title bar / chrome -->
     <sys:String x:Key="Str_Subtitle">Network Scanner</sys:String>
     <sys:String x:Key="Str_TT_Language">Language</sys:String>
+    <sys:String x:Key="Str_TT_AppSize">Scroll over the wordmark to resize the app</sys:String>
     <sys:String x:Key="Str_TT_Theme">Theme</sys:String>
     <sys:String x:Key="Str_TT_Export">Export</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">THEME</sys:String>
@@ -76,15 +77,48 @@
     <sys:String x:Key="Str_St_Probing">Probing {0} alive hosts...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Resolving {0} hosts...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Scan complete - {0} devices found</sys:String>
-    <sys:String x:Key="Str_St_ScanCancelled">Scan cancelled</sys:String>
+    <sys:String x:Key="Str_St_ScanCancelled">Scan canceled</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Deep scanning {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Rescan complete - {0} host(s) refreshed</sys:String>
     <sys:String x:Key="Str_St_Exported">Exported to {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Override set: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">Override cleared for {0}</sys:String>
+    <sys:String x:Key="Str_St_AppSize">App size {0}%</sys:String>
+    <sys:String x:Key="Str_St_BadTarget">Not a valid target: "{0}" - use 192.168.1.0/24, 192.168.1.7, or 192.168.1.10-50, separated by commas</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">That is {0} addresses - too many for one scan (limit {1}). Narrow the range or split it across tabs.</sys:String>
+    <sys:String x:Key="Str_St_NoTarget">Enter a subnet, address, or range to scan</sys:String>
 
-    <!-- Portable footer badge -->
+    <!-- Portable footer badge + install dialog -->
     <sys:String x:Key="Str_Portable">PORTABLE</sys:String>
     <sys:String x:Key="Str_InstallBtn">Install KillerScan...</sys:String>
+    <sys:String x:Key="Str_Install_AllUsers">Install for all users (Admin required)</sys:String>
+    <sys:String x:Key="Str_Install_AllUsersNote">Installs to Program Files for every account on this PC. Windows will ask for permission.</sys:String>
+    <sys:String x:Key="Str_Install_HeadUser">Install KillerScan to your user profile?</sys:String>
+    <sys:String x:Key="Str_Install_HeadAll">Install KillerScan for all users on this PC?</sys:String>
+    <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan is already installed for all users on this PC, so this will update that copy. Windows will ask for permission.</sys:String>
+    <sys:String x:Key="Str_St_InstallCancelled">Install canceled</sys:String>
+
+    <!-- Themed window system menu (right-click the title bar / Alt+Space) -->
+    <sys:String x:Key="Str_Sys_Restore">Restore</sys:String>
+    <sys:String x:Key="Str_Sys_Move">Move</sys:String>
+    <sys:String x:Key="Str_Sys_Size">Size</sys:String>
+    <sys:String x:Key="Str_Sys_Minimize">Minimize</sys:String>
+    <sys:String x:Key="Str_Sys_Maximize">Maximize</sys:String>
+    <sys:String x:Key="Str_Sys_Close">Close</sys:String>
+
+    <!-- Keyboard shortcuts overlay (F1) -->
+    <sys:String x:Key="Str_TT_Shortcuts">Keyboard shortcuts (F1)</sys:String>
+    <sys:String x:Key="Str_Shortcuts_Title">Keyboard shortcuts</sys:String>
+    <sys:String x:Key="Str_Sc_Scan">Start or stop a scan</sys:String>
+    <sys:String x:Key="Str_Sc_Cancel">Cancel the scan, or close this</sys:String>
+    <sys:String x:Key="Str_Sc_Rescan">Deep rescan the selected hosts</sys:String>
+    <sys:String x:Key="Str_Sc_Subnet">Jump to the subnet box</sys:String>
+    <sys:String x:Key="Str_Sc_SelectAll">Select every device</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Export results</sys:String>
+    <sys:String x:Key="Str_Sc_AppBigger">Make the app bigger</sys:String>
+    <sys:String x:Key="Str_Sc_AppSmaller">Make the app smaller</sys:String>
+    <sys:String x:Key="Str_Sc_AppReset">Reset the app size</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Show this list</sys:String>
+    <sys:String x:Key="Str_Sc_Hint">The app size also follows the mouse wheel over the wordmark.</sys:String>
 
 </ResourceDictionary>

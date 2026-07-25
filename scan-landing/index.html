@@ -23,7 +23,7 @@
 <meta name="twitter:description" content="One exe. No installer, no agent, no account, no telemetry. A fast local network scanner built by a field tech, for field techs. GPLv3.">
 <meta name="twitter:image" content="https://killerscan.net/og-image.png">
 <script defer src="https://koya.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
-<link rel="stylesheet" href="ks.css?v=13">
+<link rel="stylesheet" href="ks.css?v=14">
 <style>
 /* ---- Page-specific (landing) ---- */
 .content-inner { max-width: 1100px; margin: 0 auto; padding: 0 28px 50px; }
@@ -69,7 +69,15 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 .feature-card code { display: inline-block; margin-top: 4px; background: var(--panel); padding: 2px 7px; border-radius: 4px; font-family: Consolas, monospace; font-size: 12px; color: var(--text); white-space: nowrap; }
 
 /* Sidebar (screenshot strip) */
-.sb-thumbs { padding: 12px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1; }
+.sb-thumbs { padding: 4px 12px 0; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1; }
+/* Grain fade overlays pinned to the sidebar top/bottom (not a mask on the scroller, so the
+   scrollbar is never faded). Inset 8px from the right to clear the scrollbar. JS toggles .on:
+   top only once scrolled down, bottom only while more shots remain below. */
+.sb-fade { position: absolute; left: 0; right: 8px; height: 40px; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.12s ease;
+  background: var(--sidebar) url('grain.png?v=2') repeat fixed; background-size: 256px 256px; }
+.sb-fade-top { top: 0; -webkit-mask-image: linear-gradient(to bottom, #000, transparent); mask-image: linear-gradient(to bottom, #000, transparent); }
+.sb-fade-bottom { bottom: 0; -webkit-mask-image: linear-gradient(to top, #000, transparent); mask-image: linear-gradient(to top, #000, transparent); }
+.sb-fade.on { opacity: 1; }
 .sb-thumb { flex-shrink: 0; border: 2px solid transparent; border-radius: 5px; overflow: hidden; cursor: pointer; background: var(--panel); transition: border-color 0.15s, transform 0.12s; position: relative; }
 .sb-thumb:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); }
 .sb-thumb img { display: block; width: 100%; height: auto; }
@@ -81,7 +89,7 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
   .hero-grid { flex-direction: column; gap: 22px; }
   .hero-cta, .hero-info { flex: 0 0 auto; min-width: 0; }
   .feature-grid { grid-template-columns: 1fr; }
-  .sb-thumbs { flex-direction: row; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
+  .sb-thumbs { flex-direction: row; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; -webkit-mask-image: none; mask-image: none; }
   .sb-thumb { flex: 0 0 auto; width: 240px; min-width: 240px; }
 }
 @media (max-width: 560px) {
@@ -129,6 +137,7 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <div class="lang-menu" id="langMenu" hidden>
 <button class="lang-item" data-lang="en">English</button>
 <button class="lang-item" data-lang="bn">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
+<button class="lang-item" data-lang="cs">&#268;e&#353;tina</button>
 <button class="lang-item" data-lang="de">Deutsch</button>
 <button class="lang-item" data-lang="es">Espanol</button>
 <button class="lang-item" data-lang="fr">Francais</button>
@@ -172,8 +181,8 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 </div>
 </div>
 <div class="hero-info">
-<div class="row"><span class="k">version</span>&nbsp;<span class="v">KillerScan v1.5.3</span></div>
-<div class="row"><span class="k">released</span>&nbsp;<span class="v">2026-07-12</span></div>
+<div class="row"><span class="k">version</span>&nbsp;<span class="v">KillerScan v1.5.4</span></div>
+<div class="row"><span class="k">released</span>&nbsp;<span class="v">2026-07-25</span></div>
 <div class="row"><span class="k">size</span>&nbsp;<span class="v">2.62 MB exe</span></div>
 <div class="row"><span class="k">platform</span>&nbsp;<span class="v">Windows 10/11 x64</span></div>
 <div class="row"><span class="k">sha256</span>&nbsp;<span class="v hash">90753f08f082f85631a68e2ddd582b1d<br>1f856df84a72e41ddf63dc25550c15a4</span></div>
@@ -190,10 +199,10 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <div class="feature-card"><h3 data-i18n="f_mdns_t">mDNS &amp; SSDP</h3><p data-i18n="f_mdns_d">A network-wide multicast pass runs alongside the sweep.<br>Bonjour service types and UPnP SERVER strings reveal Chromecasts, printers, Sonos, AirPlay, HomeKit, Roku, Plex and Synology boxes.</p></div>
 <div class="feature-card"><h3 data-i18n="f_vendor_t">Vendor identification</h3><p data-i18n="f_vendor_d">Longest-prefix MAC OUI lookup across the full IEEE registries - MA-L, MA-M and MA-S - with brand overrides for blocks IEEE hides as "Private", and a clear label for randomized privacy MACs.</p></div>
 <div class="feature-card"><h3 data-i18n="f_classify_t">Device classification</h3><p data-i18n="f_classify_d">A weighted scorer combines hostname, vendor, open ports, banners, mDNS and SSDP into a best-guess type:<br>Router, switch/AP, NAS, printer, camera, hypervisor, phone, IoT and more.</p></div>
-<div class="feature-card"><h3 data-i18n="f_gateway_t">Gateway &amp; DNS aware</h3><p data-i18n="f_gateway_d">The gateway is labelled Router, DNS Server, or Router/DNS - and only Router/DNS when the gateway really is your configured DNS, so a dedicated DNS server is never mislabelled.</p></div>
+<div class="feature-card"><h3 data-i18n="f_gateway_t">Gateway &amp; DNS aware</h3><p data-i18n="f_gateway_d">The gateway is labeled Router, DNS Server, or Router/DNS - and only Router/DNS when the gateway really is your configured DNS, so a dedicated DNS server is never mislabeled.</p></div>
 <div class="feature-card"><h3 data-i18n="f_export_t">Export</h3><p data-i18n="f_export_d">Export the full device list to CSV, or to a self-contained HTML report that stays fully re-sortable by any column and re-themeable with the same six themes and accent colors as the app. Right-click any device to copy its IP, MAC or hostname, or jump straight to it.</p></div>
 <div class="feature-card"><h3 data-i18n="f_themes_t">Themes &amp; accents</h3><p data-i18n="f_themes_d">Six themes (Dark, Light, Black, Blood, Greed and Cyanotic) with per-theme accent colors, all switchable live, plus per-theme device-type coloring in the results table.</p></div>
-<div class="feature-card"><h3 data-i18n="f_install_t">Install or run portable</h3><p data-i18n="f_install_d">Drop the .exe anywhere and run it, or use the built-in per-user installer.<br>No admin rights, extra runtimes or dependencies are required.<br>A "PORTABLE" badge and an Install button appear when you're running it loose.</p></div>
+<div class="feature-card"><h3 data-i18n="f_install_t">Install or run portable</h3><p data-i18n="f_install_d">Drop the .exe anywhere and run it, or use the built-in installer.<br>It installs just for you by default, with no admin rights, extra runtimes or dependencies required, or tick "Install for all users" to put it in Program Files for everyone on the PC.<br>A "PORTABLE" badge and an Install button appear when you're running it loose.</p></div>
 <div class="feature-card"><h3 data-i18n="f_oui_t">Vendor database</h3><p data-i18n="f_oui_d">The full IEEE OUI registries, MA-L, MA-M and MA-S (around 57,000 entries), ship embedded so vendor names resolve offline, and are kept current from the latest IEEE data so they don't go stale.</p></div>
 <div class="feature-card"><h3 data-i18n="f_actions_t">Quick actions</h3><p data-i18n="f_actions_d">Right-click any device to copy its IP, MAC or hostname, or jump straight to it.<br>Open its web UI, or launch RDP or SSH directly, and set a manual device type that sticks.</p></div>
 <div class="feature-card"><h3 data-i18n="f_private_t">Private by design</h3><p data-i18n="f_private_d">Everything runs on your machine. No extra agent is installed, no account is required, no cloud lookups (Vendor names resolve offline from the embedded database), and no telemetry is sent anywhere.<br>Nothing about your network leaves the device.</p></div>
@@ -208,18 +217,20 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <div class="sb-thumbs" id="sbThumbs">
 <div class="sb-empty" data-i18n="sb_empty">Screenshots<br>coming soon</div>
 </div>
+<div class="sb-fade sb-fade-top" aria-hidden="true"></div>
+<div class="sb-fade sb-fade-bottom" aria-hidden="true"></div>
 </aside>
 </div>
 
 <footer class="statusbar">
 <span class="left"><a href="https://github.com/SteveTheKiller/KillerScan" target="_blank" rel="noopener" data-i18n="footer_src">Source on GitHub</a> &middot; GPLv3 &middot; Part of <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
-<span class="right"><span id="verEgg" title="click me">v1.5.3</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
+<span class="right"><span id="verEgg" title="click me">v1.5.4</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
 </footer>
 
 <div class="lightbox" id="lightbox"><img id="lightboxImg" src="" alt="KillerScan screenshot"></div>
 <div class="egg-toast" id="eggToast"></div>
 
-<script src="ks-i18n.js?v=1"></script>
+<script src="ks-i18n.js?v=2"></script>
 <script src="ks.js?v=4"></script>
 <script>
 (function () {
@@ -253,11 +264,26 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
         }
         sbThumbs.insertBefore(b, next);
         loaded++;
+        updateFade();
       };
       img.alt = 'KillerScan screenshot ' + n;
       img.src = src;
     })(i);
   }
+
+  // Fade the bottom of the strip while it overflows and isn't scrolled to the last shot,
+  // matching the app sidebar (no fade once the last screenshot is in view).
+  var fadeTop = document.querySelector('.sb-fade-top');
+  var fadeBottom = document.querySelector('.sb-fade-bottom');
+  function updateFade() {
+    var scrolledDown = sbThumbs.scrollTop > 2;
+    var more = sbThumbs.scrollHeight - sbThumbs.clientHeight - sbThumbs.scrollTop > 2;
+    if (fadeTop) fadeTop.classList.toggle('on', scrolledDown);
+    if (fadeBottom) fadeBottom.classList.toggle('on', more);
+  }
+  sbThumbs.addEventListener('scroll', updateFade, { passive: true });
+  window.addEventListener('resize', updateFade);
+  updateFade();
 })();
 </script>
 </body>

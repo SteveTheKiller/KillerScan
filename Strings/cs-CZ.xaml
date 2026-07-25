@@ -1,0 +1,109 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- KillerScan - Czech (cs-CZ). Keys omitted here fall back to en-US. Never change x:Key values. -->
+
+    <sys:String x:Key="Str_Subtitle">Síťový skener</sys:String>
+    <sys:String x:Key="Str_TT_Language">Jazyk</sys:String>
+    <sys:String x:Key="Str_TT_AppSize">Kolečkem myši nad logem změníte velikost aplikace</sys:String>
+    <sys:String x:Key="Str_TT_Theme">Vzhled</sys:String>
+    <sys:String x:Key="Str_TT_Export">Exportovat</sys:String>
+    <sys:String x:Key="Str_Lbl_Theme">VZHLED</sys:String>
+    <sys:String x:Key="Str_Lbl_Accent">AKCENT</sys:String>
+
+    <sys:String x:Key="Str_Lbl_Subnet">Podsíť</sys:String>
+    <sys:String x:Key="Str_Btn_Scan">Skenovat</sys:String>
+    <sys:String x:Key="Str_Lbl_Local">Místní</sys:String>
+    <sys:String x:Key="Str_Lbl_Gateway">Brána</sys:String>
+    <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
+
+    <sys:String x:Key="Str_Btn_Stop">Zastavit</sys:String>
+    <sys:String x:Key="Str_Status_Ready">Připraveno - načteno {0} výrobců OUI</sys:String>
+    <sys:String x:Key="Str_Count_Found">Nalezeno {0} zařízení</sys:String>
+    <sys:String x:Key="Str_Count_Shown">Zobrazeno {0} z {1}</sys:String>
+
+    <sys:String x:Key="Str_DiscoveredDevices">Nalezená zařízení</sys:String>
+    <sys:String x:Key="Str_FilterPlaceholder">Filtrovat zařízení...</sys:String>
+    <sys:String x:Key="Str_Export_Csv">Exportovat jako CSV</sys:String>
+    <sys:String x:Key="Str_Export_Html">Exportovat jako HTML</sys:String>
+
+    <sys:String x:Key="Str_Col_Ip">IP adresa</sys:String>
+    <sys:String x:Key="Str_Col_Host">Název hostitele</sys:String>
+    <sys:String x:Key="Str_Col_Mac">MAC adresa</sys:String>
+    <sys:String x:Key="Str_Col_Vendor">Výrobce</sys:String>
+    <sys:String x:Key="Str_Col_Type">Typ</sys:String>
+    <sys:String x:Key="Str_Col_Ports">Otevřené porty</sys:String>
+
+    <sys:String x:Key="Str_Ctx_RescanOne">Znovu skenovat IP</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanMany">Znovu skenovat IP adresy</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyIp">Kopírovat IP adresu</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyMac">Kopírovat MAC adresu</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyHost">Kopírovat název hostitele</sys:String>
+    <sys:String x:Key="Str_Ctx_Ping">Ping</sys:String>
+    <sys:String x:Key="Str_Ctx_OpenBrowser">Otevřít v prohlížeči</sys:String>
+    <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
+    <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SetType">Nastavit typ zařízení</sys:String>
+    <sys:String x:Key="Str_Ctx_ClearOverride">Zrušit ruční nastavení</sys:String>
+
+    <sys:String x:Key="Str_About_Version">VERZE</sys:String>
+    <sys:String x:Key="Str_About_Publisher">VYDAVATEL</sys:String>
+    <sys:String x:Key="Str_About_Thumbprint">OTISK</sys:String>
+    <sys:String x:Key="Str_About_Sha">SHA-256 SOUBORU EXE</sys:String>
+    <sys:String x:Key="Str_About_Db">DATABÁZE VÝROBCŮ</sys:String>
+    <sys:String x:Key="Str_About_DbUpdate">Aktualizovat z nejnovějších registrů</sys:String>
+    <sys:String x:Key="Str_About_DbHint">Ze seznamu OUI projektu Wireshark.</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} záznamů</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">aktualizováno {0}</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">součást aplikace</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">Sken ARP + IP s vyhledáním výrobce, klasifikací zařízení a přizpůsobitelným, řaditelným exportem do HTML. Nástroj </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve">.</sys:String>
+
+    <sys:String x:Key="Str_St_Discovering">Vyhledávání hostitelů v {0}...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingMacs">Zjišťování {0} MAC adres...</sys:String>
+    <sys:String x:Key="Str_St_Probing">Sondování {0} dostupných hostitelů...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingHosts">Překlad {0} hostitelů...</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">Skenování dokončeno - nalezeno {0} zařízení</sys:String>
+    <sys:String x:Key="Str_St_ScanCancelled">Skenování zrušeno</sys:String>
+    <sys:String x:Key="Str_St_Rescanning">Hloubkové skenování {0} ...</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">Opakované skenování dokončeno - obnoveno {0} hostitelů</sys:String>
+    <sys:String x:Key="Str_St_Exported">Exportováno do {0}</sys:String>
+    <sys:String x:Key="Str_St_OverrideSet">Ruční nastavení: {0} = {1}</sys:String>
+    <sys:String x:Key="Str_St_OverrideCleared">Ruční nastavení zrušeno pro {0}</sys:String>
+    <sys:String x:Key="Str_St_AppSize">Velikost aplikace {0} %</sys:String>
+    <sys:String x:Key="Str_St_BadTarget">Neplatný cíl: „{0}“ - použijte 192.168.1.0/24, 192.168.1.7 nebo 192.168.1.10-50, oddělené čárkami</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">To je {0} adres - příliš mnoho na jedno skenování (limit {1}). Zužte rozsah nebo jej rozdělte do více karet.</sys:String>
+    <sys:String x:Key="Str_St_NoTarget">Zadejte podsíť, adresu nebo rozsah ke skenování</sys:String>
+
+    <sys:String x:Key="Str_Portable">PŘENOSNÁ</sys:String>
+    <sys:String x:Key="Str_InstallBtn">Nainstalovat KillerScan...</sys:String>
+    <sys:String x:Key="Str_Install_AllUsers">Nainstalovat pro všechny uživatele (vyžaduje správce)</sys:String>
+    <sys:String x:Key="Str_Install_AllUsersNote">Nainstaluje do složky Program Files pro každý účet v tomto počítači. Windows si vyžádají oprávnění.</sys:String>
+    <sys:String x:Key="Str_Install_HeadUser">Nainstalovat KillerScan do vašeho uživatelského profilu?</sys:String>
+    <sys:String x:Key="Str_Install_HeadAll">Nainstalovat KillerScan pro všechny uživatele tohoto počítače?</sys:String>
+    <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan je již nainstalován pro všechny uživatele tohoto počítače, takže se aktualizuje tato kopie. Windows si vyžádají oprávnění.</sys:String>
+    <sys:String x:Key="Str_St_InstallCancelled">Instalace zrušena</sys:String>
+
+    <sys:String x:Key="Str_Sys_Restore">Obnovit</sys:String>
+    <sys:String x:Key="Str_Sys_Move">Přesunout</sys:String>
+    <sys:String x:Key="Str_Sys_Size">Velikost</sys:String>
+    <sys:String x:Key="Str_Sys_Minimize">Minimalizovat</sys:String>
+    <sys:String x:Key="Str_Sys_Maximize">Maximalizovat</sys:String>
+    <sys:String x:Key="Str_Sys_Close">Zavřít</sys:String>
+
+    <sys:String x:Key="Str_TT_Shortcuts">Klávesové zkratky (F1)</sys:String>
+    <sys:String x:Key="Str_Shortcuts_Title">Klávesové zkratky</sys:String>
+    <sys:String x:Key="Str_Sc_Scan">Spustit nebo zastavit skenování</sys:String>
+    <sys:String x:Key="Str_Sc_Cancel">Zrušit skenování nebo zavřít toto okno</sys:String>
+    <sys:String x:Key="Str_Sc_Rescan">Hloubkově znovu skenovat vybrané hostitele</sys:String>
+    <sys:String x:Key="Str_Sc_Subnet">Přejít do pole podsítě</sys:String>
+    <sys:String x:Key="Str_Sc_SelectAll">Vybrat všechna zařízení</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Exportovat výsledky</sys:String>
+    <sys:String x:Key="Str_Sc_AppBigger">Zvětšit aplikaci</sys:String>
+    <sys:String x:Key="Str_Sc_AppSmaller">Zmenšit aplikaci</sys:String>
+    <sys:String x:Key="Str_Sc_AppReset">Obnovit výchozí velikost aplikace</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Zobrazit tento seznam</sys:String>
+    <sys:String x:Key="Str_Sc_Hint">Velikost aplikace lze měnit také kolečkem myši nad logem.</sys:String>
+
+</ResourceDictionary>

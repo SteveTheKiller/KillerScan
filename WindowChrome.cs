@@ -102,6 +102,13 @@ namespace KillerScan
                 WmGetMinMaxInfo(hwnd, lParam);
                 handled = true;
             }
+            // Right-click on the caption / Alt+Space: show our themed menu instead of Windows'
+            // stock white one, which is a Win32 HMENU and cannot be styled (SystemMenu.cs).
+            if (TryHandleSystemMenu(msg, wParam, lParam))
+            {
+                handled = true;
+                return IntPtr.Zero;
+            }
             return IntPtr.Zero;
         }
 

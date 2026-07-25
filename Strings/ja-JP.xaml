@@ -83,4 +83,40 @@
     <sys:String x:Key="Str_Portable">ポータブル</sys:String>
     <sys:String x:Key="Str_InstallBtn">KillerScan をインストール...</sys:String>
 
+    <!-- Added 1.5.4: app size, multi-target scan errors, all-users install, window menu, shortcuts -->
+    <sys:String x:Key="Str_TT_AppSize">ロゴの上でホイールを回すとアプリのサイズが変わります</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanOne">IP を再スキャン</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanMany">IP を再スキャン</sys:String>
+    <sys:String x:Key="Str_St_Rescanning">{0} を詳細スキャン中 ...</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">再スキャン完了 - {0} 台のホストを更新しました</sys:String>
+    <sys:String x:Key="Str_St_AppSize">アプリのサイズ {0}%</sys:String>
+    <sys:String x:Key="Str_St_BadTarget">無効なターゲットです: 「{0}」 - 192.168.1.0/24、192.168.1.7、192.168.1.10-50 のようにカンマ区切りで指定してください</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">{0} 件のアドレスです - 1 回のスキャンには多すぎます (上限 {1})。範囲を狭めるか、タブに分けてください。</sys:String>
+    <sys:String x:Key="Str_St_NoTarget">スキャンするサブネット、アドレス、範囲を入力してください</sys:String>
+    <sys:String x:Key="Str_Install_AllUsers">すべてのユーザー用にインストール (管理者権限が必要)</sys:String>
+    <sys:String x:Key="Str_Install_AllUsersNote">この PC のすべてのアカウント用に Program Files へインストールします。Windows が許可を求めます。</sys:String>
+    <sys:String x:Key="Str_Install_HeadUser">KillerScan をユーザープロファイルにインストールしますか?</sys:String>
+    <sys:String x:Key="Str_Install_HeadAll">KillerScan をこの PC のすべてのユーザー用にインストールしますか?</sys:String>
+    <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan はこの PC のすべてのユーザー用に既にインストールされているため、そのコピーが更新されます。Windows が許可を求めます。</sys:String>
+    <sys:String x:Key="Str_St_InstallCancelled">インストールをキャンセルしました</sys:String>
+    <sys:String x:Key="Str_Sys_Restore">元のサイズに戻す</sys:String>
+    <sys:String x:Key="Str_Sys_Move">移動</sys:String>
+    <sys:String x:Key="Str_Sys_Size">サイズ変更</sys:String>
+    <sys:String x:Key="Str_Sys_Minimize">最小化</sys:String>
+    <sys:String x:Key="Str_Sys_Maximize">最大化</sys:String>
+    <sys:String x:Key="Str_Sys_Close">閉じる</sys:String>
+    <sys:String x:Key="Str_TT_Shortcuts">キーボードショートカット (F1)</sys:String>
+    <sys:String x:Key="Str_Shortcuts_Title">キーボードショートカット</sys:String>
+    <sys:String x:Key="Str_Sc_Scan">スキャンの開始または停止</sys:String>
+    <sys:String x:Key="Str_Sc_Cancel">スキャンの取り消し、またはこれを閉じる</sys:String>
+    <sys:String x:Key="Str_Sc_Rescan">選択したホストを詳細に再スキャン</sys:String>
+    <sys:String x:Key="Str_Sc_Subnet">サブネット入力欄へ移動</sys:String>
+    <sys:String x:Key="Str_Sc_SelectAll">すべてのデバイスを選択</sys:String>
+    <sys:String x:Key="Str_Sc_Export">結果をエクスポート</sys:String>
+    <sys:String x:Key="Str_Sc_AppBigger">アプリを大きくする</sys:String>
+    <sys:String x:Key="Str_Sc_AppSmaller">アプリを小さくする</sys:String>
+    <sys:String x:Key="Str_Sc_AppReset">アプリのサイズをリセット</sys:String>
+    <sys:String x:Key="Str_Sc_Help">この一覧を表示</sys:String>
+    <sys:String x:Key="Str_Sc_Hint">アプリのサイズは、ロゴの上でマウスホイールを回しても変更できます。</sys:String>
+
 </ResourceDictionary>

@@ -99,9 +99,12 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 .content-scroll { height: 100%; overflow-y: auto; scroll-behavior: smooth; }
 
 /* ---- Sidebar (the app's docked pane) ---- */
-.sidebar { position: relative; height: 100%; min-height: 0; background: var(--sidebar); display: flex; flex-direction: column; z-index: 5; }
+.sidebar { position: relative; height: calc(100% - 8px); margin-top: 8px; min-height: 0; background: var(--sidebar); display: flex; flex-direction: column; z-index: 5; }
 .sidebar::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url('grain.png?v=2') repeat fixed; background-size: 256px 256px; opacity: 1; }
-.sb-thumbs { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 14px; }
+.sb-thumbs { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 0; }
+/* Bottom fade while the strip overflows and isn't scrolled to the last shot (toggled in JS),
+   matching the app sidebar: the mask reveals the grainy sidebar behind, so grain stays intact. */
+.sb-thumbs.faded { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 36px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 36px), transparent); }
 .sb-empty { margin: auto; text-align: center; color: var(--muted); font-family: 'KillerScan', 'Courier New', monospace; font-size: 14px; letter-spacing: .5px; line-height: 1.5; padding: 20px; }
 .sb-thumb { display: block; width: 100%; padding: 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--panel); cursor: zoom-in; box-shadow: 0 2px 6px rgba(0,0,0,0.45); transition: border-color .15s ease, transform .15s ease; }
 .sb-thumb:hover { border-color: var(--accent); transform: translateY(-1px); }
@@ -257,7 +260,7 @@ html[data-theme="light"] .tech-sec h3 { text-shadow: none; }
 .dlb-inner { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; box-shadow: 0 22px 60px rgba(0,0,0,0.5); }
 .dlb-inner svg { display: block; width: min(1080px, 94vw); height: auto; max-height: 88vh; }
 /* Arrow-bulleted lists, shared by the hero blurbs and the technical sections */
-.blurb-list { list-style: none; }
+.blurb-list { list-style: none; margin-bottom: 11px; }
 .blurb-list li { font-size: 13.5px; color: var(--muted); line-height: 1.55; padding-left: 16px; position: relative; margin-bottom: 6px; }
 .blurb-list li:last-child { margin-bottom: 0; }
 .blurb-list li::before { content: "\203A"; position: absolute; left: 3px; color: var(--accent); font-weight: 700; }

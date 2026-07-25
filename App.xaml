@@ -95,8 +95,8 @@
                 <Style.Triggers>
                     <Trigger Property="IsSelected" Value="True">
                         <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
-                        <!-- Soft dark glow lifts the accent-coloured text off the tinted selection
-                             (matches KillerPDF; ShadowDepth 0 keeps it centred, no smearing). -->
+                        <!-- Soft dark glow lifts the accent-colored text off the tinted selection
+                             (matches KillerPDF; ShadowDepth 0 keeps it centered, no smearing). -->
                         <Setter Property="Effect">
                             <Setter.Value>
                                 <DropShadowEffect Color="Black" BlurRadius="4" ShadowDepth="0" Opacity="0.7"/>
@@ -161,7 +161,7 @@
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <ControlTemplate.Triggers>
-                                <!-- Reactive toggle: hover FILLS with the outline colour (contrast text);
+                                <!-- Reactive toggle: hover FILLS with the outline color (contrast text);
                                      mousedown REVERTS to the outline look; release returns to the fill.
                                      Order matters - IsPressed must come after IsMouseOver to win. -->
                                 <Trigger Property="IsMouseOver" Value="True">
@@ -181,7 +181,7 @@
                 </Setter>
             </Style>
 
-            <!-- Scan-session tab. Active tab adopts the pane colour so it reads as attached to the grid. -->
+            <!-- Scan-session tab. Active tab adopts the pane color so it reads as attached to the grid. -->
             <Style x:Key="TabButton" TargetType="Button">
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
@@ -273,8 +273,61 @@
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <ControlTemplate.Triggers>
+                                <!-- The background alone moved between two near-identical surfaces,
+                                     so the hover was effectively invisible. The border and label
+                                     brighten with it now - readable, but still clearly secondary to
+                                     the OutlineButton beside it, which fills with the accent. -->
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="border" Property="Background" Value="{DynamicResource TableHeaderBrush}"/>
+                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource InputHoverBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource InputHoverBrush}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Themed checkbox: small square, accent check. The family style, matching
+                 KillerNotes/Controls.xaml, KillerFind/Controls.xaml and the KillerUI kit, so the
+                 install dialog's "all users" box stops rendering as a stock Windows control.
+                 Untyped (no x:Key) so every CheckBox in the app picks it up. Font is left to the
+                 caller rather than forced to Consolas, since this one sits in dialog body copy. -->
+            <Style TargetType="CheckBox">
+                <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="CheckBox">
+                            <StackPanel Orientation="Horizontal" Background="Transparent">
+                                <Border x:Name="box" Width="15" Height="15" CornerRadius="3" VerticalAlignment="Center"
+                                        Background="{DynamicResource SurfaceBrush}"
+                                        BorderBrush="{DynamicResource InputBorderBrush}" BorderThickness="1">
+                                    <TextBlock x:Name="check" Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="10"
+                                               Foreground="{DynamicResource OnPrimaryBrush}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                </Border>
+                                <ContentPresenter Margin="7,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="box" Property="BorderBrush" Value="{DynamicResource InputHoverBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="box" Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                                    <Setter TargetName="box" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                    <Setter TargetName="check" Property="Visibility" Value="Visible"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                </Trigger>
+                                <!-- Locked on because a machine-wide install already exists: keep the
+                                     accent fill so it does not read as unavailable, just not clickable. -->
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.75"/>
+                                    <Setter Property="Cursor" Value="Arrow"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -447,12 +500,89 @@
                         <ControlTemplate TargetType="MenuItem">
                             <Border x:Name="bg" Background="{TemplateBinding Background}"
                                     Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
-                                <ContentPresenter ContentSource="Header" VerticalAlignment="Center"/>
+                                <!-- Icon gutter. The column is Auto and the presenter collapses when
+                                     an item has no Icon, so menus that don't use icons keep their
+                                     exact previous layout.
+
+                                     The Popup below is what makes submenus work at all. This
+                                     template sets OverridesDefaultStyle, so WPF's stock MenuItem
+                                     template - and with it the submenu Popup - is discarded; without
+                                     replacing it here, an item with children highlights on hover but
+                                     can never open. That is why "Set Device Type" did nothing. -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ContentPresenter x:Name="ico" Grid.Column="0" ContentSource="Icon"
+                                                      Width="18" Margin="0,0,10,0"
+                                                      VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <ContentPresenter Grid.Column="1" ContentSource="Header" VerticalAlignment="Center"/>
+                                    <!-- Tick for the currently-applied choice (the device's own type
+                                         in Set Device Type). Sits on the RIGHT rather than in the
+                                         icon gutter, because the gutter already carries that type's
+                                         own glyph and the two need to show at once. A leaf item
+                                         never has a chevron, so they cannot collide. -->
+                                    <TextBlock x:Name="check" Grid.Column="2" Text="&#xE73E;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="11"
+                                               Margin="18,0,0,0" VerticalAlignment="Center"
+                                               Visibility="Collapsed"
+                                               Foreground="{DynamicResource PrimaryBrush}"/>
+                                    <!-- Submenu chevron, shown only when the item actually has children -->
+                                    <TextBlock x:Name="arrow" Grid.Column="2" Text="&#xE76C;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="10"
+                                               Margin="18,0,0,0" VerticalAlignment="Center"
+                                               Visibility="Collapsed"
+                                               Foreground="{DynamicResource MutedTextBrush}"/>
+                                    <Popup x:Name="sub" Grid.Column="2"
+                                           Placement="Right" HorizontalOffset="-2" VerticalOffset="-10"
+                                           IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                           AllowsTransparency="True" Focusable="False"
+                                           PopupAnimation="Fade">
+                                        <!-- Same chrome as the ContextMenu template: 6px margin for
+                                             the shadow, rounded, grain overlay. -->
+                                        <Border Margin="6" CornerRadius="6"
+                                                Background="{DynamicResource MenuBackgroundBrush}"
+                                                BorderBrush="{DynamicResource MenuBorderBrush}"
+                                                BorderThickness="1" SnapsToDevicePixels="True">
+                                            <Border.Effect>
+                                                <DropShadowEffect Color="Black" BlurRadius="22" ShadowDepth="4"
+                                                                  Direction="270" Opacity="0.55"/>
+                                            </Border.Effect>
+                                            <Grid>
+                                                <Border IsHitTestVisible="False" CornerRadius="5"
+                                                        Background="{DynamicResource GrainTileBrush}"
+                                                        Opacity="{DynamicResource GrainOpacity}"/>
+                                                <StackPanel IsItemsHost="True" Margin="0,4"
+                                                            KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                                            </Grid>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsHighlighted" Value="True">
                                     <Setter TargetName="bg" Property="Background" Value="{DynamicResource MenuHoverBrush}"/>
                                     <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+                                </Trigger>
+                                <!-- The template had no disabled state, so a grayed-out item looked
+                                     identical to a live one. Needed by the themed system menu
+                                     (Restore/Maximize/Move/Size switch on window state), and it
+                                     also fixes the results grid's Rescan item, which is disabled
+                                     mid-scan but gave no visual sign of it. -->
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.4"/>
+                                </Trigger>
+                                <Trigger Property="Icon" Value="{x:Null}">
+                                    <Setter TargetName="ico" Property="Visibility" Value="Collapsed"/>
+                                </Trigger>
+                                <!-- Only a parent item gets the chevron. -->
+                                <Trigger Property="HasItems" Value="True">
+                                    <Setter TargetName="arrow" Property="Visibility" Value="Visible"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="check" Property="Visibility" Value="Visible"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -460,6 +590,11 @@
                 </Setter>
             </Style>
 
+            <!-- NOTE: inside a Menu or ContextMenu, WPF does NOT use this implicit style - it
+                 looks up MenuItem.SeparatorStyleKey and falls back to the stock Aero separator,
+                 which is the light gray line that showed up in the themed window menu. The keyed
+                 alias just below is what actually applies in menus; this one covers separators
+                 used anywhere else. -->
             <Style TargetType="Separator">
                 <Setter Property="OverridesDefaultStyle" Value="True"/>
                 <Setter Property="Height" Value="1"/>
@@ -476,6 +611,22 @@
                 </Setter>
             </Style>
 
+            <!-- The key WPF actually resolves for a Separator sitting in a menu. Same look as
+                 above; registering it here is what stops the stock light-gray line. -->
+            <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator"
+                   BasedOn="{StaticResource {x:Type Separator}}"/>
+
+            <!-- Glyph for a MenuItem.Icon. Keeps the 30-odd icons in the context menus to one
+                 line each and puts the size/color in one place. Every codepoint used with this
+                 was checked against the installed Segoe MDL2 Assets before being adopted. -->
+            <Style x:Key="MenuIcon" TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+
             <!-- Card Border Style -->
             <Style x:Key="Card" TargetType="Border">
                 <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
@@ -486,7 +637,7 @@
             </Style>
 
             <!-- Theme swatch (title-bar theme picker). Background = the theme's signature
-                 colour; BorderBrush/Thickness form the active ring (set in code). -->
+                 color; BorderBrush/Thickness form the active ring (set in code). -->
             <Style x:Key="ThemeSwatch" TargetType="Button">
                 <Setter Property="Width" Value="15"/>
                 <Setter Property="Height" Value="15"/>

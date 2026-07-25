@@ -72,4 +72,40 @@
     <sys:String x:Key="Str_Portable">PORTABEL</sys:String>
     <sys:String x:Key="Str_InstallBtn">KillerScan installieren...</sys:String>
 
+    <!-- Added 1.5.4: app size, multi-target scan errors, all-users install, window menu, shortcuts -->
+    <sys:String x:Key="Str_TT_AppSize">Mit dem Mausrad über dem Schriftzug die App-Größe ändern</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanOne">IP erneut scannen</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanMany">IPs erneut scannen</sys:String>
+    <sys:String x:Key="Str_St_Rescanning">Tiefen-Scan von {0} ...</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">Erneuter Scan abgeschlossen - {0} Host(s) aktualisiert</sys:String>
+    <sys:String x:Key="Str_St_AppSize">App-Größe {0} %</sys:String>
+    <sys:String x:Key="Str_St_BadTarget">Kein gültiges Ziel: "{0}" - verwende 192.168.1.0/24, 192.168.1.7 oder 192.168.1.10-50, durch Kommas getrennt</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">Das sind {0} Adressen - zu viele für einen Scan (Grenze {1}). Grenze den Bereich ein oder teile ihn auf mehrere Tabs auf.</sys:String>
+    <sys:String x:Key="Str_St_NoTarget">Subnetz, Adresse oder Bereich zum Scannen eingeben</sys:String>
+    <sys:String x:Key="Str_Install_AllUsers">Für alle Benutzer installieren (Administrator erforderlich)</sys:String>
+    <sys:String x:Key="Str_Install_AllUsersNote">Installiert nach Programme für jedes Konto auf diesem PC. Windows fragt nach der Berechtigung.</sys:String>
+    <sys:String x:Key="Str_Install_HeadUser">KillerScan in dein Benutzerprofil installieren?</sys:String>
+    <sys:String x:Key="Str_Install_HeadAll">KillerScan für alle Benutzer dieses PCs installieren?</sys:String>
+    <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan ist auf diesem PC bereits für alle Benutzer installiert, daher wird diese Kopie aktualisiert. Windows fragt nach der Berechtigung.</sys:String>
+    <sys:String x:Key="Str_St_InstallCancelled">Installation abgebrochen</sys:String>
+    <sys:String x:Key="Str_Sys_Restore">Wiederherstellen</sys:String>
+    <sys:String x:Key="Str_Sys_Move">Verschieben</sys:String>
+    <sys:String x:Key="Str_Sys_Size">Größe ändern</sys:String>
+    <sys:String x:Key="Str_Sys_Minimize">Minimieren</sys:String>
+    <sys:String x:Key="Str_Sys_Maximize">Maximieren</sys:String>
+    <sys:String x:Key="Str_Sys_Close">Schließen</sys:String>
+    <sys:String x:Key="Str_TT_Shortcuts">Tastenkürzel (F1)</sys:String>
+    <sys:String x:Key="Str_Shortcuts_Title">Tastenkürzel</sys:String>
+    <sys:String x:Key="Str_Sc_Scan">Scan starten oder stoppen</sys:String>
+    <sys:String x:Key="Str_Sc_Cancel">Scan abbrechen oder dies schließen</sys:String>
+    <sys:String x:Key="Str_Sc_Rescan">Ausgewählte Hosts tief erneut scannen</sys:String>
+    <sys:String x:Key="Str_Sc_Subnet">Zum Subnetz-Feld springen</sys:String>
+    <sys:String x:Key="Str_Sc_SelectAll">Alle Geräte auswählen</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Ergebnisse exportieren</sys:String>
+    <sys:String x:Key="Str_Sc_AppBigger">App vergrößern</sys:String>
+    <sys:String x:Key="Str_Sc_AppSmaller">App verkleinern</sys:String>
+    <sys:String x:Key="Str_Sc_AppReset">App-Größe zurücksetzen</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Diese Liste anzeigen</sys:String>
+    <sys:String x:Key="Str_Sc_Hint">Die App-Größe folgt auch dem Mausrad über dem Schriftzug.</sys:String>
+
 </ResourceDictionary>

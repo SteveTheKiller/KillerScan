@@ -7,13 +7,15 @@ The translatable strings live in `Strings/` - one XAML `ResourceDictionary` per 
 Each language is a single XAML `ResourceDictionary` in the `Strings/` folder, named with the BCP 47 tag:
 
 - `Strings/en-US.xaml` - English (US) - the base; every other file layers over it
-- `Strings/es.xaml` - Spanish
+- `Strings/bn.xaml` - Bengali
+- `Strings/cs-CZ.xaml` - Czech
 - `Strings/de-DE.xaml` - German
+- `Strings/es.xaml` - Spanish
 - `Strings/fr-FR.xaml` - French
+- `Strings/ja-JP.xaml` - Japanese
 - `Strings/tr-TR.xaml` - Turkish
 - `Strings/zh-CN.xaml` - Simplified Chinese
 - `Strings/zh-TW.xaml` - Traditional Chinese
-- `Strings/bn.xaml` - Bengali
 
 ## How to contribute
 

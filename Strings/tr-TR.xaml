@@ -72,4 +72,40 @@
     <sys:String x:Key="Str_Portable">TAŞINABİLİR</sys:String>
     <sys:String x:Key="Str_InstallBtn">KillerScan'i yükle...</sys:String>
 
+    <!-- Added 1.5.4: app size, multi-target scan errors, all-users install, window menu, shortcuts -->
+    <sys:String x:Key="Str_TT_AppSize">Uygulama boyutunu değiştirmek için logo üzerinde tekerleği kaydırın</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanOne">IP'yi yeniden tara</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanMany">IP'leri yeniden tara</sys:String>
+    <sys:String x:Key="Str_St_Rescanning">{0} derin taranıyor ...</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">Yeniden tarama tamamlandı - {0} ana bilgisayar yenilendi</sys:String>
+    <sys:String x:Key="Str_St_AppSize">Uygulama boyutu %{0}</sys:String>
+    <sys:String x:Key="Str_St_BadTarget">Geçersiz hedef: "{0}" - virgülle ayrılmış olarak 192.168.1.0/24, 192.168.1.7 veya 192.168.1.10-50 kullanın</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">Bu {0} adres - tek bir tarama için çok fazla (sınır {1}). Aralığı daraltın veya sekmelere bölün.</sys:String>
+    <sys:String x:Key="Str_St_NoTarget">Taranacak bir alt ağ, adres veya aralık girin</sys:String>
+    <sys:String x:Key="Str_Install_AllUsers">Tüm kullanıcılar için kur (Yönetici gerekir)</sys:String>
+    <sys:String x:Key="Str_Install_AllUsersNote">Bu bilgisayardaki her hesap için Program Files klasörüne kurar. Windows izin isteyecek.</sys:String>
+    <sys:String x:Key="Str_Install_HeadUser">KillerScan kullanıcı profilinize kurulsun mu?</sys:String>
+    <sys:String x:Key="Str_Install_HeadAll">KillerScan bu bilgisayardaki tüm kullanıcılar için kurulsun mu?</sys:String>
+    <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan bu bilgisayarda zaten tüm kullanıcılar için kurulu, bu nedenle o kopya güncellenecek. Windows izin isteyecek.</sys:String>
+    <sys:String x:Key="Str_St_InstallCancelled">Kurulum iptal edildi</sys:String>
+    <sys:String x:Key="Str_Sys_Restore">Geri Yükle</sys:String>
+    <sys:String x:Key="Str_Sys_Move">Taşı</sys:String>
+    <sys:String x:Key="Str_Sys_Size">Boyutlandır</sys:String>
+    <sys:String x:Key="Str_Sys_Minimize">Simge Durumuna Küçült</sys:String>
+    <sys:String x:Key="Str_Sys_Maximize">Ekranı Kapla</sys:String>
+    <sys:String x:Key="Str_Sys_Close">Kapat</sys:String>
+    <sys:String x:Key="Str_TT_Shortcuts">Klavye kısayolları (F1)</sys:String>
+    <sys:String x:Key="Str_Shortcuts_Title">Klavye kısayolları</sys:String>
+    <sys:String x:Key="Str_Sc_Scan">Taramayı başlat veya durdur</sys:String>
+    <sys:String x:Key="Str_Sc_Cancel">Taramayı iptal et veya bunu kapat</sys:String>
+    <sys:String x:Key="Str_Sc_Rescan">Seçili ana bilgisayarları derin yeniden tara</sys:String>
+    <sys:String x:Key="Str_Sc_Subnet">Alt ağ kutusuna git</sys:String>
+    <sys:String x:Key="Str_Sc_SelectAll">Tüm cihazları seç</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Sonuçları dışa aktar</sys:String>
+    <sys:String x:Key="Str_Sc_AppBigger">Uygulamayı büyüt</sys:String>
+    <sys:String x:Key="Str_Sc_AppSmaller">Uygulamayı küçült</sys:String>
+    <sys:String x:Key="Str_Sc_AppReset">Uygulama boyutunu sıfırla</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Bu listeyi göster</sys:String>
+    <sys:String x:Key="Str_Sc_Hint">Uygulama boyutu, logo üzerindeki fare tekerleğini de izler.</sys:String>
+
 </ResourceDictionary>

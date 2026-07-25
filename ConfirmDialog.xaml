@@ -40,9 +40,11 @@
                      (Killer in text color, Scan bold in the accent) like the main window title bar. -->
                 <Border Grid.Row="0" Background="Transparent"
                         MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
-                    <Grid Margin="14,0">
+                    <!-- No margin on this grid: the close button sits flush in the corner exactly
+                         like the main window's, so only the wordmark is inset. -->
+                    <Grid>
                         <!-- Wordmark with the same soft dark shadow copy the main title bar uses. -->
-                        <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Margin="14,0,0,0">
                             <StackPanel Orientation="Horizontal" Margin="1,2,0,0"
                                         Opacity="{DynamicResource IconShadowOpacity}">
                                 <StackPanel.Effect><BlurEffect Radius="3"/></StackPanel.Effect>
@@ -50,21 +52,33 @@
                             </StackPanel>
                             <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="19.5" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
                         </Grid>
-                        <Button Content="&#x2715;" Click="Cancel_Click"
-                                HorizontalAlignment="Right"
-                                Width="28" FontSize="10"
-                                Foreground="{StaticResource MutedTextBrush}"
+                        <!-- Matches the main window's close button: the same E8BB Segoe MDL2 glyph
+                             at 44x36, DangerRed at rest, filling DangerRed with a white glyph on
+                             hover. The one intentional difference is the rounded top-right, which
+                             follows the dialog's 6px corner; the main window is square there.
+
+                             The glyph is a named TextBlock recoloured by TargetName, NOT the
+                             Button's own Foreground. Setting Foreground on the Button is a LOCAL
+                             value, which outranks anything a trigger sets on that same property,
+                             so the hover left a red glyph on the red fill and the X vanished.
+                             Same trap the About overlay's close button documents. -->
+                        <Button Click="Cancel_Click"
+                                HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Width="44" Height="36"
                                 Background="Transparent" BorderThickness="0"
                                 Cursor="Hand">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
-                                    <Border x:Name="bg" Background="Transparent" CornerRadius="3">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Border x:Name="bg" Background="Transparent" CornerRadius="0,6,0,0">
+                                        <TextBlock x:Name="glyph" Text="&#xE8BB;"
+                                                   FontFamily="Segoe MDL2 Assets" FontSize="10"
+                                                   Foreground="{DynamicResource DangerRed}"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="bg" Property="Background" Value="#C42B1C"/>
-                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter TargetName="bg" Property="Background" Value="{DynamicResource DangerRed}"/>
+                                            <Setter TargetName="glyph" Property="Foreground" Value="White"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -84,6 +98,21 @@
                         <LineBreak/>
                         <Run Text="- Appears in Add/Remove Programs"/>
                     </TextBlock>
+
+                    <!-- All-users install: routes to the same machine-wide path winget and choco
+                         already use (Program Files + HKLM), by re-running the app elevated with
+                         /silent. Unticked keeps the original per-user behavior, so the default
+                         install still needs no admin rights. -->
+                    <CheckBox x:Name="AllUsersCheck" Margin="0,16,0,0"
+                              Checked="AllUsers_Changed" Unchecked="AllUsers_Changed"
+                              Foreground="{StaticResource TextBrush}" FontSize="12"
+                              Content="{DynamicResource Str_Install_AllUsers}"/>
+                    <!-- Always visible, so the dialog does not change height when the box is
+                         ticked and the consequence is readable before committing to it. -->
+                    <TextBlock x:Name="AllUsersNote" Foreground="{StaticResource MutedTextBrush}"
+                               FontSize="11" LineHeight="16" TextWrapping="Wrap"
+                               Margin="22,5,0,0"
+                               Text="{DynamicResource Str_Install_AllUsersNote}"/>
                 </StackPanel>
 
                 <!-- Buttons -->
@@ -92,8 +121,11 @@
                     <Button x:Name="CancelButton" Content="Cancel" Click="Cancel_Click"
                             Style="{StaticResource SurfaceButton}"
                             Width="80" Margin="0,0,8,0"/>
+                    <!-- OutlineButton, not PrimaryButton: hollow by default, fills with the accent
+                         on hover. Matches the Scan button and the status-bar Install button, which
+                         were already the only other buttons in the app. -->
                     <Button x:Name="OkButton" Content="Install" Click="OK_Click"
-                            Style="{StaticResource PrimaryButton}"
+                            Style="{StaticResource OutlineButton}"
                             Width="80"/>
                 </StackPanel>
             </Grid>

@@ -24,6 +24,12 @@ namespace KillerScan
             "Programs", AppName);
         private static readonly string InstallExe = Path.Combine(InstallDir, ExeName);
 
+        // Machine-wide ("all users") install target. Used by the /silent path that winget, choco
+        // and RMM call, and by the "Install for all users" checkbox in the confirm dialog.
+        private static readonly string MachineInstallDir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), AppName);
+        private static readonly string MachineInstallExe = Path.Combine(MachineInstallDir, ExeName);
+
         private static readonly string StartMenuDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.Programs), AppName);
         private static readonly string StartMenuLnk = Path.Combine(StartMenuDir, $"{AppName}.lnk");
@@ -95,23 +101,94 @@ namespace KillerScan
         // ============================================================
 
         /// <summary>
-        /// True when running from outside the installed location (i.e. portable mode).
+        /// True when running from outside EITHER installed location (i.e. portable mode).
+        /// Must check the machine-wide path as well as the per-user one: a /silent install from
+        /// winget, choco or an RMM lands in Program Files, and comparing only against the
+        /// per-user path made those properly-installed copies show the PORTABLE badge and the
+        /// Install button.
         /// </summary>
         internal static bool IsPortable()
         {
             string currentExe = Process.GetCurrentProcess().MainModule!.FileName;
-            return !string.Equals(currentExe, InstallExe, StringComparison.OrdinalIgnoreCase);
+            return !string.Equals(currentExe, InstallExe, StringComparison.OrdinalIgnoreCase)
+                && !string.Equals(currentExe, MachineInstallExe, StringComparison.OrdinalIgnoreCase);
         }
+
+        /// <summary>True when a machine-wide copy is already present on disk.</summary>
+        internal static bool MachineInstallExists() => File.Exists(MachineInstallExe);
 
         /// <summary>
         /// Installs KillerScan, then relaunches from the installed location.
+        /// For an all-users install the app re-runs itself elevated with /silent - the same
+        /// machine-wide path winget and choco already use - so UAC only appears when the user
+        /// actually ticked the box. Returns false if that elevation was declined or failed,
+        /// leaving the app running as it was.
         /// </summary>
-        internal static void InstallAndRelaunch(bool wantDesktop)
+        internal static bool InstallAndRelaunch(bool wantDesktop, bool allUsers)
         {
-            DoInstall(wantDesktop);
+            if (allUsers)
+            {
+                if (!RunElevatedSilentInstall()) return false;
 
+                // One install only: drop the per-user copy now that a machine-wide one exists.
+                // Done from THIS (unelevated) process so it removes the invoking user's profile
+                // copy, which an elevated process might not resolve to.
+                RemovePerUserInstall();
+
+                Process.Start(new ProcessStartInfo(MachineInstallExe));
+                Application.Current.Shutdown();
+                return true;
+            }
+
+            DoInstall(wantDesktop);
             Process.Start(new ProcessStartInfo(InstallExe));
             Application.Current.Shutdown();
+            return true;
+        }
+
+        /// <summary>Re-run this exe elevated with /silent and wait for it to finish.</summary>
+        private static bool RunElevatedSilentInstall()
+        {
+            try
+            {
+                var psi = new ProcessStartInfo(Process.GetCurrentProcess().MainModule!.FileName, "/silent")
+                {
+                    UseShellExecute = true,
+                    Verb = "runas",          // triggers the UAC prompt
+                };
+                using var p = Process.Start(psi);
+                p?.WaitForExit();
+                return p is not null && p.ExitCode == 0 && File.Exists(MachineInstallExe);
+            }
+            catch
+            {
+                // Declining the UAC prompt throws Win32Exception 1223 (ERROR_CANCELLED).
+                return false;
+            }
+        }
+
+        /// <summary>Remove a per-user install: files, shortcuts, and its HKCU marker.
+        /// Settings under Software\KillerScan\Settings are deliberately left alone so theme,
+        /// accent, locale and window placement survive the move to a machine-wide install.</summary>
+        private static void RemovePerUserInstall()
+        {
+            try { if (File.Exists(StartMenuLnk)) File.Delete(StartMenuLnk); } catch { }
+            try { if (Directory.Exists(StartMenuDir)) Directory.Delete(StartMenuDir, true); } catch { }
+            try { if (File.Exists(DesktopLnk)) File.Delete(DesktopLnk); } catch { }
+            try { if (Directory.Exists(InstallDir)) Directory.Delete(InstallDir, true); } catch { }
+            try
+            {
+                using var key = Registry.CurrentUser.OpenSubKey(@"Software\KillerScan", writable: true);
+                key?.DeleteValue("Installed", throwOnMissingValue: false);
+                key?.DeleteValue("InstallPath", throwOnMissingValue: false);
+            }
+            catch { }
+            try
+            {
+                Registry.CurrentUser.DeleteSubKeyTree(
+                    @"Software\Microsoft\Windows\CurrentVersion\Uninstall\KillerScan", throwOnMissingSubKey: false);
+            }
+            catch { }
         }
 
         // ============================================================

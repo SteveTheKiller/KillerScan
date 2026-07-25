@@ -60,6 +60,7 @@ namespace KillerScan
 
             RestoreWindowPlacement();                               // window size/position from previous run
             RestoreColumnLayout();                                  // column order/widths from previous run
+            InitAppScale();                                         // AppScale.cs (restore app-wide size)
 
             ApplyGrainTexture();                                    // WindowChrome.cs
             SourceInitialized += MainWindow_SourceInitialized;      // WindowChrome.cs
@@ -82,8 +83,14 @@ namespace KillerScan
             dlg.ShowDialog();
             if (!dlg.Confirmed) return;
 
+            // An all-users install can still be refused at the UAC prompt; only hide the badge
+            // once the install actually happened, otherwise the app keeps running as portable.
+            if (!App.InstallAndRelaunch(wantDesktop: true, allUsers: dlg.AllUsers))
+            {
+                StatusText.Text = Loc("Str_St_InstallCancelled");
+                return;
+            }
             _portableBadge.Visibility = Visibility.Collapsed;
-            App.InstallAndRelaunch(wantDesktop: true);
         }
 
         // Footer version number -> About overlay (About.cs).

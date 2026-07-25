@@ -25,8 +25,10 @@
 - Weighted-score classifier identifies routers, hypervisors, Windows and Linux boxes, printers, NAS, cameras, IoT, mobile, and more
 - Right-click to copy IP/MAC/hostname, launch RDP/SSH/browser, or override a device type
 - CSV export and a themeable, sortable HTML report
-- Tabs for scanning multiple subnets, six themes, localized in nine languages
-- Single Windows EXE under 3 MB, no runtime install; self-installs per-user or runs portable
+- Scan several networks in one pass: comma-separated CIDR blocks, single hosts, and ranges
+- Tabs for scanning multiple subnets, six themes, localized in ten languages
+- Keyboard shortcuts (F1 for the list) and an app-wide size control from 70% to 250%
+- Single Windows EXE under 3 MB, no runtime install; installs per-user or for all users, or runs portable
 - GPLv3, local-only, no account, no telemetry
     </description>
     <releaseNotes>https://github.com/SteveTheKiller/KillerScan/releases/tag/vREPLACE_VERSION</releaseNotes>

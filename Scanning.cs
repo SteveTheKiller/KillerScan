@@ -54,9 +54,28 @@ namespace KillerScan
                 return;
             }
 
+            // Validate before starting: one or many comma-separated targets, each a CIDR block,
+            // a single host, or a range. A bad token names itself in the status bar rather than
+            // throwing out of the scan (Services/ScanTargets.cs).
+            var targets = Services.ScanTargets.Parse(SubnetInput.Text);
+            if (!targets.Ok)
+            {
+                StatusText.Text = targets.Error switch
+                {
+                    Services.TargetError.Invalid  => string.Format(Loc("Str_St_BadTarget"), targets.Detail),
+                    Services.TargetError.TooLarge => string.Format(Loc("Str_St_TooManyAddresses"),
+                                                                   targets.Detail,
+                                                                   Services.ScanTargets.MaxAddresses.ToString("N0")),
+                    _                             => Loc("Str_St_NoTarget"),
+                };
+                SubnetInput.Focus();
+                SubnetInput.SelectAll();
+                return;
+            }
+
             s.SubnetText = SubnetInput.Text;
             s.Devices.Clear();
-            s.ScannedSubnet = SubnetInput.Text.Trim();           // updates the tab caption
+            s.ScannedSubnet = targets.Summary;                   // updates the tab caption
             if (s == _active)
             {
                 RefreshDeviceCount();

@@ -33,7 +33,10 @@ try {
     New-Item -ItemType Directory -Force -Path $staging | Out-Null
     Push-Location $projectDirFull
     try {
-        $files = @(& git ls-files 2>$null)
+        # Exclude the landing site: it is a separate deployable, not app source, and a
+        # release's own exe hash can never live correctly inside the source it is built
+        # from (circular). Keeps the bundle buildable-app-only and free of stale site info.
+        $files = @(& git ls-files 2>$null | Where-Object { $_ -notlike 'scan-landing/*' })
         if ($LASTEXITCODE -ne 0 -or $files.Count -eq 0) {
             Write-Warning "Source bundle skipped: git ls-files returned no tracked files (is git installed and is this a repo?)."
             return

@@ -19,6 +19,7 @@
         TextOptions.TextRenderingMode="ClearType"
         UseLayoutRounding="True"
         SnapsToDevicePixels="True"
+        PreviewKeyDown="Window_PreviewKeyDown"
         Icon="Resources/ks-icon.ico">
 
     <!-- Native custom chrome (no AllowsTransparency): WPF composites on the GPU and Windows
@@ -57,9 +58,15 @@
                            RenderOptions.BitmapScalingMode="HighQuality"/>
                     <!-- Typewriter wordmark with KillerPDF-style soft shadow: a blurred dark copy behind the
                          crisp text, faded by IconShadowOpacity (0 in light mode = no shadow).
-                         Plain chrome: no hit-test opt-in, so clicking it (like any empty title-bar
-                         area) drags the window. The website link lives in About. -->
-                    <Grid VerticalAlignment="Center" Background="Transparent">
+                         Rolling the wheel over it drives the app-wide size (AppScale.cs). The
+                         hit-test opt-in that lets the wheel reach it also takes it out of
+                         WindowChrome's native caption, so drag and double-click-maximize are
+                         restored by hand in AppScale.cs. The website link lives in About. -->
+                    <Grid x:Name="LogoBar" VerticalAlignment="Center" Background="Transparent"
+                          WindowChrome.IsHitTestVisibleInChrome="True"
+                          MouseWheel="LogoBar_MouseWheel"
+                          MouseLeftButtonDown="LogoBar_MouseLeftButtonDown"
+                          ToolTip="{DynamicResource Str_TT_AppSize}">
                         <StackPanel Orientation="Horizontal" Margin="1,2,0,0" Opacity="{DynamicResource IconShadowOpacity}">
                             <StackPanel.Effect><BlurEffect Radius="3"/></StackPanel.Effect>
                             <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="18"><Run Text="Killer" Foreground="#D8000000"/><Run Text="Scan" FontSize="23.4" FontWeight="Bold" Foreground="#D8000000"/></TextBlock>
@@ -73,6 +80,28 @@
                 <!-- Appearance + language (sit left of the window controls) -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
                             WindowChrome.IsHitTestVisibleInChrome="True" Margin="0,0,140,0">
+
+                    <!-- Keyboard shortcuts (F1). A Consolas "?" rather than an MDL2 glyph, matching
+                         KillerNotes and KillerPDF, which both sit theirs right beside the globe. -->
+                    <Button x:Name="ShortcutsButton" Click="ShortcutHelp_Click" Cursor="Hand"
+                            Background="Transparent" BorderThickness="0" Width="30" Height="26"
+                            Margin="0,0,12,0" ToolTip="{DynamicResource Str_TT_Shortcuts}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="bg" Background="Transparent" CornerRadius="4">
+                                    <TextBlock x:Name="ico" Text="?" FontFamily="Consolas" FontSize="18"
+                                               Foreground="{DynamicResource MutedTextBrush}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="bg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                        <Setter TargetName="ico" Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
 
                     <!-- Language picker -->
                     <Button x:Name="LangButton" Click="LangButton_Click" Cursor="Hand"
@@ -177,7 +206,25 @@
              the wordmark, so the toolbar's own 8px top padding read as ~17px above the subnet box vs
              8px below. Removing the 8 and overlapping the title row by 1 equalizes it at 8/8; both
              bars share the same background+grain, so the 1px overlap is invisible. -->
-        <Border Grid.Row="1" Background="{DynamicResource BackgroundBrush}" Padding="16,0,16,8" Margin="0,-1,0,0"
+        <!-- ScaleHost: the app-wide accessibility zoom (AppScale.cs) scales THIS grid only, so
+             the title bar and footer stay a fixed size and the wordmark you scroll to zoom
+             never moves. The DataGrid's saved column widths are logical px measured inside
+             this transform, so they need no conversion across a scale change. -->
+        <Grid x:Name="ScaleHost" Grid.Row="1" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>   <!-- 0: scan toolbar -->
+                <RowDefinition Height="*"/>      <!-- 1: devices pane -->
+            </Grid.RowDefinitions>
+
+        <!-- IsHitTestVisibleInChrome is REQUIRED here, not optional polish. WindowChrome measures
+             CaptionHeight (36) from BELOW ResizeBorderThickness (8), so the caption region runs to
+             44px from the window top - past the 36px title row and 9px into this toolbar. Windows
+             swallows every click in that region as caption, so the top of the Scan button and the
+             subnet box were dead: only their lower two thirds responded. Opting the bar into chrome
+             hit-testing hands those pixels back to WPF. Dragging the bar still works, because
+             Toolbar_MouseDown forwards empty-space clicks as a caption drag itself. -->
+        <Border Grid.Row="0" Background="{DynamicResource BackgroundBrush}" Padding="16,0,16,8" Margin="0,-1,0,0"
+                WindowChrome.IsHitTestVisibleInChrome="True"
                 MouseLeftButtonDown="Toolbar_MouseDown">
             <Grid>
                     <Grid.ColumnDefinitions>
@@ -238,14 +285,14 @@
         </Border>
 
         <!-- Chrome strip behind the pane, so the side margins carry the grain like the other bars -->
-        <Border Grid.Row="2" Background="{DynamicResource BackgroundBrush}">
+        <Border Grid.Row="1" Background="{DynamicResource BackgroundBrush}">
             <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}"
                     Background="{DynamicResource GrainTileBrush}"/>
         </Border>
 
         <!-- Devices pane - the lightest tier, lifted above the chrome with an outward drop shadow
              (kept tight to the bars; the shadow overlays them rather than adding gap) -->
-        <Border Grid.Row="2" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
+        <Border Grid.Row="1" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
                 BorderThickness="1" CornerRadius="4" Margin="8,0,8,0" Panel.ZIndex="10">
             <Border.Effect>
                 <DropShadowEffect Color="Black" BlurRadius="16" ShadowDepth="0" Opacity="0.5"/>
@@ -351,8 +398,14 @@
                         <Button.ContextMenu>
                             <ContextMenu Placement="Bottom" HorizontalOffset="0" VerticalOffset="2"
                                          PreviewMouseWheel="Menu_ForwardWheelToGrid">
-                                <MenuItem Header="{DynamicResource Str_Export_Csv}" Click="ExportCsv_Click"/>
-                                <MenuItem Header="{DynamicResource Str_Export_Html}" Click="ExportHtml_Click"/>
+                                <MenuItem Header="{DynamicResource Str_Export_Csv}" Click="ExportCsv_Click">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9F9;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <!-- Braces, not a globe: the globe is the language picker in the
+                                     title bar and the Web Device type, and this is markup. -->
+                                <MenuItem Header="{DynamicResource Str_Export_Html}" Click="ExportHtml_Click">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE943;"/></MenuItem.Icon>
+                                </MenuItem>
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
@@ -450,41 +503,111 @@
 
                     <DataGrid.ContextMenu>
                         <ContextMenu>
-                            <MenuItem x:Name="RescanMenuItem" Header="{DynamicResource Str_Ctx_RescanOne}" Click="RescanSelected_Click"/>
-                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
-                            <MenuItem Header="{DynamicResource Str_Ctx_CopyIp}" Click="CopyIp_Click"/>
-                            <MenuItem Header="{DynamicResource Str_Ctx_CopyMac}" Click="CopyMac_Click"/>
-                            <MenuItem Header="{DynamicResource Str_Ctx_CopyHost}" Click="CopyHostname_Click"/>
-                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
-                            <MenuItem Header="Ping" Click="PingDevice_Click"/>
-                            <MenuItem Header="{DynamicResource Str_Ctx_OpenBrowser}" Click="OpenBrowser_Click"/>
-                            <MenuItem Header="RDP" Click="RdpDevice_Click"/>
-                            <MenuItem Header="SSH" Click="SshDevice_Click"/>
-                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
-                            <MenuItem Header="{DynamicResource Str_Ctx_SetType}">
-                                <MenuItem Header="Router" Click="SetType_Click" Tag="Router"/>
-                                <MenuItem Header="Switch/AP" Click="SetType_Click" Tag="Switch/AP"/>
-                                <MenuItem Header="Network" Click="SetType_Click" Tag="Network"/>
-                                <MenuItem Header="Windows" Click="SetType_Click" Tag="Windows"/>
-                                <MenuItem Header="Windows Server" Click="SetType_Click" Tag="Windows Server"/>
-                                <MenuItem Header="Linux/SSH" Click="SetType_Click" Tag="Linux/SSH"/>
-                                <MenuItem Header="Server" Click="SetType_Click" Tag="Server"/>
-                                <MenuItem Header="Printer" Click="SetType_Click" Tag="Printer"/>
-                                <MenuItem Header="Smart TV" Click="SetType_Click" Tag="Smart TV"/>
-                                <MenuItem Header="Apple TV" Click="SetType_Click" Tag="Apple TV"/>
-                                <MenuItem Header="Media Streamer" Click="SetType_Click" Tag="Media Streamer"/>
-                                <MenuItem Header="Apple Device" Click="SetType_Click" Tag="Apple Device"/>
-                                <MenuItem Header="Mobile" Click="SetType_Click" Tag="Mobile"/>
-                                <MenuItem Header="IoT" Click="SetType_Click" Tag="IoT"/>
-                                <MenuItem Header="NAS" Click="SetType_Click" Tag="NAS"/>
-                                <MenuItem Header="Camera" Click="SetType_Click" Tag="Camera"/>
-                                <MenuItem Header="Hypervisor" Click="SetType_Click" Tag="Hypervisor"/>
-                                <MenuItem Header="Home Assistant" Click="SetType_Click" Tag="Home Assistant"/>
-                                <MenuItem Header="DNS Server" Click="SetType_Click" Tag="DNS Server"/>
-                                <MenuItem Header="Web Device" Click="SetType_Click" Tag="Web Device"/>
-                                <MenuItem Header="Other" Click="SetType_Click" Tag="Other"/>
+                            <MenuItem x:Name="RescanMenuItem" Header="{DynamicResource Str_Ctx_RescanOne}" Click="RescanSelected_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE72C;"/></MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_ClearOverride}" Click="ClearOverride_Click"/>
+                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
+                            <!-- The three Copy actions share one glyph on purpose: they do the same
+                                 kind of thing, and varying the icon would imply otherwise. -->
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyIp}" Click="CopyIp_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyMac}" Click="CopyMac_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyHost}" Click="CopyHostname_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_Ping}" Click="PingDevice_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE704;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <!-- Open-in-new-window, not the globe: the globe is the language picker
+                                 in the title bar, so reusing it here would blur what it means. The
+                                 globe goes to Export as HTML instead, where nothing competes. -->
+                            <MenuItem Header="{DynamicResource Str_Ctx_OpenBrowser}" Click="OpenBrowser_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8A7;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_Rdp}" Click="RdpDevice_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE7F4;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_Ssh}" Click="SshDevice_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_SetType}" SubmenuOpened="SetTypeMenu_Opened">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8EC;"/></MenuItem.Icon>
+                                <!-- One distinct glyph per type; every codepoint was checked against
+                                     the installed Segoe MDL2 Assets and rendered before adoption.
+                                     MDL2 has no true router or NAS glyph, so those two are the
+                                     closest available appliance/storage shapes. -->
+                                <MenuItem Header="Router" Click="SetType_Click" Tag="Router">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE965;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Switch/AP" Click="SetType_Click" Tag="Switch/AP">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE701;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Network" Click="SetType_Click" Tag="Network">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE839;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Windows" Click="SetType_Click" Tag="Windows">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE7F4;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Windows Server" Click="SetType_Click" Tag="Windows Server">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE968;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Linux/SSH" Click="SetType_Click" Tag="Linux/SSH">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Server" Click="SetType_Click" Tag="Server">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xEDA2;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Printer" Click="SetType_Click" Tag="Printer">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE749;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Smart TV" Click="SetType_Click" Tag="Smart TV">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE7F8;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Apple TV" Click="SetType_Click" Tag="Apple TV">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE786;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Media Streamer" Click="SetType_Click" Tag="Media Streamer">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8B2;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Apple Device" Click="SetType_Click" Tag="Apple Device">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE977;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Mobile" Click="SetType_Click" Tag="Mobile">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8EA;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="IoT" Click="SetType_Click" Tag="IoT">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9A9;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="NAS" Click="SetType_Click" Tag="NAS">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8CE;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Camera" Click="SetType_Click" Tag="Camera">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE714;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Hypervisor" Click="SetType_Click" Tag="Hypervisor">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE81E;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Home Assistant" Click="SetType_Click" Tag="Home Assistant">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE80F;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="DNS Server" Click="SetType_Click" Tag="DNS Server">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE12B;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Web Device" Click="SetType_Click" Tag="Web Device">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE774;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Other" Click="SetType_Click" Tag="Other">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9CE;"/></MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_ClearOverride}" Click="ClearOverride_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE894;"/></MenuItem.Icon>
+                            </MenuItem>
                         </ContextMenu>
                     </DataGrid.ContextMenu>
 
@@ -666,6 +789,9 @@
             </Grid>
         </Border>
 
+        </Grid>
+        <!-- end ScaleHost -->
+
         <!-- Status Bar -->
         <Border Grid.Row="3" Background="{DynamicResource BackgroundBrush}">
             <Grid Margin="16,0">
@@ -736,6 +862,63 @@
             <Rectangle Canvas.Left="6"  Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
             <Rectangle Canvas.Left="10" Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
         </Canvas>
+
+        <!-- Keyboard shortcuts overlay (F1 or the title-bar "?"). Same card chrome as the About
+             overlay below; the rows are built in Shortcuts.cs so the list has one source of truth. -->
+        <Grid x:Name="ShortcutsOverlay" Grid.RowSpan="4" Panel.ZIndex="9000" Visibility="Collapsed"
+              Background="#88000000" MouseLeftButtonDown="ShortcutsOverlay_Click">
+            <Grid Width="420" VerticalAlignment="Center" MouseLeftButtonDown="ShortcutsCard_Click">
+                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="6" IsHitTestVisible="False">
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" BlurRadius="26" ShadowDepth="5" Direction="270" Opacity="0.6"/>
+                    </Border.Effect>
+                </Border>
+                <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1" CornerRadius="6">
+                    <Grid>
+                        <Border IsHitTestVisible="False" CornerRadius="6"
+                                Opacity="{DynamicResource GrainOpacity}" Background="{DynamicResource GrainTileBrush}"/>
+
+                        <!-- Glyph is a named TextBlock recoloured by TargetName. Setting Foreground
+                             on the Button would be a local value and would outrank the trigger, so
+                             the hover would never take - the same trap the About overlay documents. -->
+                        <Button Click="ShortcutsClose_Click" HorizontalAlignment="Right"
+                                VerticalAlignment="Top" Width="28" Height="26" Margin="0,6,6,0"
+                                Panel.ZIndex="2"
+                                Background="Transparent" BorderThickness="0" Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="Transparent">
+                                        <TextBlock x:Name="glyph" Text="&#x2715;" FontSize="11"
+                                                   Foreground="{DynamicResource MutedTextBrush}"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="glyph" Property="Foreground" Value="{DynamicResource DangerRed}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <StackPanel Margin="24,18,24,18">
+                            <TextBlock x:Name="ShortcutsTitle" Text="Keyboard shortcuts"
+                                       Foreground="{DynamicResource TextBrush}"
+                                       FontSize="14" FontWeight="SemiBold" Margin="0,0,0,14"/>
+                            <Grid x:Name="ShortcutList">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" MinWidth="112"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                            </Grid>
+                            <TextBlock x:Name="ShortcutsHint" Foreground="{DynamicResource MutedTextBrush}"
+                                       FontSize="11" TextWrapping="Wrap" Margin="0,14,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
 
         <!-- About overlay: dims the window behind it and shows a centred card (matches KillerPDF).
              The close X is blended into the card (no separate title bar) with a red hover. -->
