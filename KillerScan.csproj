@@ -30,6 +30,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <!-- Transitive pins: Costura.Fody -> NETStandard.Library 1.6.1 resolves the vulnerable
+         System.Net.Http 4.3.0 / System.Text.RegularExpressions 4.3.0 (GHSA-7jgj-8wvc-jh57,
+         GHSA-cmhx-cq75-c4mj). Costura is build-time only and the app compiles against the net48
+         framework System.Net.Http, so nothing from that graph ships - these pins just move the
+         resolved versions to the patched releases. ExcludeAssets=all keeps them out of compile
+         and output entirely. Same fix as KillerNotes. -->
+    <PackageReference Include="System.Net.Http" Version="4.3.4" ExcludeAssets="all" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" ExcludeAssets="all" />
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
     <PackageReference Include="PolySharp" Version="1.15.0">
       <PrivateAssets>all</PrivateAssets>
