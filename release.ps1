@@ -148,13 +148,16 @@ if ($fileVersion -notlike "$Version*") {
 # --- 5. Single-exe check ---
 # Costura embeds every managed dependency, so the exe alone is the release asset
 # (the site links to releases/latest/download/KillerScan.exe).
+# NOTE: this is the PRE-signature size, used only for the Costura sanity check. The figure
+# published on the landing page is recomputed after signing (step 7b), because Authenticode
+# adds ~10KB and the site would otherwise advertise a size the downloaded file does not have.
 Step "Verifying single-exe packaging"
 $exeSize = (Get-Item $exe).Length
-$exeMB = '{0:N2} MB' -f ($exeSize / 1MB)
+$unsignedMB = '{0:N2} MB' -f ($exeSize / 1MB)
 if ($exeSize -lt 1.5MB) {
-    Fail "KillerScan.exe is only $exeMB - Costura does not appear to have embedded the dependencies. Check Fody/FodyWeavers.xml."
+    Fail "KillerScan.exe is only $unsignedMB - Costura does not appear to have embedded the dependencies. Check Fody/FodyWeavers.xml."
 }
-Write-Host "KillerScan.exe is $exeMB"
+Write-Host "KillerScan.exe is $unsignedMB (unsigned)"
 
 # --- 6. Sign (Certum via SimplySign, same flow as the other Killer release scripts) ---
 if ($SkipSign) {
@@ -223,6 +226,10 @@ Write-Host "Source bundle: $srcZip ($srcZipMB)"
 # KillerScan.exe and takes the LAST whitespace token as the hash, so the padded columns
 # below are fine. Upload it with the exe - gh release create does that in step 11.
 Step "Writing SHA256SUMS.txt"
+# Size and hash both come from the exe in its FINAL, signed state - this is the file people
+# actually download, so it is what the landing page must describe.
+$exeMB    = '{0:N2} MB' -f ((Get-Item $exe).Length / 1MB)
+Write-Host "Signed KillerScan.exe is $exeMB"
 $exeHash  = (Get-FileHash $exe -Algorithm SHA256).Hash
 $srcHash  = (Get-FileHash $srcZip -Algorithm SHA256).Hash
 $sumsFile = Join-Path $publishDir 'SHA256SUMS.txt'
@@ -254,22 +261,36 @@ $indexNew  = $indexNew -replace '(<span class="k">size</span>&nbsp;<span class="
 $indexNew  = $indexNew -replace '(<span class="v hash">)[0-9a-f]{32}<br>[0-9a-f]{32}', ('${1}' + $hashLower.Substring(0, 32) + '<br>' + $hashLower.Substring(32, 32))
 if ($indexNew -eq $indexRaw) {
     Write-Warning 'index.html hero block did not change - check the release-info markup still matches the patterns in this script.'
-} else {
-    [System.IO.File]::WriteAllText($indexPath, $indexNew)
-}
-
-foreach ($page in 'index.html', 'about.html', 'technical.html') {
-    $p   = Join-Path $siteDir $page
-    $raw = [System.IO.File]::ReadAllText($p)
-    $new = $raw -replace '(id="verEgg"[^>]*>)v[0-9]+\.[0-9]+\.[0-9]+', ('${1}' + "v$Version")
-    if ($new -ne $raw) { [System.IO.File]::WriteAllText($p, $new) }
 }
 
 # README: the GPL3 corresponding-source link must point at THIS release's zip.
 $readmePath = Join-Path (Get-Location).Path 'README.md'
 $readmeRaw  = [System.IO.File]::ReadAllText($readmePath)
 $readmeNew  = $readmeRaw -replace '/releases/download/v[0-9]+\.[0-9]+\.[0-9]+/KillerScan-[0-9]+\.[0-9]+\.[0-9]+-src\.zip', "/releases/download/$Tag/KillerScan-$Version-src.zip"
-if ($readmeNew -ne $readmeRaw) { [System.IO.File]::WriteAllText($readmePath, $readmeNew) }
+
+# DryRun must not touch the working tree. Writing here would leave the tree dirty, and the
+# preflight on the NEXT (real) run would then fail on the very files this run modified.
+if ($DryRun) {
+    Write-Host "DryRun: would write these release facts and commit them:" -ForegroundColor Yellow
+    Write-Host "  version  : KillerScan v$Version"
+    Write-Host "  released : $releaseDate"
+    Write-Host "  size     : $exeMB exe"
+    Write-Host "  sha256   : $hashLower"
+    Write-Host "  verEgg   : v$Version on index, about, technical"
+    Write-Host "  README   : source zip link -> $Tag$(if ($readmeNew -eq $readmeRaw) { ' (already current)' })"
+    Write-Host "DryRun: working tree left untouched." -ForegroundColor Yellow
+} else {
+    if ($indexNew -ne $indexRaw) { [System.IO.File]::WriteAllText($indexPath, $indexNew) }
+
+    foreach ($page in 'index.html', 'about.html', 'technical.html') {
+        $p   = Join-Path $siteDir $page
+        $raw = [System.IO.File]::ReadAllText($p)
+        $new = $raw -replace '(id="verEgg"[^>]*>)v[0-9]+\.[0-9]+\.[0-9]+', ('${1}' + "v$Version")
+        if ($new -ne $raw) { [System.IO.File]::WriteAllText($p, $new) }
+    }
+
+    if ($readmeNew -ne $readmeRaw) { [System.IO.File]::WriteAllText($readmePath, $readmeNew) }
+}
 
 # Claim check: the README language count is written by hand, so it silently goes stale the
 # moment a locale is added. Compare it against the shipping Strings/*.xaml count and warn.
@@ -284,7 +305,6 @@ if ($localeCount -gt 0 -and $readmeNew -match 'localized in ([0-9]+) languages')
 
 if ($DryRun) {
     Write-Host "DryRun: would commit and push scan-landing + README for v$Version"
-    git --no-pager diff --stat -- scan-landing README.md
 } else {
     $siteDirty = git status --porcelain scan-landing README.md
     if ($siteDirty) {
