@@ -11,17 +11,17 @@
 <meta name="description" content="About KillerScan and its maker, Steve the Killer - a field tech who got tired of not knowing what was on the network.">
 <link rel="icon" type="image/x-icon" href="brand/ks-icon.ico">
 <script defer src="https://koya.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
-<link rel="stylesheet" href="ks.css?v=13">
+<link rel="stylesheet" href="ks.css?v=17">
 <style>
 .page-hero { text-align: center; padding: 44px 16px 8px; }
 .page-hero .wm-logo { height: clamp(46px, 8vw, 76px); width: auto; margin: 0 auto 8px; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.55)); }
 .page-hero p { color: var(--muted); font-size: 15px; margin-top: 4px; }
 .content-inner { max-width: 880px; margin: 0 auto; padding: 0 28px 56px; }
 .sb-tabs .on { border-bottom: 0; }
-.outline { padding: 8px 0; overflow-y: auto; flex: 1; }
+.outline { padding: 8px 0; overflow-y: auto; flex: 1; min-height: 0; }
 .outline a { display: block; padding: 8px 16px 8px 18px; font-size: 13px; color: var(--text2); border-left: 2px solid transparent; }
 .outline a:hover { color: var(--text); background: color-mix(in srgb, var(--accent) 8%, transparent); filter: none; }
-.outline a.on { color: var(--accent); border-left-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, var(--sidebar)); }
+.outline a.on { color: var(--accent-text); border-left-color: var(--accent); background: var(--accent); }
 @media (max-width: 900px) { .outline { display:flex; flex-direction:row; flex-wrap:wrap; padding:8px; gap:4px; } .outline a { border-left:0; border-radius:5px; padding:6px 10px; } .outline a.on { border-left:0; } }
 /* Also try (cross-promo): chrome follows the page theme, wordmark swaps light/dark */
 .also-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 12px; margin-top: 4px; }
@@ -101,7 +101,7 @@ html[data-theme="light"] .also-wm.light { display: block; }
 <div class="about-card" id="maker">
 <h2 data-i18n="maker_h">The maker</h2>
 <p class="about-quote" data-i18n="maker_q">"I walk onto a network I've never seen and the first question is always the same: what is actually on here? So I wrote the tool that answers it - in seconds, with no agent and no login."</p>
-<p data-i18n="maker_p1">I'm <b>Steve the Killer</b> - a field technician and systems administrator at a large MSP, working in IT since 2017. I did not start there, though: I have been building websites since the 90s and spent roughly six years as a full-stack developer before I moved into IT, so building the tool I need comes as naturally to me as fixing the network in front of me.</p>
+<p data-i18n="maker_p1">I'm <b>Steve the Killer</b> - a field technician and systems administrator at a large MSP, working in IT since 2018. I did not start there, though: I have been building websites since the 90s and spent roughly eight years as a full-stack developer before I moved into IT, so building the tool I need comes as naturally to me as fixing the network in front of me.</p>
 <p data-i18n="ak_1">A big part of the job is showing up to a site I don't know and having to understand it fast: which box is the router, where the DNS actually lives, what that one device hammering the network even is. The existing answers were heavy network suites that want an agent, a server, a license, or an account before they'll tell you a single MAC address.</p>
 <p data-i18n="maker_p2">I wanted something I could drop on any machine, double-click, and read in a few seconds. So I built it, and KillerScan is the result.</p>
 </div>
@@ -135,25 +135,33 @@ html[data-theme="light"] .also-wm.light { display: block; }
 <a class="also-card" href="https://killerpdf.net" target="_blank" rel="noopener">
 <img class="also-icon" src="brand/kp-icon.png" alt="KillerPDF" width="46" height="46">
 <span class="also-body">
-<img class="also-wm dark" src="brand/killerpdf-wordmark-dark.png" alt="KillerPDF">
-<img class="also-wm light" src="brand/killerpdf-wordmark-light.png" alt="KillerPDF">
+<img class="also-wm dark" src="brand/killerpdf-logo-brand-dark.svg" alt="KillerPDF">
+<img class="also-wm light" src="brand/killerpdf-logo-brand-light.svg" alt="KillerPDF">
 <span class="also-tag" data-i18n="ak_3">Open-source PDF editor for Windows</span>
 </span>
 </a>
-<a class="also-card" href="https://killerfind.net" target="_blank" rel="noopener">
-<img class="also-icon" src="brand/kf-icon.png" alt="KillerFind" width="46" height="46">
+<a class="also-card" href="https://killershell.net" target="_blank" rel="noopener">
+<img class="also-icon" src="brand/ksh-icon.png" alt="KillerShell" width="46" height="46">
 <span class="also-body">
-<img class="also-wm dark" src="brand/killerfind-wordmark-dark.png" alt="KillerFind">
-<img class="also-wm light" src="brand/killerfind-wordmark-light.png" alt="KillerFind">
-<span class="also-tag" data-i18n="ak_kf">Open-source file search for Windows</span>
+<img class="also-wm dark" src="brand/killershell-logo-brand-dark.svg" alt="KillerShell">
+<img class="also-wm light" src="brand/killershell-logo-brand-light.svg" alt="KillerShell">
+<span class="also-tag" data-i18n="ak_kf">Open-source Windows shell for power users</span>
 </span>
 </a>
 <a class="also-card" href="https://killernotes.net" target="_blank" rel="noopener">
 <img class="also-icon" src="brand/kn-icon.png" alt="KillerNotes" width="46" height="46">
 <span class="also-body">
-<img class="also-wm dark" src="brand/killernotes-wordmark-dark.png" alt="KillerNotes">
-<img class="also-wm light" src="brand/killernotes-wordmark-light.png" alt="KillerNotes">
+<img class="also-wm dark" src="brand/killernotes-logo-brand-dark.svg" alt="KillerNotes">
+<img class="also-wm light" src="brand/killernotes-logo-brand-light.svg" alt="KillerNotes">
 <span class="also-tag" data-i18n="ak_kn">Open-source encrypted notepad for Windows</span>
+</span>
+</a>
+<a class="also-card" href="https://killendar.net" target="_blank" rel="noopener">
+<img class="also-icon" src="brand/kd-icon.png" alt="Killendar" width="46" height="46">
+<span class="also-body">
+<img class="also-wm dark" src="brand/killendar-logo-brand-dark.svg" alt="Killendar">
+<img class="also-wm light" src="brand/killendar-logo-brand-light.svg" alt="Killendar">
+<span class="also-tag" data-i18n="ak_kd">Open-source encrypted calendar for Windows</span>
 </span>
 </a>
 </div>

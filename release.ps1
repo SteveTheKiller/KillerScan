@@ -103,6 +103,24 @@ if ($changelog -match [regex]::Escape("## [$Version] - Unreleased")) {
 if ($changelog -notmatch [regex]::Escape("## [$Version]")) {
     Fail "CHANGELOG.md has no [$Version] section"
 }
+
+# The About card shows <ReleaseDate> beside the version so users can tell how old their
+# build is. It is a hand-edited csproj field, so it silently goes stale unless something
+# checks it - that something is here. It must equal the date on this version's CHANGELOG
+# section, which is the date the release actually goes out.
+if ($csproj -notmatch '<ReleaseDate>([0-9]{4}-[0-9]{2}-[0-9]{2})</ReleaseDate>') {
+    Fail 'No <ReleaseDate>yyyy-MM-dd</ReleaseDate> found in KillerScan.csproj'
+}
+$releaseDate = $Matches[1]
+if ($changelog -notmatch ('## \[' + [regex]::Escape($Version) + '\] - ([0-9]{4}-[0-9]{2}-[0-9]{2})')) {
+    Fail "CHANGELOG.md section [$Version] has no yyyy-MM-dd date"
+}
+$changelogDate = $Matches[1]
+if ($releaseDate -ne $changelogDate) {
+    Fail "csproj <ReleaseDate> is $releaseDate but CHANGELOG [$Version] is dated $changelogDate. Bump the csproj."
+}
+Write-Host "Release date: $releaseDate"
+
 Write-Host 'Preflight OK'
 
 # --- 3. Vulnerable package scan (required at every release) ---
@@ -220,7 +238,7 @@ $srcZipMB = '{0:N2} MB' -f ((Get-Item $srcZip).Length / 1MB)
 Write-Host "Source bundle: $srcZip ($srcZipMB)"
 
 # --- 7b. Checksums (SHA256SUMS.txt) ---
-# The in-app updater (About.cs DoSelfUpdateAsync) downloads this asset from the release,
+# The in-app updater (Services/UpdateService.cs DownloadAsync) downloads this asset from the release,
 # next to the exe, and verifies the download against it. WITHOUT it the Update button falls
 # back to just opening the releases page. The updater matches the line starting with
 # KillerScan.exe and takes the LAST whitespace token as the hash, so the padded columns

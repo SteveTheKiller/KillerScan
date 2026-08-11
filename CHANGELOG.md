@@ -4,6 +4,26 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - Unreleased
+
+1.6.0 adds a command line, stops SSH guessing your username, and moves theme and language onto a rail like the other Killer Tools apps.
+
+### Added
+- **A command line**: `/scan [targets]`, `/export <path>` to CSV or HTML, `/quick`, `/quiet`, `/help` and `/version`. Headless, works while the app is open, with real exit codes. Requested in issue #1.
+- **SSH asks which account to sign in as** the first time you reach a device and remembers it against that device's MAC. New **SSH as...** on the right-click menu always asks. Leaving it blank restores plain `ssh <ip>`.
+- Six more themes, ported from KillerShell: Ectoplasm, Decay, Malaise, Sepulchre, Delirium and Mourning. Twelve in total.
+
+### Changed
+- Theme, language and the shortcuts button moved from the title bar to an icon rail down the left side, matching the rest of the Killer Tools apps. The theme picker is a named list now instead of color dots.
+- Project reorganized into the family folder layout: `Shell/`, `Services/`, `Features/`, `Controls/`, `Models/`.
+
+### Fixed
+- Text on accent-filled buttons was unreadable on the Dark themes. It is near-black now instead of white; Light keeps white.
+- The window kept its rounded corners when snapped to a screen edge. It squares off now, as it already did when maximized.
+- The Black theme has its film grain back. It was at half the strength the rest of the Killer Tools apps use, so the app read as flat.
+- The Black theme matches the rest of the Killer Tools apps key for key again. Its surfaces, row hover, alternate rows, text and input borders had each drifted, and its menus drew a light gray edge instead of the family's dark one.
+- The app-size readout no longer parks itself on the status bar. It clears a few seconds after you stop zooming, and never overwrites a status written in the meantime.
+
 ## [1.5.4] - 2026-07-25
 
 ### Added
@@ -45,7 +65,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Added
 - Japanese (ja-JP) interface translation, selectable from the language picker.
-- Status-bar messages now follow the selected language: scan progress (discovering/resolving/probing), scan complete/cancelled, export confirmations, device-type overrides, and the PORTABLE badge with its install button were hardcoded English and are now translated across all nine locales.
+- Status-bar messages now follow the selected language: scan progress (discovering/resolving/probing), scan complete/canceled, export confirmations, device-type overrides, and the PORTABLE badge with its install button were hardcoded English and are now translated across all nine locales.
 - Column widths in the results table are user-resizable again (the custom header style had dropped the resize grips).
 - The window can be dragged from anywhere on the title bar or the scan toolbar's empty space, and the wordmark no longer opens the website on click (that link lives in About).
 - The window remembers its size, position, and maximized state, and the results table remembers your column order and any widths you resized, restoring both on the next launch.
@@ -64,7 +84,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ## [1.5.1] - 2026-07-02
 
 ### Fixed
-- Scanning over a routed link or VPN (e.g. FortiClient SSL VPN) no longer collapses every device to the same MAC and vendor. ARP can't resolve hosts across the tunnel, so `SendARP` returns the next-hop (VPN adapter) MAC for every remote IP; a MAC returned for more than two distinct IPs is now treated as that artifact and discarded, letting those hosts classify by their port and fingerprint signals instead of being mislabelled as the VPN's vendor.
+- Scanning over a routed link or VPN (e.g. FortiClient SSL VPN) no longer collapses every device to the same MAC and vendor. ARP can't resolve hosts across the tunnel, so `SendARP` returns the next-hop (VPN adapter) MAC for every remote IP; a MAC returned for more than two distinct IPs is now treated as that artifact and discarded, letting those hosts classify by their port and fingerprint signals instead of being mislabeled as the VPN's vendor.
 - Host discovery no longer misses devices that block ICMP. A host that doesn't answer ping now gets a quick TCP-connect probe on a few common ports (445, 3389, 80, 443, 22) and counts as alive if any responds, closing the large undercount seen when scanning over a VPN where ARP can't help.
 - Install confirmation dialog now matches the KillerDialog style: the title bar is transparent so it blends into the window with the shared film grain, and it carries the KillerScan wordmark instead of a flat solid bar with plain text.
 
@@ -77,20 +97,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - New probe ports: 139 (NetBIOS), 554 (RTSP), 1883 / 8883 (MQTT), 5357 (WSD), 32400 (Plex).
 - Hostname fallback to the mDNS `.local` name and the NetBIOS name when reverse DNS returns nothing.
 - In-window **About** overlay matching KillerPDF: dims the window behind it, shows the app icon and typewriter wordmark, a merged description / tagline, and a lifted info panel (version, publisher, certificate thumbprint, SHA-256), with a GitHub release link and update checker, and a blended close-X that turns red on hover.
-- Typewriter **KillerScan wordmark** in the title bar (bundled font), paired with the new app icon, "Scan" in the accent colour with a drop shadow (off in light mode).
+- Typewriter **KillerScan wordmark** in the title bar (bundled font), paired with the new app icon, "Scan" in the accent color with a drop shadow (off in light mode).
 - New transparent app icon and multi-resolution `.ico`.
-- Per-theme **device-type colour palettes** (15 type colours tuned per theme).
+- Per-theme **device-type color palettes** (15 type colors tuned per theme).
 - RJ-45 / Wi-Fi **interface badge** in the network info bar.
 - Govee brand overrides for five MAC prefixes that IEEE registers as "Private", and a `(Randomized)` vendor label for locally-administered (privacy) MACs.
 - Column-header sort-direction chevron plus hover and press states, and rounded top corners on the header strip.
 
 ### Changed
-- **Gateway / DNS-aware classification**: the gateway is labelled Router, DNS Server, or Router/DNS, with Router/DNS used only when the gateway *is* the configured DNS server.
+- **Gateway / DNS-aware classification**: the gateway is labeled Router, DNS Server, or Router/DNS, with Router/DNS used only when the gateway *is* the configured DNS server.
 - Classifier gained mDNS service-type signals (Chromecast, printers, Sonos/Spotify, AirPlay, HomeKit/Hue), SSDP SERVER signals (Roku, Synology/QNAP, Plex, DLNA, Samsung TV), and new port signals.
 - Known PC / workstation vendors (Dell, HP, Lenovo, MSI, Asus, and similar) with no open ports now classify as Windows instead of falling through to the IoT catch-all during standby.
-- Vendor resolution centralised through `ResolveVendor` (OUI lookup + brand overrides + randomized-MAC labelling), applied on both the quick and full scan paths.
-- Install button adopts the same OutlineButton hover / press behaviour as the Scan button.
-- RGB-theme button outlines, footer / status text, scrollbar hover, and input hover colours corrected; scrollbars thinned and lightened on hover.
+- Vendor resolution centralized through `ResolveVendor` (OUI lookup + brand overrides + randomized-MAC labeling), applied on both the quick and full scan paths.
+- Install button adopts the same OutlineButton hover / press behavior as the Scan button.
+- RGB-theme button outlines, footer / status text, scrollbar hover, and input hover colors corrected; scrollbars thinned and lightened on hover.
 - Collection initializers across `NetworkScanner.cs` simplified to C# 12 collection expressions.
 
 ## [1.4.0] - 2026-05-16

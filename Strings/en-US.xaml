@@ -54,8 +54,33 @@
     <sys:String x:Key="Str_Ctx_OpenBrowser">Open in Browser</sys:String>
     <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
     <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">SSH as...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Set Device Type</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Clear Override</sys:String>
+
+    <!-- SSH username prompt ({0} is the device, filled in by the app) -->
+    <sys:String x:Key="Str_Ssh_Head">Connect to {0} over SSH</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">The account to sign in as. KillerScan remembers it for this device, so you are only asked once. Leave it empty to let the SSH client decide.</sys:String>
+    <sys:String x:Key="Str_Ssh_User">USERNAME</sys:String>
+    <sys:String x:Key="Str_Ssh_Connect">Connect</sys:String>
+    <sys:String x:Key="Str_Btn_Cancel">Cancel</sys:String>
+
+    <!-- Theme names, shown in the rail's theme flyout. Shared with KillerShell and KillerNotes
+         key for key, so the same thirteen themes read the same way across the family. SE98 is
+         listed here ahead of the theme itself landing, because the name is not translated. -->
+    <sys:String x:Key="Str_Theme_Dark">Dark</sys:String>
+    <sys:String x:Key="Str_Theme_Light">Light</sys:String>
+    <sys:String x:Key="Str_Theme_Black">Black</sys:String>
+    <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+    <sys:String x:Key="Str_Theme_Blood">Blood</sys:String>
+    <sys:String x:Key="Str_Theme_Greed">Greed</sys:String>
+    <sys:String x:Key="Str_Theme_Cyanotic">Cyanotic</sys:String>
+    <sys:String x:Key="Str_Theme_Ectoplasm">Ectoplasm</sys:String>
+    <sys:String x:Key="Str_Theme_Decay">Decay</sys:String>
+    <sys:String x:Key="Str_Theme_Malaise">Malaise</sys:String>
+    <sys:String x:Key="Str_Theme_Sepulchre">Sepulchre</sys:String>
+    <sys:String x:Key="Str_Theme_Delirium">Delirium</sys:String>
+    <sys:String x:Key="Str_Theme_Mourning">Mourning</sys:String>
 
     <!-- About overlay -->
     <sys:String x:Key="Str_About_Version">VERSION</sys:String>

@@ -9,6 +9,7 @@
     <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#1FB8A8" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#1FB8A8" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#0D2B2A" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionBg"         Color="#1C5E5C" po:Freeze="True"/>
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#0D2B2A" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#881FB8A8" po:Freeze="True"/>
 </ResourceDictionary>

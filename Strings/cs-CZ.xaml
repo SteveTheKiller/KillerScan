@@ -44,8 +44,28 @@
     <sys:String x:Key="Str_Ctx_OpenBrowser">Otevřít v prohlížeči</sys:String>
     <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
     <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">SSH jako...</sys:String>
+    <sys:String x:Key="Str_Ssh_Head">Připojit se k {0} přes SSH</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">Účet, pod kterým se přihlásit. KillerScan si ho pro toto zařízení zapamatuje, takže se zeptá jen jednou. Ponechte prázdné, ať rozhodne klient SSH.</sys:String>
+    <sys:String x:Key="Str_Ssh_User">UŽIVATELSKÉ JMÉNO</sys:String>
+    <sys:String x:Key="Str_Ssh_Connect">Připojit</sys:String>
+    <sys:String x:Key="Str_Btn_Cancel">Zrušit</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Nastavit typ zařízení</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Zrušit ruční nastavení</sys:String>
+
+    <sys:String x:Key="Str_Theme_Dark">Tmavý</sys:String>
+    <sys:String x:Key="Str_Theme_Light">Světlý</sys:String>
+    <sys:String x:Key="Str_Theme_Black">Černý</sys:String>
+    <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+    <sys:String x:Key="Str_Theme_Blood">Krvavý</sys:String>
+    <sys:String x:Key="Str_Theme_Greed">Chamtivost</sys:String>
+    <sys:String x:Key="Str_Theme_Cyanotic">Cyanotický</sys:String>
+    <sys:String x:Key="Str_Theme_Ectoplasm">Ektoplazma</sys:String>
+    <sys:String x:Key="Str_Theme_Decay">Rozklad</sys:String>
+    <sys:String x:Key="Str_Theme_Malaise">Malátnost</sys:String>
+    <sys:String x:Key="Str_Theme_Sepulchre">Hrobka</sys:String>
+    <sys:String x:Key="Str_Theme_Delirium">Delirium</sys:String>
+    <sys:String x:Key="Str_Theme_Mourning">Smutek</sys:String>
 
     <sys:String x:Key="Str_About_Version">VERZE</sys:String>
     <sys:String x:Key="Str_About_Publisher">VYDAVATEL</sys:String>

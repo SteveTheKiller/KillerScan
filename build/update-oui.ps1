@@ -8,7 +8,7 @@
     3. Nmap mac-prefixes  - MA-L only (~35k), last-resort, always reachable on GitHub.
 
   Output: tab-separated  ASSIGNMENT<TAB>Vendor  with ASSIGNMENT as raw uppercase hex (6/7/9).
-  OuiLookup normalises keys and matches longest-first (MA-S -> MA-M -> MA-L).
+  OuiLookup normalizes keys and matches longest-first (MA-S -> MA-M -> MA-L).
 
   SAFETY - this script will NEVER shrink your list. It counts the entries already in oui.txt and
   refuses to overwrite it with a smaller result, so a blocked or partial download can't downgrade

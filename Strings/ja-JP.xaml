@@ -51,8 +51,28 @@
     <sys:String x:Key="Str_Ctx_OpenBrowser">ブラウザーで開く</sys:String>
     <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
     <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">ユーザーを指定して SSH...</sys:String>
+    <sys:String x:Key="Str_Ssh_Head">{0} に SSH で接続</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">サインインに使うアカウントです。KillerScan はこのデバイス用に記憶するため、確認は一度だけです。空のままにすると SSH クライアントの設定に従います。</sys:String>
+    <sys:String x:Key="Str_Ssh_User">ユーザー名</sys:String>
+    <sys:String x:Key="Str_Ssh_Connect">接続</sys:String>
+    <sys:String x:Key="Str_Btn_Cancel">キャンセル</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">デバイスの種類を設定</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">上書きをクリア</sys:String>
+
+    <sys:String x:Key="Str_Theme_Dark">ダーク</sys:String>
+    <sys:String x:Key="Str_Theme_Light">ライト</sys:String>
+    <sys:String x:Key="Str_Theme_Black">ブラック</sys:String>
+    <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+    <sys:String x:Key="Str_Theme_Blood">ブラッド</sys:String>
+    <sys:String x:Key="Str_Theme_Greed">グリード</sys:String>
+    <sys:String x:Key="Str_Theme_Cyanotic">シアノティック</sys:String>
+    <sys:String x:Key="Str_Theme_Ectoplasm">エクトプラズム</sys:String>
+    <sys:String x:Key="Str_Theme_Decay">ディケイ</sys:String>
+    <sys:String x:Key="Str_Theme_Malaise">マレーズ</sys:String>
+    <sys:String x:Key="Str_Theme_Sepulchre">セパルカー</sys:String>
+    <sys:String x:Key="Str_Theme_Delirium">デリリウム</sys:String>
+    <sys:String x:Key="Str_Theme_Mourning">モーニング</sys:String>
 
     <!-- About overlay -->
     <sys:String x:Key="Str_About_Version">バージョン</sys:String>

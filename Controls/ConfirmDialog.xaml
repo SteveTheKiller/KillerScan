@@ -1,0 +1,134 @@
+<Window x:Class="KillerScan.Controls.ConfirmDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="KillerScan"
+        Width="360" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        ShowInTaskbar="False">
+
+    <!-- Margin is a transparent halo so the drop shadow has room to render (AllowsTransparency window,
+         so WPF draws the shadow rather than the OS). Same shadow language as the KillerPDF KillerDialog. -->
+    <Border x:Name="RootBorder" Opacity="0"
+            Background="{StaticResource BackgroundBrush}"
+            BorderBrush="{StaticResource CardBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Margin="10">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="3" Direction="270" Opacity="0.6"/>
+        </Border.Effect>
+        <Grid>
+            <!-- Film grain over the whole dialog (behind content), so it reads as one continuous
+                 surface like the KillerPDF KillerDialog / the main window chrome. -->
+            <Border IsHitTestVisible="False" CornerRadius="6"
+                    Opacity="{DynamicResource GrainOpacity}"
+                    Background="{DynamicResource GrainTileBrush}"/>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="36"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Title bar: transparent so the dialog grain + surface show through and the bar blends
+                     into the window instead of reading as a separate strip. Carries the KillerScan wordmark
+                     (Killer in text color, Scan bold in the accent) like the main window title bar. -->
+                <Border Grid.Row="0" Background="Transparent"
+                        MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                    <!-- No margin on this grid: the close button sits flush in the corner exactly
+                         like the main window's, so only the wordmark is inset. -->
+                    <Grid>
+                        <!-- Wordmark with the same soft dark shadow copy the main title bar uses. -->
+                        <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Margin="14,0,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="1,2,0,0"
+                                        Opacity="{DynamicResource IconShadowOpacity}">
+                                <StackPanel.Effect><BlurEffect Radius="3"/></StackPanel.Effect>
+                                <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15"><Run Text="Killer" Foreground="#D8000000"/><Run Text="Scan" FontSize="19.5" FontWeight="Bold" Foreground="#D8000000"/></TextBlock>
+                            </StackPanel>
+                            <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="19.5" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
+                        </Grid>
+                        <!-- Matches the main window's close button: the same E8BB Segoe MDL2 glyph
+                             at 44x36, DangerRed at rest, filling DangerRed with a white glyph on
+                             hover. The one intentional difference is the rounded top-right, which
+                             follows the dialog's 6px corner; the main window is square there.
+
+                             The glyph is a named TextBlock recolored by TargetName, NOT the
+                             Button's own Foreground. Setting Foreground on the Button is a LOCAL
+                             value, which outranks anything a trigger sets on that same property,
+                             so the hover left a red glyph on the red fill and the X vanished.
+                             Same trap the About overlay's close button documents. -->
+                        <Button Click="Cancel_Click"
+                                HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Width="44" Height="36"
+                                Background="Transparent" BorderThickness="0"
+                                Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="bg" Background="Transparent" CornerRadius="0,6,0,0">
+                                        <TextBlock x:Name="glyph" Text="&#xE8BB;"
+                                                   FontFamily="Segoe MDL2 Assets" FontSize="10"
+                                                   Foreground="{DynamicResource DangerRed}"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="bg" Property="Background" Value="{DynamicResource DangerRed}"/>
+                                            <Setter TargetName="glyph" Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <!-- Body -->
+                <StackPanel Grid.Row="1" Margin="24,20,24,16">
+                    <TextBlock x:Name="HeadingText" Text="Install KillerScan to your user profile?"
+                               Foreground="{StaticResource TextBrush}"
+                               FontSize="13" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                    <TextBlock x:Name="DetailText" Foreground="{StaticResource MutedTextBrush}"
+                               FontSize="12" LineHeight="20" TextWrapping="Wrap">
+                        <Run Text="- Start Menu shortcut"/>
+                        <LineBreak/>
+                        <Run Text="- Appears in Add/Remove Programs"/>
+                    </TextBlock>
+
+                    <!-- All-users install: routes to the same machine-wide path winget and choco
+                         already use (Program Files + HKLM), by re-running the app elevated with
+                         /silent. Unticked keeps the original per-user behavior, so the default
+                         install still needs no admin rights. -->
+                    <CheckBox x:Name="AllUsersCheck" Margin="0,16,0,0"
+                              Checked="AllUsers_Changed" Unchecked="AllUsers_Changed"
+                              Foreground="{StaticResource TextBrush}" FontSize="12"
+                              Content="{DynamicResource Str_Install_AllUsers}"/>
+                    <!-- Always visible, so the dialog does not change height when the box is
+                         ticked and the consequence is readable before committing to it. -->
+                    <TextBlock x:Name="AllUsersNote" Foreground="{StaticResource MutedTextBrush}"
+                               FontSize="11" LineHeight="16" TextWrapping="Wrap"
+                               Margin="22,5,0,0"
+                               Text="{DynamicResource Str_Install_AllUsersNote}"/>
+                </StackPanel>
+
+                <!-- Buttons -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal"
+                            HorizontalAlignment="Right" Margin="24,0,24,20">
+                    <Button x:Name="CancelButton" Content="Cancel" Click="Cancel_Click"
+                            Style="{StaticResource SurfaceButton}"
+                            Width="80" Margin="0,0,8,0"/>
+                    <!-- OutlineButton, not PrimaryButton: hollow by default, fills with the accent
+                         on hover. Matches the Scan button and the status-bar Install button, which
+                         were already the only other buttons in the app. -->
+                    <Button x:Name="OkButton" Content="Install" Click="OK_Click"
+                            Style="{StaticResource OutlineButton}"
+                            Width="80"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

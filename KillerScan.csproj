@@ -9,11 +9,24 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\ks-icon.ico</ApplicationIcon>
-    <Version>1.5.4</Version>
-    <FileVersion>1.5.4.0</FileVersion>
-    <AssemblyVersion>1.5.4.0</AssemblyVersion>
+    <Version>1.6.0</Version>
+    <FileVersion>1.6.0.0</FileVersion>
+    <AssemblyVersion>1.6.0.0</AssemblyVersion>
+    <!-- Shown in the About card beside the version so a user can tell how old their build
+         is. Must match the date on this version's CHANGELOG section - release.ps1 preflight
+         fails the release if it does not. Bump it with the version. -->
+    <ReleaseDate>2026-08-11</ReleaseDate>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
+
+  <!-- Bake ReleaseDate into the assembly so About can show it. A file timestamp would not
+       survive being copied, and the PE linker stamp is a build date, not a release date. -->
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>ReleaseDate</_Parameter1>
+      <_Parameter2>$(ReleaseDate)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -24,7 +37,7 @@
   <ItemGroup>
     <PackageReference Include="Costura.Fody" Version="5.7.0">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <IncludeAssets>compile; runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Fody" Version="6.8.1">
       <PrivateAssets>all</PrivateAssets>
@@ -63,4 +76,5 @@
     <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)build\bundle-source.ps1&quot; -ProjectDir &quot;$(ProjectDir.TrimEnd('\'))&quot; -Version &quot;$(Version)&quot; -AppName &quot;$(AssemblyName)&quot; -PublishDir &quot;$(PublishDir.TrimEnd('\'))&quot;" IgnoreExitCode="true" />
   </Target>
 
+  <Import Project="..\KillerUI\KillerUI.ThemeAssets.props" />
 </Project>

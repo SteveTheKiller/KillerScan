@@ -23,8 +23,9 @@
 - mDNS (Bonjour) and SSDP (UPnP) discovery spots Chromecasts, printers, Sonos, AirPlay, Roku, Plex, and Synology devices
 - MAC vendor lookup across the full IEEE registries (MA-L, MA-M, MA-S) with randomized-MAC detection; vendor database refreshable in-app
 - Weighted-score classifier identifies routers, hypervisors, Windows and Linux boxes, printers, NAS, cameras, IoT, mobile, and more
-- Right-click to copy IP/MAC/hostname, launch RDP/SSH/browser, or override a device type
+- Right-click to copy IP/MAC/hostname, launch RDP/SSH/browser, or override a device type; SSH asks which account to use and remembers it per device
 - CSV export and a themeable, sortable HTML report
+- Headless command line for scripts and RMM: /scan with targets, /export to CSV or HTML, /quick, /quiet, and real exit codes
 - Scan several networks in one pass: comma-separated CIDR blocks, single hosts, and ranges
 - Tabs for scanning multiple subnets, six themes, localized in ten languages
 - Keyboard shortcuts (F1 for the list) and an app-wide size control from 70% to 250%

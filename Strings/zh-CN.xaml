@@ -36,8 +36,28 @@
     <sys:String x:Key="Str_Ctx_OpenBrowser">在浏览器中打开</sys:String>
     <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
     <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">以其他用户 SSH...</sys:String>
+    <sys:String x:Key="Str_Ssh_Head">通过 SSH 连接到 {0}</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">用于登录的账户。KillerScan 会为该设备记住它，因此只会询问一次。留空则由 SSH 客户端决定。</sys:String>
+    <sys:String x:Key="Str_Ssh_User">用户名</sys:String>
+    <sys:String x:Key="Str_Ssh_Connect">连接</sys:String>
+    <sys:String x:Key="Str_Btn_Cancel">取消</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">设置设备类型</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">清除覆盖</sys:String>
+
+    <sys:String x:Key="Str_Theme_Dark">深色</sys:String>
+    <sys:String x:Key="Str_Theme_Light">浅色</sys:String>
+    <sys:String x:Key="Str_Theme_Black">黑色</sys:String>
+    <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+    <sys:String x:Key="Str_Theme_Blood">血色</sys:String>
+    <sys:String x:Key="Str_Theme_Greed">贪婪</sys:String>
+    <sys:String x:Key="Str_Theme_Cyanotic">发绀</sys:String>
+    <sys:String x:Key="Str_Theme_Ectoplasm">灵质</sys:String>
+    <sys:String x:Key="Str_Theme_Decay">腐朽</sys:String>
+    <sys:String x:Key="Str_Theme_Malaise">倦怠</sys:String>
+    <sys:String x:Key="Str_Theme_Sepulchre">陵墓</sys:String>
+    <sys:String x:Key="Str_Theme_Delirium">谵妄</sys:String>
+    <sys:String x:Key="Str_Theme_Mourning">哀悼</sys:String>
 
     <sys:String x:Key="Str_About_Version">版本</sys:String>
     <sys:String x:Key="Str_About_Publisher">发布者</sys:String>

@@ -4,19 +4,27 @@ using System.Windows.Threading;
 
 namespace KillerScan.Services
 {
-    internal enum Theme { Dark, Light, Black, Blood, Greed, Cyanotic }
+    // Ported from KillerShell 2026-08-11: the six flat grunge palettes join the original six.
+    // Order is cosmetic - the saved setting round-trips by NAME, not by ordinal - but it follows
+    // KillerShell's so the two apps list their themes the same way.
+    internal enum Theme
+    {
+        Dark, Light, Black, Blood, Greed, Cyanotic,
+        Ectoplasm, Decay, Mourning, Sepulchre, Delirium, Malaise
+    }
 
     // Accent-hue variants for the accent-capable families (Dark, Light, Black).
     // Green is the base theme (no overlay); the others apply a small overlay
-    // dictionary that recolours only the accent-family keys. Ported from KillerPDF.
+    // dictionary that recolors only the accent-family keys. Shared skin tokens
+    // come from the linked KillerUI contract.
     internal enum Accent { Green, Red, Blue, Purple, Orange, Teal }
 
     /// <summary>
-    /// Swaps the theme colour dictionary (MergedDictionaries[0]) in place at runtime.
+    /// Swaps the theme color dictionary (MergedDictionaries[0]) in place at runtime.
     /// Control styles live in App.xaml and bind brushes via DynamicResource, so an
     /// in-place per-key update repaints everything without structural churn.
     /// KillerScan has a custom (WindowStyle=None) title bar, so there is no native
-    /// DWM title bar to recolour - that part of the KillerPDF original is dropped.
+    /// DWM title bar to recolor.
     /// </summary>
     internal static class ThemeManager
     {
@@ -32,7 +40,10 @@ namespace KillerScan.Services
         private static Accent AccentFor(Theme t) =>
             t == Theme.Light ? _lightAccent : t == Theme.Black ? _blackAccent : _darkAccent;
 
-        // Only these families carry accent-hue overlays.
+        // Only these families carry accent-hue overlays. The grunge palettes deliberately do not:
+        // each one is built around one signature accent, and letting the user swap that out is
+        // what would make them all look like the same theme in six colors. Matches KillerShell,
+        // which ships Accents/ folders for Dark, Light and Black only.
         private static bool HasAccents(Theme t) =>
             t == Theme.Dark || t == Theme.Light || t == Theme.Black;
 
@@ -81,12 +92,13 @@ namespace KillerScan.Services
         {
             var uri = new Uri($"pack://application:,,,/Themes/{theme}.xaml");
             var newDict = new ResourceDictionary { Source = uri };
+            KillerThemeContract.Apply(newDict, theme.ToString());
             var merged  = Application.Current.Resources.MergedDictionaries;
 
             // In-place per-key update: fires a targeted change notification for each key
             // without structurally modifying MergedDictionaries (a structural swap fires a
             // synchronous ResourcesChanged that can re-enter lookups before the new dict
-            // is fully in place). Theme dictionaries hold colours/brushes only.
+            // is fully in place). Theme dictionaries hold colors/brushes only.
             if (merged.Count > 0)
             {
                 var existing = merged[0];
@@ -98,7 +110,7 @@ namespace KillerScan.Services
                 merged.Add(newDict);
             }
 
-            // Accent overlay: Dark/Light/Black recolour their accent-family keys on top of
+            // Accent overlay: Dark/Light/Black recolor their accent-family keys on top of
             // the base green. Green is the base itself, so it needs no overlay (re-applying
             // the base above already restored green). Overlays live in Accents/<Family>/.
             var accent = AccentFor(theme);

@@ -3,10 +3,10 @@
                     xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <sys:Double x:Key="GrainOpacity">0.12</sys:Double>
+    <sys:Double x:Key="GrainOpacity">0.24</sys:Double>
     <sys:Double x:Key="IconShadowOpacity">0.9</sys:Double>
 
-    <!-- KillerScan - BLACK theme. OLED-style near-black with subtle surface tiering so
+    <!-- KillerScan additions for the shared KillerUI BLACK theme. OLED-style near-black with subtle surface tiering so
          elements read by background, not by bright borders (borders kept dark). -->
     <SolidColorBrush x:Key="PrimaryBrush"        Color="#00ff66" po:Freeze="True"/>
     <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#00ff66" po:Freeze="True"/>
@@ -14,13 +14,13 @@
     <SolidColorBrush x:Key="HeaderLineBrush"     Color="#00ff66" po:Freeze="True"/>
     <SolidColorBrush x:Key="OnPrimaryBrush"      Color="#0a0a0a" po:Freeze="True"/>
     <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#00ff66" po:Freeze="True"/>
-    <SolidColorBrush x:Key="InputHoverBrush"     Color="#8c8c8c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="InputHoverBrush"     Color="#aaaaaa" po:Freeze="True"/>
     <SolidColorBrush x:Key="TextFooter"          Color="#aaaaaa" po:Freeze="True"/>
 
     <SolidColorBrush x:Key="BackgroundBrush"     Color="#000000" po:Freeze="True"/>
-    <SolidColorBrush x:Key="SurfaceBrush"        Color="#0d0d0d" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PaneBrush"           Color="#161616" po:Freeze="True"/>
-    <SolidColorBrush x:Key="TableHeaderBrush"    Color="#0d0d0d" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SurfaceBrush"        Color="#000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PaneBrush"           Color="#0a0a0a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TableHeaderBrush"    Color="#000000" po:Freeze="True"/>
     <SolidColorBrush x:Key="CardBorderBrush"     Color="#2a2a2a" po:Freeze="True"/>
     <SolidColorBrush x:Key="PaneBorderBrush"     Color="#1c1c1c" po:Freeze="True"/>
     <!-- DWM window frame: pane borders are intentionally near-black here, so the
@@ -29,23 +29,29 @@
 
     <SolidColorBrush x:Key="TextBrush"           Color="#ffffff" po:Freeze="True"/>
     <SolidColorBrush x:Key="MutedTextBrush"      Color="#cccccc" po:Freeze="True"/>
-    <SolidColorBrush x:Key="ChromeTextBrush"     Color="#dcdcdc" po:Freeze="True"/>
-    <SolidColorBrush x:Key="DimTextBrush"        Color="#888888" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ChromeTextBrush"     Color="#e6e6e6" po:Freeze="True"/>
+    <SolidColorBrush x:Key="DimTextBrush"        Color="#aaaaaa" po:Freeze="True"/>
 
-    <SolidColorBrush x:Key="RowAltBrush"         Color="#14FFFFFF" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowHoverBrush"       Color="#242424" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowAltBrush"         Color="#18FFFFFF" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowHoverBrush"       Color="#333333" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#003322" po:Freeze="True"/>
+    <!-- Selection pair from the shared KillerUI contract. -->
+    <SolidColorBrush x:Key="SelectionBg"         Color="#003314" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionFg"         Color="#ffffff" po:Freeze="True"/>
 
-    <SolidColorBrush x:Key="InputBorderBrush"    Color="#2a2a2a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="InputBorderBrush"    Color="#1c1c1c" po:Freeze="True"/>
+    <!-- Menu surface compatibility defaults; KillerUI overlays the authoritative values.
+         The menu edge comes from this fill sitting LIGHTER than the surface, not from the
+         border - MenuBorderBrush is #1c1c1c across the family as of 2026-08-10. -->
     <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#121212" po:Freeze="True"/>
-    <SolidColorBrush x:Key="MenuBorderBrush"     Color="#2a2a2a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuBorderBrush"     Color="#1c1c1c" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuTextBrush"       Color="#cccccc" po:Freeze="True"/>
-    <SolidColorBrush x:Key="MenuHoverBrush"      Color="#242424" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuHoverBrush"      Color="#333333" po:Freeze="True"/>
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#003322" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#8800ff66" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#00ff66" po:Freeze="True"/>
 
-    <!-- Device-type label colours (bright, for dark panes) -->
+    <!-- Device-type label colors (bright, for dark panes) -->
     <SolidColorBrush x:Key="TypeRouter"     Color="#F0A030" po:Freeze="True"/>
     <SolidColorBrush x:Key="TypeWindows"    Color="#60A0F0" po:Freeze="True"/>
     <SolidColorBrush x:Key="TypePrinter"    Color="#D080A0" po:Freeze="True"/>

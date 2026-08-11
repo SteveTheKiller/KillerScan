@@ -89,13 +89,13 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 
 /* ---- App body: content + right-hand sidebar ---- */
 /* Chrome-toned shell: the gutter around the rounded content pane reads as grained chrome, like the app windows and killertools.net */
-.shell { display: grid; grid-template-columns: 1fr 268px; flex: 1 1 auto; min-height: 0; overflow: hidden; position: relative; background: var(--sidebar); }
+.shell { display: grid; grid-template-columns: 1fr 268px; flex: 1 1 auto; min-height: 0; overflow: visible; position: relative; z-index: 2; background: var(--sidebar); }
 .shell::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url('grain.png?v=2') repeat fixed; background-size: 256px 256px; opacity: 1; }
 @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
 /* Inset rounded pane (killertools.net MenuLayout treatment): 8px chrome gutter on the window edges, 2px hugging the sidebar, none above the statusbar.
    The pane carries its own frame line + outward shadow (z 6: above the sidebar and the statusbar chrome, below the statusbar text at z 7),
    and clips the inner scroller so the scrollbar lives INSIDE the rounded pane. */
-.content { min-width: 0; min-height: 0; overflow: hidden; position: relative; z-index: 6; margin: 8px 2px 0 8px; border: 1px solid var(--pane-border); border-radius: 14px; box-shadow: 0 0 20px 0 rgba(0,0,0,0.42); background-color: var(--bg); background-image: url('grain.png?v=2'); background-repeat: repeat; background-size: 256px 256px; background-attachment: fixed; animation: pageFadeIn .28s ease both; }
+.content { min-width: 0; min-height: 0; overflow: hidden; position: relative; z-index: 6; margin: 8px 2px 0 8px; border: 1px solid var(--pane-border); border-radius: 14px; box-shadow: 0 6px 14px 0 rgba(0,0,0,0.5); background-color: var(--bg); background-image: url('grain.png?v=2'); background-repeat: repeat; background-size: 256px 256px; background-attachment: fixed; animation: pageFadeIn .28s ease both; }
 .content-scroll { height: 100%; overflow-y: auto; scroll-behavior: smooth; }
 
 /* ---- Sidebar (the app's docked pane) ---- */
@@ -109,7 +109,20 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 .sb-thumb { display: block; width: 100%; padding: 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--panel); cursor: zoom-in; box-shadow: 0 2px 6px rgba(0,0,0,0.45); transition: border-color .15s ease, transform .15s ease; }
 .sb-thumb:hover { border-color: var(--accent); transform: translateY(-1px); }
 .sb-thumb img { display: block; width: 100%; height: auto; }
-.sidebar > * { position: relative; z-index: 1; }
+/* :not(.sb-fade) - .sb-fade sets its own position:absolute (it must stay out of flow to
+   overlay instead of taking up flex space); this reset must not clobber that. Equal
+   specificity + later source order was winning and dropping the fade divs back into
+   normal flow, which pushed real content up. */
+.sidebar > *:not(.sb-fade) { position: relative; z-index: 1; }
+/* Grain fade overlays pinned to the sidebar top/bottom (not a mask on the scroller, so the
+   scrollbar is never faded). Inset 8px from the right to clear the scrollbar. JS toggles .on:
+   top only once scrolled down, bottom only while more content remains below. Shared by any
+   scrollable sidebar content (screenshot strip on the front page, the outline nav elsewhere). */
+.sb-fade { position: absolute; left: 0; right: 8px; height: 40px; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.12s ease;
+  background: var(--sidebar) url('grain.png?v=2') repeat fixed; background-size: 256px 256px; }
+.sb-fade-top { top: 0; -webkit-mask-image: linear-gradient(to bottom, #000, transparent); mask-image: linear-gradient(to bottom, #000, transparent); }
+.sb-fade-bottom { bottom: 0; -webkit-mask-image: linear-gradient(to top, #000, transparent); mask-image: linear-gradient(to top, #000, transparent); }
+.sb-fade.on { opacity: 1; }
 .sb-tabs { display: flex; font-size: 11px; font-family: Consolas, monospace; letter-spacing: 0.5px; color: var(--muted); border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .sb-tabs span { flex: 1; text-align: center; padding: 9px 0; }
 .sb-tabs .on { color: var(--accent); border-bottom: 2px solid var(--tab-edge); }
@@ -212,7 +225,7 @@ html[data-theme="light"] .tb-nav a { text-shadow: none; }
 .acc-pop .acc-pop-label { font-size: 11px; font-family: Consolas, monospace; color: var(--muted); margin-right: 1px; }
 
 /* ============ Landing hero info block (replaces the terminal) ============ */
-.hero-info { background: color-mix(in srgb, var(--modal) 80%, transparent) url('grain.png?v=2') repeat; background-size: 256px 256px; -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); border: 1px solid var(--pane-border); border-left: 2px solid var(--tab-edge); border-right: 2px solid var(--tab-edge); border-radius: 8px; box-shadow: 0 14px 32px rgba(0,0,0,0.4); padding: 15px 14px; font-family: Consolas, monospace; font-size: 13px; line-height: 1.9; flex: 0 1 360px; min-width: 308px; transition: transform 0.12s, box-shadow 0.15s, border-color 0.12s; }
+.hero-info { background: color-mix(in srgb, var(--modal) 80%, transparent) url('grain.png?v=2') repeat; background-size: 256px 256px; -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); border: 1px solid var(--pane-border); border-left: 2px solid var(--tab-edge); border-right: 2px solid var(--tab-edge); border-radius: 8px; box-shadow: 0 14px 32px rgba(0,0,0,0.4); padding: 15px 14px; font-family: Consolas, monospace; font-size: 13px; line-height: 1.9; flex: 0 0 auto; width: 336px; transition: transform 0.12s, box-shadow 0.15s, border-color 0.12s; }
 .hero-info:hover { border-left-color: var(--accent); border-right-color: var(--accent); }
 .hero-info:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0,0,0,0.5); border-top-color: var(--dragline); border-bottom-color: var(--dragline); }
 .hero-info .row { display: flex; gap: 8px; }

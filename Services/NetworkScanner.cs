@@ -627,11 +627,11 @@ namespace KillerScan.Services
         }
 
         /// <summary>The host's default-gateway IP, set from the detected network info before a scan.
-        /// The device at this IP is the router, so it's labelled Router (or Router/DNS if it IS the DNS server).</summary>
+        /// The device at this IP is the router, so it's labeled Router (or Router/DNS if it IS the DNS server).</summary>
         public static string GatewayIp = "";
 
         /// <summary>The host's configured DNS server IP. Only this device is the actual DNS server, so a
-        /// router that merely has port 53 open (forwarding) isn't mislabelled when DNS lives elsewhere (Pi-hole).</summary>
+        /// router that merely has port 53 open (forwarding) isn't mislabeled when DNS lives elsewhere (Pi-hole).</summary>
         public static string DnsIp = "";
 
         /// <summary>

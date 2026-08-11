@@ -91,7 +91,7 @@ namespace KillerScan.Services
                 var parts = line.Split(['\t'], 2);
                 if (parts.Length == 2)
                 {
-                    // Normalise the key to raw uppercase hex so MA-L (6 hex / 24-bit), MA-M (7 / 28-bit)
+                    // Normalize the key to raw uppercase hex so MA-L (6 hex / 24-bit), MA-M (7 / 28-bit)
                     // and MA-S (9 / 36-bit) prefixes all live in one table and longest-match wins.
                     var key = parts[0].Replace(":", "").Replace("-", "").Trim().ToUpperInvariant();
                     if (key.Length >= 6) table[key] = parts[1];
@@ -104,7 +104,7 @@ namespace KillerScan.Services
             if (!_loaded) Load();
             if (string.IsNullOrEmpty(macAddress)) return string.Empty;
 
-            // Normalise the MAC to raw uppercase hex, then try the most specific block first:
+            // Normalize the MAC to raw uppercase hex, then try the most specific block first:
             // MA-S (36-bit / 9 hex) -> MA-M (28-bit / 7 hex) -> MA-L (24-bit / 6 hex).
             var hex = new string([.. macAddress.Where(Uri.IsHexDigit)]).ToUpperInvariant();
             if (hex.Length < 6) return string.Empty;

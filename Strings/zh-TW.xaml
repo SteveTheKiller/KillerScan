@@ -36,8 +36,28 @@
     <sys:String x:Key="Str_Ctx_OpenBrowser">在瀏覽器中開啟</sys:String>
     <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
     <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">以其他使用者 SSH...</sys:String>
+    <sys:String x:Key="Str_Ssh_Head">透過 SSH 連線到 {0}</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">用於登入的帳戶。KillerScan 會為這部裝置記住它，因此只會詢問一次。留空則由 SSH 用戶端決定。</sys:String>
+    <sys:String x:Key="Str_Ssh_User">使用者名稱</sys:String>
+    <sys:String x:Key="Str_Ssh_Connect">連線</sys:String>
+    <sys:String x:Key="Str_Btn_Cancel">取消</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">設定裝置類型</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">清除覆寫</sys:String>
+
+    <sys:String x:Key="Str_Theme_Dark">深色</sys:String>
+    <sys:String x:Key="Str_Theme_Light">淺色</sys:String>
+    <sys:String x:Key="Str_Theme_Black">黑色</sys:String>
+    <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+    <sys:String x:Key="Str_Theme_Blood">血紅</sys:String>
+    <sys:String x:Key="Str_Theme_Greed">貪婪綠</sys:String>
+    <sys:String x:Key="Str_Theme_Cyanotic">藍紫</sys:String>
+    <sys:String x:Key="Str_Theme_Ectoplasm">靈質</sys:String>
+    <sys:String x:Key="Str_Theme_Decay">腐朽</sys:String>
+    <sys:String x:Key="Str_Theme_Malaise">倦怠</sys:String>
+    <sys:String x:Key="Str_Theme_Sepulchre">陵墓</sys:String>
+    <sys:String x:Key="Str_Theme_Delirium">譫妄</sys:String>
+    <sys:String x:Key="Str_Theme_Mourning">哀悼</sys:String>
 
     <sys:String x:Key="Str_About_Version">版本</sys:String>
     <sys:String x:Key="Str_About_Publisher">發行者</sys:String>

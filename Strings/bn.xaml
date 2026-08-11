@@ -36,8 +36,28 @@
     <sys:String x:Key="Str_Ctx_OpenBrowser">ব্রাউজারে খুলুন</sys:String>
     <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
     <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">অন্য ব্যবহারকারী হিসেবে SSH...</sys:String>
+    <sys:String x:Key="Str_Ssh_Head">SSH দিয়ে {0}-এ সংযোগ করুন</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">যে অ্যাকাউন্ট দিয়ে সাইন ইন করা হবে। KillerScan এই ডিভাইসের জন্য এটি মনে রাখে, তাই একবারই জিজ্ঞাসা করা হয়। খালি রাখলে SSH ক্লায়েন্ট নিজেই ঠিক করবে।</sys:String>
+    <sys:String x:Key="Str_Ssh_User">ব্যবহারকারীর নাম</sys:String>
+    <sys:String x:Key="Str_Ssh_Connect">সংযোগ</sys:String>
+    <sys:String x:Key="Str_Btn_Cancel">বাতিল</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">ডিভাইসের ধরন সেট করুন</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">ওভাররাইড সাফ করুন</sys:String>
+
+    <sys:String x:Key="Str_Theme_Dark">গাঢ়</sys:String>
+    <sys:String x:Key="Str_Theme_Light">হালকা</sys:String>
+    <sys:String x:Key="Str_Theme_Black">কালো</sys:String>
+    <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+    <sys:String x:Key="Str_Theme_Blood">রক্ত</sys:String>
+    <sys:String x:Key="Str_Theme_Greed">লোভ</sys:String>
+    <sys:String x:Key="Str_Theme_Cyanotic">নীলাভ</sys:String>
+    <sys:String x:Key="Str_Theme_Ectoplasm">এক্টোপ্লাজম</sys:String>
+    <sys:String x:Key="Str_Theme_Decay">ক্ষয়</sys:String>
+    <sys:String x:Key="Str_Theme_Malaise">অস্বস্তি</sys:String>
+    <sys:String x:Key="Str_Theme_Sepulchre">সমাধি</sys:String>
+    <sys:String x:Key="Str_Theme_Delirium">প্রলাপ</sys:String>
+    <sys:String x:Key="Str_Theme_Mourning">শোক</sys:String>
 
     <sys:String x:Key="Str_About_Version">সংস্করণ</sys:String>
     <sys:String x:Key="Str_About_Publisher">প্রকাশক</sys:String>

@@ -36,8 +36,28 @@
     <sys:String x:Key="Str_Ctx_OpenBrowser">Tarayıcıda aç</sys:String>
     <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
     <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">Farklı kullanıcıyla SSH...</sys:String>
+    <sys:String x:Key="Str_Ssh_Head">{0} cihazına SSH ile bağlan</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">Oturum açılacak hesap. KillerScan bunu bu cihaz için hatırlar, bu yüzden yalnızca bir kez sorulur. SSH istemcisinin karar vermesi için boş bırakın.</sys:String>
+    <sys:String x:Key="Str_Ssh_User">KULLANICI ADI</sys:String>
+    <sys:String x:Key="Str_Ssh_Connect">Bağlan</sys:String>
+    <sys:String x:Key="Str_Btn_Cancel">İptal</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Cihaz türünü ayarla</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Geçersiz kılmayı temizle</sys:String>
+
+    <sys:String x:Key="Str_Theme_Dark">Koyu</sys:String>
+    <sys:String x:Key="Str_Theme_Light">Açık</sys:String>
+    <sys:String x:Key="Str_Theme_Black">Siyah</sys:String>
+    <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+    <sys:String x:Key="Str_Theme_Blood">Kan</sys:String>
+    <sys:String x:Key="Str_Theme_Greed">Hırs</sys:String>
+    <sys:String x:Key="Str_Theme_Cyanotic">Siyanotik</sys:String>
+    <sys:String x:Key="Str_Theme_Ectoplasm">Ektoplazma</sys:String>
+    <sys:String x:Key="Str_Theme_Decay">Çürüme</sys:String>
+    <sys:String x:Key="Str_Theme_Malaise">Halsizlik</sys:String>
+    <sys:String x:Key="Str_Theme_Sepulchre">Kabir</sys:String>
+    <sys:String x:Key="Str_Theme_Delirium">Hezeyan</sys:String>
+    <sys:String x:Key="Str_Theme_Mourning">Yas</sys:String>
 
     <sys:String x:Key="Str_About_Version">SÜRÜM</sys:String>
     <sys:String x:Key="Str_About_Publisher">YAYINCI</sys:String>

@@ -6,43 +6,55 @@
     <sys:Double x:Key="GrainOpacity">0.34</sys:Double>
     <sys:Double x:Key="IconShadowOpacity">1.0</sys:Double>
 
-    <!-- KillerScan - BLOOD theme. Ported from KillerPDF Themes/Blood.xaml.
-         Primary = HeaderAccent so the accent reads as colour, not the white base Accent. -->
-    <SolidColorBrush x:Key="PrimaryBrush"        Color="#e8485a" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#e8485a" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#e8485a" po:Freeze="True"/>
-    <SolidColorBrush x:Key="HeaderLineBrush"     Color="#8f3640" po:Freeze="True"/>
-    <SolidColorBrush x:Key="OnPrimaryBrush"      Color="#2a1012" po:Freeze="True"/>
+    <!-- BLOOD, aligned to the family 2026-08-11.
+
+         KillerScan used to swap these two deliberately - the comment here read "Primary =
+         HeaderAccent so the accent reads as color, not the white base Accent" - which put the
+         salmon #e8485a on every button and the muted #8f3640 on the wordmark. KillerShell and
+         KillerNotes both resolve the other way round: the accent is the BONE #f8c99e, and the
+         signature salmon stays in HeaderLineBrush for the wordmark. Two apps open side by side
+         did not look like the same theme, so KillerScan now follows them. -->
+    <SolidColorBrush x:Key="PrimaryBrush"        Color="#f8c99e" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#f8c99e" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#f8c99e" po:Freeze="True"/>
+    <SolidColorBrush x:Key="HeaderLineBrush"     Color="#e8485a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OnPrimaryBrush"      Color="#2c1012" po:Freeze="True"/>
     <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#f8c99e" po:Freeze="True"/>
-    <SolidColorBrush x:Key="InputHoverBrush"     Color="#8a6e6a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="InputHoverBrush"     Color="#a8434f" po:Freeze="True"/>
     <SolidColorBrush x:Key="TextFooter"          Color="#a85a5a" po:Freeze="True"/>
 
     <SolidColorBrush x:Key="BackgroundBrush"     Color="#240c0d" po:Freeze="True"/>
     <SolidColorBrush x:Key="SurfaceBrush"        Color="#2c1012" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PaneBrush"           Color="#321416" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PaneBrush"           Color="#401d21" po:Freeze="True"/>
     <SolidColorBrush x:Key="TableHeaderBrush"    Color="#2c1012" po:Freeze="True"/>
     <SolidColorBrush x:Key="CardBorderBrush"     Color="#401d1d" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PaneBorderBrush"     Color="#401d1d" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PaneBorderBrush"     Color="#633030" po:Freeze="True"/>
 
     <SolidColorBrush x:Key="TextBrush"           Color="#fffde8" po:Freeze="True"/>
     <SolidColorBrush x:Key="MutedTextBrush"      Color="#f8c99e" po:Freeze="True"/>
-    <SolidColorBrush x:Key="ChromeTextBrush"     Color="#fbdcbc" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ChromeTextBrush"     Color="#e8cfc2" po:Freeze="True"/>
     <SolidColorBrush x:Key="DimTextBrush"        Color="#e2b58a" po:Freeze="True"/>
 
     <SolidColorBrush x:Key="RowAltBrush"         Color="#18FFFFFF" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowHoverBrush"       Color="#54201f" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#44ffffff" po:Freeze="True"/>
+    <!-- Selection pair - see the note in Dark.xaml. A translucent wash of the theme's own accent,
+         not plain white: that is what the family resolves to here. -->
+    <SolidColorBrush x:Key="SelectionBg"         Color="#44f8c99e" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionFg"         Color="#ffffff" po:Freeze="True"/>
 
-    <SolidColorBrush x:Key="InputBorderBrush"    Color="#401d1d" po:Freeze="True"/>
-    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#301315" po:Freeze="True"/>
-    <SolidColorBrush x:Key="MenuBorderBrush"     Color="#401d1d" po:Freeze="True"/>
+    <SolidColorBrush x:Key="InputBorderBrush"    Color="#633030" po:Freeze="True"/>
+    <!-- Menu surface. KillerScan has no KillerUI overlay layer, so these ARE the authoritative
+         values and were aligned to the ones the family resolves to (2026-08-11). -->
+    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#1e0a0b" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuBorderBrush"     Color="#633030" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuTextBrush"       Color="#f8c99e" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuHoverBrush"      Color="#54201f" po:Freeze="True"/>
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#44ffffff" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#aaf8c99e" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#fce6d2" po:Freeze="True"/>
 
-    <!-- Device-type label colours (bright, for dark panes) -->
+    <!-- Device-type label colors (bright, for dark panes) -->
     <SolidColorBrush x:Key="TypeRouter"     Color="#F0A030" po:Freeze="True"/>
     <SolidColorBrush x:Key="TypeWindows"    Color="#60A0F0" po:Freeze="True"/>
     <SolidColorBrush x:Key="TypePrinter"    Color="#D080A0" po:Freeze="True"/>

@@ -36,8 +36,28 @@
     <sys:String x:Key="Str_Ctx_OpenBrowser">Im Browser öffnen</sys:String>
     <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
     <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">SSH als...</sys:String>
+    <sys:String x:Key="Str_Ssh_Head">Per SSH mit {0} verbinden</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">Das Konto, mit dem angemeldet wird. KillerScan merkt es sich für dieses Gerät, Sie werden also nur einmal gefragt. Leer lassen, damit der SSH-Client entscheidet.</sys:String>
+    <sys:String x:Key="Str_Ssh_User">BENUTZERNAME</sys:String>
+    <sys:String x:Key="Str_Ssh_Connect">Verbinden</sys:String>
+    <sys:String x:Key="Str_Btn_Cancel">Abbrechen</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Gerätetyp festlegen</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Überschreibung löschen</sys:String>
+
+    <sys:String x:Key="Str_Theme_Dark">Dunkel</sys:String>
+    <sys:String x:Key="Str_Theme_Light">Hell</sys:String>
+    <sys:String x:Key="Str_Theme_Black">Schwarz</sys:String>
+    <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+    <sys:String x:Key="Str_Theme_Blood">Blut</sys:String>
+    <sys:String x:Key="Str_Theme_Greed">Gier</sys:String>
+    <sys:String x:Key="Str_Theme_Cyanotic">Zyanotisch</sys:String>
+    <sys:String x:Key="Str_Theme_Ectoplasm">Ektoplasma</sys:String>
+    <sys:String x:Key="Str_Theme_Decay">Verfall</sys:String>
+    <sys:String x:Key="Str_Theme_Malaise">Unwohlsein</sys:String>
+    <sys:String x:Key="Str_Theme_Sepulchre">Grabmal</sys:String>
+    <sys:String x:Key="Str_Theme_Delirium">Delirium</sys:String>
+    <sys:String x:Key="Str_Theme_Mourning">Trauer</sys:String>
 
     <sys:String x:Key="Str_About_Version">VERSION</sys:String>
     <sys:String x:Key="Str_About_Publisher">HERAUSGEBER</sys:String>

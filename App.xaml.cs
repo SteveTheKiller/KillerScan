@@ -82,9 +82,19 @@ namespace KillerScan
                 return;
             }
 
+            // Headless command line: /scan, /help, /version (Features/Cli/CliRunner.cs). Handled
+            // before anything builds a window, so a CLI run never shows one and works while a GUI
+            // instance is already open. Arguments carrying no recognized command fall through to
+            // the normal launch below.
+            if (Features.CliRunner.TryRunCli(e.Args, out int cliExit))
+            {
+                Shutdown(cliExit);
+                return;
+            }
+
             // Demo / screenshot mode: KillerScan.exe --demo fills the grid with fabricated
             // devices so screenshots carry no real network data.
-            KillerScan.MainWindow.DemoMode = Array.Exists(e.Args, a =>
+            Services.DemoData.Enabled = Array.Exists(e.Args, a =>
                 string.Equals(a, "--demo", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(a, "/demo",  StringComparison.OrdinalIgnoreCase));
 
@@ -93,7 +103,7 @@ namespace KillerScan
             Services.LocaleManager.Initialize();
 
             ShutdownMode = ShutdownMode.OnLastWindowClose;
-            new MainWindow().Show();
+            new Shell.MainWindow().Show();
         }
 
         // ============================================================

@@ -1,0 +1,89 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:Double x:Key="GrainOpacity">0.32</sys:Double>
+    <sys:Double x:Key="IconShadowOpacity">1.0</sys:Double>
+
+    <!-- ================================================================
+         DECAY - ported from KillerShell 2026-08-11. Olive and bone: a
+         warm gray-green chrome under a lighter drab bar, with a muted
+         khaki accent.
+           Background = chrome   (#3b3f46)
+           Surface    = bar      (#514e48)
+           Pane       = content  (#403f3b)
+
+         KillerShell paints BackgroundBrush as a LinearGradientBrush here.
+         KillerScan takes its FIRST STOP as a solid instead, deliberately:
+         a gradient re-ramps its whole sweep inside whatever element it is
+         painted on, so the same brush on a 360px dialog renders an
+         arbitrary colour from the middle of the ramp rather than matching
+         the window. KillerScan uses BackgroundBrush on the window, on both
+         overlay backdrops AND on the ConfirmDialog/InputDialog root, so it
+         has to be solid. Same trap KillerShell documents in its own
+         "gradient brushes in small boxes" note.
+         ================================================================ -->
+
+    <!-- Accent -->
+    <SolidColorBrush x:Key="PrimaryBrush"        Color="#b8aa7c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#c2b280" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#9a8f68" po:Freeze="True"/>
+    <SolidColorBrush x:Key="HeaderLineBrush"     Color="#8a8a78" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OnPrimaryBrush"      Color="#202321" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#b8aa7c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="InputHoverBrush"     Color="#c2b280" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TextFooter"          Color="#b5ad9e" po:Freeze="True"/>
+
+    <!-- Surface tiers -->
+    <SolidColorBrush x:Key="BackgroundBrush"     Color="#3b3f46" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SurfaceBrush"        Color="#514e48" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PaneBrush"           Color="#403f3b" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TableHeaderBrush"    Color="#5a5c51" po:Freeze="True"/>
+    <SolidColorBrush x:Key="CardBorderBrush"     Color="#6b705c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PaneBorderBrush"     Color="#5c554c" po:Freeze="True"/>
+    <!-- Win11 DWM frame border (WindowChrome.ApplyThemeBorder); falls back to
+         PaneBorderBrush on the themes that do not set it. -->
+    <SolidColorBrush x:Key="AppBorderBrush"      Color="#7a7f62" po:Freeze="True"/>
+
+    <!-- Text -->
+    <SolidColorBrush x:Key="TextBrush"           Color="#f2f4f3" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MutedTextBrush"      Color="#d8cfb5" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ChromeTextBrush"     Color="#f2f4f3" po:Freeze="True"/>
+    <SolidColorBrush x:Key="DimTextBrush"        Color="#b5ad9e" po:Freeze="True"/>
+
+    <!-- Grid rows -->
+    <SolidColorBrush x:Key="RowAltBrush"         Color="#148a7f72" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowHoverBrush"       Color="#5f6258" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#44ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionBg"         Color="#6b705c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionFg"         Color="#f2f4f3" po:Freeze="True"/>
+
+    <!-- Inputs / menus / scrollbar -->
+    <SolidColorBrush x:Key="InputBorderBrush"    Color="#5c554c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#3b3f46" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuBorderBrush"     Color="#5c554c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuTextBrush"       Color="#d8cfb5" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuHoverBrush"      Color="#596554" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlinePressedBrush" Color="#44ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#55b8aa7c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#b8aa7c" po:Freeze="True"/>
+
+    <!-- Device-type label colors (bright, for dark panes) -->
+    <SolidColorBrush x:Key="TypeRouter"     Color="#F0A030" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeWindows"    Color="#60A0F0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypePrinter"    Color="#D080A0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeSwitch"     Color="#C0C0C0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeHypervisor" Color="#E06060" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeNas"        Color="#40C080" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeIot"        Color="#B060D0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeServer"     Color="#E08050" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeLinux"      Color="#D0C050" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeDns"        Color="#50B0D0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeHa"         Color="#50D0A0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeMobile"     Color="#A0A0F0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeCamera"     Color="#F0C060" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeSmarttv"    Color="#E0A0E0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeMedia"      Color="#70C0E0" po:Freeze="True"/>
+
+</ResourceDictionary>
