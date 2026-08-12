@@ -1,0 +1,150 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ================================================================
+         FLAT-THEME DEFAULTS. Applied FIRST in ThemeManager.LoadDict, before
+         the app palette and before the shared KillerUI layer, so anything
+         either of those defines wins over what is here.
+
+         KillerScan's own 98SE palette defines the Win98 chrome tokens (frame,
+         caption, footer cells, bevels). Every one of them must have a value on
+         the OTHER twelve themes too, or a control template that references it
+         resolves to nothing and collapses to a CLR default (Auto width, 0
+         margin, no brush). This file is that flat value, in one place, so
+         there is never a fallback copy in each of the twelve palettes.
+
+         KillerShell does this in C# (ThemeManager.ApplyDerivedTokens);
+         KillerScan does it here.
+
+         RULE: only values that are the same on EVERY flat theme. Anything
+         per-theme (a surface color, an accent) lives in that theme's palette.
+         ================================================================ -->
+
+    <!-- CORNER RADII. Flat family shape; 98SE zeroes each. -->
+    <CornerRadius x:Key="PanelCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="ControlCornerRadius">4</CornerRadius>
+    <CornerRadius x:Key="SmallCornerRadius">3</CornerRadius>
+    <CornerRadius x:Key="FlyoutCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="AccentSwatchCornerRadius">9</CornerRadius>
+
+    <!-- BEVELS. Zero and transparent, so the extra bevel Borders draw nothing. -->
+    <Thickness x:Key="BevelLightThickness">0</Thickness>
+    <Thickness x:Key="BevelDarkThickness">0</Thickness>
+    <SolidColorBrush x:Key="BevelLightBrush" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="BevelDarkBrush"  Color="#00000000" po:Freeze="True"/>
+
+    <!-- WINDOW FRAME. None on a flat theme; DWM does the edge. -->
+    <Thickness x:Key="WindowFrameThickness">0</Thickness>
+    <Thickness x:Key="WindowFramePadding">0</Thickness>
+    <Thickness x:Key="WindowFrameMargin">0</Thickness>
+    <Thickness x:Key="OverlayFrameBleed">0</Thickness>
+    <!-- DataGrid hover text. Accent-capable themes override this alongside their row tint. -->
+    <SolidColorBrush x:Key="TableHoverTextBrush" Color="#ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="WindowFrameBrush" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="WindowEdgeBrush"  Color="#00000000" po:Freeze="True"/>
+    <Thickness x:Key="WindowEdgeThickness">0</Thickness>
+    <Thickness x:Key="FrameOuterLightThickness">0</Thickness>
+    <Thickness x:Key="FrameOuterDarkThickness">0</Thickness>
+    <SolidColorBrush x:Key="FrameOuterLightBrush" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="FrameOuterDarkBrush"  Color="#00000000" po:Freeze="True"/>
+    <Thickness x:Key="FrameInnerMargin">0</Thickness>
+    <Thickness x:Key="FrameInnerLightThickness">0</Thickness>
+    <Thickness x:Key="FrameInnerDarkThickness">0</Thickness>
+    <SolidColorBrush x:Key="FrameInnerLightBrush" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="FrameInnerDarkBrush"  Color="#00000000" po:Freeze="True"/>
+    <sys:Double x:Key="ScanFrameBandSize">0</sys:Double>
+    <SolidColorBrush x:Key="ScanFrameTopBrush" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScanFrameLeftBrush" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScanFrameRightBrush" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScanFrameBottomBrush" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScanOuterKeylineBrush" Color="#00000000" po:Freeze="True"/>
+    <Thickness x:Key="ScanOuterKeylineThickness">0</Thickness>
+    <sys:Double x:Key="ScanPaneBandSize">0</sys:Double>
+    <SolidColorBrush x:Key="ScanPaneTopBrush" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScanPaneLeftBrush" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScanPaneRightBrush" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScanPaneBottomBrush" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ExportButtonBackground" Color="#00000000" po:Freeze="True"/>
+    <Visibility x:Key="GripDotsVisibility">Visible</Visibility>
+    <Visibility x:Key="GripHatchVisibility">Collapsed</Visibility>
+    <Visibility x:Key="ScaledRailVisibility">Visible</Visibility>
+    <Visibility x:Key="FixedRailVisibility">Collapsed</Visibility>
+    <Visibility x:Key="RailSeparatorVisibility">Visible</Visibility>
+    <GridLength x:Key="RailColumnWidth">24</GridLength>
+    <sys:Double x:Key="RailWidth">24</sys:Double>
+    <Thickness x:Key="RailSeparatorMargin">0,6,0,6</Thickness>
+    <Thickness x:Key="DevicesPaneMargin">0,0,8,0</Thickness>
+
+    <!-- CAPTION BUTTONS. KillerScan's own 44x36 flush buttons; 98SE makes them
+         18x16 beveled. The close button's red hover lives here as tokens: the
+         98SE palette overrides the hover to the gray face (never transparent -
+         transparent lets the navy caption show through and the X reads blue). -->
+    <sys:Double x:Key="CaptionButtonWidth">44</sys:Double>
+    <sys:Double x:Key="CaptionButtonHeight">36</sys:Double>
+    <Thickness x:Key="CaptionButtonMargin">0</Thickness>
+    <Thickness x:Key="CaptionCloseGap">0</Thickness>
+    <Thickness x:Key="CaptionButtonsMargin">0</Thickness>
+    <Thickness x:Key="TitleBarPadding">14,0,0,0</Thickness>
+    <SolidColorBrush x:Key="CaptionButtonBrush"       Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="CaptionCloseBrush"        Color="#e04444" po:Freeze="True"/>
+    <SolidColorBrush x:Key="CaptionCloseHoverBrush"   Color="#e04444" po:Freeze="True"/>
+    <SolidColorBrush x:Key="CaptionCloseHoverFgBrush" Color="#ffffff" po:Freeze="True"/>
+
+    <!-- FOOTER. One continuous strip; 98SE breaks it into sunken cells. -->
+    <Thickness x:Key="FooterPadding">16,0,16,0</Thickness>
+    <Thickness x:Key="FooterCellMargin">0</Thickness>
+    <Thickness x:Key="FooterCellPadding">0</Thickness>
+    <Thickness x:Key="FooterCellLightThickness">0</Thickness>
+    <Thickness x:Key="FooterCellDarkThickness">0</Thickness>
+    <SolidColorBrush x:Key="FooterBevelLightBrush" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="FooterBevelDarkBrush"  Color="#00000000" po:Freeze="True"/>
+
+    <!-- Hovered-row text in menus/flyouts; white on the dark washes and 98SE's
+         navy highlight. Light overrides it in its own palette. -->
+    <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#ffffff" po:Freeze="True"/>
+
+    <!-- KillerScan title placement. Separate names prevent the shared contract from
+         overwriting this app's optical alignment. -->
+    <Thickness x:Key="ScanTitleBarPadding">14,0</Thickness>
+    <Thickness x:Key="ScanCaptionButtonsMargin">0</Thickness>
+    <Thickness x:Key="DialogHaloMargin">10</Thickness>
+    <sys:Double x:Key="DialogTitleBarHeight">36</sys:Double>
+    <sys:Double x:Key="FlyoutShadowOpacity">0.6</sys:Double>
+    <SolidColorBrush x:Key="InputDialogTitleBrush" Color="#00000000" po:Freeze="True"/>
+    <Visibility x:Key="InputDialogWordmarkVisibility">Visible</Visibility>
+    <Visibility x:Key="InputDialogPlainTitleVisibility">Collapsed</Visibility>
+    <Thickness x:Key="DialogContentMargin">24,20,24,16</Thickness>
+    <Thickness x:Key="DialogButtonsMargin">24,0,24,20</Thickness>
+
+    <!-- Scrollbars retain the current thin overlay treatment on ordinary themes. The 98SE
+         contract overrides these with a 16px visible track, arrows and raised thumb. -->
+    <sys:Double x:Key="ScrollBarThickness">12</sys:Double>
+    <sys:Double x:Key="ScrollArrowSize">0</sys:Double>
+    <CornerRadius x:Key="ScrollThumbRadius">3</CornerRadius>
+    <Thickness x:Key="ScrollThumbMargin">4,0</Thickness>
+    <Thickness x:Key="ScrollThumbMarginH">0,4</Thickness>
+    <Thickness x:Key="ScrollThumbHoverMargin">2</Thickness>
+    <SolidColorBrush x:Key="ScrollTrackBrush" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScrollTrackBevelLight" Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScrollTrackBevelDark" Color="#00000000" po:Freeze="True"/>
+    <DropShadowEffect x:Key="ScrollThumbHoverEffect" Color="Black" BlurRadius="4"
+                      ShadowDepth="0" Opacity="0.3"/>
+
+    <!-- Overlay dialog chrome. Ordinary themes keep the original card treatment; 98SE
+         overrides these into a compact captioned dialog. -->
+    <sys:Double x:Key="AboutCaptionHeight">0</sys:Double>
+    <Thickness x:Key="AboutCaptionMargin">0</Thickness>
+    <Thickness x:Key="ScanAboutContentMargin">18,10,18,18</Thickness>
+    <Thickness x:Key="ShortcutsContentMargin">24,18,24,18</Thickness>
+    <sys:Double x:Key="AboutCloseWidth">28</sys:Double>
+    <sys:Double x:Key="AboutCloseHeight">26</sys:Double>
+    <Thickness x:Key="AboutCloseMargin">0,6,6,0</Thickness>
+    <sys:String x:Key="AboutCloseGlyph">✕</sys:String>
+    <FontFamily x:Key="AboutCloseFont">Segoe UI</FontFamily>
+    <FontWeight x:Key="CaptionGlyphWeight">Normal</FontWeight>
+    <SolidColorBrush x:Key="AboutCloseFg" Color="#888888" po:Freeze="True"/>
+    <SolidColorBrush x:Key="AboutCloseHoverFg" Color="#e04444" po:Freeze="True"/>
+
+</ResourceDictionary>

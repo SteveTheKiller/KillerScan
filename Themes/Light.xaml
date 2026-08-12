@@ -6,6 +6,14 @@
     <sys:Double x:Key="GrainOpacity">0.34</sys:Double>
     <sys:Double x:Key="IconShadowOpacity">0.0</sys:Double>
 
+    <!-- App-specific geometry only - see Dark.xaml. -->
+    <CornerRadius x:Key="PaneGrainCornerRadius">5</CornerRadius>
+    <CornerRadius x:Key="TabCornerRadius">5,5,0,0</CornerRadius>
+    <SolidColorBrush x:Key="TextFieldBrush" Color="#f0f0f0" po:Freeze="True"/>
+    <!-- Overrides the Defaults layer's white: Light's hover wash is pale, so hovered menu
+         text goes the accent green instead. -->
+    <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#1b5e20" po:Freeze="True"/>
+
     <!-- KillerScan additions for the shared KillerUI LIGHT theme. -->
     <SolidColorBrush x:Key="PrimaryBrush"        Color="#1b5e20" po:Freeze="True"/>
     <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#1b5e20" po:Freeze="True"/>

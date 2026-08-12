@@ -6,6 +6,11 @@
     <sys:Double x:Key="GrainOpacity">0.28</sys:Double>
     <sys:Double x:Key="IconShadowOpacity">0.9</sys:Double>
 
+    <!-- App-specific geometry only - see Dark.xaml. -->
+    <CornerRadius x:Key="PaneGrainCornerRadius">5</CornerRadius>
+    <CornerRadius x:Key="TabCornerRadius">5,5,0,0</CornerRadius>
+    <SolidColorBrush x:Key="TextFieldBrush" Color="#34373e" po:Freeze="True"/>
+
     <!-- ================================================================
          MOURNING - ported from KillerShell 2026-08-11. Funeral purple with
          a rose accent; the one grunge theme whose BackgroundBrush is solid
@@ -42,10 +47,10 @@
 
     <!-- Grid rows -->
     <SolidColorBrush x:Key="RowAltBrush"         Color="#18ffffff" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowHoverBrush"       Color="#a75167" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#44ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowHoverBrush"       Color="#44ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#ff6f91" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionBg"         Color="#ff6f91" po:Freeze="True"/>
-    <SolidColorBrush x:Key="SelectionFg"         Color="#292c31" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionFg"         Color="#ffffff" po:Freeze="True"/>
 
     <!-- Inputs / menus / scrollbar -->
     <SolidColorBrush x:Key="InputBorderBrush"    Color="#756b79" po:Freeze="True"/>

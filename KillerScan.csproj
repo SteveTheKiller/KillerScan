@@ -76,5 +76,7 @@
     <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)build\bundle-source.ps1&quot; -ProjectDir &quot;$(ProjectDir.TrimEnd('\'))&quot; -Version &quot;$(Version)&quot; -AppName &quot;$(AssemblyName)&quot; -PublishDir &quot;$(PublishDir.TrimEnd('\'))&quot;" IgnoreExitCode="true" />
   </Target>
 
-  <Import Project="..\KillerUI\KillerUI.ThemeAssets.props" />
+  <!-- Everything this project compiles lives inside this repository. KillerUI is the
+       private design source, not a build input. Shared palette files are vendored in
+       Themes\KillerUI and the theme contract is vendored in Services. -->
 </Project>

@@ -6,6 +6,11 @@
     <sys:Double x:Key="GrainOpacity">0.32</sys:Double>
     <sys:Double x:Key="IconShadowOpacity">1.0</sys:Double>
 
+    <!-- App-specific geometry only - see Dark.xaml. -->
+    <CornerRadius x:Key="PaneGrainCornerRadius">5</CornerRadius>
+    <CornerRadius x:Key="TabCornerRadius">5,5,0,0</CornerRadius>
+    <SolidColorBrush x:Key="TextFieldBrush" Color="#514e48" po:Freeze="True"/>
+
     <!-- ================================================================
          DECAY - ported from KillerShell 2026-08-11. Olive and bone: a
          warm gray-green chrome under a lighter drab bar, with a muted

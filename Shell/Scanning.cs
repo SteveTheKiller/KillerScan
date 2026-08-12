@@ -51,6 +51,11 @@ namespace KillerScan.Shell
                     ScanBtn.Content = Loc("Str_Btn_Scan");
                     ScanProgress.Visibility = Visibility.Collapsed;
                     ExportButton.IsEnabled = s.Devices.Count > 0;
+                    if (s.Devices.Count > 0)
+                    {
+                        if (ResultsGrid.SelectedItem == null) ResultsGrid.SelectedIndex = 0;
+                        ResultsGrid.Focus();
+                    }
                 }
                 return;
             }

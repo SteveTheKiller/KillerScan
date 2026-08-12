@@ -1,0 +1,35 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <SolidColorBrush x:Key="PrimaryBrush" Color="#4faaa8"/>
+  <SolidColorBrush x:Key="PrimaryHoverBrush" Color="#6bb8b6"/>
+  <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#458d8c"/>
+  <SolidColorBrush x:Key="HeaderLineBrush" Color="#292d2f"/>
+  <SolidColorBrush x:Key="OnPrimaryBrush" Color="#ffffff"/>
+  <SolidColorBrush x:Key="OutlineBtnBrush" Color="#4faaa8"/>
+  <SolidColorBrush x:Key="InputHoverBrush" Color="#4faaa8"/>
+  <LinearGradientBrush x:Key="BackgroundBrush" StartPoint="0,0.5" EndPoint="1,0.5"><GradientStop Color="#25282b" Offset="0"/><GradientStop Color="#2c5458" Offset="1"/></LinearGradientBrush>
+  <SolidColorBrush x:Key="SurfaceBrush" Color="#454039"/>
+  <SolidColorBrush x:Key="PaneBrush" Color="#3a352f"/>
+  <SolidColorBrush x:Key="TableHeaderBrush" Color="#48433e"/>
+  <SolidColorBrush x:Key="CardBorderBrush" Color="#835a30"/>
+  <SolidColorBrush x:Key="PaneBorderBrush" Color="#4d3d2b"/>
+  <SolidColorBrush x:Key="AppBorderBrush" Color="#44585b"/>
+  <SolidColorBrush x:Key="TextBrush" Color="#f4f4f0"/>
+  <SolidColorBrush x:Key="MutedTextBrush" Color="#d7d7cf"/>
+  <SolidColorBrush x:Key="ChromeTextBrush" Color="#fafaf6"/>
+  <SolidColorBrush x:Key="DimTextBrush" Color="#b4b6b1"/>
+  <SolidColorBrush x:Key="RowAltBrush" Color="#18ffffff"/>
+  <SolidColorBrush x:Key="RowHoverBrush" Color="#2d595d"/>
+  <SolidColorBrush x:Key="SelectionBg" Color="#4faaa8"/>
+  <SolidColorBrush x:Key="SelectionFg" Color="#ffffff"/>
+  <SolidColorBrush x:Key="InputBorderBrush" Color="#4d3d2b"/>
+  <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#242729"/>
+  <SolidColorBrush x:Key="MenuBorderBrush" Color="#4d3d2b"/>
+  <SolidColorBrush x:Key="MenuHoverBrush" Color="#407b7b"/>
+  <CornerRadius x:Key="WindowCornerRadius">7</CornerRadius>
+  <CornerRadius x:Key="PanelCornerRadius">6</CornerRadius>
+  <CornerRadius x:Key="ControlCornerRadius">4</CornerRadius>
+  <CornerRadius x:Key="SmallCornerRadius">3</CornerRadius>
+  <CornerRadius x:Key="FlyoutCornerRadius">0,0,4,4</CornerRadius>
+  <CornerRadius x:Key="AccentSwatchCornerRadius">9</CornerRadius>
+  <LinearGradientBrush x:Key="TitleBarBrush" StartPoint="0,0.5" EndPoint="1,0.5"><GradientStop Color="#25282b" Offset="0"/><GradientStop Color="#2c5458" Offset="1"/></LinearGradientBrush>
+</ResourceDictionary>

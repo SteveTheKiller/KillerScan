@@ -11,7 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Added
 - **A command line**: `/scan [targets]`, `/export <path>` to CSV or HTML, `/quick`, `/quiet`, `/help` and `/version`. Headless, works while the app is open, with real exit codes. Requested in issue #1.
 - **SSH asks which account to sign in as** the first time you reach a device and remembers it against that device's MAC. New **SSH as...** on the right-click menu always asks. Leaving it blank restores plain `ssh <ip>`.
-- Six more themes, ported from KillerShell: Ectoplasm, Decay, Malaise, Sepulchre, Delirium and Mourning. Twelve in total.
+- Seven more themes, ported from KillerShell: 98SE, Ectoplasm, Decay, Malaise, Sepulchre, Delirium and Mourning. Thirteen in total. 98SE squares every corner and carries its own six Windows 98 accents.
 
 ### Changed
 - Theme, language and the shortcuts button moved from the title bar to an icon rail down the left side, matching the rest of the Killer Tools apps. The theme picker is a named list now instead of color dots.

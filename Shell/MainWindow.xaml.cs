@@ -42,6 +42,9 @@ namespace KillerScan.Shell
         public MainWindow()
         {
             InitializeComponent();
+            // Family standard: rail flyouts hug the results pane's lower-left corner. That is
+            // inside the window, above the footer, and just to the right of the icon rail.
+            FlyoutPlacement.UsePane(DevicesPane, RootGrid);
             _portableBadge = (StackPanel)FindName("PortableBadge")!;
             _grainBrush    = (ImageBrush)FindName("GrainBrush")!;
 
@@ -77,6 +80,7 @@ namespace KillerScan.Shell
                     _portableBadge.Visibility = Visibility.Visible;
                 UpdateThemeSwatchSelection();                       // Theme.cs
                 UpdateAccentSwatches();                             // Theme.cs
+                ApplyFlatChrome();                                  // Theme.cs (98SE drops the shadow)
                 FadeInContent();                                    // WindowChrome.cs
                 if (DemoMode) GenerateDemoScan();                   // DemoMode.cs (--demo: initial roll)
             };

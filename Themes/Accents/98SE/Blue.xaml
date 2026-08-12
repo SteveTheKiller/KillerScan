@@ -1,0 +1,22 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+    <!-- 98SE family - BLUE accent, the Windows 98 navy. This is the DEFAULT accent for 98SE, and
+         it is an overlay rather than the base because ThemeManager treats Accent.Green as the
+         no-overlay case for every family. Values from KillerShell's Accents/98SE/Blue.xaml. -->
+    <!-- The caption gradient goes WITH the accent. Without this the title bar keeps whatever the
+         shared KillerUI 98SE palette set, which is built on its base green - so picking Blue left
+         a green caption. Every 98SE accent overlay must carry one. -->
+    <LinearGradientBrush x:Key="TitleBarBrush" StartPoint="0,0" EndPoint="1,0" po:Freeze="True">
+        <GradientStop Color="#000080" Offset="0"/><GradientStop Color="#1084d0" Offset="1"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="PrimaryBrush"        Color="#000080" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#1084d0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#000060" po:Freeze="True"/>
+    <SolidColorBrush x:Key="HeaderLineBrush"     Color="#000080" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#000080" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionBg"         Color="#000080" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#000080" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowAltBrush"         Color="#dbe8f5" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TableHoverTextBrush" Color="#9fd0ff" po:Freeze="True"/>
+</ResourceDictionary>

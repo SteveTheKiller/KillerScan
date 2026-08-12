@@ -38,7 +38,7 @@ namespace KillerScan.Shell
             if (dlg.ShowDialog() != true) return;
             try
             {
-                // The report opens in whatever theme the app is in; all six palettes ride along, so
+                // The report opens in whatever theme the app is in; all thirteen palettes ride along, so
                 // the reader can switch inside the file.
                 string html = ReportExport.BuildHtml(
                     ActiveDevices, SubnetInput.Text, ThemeManager.Current.ToString().ToLowerInvariant());

@@ -1,0 +1,192 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ================================================================
+         98SE - ported from KillerShell 2026-08-11.
+
+         FILE NAME: KillerShell calls this 98SE.xaml. KillerScan cannot -
+         ThemeManager.LoadDict derives the filename from the enum member, and
+         a C# enum member cannot start with a digit, so the member is SE98 and
+         the file has to match it. The name shown to the user is Str_Theme_SE98
+         ("98SE") in every locale, so only the file differs.
+
+         No grain and no icon shadows: Windows 98 had neither, and the texture
+         that makes every other theme in this app read as a surface is exactly
+         what breaks the illusion here.
+         ================================================================ -->
+
+    <sys:Double x:Key="GrainOpacity">0</sys:Double>
+    <sys:Double x:Key="IconShadowOpacity">0</sys:Double>
+
+    <!-- ================================================================
+         KillerScan-SPECIFIC 98SE keys only.
+
+         Everything Win98 - the frame, caption buttons, footer cells, bevels,
+         corner radii, the colours - comes from the MASTER, KillerUI/Themes/98SE.xaml,
+         which the KillerThemeContract layer merges over this file. Do NOT copy
+         those here: the master is applied second and wins, so a copy is dead
+         weight and the exact drift that made this theme take so long the first
+         time (the master had gone stale; it was resynced 2026-08-11).
+
+         Only two kinds of key belong here: tokens KillerScan invented that the
+         master has never heard of (the pane-grain radius, the tab radius) and
+         the device-type label colours, which are a network-scanner concept no
+         other app has. The master leaves those untouched, so these stand.
+         ================================================================ -->
+    <CornerRadius x:Key="PaneGrainCornerRadius">0</CornerRadius>
+    <CornerRadius x:Key="TabCornerRadius">0</CornerRadius>
+    <Thickness x:Key="ScanTitleBarPadding">2,0,0,0</Thickness>
+    <Thickness x:Key="ScanCaptionButtonsMargin">0,3,3,0</Thickness>
+    <SolidColorBrush x:Key="InputDialogTitleBrush" Color="#000080" po:Freeze="True"/>
+    <Visibility x:Key="InputDialogWordmarkVisibility">Collapsed</Visibility>
+    <Visibility x:Key="InputDialogPlainTitleVisibility">Visible</Visibility>
+
+    <!-- White, lightly dithered Win98 client area behind opaque gray table rows. -->
+    <DrawingBrush x:Key="ScanContentPaneBrush" Viewport="0,0,2,2"
+                  ViewportUnits="Absolute" TileMode="Tile" Stretch="None">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#ffffff" Geometry="M0,0 H2 V2 H0 Z"/>
+                <GeometryDrawing Brush="#f2f2f2" Geometry="M0,0 H1 V1 H0 Z M1,1 H2 V2 H1 Z"/>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <SolidColorBrush x:Key="TableRowBrush" Color="#e6e6e6" po:Freeze="True"/>
+    <!-- KillerScan draws each narrow frame edge as one continuous directional ramp. Keeping
+         two separate one-pixel Borders here created a dark/light/dark railroad stripe. -->
+    <sys:Double x:Key="ScanFrameBandSize">0</sys:Double>
+    <LinearGradientBrush x:Key="ScanFrameTopBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#dfdfdf" Offset="0"/><GradientStop Color="#ffffff" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ScanFrameLeftBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#dfdfdf" Offset="0"/><GradientStop Color="#ffffff" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ScanFrameRightBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#808080" Offset="0"/><GradientStop Color="#000000" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ScanFrameBottomBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#808080" Offset="0"/><GradientStop Color="#000000" Offset="1"/>
+    </LinearGradientBrush>
+    <!-- One unbroken HWND keyline, outside the bevel and above the caption buttons. -->
+    <SolidColorBrush x:Key="ScanOuterKeylineBrush" Color="#00000000" po:Freeze="True"/>
+    <Thickness x:Key="ScanOuterKeylineThickness">0</Thickness>
+    <!-- KillerNotes' client edge is the two directional 1px rings supplied by the shared
+         PaneBevel* resources. Do not paint another 2px gradient band over those rings: it
+         widens the right/bottom edge and produces the railroad stripe seen in KillerScan. -->
+    <sys:Double x:Key="ScanPaneBandSize">0</sys:Double>
+    <LinearGradientBrush x:Key="ScanPaneTopBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#808080" Offset="0"/><GradientStop Color="#000000" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ScanPaneLeftBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#808080" Offset="0"/><GradientStop Color="#000000" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ScanPaneRightBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#ffffff" Offset="0"/><GradientStop Color="#808080" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ScanPaneBottomBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#ffffff" Offset="0"/><GradientStop Color="#808080" Offset="1"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ExportButtonBackground" Color="#c0c0c0" po:Freeze="True"/>
+    <Visibility x:Key="GripDotsVisibility">Collapsed</Visibility>
+    <Visibility x:Key="GripHatchVisibility">Visible</Visibility>
+    <Visibility x:Key="ScaledRailVisibility">Collapsed</Visibility>
+    <Visibility x:Key="FixedRailVisibility">Visible</Visibility>
+    <Visibility x:Key="RailSeparatorVisibility">Collapsed</Visibility>
+    <GridLength x:Key="RailColumnWidth">20</GridLength>
+    <sys:Double x:Key="RailWidth">20</sys:Double>
+    <Thickness x:Key="RailSeparatorMargin">0</Thickness>
+    <Thickness x:Key="DevicesPaneMargin">0</Thickness>
+    <!-- RootGrid is inset from the five-pixel sizing frame. Full-window modal dimmers extend
+         back across that inset so the frame dims with the rest of the app. -->
+    <Thickness x:Key="OverlayFrameBleed">-5,-4,-5,-5</Thickness>
+
+    <!-- About and shortcuts are real Win98 dialogs: compact navy caption, beveled close
+         button, and content pushed below the caption instead of drawn through it. -->
+    <sys:Double x:Key="AboutCaptionHeight">20</sys:Double>
+    <Thickness x:Key="AboutCaptionMargin">2,2,2,0</Thickness>
+    <Thickness x:Key="ScanAboutContentMargin">18,30,18,18</Thickness>
+    <Thickness x:Key="ShortcutsContentMargin">24,30,24,20</Thickness>
+    <sys:Double x:Key="AboutCloseWidth">18</sys:Double>
+    <sys:Double x:Key="AboutCloseHeight">16</sys:Double>
+    <Thickness x:Key="AboutCloseMargin">0,4,4,0</Thickness>
+    <sys:String x:Key="AboutCloseGlyph">&#xE8BB;</sys:String>
+    <FontFamily x:Key="AboutCloseFont">Segoe MDL2 Assets</FontFamily>
+    <FontWeight x:Key="CaptionGlyphWeight">Bold</FontWeight>
+    <SolidColorBrush x:Key="AboutCloseFg" Color="#000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="AboutCloseHoverFg" Color="#000000" po:Freeze="True"/>
+
+    <!-- Accent: the dark Win98 green. PrimaryHover is the lighter green, and Pressed the darker,
+         because a flat theme has no shadow to signal a press with. -->
+    <SolidColorBrush x:Key="PrimaryBrush"        Color="#004f00" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#3a7d44" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#003600" po:Freeze="True"/>
+    <SolidColorBrush x:Key="HeaderLineBrush"     Color="#004f00" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OnPrimaryBrush"      Color="#ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#004f00" po:Freeze="True"/>
+    <SolidColorBrush x:Key="InputHoverBrush"     Color="#000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TextFooter"          Color="#606060" po:Freeze="True"/>
+
+    <!-- Surface tiers: there are none. Win98 paints the whole window in one face gray and
+         separates things with bevels instead of with tone, which is the entire point of the
+         theme. All four surface keys are deliberately the same value. -->
+    <SolidColorBrush x:Key="BackgroundBrush"     Color="#c0c0c0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SurfaceBrush"        Color="#c0c0c0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PaneBrush"           Color="#c0c0c0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TableHeaderBrush"    Color="#c0c0c0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="CardBorderBrush"     Color="#808080" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PaneBorderBrush"     Color="#808080" po:Freeze="True"/>
+    <SolidColorBrush x:Key="AppBorderBrush"      Color="#c0c0c0" po:Freeze="True"/>
+
+    <!-- Text. These are overridden by the shared KillerUI layer, which is merged on top, so the
+         values that actually ship are the family's. Kept here so the file does not read as
+         disagreeing with them.
+
+         Watch ChromeTextBrush when the title bar is done: KillerUI sets it white, which is right
+         against the navy TitleBarBrush the family uses and wrong against the #c0c0c0 face gray
+         KillerScan's title bar still paints. See BACKLOG.md. -->
+    <SolidColorBrush x:Key="TextBrush"           Color="#000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MutedTextBrush"      Color="#404040" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ChromeTextBrush"     Color="#404040" po:Freeze="True"/>
+    <SolidColorBrush x:Key="DimTextBrush"        Color="#606060" po:Freeze="True"/>
+
+    <!-- Grid rows. Hover is a pale version of the active accent, giving the gray table a clear
+         pointer affordance while leaving the saturated accent for keyboard/current selection. -->
+    <SolidColorBrush x:Key="RowAltBrush"         Color="#d9ead9" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowHoverBrush"       Color="#707070" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TableHoverTextBrush" Color="#a8e0b0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#004f00" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionBg"         Color="#004f00" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionFg"         Color="#ffffff" po:Freeze="True"/>
+
+    <!-- Inputs / menus / scrollbar. MenuHoverBrush is the Win98 navy, which is the one place the
+         classic highlight color still shows up. -->
+    <SolidColorBrush x:Key="InputBorderBrush"    Color="#808080" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#c0c0c0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuBorderBrush"     Color="#808080" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuTextBrush"       Color="#000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuHoverBrush"      Color="#000080" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlinePressedBrush" Color="#a0a0a0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#c0c0c0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#a0a0a0" po:Freeze="True"/>
+
+    <!-- Device-type label colors: the DARKENED set, as on Light. The pane is #c0c0c0, so the
+         bright set every dark theme uses would be unreadable on it. -->
+    <SolidColorBrush x:Key="TypeRouter"     Color="#B06000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeWindows"    Color="#1D5FB0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypePrinter"    Color="#9C3F66" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeSwitch"     Color="#5A5A5A" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeHypervisor" Color="#B02A2A" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeNas"        Color="#157A45" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeIot"        Color="#6A2A9C" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeServer"     Color="#B0481A" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeLinux"      Color="#7A6A10" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeDns"        Color="#1A6A8C" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeHa"         Color="#157A4F" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeMobile"     Color="#4040A8" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeCamera"     Color="#9A6800" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeSmarttv"    Color="#864A86" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TypeMedia"      Color="#256A9C" po:Freeze="True"/>
+
+</ResourceDictionary>

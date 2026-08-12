@@ -6,6 +6,11 @@
     <sys:Double x:Key="GrainOpacity">0.34</sys:Double>
     <sys:Double x:Key="IconShadowOpacity">1.0</sys:Double>
 
+    <!-- App-specific geometry only - see Dark.xaml. -->
+    <CornerRadius x:Key="PaneGrainCornerRadius">5</CornerRadius>
+    <CornerRadius x:Key="TabCornerRadius">5,5,0,0</CornerRadius>
+    <SolidColorBrush x:Key="TextFieldBrush" Color="#2c1012" po:Freeze="True"/>
+
     <!-- BLOOD, aligned to the family 2026-08-11.
 
          KillerScan used to swap these two deliberately - the comment here read "Primary =
@@ -44,8 +49,7 @@
     <SolidColorBrush x:Key="SelectionFg"         Color="#ffffff" po:Freeze="True"/>
 
     <SolidColorBrush x:Key="InputBorderBrush"    Color="#633030" po:Freeze="True"/>
-    <!-- Menu surface. KillerScan has no KillerUI overlay layer, so these ARE the authoritative
-         values and were aligned to the ones the family resolves to (2026-08-11). -->
+    <!-- Menu surface, aligned 2026-08-11 to what the family resolves to. See Dark.xaml. -->
     <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#1e0a0b" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuBorderBrush"     Color="#633030" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuTextBrush"       Color="#f8c99e" po:Freeze="True"/>

@@ -26,6 +26,15 @@ namespace KillerScan.Shell
             ("Ctrl + F",        "Str_Sc_Subnet"),
             ("Ctrl + A",        "Str_Sc_SelectAll"),
             ("Ctrl + E",        "Str_Sc_Export"),
+            ("Enter",           "Str_Sc_Browser"),
+            ("Ctrl + P",        "Str_Sc_Ping"),
+            ("Ctrl + D",        "Str_Sc_Rdp"),
+            ("Ctrl + S",        "Str_Sc_Ssh"),
+            ("Ctrl + Shift + S", "Str_Sc_SshAs"),
+            ("Ctrl + C",        "Str_Sc_CopyIp"),
+            ("Ctrl + Shift + C", "Str_Sc_CopyMac"),
+            ("Ctrl + Alt + C",  "Str_Sc_CopyHost"),
+            ("Shift + F10",     "Str_Sc_DeviceMenu"),
             ("Ctrl + Shift + +", "Str_Sc_AppBigger"),
             ("Ctrl + Shift + -", "Str_Sc_AppSmaller"),
             ("Ctrl + Shift + 0", "Str_Sc_AppReset"),
@@ -38,6 +47,7 @@ namespace KillerScan.Shell
         {
             bool ctrl  = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
             bool shift = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+            bool alt   = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
 
             // Esc closes the overlays first, then falls through to canceling a running scan.
             if (e.Key == Key.Escape)
@@ -57,6 +67,14 @@ namespace KillerScan.Shell
             {
                 switch (e.Key)
                 {
+                    case Key.S:
+                        if (!inTextBox && GetSelectedDevice() != null)
+                        { SshAsDevice_Click(this, new RoutedEventArgs()); e.Handled = true; }
+                        return;
+                    case Key.C:
+                        if (!inTextBox && GetSelectedDevice() != null)
+                        { CopyMac_Click(this, new RoutedEventArgs()); e.Handled = true; }
+                        return;
                     case Key.OemPlus: case Key.Add:
                         ApplyAppScale(_appScale + 0.05, persist: true); e.Handled = true; return;
                     case Key.OemMinus: case Key.Subtract:
@@ -64,6 +82,13 @@ namespace KillerScan.Shell
                     case Key.D0: case Key.NumPad0:
                         ApplyAppScale(1.0, persist: true); e.Handled = true; return;
                 }
+                return;
+            }
+
+            if (ctrl && alt)
+            {
+                if (e.Key == Key.C && !inTextBox && GetSelectedDevice() != null)
+                { CopyHostname_Click(this, new RoutedEventArgs()); e.Handled = true; }
                 return;
             }
 
@@ -83,11 +108,29 @@ namespace KillerScan.Shell
                     case Key.A:
                         if (!inTextBox) { ResultsGrid.SelectAll(); e.Handled = true; }
                         return;
+                    case Key.C:
+                        if (!inTextBox && GetSelectedDevice() != null)
+                        { CopyIp_Click(this, new RoutedEventArgs()); e.Handled = true; }
+                        return;
+                    case Key.P:
+                        if (!inTextBox && GetSelectedDevice() != null)
+                        { PingDevice_Click(this, new RoutedEventArgs()); e.Handled = true; }
+                        return;
+                    case Key.D:
+                        if (!inTextBox && GetSelectedDevice() != null)
+                        { RdpDevice_Click(this, new RoutedEventArgs()); e.Handled = true; }
+                        return;
+                    case Key.S:
+                        if (!inTextBox && GetSelectedDevice() != null)
+                        { SshDevice_Click(this, new RoutedEventArgs()); e.Handled = true; }
+                        return;
                 }
                 return;
             }
 
             if (e.Key == Key.F5) { ScanBtn_Click(this, new RoutedEventArgs()); e.Handled = true; }
+            else if (e.Key == Key.Enter && ResultsGrid.IsKeyboardFocusWithin && GetSelectedDevice() != null)
+            { OpenBrowser_Click(this, new RoutedEventArgs()); e.Handled = true; }
         }
 
         // Title-bar "?" button (MainWindow.xaml), matching KillerNotes and KillerPDF.
@@ -102,8 +145,7 @@ namespace KillerScan.Shell
         private void ShowShortcuts()
         {
             BuildShortcutRows();
-            ShortcutsOverlay.Visibility = Visibility.Visible;
-            Anim.FadeIn(ShortcutsOverlay);
+            FadeOverlayIn(ShortcutsOverlay);
         }
 
         // Same fade-out the About overlay uses (About.cs), so both dismiss identically.

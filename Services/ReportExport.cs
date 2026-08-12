@@ -34,7 +34,7 @@ namespace KillerScan.Services
         /// <summary>
         /// Self-contained HTML report: the device table plus a theme and accent switcher and
         /// click-to-sort columns. <paramref name="themeKey"/> is the theme the report opens in,
-        /// lower-case ("dark", "black", ...); all six palettes are embedded either way.
+        /// lower-case ("dark", "black", ...); every app palette is embedded either way.
         /// </summary>
         internal static string BuildHtml(IEnumerable<NetworkDevice> devices, string subnetText, string themeKey)
         {
@@ -83,7 +83,8 @@ namespace KillerScan.Services
             sb.AppendLine(".themesw button{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);cursor:pointer;padding:0;outline:none;transition:transform .1s}");
             sb.AppendLine(".themesw button:hover{transform:scale(1.15)}.themesw button.active{border-color:var(--text)}");
             sb.AppendLine(".meta{color:var(--muted);font-size:13px;margin:0 0 18px}.meta b{color:var(--text)}");
-            sb.AppendLine($".tablewrap{{overflow-x:auto;border:1px solid var(--border);border-radius:8px;background:var(--pane) url('{AssetBase}killerscan-grain.png');box-shadow:0 10px 30px rgba(0,0,0,.45)}}");
+            sb.AppendLine(".tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px;background-color:var(--pane);background-image:radial-gradient(rgba(255,255,255,.035) .65px,transparent .75px);background-size:3px 3px;box-shadow:0 10px 30px rgba(0,0,0,.45)}");
+            sb.AppendLine("html.theme-se98 .tablewrap{border-radius:0;border-color:#000;background-image:linear-gradient(45deg,#f2f2f2 25%,transparent 25%,transparent 75%,#f2f2f2 75%),linear-gradient(45deg,#f2f2f2 25%,#fff 25%,#fff 75%,#f2f2f2 75%);background-position:0 0,1px 1px;background-size:2px 2px;box-shadow:none}");
             sb.AppendLine("table{border-collapse:collapse;width:100%;min-width:760px}");
             sb.AppendLine("th{background:var(--surface);color:var(--muted);text-align:left;padding:10px 14px;font-size:12px;font-weight:600;font-family:Consolas,monospace;letter-spacing:.3px;position:sticky;top:0;white-space:nowrap;cursor:pointer;user-select:none}");
             sb.AppendLine("th:hover{color:var(--text)}th .arrow{display:inline-block;width:10px;font-size:10px;opacity:.7}");
@@ -136,7 +137,7 @@ namespace KillerScan.Services
 
             // Interactivity: theme switcher (persisted) + click-to-sort columns.
             sb.AppendLine("<script>");
-            sb.AppendLine("var THEMES=[['dark','Dark','#3a3a3a'],['light','Light','#e8e8e8'],['black','Black','#000000'],['blood','Blood','#4a1f20'],['greed','Greed','#0a5234'],['cyanotic','Cyanotic','#0a4a6e']];");
+            sb.AppendLine("var THEMES=[['dark','Dark','#3a3a3a'],['light','Light','#e8e8e8'],['black','Black','#000000'],['se98','98SE','#c0c0c0'],['blood','Blood','#4a1f20'],['greed','Greed','#0a5234'],['cyanotic','Cyanotic','#0a4a6e'],['ectoplasm','Ectoplasm','#314548'],['decay','Decay','#514e48'],['malaise','Malaise','#3f4947'],['sepulchre','Sepulchre','#454039'],['delirium','Delirium','#3e3c50'],['mourning','Mourning','#554c5d']];");
             sb.AppendLine("var sw=document.getElementById('themesw');");
             sb.AppendLine("function setTheme(t){document.documentElement.className='theme-'+t;try{localStorage.setItem('ksTheme',t)}catch(e){}var k=sw.children;for(var i=0;i<k.length;i++)k[i].className=(k[i].getAttribute('data-t')===t)?'active':'';}");
             sb.AppendLine("THEMES.forEach(function(a){var b=document.createElement('button');b.title=a[1];b.setAttribute('data-t',a[0]);b.style.background=a[2];b.onclick=function(){setTheme(a[0])};sw.appendChild(b);});");
@@ -163,7 +164,7 @@ namespace KillerScan.Services
             return sb.ToString();
         }
 
-        // ---- Report palette data (the in-report theme switcher embeds all six) ----
+        // ---- Report palette data (the in-report theme switcher embeds every app theme) ----
         private readonly struct ReportTheme(string key, string bg, string surface, string pane, string accent,
                                             string text, string muted, string border, string hover)
         {
@@ -179,6 +180,13 @@ namespace KillerScan.Services
             new("blood",    "#240c0d", "#2c1012", "#321416", "#e8485a", "#fffde8", "#f8c99e", "#401d1d", "#54201f"),
             new("greed",    "#002115", "#002e1c", "#003824", "#3fbf6f", "#fffde8", "#e0d49a", "#0f4a30", "#00593a"),
             new("cyanotic", "#001a28", "#00263a", "#002e48", "#3aa0d8", "#fffde8", "#e0d49a", "#183450", "#0a5478"),
+            new("ectoplasm","#5e1764", "#314548", "#293c3f", "#ead900", "#f4f4f0", "#d7d7cf", "#096366", "#25232c"),
+            new("decay",    "#3b3f46", "#514e48", "#403f3b", "#8fa88d", "#f2f4f3", "#d8cfb5", "#5c554c", "#5f6258"),
+            new("malaise",  "#563343", "#3f4947", "#343b3d", "#ff6f91", "#f2f4f3", "#d8cfb5", "#394742", "#4b5b57"),
+            new("sepulchre","#25282b", "#454039", "#3a352f", "#4faaa8", "#f4f4f0", "#d7d7cf", "#4d3d2b", "#2d595d"),
+            new("delirium", "#641d25", "#3e3c50", "#343344", "#dd8500", "#f4f4f0", "#d7d7cf", "#5c527d", "#312958"),
+            new("mourning", "#3b3642", "#34373e", "#554c5d", "#ff6f91", "#f4f4f0", "#d7d7cf", "#756b79", "#a75167"),
+            new("se98",     "#c0c0c0", "#c0c0c0", "#ffffff", "#000080", "#000000", "#404040", "#808080", "#c0c0c0"),
         ];
 
         private static readonly string[] TypeSlugs =
@@ -193,7 +201,7 @@ namespace KillerScan.Services
         /// <summary>Per-theme type color map, mirroring the in-app theme overrides.</summary>
         private static Dictionary<string, string> TypeMapFor(string themeKey)
         {
-            string[] basePal = themeKey == "light" ? TypeDarkened : TypeBright;
+            string[] basePal = themeKey == "light" || themeKey == "se98" ? TypeDarkened : TypeBright;
             var map = new Dictionary<string, string>();
             for (int i = 0; i < TypeSlugs.Length; i++) map[TypeSlugs[i]] = basePal[i];
             // Same-hue-as-pane tweaks the app applies in the RGB themes:

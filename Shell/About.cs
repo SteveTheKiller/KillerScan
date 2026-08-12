@@ -49,19 +49,26 @@ namespace KillerScan.Shell
 
         // ---- Overlay fade (shared with the shortcuts overlay, Shortcuts.cs) ----
 
-        private static void FadeOverlayIn(UIElement o)
+        private void FadeOverlayIn(UIElement o)
         {
+            FrameDimmer.Visibility = Visibility.Visible;
             o.Visibility = Visibility.Visible;
             Anim.FadeIn(o);
         }
 
-        private static void FadeOverlayOut(UIElement o)
+        private void FadeOverlayOut(UIElement o)
         {
             var a = new DoubleAnimation(o.Opacity, 0, new Duration(TimeSpan.FromMilliseconds(Anim.FadeMs)))
             {
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
             };
-            a.Completed += (_, _) => o.Visibility = Visibility.Collapsed;
+            a.Completed += (_, _) =>
+            {
+                o.Visibility = Visibility.Collapsed;
+                if (ShortcutsOverlay.Visibility != Visibility.Visible &&
+                    AboutOverlay.Visibility != Visibility.Visible)
+                    FrameDimmer.Visibility = Visibility.Collapsed;
+            };
             o.BeginAnimation(UIElement.OpacityProperty, a);
         }
 

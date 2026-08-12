@@ -37,8 +37,8 @@ namespace KillerScan.Shell
         private const int DWMWCP_ROUND      = 2;
         private const int DWMWA_BORDER_COLOR = 34;
 
-        /// <summary>Tints the Win11 DWM frame border to the theme's PaneBorderBrush
-        /// (AppBorderBrush overrides per theme, e.g. Black), so the 1px window outline
+        /// <summary>Tints the Win11 DWM frame border to the theme's WindowEdgeBrush first,
+        /// matching KillerNotes, then falls back through AppBorderBrush and PaneBorderBrush.
         /// follows the palette instead of staying system gray. Call at SourceInitialized
         /// and again after every theme change. (Family standard, ported from KillerFind.)</summary>
         internal static void ApplyThemeBorder(Window w)
@@ -47,12 +47,23 @@ namespace KillerScan.Shell
             {
                 var hwnd = new WindowInteropHelper(w).Handle;
                 if (hwnd == IntPtr.Zero) return;
-                if ((Application.Current.TryFindResource("AppBorderBrush")
-                     ?? Application.Current.TryFindResource("PaneBorderBrush"))
-                    is System.Windows.Media.SolidColorBrush b)
+                object? candidate = Application.Current.TryFindResource("WindowEdgeBrush");
+                // KillerScan keeps a transparent WindowEdgeBrush in Defaults so the WPF edge is
+                // absent on flat themes. Unlike KillerNotes, it does not republish that key from
+                // AppBorderBrush. Therefore transparent means "no DWM edge" only for 98SE;
+                // modern themes must fall through to their palette border.
+                if (Services.ThemeManager.Current != Services.Theme.SE98 &&
+                    candidate is System.Windows.Media.SolidColorBrush edge && edge.Color.A == 0)
+                    candidate = null;
+                candidate ??= Application.Current.TryFindResource("AppBorderBrush")
+                           ?? Application.Current.TryFindResource("PaneBorderBrush");
+
+                if (candidate is System.Windows.Media.SolidColorBrush b)
                 {
-                    // COLORREF is 0x00BBGGRR
-                    int colorref = b.Color.R | (b.Color.G << 8) | (b.Color.B << 16);
+                    // Transparent means no extra DWM keyline outside the WPF sizing frame.
+                    int colorref = b.Color.A == 0
+                        ? unchecked((int)0xFFFFFFFE)
+                        : b.Color.R | (b.Color.G << 8) | (b.Color.B << 16);
                     DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, ref colorref, sizeof(int));
                 }
             }
@@ -85,7 +96,13 @@ namespace KillerScan.Shell
         /// well, which is the only message a snap does raise.
         /// </summary>
         private void SyncWindowCorners() =>
-            ApplyWindowCorners(rounded: WindowState == WindowState.Normal && !IsEdgeSnapped());
+            ApplyWindowCorners(rounded: WindowState == WindowState.Normal
+                                        && !IsEdgeSnapped()
+                                        // 98SE squares even a floating window. Windows 98 had no
+                                        // rounded windows, and the DWM corner preference is the one
+                                        // rounding a palette cannot reach - WindowCornerRadius only
+                                        // governs what WPF draws inside the frame.
+                                        && Services.ThemeManager.Current != Services.Theme.SE98);
 
         /// <summary>
         /// True when the window sits flush against two or more edges of its monitor's work area,

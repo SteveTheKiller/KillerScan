@@ -140,6 +140,15 @@
     <sys:String x:Key="Str_Sc_Subnet">Jump to the subnet box</sys:String>
     <sys:String x:Key="Str_Sc_SelectAll">Select every device</sys:String>
     <sys:String x:Key="Str_Sc_Export">Export results</sys:String>
+    <sys:String x:Key="Str_Sc_Browser">Open the selected device in a browser</sys:String>
+    <sys:String x:Key="Str_Sc_Ping">Ping the selected device</sys:String>
+    <sys:String x:Key="Str_Sc_Rdp">Open Remote Desktop to the selected device</sys:String>
+    <sys:String x:Key="Str_Sc_Ssh">Connect to the selected device over SSH</sys:String>
+    <sys:String x:Key="Str_Sc_SshAs">Choose an SSH account and connect</sys:String>
+    <sys:String x:Key="Str_Sc_CopyIp">Copy the selected IP address</sys:String>
+    <sys:String x:Key="Str_Sc_CopyMac">Copy the selected MAC address</sys:String>
+    <sys:String x:Key="Str_Sc_CopyHost">Copy the selected hostname</sys:String>
+    <sys:String x:Key="Str_Sc_DeviceMenu">Open every action for the selected device</sys:String>
     <sys:String x:Key="Str_Sc_AppBigger">Make the app bigger</sys:String>
     <sys:String x:Key="Str_Sc_AppSmaller">Make the app smaller</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">Reset the app size</sys:String>

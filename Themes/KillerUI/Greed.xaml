@@ -1,0 +1,10 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <CornerRadius x:Key="WindowCornerRadius">7</CornerRadius><CornerRadius x:Key="PanelCornerRadius">6</CornerRadius><CornerRadius x:Key="ControlCornerRadius">4</CornerRadius><CornerRadius x:Key="SmallCornerRadius">3</CornerRadius><CornerRadius x:Key="FlyoutCornerRadius">0,0,4,4</CornerRadius><CornerRadius x:Key="AccentSwatchCornerRadius">9</CornerRadius>
+  <SolidColorBrush x:Key="TitleBarBrush" Color="#002115"/>
+  <SolidColorBrush x:Key="BackgroundBrush" Color="#002115"/><SolidColorBrush x:Key="SurfaceBrush" Color="#002e1c"/><SolidColorBrush x:Key="PaneBrush" Color="#003824"/><SolidColorBrush x:Key="TableHeaderBrush" Color="#002e1c"/>
+  <SolidColorBrush x:Key="RowAltBrush" Color="#18FFFFFF"/><SolidColorBrush x:Key="RowHoverBrush" Color="#00593a"/><SolidColorBrush x:Key="MenuHoverBrush" Color="#00593a"/>
+  <SolidColorBrush x:Key="CardBorderBrush" Color="#0f4a30"/><SolidColorBrush x:Key="PaneBorderBrush" Color="#0f4a30"/><SolidColorBrush x:Key="AppBorderBrush" Color="#0f4a30"/>
+  <SolidColorBrush x:Key="TextBrush" Color="#fffde8"/><SolidColorBrush x:Key="MutedTextBrush" Color="#e0d49a"/><SolidColorBrush x:Key="ChromeTextBrush" Color="#cfd6c2"/><SolidColorBrush x:Key="DimTextBrush" Color="#c0aa68"/>
+  <SolidColorBrush x:Key="InputBorderBrush" Color="#0f4a30"/><SolidColorBrush x:Key="InputHoverBrush" Color="#2a7a52"/><SolidColorBrush x:Key="MenuBackgroundBrush" Color="#001e13"/><SolidColorBrush x:Key="MenuBorderBrush" Color="#0f4a30"/>
+  <SolidColorBrush x:Key="SelectionBg" Color="#44ffffff"/><SolidColorBrush x:Key="SelectionFg" Color="#ffffff"/><SolidColorBrush x:Key="PrimaryBrush" Color="#ffffff"/><SolidColorBrush x:Key="PrimaryHoverBrush" Color="#ffffff"/><SolidColorBrush x:Key="PrimaryPressedBrush" Color="#ffffff"/><SolidColorBrush x:Key="OnPrimaryBrush" Color="#002e1c"/><SolidColorBrush x:Key="OutlineBtnBrush" Color="#3fbf6f"/><SolidColorBrush x:Key="HeaderLineBrush" Color="#3fbf6f"/>
+</ResourceDictionary>

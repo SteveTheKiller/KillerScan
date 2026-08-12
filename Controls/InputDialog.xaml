@@ -17,32 +17,40 @@
             Background="{StaticResource BackgroundBrush}"
             BorderBrush="{StaticResource CardBorderBrush}"
             BorderThickness="1"
-            CornerRadius="6"
-            Margin="10">
+            CornerRadius="{DynamicResource FlyoutCornerRadius}"
+            Margin="{DynamicResource DialogHaloMargin}">
         <Border.Effect>
-            <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="3" Direction="270" Opacity="0.6"/>
+            <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="3" Direction="270"
+                              Opacity="{DynamicResource FlyoutShadowOpacity}"/>
         </Border.Effect>
         <Grid>
+            <Border IsHitTestVisible="False" Panel.ZIndex="8"
+                    BorderBrush="{DynamicResource FrameOuterLightBrush}"
+                    BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
+            <Border IsHitTestVisible="False" Panel.ZIndex="8"
+                    BorderBrush="{DynamicResource FrameOuterDarkBrush}"
+                    BorderThickness="{DynamicResource FrameOuterDarkThickness}"/>
             <!-- Film grain over the whole dialog (behind content), so it reads as one continuous
                  surface like the main window chrome. -->
-            <Border IsHitTestVisible="False" CornerRadius="6"
+            <Border IsHitTestVisible="False" CornerRadius="{DynamicResource FlyoutCornerRadius}"
                     Opacity="{DynamicResource GrainOpacity}"
                     Background="{DynamicResource GrainTileBrush}"/>
 
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="36"/>
+                    <RowDefinition Height="{DynamicResource DialogTitleBarHeight}"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!-- Title bar: transparent so the dialog grain + surface show through. Carries the
                      KillerScan wordmark exactly as the main window title bar does. -->
-                <Border Grid.Row="0" Background="Transparent"
+                <Border Grid.Row="0" Background="{DynamicResource InputDialogTitleBrush}"
                         MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                     <Grid>
                         <!-- Wordmark with the same soft dark shadow copy the main title bar uses. -->
-                        <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Margin="14,0,0,0">
+                        <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Margin="14,0,0,0"
+                              Visibility="{DynamicResource InputDialogWordmarkVisibility}">
                             <StackPanel Orientation="Horizontal" Margin="1,2,0,0"
                                         Opacity="{DynamicResource IconShadowOpacity}">
                                 <StackPanel.Effect><BlurEffect Radius="3"/></StackPanel.Effect>
@@ -50,36 +58,23 @@
                             </StackPanel>
                             <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="19.5" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
                         </Grid>
+                        <TextBlock Text="SSH account" Margin="6,0,0,0" VerticalAlignment="Center"
+                                   Visibility="{DynamicResource InputDialogPlainTitleVisibility}"
+                                   FontFamily="Tahoma" FontSize="11" FontWeight="Bold"
+                                   Foreground="{DynamicResource ChromeTextBrush}"/>
                         <!-- The glyph is a named TextBlock recolored by TargetName, NOT the Button's
                              own Foreground: a local Foreground value outranks anything a trigger
                              sets on the same property, which leaves a red glyph on the red fill. -->
-                        <Button Click="Cancel_Click"
+                        <Button Content="{DynamicResource AboutCloseGlyph}" Click="Cancel_Click"
+                                Style="{StaticResource OverlayCloseButton}"
                                 HorizontalAlignment="Right" VerticalAlignment="Top"
-                                Width="44" Height="36"
-                                Background="Transparent" BorderThickness="0"
-                                Cursor="Hand">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border x:Name="bg" Background="Transparent" CornerRadius="0,6,0,0">
-                                        <TextBlock x:Name="glyph" Text="&#xE8BB;"
-                                                   FontFamily="Segoe MDL2 Assets" FontSize="10"
-                                                   Foreground="{DynamicResource DangerRed}"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="bg" Property="Background" Value="{DynamicResource DangerRed}"/>
-                                            <Setter TargetName="glyph" Property="Foreground" Value="White"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
+                                Width="{DynamicResource AboutCloseWidth}" Height="{DynamicResource AboutCloseHeight}"
+                                Margin="{DynamicResource AboutCloseMargin}"/>
                     </Grid>
                 </Border>
 
                 <!-- Body -->
-                <StackPanel Grid.Row="1" Margin="24,20,24,16">
+                <StackPanel Grid.Row="1" Margin="{DynamicResource DialogContentMargin}">
                     <TextBlock x:Name="HeadingText"
                                Foreground="{StaticResource TextBrush}"
                                FontSize="13" TextWrapping="Wrap" Margin="0,0,0,12"/>
@@ -95,7 +90,7 @@
 
                 <!-- Buttons -->
                 <StackPanel Grid.Row="2" Orientation="Horizontal"
-                            HorizontalAlignment="Right" Margin="24,0,24,20">
+                            HorizontalAlignment="Right" Margin="{DynamicResource DialogButtonsMargin}">
                     <Button x:Name="CancelButton" Content="Cancel" Click="Cancel_Click"
                             Style="{StaticResource SurfaceButton}"
                             MinWidth="80" Margin="0,0,8,0"/>

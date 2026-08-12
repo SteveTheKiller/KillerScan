@@ -21,6 +21,7 @@ namespace KillerScan.Shell
         /// Without the guard, syncing the flyout would re-apply the theme and re-enter this.
         /// </summary>
         private bool _syncingThemeRadios;
+        private ContextMenu? _themeContextMenu;
 
         private void ThemeRadio_Checked(object sender, RoutedEventArgs e)
         {
@@ -29,8 +30,61 @@ namespace KillerScan.Shell
             {
                 ThemeManager.Apply(theme);
                 ApplyThemeBorder(this);   // retint the DWM frame border to the new palette
+                ApplyFlatChrome();
                 UpdateAccentSwatches();
             }
+        }
+
+        /// <summary>
+        /// Everything about 98SE that a palette cannot express. Called on every theme change and
+        /// once at startup.
+        ///
+        /// Keyed on the theme rather than on a "is it flat" token because KillerScan has exactly
+        /// one flat theme; if a second ever lands, this is the one place that has to learn about it.
+        ///
+        /// Three things, none of which a ResourceDictionary can do:
+        ///   - The pane's drop shadow is a StaticResource Effect, not a DynamicResource-bound
+        ///     property, so no theme file can switch it off. Windows 98 had no drop shadows.
+        ///   - A Win98 caption carries the window's NAME in plain bold, never a logotype, so the
+        ///     wordmark and subtitle collapse and PlainTitle takes over. This is not cosmetic
+        ///     preference: the wordmark's two runs are TextBrush and PrimaryBrush, which on 98SE
+        ///     are black and navy - both invisible on the navy caption.
+        ///   - A Win98 caption is 22px, not 36. The row height and WindowChrome.CaptionHeight have
+        ///     to move together or the draggable strip stops matching the bar you can see.
+        /// </summary>
+        private void ApplyFlatChrome()
+        {
+            bool flat = ThemeManager.Current == Theme.SE98;
+
+            if (FindName("DevicesPane") is System.Windows.Controls.Border pane)
+                pane.Effect = flat ? null : TryFindResource("PaneShadow") as System.Windows.Media.Effects.Effect;
+
+            // The About card's shadow layer. Collapsed rather than Effect-nulled: its inline
+            // DropShadowEffect could not be restored after a null, and collapsing the whole layer
+            // also removes the second background it paints.
+            if (FindName("AboutShadow") is UIElement sh)
+                sh.Visibility = flat ? Visibility.Collapsed : Visibility.Visible;
+            if (FindName("AboutInfoShadow") is UIElement infoShadow)
+                infoShadow.Visibility = flat ? Visibility.Collapsed : Visibility.Visible;
+
+            var wordmark = flat ? Visibility.Collapsed : Visibility.Visible;
+            var plain    = flat ? Visibility.Visible   : Visibility.Collapsed;
+            if (FindName("LogoBar")      is UIElement lb) lb.Visibility = wordmark;
+            if (FindName("SubtitleText") is UIElement st) st.Visibility = wordmark;
+            if (FindName("PlainTitle")   is UIElement pt) pt.Visibility = plain;
+
+            // The icon shrinks with the bar; 27px does not fit a 22px caption.
+            if (FindName("TitleIcon") is FrameworkElement icon)
+            {
+                icon.Width = icon.Height = flat ? 16 : 27;
+                icon.Margin = new Thickness(0, 0, flat ? 5 : 7, 0);
+            }
+
+            double h = flat ? 22 : 36;
+            if (FindName("RootGrid") is System.Windows.Controls.Grid root && root.RowDefinitions.Count > 0)
+                root.RowDefinitions[0].Height = new GridLength(h);
+            var chrome = System.Windows.Shell.WindowChrome.GetWindowChrome(this);
+            if (chrome != null) chrome.CaptionHeight = h;
         }
 
         private void AccentSwatch_Click(object sender, RoutedEventArgs e)
@@ -61,18 +115,38 @@ namespace KillerScan.Shell
 
         private void ThemeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (FindName("ThemePopup") is System.Windows.Controls.Primitives.Popup p)
+            // Family standard: theme and locale both use ContextMenu. The old transparent Popup
+            // followed different DPI placement math and rasterized its text without ClearType.
+            // Move the existing named XAML content once so all theme handlers remain intact.
+            if (_themeContextMenu == null &&
+                FindName("ThemePopup") is System.Windows.Controls.Primitives.Popup oldPopup &&
+                FindName("ThemeMenuContent") is StackPanel content)
             {
-                p.IsOpen = !p.IsOpen;
-                if (p.IsOpen)
-                {
-                    // Sync on OPEN, not just at startup: the theme can have changed since the
-                    // flyout was last built, and a stale tick is worse than none.
-                    UpdateThemeSwatchSelection();
-                    UpdateAccentSwatches();
-                    if (p.Child is UIElement child) Anim.FadeIn(child);
-                }
+                if (content.Parent is Panel parent) parent.Children.Remove(content);
+                oldPopup.IsOpen = false;
+                content.Margin = new Thickness(12, 10, 14, 10);
+
+                var itemStyle = new Style(typeof(MenuItem));
+                var itemTemplate = new ControlTemplate(typeof(MenuItem));
+                var presenter = new FrameworkElementFactory(typeof(ContentPresenter));
+                presenter.SetValue(ContentPresenter.ContentSourceProperty, "Header");
+                presenter.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+                itemTemplate.VisualTree = presenter;
+                itemStyle.Setters.Add(new Setter(Control.TemplateProperty, itemTemplate));
+
+                _themeContextMenu = new ContextMenu { ItemContainerStyle = itemStyle };
+                _themeContextMenu.Items.Add(content);
+                _themeContextMenu.PreviewMouseWheel += Menu_ForwardWheelToGrid;
             }
+
+            if (_themeContextMenu == null) return;
+            FlyoutPlacement.Attach(_themeContextMenu);
+            _themeContextMenu.IsOpen = true;
+
+            // Sync on OPEN: the theme can have changed since the menu was last visited.
+            UpdateThemeSwatchSelection();
+            UpdateAccentSwatches();
+            Anim.FadeIn(_themeContextMenu);
         }
 
         /// <summary>Shows the accent dots for accent-capable themes and highlights the active accent.</summary>
@@ -80,13 +154,66 @@ namespace KillerScan.Shell
         {
             if (FindName("AccentSwatches") is not Panel panel) return;
             var t = ThemeManager.Current;
-            bool hasAccents = t == Theme.Dark || t == Theme.Light || t == Theme.Black;
-            var vis = hasAccents ? Visibility.Visible : Visibility.Collapsed;
-            panel.Visibility = vis;
+            // Asked of ThemeManager rather than listed again here: the two lists drifting apart
+            // would show dots for a theme that has no Accents/ folder, or hide them for one that has.
+            bool hasAccents = ThemeManager.SupportsAccents(t);
+            panel.Visibility = hasAccents ? Visibility.Visible : Visibility.Collapsed;
             if (hasAccents)
             {
+                RecolorAccentDots(panel, t);
                 HighlightSwatches(panel, ThemeManager.AccentChoiceFor(t).ToString());
                 PositionAccentRow(panel, t.ToString());
+            }
+        }
+
+        /// <summary>The six Windows 98 accents, keyed by the same Accent names the other families
+        /// use. These are each overlay's own PrimaryBrush, so a dot always shows the color it
+        /// actually applies - a bright modern dot next to a muted Win98 accent would be a lie
+        /// about what you are picking.</summary>
+        private static readonly Dictionary<string, string> Se98DotColors = new()
+        {
+            ["Red"]    = "#700038",   // maroon; nothing in the period palette was a bright red
+            ["Orange"] = "#804000",
+            ["Green"]  = "#004f00",
+            ["Teal"]   = "#006060",
+            ["Blue"]   = "#000080",   // the Win98 navy, and 98SE's default
+            ["Purple"] = "#4b286d",
+        };
+
+        /// <summary>Swaps the accent dots between the modern set painted in the XAML and the Win98
+        /// set above. Only 98SE differs, so every other theme restores the markup's own value from
+        /// the dot's Tag via the modern table.</summary>
+        private static readonly Dictionary<string, string> ModernDotColors = new()
+        {
+            ["Red"]    = "#DD504B",
+            ["Orange"] = "#E8962C",
+            ["Green"]  = "#1ea54c",
+            ["Teal"]   = "#1FB8A8",
+            ["Blue"]   = "#50AEE8",
+            ["Purple"] = "#B982E3",
+        };
+
+        private static void RecolorAccentDots(Panel panel, Theme t)
+        {
+            var table = t == Theme.SE98 ? Se98DotColors : ModernDotColors;
+
+            // 98SE's native/default blue is the first choice. The modern families retain the
+            // established ROYGBIV presentation order.
+            string[] order = t == Theme.SE98
+                ? ["Blue", "Red", "Orange", "Green", "Teal", "Purple"]
+                : ["Red", "Orange", "Green", "Teal", "Blue", "Purple"];
+            var buttons = panel.Children.OfType<Button>()
+                .Where(b => b.Tag is string)
+                .ToDictionary(b => (string)b.Tag);
+            panel.Children.Clear();
+            foreach (string name in order)
+                if (buttons.TryGetValue(name, out var button)) panel.Children.Add(button);
+
+            foreach (var child in panel.Children)
+            {
+                if (child is not Button b || b.Tag is not string name) continue;
+                if (!table.TryGetValue(name, out var hex)) continue;
+                b.Background = (Brush)new BrushConverter().ConvertFromString(hex)!;
             }
         }
 
@@ -137,7 +264,7 @@ namespace KillerScan.Shell
             if (sender is Button b && b.ContextMenu != null)
             {
                 BuildLanguageMenu(b.ContextMenu);
-                b.ContextMenu.PlacementTarget = b;
+                FlyoutPlacement.Attach(b.ContextMenu);
                 b.ContextMenu.IsOpen = true;
                 Anim.FadeIn(b.ContextMenu);
             }

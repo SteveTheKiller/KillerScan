@@ -34,7 +34,21 @@
                       UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
 
-    <Grid x:Name="RootGrid" Opacity="0">
+    <!-- WIN98 WINDOW FRAME, ported from KillerShell verbatim. Zero-thickness / transparent on
+         every flat theme (DWM does the edge there); on 98SE it is the hard raised sizing border.
+         WindowFrame fills the whole window with the frame face; the client-face Border repaints
+         the flat window color INSIDE the frame; four directional bevels sit on the rim; RootGrid
+         is inset by WindowFramePadding so a strip of frame shows on every side - the notepad
+         edge. The bevels must be siblings of the client face, NOT padding on a wrapper, or the
+         raised edge draws inward instead of on the rim. -->
+    <!-- Exact KillerNotes frame hierarchy: outer directional ring, a separate 3px gradient
+         face, then the inner directional ring. Keeping the face in its own Border prevents the
+         right and bottom from becoming alternating full-height stripes. -->
+    <Border x:Name="WindowFrame" BorderBrush="{DynamicResource WindowEdgeBrush}"
+            BorderThickness="{DynamicResource WindowEdgeThickness}" SnapsToDevicePixels="True">
+        <Grid x:Name="FrameHost">
+
+    <Grid x:Name="RootGrid" Opacity="0" Panel.ZIndex="9500" Margin="{DynamicResource WindowFramePadding}">
         <Grid.RowDefinitions>
             <RowDefinition Height="36"/>     <!-- 0: title bar -->
             <RowDefinition Height="Auto"/>   <!-- 1: scan toolbar -->
@@ -42,20 +56,44 @@
             <RowDefinition Height="24"/>     <!-- 3: footer / status bar (24px + 11.5/10.5 type, family standard) -->
         </Grid.RowDefinitions>
 
-        <!-- Custom Title Bar -->
-        <Border Grid.Row="0" Background="{DynamicResource BackgroundBrush}">
+        <!-- TitleBarBrush: equal to the window background on every flat theme, the Win98 navy
+             gradient on 98SE. What makes that work is the swap below - a real Win98 caption has no
+             logotype in it, just the icon and the window's name in plain bold, so on 98SE the
+             wordmark and subtitle collapse and PlainTitle shows instead. Painting the wordmark
+             onto navy was the alternative and it does not work: "Killer" is TextBrush (black
+             there) and "Scan" is PrimaryBrush (navy by default there). Same answer KillerShell
+             reached. Theme.cs drives the visibilities. -->
+        <Border Grid.Row="0" Background="{DynamicResource TitleBarBrush}">
             <Grid>
                 <!-- Film grain over the bar (behind content) -->
-                <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}">
+                <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}" Margin="0,0,0,1">
                     <Border.Background>
                         <ImageBrush x:Name="TitleGrainBrush" TileMode="Tile"
                                     ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
                     </Border.Background>
                 </Border>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0">
-                    <Image Source="pack://application:,,,/Resources/ks-icon.png" Width="27" Height="27"
-                           VerticalAlignment="Center" Margin="0,0,7,0"
-                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="{DynamicResource ScanTitleBarPadding}">
+                    <Image x:Name="TitleIcon" Source="pack://application:,,,/Resources/ks-icon.png" Width="27" Height="27"
+                            VerticalAlignment="Center" Margin="0,0,7,0"
+                            WindowChrome.IsHitTestVisibleInChrome="True"
+                            MouseWheel="LogoBar_MouseWheel"
+                            MouseLeftButtonDown="LogoBar_MouseLeftButtonDown"
+                            ToolTip="{DynamicResource Str_TT_AppSize}"
+                            RenderOptions.BitmapScalingMode="HighQuality"/>
+
+                    <!-- The 98SE caption title. A Win98 caption carries the window's name in plain
+                         bold, not a logotype, so this shows only there and the wordmark collapses.
+                         Wheel-zoomable and drag-enabled like the wordmark, because on 98SE it is
+                         the ONLY thing in the caption to roll the wheel over - without that the
+                         app-size control would simply be unreachable on this theme. -->
+                    <TextBlock x:Name="PlainTitle" Text="KillerScan" Visibility="Collapsed"
+                               VerticalAlignment="Center" Background="Transparent"
+                               WindowChrome.IsHitTestVisibleInChrome="True"
+                               MouseWheel="LogoBar_MouseWheel"
+                               MouseLeftButtonDown="LogoBar_MouseLeftButtonDown"
+                               ToolTip="{DynamicResource Str_TT_AppSize}"
+                               FontFamily="Segoe UI" FontWeight="Bold" FontSize="11"
+                               Foreground="{DynamicResource ChromeTextBrush}"/>
                     <!-- Typewriter wordmark with KillerPDF-style soft shadow: a blurred dark copy behind the
                          crisp text, faded by IconShadowOpacity (0 in light mode = no shadow).
                          Rolling the wheel over it drives the app-wide size (AppScale.cs). The
@@ -73,7 +111,7 @@
                         </StackPanel>
                         <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="18"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="23.4" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
                     </Grid>
-                    <TextBlock Text="{DynamicResource Str_Subtitle}" Foreground="{DynamicResource MutedTextBrush}"
+                    <TextBlock x:Name="SubtitleText" Text="{DynamicResource Str_Subtitle}" Foreground="{DynamicResource MutedTextBrush}"
                                FontFamily="Consolas" FontSize="11" VerticalAlignment="Center" Margin="10,2,0,0"/>
                 </StackPanel>
 
@@ -84,7 +122,12 @@
                      the wordmark and the window controls only. -->
 
                 <!-- Window Controls (Segoe MDL2 glyphs, matched to KillerPDF) -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch"
+                <!-- CaptionButtonsMargin: 0 on every flat theme so the buttons run flush to the
+                     window edge; on 98SE it insets them from the raised frame. VerticalAlignment
+                     is Top rather than Stretch because the 98SE buttons are 16px in a 22px bar and
+                     must sit against the top, not be stretched down it. -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Margin="{DynamicResource ScanCaptionButtonsMargin}"
                             WindowChrome.IsHitTestVisibleInChrome="True">
                     <Button Content="&#xE921;" Click="MinimizeBtn_Click" Style="{StaticResource ChromeButton}"/>
                     <Button x:Name="MaximizeBtn" Content="&#xE922;" Click="MaximizeBtn_Click" Style="{StaticResource ChromeButton}"/>
@@ -115,7 +158,7 @@
                  The pane's old 8px left margin becomes this column, so the content did not
                  move - the rail occupies space the window already had. -->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="24"/>
+                <ColumnDefinition Width="{DynamicResource RailColumnWidth}"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
@@ -126,23 +169,24 @@
              subnet box were dead: only their lower two thirds responded. Opting the bar into chrome
              hit-testing hands those pixels back to WPF. Dragging the bar still works, because
              Toolbar_MouseDown forwards empty-space clicks as a caption drag itself. -->
-        <Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource BackgroundBrush}" Padding="16,0,16,8" Margin="0,-1,0,0"
+        <Border Grid.Row="0" Grid.ColumnSpan="2" Background="{DynamicResource BackgroundBrush}" Padding="16,5,12,5" Margin="0,-1,0,0"
                 WindowChrome.IsHitTestVisibleInChrome="True"
                 MouseLeftButtonDown="Toolbar_MouseDown">
             <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="160"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
+                        <!-- The subnet field owns every spare pixel. Its 160px floor preserves
+                             the compact layout; the network facts remain an Auto-sized group
+                             anchored against the right side as the window grows. -->
+                        <ColumnDefinition Width="*" MinWidth="160"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Film grain over the toolbar (behind content), matching the title bar.
-                         Negative margin mirrors the Border's padding (16,0,16,8) so the grain
-                         covers the bar exactly once - no double-grain band. -->
-                    <Border Grid.ColumnSpan="6" IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}" Margin="-16,0,-16,-8">
+                    <!-- Film grain over the complete toolbar, including its padded perimeter.
+                         The former zero top inset began the tile inside the 5px padding and left
+                         a textureless stripe directly under the title bar. -->
+                    <Border Grid.ColumnSpan="4" IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}" Margin="-16,-5,-12,-5">
                         <Border.Background>
                             <ImageBrush x:Name="ToolbarGrainBrush" TileMode="Tile"
                                         ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
@@ -155,30 +199,33 @@
 
                     <TextBox Grid.Column="1" x:Name="SubnetInput"
                              Style="{StaticResource DarkTextBox}"
-                             Padding="9,3" FontSize="12"
+                             Padding="5,3,9,3" FontSize="12"
                              Text="192.168.1.0/24"
                              VerticalAlignment="Center"/>
 
-                    <!-- PrimaryButton, not OutlineButton: Scan is the one action the whole window
-                         exists for and it has to read as the loudest thing on the bar, so it is a
-                         solid accent fill. The Install badge below stays hollow on purpose - it is
-                         fine for that one to blend in. -->
+                    <!-- Quiet at rest, accent-filled on hover: the same primary-action treatment
+                         used by the other family toolbars. -->
                     <Button Grid.Column="2" x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}"
-                            Style="{StaticResource PrimaryButton}"
+                            Style="{StaticResource OutlineButton}"
                             Click="ScanBtn_Click"
                             FontSize="12" Padding="14,5" Margin="10,0,0,0"/>
 
                     <!-- Local network info - clean label/value pairs + an accent interface badge -->
-                    <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
-                        <TextBlock Text="{DynamicResource Str_Lbl_Local}" Foreground="{DynamicResource ChromeTextBrush}"
+                    <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right"
+                                VerticalAlignment="Center" Margin="20,0,0,0">
+                        <!-- MutedTextBrush, not ChromeTextBrush: ChromeText means "text on the
+                             TITLE BAR", and on 98SE that is white for the navy caption. These
+                             labels sit on the toolbar, which stays face gray, so white would be
+                             invisible. The two brushes are a shade apart on every flat theme. -->
+                        <TextBlock Text="{DynamicResource Str_Lbl_Local}" Foreground="{DynamicResource MutedTextBrush}"
                                    FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <TextBlock x:Name="LocalIpLabel" Text="--" Foreground="{DynamicResource TextBrush}"
                                    FontFamily="Consolas" FontSize="12.5" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                        <TextBlock Text="{DynamicResource Str_Lbl_Gateway}" Foreground="{DynamicResource ChromeTextBrush}"
+                        <TextBlock Text="{DynamicResource Str_Lbl_Gateway}" Foreground="{DynamicResource MutedTextBrush}"
                                    FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <TextBlock x:Name="GatewayLabel" Text="--" Foreground="{DynamicResource TextBrush}"
                                    FontFamily="Consolas" FontSize="12.5" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                        <TextBlock Text="{DynamicResource Str_Lbl_Dns}" Foreground="{DynamicResource ChromeTextBrush}"
+                        <TextBlock Text="{DynamicResource Str_Lbl_Dns}" Foreground="{DynamicResource MutedTextBrush}"
                                    FontSize="10" VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <TextBlock x:Name="DnsLabel" Text="--" Foreground="{DynamicResource TextBrush}"
                                    FontFamily="Consolas" FontSize="12.5" VerticalAlignment="Center" Margin="0,0,20,0"/>
@@ -197,6 +244,12 @@
                     Background="{DynamicResource GrainTileBrush}"/>
         </Border>
 
+        <!-- The family rail has a single hairline at its content edge. -->
+        <Border Grid.Row="1" Grid.Column="0" BorderBrush="{DynamicResource PaneBorderBrush}"
+                BorderThickness="0,0,1,0" IsHitTestVisible="False"
+                Margin="{DynamicResource RailSeparatorMargin}"
+                Visibility="{DynamicResource RailSeparatorVisibility}"/>
+
         <!-- ================================================================
              ICON RAIL (column 0).
 
@@ -211,44 +264,15 @@
              available width shifts every glyph 1px toward the pane, which is where they read as
              centred on the strip. Same trick and same reason as the collapse chevron's
              Margin="2,10,0,0" in KillerNotes and Killendar. -->
-        <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom"
-                    HorizontalAlignment="Center" Margin="2,0,0,10">
-
-            <!-- Keyboard shortcuts (F1). A Consolas "?" rather than an MDL2 glyph, matching
-                 KillerNotes, KillerPDF and Killendar. -->
-            <Button x:Name="ShortcutsButton" Style="{StaticResource RailButton}"
-                    Content="?" FontFamily="Consolas" FontSize="18"
-                    Click="ShortcutHelp_Click" Margin="0,0,0,10"
-                    ToolTip="{DynamicResource Str_TT_Shortcuts}"/>
-
-            <!-- Language. F2B7 (LocaleLanguage - globe with characters in front) is the family
-                 standard glyph, in preference to the bare E774 globe. -->
-            <Button x:Name="LangButton" Style="{StaticResource RailButton}"
-                    Content="&#xF2B7;" FontSize="15"
-                    Click="LangButton_Click" Margin="0,0,0,10"
-                    ToolTip="{DynamicResource Str_TT_Language}">
-                <Button.ContextMenu>
-                    <!-- Placement Right: the rail is on the LEFT edge, so its flyouts open away
-                         from it. A flyout always anchors to the button that opens it. -->
-                    <ContextMenu x:Name="LangMenu" Placement="Right" HorizontalOffset="4"
-                                 PreviewMouseWheel="Menu_ForwardWheelToGrid"/>
-                </Button.ContextMenu>
-            </Button>
-
-            <!-- Theme (E790, paint roller) - always the bottom-most button on the rail. -->
-            <Button x:Name="ThemeButton" Style="{StaticResource RailButton}"
-                    Content="&#xE790;" FontSize="15"
-                    Click="ThemeButton_Click"
-                    ToolTip="{DynamicResource Str_TT_Theme}"/>
-        </StackPanel>
-
-        <!-- Theme + accent flyout. PlacementTarget is the button that opens it and Placement
-             follows the edge the rail lives on - never a fixed anchor point, which is what put
-             flyouts in odd places in every other app in this family. -->
-        <Popup x:Name="ThemePopup" PlacementTarget="{Binding ElementName=ThemeButton}" Placement="Right"
-               StaysOpen="False" AllowsTransparency="True" HorizontalOffset="4" VerticalOffset="0">
+        <!-- Theme + accent flyout. Both rail menus are positioned against DevicesPane's
+             lower-left corner, matching KillerShell. Display/ClearType is deliberately local:
+             this Popup must not inherit the zoom host's fractional-scale grayscale renderer. -->
+        <Popup x:Name="ThemePopup" StaysOpen="False" AllowsTransparency="True"
+               HorizontalOffset="-17" VerticalOffset="-13"
+               TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType"
+               UseLayoutRounding="True" SnapsToDevicePixels="True">
             <Border Background="{DynamicResource MenuBackgroundBrush}" BorderBrush="{DynamicResource MenuBorderBrush}"
-                    BorderThickness="1" CornerRadius="6" Padding="12,10" Margin="22,18,22,26"
+                    BorderThickness="1" CornerRadius="{DynamicResource FlyoutCornerRadius}" Padding="12,10" Margin="22,18,22,26"
                     PreviewMouseWheel="Menu_ForwardWheelToGrid">
                 <Border.Effect>
                     <DropShadowEffect Color="Black" BlurRadius="22" ShadowDepth="4" Direction="270" Opacity="0.55"/>
@@ -257,13 +281,13 @@
                     <!-- Grain LAST inside the Grid would sit over the rows; here it is first but
                          the selected row's fill is transparent, so the texture still reads through
                          every row including the checked one. -->
-                    <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}" CornerRadius="5" Margin="-12,-10">
+                    <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}" CornerRadius="{DynamicResource PaneGrainCornerRadius}" Margin="-12,-10">
                         <Border.Background>
                             <ImageBrush x:Name="FlyoutGrainBrush" TileMode="Tile"
                                         ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
                         </Border.Background>
                     </Border>
-                    <StackPanel MinWidth="150">
+                    <StackPanel x:Name="ThemeMenuContent" MinWidth="150">
                         <TextBlock Text="{DynamicResource Str_Lbl_Theme}" Foreground="{DynamicResource DimTextBrush}" FontSize="10"
                                    FontWeight="SemiBold" Margin="2,0,0,8"/>
                         <!-- Named rows, not dots: twelve swatches do not fit, and a dot for a
@@ -276,6 +300,8 @@
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Dark"      Content="{DynamicResource Str_Theme_Dark}"      Checked="ThemeRadio_Checked"/>
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Light"     Content="{DynamicResource Str_Theme_Light}"     Checked="ThemeRadio_Checked"/>
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Black"     Content="{DynamicResource Str_Theme_Black}"     Checked="ThemeRadio_Checked"/>
+                            <!-- Tag is SE98, the enum member; the label reads "98SE". -->
+                            <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="SE98"      Content="{DynamicResource Str_Theme_SE98}"      Checked="ThemeRadio_Checked"/>
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Blood"     Content="{DynamicResource Str_Theme_Blood}"     Checked="ThemeRadio_Checked"/>
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Greed"     Content="{DynamicResource Str_Theme_Greed}"     Checked="ThemeRadio_Checked"/>
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Cyanotic"  Content="{DynamicResource Str_Theme_Cyanotic}"  Checked="ThemeRadio_Checked"/>
@@ -299,7 +325,7 @@
                                  No "ACCENT" caption: sitting indented under the selected theme,
                                  six colored dots say what they are without one. -->
                             <!-- Accent dots in ROYGBIV order; revealed only for accent-capable themes -->
-                            <StackPanel x:Name="AccentSwatches" Orientation="Horizontal" Margin="24,1,0,9" Visibility="Collapsed">
+                            <StackPanel x:Name="AccentSwatches" Orientation="Horizontal" Margin="10,-5,0,5" Visibility="Collapsed">
                                 <Button Style="{StaticResource ThemeSwatch}" Tag="Red"    Background="#DD504B" Click="AccentSwatch_Click" ToolTip="Red"/>
                                 <Button Style="{StaticResource ThemeSwatch}" Tag="Orange" Background="#E8962C" Click="AccentSwatch_Click" ToolTip="Orange"/>
                                 <Button Style="{StaticResource ThemeSwatch}" Tag="Green"  Background="#1ea54c" Click="AccentSwatch_Click" ToolTip="Green"/>
@@ -313,10 +339,36 @@
             </Border>
         </Popup>
 
+        <!-- Original family rail for every geometrically flat theme. It remains inside the
+             accessibility LayoutTransform exactly as before the 98SE work. -->
+        <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom"
+                    HorizontalAlignment="Center" Margin="2,0,0,10"
+                    Visibility="{DynamicResource ScaledRailVisibility}">
+            <Button x:Name="ShortcutsButton" Style="{StaticResource RailButton}"
+                    Content="?" FontFamily="Consolas" FontSize="18"
+                    Click="ShortcutHelp_Click" Margin="0,0,0,10"
+                    ToolTip="{DynamicResource Str_TT_Shortcuts}"/>
+            <Button x:Name="LangButton" Style="{StaticResource RailButton}"
+                    Content="&#xF2B7;" FontSize="15"
+                    Click="LangButton_Click" Margin="0,0,0,10"
+                    ToolTip="{DynamicResource Str_TT_Language}">
+                <Button.ContextMenu>
+                    <ContextMenu x:Name="LangMenu" PreviewMouseWheel="Menu_ForwardWheelToGrid"/>
+                </Button.ContextMenu>
+            </Button>
+            <Button x:Name="ThemeButton" Style="{StaticResource RailButton}"
+                    Content="&#xE790;" FontSize="15"
+                    Click="ThemeButton_Click" ToolTip="{DynamicResource Str_TT_Theme}"/>
+        </StackPanel>
+
         <!-- Devices pane - the lightest tier, lifted above the chrome with an outward drop shadow
              (kept tight to the bars; the shadow overlays them rather than adding gap) -->
-        <Border Grid.Row="1" Grid.Column="1" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
-                BorderThickness="1" CornerRadius="6" Margin="0,0,8,0" Panel.ZIndex="10"
+        <!-- Named so the shadow can be switched off. Windows 98 had no drop shadows anywhere, and
+             PaneShadow is a StaticResource effect that a palette cannot reach - so Theme.cs nulls
+             the Effect on 98SE and restores it otherwise. Same approach KillerShell takes. -->
+        <Border x:Name="DevicesPane"
+                Grid.Row="1" Grid.Column="1" Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
+                BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}" Margin="{DynamicResource DevicesPaneMargin}" Panel.ZIndex="10"
                 Effect="{StaticResource PaneShadow}">
             <Grid>
                 <Grid.RowDefinitions>
@@ -324,8 +376,33 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                <!-- The complete client pane is the Win98 recessed white well. The gray table
+                     rows live inside it; the toolbar is part of the white client surface too. -->
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="20"
+                        BorderBrush="{DynamicResource PaneBevelDarkBrush}"
+                        BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="20"
+                        BorderBrush="{DynamicResource PaneBevelLightBrush}"
+                        BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="20"
+                        Margin="{DynamicResource PaneBevelInnerMargin}"
+                        BorderBrush="{DynamicResource PaneBevelDark2Brush}"
+                        BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="20"
+                        Margin="{DynamicResource PaneBevelInnerMargin}"
+                        BorderBrush="{DynamicResource PaneBevelLight2Brush}"
+                        BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="21" VerticalAlignment="Top"
+                        Height="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneTopBrush}"/>
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="21" HorizontalAlignment="Left"
+                        Width="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneLeftBrush}"/>
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="22" HorizontalAlignment="Right"
+                        Width="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneRightBrush}"/>
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="22" VerticalAlignment="Bottom"
+                        Height="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneBottomBrush}"/>
+
                 <!-- Film grain over the WHOLE pane (behind content, clipped to the rounded corners) -->
-                <Border Grid.RowSpan="2" IsHitTestVisible="False" Opacity="0.20" Panel.ZIndex="-1" CornerRadius="5">
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Opacity="0.20" Panel.ZIndex="-1" CornerRadius="{DynamicResource PaneGrainCornerRadius}">
                     <Border.Background>
                         <ImageBrush x:Name="GrainBrush" TileMode="Tile"
                                     ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
@@ -345,7 +422,7 @@
                                FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
                     <!-- Search/filter box - magnifier + placeholder so it's clearly a search -->
                     <Border Grid.Column="1" Margin="16,0,0,0" Width="180" Height="26" VerticalAlignment="Center"
-                            Background="{DynamicResource SurfaceBrush}" BorderThickness="1" CornerRadius="4">
+                            Background="{DynamicResource TextFieldBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}">
                         <Border.Style>
                             <Style TargetType="Border">
                                 <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}"/>
@@ -374,9 +451,13 @@
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Visibility" Value="Collapsed"/>
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Text, ElementName=FilterInput}" Value="">
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Text, ElementName=FilterInput}" Value=""/>
+                                                        <Condition Binding="{Binding IsKeyboardFocusWithin, ElementName=FilterInput}" Value="False"/>
+                                                    </MultiDataTrigger.Conditions>
                                                     <Setter Property="Visibility" Value="Visible"/>
-                                                </DataTrigger>
+                                                </MultiDataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </TextBlock.Style>
@@ -391,20 +472,27 @@
                     </Border>
                     <TextBlock Grid.Column="3" x:Name="DeviceCount"
                                Text="0 devices found"
-                               Foreground="{DynamicResource ChromeTextBrush}"
+                               Foreground="{DynamicResource MutedTextBrush}"
                                FontSize="12" VerticalAlignment="Center" Margin="0,0,12,0"/>
                     <Button Grid.Column="4" x:Name="ExportButton"
                             Click="ExportButton_Click" IsEnabled="False"
                             ToolTip="{DynamicResource Str_TT_Export}" Cursor="Hand"
-                            Background="Transparent" BorderThickness="0"
+                            Background="{DynamicResource ExportButtonBackground}" BorderThickness="0"
                             Width="32" Height="26" VerticalAlignment="Center">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <Border x:Name="bg" Background="Transparent" CornerRadius="4">
+                                <Grid>
+                                    <Border x:Name="bg" Background="{TemplateBinding Background}" CornerRadius="{DynamicResource ControlCornerRadius}"/>
+                                    <Border x:Name="raisedLight" IsHitTestVisible="False"
+                                            BorderBrush="{DynamicResource FrameOuterLightBrush}"
+                                            BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
+                                    <Border x:Name="raisedDark" IsHitTestVisible="False"
+                                            BorderBrush="{DynamicResource FrameOuterDarkBrush}"
+                                            BorderThickness="{DynamicResource FrameOuterDarkThickness}"/>
                                     <TextBlock x:Name="ico" Text="&#xE896;" FontFamily="Segoe MDL2 Assets"
                                                FontSize="15" Foreground="{DynamicResource TextBrush}"
                                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
+                                </Grid>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter TargetName="bg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
@@ -412,6 +500,12 @@
                                     </Trigger>
                                     <Trigger Property="IsEnabled" Value="False">
                                         <Setter Property="Opacity" Value="0.4"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="raisedLight" Property="BorderBrush" Value="{DynamicResource FrameOuterDarkBrush}"/>
+                                        <Setter TargetName="raisedLight" Property="BorderThickness" Value="{DynamicResource FrameOuterLightThickness}"/>
+                                        <Setter TargetName="raisedDark" Property="BorderBrush" Value="{DynamicResource FrameOuterLightBrush}"/>
+                                        <Setter TargetName="ico" Property="Margin" Value="1,1,0,0"/>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -434,7 +528,7 @@
 
                 <!-- Results DataGrid -->
                 <DataGrid Grid.Row="1" x:Name="ResultsGrid"
-                          Margin="8,0,0,8"
+                          Margin="0"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"
                           Background="Transparent"
@@ -454,14 +548,15 @@
                           RowStyle="{StaticResource DarkDataGridRow}"
                           CellStyle="{StaticResource DarkDataGridCell}">
 
-                    <!-- Custom template: vertical scrollbar overlays the table's 8px right inset
-                         at the pane edge, so it never takes layout space from the rows. -->
+                    <!-- The scrollbars own the second column / third row. This anchors them to the
+                         table edge without floating over cells or relying on an 8px fake gutter. -->
                     <DataGrid.Template>
                         <ControlTemplate TargetType="DataGrid">
                             <Border Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                                <Grid>
                                 <ScrollViewer x:Name="DG_ScrollViewer" Focusable="false">
                                     <ScrollViewer.Template>
                                         <ControlTemplate TargetType="ScrollViewer">
@@ -475,28 +570,22 @@
                                                     <RowDefinition Height="*"/>
                                                     <RowDefinition Height="Auto"/>
                                                 </Grid.RowDefinitions>
-                                                <Border Grid.Row="0" Grid.Column="0" Margin="0,0,8,0" SizeChanged="HeaderStrip_SizeChanged">
+                                                <Border Grid.Row="0" Grid.Column="0" SizeChanged="HeaderStrip_SizeChanged">
                                                     <DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter"
                                                         Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
                                                 </Border>
                                                 <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
-                                                    Grid.Row="1" Grid.Column="0" Margin="0,0,8,0"
+                                                    Grid.Row="1" Grid.Column="0"
                                                     CanContentScroll="{TemplateBinding CanContentScroll}"/>
-                                                <!-- Overlay bar: the DataGrid itself now runs to the pane edge
-                                                     (no right margin) while header/content keep an 8px right
-                                                     inset above. The bar sits in the SAME cell as the content,
-                                                     right-aligned, so it floats in that 8px gap at the pane edge
-                                                     (like the website) and showing/hiding it never reflows the
-                                                     table. 8px top margin keeps it off the header strip. -->
                                                 <ScrollBar x:Name="PART_VerticalScrollBar"
-                                                    Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"
-                                                    Orientation="Vertical" Margin="0,8,0,0"
+                                                    Grid.Row="1" Grid.Column="1"
+                                                    Orientation="Vertical"
                                                     Maximum="{TemplateBinding ScrollableHeight}"
                                                     ViewportSize="{TemplateBinding ViewportHeight}"
                                                     Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
                                                     Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
                                                 <ScrollBar x:Name="PART_HorizontalScrollBar"
-                                                    Grid.Row="2" Grid.Column="0" Margin="0,0,8,0" Orientation="Horizontal"
+                                                    Grid.Row="2" Grid.Column="0" Orientation="Horizontal"
                                                     Maximum="{TemplateBinding ScrollableWidth}"
                                                     ViewportSize="{TemplateBinding ViewportWidth}"
                                                     Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
@@ -506,6 +595,7 @@
                                     </ScrollViewer.Template>
                                     <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                                 </ScrollViewer>
+                                </Grid>
                             </Border>
                         </ControlTemplate>
                     </DataGrid.Template>
@@ -524,35 +614,35 @@
 
                     <DataGrid.ContextMenu>
                         <ContextMenu>
-                            <MenuItem x:Name="RescanMenuItem" Header="{DynamicResource Str_Ctx_RescanOne}" Click="RescanSelected_Click">
+                            <MenuItem x:Name="RescanMenuItem" Header="{DynamicResource Str_Ctx_RescanOne}" InputGestureText="Ctrl+R" Click="RescanSelected_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE72C;"/></MenuItem.Icon>
                             </MenuItem>
                             <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
                             <!-- The three Copy actions share one glyph on purpose: they do the same
                                  kind of thing, and varying the icon would imply otherwise. -->
-                            <MenuItem Header="{DynamicResource Str_Ctx_CopyIp}" Click="CopyIp_Click">
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyIp}" InputGestureText="Ctrl+C" Click="CopyIp_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_CopyMac}" Click="CopyMac_Click">
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyMac}" InputGestureText="Ctrl+Shift+C" Click="CopyMac_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_CopyHost}" Click="CopyHostname_Click">
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyHost}" InputGestureText="Ctrl+Alt+C" Click="CopyHostname_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
                             </MenuItem>
                             <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
-                            <MenuItem Header="{DynamicResource Str_Ctx_Ping}" Click="PingDevice_Click">
+                            <MenuItem Header="{DynamicResource Str_Ctx_Ping}" InputGestureText="Ctrl+P" Click="PingDevice_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE704;"/></MenuItem.Icon>
                             </MenuItem>
                             <!-- Open-in-new-window, not the globe: the globe is the language picker
                                  in the title bar, so reusing it here would blur what it means. The
                                  globe goes to Export as HTML instead, where nothing competes. -->
-                            <MenuItem Header="{DynamicResource Str_Ctx_OpenBrowser}" Click="OpenBrowser_Click">
+                            <MenuItem Header="{DynamicResource Str_Ctx_OpenBrowser}" InputGestureText="Enter" Click="OpenBrowser_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8A7;"/></MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_Rdp}" Click="RdpDevice_Click">
+                            <MenuItem Header="{DynamicResource Str_Ctx_Rdp}" InputGestureText="Ctrl+D" Click="RdpDevice_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE7F4;"/></MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_Ssh}" Click="SshDevice_Click">
+                            <MenuItem Header="{DynamicResource Str_Ctx_Ssh}" InputGestureText="Ctrl+S" Click="SshDevice_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
                             </MenuItem>
                             <!-- Same E756 glyph as the row above on purpose: this is the same
@@ -560,7 +650,7 @@
                                  every other codepoint in this menu was adopted only after being
                                  rendered and checked. Reusing a proven glyph beats introducing an
                                  unverified one for a variant. -->
-                            <MenuItem Header="{DynamicResource Str_Ctx_SshAs}" Click="SshAsDevice_Click">
+                            <MenuItem Header="{DynamicResource Str_Ctx_SshAs}" InputGestureText="Ctrl+Shift+S" Click="SshAsDevice_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
                             </MenuItem>
                             <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
@@ -654,6 +744,15 @@
                                 <Setter.Value>
                                     <ControlTemplate TargetType="DataGridColumnHeader">
                                         <Grid>
+                                        <!-- RAISED bevel per header, paired with its slots: a Win98
+                                             column header is a BUTTON, each one its own raised
+                                             plate. Zero on every flat theme. -->
+                                        <Border IsHitTestVisible="False" Panel.ZIndex="2"
+                                                BorderBrush="{DynamicResource BevelLightBrush}"
+                                                BorderThickness="{DynamicResource BevelLightThickness}"/>
+                                        <Border IsHitTestVisible="False" Panel.ZIndex="2"
+                                                BorderBrush="{DynamicResource BevelDarkBrush}"
+                                                BorderThickness="{DynamicResource BevelDarkThickness}"/>
                                         <Border x:Name="hdrBg"
                                                 Background="{TemplateBinding Background}"
                                                 BorderBrush="{TemplateBinding BorderBrush}"
@@ -786,6 +885,10 @@
                                                     <DataTrigger Binding="{Binding DeviceType}" Value="Media Streamer">
                                                         <Setter Property="Foreground" Value="{DynamicResource TypeMedia}"/>
                                                     </DataTrigger>
+                                                    <!-- Selection wins over device classification colors. -->
+                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                                    </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -821,33 +924,72 @@
         </Grid>
         <!-- end ScaleHost -->
 
+        <!-- The family rail is window furniture, not scalable document content. Keeping it
+             outside ScaleHost matches KillerShell/KillerNotes and prevents fractional app zoom
+             from rasterizing these small glyphs between device pixels. -->
+        <StackPanel Grid.Row="2" Width="{DynamicResource RailWidth}" VerticalAlignment="Bottom"
+                    HorizontalAlignment="Left" Margin="0,0,0,10" Panel.ZIndex="30"
+                    Visibility="{DynamicResource FixedRailVisibility}">
+            <Button x:Name="FixedShortcutsButton" Style="{StaticResource RailButton}"
+                    Content="?" FontFamily="Consolas" FontSize="18"
+                    Click="ShortcutHelp_Click" Margin="0,0,0,10"
+                    ToolTip="{DynamicResource Str_TT_Shortcuts}"/>
+            <Button x:Name="FixedLangButton" Style="{StaticResource RailButton}"
+                    Content="&#xF2B7;" FontSize="15"
+                    Click="LangButton_Click" Margin="0,0,0,10"
+                    ToolTip="{DynamicResource Str_TT_Language}">
+                <Button.ContextMenu>
+                    <ContextMenu x:Name="FixedLangMenu" PreviewMouseWheel="Menu_ForwardWheelToGrid"/>
+                </Button.ContextMenu>
+            </Button>
+            <Button x:Name="FixedThemeButton" Style="{StaticResource RailButton}"
+                    Content="&#xE790;" FontSize="15"
+                    Click="ThemeButton_Click" ToolTip="{DynamicResource Str_TT_Theme}"/>
+        </StackPanel>
+
         <!-- Status Bar -->
         <!-- ZIndex -1 so the content pane's shadow lands on the footer rather than being painted
              over by it. The footer is pushed down rather than the content row raised, which would
              also put it above the overlays declared later. -->
         <Border Grid.Row="3" Panel.ZIndex="-1" Background="{DynamicResource BackgroundBrush}">
-            <Grid Margin="16,0">
-                <!-- Three zones so the centered PORTABLE badge and the right-hand version/progress
-                     cluster live in separate columns and can never overlap. -->
+            <!-- FooterPadding: 16,0 on the flat themes (one continuous strip); 0 on 98SE, where
+                 the strip breaks into sunken cells that run to the edges. -->
+            <Grid Margin="{DynamicResource FooterPadding}">
+                <!-- TWO cells now, not three: the wide LEFT cell is the status recess and it
+                     ALSO holds the centered PORTABLE/install badge, so it runs from the left edge
+                     right up to the version cell (Win98 status bars are a row of wide cells, the
+                     first one dominant). The RIGHT cell is the version/copyright recess. -->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <!-- Film grain over the bar (negative margin pulls it to the full width) -->
-                <Border Grid.ColumnSpan="3" IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}" Margin="-16,0">
+                <Border Grid.ColumnSpan="2" IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}" Margin="-16,0">
                     <Border.Background>
                         <ImageBrush x:Name="StatusGrainBrush" TileMode="Tile"
                                     ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
                     </Border.Background>
                 </Border>
-                <TextBlock x:Name="StatusText" Grid.Column="0" Text="Ready"
-                           Foreground="{DynamicResource ChromeTextBrush}" FontFamily="Consolas"
-                           FontSize="11.5" VerticalAlignment="Center"/>
-                <!-- Portable mode indicator (hidden when installed) -->
-                <StackPanel x:Name="PortableBadge" Grid.Column="1" Orientation="Horizontal"
-                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                            Visibility="Collapsed">
+                <!-- WIDE SUNKEN STATUS CELL. Crossed bevels (dark in the Light slot) - a status
+                     cell is a RECESS, not a button. Holds the status text (left) and the portable
+                     badge (centered) in one recess. All four tokens zero on flat themes. -->
+                <Grid Grid.Column="0" Margin="{DynamicResource FooterCellMargin}">
+                    <Border IsHitTestVisible="False"
+                            BorderBrush="{DynamicResource FooterBevelDarkBrush}"
+                            BorderThickness="{DynamicResource FooterCellLightThickness}"/>
+                    <Border IsHitTestVisible="False"
+                            BorderBrush="{DynamicResource FooterBevelLightBrush}"
+                            BorderThickness="{DynamicResource FooterCellDarkThickness}"/>
+                    <TextBlock x:Name="StatusText" Text="Ready"
+                               Margin="{DynamicResource FooterCellPadding}" HorizontalAlignment="Left"
+                               Foreground="{DynamicResource MutedTextBrush}" FontFamily="Consolas"
+                               FontSize="11.5" VerticalAlignment="Center"/>
+                </Grid>
+                <!-- Centered against the complete footer/window, not merely the shortened status
+                     cell to the left of the version block. -->
+                <StackPanel x:Name="PortableBadge" Grid.ColumnSpan="2" Panel.ZIndex="5"
+                            Orientation="Horizontal" HorizontalAlignment="Center"
+                            VerticalAlignment="Center" Visibility="Collapsed">
                     <TextBlock Text="{DynamicResource Str_Portable}" Foreground="{DynamicResource TextFooter}"
                                FontFamily="Consolas" FontSize="9"
                                VerticalAlignment="Center" Margin="0,0,8,0"/>
@@ -856,7 +998,17 @@
                             FontFamily="Segoe UI" FontSize="10" Padding="8,1"
                             VerticalAlignment="Center"/>
                 </StackPanel>
-                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <!-- Version/progress cluster in its own sunken cell (crossed, like the status
+                     cell). -->
+                <Grid Grid.Column="1" HorizontalAlignment="Right" Margin="{DynamicResource FooterCellMargin}">
+                    <Border IsHitTestVisible="False"
+                            BorderBrush="{DynamicResource FooterBevelDarkBrush}"
+                            BorderThickness="{DynamicResource FooterCellLightThickness}"/>
+                    <Border IsHitTestVisible="False"
+                            BorderBrush="{DynamicResource FooterBevelLightBrush}"
+                            BorderThickness="{DynamicResource FooterCellDarkThickness}"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Margin="{DynamicResource FooterCellPadding}">
                     <ProgressBar x:Name="ScanProgress"
                                  Width="200" Height="4" VerticalAlignment="Center"
                                  Foreground="{DynamicResource PrimaryBrush}"
@@ -878,63 +1030,76 @@
                         </Hyperlink>
                     </TextBlock>
                 </StackPanel>
+                </Grid>
             </Grid>
         </Border>
 
-        <!-- Custom bottom-right resize grip (6 dots), ported from KillerPDF. Sits at the visible
-             content corner and forwards a HTBOTTOMRIGHT resize to Windows on drag. -->
+        <!-- Bottom-right resize grip. Modern themes use the family six dots; 98SE switches to
+             KillerNotes' three continuous beveled diagonal ridges. -->
         <Canvas x:Name="ResizeGripDots" Grid.Row="3" Width="13" Height="13" Panel.ZIndex="50"
                 HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,4"
                 Background="Transparent" Cursor="SizeNWSE"
                 MouseLeftButtonDown="ResizeGrip_MouseDown">
-            <Rectangle Canvas.Left="10" Canvas.Top="2"  Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
-            <Rectangle Canvas.Left="6"  Canvas.Top="6"  Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
-            <Rectangle Canvas.Left="10" Canvas.Top="6"  Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
-            <Rectangle Canvas.Left="2"  Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
-            <Rectangle Canvas.Left="6"  Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
-            <Rectangle Canvas.Left="10" Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+            <Canvas Visibility="{DynamicResource GripDotsVisibility}">
+                <Rectangle Canvas.Left="10" Canvas.Top="2"  Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+                <Rectangle Canvas.Left="6"  Canvas.Top="6"  Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+                <Rectangle Canvas.Left="10" Canvas.Top="6"  Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+                <Rectangle Canvas.Left="2"  Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+                <Rectangle Canvas.Left="6"  Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+                <Rectangle Canvas.Left="10" Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+            </Canvas>
+            <Canvas Visibility="{DynamicResource GripHatchVisibility}">
+                <Canvas.Resources>
+                    <Style TargetType="Line">
+                        <Setter Property="StrokeThickness" Value="1"/>
+                        <Setter Property="SnapsToDevicePixels" Value="True"/>
+                    </Style>
+                </Canvas.Resources>
+                <Line X1="12.5" Y1="3.5"  X2="3.5"  Y2="12.5" Stroke="{DynamicResource BevelDarkBrush}"/>
+                <Line X1="12.5" Y1="4.5"  X2="4.5"  Y2="12.5" Stroke="{DynamicResource BevelLightBrush}"/>
+                <Line X1="12.5" Y1="6.5"  X2="6.5"  Y2="12.5" Stroke="{DynamicResource BevelDarkBrush}"/>
+                <Line X1="12.5" Y1="7.5"  X2="7.5"  Y2="12.5" Stroke="{DynamicResource BevelLightBrush}"/>
+                <Line X1="12.5" Y1="9.5"  X2="9.5"  Y2="12.5" Stroke="{DynamicResource BevelDarkBrush}"/>
+                <Line X1="12.5" Y1="10.5" X2="10.5" Y2="12.5" Stroke="{DynamicResource BevelLightBrush}"/>
+            </Canvas>
         </Canvas>
 
         <!-- Keyboard shortcuts overlay (F1 or the title-bar "?"). Same card chrome as the About
              overlay below; the rows are built in Shortcuts.cs so the list has one source of truth. -->
         <Grid x:Name="ShortcutsOverlay" Grid.RowSpan="4" Panel.ZIndex="9000" Visibility="Collapsed"
+              Margin="{DynamicResource OverlayFrameBleed}"
               Background="#88000000" MouseLeftButtonDown="ShortcutsOverlay_Click">
             <Grid Width="420" VerticalAlignment="Center" MouseLeftButtonDown="ShortcutsCard_Click">
-                <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="6" IsHitTestVisible="False">
+                <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="{DynamicResource FlyoutCornerRadius}" IsHitTestVisible="False">
                     <Border.Effect>
                         <DropShadowEffect Color="Black" BlurRadius="26" ShadowDepth="5" Direction="270" Opacity="0.6"/>
                     </Border.Effect>
                 </Border>
                 <Border Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
-                        BorderThickness="1" CornerRadius="6">
+                        BorderThickness="1" CornerRadius="{DynamicResource FlyoutCornerRadius}">
                     <Grid>
-                        <Border IsHitTestVisible="False" CornerRadius="6"
+                        <Border IsHitTestVisible="False" CornerRadius="{DynamicResource FlyoutCornerRadius}"
                                 Opacity="{DynamicResource GrainOpacity}" Background="{DynamicResource GrainTileBrush}"/>
+
+                        <Border VerticalAlignment="Top" ClipToBounds="True"
+                                Height="{DynamicResource AboutCaptionHeight}"
+                                Margin="{DynamicResource AboutCaptionMargin}"
+                                Background="{DynamicResource TitleBarBrush}">
+                            <TextBlock Text="Keyboard shortcuts" VerticalAlignment="Center" Margin="8,0,0,0"
+                                       FontFamily="{DynamicResource ChromeFontFamily}" FontSize="11" FontWeight="Bold"
+                                       Foreground="{DynamicResource ChromeTextBrush}"/>
+                        </Border>
 
                         <!-- Glyph is a named TextBlock recolored by TargetName. Setting Foreground
                              on the Button would be a local value and would outrank the trigger, so
                              the hover would never take - the same trap the About overlay documents. -->
-                        <Button Click="ShortcutsClose_Click" HorizontalAlignment="Right"
-                                VerticalAlignment="Top" Width="28" Height="26" Margin="0,6,6,0"
-                                Panel.ZIndex="2"
-                                Background="Transparent" BorderThickness="0" Cursor="Hand">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="Transparent">
-                                        <TextBlock x:Name="glyph" Text="&#x2715;" FontSize="11"
-                                                   Foreground="{DynamicResource MutedTextBrush}"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="glyph" Property="Foreground" Value="{DynamicResource DangerRed}"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
+                        <Button Content="{DynamicResource AboutCloseGlyph}" Click="ShortcutsClose_Click"
+                                Style="{StaticResource OverlayCloseButton}" HorizontalAlignment="Right"
+                                VerticalAlignment="Top" Width="{DynamicResource AboutCloseWidth}"
+                                Height="{DynamicResource AboutCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"
+                                Panel.ZIndex="7"/>
 
-                        <StackPanel Margin="24,18,24,18">
+                        <StackPanel Margin="{DynamicResource ShortcutsContentMargin}">
                             <TextBlock x:Name="ShortcutsTitle" Text="Keyboard shortcuts"
                                        Foreground="{DynamicResource TextBrush}"
                                        FontSize="14" FontWeight="SemiBold" Margin="0,0,0,14"/>
@@ -955,55 +1120,52 @@
         <!-- About overlay: dims the window behind it and shows a centered card (matches KillerPDF).
              The close X is blended into the card (no separate title bar) with a red hover. -->
         <Grid x:Name="AboutOverlay" Grid.RowSpan="4" Panel.ZIndex="9000" Visibility="Collapsed"
+              Margin="{DynamicResource OverlayFrameBleed}"
               Background="#88000000" MouseLeftButtonDown="AboutOverlay_Click">
             <!-- No fixed width: the SHA-256 line never wraps, so it sizes the info panel and
                  the info panel sizes the card. The header below pins its width to that panel
                  so a long tagline wraps instead of widening the card. Family standard. -->
             <Grid VerticalAlignment="Center" HorizontalAlignment="Center" MouseLeftButtonDown="AboutCard_Click">
-                <!-- Shadow on a separate element so the card text stays crisp -->
-                <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="6" IsHitTestVisible="False">
+                <!-- Shadow on a separate element so the card text stays crisp. Named so
+                     ApplyFlatChrome (Theme.cs) can collapse it on 98SE - no shadows there,
+                     and the card's elevation signal becomes the raised bevel below. -->
+                <Border x:Name="AboutShadow" Background="{DynamicResource BackgroundBrush}" CornerRadius="{DynamicResource FlyoutCornerRadius}" IsHitTestVisible="False">
                     <Border.Effect>
                         <DropShadowEffect Color="Black" BlurRadius="26" ShadowDepth="5" Direction="270" Opacity="0.6"/>
                     </Border.Effect>
                 </Border>
                 <Border Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
-                        BorderThickness="1" CornerRadius="6">
+                        BorderThickness="1" CornerRadius="{DynamicResource FlyoutCornerRadius}">
                     <Grid>
-                        <Border IsHitTestVisible="False" CornerRadius="6"
+                        <!-- Raised card bevel, KillerShell's About verbatim: FrameOuter pair, so on
+                             98SE the card carries the same edge as the window. Nothing elsewhere. -->
+                        <Border IsHitTestVisible="False" Panel.ZIndex="6"
+                                BorderBrush="{DynamicResource FrameOuterLightBrush}"
+                                BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
+                        <Border IsHitTestVisible="False" Panel.ZIndex="6"
+                                BorderBrush="{DynamicResource FrameOuterDarkBrush}"
+                                BorderThickness="{DynamicResource FrameOuterDarkThickness}"/>
+                        <Border IsHitTestVisible="False" CornerRadius="{DynamicResource FlyoutCornerRadius}"
                                 Opacity="{DynamicResource GrainOpacity}" Background="{DynamicResource GrainTileBrush}"/>
+
+                        <Border VerticalAlignment="Top" ClipToBounds="True"
+                                Height="{DynamicResource AboutCaptionHeight}"
+                                Margin="{DynamicResource AboutCaptionMargin}"
+                                Background="{DynamicResource TitleBarBrush}">
+                            <TextBlock Text="About KillerScan" VerticalAlignment="Center" Margin="8,0,0,0"
+                                       FontFamily="{DynamicResource ChromeFontFamily}" FontSize="11" FontWeight="Bold"
+                                       Foreground="{DynamicResource ChromeTextBrush}"/>
+                        </Border>
 
                         <!-- Close X: just the glyph turns red on hover (no filled square), like KillerPDF.
                              Foreground is a Style setter (not a local value) so the hover trigger can win. -->
-                        <Button Content="&#x2715;" Click="AboutClose_Click" HorizontalAlignment="Right" VerticalAlignment="Top"
-                                Width="28" Height="26" Margin="0,6,6,0" Panel.ZIndex="2" FontSize="11"
-                                Background="Transparent" BorderThickness="0" Cursor="Hand">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border Background="Transparent">
-                                                    <ContentPresenter x:Name="cp" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Foreground" Value="#E04444"/>
-                                                        <Setter TargetName="cp" Property="Effect">
-                                                            <Setter.Value>
-                                                                <DropShadowEffect Color="#000000" BlurRadius="4" ShadowDepth="1" Direction="270" Opacity="0.5"/>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Button.Style>
-                        </Button>
+                        <Button Content="{DynamicResource AboutCloseGlyph}" Click="AboutClose_Click"
+                                Style="{StaticResource OverlayCloseButton}" HorizontalAlignment="Right"
+                                VerticalAlignment="Top" Width="{DynamicResource AboutCloseWidth}"
+                                Height="{DynamicResource AboutCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"
+                                Panel.ZIndex="7"/>
 
-                        <StackPanel Margin="18,10,18,18">
+                        <StackPanel Margin="{DynamicResource ScanAboutContentMargin}">
                             <!-- Header: icon to the left of the wordmark + description + tagline.
                                  A Grid (not a horizontal StackPanel) so the text column is bounded and wraps.
                                  Width is pinned to the info panel so the SHA-256 line stays the only thing
@@ -1032,12 +1194,12 @@
                             <!-- Info panel - matte, lifted above the grainy card. Named: the header
                                  binds its width to this panel (see above). -->
                             <Grid x:Name="AboutInfoGrid">
-                                <Border Background="{DynamicResource PaneBrush}" CornerRadius="4" IsHitTestVisible="False">
+                                <Border x:Name="AboutInfoShadow" Background="{DynamicResource AboutPanelBrush}" CornerRadius="{DynamicResource ControlCornerRadius}" IsHitTestVisible="False">
                                     <Border.Effect>
                                         <DropShadowEffect Color="Black" BlurRadius="14" ShadowDepth="2" Direction="270" Opacity="0.5"/>
                                     </Border.Effect>
                                 </Border>
-                                <Border Background="{DynamicResource PaneBrush}" CornerRadius="4" Padding="14,12,14,4">
+                                <Border Background="{DynamicResource AboutPanelBrush}" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14,12,14,4">
                                     <StackPanel>
                                         <StackPanel Margin="0,0,0,10">
                                             <TextBlock Text="{DynamicResource Str_About_Version}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>
@@ -1080,6 +1242,26 @@
                                         </StackPanel>
                                     </StackPanel>
                                 </Border>
+                                <Border IsHitTestVisible="False"
+                                        BorderBrush="{DynamicResource PaneBevelDarkBrush}"
+                                        BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
+                                <Border IsHitTestVisible="False"
+                                        BorderBrush="{DynamicResource PaneBevelLightBrush}"
+                                        BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
+                                <Border IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}"
+                                        BorderBrush="{DynamicResource PaneBevelDark2Brush}"
+                                        BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
+                                <Border IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}"
+                                        BorderBrush="{DynamicResource PaneBevelLight2Brush}"
+                                        BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
+                                <Border IsHitTestVisible="False" VerticalAlignment="Top"
+                                        Height="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneTopBrush}"/>
+                                <Border IsHitTestVisible="False" HorizontalAlignment="Left"
+                                        Width="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneLeftBrush}"/>
+                                <Border IsHitTestVisible="False" HorizontalAlignment="Right"
+                                        Width="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneRightBrush}"/>
+                                <Border IsHitTestVisible="False" VerticalAlignment="Bottom"
+                                        Height="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneBottomBrush}"/>
                             </Grid>
 
                             <!-- Update notice: shown only when a newer release is found -->
@@ -1088,7 +1270,7 @@
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border x:Name="ub" Background="Transparent" BorderBrush="{DynamicResource PrimaryBrush}"
-                                                BorderThickness="1" CornerRadius="4" Padding="14,7">
+                                                BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14,7">
                                             <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
@@ -1108,4 +1290,34 @@
         </Grid>
 
     </Grid>
+    <!-- /RootGrid -->
+
+        <!-- Window frame, copied from KillerNotes. Each ring occupies its own depth instead of
+             painting several unrelated bands over the same right and bottom pixels. -->
+        <Border Panel.ZIndex="9001" IsHitTestVisible="False"
+                BorderBrush="{DynamicResource FrameOuterLightBrush}"
+                BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
+        <Border Panel.ZIndex="9001" IsHitTestVisible="False"
+                BorderBrush="{DynamicResource FrameOuterDarkBrush}"
+                BorderThickness="{DynamicResource FrameOuterDarkThickness}"/>
+        <Border Panel.ZIndex="8999" IsHitTestVisible="False"
+                Margin="{DynamicResource WindowFrameMargin}"
+                BorderBrush="{DynamicResource WindowFrameBrush}"
+                BorderThickness="{DynamicResource WindowFrameThickness}"/>
+        <Border Panel.ZIndex="9000" IsHitTestVisible="False"
+                Margin="{DynamicResource FrameInnerMargin}"
+                BorderBrush="{DynamicResource FrameInnerLightBrush}"
+                BorderThickness="{DynamicResource FrameInnerLightThickness}"/>
+        <Border Panel.ZIndex="9000" IsHitTestVisible="False"
+                Margin="{DynamicResource FrameInnerMargin}"
+                BorderBrush="{DynamicResource FrameInnerDarkBrush}"
+                BorderThickness="{DynamicResource FrameInnerDarkThickness}"/>
+        <!-- RootGrid is inset inside the 98SE sizing frame, so its modal backdrops cannot
+             reliably paint over that frame. This sibling dims only the exposed frame area;
+             RootGrid (z=9500) covers its center while its own overlay dims the client. -->
+        <Border x:Name="FrameDimmer" Panel.ZIndex="9400" IsHitTestVisible="False"
+                Background="#88000000" Visibility="Collapsed"/>
+        </Grid>
+    </Border>
+    <!-- /WindowFrame -->
 </Window>

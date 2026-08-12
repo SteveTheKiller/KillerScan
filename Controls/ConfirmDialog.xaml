@@ -16,7 +16,7 @@
             Background="{StaticResource BackgroundBrush}"
             BorderBrush="{StaticResource CardBorderBrush}"
             BorderThickness="1"
-            CornerRadius="6"
+            CornerRadius="{DynamicResource FlyoutCornerRadius}"
             Margin="10">
         <Border.Effect>
             <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="3" Direction="270" Opacity="0.6"/>
@@ -24,7 +24,7 @@
         <Grid>
             <!-- Film grain over the whole dialog (behind content), so it reads as one continuous
                  surface like the KillerPDF KillerDialog / the main window chrome. -->
-            <Border IsHitTestVisible="False" CornerRadius="6"
+            <Border IsHitTestVisible="False" CornerRadius="{DynamicResource FlyoutCornerRadius}"
                     Opacity="{DynamicResource GrainOpacity}"
                     Background="{DynamicResource GrainTileBrush}"/>
 

@@ -1,0 +1,18 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+    <!-- 98SE family - PURPLE accent. Values from KillerShell's Accents/98SE/Purple.xaml. -->
+    <!-- Caption gradient - see Blue.xaml. -->
+    <LinearGradientBrush x:Key="TitleBarBrush" StartPoint="0,0" EndPoint="1,0" po:Freeze="True">
+        <GradientStop Color="#402050" Offset="0"/><GradientStop Color="#8a5ca8" Offset="1"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="PrimaryBrush"        Color="#4b286d" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#6e3f8f" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#341b4d" po:Freeze="True"/>
+    <SolidColorBrush x:Key="HeaderLineBrush"     Color="#4b286d" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#4b286d" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionBg"         Color="#4b286d" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#4b286d" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowAltBrush"         Color="#e4d8ed" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TableHoverTextBrush" Color="#d3a7ed" po:Freeze="True"/>
+</ResourceDictionary>
