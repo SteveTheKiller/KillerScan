@@ -2,7 +2,7 @@
    Page-specific behavior (screenshot strip, outline scroll-spy) stays inline per page. */
 (function () {
   var root = document.documentElement;
-  var THEMES = ['dark','light','hc','blood','greed','cyanotic'];
+  var THEMES = ['dark','light','hc','blood','greed','cyanotic','ectoplasm','decay','malaise','sepulchre','delirium','mourning'];
   var NEUTRAL = ['dark','light','hc'];
   // Per-family palette copied from the app: [ Accent (bright: text/links/logo/outlines), SelectionBg (darker fill: solid buttons, selected tab edges) ].
   var ACCENTS = {
@@ -112,11 +112,15 @@
     window.addEventListener('mouseup', function () {
       if (!dragging) return; dragging = false; document.body.style.userSelect = '';
     });
-    window.addEventListener('resize', function () { dragDx = dragClamp(dragDx); pill.style.transform = 'translateX(' + dragDx + 'px)'; });
+    function dockAccentBar() {
+      var contentPane = document.querySelector('.content');
+      if (contentPane) accentBar.style.top = Math.round(contentPane.getBoundingClientRect().top) + 'px';
+    }
+    window.addEventListener('resize', function () { dockAccentBar(); dragDx = dragClamp(dragDx); pill.style.transform = 'translateX(' + dragDx + 'px)'; });
     // Default position: top-right corner, nearest the theme picker (still draggable from there).
     requestAnimationFrame(function () { dragDx = dragClamp(1e6); pill.style.transform = 'translateX(' + dragDx + 'px)'; });
   }
-  function showAccentBar() { if (accentBar && NEUTRAL.indexOf(root.getAttribute('data-theme')) >= 0) { accentBar.classList.add('show'); if (accToggle) accToggle.setAttribute('aria-expanded', 'true'); } }
+  function showAccentBar() { if (accentBar && NEUTRAL.indexOf(root.getAttribute('data-theme')) >= 0) { var contentPane = document.querySelector('.content'); if (contentPane) accentBar.style.top = Math.round(contentPane.getBoundingClientRect().top) + 'px'; accentBar.classList.add('show'); if (accToggle) accToggle.setAttribute('aria-expanded', 'true'); } }
   function hideAccentBar() { if (accentBar) { accentBar.classList.remove('show'); if (accToggle) accToggle.setAttribute('aria-expanded', 'false'); } }
   accDots.forEach(function (d) { d.addEventListener('click', function () { applyAccent(d.dataset.accent); }); });
   if (accToggle) {

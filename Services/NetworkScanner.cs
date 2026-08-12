@@ -442,10 +442,12 @@ namespace KillerScan.Services
         public async Task<NetworkDevice> DeepProbeHostAsync(string ip, CancellationToken ct)
         {
             var addr = IPAddress.Parse(ip);
-            var device = new NetworkDevice { IpAddress = ip };
-
-            // Fresh MAC via ARP.
-            device.MacAddress = await Task.Run(() => GetMacAddress(addr), ct);
+            var device = new NetworkDevice
+            {
+                IpAddress  = ip,
+                // Fresh MAC via ARP.
+                MacAddress = await Task.Run(() => GetMacAddress(addr), ct)
+            };
 
             // Hostname + TTL alongside the port sweep.
             var dnsTask = Task.Run(async () =>

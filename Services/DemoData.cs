@@ -31,7 +31,7 @@ namespace KillerScan.Services
         internal static bool Enabled;
 
         private static readonly string[] Subnets =
-            { "10.0.0", "10.10.10", "172.16.4", "192.168.0", "192.168.1", "192.168.50" };
+            ["10.0.0", "10.10.10", "172.16.4", "192.168.0", "192.168.1", "192.168.50"];
 
         // Always the .1 gateway.
         private static readonly (string Vendor, string[] Ouis, string Type, int[] Ports, string[] Names) Gateway =
@@ -40,7 +40,7 @@ namespace KillerScan.Services
         // Pool of devices to draw the rest of the network from. Vendors, types and ports are varied
         // and intentionally different from the author's own kit.
         private static readonly (string Vendor, string[] Ouis, string Type, int[] Ports, string[] Names)[] Pool =
-        {
+        [
             ("Netgear",                    new[]{"9C:D3:6D","A0:40:A0","3C:37:86"}, "Switch/AP",      new[]{22,80,443,161},            new[]{"switch","ap","orbi"}),
             ("MikroTik",                   new[]{"48:8F:5A","DC:2C:6E","64:D1:54"}, "Router",         new[]{22,23,80,8291},            new[]{"mikrotik","rb","hex"}),
             ("Aruba Networks",             new[]{"00:0B:86","20:4C:03"},            "Switch/AP",      new[]{22,443,161,4343},          new[]{"ap","aruba","iap"}),
@@ -71,7 +71,7 @@ namespace KillerScan.Services
             ("Intel Corporate",            new[]{"34:13:E8","3C:FD:FE","A0:88:69"}, "Windows",        new[]{135,139,445,3389},         new[]{"desktop","pc","workstation"}),
             ("VMware, Inc.",               new[]{"00:0C:29","00:50:56"},            "Linux/SSH",      new[]{22,80,443,8080},           new[]{"vm","ubuntu","debian"}),
             ("Zebra Technologies",         new[]{"00:07:4D","84:24:8D"},            "Printer",        new[]{80,515,631,9100},          Array.Empty<string>()),
-        };
+        ];
 
         /// <summary>Rolls a whole fabricated network: a gateway at .1 plus 16 to 28 other hosts.</summary>
         internal static DemoScan Generate(Random rng)

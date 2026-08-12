@@ -136,8 +136,8 @@ namespace KillerScan.Features
             DeviceOverrides.Load();
 
             using var cts = new CancellationTokenSource();
-            ConsoleCancelEventHandler onCancel = (_, e) => { e.Cancel = true; cts.Cancel(); };
-            try { Console.CancelKeyPress += onCancel; } catch { /* no console attached */ }
+            void OnCancel(object? sender, ConsoleCancelEventArgs e) { e.Cancel = true; cts.Cancel(); }
+            try { Console.CancelKeyPress += OnCancel; } catch { /* no console attached */ }
 
             if (!quiet) err.WriteLine($"Scanning {parsed.Summary} ({parsed.Addresses.Count:N0} addresses)...");
 
@@ -155,10 +155,10 @@ namespace KillerScan.Features
             }
             finally
             {
-                try { Console.CancelKeyPress -= onCancel; } catch { }
+                try { Console.CancelKeyPress -= OnCancel; } catch { }
             }
 
-            devices = devices.OrderBy(d => d.IpSortKey).ToList();
+            devices = [.. devices.OrderBy(d => d.IpSortKey)];
 
             if (!quiet)
             {
@@ -218,7 +218,7 @@ namespace KillerScan.Features
 
             var sb = new StringBuilder();
             AppendRow(sb, headers, width);
-            AppendRow(sb, width.Select(w => new string('-', w)).ToArray(), width);
+            AppendRow(sb, [.. width.Select(w => new string('-', w))], width);
             foreach (var r in rows) AppendRow(sb, r, width);
             return sb.ToString().TrimEnd();
         }
@@ -240,7 +240,7 @@ namespace KillerScan.Features
         private static string Clip(string? s, int max)
         {
             s ??= "";
-            return s.Length <= max ? s : s.Substring(0, max - 3) + "...";
+            return s.Length <= max ? s : s[..(max - 3)] + "...";
         }
 
         // ---- Help ----

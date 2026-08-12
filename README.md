@@ -17,7 +17,7 @@ Part of [killertools.net](https://killertools.net).
 
 ## Features
 
-- Self-installer: launch the EXE to install to `%LOCALAPPDATA%\Programs\KillerScan\` with Start Menu and optional desktop shortcut, or tick "Install for all users" to install to Program Files for every account on the PC (the only path that asks for admin), or just run it portable with no install
+- Self-installer: launch the EXE to install to `%LOCALAPPDATA%\Programs\KillerScan\` with Start Menu and optional desktop shortcut, or tick "Install for all users" to install to Program Files for every account on the PC (the only path that asks for admin), or just run it portable with no install. An installed copy is added to PATH, so a new terminal can run it as `KillerScan` from any directory
 - Scan several networks in one pass: the subnet box takes a comma-separated list of CIDR blocks (`192.168.9.0/24, 192.168.10.0/24`), single hosts (`192.168.1.7`), and ranges written in full (`192.168.1.10-192.168.1.50`) or shorthand (`192.168.1.10-50`); spacing is forgiving and overlapping targets are counted once
 - ARP cache + parallel ping sweep for fast discovery; a second ARP pass after the sweep catches phones and devices that block ICMP
 - TCP port scan across 30+ common service ports, plus active fingerprinting: HTTP title/Server header, SSH banner, TLS cert subject, NetBIOS name (UDP 137), SNMPv1 sysDescr (UDP 161), ICMP TTL
@@ -29,7 +29,16 @@ Part of [killertools.net](https://killertools.net).
 - Headless command line for scripts and RMM work: `KillerScan.exe /scan [targets]` with `/export <path>` to CSV or HTML, `/quick`, `/quiet`, `/help` and `/version`. No window opens, it runs while the app is open, and it returns 0 for success, 1 for a failed scan, 2 for bad usage
 - Keyboard shortcuts (F1 for the list): F5 scan/stop, Esc cancel, Ctrl+R deep rescan the selection, Ctrl+F subnet box, Ctrl+A select all, Ctrl+E export
 - App-wide size control from 70% to 250%, on Ctrl+Shift+plus/minus/0 or the mouse wheel over the title-bar wordmark; text reflows at the new size and the setting is remembered
-- Six themes with per-theme accent colors, localized in 10 languages (English, Spanish, Traditional and Simplified Chinese, German, French, Turkish, Bengali, Japanese, Czech)
+- Thirteen themes with per-theme accent colors, including a full Windows 98 treatment; theme, accent, language, and app size are remembered; localized in 10 languages (English, Spanish, Traditional and Simplified Chinese, German, French, Turkish, Bengali, Japanese, Czech)
+
+## Screenshots
+
+<table>
+<tr>
+<td width="50%"><img src="docs/main-window.png" alt="KillerScan showing a completed network scan"><br><sub>A completed scan with IP addresses, hostnames, MAC vendors, device classifications and open ports together in one sortable view.</sub></td>
+<td width="50%"><img src="docs/device-actions.png" alt="KillerScan device actions and type override menu in the Black theme"><br><sub>Right-click a device to rescan it, copy its details, ping it, open its web interface, launch RDP or SSH, or correct its remembered device type.</sub></td>
+</tr>
+</table>
 
 ## Requirements
 

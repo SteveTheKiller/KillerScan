@@ -105,7 +105,7 @@ namespace KillerScan.Services
             sb.AppendLine("<span id='wm' class='wordmark'><span class='k'>Killer</span><span class='s'>Scan</span></span>");
             sb.AppendLine("</div><div class='switchers'>");
             sb.AppendLine("<div class='swrow'><span class='swlabel'>Theme</span><div class='themesw' id='themesw'></div></div>");
-            sb.AppendLine("<div class='swrow'><span class='swlabel'>Accent</span><div class='themesw' id='accentsw'></div></div>");
+            sb.AppendLine("<div class='swrow' id='accentrow'><span class='swlabel'>Accent</span><div class='themesw' id='accentsw'></div></div>");
             sb.AppendLine("</div></div>");
 
             sb.AppendLine($"<p class='meta'>Subnet <b>{Esc(subnetText)}</b> &middot; Scanned <b>{DateTime.Now:yyyy-MM-dd HH:mm}</b> &middot; <b>{list.Count}</b> devices</p>");
@@ -139,7 +139,8 @@ namespace KillerScan.Services
             sb.AppendLine("<script>");
             sb.AppendLine("var THEMES=[['dark','Dark','#3a3a3a'],['light','Light','#e8e8e8'],['black','Black','#000000'],['se98','98SE','#c0c0c0'],['blood','Blood','#4a1f20'],['greed','Greed','#0a5234'],['cyanotic','Cyanotic','#0a4a6e'],['ectoplasm','Ectoplasm','#314548'],['decay','Decay','#514e48'],['malaise','Malaise','#3f4947'],['sepulchre','Sepulchre','#454039'],['delirium','Delirium','#3e3c50'],['mourning','Mourning','#554c5d']];");
             sb.AppendLine("var sw=document.getElementById('themesw');");
-            sb.AppendLine("function setTheme(t){document.documentElement.className='theme-'+t;try{localStorage.setItem('ksTheme',t)}catch(e){}var k=sw.children;for(var i=0;i<k.length;i++)k[i].className=(k[i].getAttribute('data-t')===t)?'active':'';}");
+            sb.AppendLine("var CUSTOM_ACCENT={dark:1,light:1,black:1};");
+            sb.AppendLine("function setTheme(t){document.documentElement.className='theme-'+t;try{localStorage.setItem('ksTheme',t)}catch(e){}var k=sw.children;for(var i=0;i<k.length;i++)k[i].className=(k[i].getAttribute('data-t')===t)?'active':'';var ar=document.getElementById('accentrow');ar.style.display=CUSTOM_ACCENT[t]?'flex':'none';if(CUSTOM_ACCENT[t]){var a=null;try{a=localStorage.getItem('ksAccent')}catch(e){}if(a)document.documentElement.style.setProperty('--accent',a);}else document.documentElement.style.removeProperty('--accent');}");
             sb.AppendLine("THEMES.forEach(function(a){var b=document.createElement('button');b.title=a[1];b.setAttribute('data-t',a[0]);b.style.background=a[2];b.onclick=function(){setTheme(a[0])};sw.appendChild(b);});");
             sb.AppendLine("var saved=null;try{saved=localStorage.getItem('ksTheme')}catch(e){}");
             sb.AppendLine($"setTheme(saved||'{current}');");
@@ -149,7 +150,7 @@ namespace KillerScan.Services
             sb.AppendLine("function setAccent(c){if(c){document.documentElement.style.setProperty('--accent',c);try{localStorage.setItem('ksAccent',c)}catch(e){}}var k=asw.children;for(var i=0;i<k.length;i++)k[i].className=(k[i].getAttribute('data-c')===c)?'active':'';}");
             sb.AppendLine("ACCENTS.forEach(function(a){var b=document.createElement('button');b.title=a[1];b.setAttribute('data-c',a[0]);b.style.background=a[0];b.onclick=function(){setAccent(a[0])};asw.appendChild(b);});");
             sb.AppendLine("var savedA=null;try{savedA=localStorage.getItem('ksAccent')}catch(e){}");
-            sb.AppendLine("if(savedA)setAccent(savedA);");
+            sb.AppendLine("if(savedA&&CUSTOM_ACCENT[(document.documentElement.className||'').replace('theme-','')])setAccent(savedA);");
             sb.AppendLine("var tbl=document.getElementById('tbl'),tb=tbl.tBodies[0],sortCol=-1,sortDir=1;");
             sb.AppendLine("var ths=tbl.tHead.rows[0].cells;");
             sb.AppendLine("for(var c=0;c<ths.length;c++){(function(i){ths[i].onclick=function(){");
@@ -180,11 +181,11 @@ namespace KillerScan.Services
             new("blood",    "#240c0d", "#2c1012", "#321416", "#e8485a", "#fffde8", "#f8c99e", "#401d1d", "#54201f"),
             new("greed",    "#002115", "#002e1c", "#003824", "#3fbf6f", "#fffde8", "#e0d49a", "#0f4a30", "#00593a"),
             new("cyanotic", "#001a28", "#00263a", "#002e48", "#3aa0d8", "#fffde8", "#e0d49a", "#183450", "#0a5478"),
-            new("ectoplasm","#5e1764", "#314548", "#293c3f", "#ead900", "#f4f4f0", "#d7d7cf", "#096366", "#25232c"),
-            new("decay",    "#3b3f46", "#514e48", "#403f3b", "#8fa88d", "#f2f4f3", "#d8cfb5", "#5c554c", "#5f6258"),
-            new("malaise",  "#563343", "#3f4947", "#343b3d", "#ff6f91", "#f2f4f3", "#d8cfb5", "#394742", "#4b5b57"),
-            new("sepulchre","#25282b", "#454039", "#3a352f", "#4faaa8", "#f4f4f0", "#d7d7cf", "#4d3d2b", "#2d595d"),
-            new("delirium", "#641d25", "#3e3c50", "#343344", "#dd8500", "#f4f4f0", "#d7d7cf", "#5c527d", "#312958"),
+            new("ectoplasm","linear-gradient(90deg,#5e1764 0%,#25232b 100%)", "#314548", "#293c3f", "#ead900", "#f4f4f0", "#d7d7cf", "#096366", "#25232c"),
+            new("decay",    "linear-gradient(90deg,#3b3f46 0%,#50564b 100%)", "#514e48", "#403f3b", "#8fa88d", "#f2f4f3", "#d8cfb5", "#5c554c", "#5f6258"),
+            new("malaise",  "linear-gradient(90deg,#563343 0%,#365b58 100%)", "#3f4947", "#343b3d", "#ff6f91", "#f2f4f3", "#d8cfb5", "#394742", "#4b5b57"),
+            new("sepulchre","linear-gradient(90deg,#25282b 0%,#2c5458 100%)", "#454039", "#3a352f", "#4faaa8", "#f4f4f0", "#d7d7cf", "#4d3d2b", "#2d595d"),
+            new("delirium", "linear-gradient(90deg,#641d25 0%,#2f2853 100%)", "#3e3c50", "#343344", "#dd8500", "#f4f4f0", "#d7d7cf", "#5c527d", "#312958"),
             new("mourning", "#3b3642", "#34373e", "#554c5d", "#ff6f91", "#f4f4f0", "#d7d7cf", "#756b79", "#a75167"),
             new("se98",     "#c0c0c0", "#c0c0c0", "#ffffff", "#000080", "#000000", "#404040", "#808080", "#c0c0c0"),
         ];

@@ -34,8 +34,8 @@ namespace KillerScan.Services
     {
         private static Theme _current = Theme.Black;
         // Dark, Light, and Black each remember their own accent independently.
-        private static Accent _darkAccent  = Accent.Green;
-        private static Accent _lightAccent = Accent.Green;
+        private static Accent _darkAccent  = Accent.Orange;
+        private static Accent _lightAccent = Accent.Orange;
         private static Accent _blackAccent = Accent.Orange;
         // Blue is the Windows 98 default and the one this theme is built around, so it is 98SE's
         // starting accent rather than the Green base every other family starts on.
@@ -87,10 +87,23 @@ namespace KillerScan.Services
             string? saved = App.GetSetting("Theme");
             _current     = saved == "98SE" ? Theme.SE98
                          : Enum.TryParse<Theme>(saved, out var t) ? t : Theme.Black;
-            _darkAccent  = Enum.TryParse<Accent>(App.GetSetting("DarkAccent"),  out var da) ? da : Accent.Green;
-            _lightAccent = Enum.TryParse<Accent>(App.GetSetting("LightAccent"), out var la) ? la : Accent.Green;
+            _darkAccent  = Enum.TryParse<Accent>(App.GetSetting("DarkAccent"),  out var da) ? da : Accent.Orange;
+            _lightAccent = Enum.TryParse<Accent>(App.GetSetting("LightAccent"), out var la) ? la : Accent.Orange;
             _blackAccent = Enum.TryParse<Accent>(App.GetSetting("BlackAccent"), out var ba) ? ba : Accent.Orange;
             _se98Accent  = Enum.TryParse<Accent>(App.GetSetting("SE98Accent"),  out var sa) ? sa : Accent.Blue;
+
+            // The pre-release accent picker wrote Green as Dark and Light's default, and local
+            // test installs may also have persisted Green for Black. Move those installations to
+            // KillerScan's orange brand default once. The marker makes this a migration rather
+            // than a permanent override: choosing Green afterward still survives every restart.
+            if (App.GetSetting("NeutralAccentDefaultsV2") != "1")
+            {
+                _darkAccent = _lightAccent = _blackAccent = Accent.Orange;
+                App.SetSetting("DarkAccent", Accent.Orange.ToString());
+                App.SetSetting("LightAccent", Accent.Orange.ToString());
+                App.SetSetting("BlackAccent", Accent.Orange.ToString());
+                App.SetSetting("NeutralAccentDefaultsV2", "1");
+            }
             LoadDict(_current);
         }
 
@@ -218,6 +231,18 @@ namespace KillerScan.Services
                     var target = merged[0];
                     foreach (object key in accentDict.Keys)
                         target[key] = accentDict[key];
+
+                    // OutlineButton consumes the derived roles below, not OutlineBtnBrush
+                    // directly. They were created from the base palette before this overlay was
+                    // applied, so without refreshing them the table line and selection changed
+                    // hue while the Scan button stayed base green. 98SE supplies purpose-built
+                    // outline roles in its overlays and must keep those instead.
+                    if (theme != Theme.SE98)
+                    {
+                        target["OutlineTextBrush"] = target["OutlineBtnBrush"];
+                        target["OutlineRestBrush"] = target["OutlineBtnBrush"];
+                        target["OutlineHoverBrush"] = target["OutlineBtnBrush"];
+                    }
                 }
                 catch { /* overlay file not present yet - base theme stands */ }
             }

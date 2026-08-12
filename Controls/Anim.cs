@@ -94,13 +94,12 @@ namespace KillerScan.Controls
 
             var clock = System.Diagnostics.Stopwatch.StartNew();
             double from = window.Opacity;
-            EventHandler? tick = null;
-            tick = (_, _) =>
+            void Tick(object? sender, EventArgs e)
             {
                 double t = clock.Elapsed.TotalMilliseconds / FadeMs;
                 if (t >= 1)
                 {
-                    CompositionTarget.Rendering -= tick;
+                    CompositionTarget.Rendering -= Tick;
                     window.Opacity = 0;
                     // Off the render callback before closing: tearing the window down inside a
                     // Rendering handler reenters composition.
@@ -125,8 +124,8 @@ namespace KillerScan.Controls
                     return;
                 }
                 window.Opacity = from * (1 - t * t);   // quadratic ease-in, mirrors FadeIn
-            };
-            CompositionTarget.Rendering += tick;
+            }
+            CompositionTarget.Rendering += Tick;
             return true;
         }
 

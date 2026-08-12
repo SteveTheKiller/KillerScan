@@ -37,7 +37,7 @@
     <SolidColorBrush x:Key="SurfaceBrush"        Color="#454039" po:Freeze="True"/>
     <SolidColorBrush x:Key="PaneBrush"           Color="#3a352f" po:Freeze="True"/>
     <SolidColorBrush x:Key="TableHeaderBrush"    Color="#48433e" po:Freeze="True"/>
-    <SolidColorBrush x:Key="CardBorderBrush"     Color="#835a30" po:Freeze="True"/>
+    <SolidColorBrush x:Key="CardBorderBrush"     Color="#4d3d2b" po:Freeze="True"/>
     <SolidColorBrush x:Key="PaneBorderBrush"     Color="#4d3d2b" po:Freeze="True"/>
     <SolidColorBrush x:Key="AppBorderBrush"      Color="#44585b" po:Freeze="True"/>
 
@@ -49,10 +49,10 @@
 
     <!-- Grid rows -->
     <SolidColorBrush x:Key="RowAltBrush"         Color="#18ffffff" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowHoverBrush"       Color="#4faaa8" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#44ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowHoverBrush"       Color="#44ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#4faaa8" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionBg"         Color="#2d595d" po:Freeze="True"/>
-    <SolidColorBrush x:Key="SelectionFg"         Color="#ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionFg"         Color="#1e2424" po:Freeze="True"/>
 
     <!-- Inputs / menus / scrollbar -->
     <SolidColorBrush x:Key="InputBorderBrush"    Color="#4d3d2b" po:Freeze="True"/>

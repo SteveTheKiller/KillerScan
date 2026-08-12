@@ -49,8 +49,8 @@
 
     <!-- Grid rows -->
     <SolidColorBrush x:Key="RowAltBrush"         Color="#18ffffff" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowHoverBrush"       Color="#312958" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#44ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowHoverBrush"       Color="#44ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#dd8500" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionBg"         Color="#dd8500" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionFg"         Color="#ffffff" po:Freeze="True"/>
 

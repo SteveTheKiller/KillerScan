@@ -2,6 +2,10 @@
   "profiles": {
     "KillerScan": {
       "commandName": "Project"
+    },
+    "Demo": {
+      "commandName": "Project",
+      "commandLineArgs": "--demo"
     }
   }
 }

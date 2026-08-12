@@ -20,7 +20,7 @@
   <SolidColorBrush x:Key="RowAltBrush" Color="#18ffffff"/>
   <SolidColorBrush x:Key="RowHoverBrush" Color="#2d595d"/>
   <SolidColorBrush x:Key="SelectionBg" Color="#4faaa8"/>
-  <SolidColorBrush x:Key="SelectionFg" Color="#ffffff"/>
+  <SolidColorBrush x:Key="SelectionFg" Color="#1e2424"/>
   <SolidColorBrush x:Key="InputBorderBrush" Color="#4d3d2b"/>
   <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#242729"/>
   <SolidColorBrush x:Key="MenuBorderBrush" Color="#4d3d2b"/>

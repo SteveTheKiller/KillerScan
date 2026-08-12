@@ -29,7 +29,7 @@ namespace KillerScan.Controls
             double min     = AsDouble(values, 2);
             double width   = AsDouble(values, 3);
             double height  = AsDouble(values, 4);
-            bool vertical  = values.Length <= 5 || !(values[5] is Orientation o)
+            bool vertical  = values.Length <= 5 || values[5] is not Orientation o
                                  || o == Orientation.Vertical;
 
             double trackLen = vertical ? height : width;

@@ -771,7 +771,7 @@
                                                 <TextBlock x:Name="sortGlyph" Grid.Column="1"
                                                            Text="&#x25B2;" FontSize="8"
                                                            VerticalAlignment="Center" Margin="6,1,0,0"
-                                                           Foreground="{DynamicResource AccentBrush}"
+                                                           Foreground="{DynamicResource PrimaryBrush}"
                                                            Visibility="Collapsed"/>
                                             </Grid>
                                         </Border>
@@ -1070,15 +1070,19 @@
               Margin="{DynamicResource OverlayFrameBleed}"
               Background="#88000000" MouseLeftButtonDown="ShortcutsOverlay_Click">
             <Grid Width="420" VerticalAlignment="Center" MouseLeftButtonDown="ShortcutsCard_Click">
-                <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="{DynamicResource FlyoutCornerRadius}" IsHitTestVisible="False">
+                <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="{DynamicResource PanelCornerRadius}" IsHitTestVisible="False">
                     <Border.Effect>
                         <DropShadowEffect Color="Black" BlurRadius="26" ShadowDepth="5" Direction="270" Opacity="0.6"/>
                     </Border.Effect>
                 </Border>
+                <!-- PanelCornerRadius, not FlyoutCornerRadius: the shared KillerUI layer overwrites
+                     FlyoutCornerRadius with 0,0,4,4 - a dropdown shape that hangs off a button, so
+                     this centered card came out with square top corners. PanelCornerRadius is 6 on
+                     every flat theme and 0 on 98SE, which is the shape a card wants. -->
                 <Border Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
-                        BorderThickness="1" CornerRadius="{DynamicResource FlyoutCornerRadius}">
+                        BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
                     <Grid>
-                        <Border IsHitTestVisible="False" CornerRadius="{DynamicResource FlyoutCornerRadius}"
+                        <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}"
                                 Opacity="{DynamicResource GrainOpacity}" Background="{DynamicResource GrainTileBrush}"/>
 
                         <Border VerticalAlignment="Top" ClipToBounds="True"
@@ -1129,13 +1133,17 @@
                 <!-- Shadow on a separate element so the card text stays crisp. Named so
                      ApplyFlatChrome (Theme.cs) can collapse it on 98SE - no shadows there,
                      and the card's elevation signal becomes the raised bevel below. -->
-                <Border x:Name="AboutShadow" Background="{DynamicResource BackgroundBrush}" CornerRadius="{DynamicResource FlyoutCornerRadius}" IsHitTestVisible="False">
+                <Border x:Name="AboutShadow" Background="{DynamicResource BackgroundBrush}" CornerRadius="{DynamicResource PanelCornerRadius}" IsHitTestVisible="False">
                     <Border.Effect>
                         <DropShadowEffect Color="Black" BlurRadius="26" ShadowDepth="5" Direction="270" Opacity="0.6"/>
                     </Border.Effect>
                 </Border>
+                <!-- PanelCornerRadius, not FlyoutCornerRadius: the shared KillerUI layer overwrites
+                     FlyoutCornerRadius with 0,0,4,4 - a dropdown shape that hangs off a button, so
+                     this centered card came out with square top corners. PanelCornerRadius is 6 on
+                     every flat theme and 0 on 98SE, which is the shape a card wants. -->
                 <Border Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
-                        BorderThickness="1" CornerRadius="{DynamicResource FlyoutCornerRadius}">
+                        BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
                     <Grid>
                         <!-- Raised card bevel, KillerShell's About verbatim: FrameOuter pair, so on
                              98SE the card carries the same edge as the window. Nothing elsewhere. -->
@@ -1145,7 +1153,7 @@
                         <Border IsHitTestVisible="False" Panel.ZIndex="6"
                                 BorderBrush="{DynamicResource FrameOuterDarkBrush}"
                                 BorderThickness="{DynamicResource FrameOuterDarkThickness}"/>
-                        <Border IsHitTestVisible="False" CornerRadius="{DynamicResource FlyoutCornerRadius}"
+                        <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}"
                                 Opacity="{DynamicResource GrainOpacity}" Background="{DynamicResource GrainTileBrush}"/>
 
                         <Border VerticalAlignment="Top" ClipToBounds="True"

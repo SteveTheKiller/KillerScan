@@ -6,5 +6,9 @@
   <SolidColorBrush x:Key="CardBorderBrush" Color="#401d1d"/><SolidColorBrush x:Key="PaneBorderBrush" Color="#633030"/><SolidColorBrush x:Key="AppBorderBrush" Color="#401d1d"/>
   <SolidColorBrush x:Key="TextBrush" Color="#fffde8"/><SolidColorBrush x:Key="MutedTextBrush" Color="#f8c99e"/><SolidColorBrush x:Key="ChromeTextBrush" Color="#e8cfc2"/><SolidColorBrush x:Key="DimTextBrush" Color="#e2b58a"/>
   <SolidColorBrush x:Key="InputBorderBrush" Color="#633030"/><SolidColorBrush x:Key="InputHoverBrush" Color="#a8434f"/><SolidColorBrush x:Key="MenuBackgroundBrush" Color="#1e0a0b"/><SolidColorBrush x:Key="MenuBorderBrush" Color="#633030"/>
-  <SolidColorBrush x:Key="SelectionBg" Color="#44ffffff"/><SolidColorBrush x:Key="SelectionFg" Color="#ffffff"/><SolidColorBrush x:Key="PrimaryBrush" Color="#ffffff"/><SolidColorBrush x:Key="PrimaryHoverBrush" Color="#ffffff"/><SolidColorBrush x:Key="PrimaryPressedBrush" Color="#ffffff"/><SolidColorBrush x:Key="OnPrimaryBrush" Color="#2c1012"/><SolidColorBrush x:Key="OutlineBtnBrush" Color="#e8485a"/><SolidColorBrush x:Key="HeaderLineBrush" Color="#e8485a"/>
+  <!-- SelectionBg, PrimaryBrush, PrimaryHoverBrush, PrimaryPressedBrush and OutlineBtnBrush are
+       deliberately absent. This layer applies AFTER the app palette, so defining them here
+       overwrote Blood's salmon accent with white and a saturated red. Themes/Blood.xaml owns
+       the accent; do not restore these keys when re-vendoring. -->
+  <SolidColorBrush x:Key="SelectionFg" Color="#ffffff"/><SolidColorBrush x:Key="OnPrimaryBrush" Color="#2c1012"/><SolidColorBrush x:Key="HeaderLineBrush" Color="#e8485a"/>
 </ResourceDictionary>

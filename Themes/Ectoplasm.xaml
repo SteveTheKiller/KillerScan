@@ -37,7 +37,7 @@
     <SolidColorBrush x:Key="SurfaceBrush"        Color="#314548" po:Freeze="True"/>
     <SolidColorBrush x:Key="PaneBrush"           Color="#293c3f" po:Freeze="True"/>
     <SolidColorBrush x:Key="TableHeaderBrush"    Color="#384a4c" po:Freeze="True"/>
-    <SolidColorBrush x:Key="CardBorderBrush"     Color="#109fa3" po:Freeze="True"/>
+    <SolidColorBrush x:Key="CardBorderBrush"     Color="#096366" po:Freeze="True"/>
     <SolidColorBrush x:Key="PaneBorderBrush"     Color="#096366" po:Freeze="True"/>
     <SolidColorBrush x:Key="AppBorderBrush"      Color="#7e0685" po:Freeze="True"/>
 
@@ -50,7 +50,9 @@
     <!-- Grid rows -->
     <SolidColorBrush x:Key="RowAltBrush"         Color="#18ffffff" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowHoverBrush"       Color="#25232c" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#44ffffff" po:Freeze="True"/>
+    <!-- Ectoplasm's selected row is the same solid sickly-yellow/black pair used by its
+         primary controls. A pale neutral wash made selection look detached from the palette. -->
+    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#ead900" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionBg"         Color="#ead900" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionFg"         Color="#1e1f22" po:Freeze="True"/>
 

@@ -103,8 +103,8 @@ namespace KillerScan.Services
             int slash = token.IndexOf('/');
             if (slash >= 0)
             {
-                if (!TryParseIPv4(token.Substring(0, slash), out uint ip)) return false;
-                if (!int.TryParse(token.Substring(slash + 1), out int bits) || bits < 0 || bits > 32)
+                if (!TryParseIPv4(token[..slash], out uint ip)) return false;
+                if (!int.TryParse(token[(slash + 1)..], out int bits) || bits < 0 || bits > 32)
                     return false;
 
                 uint mask = bits == 0 ? 0u : uint.MaxValue << (32 - bits);
@@ -123,7 +123,7 @@ namespace KillerScan.Services
             int dash = token.IndexOf('-');
             if (dash > 0)
             {
-                string left = token.Substring(0, dash), right = token.Substring(dash + 1);
+                string left = token[..dash], right = token[(dash + 1)..];
                 if (!TryParseIPv4(left, out start)) return false;
 
                 if (TryParseIPv4(right, out end))
@@ -164,6 +164,6 @@ namespace KillerScan.Services
         }
 
         private static IPAddress FromUInt(uint a) =>
-            new IPAddress([(byte)(a >> 24), (byte)(a >> 16), (byte)(a >> 8), (byte)a]);
+            new([(byte)(a >> 24), (byte)(a >> 16), (byte)(a >> 8), (byte)a]);
     }
 }

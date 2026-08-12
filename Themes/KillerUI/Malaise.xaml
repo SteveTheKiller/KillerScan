@@ -19,8 +19,9 @@
   <SolidColorBrush x:Key="DimTextBrush" Color="#b6ad9e"/>
   <SolidColorBrush x:Key="RowAltBrush" Color="#14f2f4f3"/>
   <SolidColorBrush x:Key="RowHoverBrush" Color="#4b5b57"/>
-  <SolidColorBrush x:Key="SelectionBg" Color="#365b58"/>
-  <SolidColorBrush x:Key="SelectionFg" Color="#f2f4f3"/>
+  <SolidColorBrush x:Key="RowSelectedBrush" Color="#ff6f91"/>
+  <SolidColorBrush x:Key="SelectionBg" Color="#ff6f91"/>
+  <SolidColorBrush x:Key="SelectionFg" Color="#292c31"/>
   <SolidColorBrush x:Key="InputBorderBrush" Color="#394742"/>
   <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#262b2d"/>
   <SolidColorBrush x:Key="MenuBorderBrush" Color="#394742"/>

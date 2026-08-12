@@ -17,14 +17,15 @@
 .page-hero .wm-logo { height: clamp(46px, 8vw, 76px); width: auto; margin: 0 auto 8px; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.55)); }
 .page-hero p { color: var(--muted); font-size: 15px; margin: 4px auto 0; max-width: 540px; }
 .content-inner { max-width: 860px; margin: 0 auto; padding: 0 28px 56px; }
-.tech-sec { scroll-margin-top: 84px; }
+.tech-sec, .tech-sec h3 { scroll-margin-top: 84px; }
 @media (min-width: 901px){ .shell { grid-template-columns: 268px 1fr; } .content { margin: 8px 8px 0 2px; } }
 .sb-tabs .on { border-bottom: 0; }
 .outline { padding: 8px 0; overflow-y: auto; flex: 1; min-height: 0; }
 .outline a { display: block; padding: 8px 16px 8px 18px; font-size: 13px; color: var(--text2); border-left: 2px solid transparent; }
 .outline a:hover { color: var(--text); background: color-mix(in srgb, var(--accent) 8%, transparent); filter: none; }
 .outline a.on { color: var(--accent-text); border-left-color: var(--accent); background: var(--accent); }
-@media (max-width: 900px) { .outline { display:flex; flex-direction:row; flex-wrap:wrap; padding:8px; gap:4px; } .outline a { border-left:0; border-radius:5px; padding:6px 10px; } .outline a.on { border-left:0; } }
+.outline a.sub { padding-left: 32px; font-size: 12px; opacity: 0.82; }
+@media (max-width: 900px) { .outline { display:flex; flex-direction:row; flex-wrap:wrap; padding:8px; gap:4px; } .outline a { border-left:0; border-radius:5px; padding:6px 10px; } .outline a.on { border-left:0; } .outline a.sub { padding-left:10px; } }
 </style>
 </head>
 <body>
@@ -47,6 +48,12 @@
 <button class="swatch sw-blood"    data-theme="blood"    title="Blood"></button>
 <button class="swatch sw-greed"    data-theme="greed"    title="Greed"></button>
 <button class="swatch sw-cyanotic" data-theme="cyanotic" title="Cyanotic"></button>
+<button class="swatch sw-ectoplasm" data-theme="ectoplasm" title="Ectoplasm"></button>
+<button class="swatch sw-decay" data-theme="decay" title="Decay"></button>
+<button class="swatch sw-malaise" data-theme="malaise" title="Malaise"></button>
+<button class="swatch sw-sepulchre" data-theme="sepulchre" title="Sepulchre"></button>
+<button class="swatch sw-delirium" data-theme="delirium" title="Delirium"></button>
+<button class="swatch sw-mourning" data-theme="mourning" title="Mourning"></button>
 </div>
 <div class="acc-fly accent-switch" id="accentSwitch">
 <button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="Accent color"></button>
@@ -83,11 +90,25 @@
 <nav class="outline">
 <a href="#stack" class="on" data-i18n="tk_164">Tech stack</a>
 <a href="#install" data-i18n="tk_165">Install &amp; data</a>
+<a href="#command-line" data-i18n="tk_cli_nav">Command line</a>
+<a href="#commands-options" class="sub" data-i18n="tk_cli_commands">Commands and options</a>
+<a href="#target-formats" class="sub" data-i18n="tk_cli_target_title">Target formats</a>
+<a href="#automation-output" class="sub" data-i18n="tk_cli_automation_title">Automation and output</a>
 <a href="#keyboard" data-i18n="tk_182">Keyboard &amp; app size</a>
 <a href="#pipeline" data-i18n="tk_166">The scan pipeline</a>
+<a href="#phase0" class="sub" data-i18n="tk_23">Phase 0: building the address list</a>
+<a href="#phase1" class="sub" data-i18n="tk_25">Phase 1: discovery (who is out there?)</a>
+<a href="#phase2" class="sub" data-i18n="tk_33">Phase 2: taking a closer look at each device</a>
 <a href="#ports" data-i18n="tk_167">Ports probed</a>
 <a href="#vendor" data-i18n="tk_168">Vendor resolution</a>
+<a href="#brand" class="sub" data-i18n="tk_62">1. Brand overrides</a>
+<a href="#random" class="sub" data-i18n="tk_64">2. Randomized MACs</a>
+<a href="#oui" class="sub" data-i18n="tk_66">3. Most-specific match first</a>
+<a href="#database" class="sub" data-i18n="tk_78">The database itself</a>
 <a href="#classify" data-i18n="tk_169">Device classification</a>
+<a href="#gateway" class="sub" data-i18n="tk_83">Gateway, DNS, and three honest labels</a>
+<a href="#signals" class="sub" data-i18n="tk_85">Weighted signals</a>
+<a href="#fallbacks" class="sub" data-i18n="tk_98">When nothing scores</a>
 <a href="#deepscan" data-i18n="tk_172">Deep rescan</a>
 <a href="#privacy" data-i18n="tk_170">Privacy &amp; footprint</a>
 <a href="#glossary" data-i18n="tk_171">Glossary</a>
@@ -118,7 +139,49 @@
 
 <div class="tech-sec" id="install">
 <h2 data-i18n="tk_19">Install &amp; data</h2>
-<p data-i18n="tk_20">KillerScan is a single .exe. Put it anywhere and run it as is, or use the built-in installer. By default it installs just for you: the app is copied into your user folder, with a Start Menu shortcut and a normal Windows uninstall entry registered for your account alone, needing no admin rights, no .NET runtime, and nothing else installed. Tick <b>Install for all users</b> in that prompt and it goes to Program Files for every account on the PC instead, which is the one case where Windows asks for permission. When you run it from outside its installed location, a <b>PORTABLE</b> badge and an <b>Install KillerScan...</b> button appear in the status bar.</p>
+<p data-i18n="tk_20">KillerScan is a single .exe. Put it anywhere and run it as is, or use the built-in installer. By default it installs just for you: the app is copied into your user folder, with a Start Menu shortcut and a normal Windows uninstall entry registered for your account alone, needing no admin rights, no .NET runtime, and nothing else installed. Tick <b>Install for all users</b> in that prompt and it goes to Program Files for every account on the PC instead, which is the one case where Windows asks for permission. Installation also adds KillerScan to PATH, so a newly opened terminal can run <code>killerscan</code> from any folder. When you run it from outside its installed location, a <b>PORTABLE</b> badge and an <b>Install KillerScan...</b> button appear in the status bar.</p>
+</div>
+
+<div class="tech-sec" id="command-line">
+<h2 data-i18n="tk_cli_title">Command line</h2>
+<p data-i18n="tk_cli_intro">The same scanner that powers the window can run headless from Command Prompt, PowerShell, scripts, scheduled tasks, and RMM tools. Install KillerScan, open a new terminal, and call it by name. Windows commands are case-insensitive, so <code>killerscan</code> and <code>KillerScan</code> are the same command. Running it without any flags opens the normal app.</p>
+<div class="cli-demo" aria-label="KillerScan command examples"><span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan 192.168.8.0/24</span>
+<span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan 192.168.8.10-50 /quick</span>
+<span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan /export report.html /quiet</span>
+<span class="prompt">C:\&gt;</span> killerscan <span class="arg">/help</span></div>
+
+<h3 id="commands-options" data-i18n="tk_cli_commands">Commands and options</h3>
+<table class="spec-table cli-table"><tr><th data-i18n="tk_cli_syntax">Syntax</th><th data-i18n="tk_cli_action">What it does</th></tr>
+<tr><td><code>killerscan</code></td><td data-i18n="tk_cli_gui">Open the normal KillerScan window.</td></tr>
+<tr><td><code>killerscan /scan</code></td><td data-i18n="tk_cli_local">Detect and scan the active local IPv4 subnet.</td></tr>
+<tr><td><code>killerscan /scan &lt;targets&gt;</code></td><td data-i18n="tk_cli_targets">Scan one or more explicit IPv4 targets.</td></tr>
+<tr><td><code>/quick</code></td><td data-i18n="tk_cli_quick">Run discovery, hostname, MAC, vendor, and lightweight device classification without the full port and fingerprint probe.</td></tr>
+<tr><td><code>/export &lt;path&gt;</code></td><td data-i18n="tk_cli_export">Write the same report offered by the app: .html or .htm creates an interactive HTML report; every other extension creates CSV.</td></tr>
+<tr><td><code>/quiet</code></td><td data-i18n="tk_cli_quiet">Suppress normal progress and results. Intended for unattended use with /export and an exit-code check.</td></tr>
+<tr><td><code>/help</code>, <code>-h</code>, <code>/?</code></td><td data-i18n="tk_cli_help">Print the complete built-in command reference.</td></tr>
+<tr><td><code>/version</code>, <code>-v</code></td><td data-i18n="tk_cli_version">Print the installed version.</td></tr>
+</table>
+
+<h3 id="target-formats" data-i18n="tk_cli_target_title">Target formats</h3>
+<p data-i18n="tk_cli_target_body">Targets use exactly the same syntax as the subnet box: CIDR blocks such as <code>192.168.8.0/24</code>, a single host, a full address range, or a range with only the final octet on the right. Supply several targets separated by commas or as separate arguments. Overlaps are removed and the combined safety ceiling is 65,536 addresses.</p>
+<div class="codeblock">killerscan <span class="arg">/scan 192.168.8.0/24</span>
+killerscan <span class="arg">/scan 192.168.8.25</span>
+killerscan <span class="arg">/scan 192.168.8.10-192.168.8.50</span>
+killerscan <span class="arg">/scan 192.168.8.10-50</span>
+killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
+
+<h3 id="automation-output" data-i18n="tk_cli_automation_title">Automation and output</h3>
+<p data-i18n="tk_cli_automation_body">KillerScan sends the result table to standard output and progress or errors to standard error, so redirecting the table does not mix in status messages. Ctrl+C cancels a running scan. Because KillerScan is also a graphical Windows app, Command Prompt may return its prompt before the headless process finishes; scripts that need the result must explicitly wait:</p>
+<div class="codeblock"><span class="cm">REM Command Prompt: wait, then read %ERRORLEVEL%</span>
+<span class="prompt">start /wait ""</span> killerscan <span class="arg">/scan 192.168.8.0/24 /export hosts.csv</span>
+
+<span class="cm"># PowerShell: wait for completion</span>
+<span class="prompt">Start-Process -Wait</span> killerscan <span class="arg">-ArgumentList '/scan 192.168.8.0/24 /export hosts.csv'</span></div>
+<table class="spec-table exit-table"><tr><th data-i18n="tk_cli_exit">Exit code</th><th data-i18n="tk_cli_meaning">Meaning</th></tr>
+<tr><td><code>0</code></td><td data-i18n="tk_cli_exit0">The scan and any requested export completed successfully.</td></tr>
+<tr><td><code>1</code></td><td data-i18n="tk_cli_exit1">The scan or export failed, or the scan was cancelled.</td></tr>
+<tr><td><code>2</code></td><td data-i18n="tk_cli_exit2">A required value or scan target was missing or invalid.</td></tr>
+</table>
 </div>
 
 <div class="tech-sec" id="keyboard">

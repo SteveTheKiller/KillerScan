@@ -6,5 +6,9 @@
   <SolidColorBrush x:Key="CardBorderBrush" Color="#0f4a30"/><SolidColorBrush x:Key="PaneBorderBrush" Color="#0f4a30"/><SolidColorBrush x:Key="AppBorderBrush" Color="#0f4a30"/>
   <SolidColorBrush x:Key="TextBrush" Color="#fffde8"/><SolidColorBrush x:Key="MutedTextBrush" Color="#e0d49a"/><SolidColorBrush x:Key="ChromeTextBrush" Color="#cfd6c2"/><SolidColorBrush x:Key="DimTextBrush" Color="#c0aa68"/>
   <SolidColorBrush x:Key="InputBorderBrush" Color="#0f4a30"/><SolidColorBrush x:Key="InputHoverBrush" Color="#2a7a52"/><SolidColorBrush x:Key="MenuBackgroundBrush" Color="#001e13"/><SolidColorBrush x:Key="MenuBorderBrush" Color="#0f4a30"/>
-  <SolidColorBrush x:Key="SelectionBg" Color="#44ffffff"/><SolidColorBrush x:Key="SelectionFg" Color="#ffffff"/><SolidColorBrush x:Key="PrimaryBrush" Color="#ffffff"/><SolidColorBrush x:Key="PrimaryHoverBrush" Color="#ffffff"/><SolidColorBrush x:Key="PrimaryPressedBrush" Color="#ffffff"/><SolidColorBrush x:Key="OnPrimaryBrush" Color="#002e1c"/><SolidColorBrush x:Key="OutlineBtnBrush" Color="#3fbf6f"/><SolidColorBrush x:Key="HeaderLineBrush" Color="#3fbf6f"/>
+  <!-- SelectionBg, PrimaryBrush, PrimaryHoverBrush, PrimaryPressedBrush and OutlineBtnBrush are
+       deliberately absent. This layer applies AFTER the app palette, so defining them here
+       overwrote Greed's pale yellow accent with white and a saturated green. Themes/Greed.xaml
+       owns the accent; do not restore these keys when re-vendoring. -->
+  <SolidColorBrush x:Key="SelectionFg" Color="#ffffff"/><SolidColorBrush x:Key="OnPrimaryBrush" Color="#002e1c"/><SolidColorBrush x:Key="HeaderLineBrush" Color="#3fbf6f"/>
 </ResourceDictionary>

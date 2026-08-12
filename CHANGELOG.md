@@ -4,14 +4,15 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.6.0] - Unreleased
+## [1.6.0] - 2026-08-12
 
 1.6.0 adds a command line, stops SSH guessing your username, and moves theme and language onto a rail like the other Killer Tools apps.
 
 ### Added
-- **A command line**: `/scan [targets]`, `/export <path>` to CSV or HTML, `/quick`, `/quiet`, `/help` and `/version`. Headless, works while the app is open, with real exit codes. Requested in issue #1.
+- **A command line**: `/scan [targets]`, `/export <path>` to CSV or HTML, `/quick`, `/quiet`, `/help` and `/version`. Headless, works while the app is open, with real exit codes. Installed copies are added to PATH, so `KillerScan` works from any directory in a new terminal. Requested in issue #1.
 - **SSH asks which account to sign in as** the first time you reach a device and remembers it against that device's MAC. New **SSH as...** on the right-click menu always asks. Leaving it blank restores plain `ssh <ip>`.
 - Seven more themes, ported from KillerShell: 98SE, Ectoplasm, Decay, Malaise, Sepulchre, Delirium and Mourning. Thirteen in total. 98SE squares every corner and carries its own six Windows 98 accents.
+- Dark, Light, and Black now open with KillerScan orange as their default accent instead of inheriting green; each can still remember a different user-selected accent.
 
 ### Changed
 - Theme, language and the shortcuts button moved from the title bar to an icon rail down the left side, matching the rest of the Killer Tools apps. The theme picker is a named list now instead of color dots.

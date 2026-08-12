@@ -119,6 +119,12 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <button class="swatch sw-blood"    data-theme="blood"    title="Blood"></button>
 <button class="swatch sw-greed"    data-theme="greed"    title="Greed"></button>
 <button class="swatch sw-cyanotic" data-theme="cyanotic" title="Cyanotic"></button>
+<button class="swatch sw-ectoplasm" data-theme="ectoplasm" title="Ectoplasm"></button>
+<button class="swatch sw-decay" data-theme="decay" title="Decay"></button>
+<button class="swatch sw-malaise" data-theme="malaise" title="Malaise"></button>
+<button class="swatch sw-sepulchre" data-theme="sepulchre" title="Sepulchre"></button>
+<button class="swatch sw-delirium" data-theme="delirium" title="Delirium"></button>
+<button class="swatch sw-mourning" data-theme="mourning" title="Mourning"></button>
 </div>
 <div class="acc-fly accent-switch" id="accentSwitch">
 <button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="Accent color"></button>
@@ -168,7 +174,8 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <li>IEEE OUI vendor ID - MA-L, MA-M and MA-S</li>
 <li>Weighted classifier: routers, NAS, printers, cameras, IoT, phones and more</li>
 <li>Export results to CSV or HTML</li>
-<li>Six themes with live accent colors</li>
+<li>Headless command line for scripts, scheduled tasks and RMM</li>
+<li>Thirteen themes with live accent colors and remembered appearance settings</li>
 </ul></div>
 <div class="blurb"><h3 data-i18n="b2_t">Built from scratch</h3><p data-i18n="b2_d">KillerScan is written in C# and WPF on .NET Framework 4.8, so it runs as one self-contained native .exe with no runtime to install. The full IEEE OUI database (~57,000 entries) is embedded, and mDNS and SSDP discovery are done with raw sockets; There is no bundled scanner engine.<br><br>The <a href="technical.html">Technical</a> page has the full breakdown of how it decides what each device is.</p></div>
 <div class="blurb"><h3 data-i18n="b3_t">By a field tech, for field techs</h3><p data-i18n="b3_d">KillerScan was built on the bench while working at a large MSP, to answer the question every tech asks on a strange network: what is actually here?</p><p data-i18n="b3_d2">Through constant and ongoing experience (trial and error) the discovery and classification algorithms are still being perfected.</p><p data-i18n="b3_d3">The <a href="https://github.com/SteveTheKiller/KillerScan/issues" target="_blank" rel="noopener">GitHub issues</a> page is open to anyone.</p><br><p data-i18n="b3_d4">Read the story behind it on the <a href="about.html">About</a> page.</p></div>
@@ -200,8 +207,9 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <div class="feature-card"><h3 data-i18n="f_vendor_t">Vendor identification</h3><p data-i18n="f_vendor_d">Longest-prefix MAC OUI lookup across the full IEEE registries - MA-L, MA-M and MA-S - with brand overrides for blocks IEEE hides as "Private", and a clear label for randomized privacy MACs.</p></div>
 <div class="feature-card"><h3 data-i18n="f_classify_t">Device classification</h3><p data-i18n="f_classify_d">A weighted scorer combines hostname, vendor, open ports, banners, mDNS and SSDP into a best-guess type:<br>Router, switch/AP, NAS, printer, camera, hypervisor, phone, IoT and more.</p></div>
 <div class="feature-card"><h3 data-i18n="f_gateway_t">Gateway &amp; DNS aware</h3><p data-i18n="f_gateway_d">The gateway is labeled Router, DNS Server, or Router/DNS - and only Router/DNS when the gateway really is your configured DNS, so a dedicated DNS server is never mislabeled.</p></div>
-<div class="feature-card"><h3 data-i18n="f_export_t">Export</h3><p data-i18n="f_export_d">Export the full device list to CSV, or to a self-contained HTML report that stays fully re-sortable by any column and re-themeable with the same six themes and accent colors as the app. Right-click any device to copy its IP, MAC or hostname, or jump straight to it.</p></div>
-<div class="feature-card"><h3 data-i18n="f_themes_t">Themes &amp; accents</h3><p data-i18n="f_themes_d">Six themes (Dark, Light, Black, Blood, Greed and Cyanotic) with per-theme accent colors, all switchable live, plus per-theme device-type coloring in the results table.</p></div>
+<div class="feature-card"><h3 data-i18n="f_export_t">Export</h3><p data-i18n="f_export_d">Export the full device list to CSV, or to a self-contained HTML report that stays fully re-sortable by any column and re-themeable with the same thirteen themes and accent colors as the app. Right-click any device to copy its IP, MAC or hostname, or jump straight to it.</p></div>
+<div class="feature-card cli-feature"><h3 data-i18n="f_cli_t">Command line ready</h3><p data-i18n="f_cli_d">Install it, open a new terminal, and run <code>killerscan /scan 192.168.8.0/24</code>. The full scanner runs headless with quick and quiet modes, CSV or HTML export, Ctrl+C cancellation, and dependable exit codes for scripts, scheduled tasks and RMM tools. <a href="technical.html#command-line">See every command.</a></p></div>
+<div class="feature-card"><h3 data-i18n="f_themes_t">Themes &amp; settings</h3><p data-i18n="f_themes_d">Thirteen themes, all switchable live, with six accent colors for Dark, Light and Black plus per-theme device-type coloring. KillerScan remembers your theme, accent, language and app size between runs.</p></div>
 <div class="feature-card"><h3 data-i18n="f_install_t">Install or run portable</h3><p data-i18n="f_install_d">Drop the .exe anywhere and run it, or use the built-in installer.<br>It installs just for you by default, with no admin rights, extra runtimes or dependencies required, or tick "Install for all users" to put it in Program Files for everyone on the PC.<br>A "PORTABLE" badge and an Install button appear when you're running it loose.</p></div>
 <div class="feature-card"><h3 data-i18n="f_oui_t">Vendor database</h3><p data-i18n="f_oui_d">The full IEEE OUI registries, MA-L, MA-M and MA-S (around 57,000 entries), ship embedded so vendor names resolve offline, and are kept current from the latest IEEE data so they don't go stale.</p></div>
 <div class="feature-card"><h3 data-i18n="f_actions_t">Quick actions</h3><p data-i18n="f_actions_d">Right-click any device to copy its IP, MAC or hostname, or jump straight to it.<br>Open its web UI, or launch RDP or SSH directly, and set a manual device type that sticks.</p></div>

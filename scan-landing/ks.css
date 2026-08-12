@@ -8,7 +8,42 @@ html[data-theme="hc"]       { --bg:#0d0d0d; --surface:#0a0a0a; --panel:#141414; 
 html[data-theme="blood"]    { --bg:#4a1f20; --surface:#321416; --panel:#321416; --sidebar:#1e0a0b; --canvas:#4a1f20; --border:#361619; --pane-border:#3a1a1d; --dragline:#3e1e21; --tab-edge:rgba(255,255,255,0.27); --accent:#ffffff; --accent-text:#450002; --text:#fffde8; --text2:#b09e9c; --muted:#f8c99e; --footer-text:#b09e9c; --danger:#ff6666; --grain:0.32; --btn:#1ea54c; --btn-text:#ffffff; --logo-pdf:#1ea54c; --chrome:#240c0d; --modal:#1e0a0b; --fade:rgba(0,0,0,0.6); }
 html[data-theme="greed"]    { --bg:#0a5234; --surface:#003824; --panel:#003824; --sidebar:#001e13; --canvas:#0a5234; --border:#07371f; --pane-border:#07371f; --dragline:#0b3b23; --tab-edge:rgba(255,255,255,0.27); --accent:#ffffff; --accent-text:#002819; --text:#fffde8; --text2:#a6a99a; --muted:#e0d49a; --footer-text:#a6a99a; --danger:#ff6666; --grain:0.26; --btn:#e6b800; --btn-text:#1a1a1a; --logo-pdf:#1ea54c; --chrome:#002115; --modal:#001e13; --fade:rgba(0,0,0,0.6); }
 html[data-theme="cyanotic"] { --bg:#0a4a6e; --surface:#002e48; --panel:#002e48; --sidebar:#001a28; --canvas:#0a4a6e; --border:#093250; --pane-border:#093250; --dragline:#0d3654; --tab-edge:rgba(255,255,255,0.27); --accent:#ffffff; --accent-text:#001e2e; --text:#fffde8; --text2:#9ba3ac; --muted:#e0d49a; --footer-text:#9ba3ac; --danger:#ff6666; --grain:0.26; --btn:#1ea54c; --btn-text:#ffffff; --logo-pdf:#1ea54c; --chrome:#001a28; --modal:#001624; --fade:rgba(0,0,0,0.6); }
+html[data-theme="ectoplasm"] { --bg:#5e1764; --surface:#314548; --panel:#293c3f; --sidebar:#314548; --canvas:#293c3f; --border:#109fa3; --pane-border:#096366; --dragline:#096366; --tab-edge:#bd00c6; --accent:#ead900; --accent-text:#1e1f22; --text:#f4f4f0; --text2:#d7d7cf; --muted:#b4b6b1; --footer-text:#b4b6b1; --danger:#ff5a67; --grain:0.28; --btn:#ead900; --btn-text:#1e1f22; --logo-pdf:#e8962c; --chrome:#314548; --modal:#293c3f; --fade:rgba(0,0,0,0.58); }
+html[data-theme="decay"]    { --bg:#3b3f46; --surface:#514e48; --panel:#403f3b; --sidebar:#514e48; --canvas:#403f3b; --border:#6b705c; --pane-border:#5c554c; --dragline:#5c554c; --tab-edge:#8a8a78; --accent:#b8aa7c; --accent-text:#202321; --text:#f2f4f3; --text2:#d8cfb5; --muted:#b5ad9e; --footer-text:#b5ad9e; --danger:#d86b68; --grain:0.3; --btn:#b8aa7c; --btn-text:#202321; --logo-pdf:#e8962c; --chrome:#514e48; --modal:#403f3b; --fade:rgba(0,0,0,0.58); }
+html[data-theme="malaise"]  { --bg:#563343; --surface:#3f4947; --panel:#343b3d; --sidebar:#3f4947; --canvas:#343b3d; --border:#4a5154; --pane-border:#394742; --dragline:#394742; --tab-edge:#a0ffe6; --accent:#ff6f91; --accent-text:#292c31; --text:#f2f4f3; --text2:#d8cfb5; --muted:#b6ad9e; --footer-text:#b6ad9e; --danger:#ff5b67; --grain:0.3; --btn:#ff6f91; --btn-text:#292c31; --logo-pdf:#e8962c; --chrome:#3f4947; --modal:#343b3d; --fade:rgba(0,0,0,0.58); }
+html[data-theme="sepulchre"] { --bg:#25282b; --surface:#454039; --panel:#3a352f; --sidebar:#454039; --canvas:#3a352f; --border:#835a30; --pane-border:#4d3d2b; --dragline:#4d3d2b; --tab-edge:#292d2f; --accent:#4faaa8; --accent-text:#ffffff; --text:#f4f4f0; --text2:#d7d7cf; --muted:#b4b6b1; --footer-text:#b4b6b1; --danger:#dc6666; --grain:0.32; --btn:#4faaa8; --btn-text:#ffffff; --logo-pdf:#e8962c; --chrome:#454039; --modal:#3a352f; --fade:rgba(0,0,0,0.62); }
+html[data-theme="delirium"] { --bg:#641d25; --surface:#3e3c50; --panel:#343344; --sidebar:#3e3c50; --canvas:#343344; --border:#8e101c; --pane-border:#5c527d; --dragline:#5c527d; --tab-edge:#cf1020; --accent:#dd8500; --accent-text:#ffffff; --text:#f4f4f0; --text2:#d7d7cf; --muted:#b4b6b1; --footer-text:#b4b6b1; --danger:#ff5360; --grain:0.32; --btn:#dd8500; --btn-text:#ffffff; --logo-pdf:#e8962c; --chrome:#3e3c50; --modal:#343344; --fade:rgba(0,0,0,0.62); }
+html[data-theme="mourning"] { --bg:#3b3642; --surface:#34373e; --panel:#554c5d; --sidebar:#34373e; --canvas:#554c5d; --border:#756b79; --pane-border:#756b79; --dragline:#756b79; --tab-edge:#a0ffe6; --accent:#ff6f91; --accent-text:#292c31; --text:#f4f4f0; --text2:#d7d7cf; --muted:#b4b6b1; --footer-text:#b4b6b1; --danger:#ff5360; --grain:0.34; --btn:#ff6f91; --btn-text:#292c31; --logo-pdf:#e8962c; --chrome:#34373e; --modal:#554c5d; --fade:rgba(0,0,0,0.62); }
+/* The app paints its signature palette on the outer window and keeps the reading pane solid. */
+html[data-theme="ectoplasm"] { --bg:#293c3f; --sidebar:linear-gradient(90deg,#5e1764 0%,#25232b 100%); }
+html[data-theme="decay"] { --bg:#403f3b; --sidebar:linear-gradient(90deg,#3b3f46 0%,#50564b 100%); }
+html[data-theme="malaise"] { --bg:#343b3d; --sidebar:linear-gradient(90deg,#563343 0%,#365b58 100%); }
+html[data-theme="sepulchre"] { --bg:#3a352f; --sidebar:linear-gradient(90deg,#25282b 0%,#2c5458 100%); }
+html[data-theme="delirium"] { --bg:#343344; --sidebar:linear-gradient(90deg,#641d25 0%,#2f2853 100%); }
+html[data-theme="mourning"] { --bg:#554c5d; --sidebar:#3b3642; }
+/* Card surfaces mirror the app context-menu background in every web theme. */
+html[data-theme="dark"] { --modal:#2b2b2b; }
+html[data-theme="light"] { --modal:#ffffff; }
+html[data-theme="hc"] { --modal:#121212; }
+html[data-theme="blood"] { --modal:#1e0a0b; }
+html[data-theme="greed"] { --modal:#001e13; }
+html[data-theme="cyanotic"] { --modal:#001624; }
+html[data-theme="ectoplasm"] { --modal:#383838; }
+html[data-theme="decay"] { --modal:#3b3f46; }
+html[data-theme="malaise"] { --modal:#262b2d; }
+html[data-theme="sepulchre"] { --modal:#242729; }
+html[data-theme="delirium"] { --modal:#24212b; }
+html[data-theme="mourning"] { --modal:#4f413f; }
 :root { --accent-dim: color-mix(in srgb, var(--accent) 16%, transparent); }
++/* Inactive tab/card edges are muted active colors; hover rules brighten to --accent. */
+html[data-theme="ectoplasm"] { --tab-edge:rgba(234,217,0,.42); }
+html[data-theme="sepulchre"] { --tab-edge:rgba(79,170,168,.42); }
+html[data-theme="mourning"] { --tab-edge:rgba(255,111,145,.42); }
+/* Delirium downloads rest orange and turn yellow when focused/hovered. */
+html[data-theme="delirium"] .tb-dl:hover,
+html[data-theme="delirium"] body .download-btn:hover { background:#ffad2f; color:#1e1f22; filter:none; }
+html[data-theme="malaise"] .tb-dl:hover,
+html[data-theme="malaise"] body .download-btn:hover { background:#ff9fba; color:#292c31; filter:none; }
 
 html { background: var(--bg); height: 100%; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; height: 100%; overflow: hidden; display: flex; flex-direction: column; position: relative; isolation: isolate; transition: background-color 0.2s, color 0.2s; }
@@ -64,6 +99,12 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 .sw-dark { background:#2b2b2b; --sw-accent:#1ea54c; } .sw-light { background:#e8e8e8; --sw-accent:#18843d; }
 .sw-hc { background:#000; --sw-accent:#00ff66; } .sw-blood { background:#73000e; --sw-accent:#f8c99e; }
 .sw-greed { background:#004d32; --sw-accent:#e0d49a; } .sw-cyanotic { background:#003450; --sw-accent:#e0d49a; }
+.sw-ectoplasm { background:#5e1764; --sw-accent:#ead900; }
+.sw-decay { background:#403f3b; --sw-accent:#b8aa7c; }
+.sw-malaise { background:#563343; --sw-accent:#ff6f91; }
+.sw-sepulchre { background:#3a352f; --sw-accent:#4faaa8; }
+.sw-delirium { background:#641d25; --sw-accent:#dd8500; }
+.sw-mourning { background:#554c5d; --sw-accent:#ff6f91; }
 .acc { width: 17px; height: 17px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.25); padding: 0; transition: transform 0.12s; }
 .acc:hover { transform: scale(1.18); }
 .acc[aria-pressed="true"] { border-color: #fff; box-shadow: 0 0 0 2px currentColor; }
@@ -101,6 +142,8 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 /* ---- Sidebar (the app's docked pane) ---- */
 .sidebar { position: relative; height: calc(100% - 8px); margin-top: 8px; min-height: 0; background: var(--sidebar); display: flex; flex-direction: column; z-index: 5; }
 .sidebar::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url('grain.png?v=2') repeat fixed; background-size: 256px 256px; opacity: 1; }
+.sidebar { background: transparent; }
+.sidebar::before { background: none; }
 .sb-thumbs { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 0; }
 /* Bottom fade while the strip overflows and isn't scrolled to the last shot (toggled in JS),
    matching the app sidebar: the mask reveals the grainy sidebar behind, so grain stays intact. */
@@ -208,6 +251,7 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 html[data-theme="light"] .tb-nav a { text-shadow: none; }
 .tb-nav a:hover { color: var(--text); background: color-mix(in srgb, var(--accent) 12%, transparent); filter: none; }
 .tb-nav a.on { color: var(--accent); }
+@media (min-width: 901px) { .tb-nav + .tgrp { margin-left: -10px; } }
 
 /* Header download button */
 .tb-dl { display: inline-flex; align-items: center; gap: 7px; margin-left: 10px; background: var(--btn); color: var(--btn-text); font-size: 13px; font-weight: 700; padding: 7px 15px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: filter 0.15s, transform 0.1s, box-shadow 0.15s; }
@@ -263,7 +307,18 @@ html[data-theme="light"] .tech-sec h3 { text-shadow: none; }
 .tech-sec a { color: var(--accent); font-weight: 600; }
 .codeblock { background: var(--panel); border: 1px solid var(--pane-border); border-left: 2px solid var(--accent); border-radius: 7px; padding: 13px 16px; margin: 10px 0 14px; font-family: Consolas, monospace; font-size: 12.5px; line-height: 1.7; color: var(--text); white-space: pre-wrap; overflow-x: auto; }
 .codeblock .cm { color: var(--muted); }
+.cli-demo { background: #111; border: 1px solid var(--pane-border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 16px 18px; margin: 12px 0 18px; font: 13px/1.9 Consolas, monospace; color: #e8e8e8; white-space: pre-wrap; overflow-x: auto; box-shadow: inset 0 1px rgba(255,255,255,.035), 0 8px 22px rgba(0,0,0,.18); }
+.cli-demo .prompt, .codeblock .prompt { color: var(--accent); }
+.cli-demo .prompt { user-select: none; }
+.cli-demo .arg, .codeblock .arg { color: #b9dcae; }
+.cli-table td:first-child { white-space: nowrap; }
+.exit-table { max-width: 720px; }
+.cli-feature { border-left: 2px solid var(--accent); }
+.feature-card code { color: var(--accent); font-family: Consolas, monospace; font-size: .92em; }
+.feature-card a { color: var(--accent); font-weight: 600; }
 .diagram { margin: 20px 0 6px; padding: 14px 16px; border: 1px solid var(--pane-border); border-radius: 10px; background: var(--modal); }
+/* Technical cards match the app's textured context-menu surface. */
+.codeblock, .cli-demo, .diagram { background: var(--modal) url('grain.png?v=2') repeat; background-size: 256px 256px; }
 .diagram svg { width: 100%; height: auto; display: block; cursor: zoom-in; }
 .diagram figcaption { font-size: 12.5px; line-height: 1.55; color: var(--muted); margin-top: 10px; }
 .diagram .zoom-hint { display: block; color: var(--muted); font-size: 11px; margin-top: 4px; }
