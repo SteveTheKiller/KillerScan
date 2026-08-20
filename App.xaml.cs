@@ -434,8 +434,41 @@ namespace KillerScan
         // Uninstall
         // ============================================================
 
+        private static bool RelaunchMachineUninstallElevatedIfNeeded(bool machine)
+        {
+            if (!machine) return false;
+            try
+            {
+                using var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
+                var principal = new System.Security.Principal.WindowsPrincipal(identity);
+                if (principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator))
+                    return false;
+
+                Process.Start(new ProcessStartInfo(
+                    Process.GetCurrentProcess().MainModule!.FileName, "/uninstall")
+                {
+                    UseShellExecute = true,
+                    Verb = "runas",
+                });
+            }
+            catch (System.ComponentModel.Win32Exception ex) when (ex.NativeErrorCode == 1223)
+            {
+                // UAC was declined. Leave the installation untouched.
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Uninstall could not request administrator access:\n{ex.Message}",
+                    AppName, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            return true;
+        }
+
         private static void Uninstall()
         {
+            string currentExe = Process.GetCurrentProcess().MainModule!.FileName;
+            bool machineInstall = string.Equals(currentExe, MachineInstallExe, StringComparison.OrdinalIgnoreCase);
+            if (RelaunchMachineUninstallElevatedIfNeeded(machineInstall)) return;
+
             var res = MessageBox.Show(
                 "Uninstall KillerScan from this computer?",
                 $"{AppName} Uninstall",
@@ -443,18 +476,22 @@ namespace KillerScan
                 MessageBoxImage.Question);
             if (res != MessageBoxResult.Yes) return;
 
-            string currentExe = Process.GetCurrentProcess().MainModule!.FileName;
-            bool machineInstall = string.Equals(currentExe, MachineInstallExe, StringComparison.OrdinalIgnoreCase);
             RemoveFromPath(machineInstall ? MachineInstallDir : InstallDir,
                 machineInstall ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.User);
 
-            try { File.Delete(StartMenuLnk); } catch { }
-            try { Directory.Delete(StartMenuDir, recursive: false); } catch { }
-            try { File.Delete(DesktopLnk); } catch { }
+            string startMenuDir = machineInstall
+                ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonPrograms), AppName)
+                : StartMenuDir;
+            string targetDir = machineInstall ? MachineInstallDir : InstallDir;
+            try { File.Delete(Path.Combine(startMenuDir, $"{AppName}.lnk")); } catch { }
+            try { Directory.Delete(startMenuDir, recursive: false); } catch { }
+            if (!machineInstall) try { File.Delete(DesktopLnk); } catch { }
 
-            try { Registry.CurrentUser.DeleteSubKeyTree(@"Software\KillerScan"); } catch { }
-            try { Registry.CurrentUser.DeleteSubKeyTree(
-                @"Software\Microsoft\Windows\CurrentVersion\Uninstall\KillerScan"); } catch { }
+            var hive = machineInstall ? Registry.LocalMachine : Registry.CurrentUser;
+            try { hive.DeleteSubKeyTree(@"Software\KillerScan", throwOnMissingSubKey: false); } catch { }
+            try { hive.DeleteSubKeyTree(
+                @"Software\Microsoft\Windows\CurrentVersion\Uninstall\KillerScan",
+                throwOnMissingSubKey: false); } catch { }
 
             SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
 
@@ -463,7 +500,7 @@ namespace KillerScan
             File.WriteAllText(bat,
                 "@echo off\r\n" +
                 "ping -n 3 127.0.0.1 >nul\r\n" +
-                $"rmdir /s /q \"{InstallDir}\"\r\n" +
+                $"rmdir /s /q \"{targetDir}\"\r\n" +
                 "del \"%~f0\"\r\n");
             Process.Start(new ProcessStartInfo("cmd.exe", $"/c \"{bat}\"")
             {

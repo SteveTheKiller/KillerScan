@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using KillerScan.Controls;
 using KillerScan.Services;
 
@@ -31,7 +32,7 @@ namespace KillerScan.Shell
                 ThemeManager.Apply(theme);
                 ApplyThemeBorder(this);   // retint the DWM frame border to the new palette
                 ApplyFlatChrome();
-                UpdateAccentSwatches();
+                UpdateAccentStrip(animate: true);
             }
         }
 
@@ -93,7 +94,7 @@ namespace KillerScan.Shell
             {
                 ThemeManager.ApplyAccent(ThemeManager.Current, accent);
                 UpdateThemeSwatchSelection();   // ring colors follow the accent
-                UpdateAccentSwatches();
+                RingAccentStrip();
             }
         }
 
@@ -120,11 +121,11 @@ namespace KillerScan.Shell
             // Move the existing named XAML content once so all theme handlers remain intact.
             if (_themeContextMenu == null &&
                 FindName("ThemePopup") is System.Windows.Controls.Primitives.Popup oldPopup &&
-                FindName("ThemeMenuContent") is StackPanel content)
+                FindName("ThemeMenuContent") is Grid content)
             {
                 if (content.Parent is Panel parent) parent.Children.Remove(content);
                 oldPopup.IsOpen = false;
-                content.Margin = new Thickness(12, 10, 14, 10);
+                content.Margin = new Thickness(12, 10, 3, 10);
 
                 var itemStyle = new Style(typeof(MenuItem));
                 var itemTemplate = new ControlTemplate(typeof(MenuItem));
@@ -145,119 +146,112 @@ namespace KillerScan.Shell
 
             // Sync on OPEN: the theme can have changed since the menu was last visited.
             UpdateThemeSwatchSelection();
-            UpdateAccentSwatches();
+            UpdateAccentStrip(animate: false);
             Anim.FadeIn(_themeContextMenu);
         }
 
-        /// <summary>Shows the accent dots for accent-capable themes and highlights the active accent.</summary>
-        private void UpdateAccentSwatches()
-        {
-            if (FindName("AccentSwatches") is not Panel panel) return;
-            var t = ThemeManager.Current;
-            // Asked of ThemeManager rather than listed again here: the two lists drifting apart
-            // would show dots for a theme that has no Accents/ folder, or hide them for one that has.
-            bool hasAccents = ThemeManager.SupportsAccents(t);
-            panel.Visibility = hasAccents ? Visibility.Visible : Visibility.Collapsed;
-            if (hasAccents)
-            {
-                RecolorAccentDots(panel, t);
-                HighlightSwatches(panel, ThemeManager.AccentChoiceFor(t).ToString());
-                PositionAccentRow(panel, t.ToString());
-            }
-        }
+        private static readonly (Accent Accent, string Hex)[] DarkStripColors =
+            [(Accent.Red, "#DD504B"), (Accent.Orange, "#E8962C"), (Accent.Green, "#1EA54C"),
+             (Accent.Teal, "#1FB8A8"), (Accent.Blue, "#4580D9"), (Accent.Purple, "#B982E3")];
+        private static readonly (Accent Accent, string Hex)[] LightStripColors =
+            [(Accent.Red, "#931A1A"), (Accent.Orange, "#C7710F"), (Accent.Green, "#1B5E20"),
+             (Accent.Teal, "#0D827E"), (Accent.Blue, "#18608E"), (Accent.Purple, "#5A1690")];
+        private static readonly (Accent Accent, string Hex)[] BlackStripColors =
+            [(Accent.Red, "#FF2929"), (Accent.Orange, "#FF910A"), (Accent.Green, "#00FF66"),
+             (Accent.Teal, "#0AFFE7"), (Accent.Blue, "#298DFF"), (Accent.Purple, "#B829FF")];
+        private static readonly (Accent Accent, string Hex)[] SE98StripColors =
+            [(Accent.Red, "#800040"), (Accent.Orange, "#A05000"), (Accent.Green, "#006000"),
+             (Accent.Teal, "#008080"), (Accent.Blue, "#000080"), (Accent.Purple, "#5A376E")];
 
-        /// <summary>The six Windows 98 accents, keyed by the same Accent names the other families
-        /// use. These are each overlay's own PrimaryBrush, so a dot always shows the color it
-        /// actually applies - a bright modern dot next to a muted Win98 accent would be a lie
-        /// about what you are picking.</summary>
-        private static readonly Dictionary<string, string> Se98DotColors = new()
+        private static (Accent Accent, string Hex)[] StripColorsFor(Theme family) => family switch
         {
-            ["Red"]    = "#700038",   // maroon; nothing in the period palette was a bright red
-            ["Orange"] = "#804000",
-            ["Green"]  = "#004f00",
-            ["Teal"]   = "#006060",
-            ["Blue"]   = "#000080",   // the Win98 navy, and 98SE's default
-            ["Purple"] = "#4b286d",
+            Theme.Light => LightStripColors,
+            Theme.Black => BlackStripColors,
+            Theme.SE98 => SE98StripColors,
+            _ => DarkStripColors,
         };
 
-        /// <summary>Swaps the accent dots between the modern set painted in the XAML and the Win98
-        /// set above. Only 98SE differs, so every other theme restores the markup's own value from
-        /// the dot's Tag via the modern table.</summary>
-        private static readonly Dictionary<string, string> ModernDotColors = new()
+        private Theme _stripFamily = Theme.Dark;
+        private bool _stripOpen;
+        private const double AccentStripWidth = 39;
+        private const double AccentStripSlideMs = 180;
+        private Button[] StripDots =>
+            [AccentStripDot0, AccentStripDot1, AccentStripDot2, AccentStripDot3, AccentStripDot4, AccentStripDot5];
+
+        private void PopulateAccentStrip(Theme family)
         {
-            ["Red"]    = "#DD504B",
-            ["Orange"] = "#E8962C",
-            ["Green"]  = "#1ea54c",
-            ["Teal"]   = "#1FB8A8",
-            ["Blue"]   = "#50AEE8",
-            ["Purple"] = "#B982E3",
-        };
-
-        private static void RecolorAccentDots(Panel panel, Theme t)
-        {
-            var table = t == Theme.SE98 ? Se98DotColors : ModernDotColors;
-
-            // 98SE's native/default blue is the first choice. The modern families retain the
-            // established ROYGBIV presentation order.
-            string[] order = t == Theme.SE98
-                ? ["Blue", "Red", "Orange", "Green", "Teal", "Purple"]
-                : ["Red", "Orange", "Green", "Teal", "Blue", "Purple"];
-            var buttons = panel.Children.OfType<Button>()
-                .Where(b => b.Tag is string)
-                .ToDictionary(b => (string)b.Tag);
-            panel.Children.Clear();
-            foreach (string name in order)
-                if (buttons.TryGetValue(name, out var button)) panel.Children.Add(button);
-
-            foreach (var child in panel.Children)
+            var colors = StripColorsFor(family);
+            var dots = StripDots;
+            for (int i = 0; i < dots.Length; i++)
             {
-                if (child is not Button b || b.Tag is not string name) continue;
-                if (!table.TryGetValue(name, out var hex)) continue;
-                b.Background = (Brush)new BrushConverter().ConvertFromString(hex)!;
+                dots[i].Background = (Brush)new BrushConverter().ConvertFromString(colors[i].Hex)!;
+                dots[i].Tag = colors[i].Accent.ToString();
+                dots[i].ToolTip = colors[i].Accent.ToString();
+            }
+            _stripFamily = family;
+            RingAccentStrip();
+        }
+
+        private void RingAccentStrip()
+        {
+            var activeRing = TryFindResource("TextBrush") as Brush ?? Brushes.White;
+            var chosen = ThemeManager.AccentChoiceFor(_stripFamily).ToString();
+            foreach (var dot in StripDots)
+            {
+                bool selected = dot.Tag as string == chosen;
+                dot.BorderBrush = selected ? activeRing : Brushes.Transparent;
+                dot.BorderThickness = new Thickness(selected ? 2 : 1);
             }
         }
 
-        /// <summary>
-        /// Moves the accent dots so they sit directly under the theme row they belong to. An accent
-        /// is a property of ONE theme - Dark, Light and Black each remember their own - so a single
-        /// accent block at the foot of a twelve-row list is next to whichever theme happens to be
-        /// last, which is never the one it applies to.
-        ///
-        /// Reparenting rather than three hardcoded rows (KillerShell's approach): one set of dots
-        /// cannot drift out of step with its copies, and adding an accent-capable theme needs no
-        /// new markup. The panel keeps its x:Name registration through the move, because the name
-        /// scope belongs to the window, not to the panel.
-        /// </summary>
-        private void PositionAccentRow(Panel dots, string currentTag)
+        private void UpdateAccentStrip(bool animate)
         {
-            if (FindName("ThemeRadios") is not Panel rows) return;
-
-            rows.Children.Remove(dots);
-
-            int idx = -1;
-            for (int i = 0; i < rows.Children.Count; i++)
-                if (rows.Children[i] is RadioButton rb && rb.Tag as string == currentTag) { idx = i; break; }
-
-            // Unknown theme (should not happen): put them back at the end rather than dropping
-            // them out of the tree entirely.
-            rows.Children.Insert(idx < 0 ? rows.Children.Count : idx + 1, dots);
-        }
-
-        private void HighlightSwatches(Panel? panel, string current)
-        {
-            if (panel == null) return;
-            var activeRing = TryFindResource("PrimaryBrush") as Brush ?? Brushes.White;
-            var idleRing   = new SolidColorBrush(Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF));
-            foreach (var child in panel.Children)
+            var current = ThemeManager.Current;
+            bool show = ThemeManager.SupportsAccents(current);
+            if (show)
             {
-                if (child is not Button b || b.Tag is not string name) continue;
-                bool active = name == current;
-                b.BorderBrush     = active ? activeRing : idleRing;
-                b.BorderThickness = new Thickness(active ? 2 : 1);
+                if (animate && _stripOpen && _stripFamily != current)
+                {
+                    var target = current;
+                    var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(90));
+                    fadeOut.Completed += (_, _) =>
+                    {
+                        PopulateAccentStrip(target);
+                        AccentStrip.BeginAnimation(OpacityProperty,
+                            new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(90)));
+                    };
+                    AccentStrip.BeginAnimation(OpacityProperty, fadeOut);
+                }
+                else PopulateAccentStrip(current);
             }
+            SlideAccentStrip(show, animate);
         }
 
-        // ---- Language menu (scaffold; English only until the i18n pass) ----
+        private void SlideAccentStrip(bool show, bool animate)
+        {
+            if (show == _stripOpen && animate) return;
+            _stripOpen = show;
+            AccentStripHost.BeginAnimation(WidthProperty, null);
+            if (!animate)
+            {
+                AccentStripHost.Width = show ? AccentStripWidth : 0;
+                return;
+            }
+            double from = double.IsNaN(AccentStripHost.Width) ? AccentStripHost.ActualWidth : AccentStripHost.Width;
+            var animation = new DoubleAnimation(from, show ? AccentStripWidth : 0,
+                TimeSpan.FromMilliseconds(AccentStripSlideMs))
+            {
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+            };
+            animation.Completed += (_, _) =>
+            {
+                AccentStripHost.BeginAnimation(WidthProperty, null);
+                AccentStripHost.Width = _stripOpen ? AccentStripWidth : 0;
+            };
+            AccentStripHost.BeginAnimation(WidthProperty, animation);
+        }
+
+        // ---- Language menu ----
 
         private void LangButton_Click(object sender, RoutedEventArgs e)
         {
@@ -281,6 +275,8 @@ namespace KillerScan.Shell
             (Services.Locale.Es,   "Español",    "es"),
             (Services.Locale.Fr,   "Français",   "fr-FR"),
             (Services.Locale.Ja,   "日本語",      "ja-JP"),
+            (Services.Locale.PlPL, "Polski",      "pl-PL"),
+            (Services.Locale.HuHU, "Magyar",      "hu-HU"),
             (Services.Locale.TrTR, "Türkçe",     "tr-TR"),
             (Services.Locale.ZhCN, "中文 (简体)", "zh-CN"),
             (Services.Locale.ZhTW, "中文 (繁體)", "zh-TW"),

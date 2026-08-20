@@ -83,14 +83,14 @@
     <sys:String x:Key="Str_St_Probing">Sondage de {0} hôtes actifs...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Résolution de {0} hôtes...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Analyse terminée - {0} appareils trouvés</sys:String>
-    <sys:String x:Key="Str_St_ScanCancelled">Analyse annulée</sys:String>
+    <sys:String x:Key="Str_St_ScanCanceled">Analyse annulée</sys:String>
     <sys:String x:Key="Str_St_Exported">Exporté vers {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Remplacement défini : {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">Remplacement effacé pour {0}</sys:String>
 
     <!-- Portable footer badge -->
     <sys:String x:Key="Str_Portable">PORTABLE</sys:String>
-    <sys:String x:Key="Str_InstallBtn">Installer KillerScan...</sys:String>
+    <sys:String x:Key="Str_InstallBtn">Installer KillerScan</sys:String>
 
     <!-- Added 1.5.4: app size, multi-target scan errors, all-users install, window menu, shortcuts -->
     <sys:String x:Key="Str_TT_AppSize">Faites défiler la molette sur le logo pour redimensionner l'application</sys:String>
@@ -107,7 +107,7 @@
     <sys:String x:Key="Str_Install_HeadUser">Installer KillerScan dans votre profil utilisateur ?</sys:String>
     <sys:String x:Key="Str_Install_HeadAll">Installer KillerScan pour tous les utilisateurs de ce PC ?</sys:String>
     <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan est déjà installé pour tous les utilisateurs de ce PC ; cette copie sera donc mise à jour. Windows demandera l'autorisation.</sys:String>
-    <sys:String x:Key="Str_St_InstallCancelled">Installation annulée</sys:String>
+    <sys:String x:Key="Str_St_InstallCanceled">Installation annulée</sys:String>
     <sys:String x:Key="Str_Sys_Restore">Restaurer</sys:String>
     <sys:String x:Key="Str_Sys_Move">Déplacer</sys:String>
     <sys:String x:Key="Str_Sys_Size">Dimensionner</sys:String>

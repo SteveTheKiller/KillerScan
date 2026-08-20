@@ -11,7 +11,7 @@
 <meta name="description" content="How KillerScan works under the hood: how it scans your network, works out who made each device, and figures out what every device is.">
 <link rel="icon" type="image/x-icon" href="brand/ks-icon.ico">
 <script defer src="https://koya.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
-<link rel="stylesheet" href="ks.css?v=17">
+<link rel="stylesheet" href="ks.css?v=20">
 <style>
 .page-hero { text-align: center; padding: 44px 16px 8px; }
 .page-hero .wm-logo { height: clamp(46px, 8vw, 76px); width: auto; margin: 0 auto 8px; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.55)); }
@@ -77,6 +77,8 @@
 <button class="lang-item" data-lang="es">Espanol</button>
 <button class="lang-item" data-lang="fr">Francais</button>
 <button class="lang-item" data-lang="ja">&#26085;&#26412;&#35486;</button>
+<button class="lang-item" data-lang="pl">Polski</button>
+<button class="lang-item" data-lang="hu">Magyar</button>
 <button class="lang-item" data-lang="tr">Turkce</button>
 <button class="lang-item" data-lang="zh-cn">&#20013;&#25991; (&#31616;&#20307;)</button>
 <button class="lang-item" data-lang="zh">&#20013;&#25991; (&#32321;&#39636;)</button>
@@ -145,9 +147,11 @@
 <div class="tech-sec" id="command-line">
 <h2 data-i18n="tk_cli_title">Command line</h2>
 <p data-i18n="tk_cli_intro">The same scanner that powers the window can run headless from Command Prompt, PowerShell, scripts, scheduled tasks, and RMM tools. Install KillerScan, open a new terminal, and call it by name. Windows commands are case-insensitive, so <code>killerscan</code> and <code>KillerScan</code> are the same command. Running it without any flags opens the normal app.</p>
+<p data-i18n="tk_ssh_security"><b>SSH usernames and authentication.</b> When you launch SSH from a device's right-click menu, KillerScan asks for the username the first time and remembers only that username against the device's MAC address. It never asks for, sees, or stores passwords or private keys. The normal Windows SSH client handles the connection and all authentication.</p>
 <div class="cli-demo" aria-label="KillerScan command examples"><span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan 192.168.8.0/24</span>
 <span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan 192.168.8.10-50 /quick</span>
-<span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan /export report.html /quiet</span>
+<span class="prompt">C:\&gt;</span> killerscan <span class="arg">/probe 192.168.8.20 /json /timeout 30</span>
+<span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan /ports 22,443 /sort vendor /export report.html</span>
 <span class="prompt">C:\&gt;</span> killerscan <span class="arg">/help</span></div>
 
 <h3 id="commands-options" data-i18n="tk_cli_commands">Commands and options</h3>
@@ -155,8 +159,17 @@
 <tr><td><code>killerscan</code></td><td data-i18n="tk_cli_gui">Open the normal KillerScan window.</td></tr>
 <tr><td><code>killerscan /scan</code></td><td data-i18n="tk_cli_local">Detect and scan the active local IPv4 subnet.</td></tr>
 <tr><td><code>killerscan /scan &lt;targets&gt;</code></td><td data-i18n="tk_cli_targets">Scan one or more explicit IPv4 targets.</td></tr>
+<tr><td><code>killerscan /probe &lt;IPv4&gt;</code></td><td>Deep-probe one host, scanning ports 1-1024 plus KillerScan's extended service list and collecting every available fingerprint.</td></tr>
+<tr><td><code>killerscan /network</code></td><td>Print the detected interface, local address, subnet, gateway and DNS server without scanning.</td></tr>
+<tr><td><code>killerscan /vendor &lt;MAC&gt;</code></td><td>Resolve a MAC address against the embedded offline IEEE OUI database.</td></tr>
 <tr><td><code>/quick</code></td><td data-i18n="tk_cli_quick">Run discovery, hostname, MAC, vendor, and lightweight device classification without the full port and fingerprint probe.</td></tr>
-<tr><td><code>/export &lt;path&gt;</code></td><td data-i18n="tk_cli_export">Write the same report offered by the app: .html or .htm creates an interactive HTML report; every other extension creates CSV.</td></tr>
+<tr><td><code>/progress</code>, <code>/timeout N</code></td><td>Report status every five percent or cancel after a deadline.</td></tr>
+<tr><td><code>/filter text</code>, <code>/type text</code>, <code>/vendor-filter text</code>, <code>/ports p,p</code></td><td>Keep only matching devices. The general filter searches displayed values and every collected fingerprint.</td></tr>
+<tr><td><code>/sort field</code>, <code>/descending</code>, <code>/limit N</code></td><td>Order by IP, hostname, MAC, vendor, type or open-port count, reverse it if wanted, then cap the result count.</td></tr>
+<tr><td><code>/format kind</code></td><td>Select table, CSV, JSON or interactive HTML. The shorthand flags <code>/table</code>, <code>/csv</code>, <code>/json</code> and <code>/html</code> do the same.</td></tr>
+<tr><td><code>/export &lt;path&gt;</code></td><td data-i18n="tk_cli_export">Write the output to a file. The .csv, .json, .html or .htm extension selects its format unless /format overrides it.</td></tr>
+<tr><td><code>/no-header</code>, <code>/theme name</code></td><td>Drop table/CSV headings, or select any of the thirteen app themes for HTML output.</td></tr>
+<tr><td><code>/fail-empty</code></td><td>Return exit code 3 when filtering leaves no devices, making empty automation results explicit.</td></tr>
 <tr><td><code>/quiet</code></td><td data-i18n="tk_cli_quiet">Suppress normal progress and results. Intended for unattended use with /export and an exit-code check.</td></tr>
 <tr><td><code>/help</code>, <code>-h</code>, <code>/?</code></td><td data-i18n="tk_cli_help">Print the complete built-in command reference.</td></tr>
 <tr><td><code>/version</code>, <code>-v</code></td><td data-i18n="tk_cli_version">Print the installed version.</td></tr>
@@ -181,6 +194,7 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
 <tr><td><code>0</code></td><td data-i18n="tk_cli_exit0">The scan and any requested export completed successfully.</td></tr>
 <tr><td><code>1</code></td><td data-i18n="tk_cli_exit1">The scan or export failed, or the scan was cancelled.</td></tr>
 <tr><td><code>2</code></td><td data-i18n="tk_cli_exit2">A required value or scan target was missing or invalid.</td></tr>
+<tr><td><code>3</code></td><td>No device matched, or an offline vendor lookup found no registration, when the command requested that distinction.</td></tr>
 </table>
 </div>
 
@@ -479,7 +493,7 @@ some ports open, none telling  -> Other</div>
 <div class="egg-toast" id="eggToast"></div>
 <div class="dlightbox" id="diagram-lightbox" hidden><div class="dlb-inner"></div></div>
 <script src="ks-i18n.js?v=2"></script>
-<script src="ks.js?v=4"></script>
+<script src="ks.js?v=5"></script>
 <script>
 (function(){
   var links=[].slice.call(document.querySelectorAll('.outline a'));

@@ -20,7 +20,7 @@ namespace KillerScan.Services
         public string Detail { get; set; } = "";
         public bool Ok => Error == TargetError.None;
 
-        /// <summary>Short caption for the tab and status bar: "192.168.9.0/24 +2".</summary>
+        /// <summary>Short caption for the status bar: "192.168.9.0/24 +2".</summary>
         public string Summary =>
             Targets.Count == 0 ? "" :
             Targets.Count == 1 ? Targets[0] : $"{Targets[0]} +{Targets.Count - 1}";

@@ -85,7 +85,7 @@
     <sys:String x:Key="Str_St_Probing">Sondování {0} dostupných hostitelů...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Překlad {0} hostitelů...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Skenování dokončeno - nalezeno {0} zařízení</sys:String>
-    <sys:String x:Key="Str_St_ScanCancelled">Skenování zrušeno</sys:String>
+    <sys:String x:Key="Str_St_ScanCanceled">Skenování zrušeno</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Hloubkové skenování {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Opakované skenování dokončeno - obnoveno {0} hostitelů</sys:String>
     <sys:String x:Key="Str_St_Exported">Exportováno do {0}</sys:String>
@@ -97,13 +97,13 @@
     <sys:String x:Key="Str_St_NoTarget">Zadejte podsíť, adresu nebo rozsah ke skenování</sys:String>
 
     <sys:String x:Key="Str_Portable">PŘENOSNÁ</sys:String>
-    <sys:String x:Key="Str_InstallBtn">Nainstalovat KillerScan...</sys:String>
+    <sys:String x:Key="Str_InstallBtn">Nainstalovat KillerScan</sys:String>
     <sys:String x:Key="Str_Install_AllUsers">Nainstalovat pro všechny uživatele (vyžaduje správce)</sys:String>
     <sys:String x:Key="Str_Install_AllUsersNote">Nainstaluje do složky Program Files pro každý účet v tomto počítači. Windows si vyžádají oprávnění.</sys:String>
     <sys:String x:Key="Str_Install_HeadUser">Nainstalovat KillerScan do vašeho uživatelského profilu?</sys:String>
     <sys:String x:Key="Str_Install_HeadAll">Nainstalovat KillerScan pro všechny uživatele tohoto počítače?</sys:String>
     <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan je již nainstalován pro všechny uživatele tohoto počítače, takže se aktualizuje tato kopie. Windows si vyžádají oprávnění.</sys:String>
-    <sys:String x:Key="Str_St_InstallCancelled">Instalace zrušena</sys:String>
+    <sys:String x:Key="Str_St_InstallCanceled">Instalace zrušena</sys:String>
 
     <sys:String x:Key="Str_Sys_Restore">Obnovit</sys:String>
     <sys:String x:Key="Str_Sys_Move">Přesunout</sys:String>

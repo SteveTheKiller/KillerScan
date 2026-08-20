@@ -19,8 +19,7 @@ namespace KillerScan.Services
 
     // Accent-hue variants for the accent-capable families (Dark, Light, Black).
     // Green is the base theme (no overlay); the others apply a small overlay
-    // dictionary that recolors only the accent-family keys. Shared skin tokens
-    // come from the linked KillerUI contract.
+    // dictionary that recolors only the accent-family keys.
     internal enum Accent { Green, Red, Blue, Purple, Orange, Teal }
 
     /// <summary>
@@ -63,13 +62,11 @@ namespace KillerScan.Services
 
         /// <summary>
         /// File stem for a theme, and the name of its accent folder. Only SE98 differs: the enum
-        /// member cannot start with a digit, but the palette, its KillerUI half and its accent
-        /// folder are all named "98SE" - the KillerUI half especially, because that file is
-        /// SHARED with every other app in the family and is not KillerScan's to rename.
+        /// member cannot start with a digit, but the palette and accent folder are named "98SE".
         ///
         /// Use this and never theme.ToString() for anything that touches a path or the saved
         /// setting. Getting that wrong is what made picking 98SE throw
-        /// "Cannot locate resource themes/killerui/se98.xaml".
+        /// "Cannot locate resource themes/se98.xaml".
         /// </summary>
         private static string ThemeFileName(Theme theme) =>
             theme == Theme.SE98 ? "98SE" : theme.ToString();
@@ -140,8 +137,8 @@ namespace KillerScan.Services
         {
             string name = ThemeFileName(theme);
 
-            // Layer order, and it matters: Defaults, then the app palette, then the shared KillerUI
-            // layer, then the accent overlay. Each wins over the one before it.
+            // Layer order, and it matters: Defaults, then the complete app palette, then the
+            // optional accent overlay. Each wins over the one before it.
             //
             // Defaults carries the flat-theme value of every token that only the 98SE palette
             // defines - caption metrics, footer cells, bevels, the window frame. Without it, a
@@ -157,7 +154,6 @@ namespace KillerScan.Services
             };
             foreach (object key in palette.Keys) newDict[key] = palette[key];
 
-            KillerThemeContract.Apply(newDict, name);
 
             // The outer window frame now uses KillerNotes' exact shared five-pixel geometry.
             // Only the recessed client wells remain app-specific continuous ramps.
@@ -174,8 +170,6 @@ namespace KillerScan.Services
             // white list/about wells used by KillerShell's Event Viewer and dialogs.
             if (!newDict.Contains("ListPaneBrush"))
                 newDict["ListPaneBrush"] = newDict["PaneBrush"];
-            if (!newDict.Contains("AboutPanelBrush"))
-                newDict["AboutPanelBrush"] = newDict["PaneBrush"];
             if (!newDict.Contains("ScanContentPaneBrush"))
                 newDict["ScanContentPaneBrush"] = newDict["ListPaneBrush"];
             if (!newDict.Contains("TableRowBrush"))
@@ -246,6 +240,9 @@ namespace KillerScan.Services
                 }
                 catch { /* overlay file not present yet - base theme stands */ }
             }
+            // The two window-like overlays follow the fully merged outer-window surface, including
+            // gradients in the material palettes; they are not context menus.
+            merged[0]["OverlayWindowBrush"] = merged[0]["BackgroundBrush"];
         }
     }
 }

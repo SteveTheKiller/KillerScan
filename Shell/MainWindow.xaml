@@ -287,16 +287,18 @@
                                         ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
                         </Border.Background>
                     </Border>
-                    <StackPanel x:Name="ThemeMenuContent" MinWidth="150">
-                        <TextBlock Text="{DynamicResource Str_Lbl_Theme}" Foreground="{DynamicResource DimTextBrush}" FontSize="10"
-                                   FontWeight="SemiBold" Margin="2,0,0,8"/>
+                    <Grid x:Name="ThemeMenuContent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
                         <!-- Named rows, not dots: twelve swatches do not fit, and a dot for a
                              grunge palette would be an invented color. Tag carries the Theme enum
                              name, so one handler serves every row and adding a theme is one line.
                              Order is presentation, deliberately NOT the enum's order, and matches
                              KillerShell and KillerNotes so the family lists themes the same way.
                              98SE slots in after Black when it lands. -->
-                        <StackPanel x:Name="ThemeRadios">
+                        <StackPanel x:Name="ThemeRadios" Grid.Column="0" Width="120">
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Dark"      Content="{DynamicResource Str_Theme_Dark}"      Checked="ThemeRadio_Checked"/>
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Light"     Content="{DynamicResource Str_Theme_Light}"     Checked="ThemeRadio_Checked"/>
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Black"     Content="{DynamicResource Str_Theme_Black}"     Checked="ThemeRadio_Checked"/>
@@ -311,30 +313,25 @@
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Sepulchre" Content="{DynamicResource Str_Theme_Sepulchre}" Checked="ThemeRadio_Checked"/>
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Delirium"  Content="{DynamicResource Str_Theme_Delirium}"  Checked="ThemeRadio_Checked"/>
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Mourning"  Content="{DynamicResource Str_Theme_Mourning}"  Checked="ThemeRadio_Checked"/>
-
-                            <!-- The accent row lives INSIDE the theme list and is moved to sit
-                                 directly under whichever accent-capable theme is selected
-                                 (Theme.cs, PositionAccentRow). An accent belongs to one theme -
-                                 Dark, Light and Black each remember their own - so parking the
-                                 dots at the bottom of the list left them nowhere near the thing
-                                 they change. Same shape as KillerShell, which hardcodes a
-                                 separate accent row under each accent-capable theme; one row
-                                 that relocates avoids keeping three copies of six dots in step.
-                                 Declared last here purely as a starting position.
-
-                                 No "ACCENT" caption: sitting indented under the selected theme,
-                                 six colored dots say what they are without one. -->
-                            <!-- Accent dots in ROYGBIV order; revealed only for accent-capable themes -->
-                            <StackPanel x:Name="AccentSwatches" Orientation="Horizontal" Margin="10,-5,0,5" Visibility="Collapsed">
-                                <Button Style="{StaticResource ThemeSwatch}" Tag="Red"    Background="#DD504B" Click="AccentSwatch_Click" ToolTip="Red"/>
-                                <Button Style="{StaticResource ThemeSwatch}" Tag="Orange" Background="#E8962C" Click="AccentSwatch_Click" ToolTip="Orange"/>
-                                <Button Style="{StaticResource ThemeSwatch}" Tag="Green"  Background="#1ea54c" Click="AccentSwatch_Click" ToolTip="Green"/>
-                                <Button Style="{StaticResource ThemeSwatch}" Tag="Teal"   Background="#1FB8A8" Click="AccentSwatch_Click" ToolTip="Teal"/>
-                                <Button Style="{StaticResource ThemeSwatch}" Tag="Blue"   Background="#50AEE8" Click="AccentSwatch_Click" ToolTip="Blue"/>
-                                <Button Style="{StaticResource ThemeSwatch}" Tag="Purple" Background="#B982E3" Click="AccentSwatch_Click" ToolTip="Purple"/>
-                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
+                        <Grid x:Name="AccentStripHost" Grid.Column="1" Width="0" ClipToBounds="True">
+                            <Border Width="1" HorizontalAlignment="Left" Margin="0,6"
+                                    Background="{DynamicResource MenuBorderBrush}"/>
+                            <Grid x:Name="AccentStrip" Margin="7,6,2,6">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/><RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/><RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/><RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Button x:Name="AccentStripDot0" Grid.Row="0" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
+                                <Button x:Name="AccentStripDot1" Grid.Row="1" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
+                                <Button x:Name="AccentStripDot2" Grid.Row="2" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
+                                <Button x:Name="AccentStripDot3" Grid.Row="3" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
+                                <Button x:Name="AccentStripDot4" Grid.Row="4" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
+                                <Button x:Name="AccentStripDot5" Grid.Row="5" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0" Click="AccentSwatch_Click"/>
+                            </Grid>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Border>
         </Popup>
@@ -985,18 +982,19 @@
                                Foreground="{DynamicResource MutedTextBrush}" FontFamily="Consolas"
                                FontSize="11.5" VerticalAlignment="Center"/>
                 </Grid>
-                <!-- Centered against the complete footer/window, not merely the shortened status
-                     cell to the left of the version block. -->
+                <!-- Compact portable install action, centered against the complete footer/window,
+                     not merely the shortened status cell to the left of the version block. -->
                 <StackPanel x:Name="PortableBadge" Grid.ColumnSpan="2" Panel.ZIndex="5"
                             Orientation="Horizontal" HorizontalAlignment="Center"
                             VerticalAlignment="Center" Visibility="Collapsed">
-                    <TextBlock Text="{DynamicResource Str_Portable}" Foreground="{DynamicResource TextFooter}"
-                               FontFamily="Consolas" FontSize="9"
-                               VerticalAlignment="Center" Margin="0,0,8,0"/>
                     <Button x:Name="InstallBtn" Content="{DynamicResource Str_InstallBtn}"
                             Click="Install_Click" Style="{StaticResource OutlineButton}"
-                            FontFamily="Segoe UI" FontSize="10" Padding="8,1"
-                            VerticalAlignment="Center"/>
+                            FontFamily="{DynamicResource ChromeFontFamily}" FontSize="10" Padding="8,1"
+                            VerticalAlignment="Center">
+                        <Button.Resources>
+                            <CornerRadius x:Key="ControlCornerRadius">0</CornerRadius>
+                        </Button.Resources>
+                    </Button>
                 </StackPanel>
                 <!-- Version/progress cluster in its own sunken cell (crossed, like the status
                      cell). -->
@@ -1070,7 +1068,7 @@
               Margin="{DynamicResource OverlayFrameBleed}"
               Background="#88000000" MouseLeftButtonDown="ShortcutsOverlay_Click">
             <Grid Width="420" VerticalAlignment="Center" MouseLeftButtonDown="ShortcutsCard_Click">
-                <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="{DynamicResource PanelCornerRadius}" IsHitTestVisible="False">
+                <Border Background="{DynamicResource OverlayWindowBrush}" CornerRadius="{DynamicResource PanelCornerRadius}" IsHitTestVisible="False">
                     <Border.Effect>
                         <DropShadowEffect Color="Black" BlurRadius="26" ShadowDepth="5" Direction="270" Opacity="0.6"/>
                     </Border.Effect>
@@ -1079,7 +1077,7 @@
                      FlyoutCornerRadius with 0,0,4,4 - a dropdown shape that hangs off a button, so
                      this centered card came out with square top corners. PanelCornerRadius is 6 on
                      every flat theme and 0 on 98SE, which is the shape a card wants. -->
-                <Border Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
+                <Border Background="{DynamicResource OverlayWindowBrush}" BorderBrush="{DynamicResource AppBorderBrush}"
                         BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
                     <Grid>
                         <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}"
@@ -1133,7 +1131,7 @@
                 <!-- Shadow on a separate element so the card text stays crisp. Named so
                      ApplyFlatChrome (Theme.cs) can collapse it on 98SE - no shadows there,
                      and the card's elevation signal becomes the raised bevel below. -->
-                <Border x:Name="AboutShadow" Background="{DynamicResource BackgroundBrush}" CornerRadius="{DynamicResource PanelCornerRadius}" IsHitTestVisible="False">
+                <Border x:Name="AboutShadow" Background="{DynamicResource OverlayWindowBrush}" CornerRadius="{DynamicResource PanelCornerRadius}" IsHitTestVisible="False">
                     <Border.Effect>
                         <DropShadowEffect Color="Black" BlurRadius="26" ShadowDepth="5" Direction="270" Opacity="0.6"/>
                     </Border.Effect>
@@ -1142,7 +1140,7 @@
                      FlyoutCornerRadius with 0,0,4,4 - a dropdown shape that hangs off a button, so
                      this centered card came out with square top corners. PanelCornerRadius is 6 on
                      every flat theme and 0 on 98SE, which is the shape a card wants. -->
-                <Border Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
+                <Border Background="{DynamicResource OverlayWindowBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
                         BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
                     <Grid>
                         <!-- Raised card bevel, KillerShell's About verbatim: FrameOuter pair, so on
@@ -1202,12 +1200,14 @@
                             <!-- Info panel - matte, lifted above the grainy card. Named: the header
                                  binds its width to this panel (see above). -->
                             <Grid x:Name="AboutInfoGrid">
-                                <Border x:Name="AboutInfoShadow" Background="{DynamicResource AboutPanelBrush}" CornerRadius="{DynamicResource ControlCornerRadius}" IsHitTestVisible="False">
+                                <Border x:Name="AboutInfoShadow" Background="{DynamicResource MenuBackgroundBrush}" CornerRadius="{DynamicResource ControlCornerRadius}" IsHitTestVisible="False">
                                     <Border.Effect>
                                         <DropShadowEffect Color="Black" BlurRadius="14" ShadowDepth="2" Direction="270" Opacity="0.5"/>
                                     </Border.Effect>
                                 </Border>
-                                <Border Background="{DynamicResource AboutPanelBrush}" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14,12,14,4">
+                                <Border Background="{DynamicResource MenuBackgroundBrush}"
+                                        BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1"
+                                        CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14,12,14,4">
                                     <StackPanel>
                                         <StackPanel Margin="0,0,0,10">
                                             <TextBlock Text="{DynamicResource Str_About_Version}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>

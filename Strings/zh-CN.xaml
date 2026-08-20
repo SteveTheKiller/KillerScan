@@ -83,14 +83,14 @@
     <sys:String x:Key="Str_St_Probing">正在探测 {0} 个在线主机...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">正在解析 {0} 个主机...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">扫描完成 - 找到 {0} 台设备</sys:String>
-    <sys:String x:Key="Str_St_ScanCancelled">扫描已取消</sys:String>
+    <sys:String x:Key="Str_St_ScanCanceled">扫描已取消</sys:String>
     <sys:String x:Key="Str_St_Exported">已导出到 {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">已设置覆盖：{0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">已清除 {0} 的覆盖</sys:String>
 
     <!-- Portable footer badge -->
     <sys:String x:Key="Str_Portable">便携版</sys:String>
-    <sys:String x:Key="Str_InstallBtn">安装 KillerScan...</sys:String>
+    <sys:String x:Key="Str_InstallBtn">安装 KillerScan</sys:String>
 
     <!-- Added 1.5.4: app size, multi-target scan errors, all-users install, window menu, shortcuts -->
     <sys:String x:Key="Str_TT_AppSize">在标志上滚动滚轮可调整应用大小</sys:String>
@@ -107,7 +107,7 @@
     <sys:String x:Key="Str_Install_HeadUser">将 KillerScan 安装到你的用户配置文件？</sys:String>
     <sys:String x:Key="Str_Install_HeadAll">为本电脑上的所有用户安装 KillerScan？</sys:String>
     <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan 已为本电脑上的所有用户安装，因此将更新该副本。Windows 将请求授权。</sys:String>
-    <sys:String x:Key="Str_St_InstallCancelled">安装已取消</sys:String>
+    <sys:String x:Key="Str_St_InstallCanceled">安装已取消</sys:String>
     <sys:String x:Key="Str_Sys_Restore">还原</sys:String>
     <sys:String x:Key="Str_Sys_Move">移动</sys:String>
     <sys:String x:Key="Str_Sys_Size">大小</sys:String>

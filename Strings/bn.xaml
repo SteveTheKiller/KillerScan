@@ -83,14 +83,14 @@
     <sys:String x:Key="Str_St_Probing">{0}টি সক্রিয় হোস্ট যাচাই করা হচ্ছে...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">{0}টি হোস্ট সমাধান করা হচ্ছে...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">স্ক্যান সম্পন্ন - {0}টি ডিভাইস পাওয়া গেছে</sys:String>
-    <sys:String x:Key="Str_St_ScanCancelled">স্ক্যান বাতিল করা হয়েছে</sys:String>
+    <sys:String x:Key="Str_St_ScanCanceled">স্ক্যান বাতিল করা হয়েছে</sys:String>
     <sys:String x:Key="Str_St_Exported">{0}-এ এক্সপোর্ট করা হয়েছে</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">ওভাররাইড সেট: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">{0}-এর ওভাররাইড মুছে ফেলা হয়েছে</sys:String>
 
     <!-- Portable footer badge -->
     <sys:String x:Key="Str_Portable">পোর্টেবল</sys:String>
-    <sys:String x:Key="Str_InstallBtn">KillerScan ইনস্টল করুন...</sys:String>
+    <sys:String x:Key="Str_InstallBtn">KillerScan ইনস্টল করুন</sys:String>
 
     <!-- Added 1.5.4: app size, multi-target scan errors, all-users install, window menu, shortcuts -->
     <sys:String x:Key="Str_TT_AppSize">অ্যাপের আকার বদলাতে লোগোর উপর স্ক্রোল করুন</sys:String>
@@ -107,7 +107,7 @@
     <sys:String x:Key="Str_Install_HeadUser">KillerScan আপনার ব্যবহারকারী প্রোফাইলে ইনস্টল করবেন?</sys:String>
     <sys:String x:Key="Str_Install_HeadAll">এই পিসির সব ব্যবহারকারীর জন্য KillerScan ইনস্টল করবেন?</sys:String>
     <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan ইতিমধ্যেই এই পিসির সব ব্যবহারকারীর জন্য ইনস্টল করা আছে, তাই সেই কপিটিই হালনাগাদ হবে। Windows অনুমতি চাইবে।</sys:String>
-    <sys:String x:Key="Str_St_InstallCancelled">ইনস্টল বাতিল হয়েছে</sys:String>
+    <sys:String x:Key="Str_St_InstallCanceled">ইনস্টল বাতিল হয়েছে</sys:String>
     <sys:String x:Key="Str_Sys_Restore">পুনরুদ্ধার</sys:String>
     <sys:String x:Key="Str_Sys_Move">সরান</sys:String>
     <sys:String x:Key="Str_Sys_Size">আকার</sys:String>

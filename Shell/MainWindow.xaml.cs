@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,7 +19,7 @@ namespace KillerScan.Shell
     //
     //   UI shell:      WindowChrome.cs, Theme.cs, SystemMenu.cs, AppScale.cs,
     //                  Shortcuts.cs, About.cs
-    //   Scanner core:  Scanning.cs, NetworkInfo.cs, Filtering.cs, Tabs.cs,
+    //   Scanner core:  Scanning.cs, NetworkInfo.cs, Filtering.cs, Session.cs,
     //                  Rescan.cs, DeviceActions.cs, Export.cs, DemoMode.cs
     //
     // Everything in Shell/ is window code. The scan engine, the report writers
@@ -31,13 +30,12 @@ namespace KillerScan.Shell
     // ============================================================
     public partial class MainWindow : Window
     {
-        // Each tab is a ScanSession; _active is the one shown in the grid. Proxies for the
-        // active session's collection/state live in Tabs.cs (ActiveDevices, ActiveSubnet, ...).
-        private readonly ObservableCollection<ScanSession> _sessions = [];
-        private ScanSession _active = null!;
+        // One session backs the one scan surface. A scan itself accepts several targets.
+        private readonly ScanSession _active;
         private ICollectionView? _filteredView;
         private readonly StackPanel _portableBadge = null!;
         private readonly ImageBrush _grainBrush = null!;
+        private bool _closeFaded;
 
         public MainWindow()
         {
@@ -58,14 +56,12 @@ namespace KillerScan.Shell
 
             PopulateNetworkInfo();                                   // NetworkInfo.cs (sets SubnetInput.Text)
 
-            // First tab, seeded with the detected subnet.
-            var first = new ScanSession(SubnetInput.Text)
+            _active = new ScanSession(SubnetInput.Text)
             {
                 Status = string.Format(Loc("Str_Status_Ready"), OuiLookup.Count.ToString("N0"))
             };
-            WireSession(first);                                     // Scanning.cs
-            _sessions.Add(first);
-            ActivateSession(first);                                 // Tabs.cs (binds grid to the session)
+            WireSession(_active);                                   // Scanning.cs
+            ActivateSession();                                      // Session.cs (binds grid to the session)
 
             RestoreWindowPlacement();                               // window size/position from previous run
             RestoreColumnLayout();                                  // column order/widths from previous run
@@ -79,7 +75,7 @@ namespace KillerScan.Shell
                 if (App.IsPortable())
                     _portableBadge.Visibility = Visibility.Visible;
                 UpdateThemeSwatchSelection();                       // Theme.cs
-                UpdateAccentSwatches();                             // Theme.cs
+                UpdateAccentStrip(animate: false);                  // Theme.cs
                 ApplyFlatChrome();                                  // Theme.cs (98SE drops the shadow)
                 FadeInContent();                                    // WindowChrome.cs
                 if (DemoMode) GenerateDemoScan();                   // DemoMode.cs (--demo: initial roll)
@@ -97,7 +93,7 @@ namespace KillerScan.Shell
             // once the install actually happened, otherwise the app keeps running as portable.
             if (!App.InstallAndRelaunch(wantDesktop: true, allUsers: dlg.AllUsers))
             {
-                StatusText.Text = Loc("Str_St_InstallCancelled");
+                StatusText.Text = Loc("Str_St_InstallCanceled");
                 return;
             }
             _portableBadge.Visibility = Visibility.Collapsed;
@@ -235,6 +231,16 @@ namespace KillerScan.Shell
             SaveWindowPlacement();
             SaveColumnLayout();
             base.OnClosed(e);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (Anim.FadeOutAndClose(this, ref _closeFaded))
+            {
+                e.Cancel = true;
+                return;
+            }
+            base.OnClosing(e);
         }
     }
 }

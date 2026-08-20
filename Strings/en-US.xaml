@@ -102,7 +102,7 @@
     <sys:String x:Key="Str_St_Probing">Probing {0} alive hosts...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Resolving {0} hosts...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Scan complete - {0} devices found</sys:String>
-    <sys:String x:Key="Str_St_ScanCancelled">Scan canceled</sys:String>
+    <sys:String x:Key="Str_St_ScanCanceled">Scan canceled</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Deep scanning {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Rescan complete - {0} host(s) refreshed</sys:String>
     <sys:String x:Key="Str_St_Exported">Exported to {0}</sys:String>
@@ -115,13 +115,13 @@
 
     <!-- Portable footer badge + install dialog -->
     <sys:String x:Key="Str_Portable">PORTABLE</sys:String>
-    <sys:String x:Key="Str_InstallBtn">Install KillerScan...</sys:String>
+    <sys:String x:Key="Str_InstallBtn">Install KillerScan</sys:String>
     <sys:String x:Key="Str_Install_AllUsers">Install for all users (Admin required)</sys:String>
     <sys:String x:Key="Str_Install_AllUsersNote">Installs to Program Files for every account on this PC. Windows will ask for permission.</sys:String>
     <sys:String x:Key="Str_Install_HeadUser">Install KillerScan to your user profile?</sys:String>
     <sys:String x:Key="Str_Install_HeadAll">Install KillerScan for all users on this PC?</sys:String>
     <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan is already installed for all users on this PC, so this will update that copy. Windows will ask for permission.</sys:String>
-    <sys:String x:Key="Str_St_InstallCancelled">Install canceled</sys:String>
+    <sys:String x:Key="Str_St_InstallCanceled">Install canceled</sys:String>
 
     <!-- Themed window system menu (right-click the title bar / Alt+Space) -->
     <sys:String x:Key="Str_Sys_Restore">Restore</sys:String>

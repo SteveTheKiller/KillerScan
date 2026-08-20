@@ -6,16 +6,15 @@ using KillerScan.Models;
 namespace KillerScan.Shell
 {
     // Scanner core: drives a scan from the UI and reflects engine progress back.
-    // The scan itself runs in Services/NetworkScanner; this is only the glue. Each tab
-    // (ScanSession) owns its own scanner, so background tabs keep scanning; UI writes are
-    // gated to the active tab.
+    // The scan itself runs in Services/NetworkScanner; this is only the glue. ScanSession owns
+    // the scanner and scan state.
     public partial class MainWindow
     {
-        // Prefix the device-count readout with the active tab's scanned subnet.
+        // Prefix the device-count readout with the scanned target summary.
         private string CountLabel(string tail) =>
             string.IsNullOrEmpty(ActiveSubnet) ? tail : $"{ActiveSubnet}  ·  {tail}";
 
-        /// <summary>Subscribe a session's scanner engine to the UI (only writes when that tab is active).</summary>
+        /// <summary>Subscribe the session's scanner engine to the UI.</summary>
         private void WireSession(ScanSession s)
         {
             // Status messages are composed inside the scan engine (it knows the counts); hand it
@@ -42,7 +41,7 @@ namespace KillerScan.Shell
 
             var s = _active;
 
-            // Stop a scan already running on this tab.
+            // Stop a scan already in progress.
             if (s.Cts != null)
             {
                 s.Cts.Cancel(); s.Cts = null;
@@ -81,7 +80,7 @@ namespace KillerScan.Shell
 
             s.SubnetText = SubnetInput.Text;
             s.Devices.Clear();
-            s.ScannedSubnet = targets.Summary;                   // updates the tab caption
+            s.ScannedSubnet = targets.Summary;
             if (s == _active)
             {
                 RefreshDeviceCount();
@@ -95,7 +94,7 @@ namespace KillerScan.Shell
             {
                 await s.Scanner.ScanSubnetAsync(s.SubnetText, s.Cts.Token, fullScan: true);
             }
-            catch (OperationCanceledException) { s.Status = Loc("Str_St_ScanCancelled"); if (s == _active) StatusText.Text = s.Status; }
+            catch (OperationCanceledException) { s.Status = Loc("Str_St_ScanCanceled"); if (s == _active) StatusText.Text = s.Status; }
             catch (Exception ex) { MessageBox.Show($"Scan error: {ex.Message}", "KillerScan", MessageBoxButton.OK, MessageBoxImage.Error); }
             finally
             {

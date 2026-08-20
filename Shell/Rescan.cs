@@ -9,8 +9,8 @@ namespace KillerScan.Shell
 {
     // Scanner core: right-click "Rescan" of one or more selected devices. Runs the deep
     // per-host probe (exhaustive ports + refreshed fingerprints) and swaps each result
-    // back into the grid in place. Independent of the tab's subnet scan; disabled while
-    // that tab is mid-scan so the two don't fight over the scanner's discovery state.
+    // back into the grid in place. Disabled during a subnet scan so the two operations do not
+    // fight over the scanner's discovery state.
     public partial class MainWindow
     {
         private CancellationTokenSource? _rescanCts;
@@ -66,7 +66,7 @@ namespace KillerScan.Shell
                 }
                 StatusText.Text = string.Format(Loc("Str_St_RescanDone"), targets.Count);
             }
-            catch (OperationCanceledException) { StatusText.Text = Loc("Str_St_ScanCancelled"); }
+            catch (OperationCanceledException) { StatusText.Text = Loc("Str_St_ScanCanceled"); }
             finally
             {
                 _rescanCts = null;

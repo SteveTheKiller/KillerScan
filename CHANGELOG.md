@@ -4,6 +4,23 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] - Unreleased
+
+### Added
+- Hungarian localization for the complete app interface and killerscan.net, bringing both to twelve languages.
+- The command line now includes `/probe`, `/network`, and offline `/vendor` commands; table, CSV, JSON, and themed HTML output; text, device-type, vendor, and port filters; sorting, descending order, result limits, custom port checks, progress reporting, timeouts, header control, extension-based export formats, and an optional empty-result exit code for automation.
+
+### Changed
+- Removed the unused tab-session scaffolding. A single scan already accepts several subnets, hosts, and ranges together, so the app now keeps one results session without carrying unreachable tab handlers or claiming a tabbed interface in package copy.
+- killerscan.net now explains in all twelve languages that per-device SSH preferences store only a username; passwords, private keys, the connection, and authentication remain entirely with the Windows SSH client.
+- Internal cancellation resource keys now use the same American spelling as their displayed text.
+- Themes are now complete, app-owned resources with no private template overlay or external build dependency.
+- The About card now takes its outer edge from the app-frame color and its information panel directly from the context-menu surface, with the pane-border color around that panel. The old About-only color override is gone, so every theme uses the same semantic keys as the rest of its interface.
+
+### Fixed
+- Machine-wide uninstall now requests administrator access and removes the Program Files copy, Common Start Menu shortcut, machine PATH entry and HKLM registration instead of targeting the per-user installation.
+- The confirmation dialog's close-button corner now follows the active theme, so 98SE no longer leaves one rounded corner in otherwise square dialog chrome.
+
 ## [1.6.0] - 2026-08-12
 
 1.6.0 adds a command line, stops SSH guessing your username, and moves theme and language onto a rail like the other Killer Tools apps.

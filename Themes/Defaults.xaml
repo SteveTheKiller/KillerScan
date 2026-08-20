@@ -3,30 +3,12 @@
                     xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <!-- ================================================================
-         FLAT-THEME DEFAULTS. Applied FIRST in ThemeManager.LoadDict, before
-         the app palette and before the shared KillerUI layer, so anything
-         either of those defines wins over what is here.
-
-         KillerScan's own 98SE palette defines the Win98 chrome tokens (frame,
-         caption, footer cells, bevels). Every one of them must have a value on
-         the OTHER twelve themes too, or a control template that references it
-         resolves to nothing and collapses to a CLR default (Auto width, 0
-         margin, no brush). This file is that flat value, in one place, so
-         there is never a fallback copy in each of the twelve palettes.
-
-         KillerShell does this in C# (ThemeManager.ApplyDerivedTokens);
-         KillerScan does it here.
-
-         RULE: only values that are the same on EVERY flat theme. Anything
-         per-theme (a surface color, an accent) lives in that theme's palette.
-         ================================================================ -->
-
     <!-- CORNER RADII. Flat family shape; 98SE zeroes each. -->
     <CornerRadius x:Key="PanelCornerRadius">6</CornerRadius>
     <CornerRadius x:Key="ControlCornerRadius">4</CornerRadius>
     <CornerRadius x:Key="SmallCornerRadius">3</CornerRadius>
     <CornerRadius x:Key="FlyoutCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="DialogCloseCornerRadius">0,6,0,0</CornerRadius>
     <CornerRadius x:Key="AccentSwatchCornerRadius">9</CornerRadius>
 
     <!-- BEVELS. Zero and transparent, so the extra bevel Borders draw nothing. -->

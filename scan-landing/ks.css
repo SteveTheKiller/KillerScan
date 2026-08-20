@@ -45,7 +45,7 @@ html[data-theme="delirium"] body .download-btn:hover { background:#ffad2f; color
 html[data-theme="malaise"] .tb-dl:hover,
 html[data-theme="malaise"] body .download-btn:hover { background:#ff9fba; color:#292c31; filter:none; }
 
-html { background: var(--bg); height: 100%; }
+html { --scroll-thumb: color-mix(in srgb, var(--accent) 55%, var(--bg)); --scroll-thumb-hover: var(--accent); background: var(--bg); height: 100%; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; height: 100%; overflow: hidden; display: flex; flex-direction: column; position: relative; isolation: isolate; transition: background-color 0.2s, color 0.2s; }
 /* Grain: chrome bars carry their own (fixed); the document-pane grain lives on .content so it scrolls with the content. grain.png is a sparse transparent speckle (matches the app's generated texture) so it composites normally - no blend mode, no lightening. */
 body > * { position: relative; z-index: 1; }
@@ -162,7 +162,7 @@ html[data-theme="light"] .page-title { text-shadow: none; }
    top only once scrolled down, bottom only while more content remains below. Shared by any
    scrollable sidebar content (screenshot strip on the front page, the outline nav elsewhere). */
 .sb-fade { position: absolute; left: 0; right: 8px; height: 40px; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.12s ease;
-  background: var(--sidebar) url('grain.png?v=2') repeat fixed; background-size: 256px 256px; }
+  background: var(--sidebar); background-attachment: fixed; background-size: 100vw 100vh; }
 .sb-fade-top { top: 0; -webkit-mask-image: linear-gradient(to bottom, #000, transparent); mask-image: linear-gradient(to bottom, #000, transparent); }
 .sb-fade-bottom { bottom: 0; -webkit-mask-image: linear-gradient(to top, #000, transparent); mask-image: linear-gradient(to top, #000, transparent); }
 .sb-fade.on { opacity: 1; }
@@ -193,8 +193,10 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 .lightbox { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; padding: 32px; cursor: zoom-out; opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility 0s linear .2s; }
 .lightbox.show { opacity: 1; visibility: visible; transition: opacity .2s ease; }
 .lightbox[hidden] { display: none; }
-.lightbox img { max-width: 100%; max-height: 100%; border-radius: 6px; box-shadow: 0 24px 60px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); transform: scale(.96); transition: transform .2s ease; }
+.lightbox-figure { margin: 0; max-width: 100%; max-height: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.lightbox img { display: block; max-width: 100%; max-height: calc(100vh - 112px); border-radius: 6px; box-shadow: 0 24px 60px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); transform: scale(.96); transition: transform .2s ease; }
 .lightbox.show img { transform: scale(1); }
+.lightbox figcaption { max-width: min(1100px, 100%); color: #f2f2f2; font-size: 13px; line-height: 1.45; text-align: center; text-shadow: 0 1px 3px #000; }
 
 /* Slim scrollbars: transparent track (no opaque band), no arrow buttons, thumb flat to the ends.
    IMPORTANT: the standard scrollbar-width/scrollbar-color props are scoped to browsers that do
@@ -202,20 +204,21 @@ html[data-theme="light"] .page-title { text-shadow: none; }
    presence makes Chrome/Edge IGNORE the ::-webkit-scrollbar rules below - which is what brought
    back the opaque track and the arrow buttons on the content area. */
 @supports not selector(::-webkit-scrollbar) {
-  * { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--accent) 60%, var(--bg)) transparent; }
+  * { scrollbar-width: thin; scrollbar-color: var(--scroll-thumb) transparent; }
 }
 ::-webkit-scrollbar { width: 8px; height: 8px; background: transparent; }
 ::-webkit-scrollbar-track,
 ::-webkit-scrollbar-track-piece { background: var(--bg) url('grain.png?v=2') repeat; background-size: 256px 256px; }
-::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--accent) 55%, var(--bg)); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }
 ::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
 ::-webkit-scrollbar-corner { background: transparent; }
-/* Sidebar is darker than --bg, so its scrollbar track must use --sidebar (not the global --bg) or it shows a lighter mismatched band. */
+/* Let the continuous shell chrome show through the sidebar scrollbar track. Repainting
+   the sidebar here restarts gradient themes inside the narrow track. */
 .sidebar::-webkit-scrollbar-track,
 .sidebar::-webkit-scrollbar-track-piece,
 .sidebar ::-webkit-scrollbar-track,
-.sidebar ::-webkit-scrollbar-track-piece { background: var(--sidebar) url('grain.png?v=2') repeat; background-size: 256px 256px; }
+.sidebar ::-webkit-scrollbar-track-piece { background: transparent; }
 
 @media (max-width: 900px) {
   html, body { height: auto; overflow: visible; display: block; }
@@ -251,8 +254,6 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 html[data-theme="light"] .tb-nav a { text-shadow: none; }
 .tb-nav a:hover { color: var(--text); background: color-mix(in srgb, var(--accent) 12%, transparent); filter: none; }
 .tb-nav a.on { color: var(--accent); }
-@media (min-width: 901px) { .tb-nav + .tgrp { margin-left: -10px; } }
-
 /* Header download button */
 .tb-dl { display: inline-flex; align-items: center; gap: 7px; margin-left: 10px; background: var(--btn); color: var(--btn-text); font-size: 13px; font-weight: 700; padding: 7px 15px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: filter 0.15s, transform 0.1s, box-shadow 0.15s; }
 .tb-dl:hover { filter: brightness(1.1); color: var(--btn-text); transform: translateY(-1px); box-shadow: 0 7px 16px rgba(0,0,0,0.4); }

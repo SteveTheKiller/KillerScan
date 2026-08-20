@@ -27,7 +27,7 @@
 - CSV export and a themeable, sortable HTML report
 - Headless command line for scripts and RMM: /scan with targets, /export to CSV or HTML, /quick, /quiet, and real exit codes
 - Scan several networks in one pass: comma-separated CIDR blocks, single hosts, and ranges
-- Tabs for scanning multiple subnets, six themes, localized in ten languages
+- Scan multiple subnets together, thirteen themes, localized in twelve languages
 - Keyboard shortcuts (F1 for the list) and an app-wide size control from 70% to 250%
 - Single Windows EXE under 3 MB, no runtime install; installs per-user or for all users, or runs portable
 - GPLv3, local-only, no account, no telemetry

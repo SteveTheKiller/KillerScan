@@ -69,7 +69,8 @@
                                 Cursor="Hand">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
-                                    <Border x:Name="bg" Background="Transparent" CornerRadius="0,6,0,0">
+                                    <Border x:Name="bg" Background="Transparent"
+                                            CornerRadius="{DynamicResource DialogCloseCornerRadius}">
                                         <TextBlock x:Name="glyph" Text="&#xE8BB;"
                                                    FontFamily="Segoe MDL2 Assets" FontSize="10"
                                                    Foreground="{DynamicResource DangerRed}"

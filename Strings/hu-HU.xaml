@@ -1,0 +1,158 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ================================================================
+         KillerScan  -  Hungarian (hu-HU) strings
+         x:Key values are looked up at runtime - never change them.
+         Other locales layer over this file; any key they omit falls back here.
+         ================================================================ -->
+
+    <!-- Title bar / chrome -->
+    <sys:String x:Key="Str_Subtitle">Hálózati szkenner</sys:String>
+    <sys:String x:Key="Str_TT_Language">Nyelv</sys:String>
+    <sys:String x:Key="Str_TT_AppSize">Az alkalmazás átméretezéséhez görgessen a szójel fölé</sys:String>
+    <sys:String x:Key="Str_TT_Theme">téma</sys:String>
+    <sys:String x:Key="Str_TT_Export">Exportálás</sys:String>
+    <sys:String x:Key="Str_Lbl_Theme">TÉMA</sys:String>
+    <sys:String x:Key="Str_Lbl_Accent">AKCENT</sys:String>
+
+    <!-- Scan bar -->
+    <sys:String x:Key="Str_Lbl_Subnet">Alhálózat</sys:String>
+    <sys:String x:Key="Str_Btn_Scan">Scan</sys:String>
+    <sys:String x:Key="Str_Lbl_Local">Helyi</sys:String>
+    <sys:String x:Key="Str_Lbl_Gateway">Átjáró</sys:String>
+    <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
+
+    <!-- Status bar + counts ({0}/{1} are filled in by the app - keep them) -->
+    <sys:String x:Key="Str_Btn_Stop">Állj</sys:String>
+    <sys:String x:Key="Str_Status_Ready">Kész – {0} OUI-szolgáltató betöltve</sys:String>
+    <sys:String x:Key="Str_Count_Found">{0} eszköz található</sys:String>
+    <sys:String x:Key="Str_Count_Shown">{0}/{1} látható</sys:String>
+
+    <!-- Results pane -->
+    <sys:String x:Key="Str_DiscoveredDevices">Felfedezett eszközök</sys:String>
+    <sys:String x:Key="Str_FilterPlaceholder">Eszközök szűrése...</sys:String>
+    <sys:String x:Key="Str_Export_Csv">Exportálás CSV-ként</sys:String>
+    <sys:String x:Key="Str_Export_Html">Exportálás HTML-ként</sys:String>
+
+    <!-- Results columns -->
+    <sys:String x:Key="Str_Col_Ip">IP-cím</sys:String>
+    <sys:String x:Key="Str_Col_Host">Gazdanév</sys:String>
+    <sys:String x:Key="Str_Col_Mac">MAC-cím</sys:String>
+    <sys:String x:Key="Str_Col_Vendor">Eladó</sys:String>
+    <sys:String x:Key="Str_Col_Type">Írja be</sys:String>
+    <sys:String x:Key="Str_Col_Ports">Nyissa meg a Portokat</sys:String>
+
+    <!-- Right-click device menu -->
+    <sys:String x:Key="Str_Ctx_RescanOne">IP újraolvasása</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanMany">IP-címek újraolvasása</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyIp">IP-cím másolása</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyMac">Másolja a MAC-címet</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyHost">Gazdanév másolása</sys:String>
+    <sys:String x:Key="Str_Ctx_Ping">Ping</sys:String>
+    <sys:String x:Key="Str_Ctx_OpenBrowser">Nyissa meg a böngészőben</sys:String>
+    <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
+    <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">SSH mint...</sys:String>
+    <sys:String x:Key="Str_Ctx_SetType">Eszköztípus beállítása</sys:String>
+    <sys:String x:Key="Str_Ctx_ClearOverride">Felülbírálás törlése</sys:String>
+
+    <!-- SSH username prompt ({0} is the device, filled in by the app) -->
+    <sys:String x:Key="Str_Ssh_Head">Csatlakozzon a következőhöz: {0} SSH-n keresztül</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">A bejelentkezéshez használt fiók. A KillerScan megjegyzi ezt az eszközt, így csak egyszer kérdezik meg. Hagyja üresen, hogy az SSH-kliens dönthessen.</sys:String>
+    <sys:String x:Key="Str_Ssh_User">USERNAME</sys:String>
+    <sys:String x:Key="Str_Ssh_Connect">Csatlakozás</sys:String>
+    <sys:String x:Key="Str_Btn_Cancel">Mégse</sys:String>
+
+    <!-- Theme names, shown in the rail's theme flyout. Shared with KillerShell and KillerNotes
+         key for key, so the same thirteen themes read the same way across the family. SE98 is
+         listed here ahead of the theme itself landing, because the name is not translated. -->
+    <sys:String x:Key="Str_Theme_Dark">Sötét</sys:String>
+    <sys:String x:Key="Str_Theme_Light">Fény</sys:String>
+    <sys:String x:Key="Str_Theme_Black">Fekete</sys:String>
+    <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+    <sys:String x:Key="Str_Theme_Blood">Vér</sys:String>
+    <sys:String x:Key="Str_Theme_Greed">Kapzsiság</sys:String>
+    <sys:String x:Key="Str_Theme_Cyanotic">Cianotikus</sys:String>
+    <sys:String x:Key="Str_Theme_Ectoplasm">Ektoplazma</sys:String>
+    <sys:String x:Key="Str_Theme_Decay">Bomlás</sys:String>
+    <sys:String x:Key="Str_Theme_Malaise">rosszullét</sys:String>
+    <sys:String x:Key="Str_Theme_Sepulchre">Sír</sys:String>
+    <sys:String x:Key="Str_Theme_Delirium">Delírium</sys:String>
+    <sys:String x:Key="Str_Theme_Mourning">Gyász</sys:String>
+
+    <!-- About overlay -->
+    <sys:String x:Key="Str_About_Version">VERZIÓ</sys:String>
+    <sys:String x:Key="Str_About_Publisher">KIADÓ</sys:String>
+    <sys:String x:Key="Str_About_Thumbprint">ujjlenyomat</sys:String>
+    <sys:String x:Key="Str_About_Sha">EXE SHA-256</sys:String>
+    <sys:String x:Key="Str_About_Db">SZÁLLÍTÓI ADATBÁZIS</sys:String>
+    <sys:String x:Key="Str_About_DbUpdate">Frissítés a legújabb nyilvántartásokból</sys:String>
+    <sys:String x:Key="Str_About_DbHint">A Wireshark OUI listából.</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} bejegyzés</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">frissítve: {0}</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">az alkalmazással együtt</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">ARP + IP sweep szállítókereséssel, eszközosztályozással és tematikus, rendezhető HTML-exporttal. A </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve"> hasznosság.</sys:String>
+
+    <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
+    <sys:String x:Key="Str_St_Discovering">Házigazdák felfedezése itt: {0}...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingMacs">{0} MAC-cím feloldása...</sys:String>
+    <sys:String x:Key="Str_St_Probing">{0} élő gazdagép vizsgálata...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingHosts">{0} gazdagép feloldása...</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">A vizsgálat befejeződött – {0} eszköz található</sys:String>
+    <sys:String x:Key="Str_St_ScanCanceled">Szkennelés megszakítva</sys:String>
+    <sys:String x:Key="Str_St_Rescanning">Mély vizsgálat {0}...</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">Újrakeresés kész – {0} gazdagép frissítve</sys:String>
+    <sys:String x:Key="Str_St_Exported">Exportálva ide: {0}</sys:String>
+    <sys:String x:Key="Str_St_OverrideSet">Felülbírálási készlet: {0} = {1}</sys:String>
+    <sys:String x:Key="Str_St_OverrideCleared">A(z) {0} felülbírálása törölve</sys:String>
+    <sys:String x:Key="Str_St_AppSize">Alkalmazás mérete {0}%</sys:String>
+    <sys:String x:Key="Str_St_BadTarget">Érvénytelen cél: &quot;{0}&quot; - használja a 192.168.1.0/24, 192.168.1.7 vagy 192.168.1.10-50 kódot, vesszővel elválasztva</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">Ez {0} cím – túl sok egy vizsgálathoz (korlát: {1}). Szűkítse a tartományt, vagy ossza fel lapokra.</sys:String>
+    <sys:String x:Key="Str_St_NoTarget">Adjon meg egy alhálózatot, címet vagy tartományt a vizsgálathoz</sys:String>
+
+    <!-- Portable footer badge + install dialog -->
+    <sys:String x:Key="Str_Portable">HORDOZHATÓ</sys:String>
+    <sys:String x:Key="Str_InstallBtn">Telepítse a KillerScan programot</sys:String>
+    <sys:String x:Key="Str_Install_AllUsers">Telepítés minden felhasználó számára (rendszergazda szükséges)</sys:String>
+    <sys:String x:Key="Str_Install_AllUsersNote">Telepítés a Program Filesba minden fiókhoz ezen a számítógépen. A Windows engedélyt fog kérni.</sys:String>
+    <sys:String x:Key="Str_Install_HeadUser">Telepíti a KillerScan-t a felhasználói profiljába?</sys:String>
+    <sys:String x:Key="Str_Install_HeadAll">Telepíti a KillerScant minden felhasználó számára ezen a számítógépen?</sys:String>
+    <sys:String x:Key="Str_Install_AlreadyAllUsers">A KillerScan már telepítve van az összes felhasználó számára ezen a számítógépen, így ez frissíti a másolatot. A Windows engedélyt fog kérni.</sys:String>
+    <sys:String x:Key="Str_St_InstallCanceled">Telepítés megszakítva</sys:String>
+
+    <!-- Themed window system menu (right-click the title bar / Alt+Space) -->
+    <sys:String x:Key="Str_Sys_Restore">Visszaállítás</sys:String>
+    <sys:String x:Key="Str_Sys_Move">Mozgás</sys:String>
+    <sys:String x:Key="Str_Sys_Size">Méret</sys:String>
+    <sys:String x:Key="Str_Sys_Minimize">Minimalizálás</sys:String>
+    <sys:String x:Key="Str_Sys_Maximize">Maximalizálás</sys:String>
+    <sys:String x:Key="Str_Sys_Close">Bezárás</sys:String>
+
+    <!-- Keyboard shortcuts overlay (F1) -->
+    <sys:String x:Key="Str_TT_Shortcuts">Billentyűparancsok (F1)</sys:String>
+    <sys:String x:Key="Str_Shortcuts_Title">Billentyűparancsok</sys:String>
+    <sys:String x:Key="Str_Sc_Scan">Indítsa el vagy állítsa le a keresést</sys:String>
+    <sys:String x:Key="Str_Sc_Cancel">Szakítsa meg a beolvasást, vagy zárja be</sys:String>
+    <sys:String x:Key="Str_Sc_Rescan">A kiválasztott gazdagépek mélyreható újrakeresése</sys:String>
+    <sys:String x:Key="Str_Sc_Subnet">Ugrás az alhálózati mezőre</sys:String>
+    <sys:String x:Key="Str_Sc_SelectAll">Válassza ki az összes eszközt</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Eredmények exportálása</sys:String>
+    <sys:String x:Key="Str_Sc_Browser">Nyissa meg a kiválasztott eszközt egy böngészőben</sys:String>
+    <sys:String x:Key="Str_Sc_Ping">Pingelje a kiválasztott eszközt</sys:String>
+    <sys:String x:Key="Str_Sc_Rdp">Nyissa meg a Távoli asztalt a kiválasztott eszközön</sys:String>
+    <sys:String x:Key="Str_Sc_Ssh">Csatlakozzon a kiválasztott eszközhöz SSH-n keresztül</sys:String>
+    <sys:String x:Key="Str_Sc_SshAs">Válasszon egy SSH-fiókot, és csatlakozzon</sys:String>
+    <sys:String x:Key="Str_Sc_CopyIp">Másolja a kiválasztott IP-címet</sys:String>
+    <sys:String x:Key="Str_Sc_CopyMac">Másolja a kiválasztott MAC-címet</sys:String>
+    <sys:String x:Key="Str_Sc_CopyHost">Másolja ki a kiválasztott gazdagépnevet</sys:String>
+    <sys:String x:Key="Str_Sc_DeviceMenu">Nyisson meg minden műveletet a kiválasztott eszközhöz</sys:String>
+    <sys:String x:Key="Str_Sc_AppBigger">Tedd nagyobbá az alkalmazást</sys:String>
+    <sys:String x:Key="Str_Sc_AppSmaller">Csökkentse az alkalmazást</sys:String>
+    <sys:String x:Key="Str_Sc_AppReset">Állítsa vissza az alkalmazás méretét</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Mutasd ezt a listát</sys:String>
+    <sys:String x:Key="Str_Sc_Hint">Az alkalmazás mérete is követi az egér görgőjét a szójel felett.</sys:String>
+
+</ResourceDictionary>
