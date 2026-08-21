@@ -110,7 +110,7 @@ namespace KillerScan.Services
         /// not writable by a normal user, so the swap has to run elevated. The copy result is
         /// checked: without that, an unelevated swap fails silently and relaunches the OLD exe, and
         /// the app appears to update to the same version with no error.</summary>
-        internal static void StartSwap(string newExe)
+        internal static void StartSwap(string newExe, string? newVersion = null)
         {
             var curExe = Process.GetCurrentProcess().MainModule!.FileName;
             var pid    = Process.GetCurrentProcess().Id;
@@ -118,6 +118,25 @@ namespace KillerScan.Services
                                       $"{AppInfo.DisplayName}_update_{Guid.NewGuid():N}.bat");
 
             bool needsElevation = !CanWriteTo(Path.GetDirectoryName(curExe)!);
+
+            // Keep Add/Remove Programs honest: the swap replaces the exe but the install keys
+            // still carry the old version, which is how a machine ends up with an ARP entry
+            // describing a version that is not on disk. The batch already runs elevated exactly
+            // when the target is the machine-wide install, so it is the one place that can write
+            // whichever hive matches. A portable exe writes nothing.
+            string regLines = "";
+            if (!string.IsNullOrEmpty(newVersion))
+            {
+                string hive = RegistryHiveFor(curExe);
+                if (hive.Length > 0)
+                {
+                    string uninstall = hive + @"\Software\Microsoft\Windows\CurrentVersion\Uninstall\" + AppInfo.DisplayName;
+                    string appKey    = hive + @"\Software\" + AppInfo.DisplayName;
+                    regLines =
+                        $"reg add \"{uninstall}\" /v DisplayVersion /t REG_SZ /d \"{newVersion}\" /f >nul 2>&1\r\n" +
+                        $"reg add \"{appKey}\" /v Version /t REG_SZ /d \"{newVersion}\" /f >nul 2>&1\r\n";
+                }
+            }
 
             // When elevated, relaunch through explorer.exe so the app comes back at the user's
             // normal integrity level instead of inheriting the elevated token.
@@ -132,6 +151,7 @@ namespace KillerScan.Services
                 "if not errorlevel 1 ( ping -n 2 127.0.0.1 >nul & goto wait )\r\n" +
                 $"copy /y \"{newExe}\" \"{curExe}\" >nul 2>&1\r\n" +
                 "if errorlevel 1 goto failed\r\n" +
+                regLines +
                 relaunch + "\r\n" +
                 "goto cleanup\r\n" +
                 ":failed\r\n" +
@@ -150,6 +170,26 @@ namespace KillerScan.Services
             if (needsElevation) psi.Verb = "runas";   // triggers the UAC prompt
 
             Process.Start(psi);
+        }
+
+        /// <summary>"HKCU" when <paramref name="exePath"/> is the per-user install,
+        /// "HKLM" when it is the machine-wide install, "" for a portable copy - which has no
+        /// install keys and must not gain any from an update.</summary>
+        private static string RegistryHiveFor(string exePath)
+        {
+            try
+            {
+                string userExe = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "Programs", AppInfo.DisplayName, AppInfo.ExeName);
+                string machineExe = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                    AppInfo.DisplayName, AppInfo.ExeName);
+                if (string.Equals(exePath, userExe, StringComparison.OrdinalIgnoreCase)) return "HKCU";
+                if (string.Equals(exePath, machineExe, StringComparison.OrdinalIgnoreCase)) return "HKLM";
+            }
+            catch { }
+            return "";
         }
 
         /// <summary>Deletes a downloaded update that will not be installed.</summary>

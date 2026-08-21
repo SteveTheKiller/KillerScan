@@ -90,6 +90,15 @@ namespace KillerScan
                 return;
             }
 
+            // Elevated half of the dual-install repair below: removes the machine-wide copy.
+            if (e.Args.Length > 0 &&
+                string.Equals(e.Args[0], "/remove-machine-conflict", StringComparison.OrdinalIgnoreCase))
+            {
+                RemoveMachineInstallConflict();
+                Shutdown(0);
+                return;
+            }
+
             // Headless command line: /scan, /help, /version (Features/Cli/CliRunner.cs). Handled
             // before anything builds a window, so a CLI run never shows one and works while a GUI
             // instance is already open. Arguments carrying no recognized command fall through to
@@ -105,6 +114,8 @@ namespace KillerScan
             Services.DemoData.Enabled = Array.Exists(e.Args, a =>
                 string.Equals(a, "--demo", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(a, "/demo",  StringComparison.OrdinalIgnoreCase));
+
+            OfferInstallConflictRepair();
 
             // Restore the saved theme + locale before the window is built (no first-paint flash).
             Services.ThemeManager.Initialize();
@@ -134,6 +145,47 @@ namespace KillerScan
 
         /// <summary>True when a machine-wide copy is already present on disk.</summary>
         internal static bool MachineInstallExists() => File.Exists(MachineInstallExe);
+
+        /// <summary>Repairs a machine that carries BOTH a per-user and a machine-wide install -
+        /// the state where each Add/Remove Programs entry describes the other copy's version and
+        /// launching gets whichever exe the shell resolves first. Detected at startup; offers to
+        /// remove whichever copy is NOT running. Removing the machine copy needs elevation, so
+        /// that path re-runs this exe with /remove-machine-conflict under UAC.</summary>
+        private static void OfferInstallConflictRepair()
+        {
+            if (!File.Exists(InstallExe) || !File.Exists(MachineInstallExe)) return;
+            string current = Process.GetCurrentProcess().MainModule?.FileName ?? "";
+            bool runningMachine = string.Equals(current, MachineInstallExe, StringComparison.OrdinalIgnoreCase);
+            bool runningUser = string.Equals(current, InstallExe, StringComparison.OrdinalIgnoreCase);
+            if (!runningMachine && !runningUser) return;
+
+            string other = runningMachine ? "per-user" : "all-users";
+            if (MessageBox.Show($"KillerScan is installed twice. Remove the other {other} copy now?\n\nYour settings will not be removed.",
+                $"{AppName} installation conflict", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
+
+            if (runningMachine) RemovePerUserInstall();
+            else
+            {
+                try
+                {
+                    using var p = Process.Start(new ProcessStartInfo(current, "/remove-machine-conflict")
+                    { UseShellExecute = true, Verb = "runas" });
+                    p?.WaitForExit();
+                }
+                catch { /* declining UAC leaves both copies in place */ }
+            }
+        }
+
+        private static void RemoveMachineInstallConflict()
+        {
+            RemoveFromPath(MachineInstallDir, EnvironmentVariableTarget.Machine);
+            string common = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonPrograms), AppName);
+            try { Registry.LocalMachine.DeleteSubKeyTree(@"Software\KillerScan", false); } catch { }
+            try { Registry.LocalMachine.DeleteSubKeyTree(
+                @"Software\Microsoft\Windows\CurrentVersion\Uninstall\KillerScan", false); } catch { }
+            try { if (Directory.Exists(common)) Directory.Delete(common, true); } catch { }
+            try { if (Directory.Exists(MachineInstallDir)) Directory.Delete(MachineInstallDir, true); } catch { }
+        }
 
         /// <summary>
         /// Installs KillerScan, then relaunches from the installed location.
