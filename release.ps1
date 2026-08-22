@@ -429,6 +429,12 @@ Step "Creating GitHub release"
 gh release create $Tag $exe $srcZip $sumsFile --title "KillerScan $Tag" --notes-file $notesFile --verify-tag
 if ($LASTEXITCODE -ne 0) { Fail 'gh release create failed' }
 
+Step "Refreshing thekiller.net software page"
+gh workflow run deploy.yml --repo SteveTheKiller/thekiller-site
+if ($LASTEXITCODE -ne 0) {
+    Write-Warning 'The release is published, but thekiller.net refresh could not be started. Run: gh workflow run deploy.yml --repo SteveTheKiller/thekiller-site'
+}
+
 # --- 11. Chocolatey pack/push (opt-in) ---
 # Runs AFTER the release is published so the package never points at a release that failed.
 # Non-fatal: the GitHub release is already out, so a choco hiccup must not fail the run.
