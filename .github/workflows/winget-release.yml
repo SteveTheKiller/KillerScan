@@ -43,6 +43,17 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         shell: pwsh
 
+      # komac branches from the fork's master, so a stale fork breaks the branch and the PR.
+      # GitHub reports that as "does not have the correct permissions to execute CreateRef",
+      # which reads like a token problem and is not. The fork was 7,877 commits behind when
+      # this was tracked down on 2026-08-26, and every app shares the one fork, so all five
+      # repos started failing together.
+      - name: Sync the winget-pkgs fork
+        run: komac sync
+        env:
+          GITHUB_TOKEN: ${{ secrets.WINGET_TOKEN }}
+        shell: pwsh
+
       - name: Submit to WinGet
         run: |
           $releaseTag = if ("${{ github.event_name }}" -eq "workflow_dispatch") { "${{ github.event.inputs.tag }}" } else { "${{ github.event.release.tag_name }}" }
