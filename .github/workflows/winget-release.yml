@@ -1,3 +1,13 @@
+# A release-triggered run starts seconds after release.ps1 finished creating the release and
+# uploading its assets, and GitHub throttles the branch push komac needs on the way out. It
+# surfaces as "Ref cannot be created" or "SteveTheKiller does not have the correct permissions
+# to execute CreateRef", which reads like a bad token and is not: the same secret succeeds on a
+# later retry. 1.6.0 failed this way and its workflow_dispatch retry succeeded 11 minutes later.
+# The submit step now settles first and retries with backoff.
+#
+# workflow_dispatch is still the manual retry path: re-running this with the tag is the fix for
+# anything the backoff does not outlast, and it needs no re-release.
+
 name: WinGet Release
 
 on:
@@ -15,11 +25,22 @@ jobs:
     steps:
       - name: Install Komac
         run: |
-          $tag = (Invoke-RestMethod "https://api.github.com/repos/russellbanks/Komac/releases/latest").tag_name
+          # Authenticated so this does not spend the unauthenticated API allowance, which is
+          # shared per runner IP and which a release-triggered run has usually already burned.
+          # KillerPDF 1.7.5 failed right here on "API rate limit exceeded", before komac ran.
+          $headers = @{
+            Authorization = "Bearer $env:GITHUB_TOKEN"
+            Accept = "application/vnd.github+json"
+            "X-GitHub-Api-Version" = "2022-11-28"
+            "User-Agent" = "KillerScan-WinGet-Release"
+          }
+          $tag = (Invoke-RestMethod "https://api.github.com/repos/russellbanks/Komac/releases/latest" -Headers $headers).tag_name
           $ver = $tag.TrimStart('v')
           $url = "https://github.com/russellbanks/Komac/releases/download/$tag/komac-$ver-x86_64-pc-windows-msvc.exe"
           Invoke-WebRequest -Uri $url -OutFile "$env:RUNNER_TEMP\komac.exe"
           Add-Content $env:GITHUB_PATH $env:RUNNER_TEMP
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         shell: pwsh
 
       - name: Submit to WinGet
@@ -27,7 +48,22 @@ jobs:
           $releaseTag = if ("${{ github.event_name }}" -eq "workflow_dispatch") { "${{ github.event.inputs.tag }}" } else { "${{ github.event.release.tag_name }}" }
           $version = $releaseTag.TrimStart('v')
           $url = "https://github.com/SteveTheKiller/KillerScan/releases/download/$releaseTag/KillerScan.exe"
-          komac update SteveTheKiller.KillerScan --version $version --urls $url --submit
+
+          # Let the release settle before asking GitHub for a branch. See the header note.
+          if ("${{ github.event_name }}" -eq "release") { Start-Sleep -Seconds 90 }
+
+          # komac picks a fresh GUID for its branch name every run, so a retry never collides
+          # with a half-finished attempt.
+          $delays = @(60, 150, 300)
+          for ($i = 0; $i -le $delays.Count; $i++) {
+              komac update SteveTheKiller.KillerScan --version $version --urls $url --submit
+              if ($LASTEXITCODE -eq 0) { exit 0 }
+              if ($i -eq $delays.Count) { break }
+              Write-Host "Submit failed with exit $LASTEXITCODE. Retrying in $($delays[$i])s."
+              Start-Sleep -Seconds $delays[$i]
+          }
+          Write-Error "komac update failed after $($delays.Count + 1) attempts"
+          exit 1
         env:
           GITHUB_TOKEN: ${{ secrets.WINGET_TOKEN }}
         shell: pwsh
