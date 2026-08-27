@@ -100,7 +100,7 @@
     <sys:String x:Key="Str_St_RescanDone">Réanalyse terminée - {0} hôte(s) actualisé(s)</sys:String>
     <sys:String x:Key="Str_St_AppSize">Taille de l'application {0} %</sys:String>
     <sys:String x:Key="Str_St_BadTarget">Cible non valide : « {0} » - utilisez 192.168.1.0/24, 192.168.1.7 ou 192.168.1.10-50, séparées par des virgules</sys:String>
-    <sys:String x:Key="Str_St_TooManyAddresses">Cela fait {0} adresses - trop pour une seule analyse (limite {1}). Réduisez la plage ou répartissez-la sur plusieurs onglets.</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">Cela fait {0} adresses - trop pour une seule analyse (limite {1}). Réduisez la plage ou analysez-la en plusieurs fois.</sys:String>
     <sys:String x:Key="Str_St_NoTarget">Saisissez un sous-réseau, une adresse ou une plage à analyser</sys:String>
     <sys:String x:Key="Str_Install_AllUsers">Installer pour tous les utilisateurs (administrateur requis)</sys:String>
     <sys:String x:Key="Str_Install_AllUsersNote">Installe dans Program Files pour tous les comptes de ce PC. Windows demandera l'autorisation.</sys:String>
@@ -127,5 +127,103 @@
     <sys:String x:Key="Str_Sc_AppReset">Réinitialiser la taille de l'application</sys:String>
     <sys:String x:Key="Str_Sc_Help">Afficher cette liste</sys:String>
     <sys:String x:Key="Str_Sc_Hint">La taille de l'application suit aussi la molette de la souris sur le logo.</sys:String>
+
+    <!-- Exported HTML report -->
+    <sys:String x:Key="Str_Rep_Theme">Thème</sys:String>
+    <sys:String x:Key="Str_Rep_Accent">Accent</sys:String>
+    <sys:String x:Key="Str_Rep_Subnet">Sous-réseau</sys:String>
+    <sys:String x:Key="Str_Rep_Scanned">Analysé</sys:String>
+    <sys:String x:Key="Str_Rep_Devices">appareils</sys:String>
+    <sys:String x:Key="Str_Rep_GeneratedBy">Généré par</sys:String>
+    <sys:String x:Key="Str_Accent_Red">Rouge</sys:String>
+    <sys:String x:Key="Str_Accent_Orange">Orange</sys:String>
+    <sys:String x:Key="Str_Accent_Green">Vert</sys:String>
+    <sys:String x:Key="Str_Accent_Teal">Turquoise</sys:String>
+    <sys:String x:Key="Str_Accent_Blue">Bleu</sys:String>
+    <sys:String x:Key="Str_Accent_Purple">Violet</sys:String>
+
+    <!-- Dialogs, updates and errors -->
+    <sys:String x:Key="Str_About_Title">À propos de KillerScan</sys:String>
+    <sys:String x:Key="Str_TT_About">À propos de KillerScan</sys:String>
+    <sys:String x:Key="Str_About_Aka" xml:space="preserve">ALIAS </sys:String>
+    <sys:String x:Key="Str_About_Unsigned">(non signé ou chaîne non valide)</sys:String>
+    <sys:String x:Key="Str_About_Computing">calcul en cours...</sys:String>
+    <sys:String x:Key="Str_Ssh_Title">Compte SSH</sys:String>
+    <sys:String x:Key="Str_Btn_Install">Installer</sys:String>
+    <sys:String x:Key="Str_Install_BulletShortcut">- Raccourci dans le menu Démarrer</sys:String>
+    <sys:String x:Key="Str_Install_BulletArp">- Apparaît dans Ajout/Suppression de programmes</sys:String>
+    <sys:String x:Key="Str_Db_Checking">Recherche de données constructeur plus récentes...</sys:String>
+    <sys:String x:Key="Str_Db_Downloading">Téléchargement des données constructeur...</sys:String>
+    <sys:String x:Key="Str_Db_Fallback">Essai de la source de secours...</sys:String>
+    <sys:String x:Key="Str_Db_Blocked">Échec de la mise à jour - le téléchargement a été bloqué ou était vide. Votre liste est inchangée.</sys:String>
+    <sys:String x:Key="Str_Db_Smaller">Les données les plus récentes comptaient {0} entrées, moins que vos {1} actuelles. Votre liste a été conservée.</sys:String>
+    <sys:String x:Key="Str_Db_UpToDate">La base de données est déjà à jour ({0} entrées).</sys:String>
+    <sys:String x:Key="Str_Db_Updated">Mise à jour vers {0} entrées.</sys:String>
+    <sys:String x:Key="Str_Db_SaveFailed">Impossible d'enregistrer la base de données : {0}</sys:String>
+    <sys:String x:Key="Str_Db_Failed">Échec de la mise à jour : {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Available">Mise à jour disponible : {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Downloading">Téléchargement...</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmHead">Télécharger et installer {0} {1} ?</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBody">L'application se fermera et redémarrera automatiquement.</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBtn">Mettre à jour</sys:String>
+    <sys:String x:Key="Str_Conflict_Title">conflit d'installation</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveUser">KillerScan est installé deux fois. Supprimer maintenant l'autre copie par utilisateur ?
+
+Vos paramètres ne seront pas supprimés.</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveMachine">KillerScan est installé deux fois. Supprimer maintenant l'autre copie pour tous les utilisateurs ?
+
+Vos paramètres ne seront pas supprimés.</sys:String>
+    <sys:String x:Key="Str_Install_Failed">Échec de l'installation :
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Title">Désinstallation</sys:String>
+    <sys:String x:Key="Str_Uninstall_Confirm">Désinstaller KillerScan de cet ordinateur ?</sys:String>
+    <sys:String x:Key="Str_Uninstall_NoAdmin">La désinstallation n'a pas pu demander les droits d'administrateur :
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Done">KillerScan a été désinstallé.</sys:String>
+    <sys:String x:Key="Str_Err_Export">Erreur d'exportation : {0}</sys:String>
+    <sys:String x:Key="Str_Err_Scan">Erreur d'analyse : {0}</sys:String>
+    <sys:String x:Key="Str_Filter_Csv">Fichier CSV</sys:String>
+    <sys:String x:Key="Str_Filter_Html">Rapport HTML</sys:String>
+    <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
+    <sys:String x:Key="Str_Vendor_Randomized">(Aléatoire)</sys:String>
+
+    <!-- Device shortcuts -->
+    <sys:String x:Key="Str_Sc_Browser">Ouvrir l'appareil sélectionné dans le navigateur</sys:String>
+    <sys:String x:Key="Str_Sc_Ping">Envoyer un ping à l'appareil sélectionné</sys:String>
+    <sys:String x:Key="Str_Sc_Rdp">Ouvrir le Bureau à distance vers l'appareil sélectionné</sys:String>
+    <sys:String x:Key="Str_Sc_Ssh">Se connecter à l'appareil sélectionné en SSH</sys:String>
+    <sys:String x:Key="Str_Sc_SshAs">Choisir un compte SSH et se connecter</sys:String>
+    <sys:String x:Key="Str_Sc_CopyIp">Copier l'adresse IP sélectionnée</sys:String>
+    <sys:String x:Key="Str_Sc_CopyMac">Copier l'adresse MAC sélectionnée</sys:String>
+    <sys:String x:Key="Str_Sc_CopyHost">Copier le nom d'hôte sélectionné</sys:String>
+    <sys:String x:Key="Str_Sc_DeviceMenu">Ouvrir toutes les actions de l'appareil sélectionné</sys:String>
+
+    <!-- Device types. Display labels only; the stored value stays English (see en-US.xaml). -->
+    <sys:String x:Key="Str_Dev_Router">Routeur</sys:String>
+    <sys:String x:Key="Str_Dev_RouterDNS">Routeur/DNS</sys:String>
+    <sys:String x:Key="Str_Dev_SwitchAP">Commutateur/PA</sys:String>
+    <sys:String x:Key="Str_Dev_Network">Réseau</sys:String>
+    <sys:String x:Key="Str_Dev_Windows">Windows</sys:String>
+    <sys:String x:Key="Str_Dev_WindowsServer">Windows Server</sys:String>
+    <sys:String x:Key="Str_Dev_LinuxSSH">Linux/SSH</sys:String>
+    <sys:String x:Key="Str_Dev_Server">Serveur</sys:String>
+    <sys:String x:Key="Str_Dev_Printer">Imprimante</sys:String>
+    <sys:String x:Key="Str_Dev_SmartTV">Smart TV</sys:String>
+    <sys:String x:Key="Str_Dev_AppleTV">Apple TV</sys:String>
+    <sys:String x:Key="Str_Dev_MediaStreamer">Lecteur multimédia</sys:String>
+    <sys:String x:Key="Str_Dev_AppleDevice">Appareil Apple</sys:String>
+    <sys:String x:Key="Str_Dev_iPhone">iPhone</sys:String>
+    <sys:String x:Key="Str_Dev_Android">Android</sys:String>
+    <sys:String x:Key="Str_Dev_Mobile">Mobile</sys:String>
+    <sys:String x:Key="Str_Dev_IoT">IoT</sys:String>
+    <sys:String x:Key="Str_Dev_NAS">NAS</sys:String>
+    <sys:String x:Key="Str_Dev_Camera">Caméra</sys:String>
+    <sys:String x:Key="Str_Dev_Hypervisor">Hyperviseur</sys:String>
+    <sys:String x:Key="Str_Dev_HomeAssistant">Home Assistant</sys:String>
+    <sys:String x:Key="Str_Dev_DNSServer">Serveur DNS</sys:String>
+    <sys:String x:Key="Str_Dev_WebDevice">Appareil web</sys:String>
+    <sys:String x:Key="Str_Dev_Other">Autre</sys:String>
+    <sys:String x:Key="Str_Dev_Unknown">Inconnu</sys:String>
 
 </ResourceDictionary>

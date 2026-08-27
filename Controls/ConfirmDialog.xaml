@@ -90,14 +90,17 @@
 
                 <!-- Body -->
                 <StackPanel Grid.Row="1" Margin="24,20,24,16">
-                    <TextBlock x:Name="HeadingText" Text="Install KillerScan to your user profile?"
+                    <!-- These are NOT design-time placeholders. The portable install badge opens
+                         this dialog through the parameterless constructor, so whatever is set here
+                         is what a user reads - which is why they have to be resources. -->
+                    <TextBlock x:Name="HeadingText" Text="{DynamicResource Str_Install_HeadUser}"
                                Foreground="{StaticResource TextBrush}"
                                FontSize="13" TextWrapping="Wrap" Margin="0,0,0,12"/>
                     <TextBlock x:Name="DetailText" Foreground="{StaticResource MutedTextBrush}"
                                FontSize="12" LineHeight="20" TextWrapping="Wrap">
-                        <Run Text="- Start Menu shortcut"/>
+                        <Run Text="{DynamicResource Str_Install_BulletShortcut}"/>
                         <LineBreak/>
-                        <Run Text="- Appears in Add/Remove Programs"/>
+                        <Run Text="{DynamicResource Str_Install_BulletArp}"/>
                     </TextBlock>
 
                     <!-- All-users install: routes to the same machine-wide path winget and choco
@@ -119,13 +122,13 @@
                 <!-- Buttons -->
                 <StackPanel Grid.Row="2" Orientation="Horizontal"
                             HorizontalAlignment="Right" Margin="24,0,24,20">
-                    <Button x:Name="CancelButton" Content="Cancel" Click="Cancel_Click"
+                    <Button x:Name="CancelButton" Content="{DynamicResource Str_Btn_Cancel}" Click="Cancel_Click"
                             Style="{StaticResource SurfaceButton}"
                             Width="80" Margin="0,0,8,0"/>
                     <!-- OutlineButton, not PrimaryButton: hollow by default, fills with the accent
                          on hover. Matches the Scan button and the status-bar Install button, which
                          were already the only other buttons in the app. -->
-                    <Button x:Name="OkButton" Content="Install" Click="OK_Click"
+                    <Button x:Name="OkButton" Content="{DynamicResource Str_Btn_Install}" Click="OK_Click"
                             Style="{StaticResource OutlineButton}"
                             Width="80"/>
                 </StackPanel>

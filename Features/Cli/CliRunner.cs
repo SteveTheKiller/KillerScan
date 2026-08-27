@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using KillerScan.Models;
 using KillerScan.Services;
 
-namespace KillerScan.Features
+namespace KillerScan.Features.Cli
 {
     // Headless commands use the same scanner, classifier, overrides, OUI database and report
     // writer as the GUI. Progress is stderr; result data is stdout.

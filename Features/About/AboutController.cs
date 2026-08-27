@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using KillerScan.Controls;
 using KillerScan.Services;
 
-namespace KillerScan.Features
+namespace KillerScan.Features.About
 {
     /// <summary>
     /// The About card's content: version and release date, the code-signing publisher and
@@ -37,7 +37,7 @@ namespace KillerScan.Features
                 subject  = AppInfo.DemoSubject;
                 thumb    = AppInfo.DemoThumbprint;
             }
-            _host.Publisher = sigValid ? subject : "(not signed or chain failed)";
+            _host.Publisher = sigValid ? subject : _host.Loc("Str_About_Unsigned");
 
             // Shown only when the exe is signed by the expected publisher AND the signature actually
             // verifies: reading a certificate out of a file does not prove the file is untampered.
@@ -50,7 +50,7 @@ namespace KillerScan.Features
             _host.Alias         = (char)0x201C + AppInfo.AkaName + (char)0x201D;
             _host.AliasVisible  = signedByPublisher;
             _host.Thumbprint    = thumb;
-            _host.Sha256        = "computing…";
+            _host.Sha256        = _host.Loc("Str_About_Computing");
             _host.UpdateVisible = false;
 
             RefreshDbInfo();
@@ -90,19 +90,37 @@ namespace KillerScan.Features
         internal async void UpdateVendorDb()
         {
             _host.DbUpdateEnabled = false;
-            _host.DbStatus = "Checking for newer vendor data...";
-            var progress = new Progress<string>(s => _host.DbStatus = s);
+            _host.DbStatus = _host.Loc("Str_Db_Checking");
+            // The updater reports progress and its outcome as RESOURCE KEYS plus arguments, not as
+            // finished English. It lives in Services/ with no access to the resource dictionary,
+            // and the alternative - handing it a localizer - would have made a background service
+            // depend on the UI (VendorDbUpdater).
+            var progress = new Progress<VendorDbUpdater.Status>(s => _host.DbStatus = Format(s));
             try
             {
-                var (_, _, msg) = await VendorDbUpdater.UpdateAsync(progress);
-                _host.DbStatus = msg;
+                var (_, _, status) = await VendorDbUpdater.UpdateAsync(progress);
+                _host.DbStatus = Format(status);
             }
             catch (Exception ex)
             {
-                _host.DbStatus = "Update failed: " + ex.Message;
+                _host.DbStatus = string.Format(_host.Loc("Str_Db_Failed"), ex.Message);
             }
             RefreshDbInfo();
             _host.DbUpdateEnabled = true;
+        }
+
+        /// <summary>Turns one of the updater's key-plus-arguments reports into a sentence in the
+        /// current language. Counts are formatted here rather than by the service, so they pick up
+        /// the culture's own thousands separator.</summary>
+        private string Format(VendorDbUpdater.Status s)
+        {
+            // Detail carries an exception's own text, which is not ours to translate - it goes in
+            // as {0} verbatim. Otherwise the arguments are counts, formatted N0 so they pick up the
+            // culture's thousands separator rather than always reading like English.
+            if (s.Detail is string d) return string.Format(_host.Loc(s.Key), d);
+            var args = new object[s.Args.Length];
+            for (int i = 0; i < s.Args.Length; i++) args[i] = s.Args[i].ToString("N0");
+            return string.Format(_host.Loc(s.Key), args);
         }
 
         // ---- Self-update ----
@@ -114,7 +132,7 @@ namespace KillerScan.Features
             if (tag is null) return;
 
             _updateTag          = tag;
-            _host.UpdateText    = $"Update available: {tag}";
+            _host.UpdateText    = string.Format(_host.Loc("Str_Upd_Available"), tag);
             _host.UpdateVisible = true;
         }
 
@@ -127,14 +145,15 @@ namespace KillerScan.Features
             if (string.IsNullOrEmpty(tag)) return;
 
             var dlg = new ConfirmDialog(
-                $"Download and install {AppInfo.DisplayName} {tag}?",
-                "The app will close and reopen automatically.",
-                "Update") { Owner = _host.Window };
+                string.Format(_host.Loc("Str_Upd_ConfirmHead"), AppInfo.DisplayName, tag),
+                _host.Loc("Str_Upd_ConfirmBody"),
+                _host.Loc("Str_Upd_ConfirmBtn"),
+                _host.Loc("Str_Btn_Cancel")) { Owner = _host.Window };
             dlg.ShowDialog();
             if (!dlg.Confirmed) return;
 
             _host.UpdateEnabled = false;
-            _host.UpdateText    = "Downloading...";
+            _host.UpdateText    = _host.Loc("Str_Upd_Downloading");
 
             string? newExe;
             try
@@ -146,7 +165,7 @@ namespace KillerScan.Features
                 // Offline, timed out, or verification failed: restore the button and open the
                 // releases page so the user can update by hand.
                 _host.UpdateEnabled = true;
-                _host.UpdateText    = $"Update available: {tag}";
+                _host.UpdateText    = string.Format(_host.Loc("Str_Upd_Available"), tag);
                 WebLink.Open(UpdateService.ReleasesUrl);
                 return;
             }
@@ -162,7 +181,7 @@ namespace KillerScan.Features
             {
                 UpdateService.DiscardDownload(newExe);
                 _host.UpdateEnabled = true;
-                _host.UpdateText    = $"Update available: {tag}";
+                _host.UpdateText    = string.Format(_host.Loc("Str_Upd_Available"), tag);
             }
         }
     }

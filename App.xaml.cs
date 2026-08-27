@@ -103,7 +103,7 @@ namespace KillerScan
             // before anything builds a window, so a CLI run never shows one and works while a GUI
             // instance is already open. Arguments carrying no recognized command fall through to
             // the normal launch below.
-            if (Features.CliRunner.TryRunCli(e.Args, out int cliExit))
+            if (Features.Cli.CliRunner.TryRunCli(e.Args, out int cliExit))
             {
                 Shutdown(cliExit);
                 return;
@@ -146,6 +146,15 @@ namespace KillerScan
         /// <summary>True when a machine-wide copy is already present on disk.</summary>
         internal static bool MachineInstallExists() => File.Exists(MachineInstallExe);
 
+        /// <summary>Resource lookup WITH AN ENGLISH FALLBACK, for the install and uninstall
+        /// prompts. Unlike the rest of the app these can run before LocaleManager.Initialize -
+        /// /uninstall and /remove-machine-conflict handle their argument and exit long before a
+        /// window exists - and at that point there is no dictionary to read. The fallback keeps
+        /// those paths saying something rather than rendering a raw Str_ key, and once the app has
+        /// started normally the translation is found and used.</summary>
+        private static string L(string key, string fallback) =>
+            Current?.TryFindResource(key) as string ?? fallback;
+
         /// <summary>Repairs a machine that carries BOTH a per-user and a machine-wide install -
         /// the state where each Add/Remove Programs entry describes the other copy's version and
         /// launching gets whichever exe the shell resolves first. Detected at startup; offers to
@@ -159,9 +168,14 @@ namespace KillerScan
             bool runningUser = string.Equals(current, InstallExe, StringComparison.OrdinalIgnoreCase);
             if (!runningMachine && !runningUser) return;
 
-            string other = runningMachine ? "per-user" : "all-users";
-            if (MessageBox.Show($"KillerScan is installed twice. Remove the other {other} copy now?\n\nYour settings will not be removed.",
-                $"{AppName} installation conflict", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
+            // Two whole sentences rather than one with the scope substituted in: languages that
+            // inflect the noun cannot take "per-user" or "all-users" as a drop-in word.
+            string body = runningMachine
+                ? L("Str_Conflict_RemoveUser", "KillerScan is installed twice. Remove the other per-user copy now?\n\nYour settings will not be removed.")
+                : L("Str_Conflict_RemoveMachine", "KillerScan is installed twice. Remove the other all-users copy now?\n\nYour settings will not be removed.");
+            if (MessageBox.Show(body,
+                $"{AppName} {L("Str_Conflict_Title", "installation conflict")}",
+                MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
 
             if (runningMachine) RemovePerUserInstall();
             else
@@ -350,7 +364,7 @@ namespace KillerScan
                 {
                     key.SetValue("DisplayName",          AppName);
                     key.SetValue("DisplayVersion",       version);
-                    key.SetValue("Publisher",            "Steve / thekiller.net");
+                    key.SetValue("Publisher",            "Steve the Killer");
                     key.SetValue("InstallLocation",      installDir);
                     key.SetValue("DisplayIcon",          $"{installExe},0");
                     key.SetValue("UninstallString",      $"\"{installExe}\" /uninstall");
@@ -394,7 +408,7 @@ namespace KillerScan
                     key.SetValue("DisplayName",          AppName);
                     key.SetValue("DisplayVersion",
                         Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "");
-                    key.SetValue("Publisher",            "Steve / thekiller.net");
+                    key.SetValue("Publisher",            "Steve the Killer");
                     key.SetValue("InstallLocation",      InstallDir);
                     key.SetValue("DisplayIcon",          $"{InstallExe},0");
                     key.SetValue("UninstallString",      $"\"{InstallExe}\" /uninstall");
@@ -405,7 +419,7 @@ namespace KillerScan
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Installation failed:\n{ex.Message}", AppName,
+                MessageBox.Show(string.Format(L("Str_Install_Failed", "Installation failed:\n{0}"), ex.Message), AppName,
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -509,7 +523,7 @@ namespace KillerScan
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Uninstall could not request administrator access:\n{ex.Message}",
+                MessageBox.Show(string.Format(L("Str_Uninstall_NoAdmin", "Uninstall could not request administrator access:\n{0}"), ex.Message),
                     AppName, MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return true;
@@ -521,12 +535,13 @@ namespace KillerScan
             bool machineInstall = string.Equals(currentExe, MachineInstallExe, StringComparison.OrdinalIgnoreCase);
             if (RelaunchMachineUninstallElevatedIfNeeded(machineInstall)) return;
 
-            var res = MessageBox.Show(
-                "Uninstall KillerScan from this computer?",
-                $"{AppName} Uninstall",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
-            if (res != MessageBoxResult.Yes) return;
+            var confirm = new Controls.ConfirmDialog(
+                L("Str_Uninstall_Confirm", "Uninstall KillerScan from this computer?"),
+                string.Empty,
+                L("Str_Uninstall_Title", "Uninstall"),
+                L("Str_Btn_Cancel", "Cancel"));
+            confirm.ShowDialog();
+            if (!confirm.Confirmed) return;
 
             RemoveFromPath(machineInstall ? MachineInstallDir : InstallDir,
                 machineInstall ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.User);
@@ -560,8 +575,6 @@ namespace KillerScan
                 UseShellExecute = true
             });
 
-            MessageBox.Show("KillerScan has been uninstalled.", AppName,
-                MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

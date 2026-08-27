@@ -93,7 +93,7 @@
     <sys:String x:Key="Str_St_OverrideCleared">Ruční nastavení zrušeno pro {0}</sys:String>
     <sys:String x:Key="Str_St_AppSize">Velikost aplikace {0} %</sys:String>
     <sys:String x:Key="Str_St_BadTarget">Neplatný cíl: „{0}“ - použijte 192.168.1.0/24, 192.168.1.7 nebo 192.168.1.10-50, oddělené čárkami</sys:String>
-    <sys:String x:Key="Str_St_TooManyAddresses">To je {0} adres - příliš mnoho na jedno skenování (limit {1}). Zužte rozsah nebo jej rozdělte do více karet.</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">To je {0} adres - příliš mnoho na jedno skenování (limit {1}). Zužte rozsah nebo jej skenujte po částech.</sys:String>
     <sys:String x:Key="Str_St_NoTarget">Zadejte podsíť, adresu nebo rozsah ke skenování</sys:String>
 
     <sys:String x:Key="Str_Portable">PŘENOSNÁ</sys:String>
@@ -125,5 +125,103 @@
     <sys:String x:Key="Str_Sc_AppReset">Obnovit výchozí velikost aplikace</sys:String>
     <sys:String x:Key="Str_Sc_Help">Zobrazit tento seznam</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Velikost aplikace lze měnit také kolečkem myši nad logem.</sys:String>
+
+    <!-- Exported HTML report -->
+    <sys:String x:Key="Str_Rep_Theme">Motiv</sys:String>
+    <sys:String x:Key="Str_Rep_Accent">Zvýraznění</sys:String>
+    <sys:String x:Key="Str_Rep_Subnet">Podsíť</sys:String>
+    <sys:String x:Key="Str_Rep_Scanned">Skenováno</sys:String>
+    <sys:String x:Key="Str_Rep_Devices">zařízení</sys:String>
+    <sys:String x:Key="Str_Rep_GeneratedBy">Vygenerováno pomocí</sys:String>
+    <sys:String x:Key="Str_Accent_Red">Červená</sys:String>
+    <sys:String x:Key="Str_Accent_Orange">Oranžová</sys:String>
+    <sys:String x:Key="Str_Accent_Green">Zelená</sys:String>
+    <sys:String x:Key="Str_Accent_Teal">Tyrkysová</sys:String>
+    <sys:String x:Key="Str_Accent_Blue">Modrá</sys:String>
+    <sys:String x:Key="Str_Accent_Purple">Fialová</sys:String>
+
+    <!-- Dialogs, updates and errors -->
+    <sys:String x:Key="Str_About_Title">O aplikaci KillerScan</sys:String>
+    <sys:String x:Key="Str_TT_About">O aplikaci KillerScan</sys:String>
+    <sys:String x:Key="Str_About_Aka" xml:space="preserve">ALIAS </sys:String>
+    <sys:String x:Key="Str_About_Unsigned">(nepodepsáno nebo neplatný řetěz)</sys:String>
+    <sys:String x:Key="Str_About_Computing">počítá se...</sys:String>
+    <sys:String x:Key="Str_Ssh_Title">Účet SSH</sys:String>
+    <sys:String x:Key="Str_Btn_Install">Nainstalovat</sys:String>
+    <sys:String x:Key="Str_Install_BulletShortcut">- Zástupce v nabídce Start</sys:String>
+    <sys:String x:Key="Str_Install_BulletArp">- Zobrazí se v Přidat nebo odebrat programy</sys:String>
+    <sys:String x:Key="Str_Db_Checking">Hledají se novější data výrobců...</sys:String>
+    <sys:String x:Key="Str_Db_Downloading">Stahují se data výrobců...</sys:String>
+    <sys:String x:Key="Str_Db_Fallback">Zkouší se záložní zdroj...</sys:String>
+    <sys:String x:Key="Str_Db_Blocked">Aktualizace selhala - stahování bylo zablokováno nebo bylo prázdné. Váš seznam zůstal beze změny.</sys:String>
+    <sys:String x:Key="Str_Db_Smaller">Nejnovější data měla {0} položek, méně než vašich stávajících {1}. Váš seznam byl zachován.</sys:String>
+    <sys:String x:Key="Str_Db_UpToDate">Databáze je již aktuální ({0} položek).</sys:String>
+    <sys:String x:Key="Str_Db_Updated">Aktualizováno na {0} položek.</sys:String>
+    <sys:String x:Key="Str_Db_SaveFailed">Databázi se nepodařilo uložit: {0}</sys:String>
+    <sys:String x:Key="Str_Db_Failed">Aktualizace selhala: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Available">Je dostupná aktualizace: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Downloading">Stahování...</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmHead">Stáhnout a nainstalovat {0} {1}?</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBody">Aplikace se zavře a znovu se automaticky spustí.</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBtn">Aktualizovat</sys:String>
+    <sys:String x:Key="Str_Conflict_Title">konflikt instalace</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveUser">KillerScan je nainstalován dvakrát. Odebrat nyní druhou kopii pro tohoto uživatele?
+
+Vaše nastavení nebude odstraněno.</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveMachine">KillerScan je nainstalován dvakrát. Odebrat nyní druhou kopii pro všechny uživatele?
+
+Vaše nastavení nebude odstraněno.</sys:String>
+    <sys:String x:Key="Str_Install_Failed">Instalace selhala:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Title">Odinstalace</sys:String>
+    <sys:String x:Key="Str_Uninstall_Confirm">Odinstalovat KillerScan z tohoto počítače?</sys:String>
+    <sys:String x:Key="Str_Uninstall_NoAdmin">Odinstalace nemohla vyžádat oprávnění správce:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Done">KillerScan byl odinstalován.</sys:String>
+    <sys:String x:Key="Str_Err_Export">Chyba exportu: {0}</sys:String>
+    <sys:String x:Key="Str_Err_Scan">Chyba skenování: {0}</sys:String>
+    <sys:String x:Key="Str_Filter_Csv">Soubor CSV</sys:String>
+    <sys:String x:Key="Str_Filter_Html">Zpráva HTML</sys:String>
+    <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
+    <sys:String x:Key="Str_Vendor_Randomized">(Náhodná)</sys:String>
+
+    <!-- Device shortcuts -->
+    <sys:String x:Key="Str_Sc_Browser">Otevřít vybrané zařízení v prohlížeči</sys:String>
+    <sys:String x:Key="Str_Sc_Ping">Odeslat ping vybranému zařízení</sys:String>
+    <sys:String x:Key="Str_Sc_Rdp">Otevřít Vzdálenou plochu k vybranému zařízení</sys:String>
+    <sys:String x:Key="Str_Sc_Ssh">Připojit se k vybranému zařízení přes SSH</sys:String>
+    <sys:String x:Key="Str_Sc_SshAs">Vybrat účet SSH a připojit se</sys:String>
+    <sys:String x:Key="Str_Sc_CopyIp">Kopírovat vybranou IP adresu</sys:String>
+    <sys:String x:Key="Str_Sc_CopyMac">Kopírovat vybranou MAC adresu</sys:String>
+    <sys:String x:Key="Str_Sc_CopyHost">Kopírovat vybraný název hostitele</sys:String>
+    <sys:String x:Key="Str_Sc_DeviceMenu">Otevřít všechny akce pro vybrané zařízení</sys:String>
+
+    <!-- Device types. Display labels only; the stored value stays English (see en-US.xaml). -->
+    <sys:String x:Key="Str_Dev_Router">Router</sys:String>
+    <sys:String x:Key="Str_Dev_RouterDNS">Router/DNS</sys:String>
+    <sys:String x:Key="Str_Dev_SwitchAP">Switch/AP</sys:String>
+    <sys:String x:Key="Str_Dev_Network">Síť</sys:String>
+    <sys:String x:Key="Str_Dev_Windows">Windows</sys:String>
+    <sys:String x:Key="Str_Dev_WindowsServer">Windows Server</sys:String>
+    <sys:String x:Key="Str_Dev_LinuxSSH">Linux/SSH</sys:String>
+    <sys:String x:Key="Str_Dev_Server">Server</sys:String>
+    <sys:String x:Key="Str_Dev_Printer">Tiskárna</sys:String>
+    <sys:String x:Key="Str_Dev_SmartTV">Smart TV</sys:String>
+    <sys:String x:Key="Str_Dev_AppleTV">Apple TV</sys:String>
+    <sys:String x:Key="Str_Dev_MediaStreamer">Multimediální přehrávač</sys:String>
+    <sys:String x:Key="Str_Dev_AppleDevice">Zařízení Apple</sys:String>
+    <sys:String x:Key="Str_Dev_iPhone">iPhone</sys:String>
+    <sys:String x:Key="Str_Dev_Android">Android</sys:String>
+    <sys:String x:Key="Str_Dev_Mobile">Mobilní zařízení</sys:String>
+    <sys:String x:Key="Str_Dev_IoT">IoT</sys:String>
+    <sys:String x:Key="Str_Dev_NAS">NAS</sys:String>
+    <sys:String x:Key="Str_Dev_Camera">Kamera</sys:String>
+    <sys:String x:Key="Str_Dev_Hypervisor">Hypervizor</sys:String>
+    <sys:String x:Key="Str_Dev_HomeAssistant">Home Assistant</sys:String>
+    <sys:String x:Key="Str_Dev_DNSServer">Server DNS</sys:String>
+    <sys:String x:Key="Str_Dev_WebDevice">Webové zařízení</sys:String>
+    <sys:String x:Key="Str_Dev_Other">Jiné</sys:String>
+    <sys:String x:Key="Str_Dev_Unknown">Neznámé</sys:String>
 
 </ResourceDictionary>

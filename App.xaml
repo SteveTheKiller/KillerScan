@@ -31,6 +31,11 @@
             <!-- KillerUI scrollbar thumb floor: keeps the thumb grabbable on large documents. -->
             <controls:ThumbViewportFloorConverter x:Key="ThumbFloor"/>
 
+            <!-- Device type: stored English value in, localized label out. Display only - nothing
+                 that persists, colors, filters or exports goes through it (DeviceTypeConverter). -->
+            <controls:DeviceTypeConverter x:Key="DeviceTypeLoc"/>
+            <controls:VendorConverter x:Key="VendorLoc"/>
+
             <!-- Typewriter wordmark font (bundled in Fonts/). -->
             <FontFamily x:Key="WordmarkFont">/KillerScan;component/Fonts/#Typewriter - a602 (dead postman 2004)</FontFamily>
 

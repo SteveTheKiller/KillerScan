@@ -100,7 +100,7 @@
     <sys:String x:Key="Str_St_RescanDone">Yeniden tarama tamamlandı - {0} ana bilgisayar yenilendi</sys:String>
     <sys:String x:Key="Str_St_AppSize">Uygulama boyutu %{0}</sys:String>
     <sys:String x:Key="Str_St_BadTarget">Geçersiz hedef: "{0}" - virgülle ayrılmış olarak 192.168.1.0/24, 192.168.1.7 veya 192.168.1.10-50 kullanın</sys:String>
-    <sys:String x:Key="Str_St_TooManyAddresses">Bu {0} adres - tek bir tarama için çok fazla (sınır {1}). Aralığı daraltın veya sekmelere bölün.</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">Bu {0} adres - tek bir tarama için çok fazla (sınır {1}). Aralığı daraltın veya parçalar hâlinde tarayın.</sys:String>
     <sys:String x:Key="Str_St_NoTarget">Taranacak bir alt ağ, adres veya aralık girin</sys:String>
     <sys:String x:Key="Str_Install_AllUsers">Tüm kullanıcılar için kur (Yönetici gerekir)</sys:String>
     <sys:String x:Key="Str_Install_AllUsersNote">Bu bilgisayardaki her hesap için Program Files klasörüne kurar. Windows izin isteyecek.</sys:String>
@@ -127,5 +127,103 @@
     <sys:String x:Key="Str_Sc_AppReset">Uygulama boyutunu sıfırla</sys:String>
     <sys:String x:Key="Str_Sc_Help">Bu listeyi göster</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Uygulama boyutu, logo üzerindeki fare tekerleğini de izler.</sys:String>
+
+    <!-- Exported HTML report -->
+    <sys:String x:Key="Str_Rep_Theme">Tema</sys:String>
+    <sys:String x:Key="Str_Rep_Accent">Vurgu</sys:String>
+    <sys:String x:Key="Str_Rep_Subnet">Alt ağ</sys:String>
+    <sys:String x:Key="Str_Rep_Scanned">Tarandı</sys:String>
+    <sys:String x:Key="Str_Rep_Devices">cihaz</sys:String>
+    <sys:String x:Key="Str_Rep_GeneratedBy">Oluşturan:</sys:String>
+    <sys:String x:Key="Str_Accent_Red">Kırmızı</sys:String>
+    <sys:String x:Key="Str_Accent_Orange">Turuncu</sys:String>
+    <sys:String x:Key="Str_Accent_Green">Yeşil</sys:String>
+    <sys:String x:Key="Str_Accent_Teal">Turkuaz</sys:String>
+    <sys:String x:Key="Str_Accent_Blue">Mavi</sys:String>
+    <sys:String x:Key="Str_Accent_Purple">Mor</sys:String>
+
+    <!-- Dialogs, updates and errors -->
+    <sys:String x:Key="Str_About_Title">KillerScan hakkında</sys:String>
+    <sys:String x:Key="Str_TT_About">KillerScan hakkında</sys:String>
+    <sys:String x:Key="Str_About_Aka" xml:space="preserve">TAKMA AD </sys:String>
+    <sys:String x:Key="Str_About_Unsigned">(imzalanmamış veya zincir doğrulanamadı)</sys:String>
+    <sys:String x:Key="Str_About_Computing">hesaplanıyor...</sys:String>
+    <sys:String x:Key="Str_Ssh_Title">SSH hesabı</sys:String>
+    <sys:String x:Key="Str_Btn_Install">Yükle</sys:String>
+    <sys:String x:Key="Str_Install_BulletShortcut">- Başlat menüsü kısayolu</sys:String>
+    <sys:String x:Key="Str_Install_BulletArp">- Program Ekle/Kaldır listesinde görünür</sys:String>
+    <sys:String x:Key="Str_Db_Checking">Daha yeni üretici verisi aranıyor...</sys:String>
+    <sys:String x:Key="Str_Db_Downloading">Üretici verisi indiriliyor...</sys:String>
+    <sys:String x:Key="Str_Db_Fallback">Yedek kaynak deneniyor...</sys:String>
+    <sys:String x:Key="Str_Db_Blocked">Güncelleme başarısız - indirme engellendi veya boştu. Listeniz değişmedi.</sys:String>
+    <sys:String x:Key="Str_Db_Smaller">En yeni veride {0} kayıt vardı, mevcut {1} kaydınızdan az. Listeniz korundu.</sys:String>
+    <sys:String x:Key="Str_Db_UpToDate">Veritabanı zaten güncel ({0} kayıt).</sys:String>
+    <sys:String x:Key="Str_Db_Updated">{0} kayda güncellendi.</sys:String>
+    <sys:String x:Key="Str_Db_SaveFailed">Veritabanı kaydedilemedi: {0}</sys:String>
+    <sys:String x:Key="Str_Db_Failed">Güncelleme başarısız: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Available">Güncelleme mevcut: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Downloading">İndiriliyor...</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmHead">{0} {1} indirilip yüklensin mi?</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBody">Uygulama kapanacak ve otomatik olarak yeniden açılacak.</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBtn">Güncelle</sys:String>
+    <sys:String x:Key="Str_Conflict_Title">yükleme çakışması</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveUser">KillerScan iki kez yüklü. Diğer kullanıcıya özel kopya şimdi kaldırılsın mı?
+
+Ayarlarınız silinmeyecek.</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveMachine">KillerScan iki kez yüklü. Diğer tüm kullanıcılar için olan kopya şimdi kaldırılsın mı?
+
+Ayarlarınız silinmeyecek.</sys:String>
+    <sys:String x:Key="Str_Install_Failed">Yükleme başarısız:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Title">Kaldırma</sys:String>
+    <sys:String x:Key="Str_Uninstall_Confirm">KillerScan bu bilgisayardan kaldırılsın mı?</sys:String>
+    <sys:String x:Key="Str_Uninstall_NoAdmin">Kaldırma işlemi yönetici izni isteyemedi:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Done">KillerScan kaldırıldı.</sys:String>
+    <sys:String x:Key="Str_Err_Export">Dışa aktarma hatası: {0}</sys:String>
+    <sys:String x:Key="Str_Err_Scan">Tarama hatası: {0}</sys:String>
+    <sys:String x:Key="Str_Filter_Csv">CSV dosyası</sys:String>
+    <sys:String x:Key="Str_Filter_Html">HTML raporu</sys:String>
+    <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
+    <sys:String x:Key="Str_Vendor_Randomized">(Rastgele)</sys:String>
+
+    <!-- Device shortcuts -->
+    <sys:String x:Key="Str_Sc_Browser">Seçili cihazı tarayıcıda aç</sys:String>
+    <sys:String x:Key="Str_Sc_Ping">Seçili cihaza ping gönder</sys:String>
+    <sys:String x:Key="Str_Sc_Rdp">Seçili cihaza Uzak Masaüstü aç</sys:String>
+    <sys:String x:Key="Str_Sc_Ssh">Seçili cihaza SSH ile bağlan</sys:String>
+    <sys:String x:Key="Str_Sc_SshAs">Bir SSH hesabı seç ve bağlan</sys:String>
+    <sys:String x:Key="Str_Sc_CopyIp">Seçili IP adresini kopyala</sys:String>
+    <sys:String x:Key="Str_Sc_CopyMac">Seçili MAC adresini kopyala</sys:String>
+    <sys:String x:Key="Str_Sc_CopyHost">Seçili ana bilgisayar adını kopyala</sys:String>
+    <sys:String x:Key="Str_Sc_DeviceMenu">Seçili cihaz için tüm eylemleri aç</sys:String>
+
+    <!-- Device types. Display labels only; the stored value stays English (see en-US.xaml). -->
+    <sys:String x:Key="Str_Dev_Router">Yönlendirici</sys:String>
+    <sys:String x:Key="Str_Dev_RouterDNS">Yönlendirici/DNS</sys:String>
+    <sys:String x:Key="Str_Dev_SwitchAP">Anahtar/EN</sys:String>
+    <sys:String x:Key="Str_Dev_Network">Ağ</sys:String>
+    <sys:String x:Key="Str_Dev_Windows">Windows</sys:String>
+    <sys:String x:Key="Str_Dev_WindowsServer">Windows Server</sys:String>
+    <sys:String x:Key="Str_Dev_LinuxSSH">Linux/SSH</sys:String>
+    <sys:String x:Key="Str_Dev_Server">Sunucu</sys:String>
+    <sys:String x:Key="Str_Dev_Printer">Yazıcı</sys:String>
+    <sys:String x:Key="Str_Dev_SmartTV">Akıllı TV</sys:String>
+    <sys:String x:Key="Str_Dev_AppleTV">Apple TV</sys:String>
+    <sys:String x:Key="Str_Dev_MediaStreamer">Medya oynatıcı</sys:String>
+    <sys:String x:Key="Str_Dev_AppleDevice">Apple cihazı</sys:String>
+    <sys:String x:Key="Str_Dev_iPhone">iPhone</sys:String>
+    <sys:String x:Key="Str_Dev_Android">Android</sys:String>
+    <sys:String x:Key="Str_Dev_Mobile">Mobil</sys:String>
+    <sys:String x:Key="Str_Dev_IoT">IoT</sys:String>
+    <sys:String x:Key="Str_Dev_NAS">NAS</sys:String>
+    <sys:String x:Key="Str_Dev_Camera">Kamera</sys:String>
+    <sys:String x:Key="Str_Dev_Hypervisor">Hipervizör</sys:String>
+    <sys:String x:Key="Str_Dev_HomeAssistant">Home Assistant</sys:String>
+    <sys:String x:Key="Str_Dev_DNSServer">DNS sunucusu</sys:String>
+    <sys:String x:Key="Str_Dev_WebDevice">Web cihazı</sys:String>
+    <sys:String x:Key="Str_Dev_Other">Diğer</sys:String>
+    <sys:String x:Key="Str_Dev_Unknown">Bilinmiyor</sys:String>
 
 </ResourceDictionary>

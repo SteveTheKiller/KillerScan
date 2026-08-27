@@ -21,7 +21,9 @@ namespace KillerScan.Shell
 
         private void ExportCsv_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new SaveFileDialog { Filter = "CSV File|*.csv", FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.csv" };
+            // The description before the | is what the Windows save dialog shows in its type
+            // dropdown, so it is interface text; the *.csv pattern after it is not.
+            var dlg = new SaveFileDialog { Filter = Loc("Str_Filter_Csv") + "|*.csv", FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.csv" };
             if (dlg.ShowDialog() != true) return;
             try
             {
@@ -29,12 +31,12 @@ namespace KillerScan.Shell
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }
             catch (Exception ex)
-            { MessageBox.Show($"Export error: {ex.Message}", "KillerScan", MessageBoxButton.OK, MessageBoxImage.Error); }
+            { MessageBox.Show(string.Format(Loc("Str_Err_Export"), ex.Message), AppInfo.DisplayName, MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         private void ExportHtml_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new SaveFileDialog { Filter = "HTML Report|*.html", FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.html" };
+            var dlg = new SaveFileDialog { Filter = Loc("Str_Filter_Html") + "|*.html", FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.html" };
             if (dlg.ShowDialog() != true) return;
             try
             {
@@ -46,7 +48,7 @@ namespace KillerScan.Shell
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }
             catch (Exception ex)
-            { MessageBox.Show($"Export error: {ex.Message}", "KillerScan", MessageBoxButton.OK, MessageBoxImage.Error); }
+            { MessageBox.Show(string.Format(Loc("Str_Err_Export"), ex.Message), AppInfo.DisplayName, MessageBoxButton.OK, MessageBoxImage.Error); }
         }
     }
 }

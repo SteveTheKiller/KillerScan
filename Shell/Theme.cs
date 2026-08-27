@@ -85,7 +85,7 @@ namespace KillerScan.Shell
             if (FindName("RootGrid") is System.Windows.Controls.Grid root && root.RowDefinitions.Count > 0)
                 root.RowDefinitions[0].Height = new GridLength(h);
             var chrome = System.Windows.Shell.WindowChrome.GetWindowChrome(this);
-            if (chrome != null) chrome.CaptionHeight = h;
+            chrome?.CaptionHeight = h;
         }
 
         private void AccentSwatch_Click(object sender, RoutedEventArgs e)
@@ -274,9 +274,9 @@ namespace KillerScan.Shell
             (Services.Locale.De,   "Deutsch",    "de-DE"),
             (Services.Locale.Es,   "Español",    "es"),
             (Services.Locale.Fr,   "Français",   "fr-FR"),
+            (Services.Locale.HuHU, "Magyar",      "hu-HU"),
             (Services.Locale.Ja,   "日本語",      "ja-JP"),
             (Services.Locale.PlPL, "Polski",      "pl-PL"),
-            (Services.Locale.HuHU, "Magyar",      "hu-HU"),
             (Services.Locale.TrTR, "Türkçe",     "tr-TR"),
             (Services.Locale.ZhCN, "中文 (简体)", "zh-CN"),
             (Services.Locale.ZhTW, "中文 (繁體)", "zh-TW"),
@@ -342,12 +342,12 @@ namespace KillerScan.Shell
         private void RelocalizeDynamicUi()
         {
             // DataGridColumn.Header DynamicResource does not refresh on a live dictionary swap - re-set it.
-            if (ColIp != null)     ColIp.Header     = Loc("Str_Col_Ip");
-            if (ColHost != null)   ColHost.Header   = Loc("Str_Col_Host");
-            if (ColMac != null)    ColMac.Header    = Loc("Str_Col_Mac");
-            if (ColVendor != null) ColVendor.Header = Loc("Str_Col_Vendor");
-            if (ColType != null)   ColType.Header   = Loc("Str_Col_Type");
-            if (ColPorts != null)  ColPorts.Header  = Loc("Str_Col_Ports");
+            ColIp?.Header     = Loc("Str_Col_Ip");
+            ColHost?.Header   = Loc("Str_Col_Host");
+            ColMac?.Header    = Loc("Str_Col_Mac");
+            ColVendor?.Header = Loc("Str_Col_Vendor");
+            ColType?.Header   = Loc("Str_Col_Type");
+            ColPorts?.Header  = Loc("Str_Col_Ports");
 
             if (_active != null)
             {

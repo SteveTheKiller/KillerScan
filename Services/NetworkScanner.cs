@@ -220,7 +220,13 @@ namespace KillerScan.Services
 
             // Phase 2: Probe discovered hosts for details (parallel, throttled)
             var sortedHosts = discoveredHosts.Values
-                .OrderBy(h => BitConverter.ToUInt32([.. h.Addr.GetAddressBytes().Reverse()], 0))
+                // Enumerable.Reverse SPELLED OUT, not h.Addr.GetAddressBytes().Reverse().
+                // System.Text.Json 10 pulls System.Memory into this net48 project, which brings
+                // MemoryExtensions.Reverse<T>(this Span<T>) into scope. A byte[] converts
+                // implicitly to Span<byte>, so that overload WINS resolution over LINQ's - and it
+                // reverses in place and returns void, so the spread below fails to compile
+                // (CS9212). Naming Enumerable pins it to the overload this actually wants.
+                .OrderBy(h => BitConverter.ToUInt32([.. Enumerable.Reverse(h.Addr.GetAddressBytes())], 0))
                 .ToList();
             completed = 0;
             total = sortedHosts.Count;
@@ -609,6 +615,10 @@ namespace KillerScan.Services
             { "E0:72:A1", "Govee" },
         };
 
+        /// <summary>The stored Vendor value for a locally-administered (randomized) MAC. Public so
+        /// the display converter can recognise it without a second copy of the literal.</summary>
+        public const string VendorRandomized = "(Randomized)";
+
         /// <summary>OUI vendor lookup with brand-prefix overrides applied (used for display + classification).</summary>
         private static string ResolveVendor(string mac)
         {
@@ -623,7 +633,12 @@ namespace KillerScan.Services
             // iOS "Private Wi-Fi Address" and Android MAC randomization both use these.
             if (byte.TryParse(mac[..2], System.Globalization.NumberStyles.HexNumber, null, out var b0)
                 && (b0 & 0x02) != 0)
-                return "(Randomized)";
+                // ENGLISH, like every other stored value. This lands in NetworkDevice.Vendor,
+                // which is written to CSV, used by the HTML report and matched by the CLI's
+                // /vendor-filter - so translating it here would make a scan saved in German
+                // filter differently from one saved in English. VendorConverter turns it into the
+                // reader's language on the way to the screen, the same split device types use.
+                return VendorRandomized;
 
             return OuiLookup.GetVendor(mac);
         }

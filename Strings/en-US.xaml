@@ -110,7 +110,7 @@
     <sys:String x:Key="Str_St_OverrideCleared">Override cleared for {0}</sys:String>
     <sys:String x:Key="Str_St_AppSize">App size {0}%</sys:String>
     <sys:String x:Key="Str_St_BadTarget">Not a valid target: "{0}" - use 192.168.1.0/24, 192.168.1.7, or 192.168.1.10-50, separated by commas</sys:String>
-    <sys:String x:Key="Str_St_TooManyAddresses">That is {0} addresses - too many for one scan (limit {1}). Narrow the range or split it across tabs.</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">That is {0} addresses - too many for one scan (limit {1}). Narrow the range, or scan it in parts.</sys:String>
     <sys:String x:Key="Str_St_NoTarget">Enter a subnet, address, or range to scan</sys:String>
 
     <!-- Portable footer badge + install dialog -->
@@ -154,5 +154,118 @@
     <sys:String x:Key="Str_Sc_AppReset">Reset the app size</sys:String>
     <sys:String x:Key="Str_Sc_Help">Show this list</sys:String>
     <sys:String x:Key="Str_Sc_Hint">The app size also follows the mouse wheel over the wordmark.</sys:String>
+
+    <!-- ==== DIALOGS, UPDATES AND ERRORS ==== -->
+    <sys:String x:Key="Str_About_Title">About KillerScan</sys:String>
+    <sys:String x:Key="Str_TT_About">About KillerScan</sys:String>
+    <sys:String x:Key="Str_About_Aka" xml:space="preserve">AKA </sys:String>
+    <sys:String x:Key="Str_About_Unsigned">(not signed or chain failed)</sys:String>
+    <sys:String x:Key="Str_About_Computing">computing...</sys:String>
+    <sys:String x:Key="Str_Ssh_Title">SSH account</sys:String>
+    <sys:String x:Key="Str_Btn_Install">Install</sys:String>
+    <sys:String x:Key="Str_Install_BulletShortcut">- Start Menu shortcut</sys:String>
+    <sys:String x:Key="Str_Install_BulletArp">- Appears in Add/Remove Programs</sys:String>
+
+    <!-- Vendor database. {0} is a count, already formatted with the locale's own separators. -->
+    <sys:String x:Key="Str_Db_Checking">Checking for newer vendor data...</sys:String>
+    <sys:String x:Key="Str_Db_Downloading">Downloading vendor data...</sys:String>
+    <sys:String x:Key="Str_Db_Fallback">Trying fallback source...</sys:String>
+    <sys:String x:Key="Str_Db_Blocked">Update failed - the download was blocked or empty. Your list is unchanged.</sys:String>
+    <sys:String x:Key="Str_Db_Smaller">Newest data had {0} entries, fewer than your current {1}. Kept your list.</sys:String>
+    <sys:String x:Key="Str_Db_UpToDate">Database is already up to date ({0} entries).</sys:String>
+    <sys:String x:Key="Str_Db_Updated">Updated to {0} entries.</sys:String>
+    <sys:String x:Key="Str_Db_SaveFailed">Could not save the database: {0}</sys:String>
+    <sys:String x:Key="Str_Db_Failed">Update failed: {0}</sys:String>
+
+    <!-- Self-update. {0} is the release tag; in the heading {0} is the app name and {1} the tag. -->
+    <sys:String x:Key="Str_Upd_Available">Update available: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Downloading">Downloading...</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmHead">Download and install {0} {1}?</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBody">The app will close and reopen automatically.</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBtn">Update</sys:String>
+
+    <!-- Install conflict, uninstall. Two whole sentences rather than one with the scope
+         substituted in: a language that inflects the noun cannot take a drop-in word. -->
+    <sys:String x:Key="Str_Conflict_Title">installation conflict</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveUser">KillerScan is installed twice. Remove the other per-user copy now?
+
+Your settings will not be removed.</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveMachine">KillerScan is installed twice. Remove the other all-users copy now?
+
+Your settings will not be removed.</sys:String>
+    <sys:String x:Key="Str_Install_Failed">Installation failed:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Title">Uninstall</sys:String>
+    <sys:String x:Key="Str_Uninstall_Confirm">Uninstall KillerScan from this computer?</sys:String>
+    <sys:String x:Key="Str_Uninstall_NoAdmin">Uninstall could not request administrator access:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Done">KillerScan has been uninstalled.</sys:String>
+
+    <!-- Errors and file dialogs. The text before the | in a save filter is what Windows shows
+         in its type dropdown; the *.ext pattern after it is not interface text. -->
+    <sys:String x:Key="Str_Err_Export">Export error: {0}</sys:String>
+    <sys:String x:Key="Str_Err_Scan">Scan error: {0}</sys:String>
+    <sys:String x:Key="Str_Filter_Csv">CSV File</sys:String>
+    <sys:String x:Key="Str_Filter_Html">HTML Report</sys:String>
+
+    <!-- Adapter kind and the randomized-MAC vendor placeholder. -->
+    <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
+    <sys:String x:Key="Str_Vendor_Randomized">(Randomized)</sys:String>
+
+    <!-- ==== EXPORTED HTML REPORT ====
+         The report reuses the grid's Str_Col_* headers and the picker's Str_Theme_* names, so it
+         can never disagree with the app that produced it. Only these are its own. Accent names
+         are new: the app's accent dots are swatches with no text, but the report's need titles. -->
+    <sys:String x:Key="Str_Rep_Theme">Theme</sys:String>
+    <sys:String x:Key="Str_Rep_Accent">Accent</sys:String>
+    <sys:String x:Key="Str_Rep_Subnet">Subnet</sys:String>
+    <sys:String x:Key="Str_Rep_Scanned">Scanned</sys:String>
+    <sys:String x:Key="Str_Rep_Devices">devices</sys:String>
+    <sys:String x:Key="Str_Rep_GeneratedBy">Generated by</sys:String>
+    <sys:String x:Key="Str_Accent_Red">Red</sys:String>
+    <sys:String x:Key="Str_Accent_Orange">Orange</sys:String>
+    <sys:String x:Key="Str_Accent_Green">Green</sys:String>
+    <sys:String x:Key="Str_Accent_Teal">Teal</sys:String>
+    <sys:String x:Key="Str_Accent_Blue">Blue</sys:String>
+    <sys:String x:Key="Str_Accent_Purple">Purple</sys:String>
+
+    <!-- ==== DEVICE TYPES ====================================================================
+         DISPLAY LABELS ONLY. The stored value stays English in every locale - it is written to
+         the override registry, matched by the Type column's color triggers, used as a CSS class
+         in the exported report and accepted by the CLI's /type filter. DeviceTypeConverter maps
+         one to the other on the way to the screen, and derives each key by stripping everything
+         that is not a letter or digit ("Switch/AP" -> Str_Dev_SwitchAP).
+
+         The list covers the classifier's whole vocabulary, not just the 21 rows in the "Set
+         device type" menu: a type the menu cannot set can still be detected and shown.
+
+         Product names (Windows, Linux, NAS, IoT, DNS, Apple, Android) are proper nouns and stay
+         as they are when translated - only the surrounding words change. -->
+    <sys:String x:Key="Str_Dev_Router">Router</sys:String>
+    <sys:String x:Key="Str_Dev_RouterDNS">Router/DNS</sys:String>
+    <sys:String x:Key="Str_Dev_SwitchAP">Switch/AP</sys:String>
+    <sys:String x:Key="Str_Dev_Network">Network</sys:String>
+    <sys:String x:Key="Str_Dev_Windows">Windows</sys:String>
+    <sys:String x:Key="Str_Dev_WindowsServer">Windows Server</sys:String>
+    <sys:String x:Key="Str_Dev_LinuxSSH">Linux/SSH</sys:String>
+    <sys:String x:Key="Str_Dev_Server">Server</sys:String>
+    <sys:String x:Key="Str_Dev_Printer">Printer</sys:String>
+    <sys:String x:Key="Str_Dev_SmartTV">Smart TV</sys:String>
+    <sys:String x:Key="Str_Dev_AppleTV">Apple TV</sys:String>
+    <sys:String x:Key="Str_Dev_MediaStreamer">Media Streamer</sys:String>
+    <sys:String x:Key="Str_Dev_AppleDevice">Apple Device</sys:String>
+    <sys:String x:Key="Str_Dev_iPhone">iPhone</sys:String>
+    <sys:String x:Key="Str_Dev_Android">Android</sys:String>
+    <sys:String x:Key="Str_Dev_Mobile">Mobile</sys:String>
+    <sys:String x:Key="Str_Dev_IoT">IoT</sys:String>
+    <sys:String x:Key="Str_Dev_NAS">NAS</sys:String>
+    <sys:String x:Key="Str_Dev_Camera">Camera</sys:String>
+    <sys:String x:Key="Str_Dev_Hypervisor">Hypervisor</sys:String>
+    <sys:String x:Key="Str_Dev_HomeAssistant">Home Assistant</sys:String>
+    <sys:String x:Key="Str_Dev_DNSServer">DNS Server</sys:String>
+    <sys:String x:Key="Str_Dev_WebDevice">Web Device</sys:String>
+    <sys:String x:Key="Str_Dev_Other">Other</sys:String>
+    <sys:String x:Key="Str_Dev_Unknown">Unknown</sys:String>
 
 </ResourceDictionary>

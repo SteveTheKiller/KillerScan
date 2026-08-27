@@ -100,7 +100,7 @@
     <sys:String x:Key="Str_St_RescanDone">পুনঃস্ক্যান সম্পন্ন - {0}টি হোস্ট হালনাগাদ হয়েছে</sys:String>
     <sys:String x:Key="Str_St_AppSize">অ্যাপের আকার {0}%</sys:String>
     <sys:String x:Key="Str_St_BadTarget">বৈধ লক্ষ্য নয়: “{0}” - কমা দিয়ে আলাদা করে 192.168.1.0/24, 192.168.1.7 বা 192.168.1.10-50 ব্যবহার করুন</sys:String>
-    <sys:String x:Key="Str_St_TooManyAddresses">এটি {0}টি ঠিকানা - একটি স্ক্যানের জন্য অত্যধিক (সীমা {1})। পরিসর ছোট করুন বা ট্যাবে ভাগ করুন।</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">এটি {0}টি ঠিকানা - একটি স্ক্যানের জন্য অত্যধিক (সীমা {1})। পরিসর ছোট করুন বা অংশে ভাগ করে স্ক্যান করুন।</sys:String>
     <sys:String x:Key="Str_St_NoTarget">স্ক্যান করতে একটি সাবনেট, ঠিকানা বা পরিসর দিন</sys:String>
     <sys:String x:Key="Str_Install_AllUsers">সব ব্যবহারকারীর জন্য ইনস্টল করুন (অ্যাডমিন প্রয়োজন)</sys:String>
     <sys:String x:Key="Str_Install_AllUsersNote">এই পিসির প্রতিটি অ্যাকাউন্টের জন্য Program Files-এ ইনস্টল করে। Windows অনুমতি চাইবে।</sys:String>
@@ -127,5 +127,103 @@
     <sys:String x:Key="Str_Sc_AppReset">অ্যাপের আকার রিসেট করুন</sys:String>
     <sys:String x:Key="Str_Sc_Help">এই তালিকা দেখান</sys:String>
     <sys:String x:Key="Str_Sc_Hint">লোগোর উপর মাউস হুইল ঘোরালেও অ্যাপের আকার বদলায়।</sys:String>
+
+    <!-- Exported HTML report -->
+    <sys:String x:Key="Str_Rep_Theme">থিম</sys:String>
+    <sys:String x:Key="Str_Rep_Accent">অ্যাকসেন্ট</sys:String>
+    <sys:String x:Key="Str_Rep_Subnet">সাবনেট</sys:String>
+    <sys:String x:Key="Str_Rep_Scanned">স্ক্যান করা হয়েছে</sys:String>
+    <sys:String x:Key="Str_Rep_Devices">টি ডিভাইস</sys:String>
+    <sys:String x:Key="Str_Rep_GeneratedBy">তৈরি করেছে</sys:String>
+    <sys:String x:Key="Str_Accent_Red">লাল</sys:String>
+    <sys:String x:Key="Str_Accent_Orange">কমলা</sys:String>
+    <sys:String x:Key="Str_Accent_Green">সবুজ</sys:String>
+    <sys:String x:Key="Str_Accent_Teal">নীলাভ সবুজ</sys:String>
+    <sys:String x:Key="Str_Accent_Blue">নীল</sys:String>
+    <sys:String x:Key="Str_Accent_Purple">বেগুনি</sys:String>
+
+    <!-- Dialogs, updates and errors -->
+    <sys:String x:Key="Str_About_Title">KillerScan সম্পর্কে</sys:String>
+    <sys:String x:Key="Str_TT_About">KillerScan সম্পর্কে</sys:String>
+    <sys:String x:Key="Str_About_Aka" xml:space="preserve">ওরফে </sys:String>
+    <sys:String x:Key="Str_About_Unsigned">(স্বাক্ষরিত নয় বা চেইন যাচাই ব্যর্থ)</sys:String>
+    <sys:String x:Key="Str_About_Computing">গণনা করা হচ্ছে...</sys:String>
+    <sys:String x:Key="Str_Ssh_Title">SSH অ্যাকাউন্ট</sys:String>
+    <sys:String x:Key="Str_Btn_Install">ইনস্টল করুন</sys:String>
+    <sys:String x:Key="Str_Install_BulletShortcut">- স্টার্ট মেনু শর্টকাট</sys:String>
+    <sys:String x:Key="Str_Install_BulletArp">- Add/Remove Programs তালিকায় দেখা যাবে</sys:String>
+    <sys:String x:Key="Str_Db_Checking">নতুন ভেন্ডর ডেটা খোঁজা হচ্ছে...</sys:String>
+    <sys:String x:Key="Str_Db_Downloading">ভেন্ডর ডেটা ডাউনলোড হচ্ছে...</sys:String>
+    <sys:String x:Key="Str_Db_Fallback">বিকল্প উৎস চেষ্টা করা হচ্ছে...</sys:String>
+    <sys:String x:Key="Str_Db_Blocked">আপডেট ব্যর্থ হয়েছে - ডাউনলোড আটকে গেছে বা ফাঁকা ছিল। আপনার তালিকা অপরিবর্তিত আছে।</sys:String>
+    <sys:String x:Key="Str_Db_Smaller">নতুন ডেটায় {0}টি এন্ট্রি ছিল, আপনার বর্তমান {1}টির চেয়ে কম। আপনার তালিকা রাখা হয়েছে।</sys:String>
+    <sys:String x:Key="Str_Db_UpToDate">ডেটাবেস ইতিমধ্যেই হালনাগাদ ({0}টি এন্ট্রি)।</sys:String>
+    <sys:String x:Key="Str_Db_Updated">{0}টি এন্ট্রিতে হালনাগাদ হয়েছে।</sys:String>
+    <sys:String x:Key="Str_Db_SaveFailed">ডেটাবেস সংরক্ষণ করা যায়নি: {0}</sys:String>
+    <sys:String x:Key="Str_Db_Failed">আপডেট ব্যর্থ হয়েছে: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Available">আপডেট উপলব্ধ: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Downloading">ডাউনলোড হচ্ছে...</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmHead">{0} {1} ডাউনলোড করে ইনস্টল করবেন?</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBody">অ্যাপটি বন্ধ হয়ে স্বয়ংক্রিয়ভাবে আবার চালু হবে।</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBtn">আপডেট</sys:String>
+    <sys:String x:Key="Str_Conflict_Title">ইনস্টলেশন দ্বন্দ্ব</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveUser">KillerScan দুইবার ইনস্টল করা আছে। অন্য ব্যবহারকারী-ভিত্তিক কপিটি এখন সরাবেন?
+
+আপনার সেটিংস মুছে ফেলা হবে না।</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveMachine">KillerScan দুইবার ইনস্টল করা আছে। অন্য সব-ব্যবহারকারীর কপিটি এখন সরাবেন?
+
+আপনার সেটিংস মুছে ফেলা হবে না।</sys:String>
+    <sys:String x:Key="Str_Install_Failed">ইনস্টলেশন ব্যর্থ হয়েছে:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Title">আনইনস্টল</sys:String>
+    <sys:String x:Key="Str_Uninstall_Confirm">এই কম্পিউটার থেকে KillerScan আনইনস্টল করবেন?</sys:String>
+    <sys:String x:Key="Str_Uninstall_NoAdmin">আনইনস্টল প্রশাসক অনুমতি চাইতে পারেনি:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Done">KillerScan আনইনস্টল করা হয়েছে।</sys:String>
+    <sys:String x:Key="Str_Err_Export">এক্সপোর্ট ত্রুটি: {0}</sys:String>
+    <sys:String x:Key="Str_Err_Scan">স্ক্যান ত্রুটি: {0}</sys:String>
+    <sys:String x:Key="Str_Filter_Csv">CSV ফাইল</sys:String>
+    <sys:String x:Key="Str_Filter_Html">HTML প্রতিবেদন</sys:String>
+    <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Iface_Ethernet">ইথারনেট</sys:String>
+    <sys:String x:Key="Str_Vendor_Randomized">(এলোমেলো)</sys:String>
+
+    <!-- Device shortcuts -->
+    <sys:String x:Key="Str_Sc_Browser">নির্বাচিত ডিভাইস ব্রাউজারে খুলুন</sys:String>
+    <sys:String x:Key="Str_Sc_Ping">নির্বাচিত ডিভাইসে পিং করুন</sys:String>
+    <sys:String x:Key="Str_Sc_Rdp">নির্বাচিত ডিভাইসে রিমোট ডেস্কটপ খুলুন</sys:String>
+    <sys:String x:Key="Str_Sc_Ssh">SSH দিয়ে নির্বাচিত ডিভাইসে সংযোগ করুন</sys:String>
+    <sys:String x:Key="Str_Sc_SshAs">একটি SSH অ্যাকাউন্ট বেছে নিয়ে সংযোগ করুন</sys:String>
+    <sys:String x:Key="Str_Sc_CopyIp">নির্বাচিত IP ঠিকানা কপি করুন</sys:String>
+    <sys:String x:Key="Str_Sc_CopyMac">নির্বাচিত MAC ঠিকানা কপি করুন</sys:String>
+    <sys:String x:Key="Str_Sc_CopyHost">নির্বাচিত হোস্টনাম কপি করুন</sys:String>
+    <sys:String x:Key="Str_Sc_DeviceMenu">নির্বাচিত ডিভাইসের সব ক্রিয়া খুলুন</sys:String>
+
+    <!-- Device types. Display labels only; the stored value stays English (see en-US.xaml). -->
+    <sys:String x:Key="Str_Dev_Router">রাউটার</sys:String>
+    <sys:String x:Key="Str_Dev_RouterDNS">রাউটার/DNS</sys:String>
+    <sys:String x:Key="Str_Dev_SwitchAP">সুইচ/AP</sys:String>
+    <sys:String x:Key="Str_Dev_Network">নেটওয়ার্ক</sys:String>
+    <sys:String x:Key="Str_Dev_Windows">Windows</sys:String>
+    <sys:String x:Key="Str_Dev_WindowsServer">Windows Server</sys:String>
+    <sys:String x:Key="Str_Dev_LinuxSSH">Linux/SSH</sys:String>
+    <sys:String x:Key="Str_Dev_Server">সার্ভার</sys:String>
+    <sys:String x:Key="Str_Dev_Printer">প্রিন্টার</sys:String>
+    <sys:String x:Key="Str_Dev_SmartTV">স্মার্ট টিভি</sys:String>
+    <sys:String x:Key="Str_Dev_AppleTV">Apple TV</sys:String>
+    <sys:String x:Key="Str_Dev_MediaStreamer">মিডিয়া স্ট্রিমার</sys:String>
+    <sys:String x:Key="Str_Dev_AppleDevice">Apple ডিভাইস</sys:String>
+    <sys:String x:Key="Str_Dev_iPhone">iPhone</sys:String>
+    <sys:String x:Key="Str_Dev_Android">Android</sys:String>
+    <sys:String x:Key="Str_Dev_Mobile">মোবাইল</sys:String>
+    <sys:String x:Key="Str_Dev_IoT">IoT</sys:String>
+    <sys:String x:Key="Str_Dev_NAS">NAS</sys:String>
+    <sys:String x:Key="Str_Dev_Camera">ক্যামেরা</sys:String>
+    <sys:String x:Key="Str_Dev_Hypervisor">হাইপারভাইজর</sys:String>
+    <sys:String x:Key="Str_Dev_HomeAssistant">Home Assistant</sys:String>
+    <sys:String x:Key="Str_Dev_DNSServer">DNS সার্ভার</sys:String>
+    <sys:String x:Key="Str_Dev_WebDevice">ওয়েব ডিভাইস</sys:String>
+    <sys:String x:Key="Str_Dev_Other">অন্যান্য</sys:String>
+    <sys:String x:Key="Str_Dev_Unknown">অজানা</sys:String>
 
 </ResourceDictionary>

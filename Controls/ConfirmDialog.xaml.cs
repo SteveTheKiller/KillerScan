@@ -31,7 +31,10 @@ namespace KillerScan.Controls
 
         // Configurable variant for reusing the themed dialog beyond the install prompt
         // (e.g. the self-update confirmation). detail may contain newlines for multiple lines.
-        public ConfirmDialog(string heading, string detail, string confirmText, string cancelText = "Cancel")
+        // cancelText has no English default any more: a defaulted literal is how the self-update
+        // dialog kept an English Cancel button next to three translated ones. Callers pass
+        // Loc("Str_Btn_Cancel"), which is what the default was trying to be.
+        public ConfirmDialog(string heading, string detail, string confirmText, string cancelText)
             : this()
         {
             HeadingText.Text = heading;

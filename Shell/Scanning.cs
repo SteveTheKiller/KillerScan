@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Windows;
 using KillerScan.Models;
+using KillerScan.Services;   // AppInfo, for the message box caption
 
 namespace KillerScan.Shell
 {
@@ -95,7 +96,7 @@ namespace KillerScan.Shell
                 await s.Scanner.ScanSubnetAsync(s.SubnetText, s.Cts.Token, fullScan: true);
             }
             catch (OperationCanceledException) { s.Status = Loc("Str_St_ScanCanceled"); if (s == _active) StatusText.Text = s.Status; }
-            catch (Exception ex) { MessageBox.Show($"Scan error: {ex.Message}", "KillerScan", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch (Exception ex) { MessageBox.Show(string.Format(Loc("Str_Err_Scan"), ex.Message), AppInfo.DisplayName, MessageBoxButton.OK, MessageBoxImage.Error); }
             finally
             {
                 s.Cts = null;

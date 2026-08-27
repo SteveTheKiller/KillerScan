@@ -9,6 +9,11 @@ namespace KillerScan.Services
     /// <summary>
     /// Turns a list of discovered devices into a CSV file or a styled, interactive HTML report.
     ///
+    /// Localized WITH A FALLBACK (see L below), because this runs in two very different places:
+    /// from the app, where a resource dictionary is loaded and the report should read in the same
+    /// language as the window that produced it, and from the command line, where there is no
+    /// Application at all and English is the right answer anyway.
+    ///
     /// Pure: no window, no dialogs, no file IO - it returns the document as a string and the caller
     /// decides where it lands. That is what lets the same two writers serve the export menu and the
     /// headless command line without either one growing its own copy.
@@ -22,6 +27,16 @@ namespace KillerScan.Services
         private const string AssetBase = "https://scan.killertools.net/assets/";
 
         /// <summary>Comma-separated devices, IP-ordered, every field quoted.</summary>
+        /// <summary>Resource lookup that survives having no Application - the CLI builds reports
+        /// with no WPF resources loaded, and gets the English fallback. Also used for the JS string
+        /// literals below, so those are escaped for a single-quoted JavaScript string.</summary>
+        private static string L(string key, string fallback) =>
+            System.Windows.Application.Current?.TryFindResource(key) as string ?? fallback;
+
+        /// <summary>L, escaped to sit inside a single-quoted JavaScript string literal.</summary>
+        private static string Ljs(string key, string fallback) =>
+            L(key, fallback).Replace("\\", "\\\\").Replace("'", "\\'");
+
         internal static string BuildCsv(IEnumerable<NetworkDevice> devices)
         {
             var sb = new StringBuilder();
@@ -104,19 +119,22 @@ namespace KillerScan.Services
             sb.AppendLine($"<img class='logo' src='{AssetBase}killerscan-wordmark.png' alt='' onload=\"document.getElementById('wm').style.display='none'\" onerror=\"this.style.display='none'\"/>");
             sb.AppendLine("<span id='wm' class='wordmark'><span class='k'>Killer</span><span class='s'>Scan</span></span>");
             sb.AppendLine("</div><div class='switchers'>");
-            sb.AppendLine("<div class='swrow'><span class='swlabel'>Theme</span><div class='themesw' id='themesw'></div></div>");
-            sb.AppendLine("<div class='swrow' id='accentrow'><span class='swlabel'>Accent</span><div class='themesw' id='accentsw'></div></div>");
+            sb.AppendLine($"<div class='swrow'><span class='swlabel'>{Esc(L("Str_Rep_Theme", "Theme"))}</span><div class='themesw' id='themesw'></div></div>");
+            sb.AppendLine($"<div class='swrow' id='accentrow'><span class='swlabel'>{Esc(L("Str_Rep_Accent", "Accent"))}</span><div class='themesw' id='accentsw'></div></div>");
             sb.AppendLine("</div></div>");
 
-            sb.AppendLine($"<p class='meta'>Subnet <b>{Esc(subnetText)}</b> &middot; Scanned <b>{DateTime.Now:yyyy-MM-dd HH:mm}</b> &middot; <b>{list.Count}</b> devices</p>");
+            // Three separate words rather than one sentence with the values substituted in: the
+            // bold values sit between them, so a language that reorders the clause still gets to.
+            sb.AppendLine($"<p class='meta'>{Esc(L("Str_Rep_Subnet", "Subnet"))} <b>{Esc(subnetText)}</b> &middot; {Esc(L("Str_Rep_Scanned", "Scanned"))} <b>{DateTime.Now:yyyy-MM-dd HH:mm}</b> &middot; <b>{list.Count}</b> {Esc(L("Str_Rep_Devices", "devices"))}</p>");
 
+            // The report's headers reuse the grid's own column keys, so the two never disagree.
             sb.AppendLine("<div class='tablewrap'><table id='tbl'><thead><tr>");
-            sb.AppendLine("<th data-type='num'>IP Address <span class='arrow'></span></th>");
-            sb.AppendLine("<th data-type='text'>Hostname <span class='arrow'></span></th>");
-            sb.AppendLine("<th data-type='text'>MAC Address <span class='arrow'></span></th>");
-            sb.AppendLine("<th data-type='text'>Vendor <span class='arrow'></span></th>");
-            sb.AppendLine("<th data-type='text'>Type <span class='arrow'></span></th>");
-            sb.AppendLine("<th data-type='text'>Open Ports <span class='arrow'></span></th>");
+            sb.AppendLine($"<th data-type='num'>{Esc(L("Str_Col_Ip", "IP Address"))} <span class='arrow'></span></th>");
+            sb.AppendLine($"<th data-type='text'>{Esc(L("Str_Col_Host", "Hostname"))} <span class='arrow'></span></th>");
+            sb.AppendLine($"<th data-type='text'>{Esc(L("Str_Col_Mac", "MAC Address"))} <span class='arrow'></span></th>");
+            sb.AppendLine($"<th data-type='text'>{Esc(L("Str_Col_Vendor", "Vendor"))} <span class='arrow'></span></th>");
+            sb.AppendLine($"<th data-type='text'>{Esc(L("Str_Col_Type", "Type"))} <span class='arrow'></span></th>");
+            sb.AppendLine($"<th data-type='text'>{Esc(L("Str_Col_Ports", "Open Ports"))} <span class='arrow'></span></th>");
             sb.AppendLine("</tr></thead><tbody>");
             foreach (var d in list)
             {
@@ -127,17 +145,38 @@ namespace KillerScan.Services
                     $"<td>{Esc(d.Hostname)}</td>" +
                     $"<td class='mono'>{Esc(d.MacAddress)}</td>" +
                     $"<td class='vendor'>{Esc(d.Vendor)}</td>" +
-                    $"<td class='{cls}'>{Esc(d.DeviceType)}</td>" +
+                    // The CLASS above keeps the English slug (that is what the CSS matches); only
+                    // the visible cell is translated.
+                    $"<td class='{cls}'>{Esc(Controls.DeviceTypeConverter.Display(d.DeviceType))}</td>" +
                     $"<td class='mono'>{Esc(d.OpenPortsDisplay)}</td></tr>");
             }
             sb.AppendLine("</tbody></table></div>");
 
-            sb.AppendLine($"<p class='footer'>Generated by <a href='{AppInfo.SiteUrl}' target='_blank' rel='noopener'>KillerScan</a> &middot; &copy; 2026 Steve the Killer</p>");
+            // The app name stays outside the translated span - it is the link text and a proper noun.
+            sb.AppendLine($"<p class='footer'>{Esc(L("Str_Rep_GeneratedBy", "Generated by"))} <a href='{AppInfo.SiteUrl}' target='_blank' rel='noopener'>KillerScan</a> &middot; &copy; 2026 Steve the Killer</p>");
             sb.AppendLine("</div>");
 
             // Interactivity: theme switcher (persisted) + click-to-sort columns.
             sb.AppendLine("<script>");
-            sb.AppendLine("var THEMES=[['dark','Dark','#3a3a3a'],['light','Light','#e8e8e8'],['black','Black','#000000'],['se98','98SE','#c0c0c0'],['blood','Blood','#4a1f20'],['greed','Greed','#0a5234'],['cyanotic','Cyanotic','#0a4a6e'],['ectoplasm','Ectoplasm','#314548'],['decay','Decay','#514e48'],['malaise','Malaise','#3f4947'],['sepulchre','Sepulchre','#454039'],['delirium','Delirium','#3e3c50'],['mourning','Mourning','#554c5d']];");
+            // The swatch TOOLTIPS use the app's own Str_Theme_* names, so a reader who switches
+            // theme in the report sees the same words the picker uses. The first element of each
+            // row is the CSS class and stays English.
+            sb.AppendLine("var THEMES=[" + string.Join(",",
+            [
+                $"['dark','{Ljs("Str_Theme_Dark", "Dark")}','#3a3a3a']",
+                $"['light','{Ljs("Str_Theme_Light", "Light")}','#e8e8e8']",
+                $"['black','{Ljs("Str_Theme_Black", "Black")}','#000000']",
+                $"['se98','{Ljs("Str_Theme_SE98", "98SE")}','#c0c0c0']",
+                $"['blood','{Ljs("Str_Theme_Blood", "Blood")}','#4a1f20']",
+                $"['greed','{Ljs("Str_Theme_Greed", "Greed")}','#0a5234']",
+                $"['cyanotic','{Ljs("Str_Theme_Cyanotic", "Cyanotic")}','#0a4a6e']",
+                $"['ectoplasm','{Ljs("Str_Theme_Ectoplasm", "Ectoplasm")}','#314548']",
+                $"['decay','{Ljs("Str_Theme_Decay", "Decay")}','#514e48']",
+                $"['malaise','{Ljs("Str_Theme_Malaise", "Malaise")}','#3f4947']",
+                $"['sepulchre','{Ljs("Str_Theme_Sepulchre", "Sepulchre")}','#454039']",
+                $"['delirium','{Ljs("Str_Theme_Delirium", "Delirium")}','#3e3c50']",
+                $"['mourning','{Ljs("Str_Theme_Mourning", "Mourning")}','#554c5d']",
+            ]) + "];");
             sb.AppendLine("var sw=document.getElementById('themesw');");
             sb.AppendLine("var CUSTOM_ACCENT={dark:1,light:1,black:1};");
             sb.AppendLine("function setTheme(t){document.documentElement.className='theme-'+t;try{localStorage.setItem('ksTheme',t)}catch(e){}var k=sw.children;for(var i=0;i<k.length;i++)k[i].className=(k[i].getAttribute('data-t')===t)?'active':'';var ar=document.getElementById('accentrow');ar.style.display=CUSTOM_ACCENT[t]?'flex':'none';if(CUSTOM_ACCENT[t]){var a=null;try{a=localStorage.getItem('ksAccent')}catch(e){}if(a)document.documentElement.style.setProperty('--accent',a);}else document.documentElement.style.removeProperty('--accent');}");
@@ -145,7 +184,15 @@ namespace KillerScan.Services
             sb.AppendLine("var saved=null;try{saved=localStorage.getItem('ksTheme')}catch(e){}");
             sb.AppendLine($"setTheme(saved||'{current}');");
             // Accent picker (ROYGBIV, matching the app) - overrides --accent and persists.
-            sb.AppendLine("var ACCENTS=[['#DD504B','Red'],['#E8962C','Orange'],['#1ea54c','Green'],['#1FB8A8','Teal'],['#50AEE8','Blue'],['#B982E3','Purple']];");
+            sb.AppendLine("var ACCENTS=[" + string.Join(",",
+            [
+                $"['#DD504B','{Ljs("Str_Accent_Red", "Red")}']",
+                $"['#E8962C','{Ljs("Str_Accent_Orange", "Orange")}']",
+                $"['#1ea54c','{Ljs("Str_Accent_Green", "Green")}']",
+                $"['#1FB8A8','{Ljs("Str_Accent_Teal", "Teal")}']",
+                $"['#50AEE8','{Ljs("Str_Accent_Blue", "Blue")}']",
+                $"['#B982E3','{Ljs("Str_Accent_Purple", "Purple")}']",
+            ]) + "];");
             sb.AppendLine("var asw=document.getElementById('accentsw');");
             sb.AppendLine("function setAccent(c){if(c){document.documentElement.style.setProperty('--accent',c);try{localStorage.setItem('ksAccent',c)}catch(e){}}var k=asw.children;for(var i=0;i<k.length;i++)k[i].className=(k[i].getAttribute('data-c')===c)?'active':'';}");
             sb.AppendLine("ACCENTS.forEach(function(a){var b=document.createElement('button');b.title=a[1];b.setAttribute('data-c',a[0]);b.style.background=a[0];b.onclick=function(){setAccent(a[0])};asw.appendChild(b);});");

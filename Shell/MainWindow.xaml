@@ -657,67 +657,71 @@
                                      the installed Segoe MDL2 Assets and rendered before adoption.
                                      MDL2 has no true router or NAS glyph, so those two are the
                                      closest available appliance/storage shapes. -->
-                                <MenuItem Header="Router" Click="SetType_Click" Tag="Router">
+                                <!-- Header is the LABEL, Tag is the stored VALUE. The Tag stays
+                                     English on every locale: it is written to the override
+                                     registry and matched by the grid's color triggers, the HTML
+                                     report's CSS slugs and the CLI's /type filter. -->
+                                <MenuItem Header="{DynamicResource Str_Dev_Router}" Click="SetType_Click" Tag="Router">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE965;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Switch/AP" Click="SetType_Click" Tag="Switch/AP">
+                                <MenuItem Header="{DynamicResource Str_Dev_SwitchAP}" Click="SetType_Click" Tag="Switch/AP">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE701;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Network" Click="SetType_Click" Tag="Network">
+                                <MenuItem Header="{DynamicResource Str_Dev_Network}" Click="SetType_Click" Tag="Network">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE839;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Windows" Click="SetType_Click" Tag="Windows">
+                                <MenuItem Header="{DynamicResource Str_Dev_Windows}" Click="SetType_Click" Tag="Windows">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE7F4;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Windows Server" Click="SetType_Click" Tag="Windows Server">
+                                <MenuItem Header="{DynamicResource Str_Dev_WindowsServer}" Click="SetType_Click" Tag="Windows Server">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE968;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Linux/SSH" Click="SetType_Click" Tag="Linux/SSH">
+                                <MenuItem Header="{DynamicResource Str_Dev_LinuxSSH}" Click="SetType_Click" Tag="Linux/SSH">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Server" Click="SetType_Click" Tag="Server">
+                                <MenuItem Header="{DynamicResource Str_Dev_Server}" Click="SetType_Click" Tag="Server">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xEDA2;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Printer" Click="SetType_Click" Tag="Printer">
+                                <MenuItem Header="{DynamicResource Str_Dev_Printer}" Click="SetType_Click" Tag="Printer">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE749;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Smart TV" Click="SetType_Click" Tag="Smart TV">
+                                <MenuItem Header="{DynamicResource Str_Dev_SmartTV}" Click="SetType_Click" Tag="Smart TV">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE7F8;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Apple TV" Click="SetType_Click" Tag="Apple TV">
+                                <MenuItem Header="{DynamicResource Str_Dev_AppleTV}" Click="SetType_Click" Tag="Apple TV">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE786;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Media Streamer" Click="SetType_Click" Tag="Media Streamer">
+                                <MenuItem Header="{DynamicResource Str_Dev_MediaStreamer}" Click="SetType_Click" Tag="Media Streamer">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8B2;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Apple Device" Click="SetType_Click" Tag="Apple Device">
+                                <MenuItem Header="{DynamicResource Str_Dev_AppleDevice}" Click="SetType_Click" Tag="Apple Device">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE977;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Mobile" Click="SetType_Click" Tag="Mobile">
+                                <MenuItem Header="{DynamicResource Str_Dev_Mobile}" Click="SetType_Click" Tag="Mobile">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8EA;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="IoT" Click="SetType_Click" Tag="IoT">
+                                <MenuItem Header="{DynamicResource Str_Dev_IoT}" Click="SetType_Click" Tag="IoT">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9A9;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="NAS" Click="SetType_Click" Tag="NAS">
+                                <MenuItem Header="{DynamicResource Str_Dev_NAS}" Click="SetType_Click" Tag="NAS">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8CE;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Camera" Click="SetType_Click" Tag="Camera">
+                                <MenuItem Header="{DynamicResource Str_Dev_Camera}" Click="SetType_Click" Tag="Camera">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE714;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Hypervisor" Click="SetType_Click" Tag="Hypervisor">
+                                <MenuItem Header="{DynamicResource Str_Dev_Hypervisor}" Click="SetType_Click" Tag="Hypervisor">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE81E;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Home Assistant" Click="SetType_Click" Tag="Home Assistant">
+                                <MenuItem Header="{DynamicResource Str_Dev_HomeAssistant}" Click="SetType_Click" Tag="Home Assistant">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE80F;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="DNS Server" Click="SetType_Click" Tag="DNS Server">
+                                <MenuItem Header="{DynamicResource Str_Dev_DNSServer}" Click="SetType_Click" Tag="DNS Server">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE12B;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Web Device" Click="SetType_Click" Tag="Web Device">
+                                <MenuItem Header="{DynamicResource Str_Dev_WebDevice}" Click="SetType_Click" Tag="Web Device">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE774;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Other" Click="SetType_Click" Tag="Other">
+                                <MenuItem Header="{DynamicResource Str_Dev_Other}" Click="SetType_Click" Tag="Other">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9CE;"/></MenuItem.Icon>
                                 </MenuItem>
                             </MenuItem>
@@ -816,11 +820,14 @@
                         <DataGridTextColumn x:Name="ColIp" Header="{DynamicResource Str_Col_Ip}" Binding="{Binding IpAddress}" Width="Auto" MinWidth="92" SortMemberPath="IpSortKey"/>
                         <DataGridTextColumn x:Name="ColHost" Header="{DynamicResource Str_Col_Host}" Binding="{Binding Hostname}" Width="Auto" MinWidth="142" MaxWidth="220"/>
                         <DataGridTextColumn x:Name="ColMac" Header="{DynamicResource Str_Col_Mac}" Binding="{Binding MacAddress}" Width="Auto" MinWidth="110"/>
-                        <DataGridTextColumn x:Name="ColVendor" Header="{DynamicResource Str_Col_Vendor}" Binding="{Binding Vendor}" Width="2*"/>
+                        <DataGridTextColumn x:Name="ColVendor" Header="{DynamicResource Str_Col_Vendor}" Binding="{Binding Vendor, Converter={StaticResource VendorLoc}}" Width="2*"/>
                         <DataGridTemplateColumn x:Name="ColType" Header="{DynamicResource Str_Col_Type}" Width="Auto" MinWidth="95" SortMemberPath="DeviceType">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding DeviceType}" FontWeight="Medium">
+                                    <!-- The TEXT is localized; the DataTriggers below deliberately
+                                         still match the raw English DeviceType, so the color a
+                                         type gets never depends on the interface language. -->
+                                    <TextBlock Text="{Binding DeviceType, Converter={StaticResource DeviceTypeLoc}}" FontWeight="Medium">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
@@ -1015,7 +1022,7 @@
                     <TextBlock x:Name="VersionLabel" Text="v1.5.2"
                                Foreground="{DynamicResource TextFooter}" FontFamily="Consolas"
                                FontSize="10" VerticalAlignment="Center" Margin="0,0,12,0"
-                               Cursor="Hand" ToolTip="About KillerScan"
+                               Cursor="Hand" ToolTip="{DynamicResource Str_TT_About}"
                                MouseLeftButtonUp="VersionLabel_Click"/>
                     <!-- 14px trailing margin keeps the copyright clear of the corner grip (family standard) -->
                     <TextBlock FontSize="10" VerticalAlignment="Center"
@@ -1087,7 +1094,7 @@
                                 Height="{DynamicResource AboutCaptionHeight}"
                                 Margin="{DynamicResource AboutCaptionMargin}"
                                 Background="{DynamicResource TitleBarBrush}">
-                            <TextBlock Text="Keyboard shortcuts" VerticalAlignment="Center" Margin="8,0,0,0"
+                            <TextBlock Text="{DynamicResource Str_Shortcuts_Title}" VerticalAlignment="Center" Margin="8,0,0,0"
                                        FontFamily="{DynamicResource ChromeFontFamily}" FontSize="11" FontWeight="Bold"
                                        Foreground="{DynamicResource ChromeTextBrush}"/>
                         </Border>
@@ -1158,7 +1165,7 @@
                                 Height="{DynamicResource AboutCaptionHeight}"
                                 Margin="{DynamicResource AboutCaptionMargin}"
                                 Background="{DynamicResource TitleBarBrush}">
-                            <TextBlock Text="About KillerScan" VerticalAlignment="Center" Margin="8,0,0,0"
+                            <TextBlock Text="{DynamicResource Str_About_Title}" VerticalAlignment="Center" Margin="8,0,0,0"
                                        FontFamily="{DynamicResource ChromeFontFamily}" FontSize="11" FontWeight="Bold"
                                        Foreground="{DynamicResource ChromeTextBrush}"/>
                         </Border>
@@ -1230,7 +1237,7 @@
                                             <!-- Shown only on an exe signed by Steve. The alias is an accent link to
                                                  thekiller.net; "AKA" stays muted so the eye lands on the name. -->
                                             <TextBlock x:Name="AboutAkaBlock" Visibility="Collapsed" Foreground="{DynamicResource MutedTextBrush}"
-                                                       FontSize="11" Margin="0,3,0,0"><Run Text="AKA "/><Hyperlink NavigateUri="https://thekiller.net" RequestNavigate="AboutLink_Navigate" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None" ToolTip="thekiller.net"><Run x:Name="AboutAkaRun"/></Hyperlink></TextBlock>
+                                                       FontSize="11" Margin="0,3,0,0"><Run Text="{DynamicResource Str_About_Aka}"/><Hyperlink NavigateUri="https://thekiller.net" RequestNavigate="AboutLink_Navigate" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None" ToolTip="thekiller.net"><Run x:Name="AboutAkaRun"/></Hyperlink></TextBlock>
                                         </StackPanel>
                                         <StackPanel Margin="0,0,0,10">
                                             <TextBlock Text="{DynamicResource Str_About_Thumbprint}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/>

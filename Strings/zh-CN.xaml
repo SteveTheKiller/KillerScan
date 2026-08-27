@@ -100,7 +100,7 @@
     <sys:String x:Key="Str_St_RescanDone">重新扫描完成 - 已刷新 {0} 台主机</sys:String>
     <sys:String x:Key="Str_St_AppSize">应用大小 {0}%</sys:String>
     <sys:String x:Key="Str_St_BadTarget">目标无效：“{0}” - 请使用 192.168.1.0/24、192.168.1.7 或 192.168.1.10-50，以逗号分隔</sys:String>
-    <sys:String x:Key="Str_St_TooManyAddresses">这是 {0} 个地址 - 单次扫描过多（上限 {1}）。请缩小范围或拆分到多个标签页。</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">这是 {0} 个地址 - 单次扫描过多（上限 {1}）。请缩小范围或分批扫描。</sys:String>
     <sys:String x:Key="Str_St_NoTarget">请输入要扫描的子网、地址或范围</sys:String>
     <sys:String x:Key="Str_Install_AllUsers">为所有用户安装（需要管理员权限）</sys:String>
     <sys:String x:Key="Str_Install_AllUsersNote">为本电脑上的每个账户安装到 Program Files。Windows 将请求授权。</sys:String>
@@ -127,5 +127,103 @@
     <sys:String x:Key="Str_Sc_AppReset">重置应用大小</sys:String>
     <sys:String x:Key="Str_Sc_Help">显示此列表</sys:String>
     <sys:String x:Key="Str_Sc_Hint">在标志上滚动鼠标滚轮同样可以调整应用大小。</sys:String>
+
+    <!-- Exported HTML report -->
+    <sys:String x:Key="Str_Rep_Theme">主题</sys:String>
+    <sys:String x:Key="Str_Rep_Accent">强调色</sys:String>
+    <sys:String x:Key="Str_Rep_Subnet">子网</sys:String>
+    <sys:String x:Key="Str_Rep_Scanned">扫描时间</sys:String>
+    <sys:String x:Key="Str_Rep_Devices">台设备</sys:String>
+    <sys:String x:Key="Str_Rep_GeneratedBy">生成工具：</sys:String>
+    <sys:String x:Key="Str_Accent_Red">红色</sys:String>
+    <sys:String x:Key="Str_Accent_Orange">橙色</sys:String>
+    <sys:String x:Key="Str_Accent_Green">绿色</sys:String>
+    <sys:String x:Key="Str_Accent_Teal">青色</sys:String>
+    <sys:String x:Key="Str_Accent_Blue">蓝色</sys:String>
+    <sys:String x:Key="Str_Accent_Purple">紫色</sys:String>
+
+    <!-- Dialogs, updates and errors -->
+    <sys:String x:Key="Str_About_Title">关于 KillerScan</sys:String>
+    <sys:String x:Key="Str_TT_About">关于 KillerScan</sys:String>
+    <sys:String x:Key="Str_About_Aka" xml:space="preserve">别名 </sys:String>
+    <sys:String x:Key="Str_About_Unsigned">(未签名或证书链验证失败)</sys:String>
+    <sys:String x:Key="Str_About_Computing">正在计算...</sys:String>
+    <sys:String x:Key="Str_Ssh_Title">SSH 账户</sys:String>
+    <sys:String x:Key="Str_Btn_Install">安装</sys:String>
+    <sys:String x:Key="Str_Install_BulletShortcut">- 开始菜单快捷方式</sys:String>
+    <sys:String x:Key="Str_Install_BulletArp">- 显示在“添加或删除程序”中</sys:String>
+    <sys:String x:Key="Str_Db_Checking">正在检查更新的厂商数据...</sys:String>
+    <sys:String x:Key="Str_Db_Downloading">正在下载厂商数据...</sys:String>
+    <sys:String x:Key="Str_Db_Fallback">正在尝试备用来源...</sys:String>
+    <sys:String x:Key="Str_Db_Blocked">更新失败 - 下载被阻止或内容为空。您的列表未更改。</sys:String>
+    <sys:String x:Key="Str_Db_Smaller">最新数据有 {0} 条记录，少于当前的 {1} 条，已保留您的列表。</sys:String>
+    <sys:String x:Key="Str_Db_UpToDate">数据库已是最新 ({0} 条记录)。</sys:String>
+    <sys:String x:Key="Str_Db_Updated">已更新至 {0} 条记录。</sys:String>
+    <sys:String x:Key="Str_Db_SaveFailed">无法保存数据库：{0}</sys:String>
+    <sys:String x:Key="Str_Db_Failed">更新失败：{0}</sys:String>
+    <sys:String x:Key="Str_Upd_Available">有可用更新：{0}</sys:String>
+    <sys:String x:Key="Str_Upd_Downloading">正在下载...</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmHead">下载并安装 {0} {1}？</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBody">应用将关闭并自动重新打开。</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBtn">更新</sys:String>
+    <sys:String x:Key="Str_Conflict_Title">安装冲突</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveUser">KillerScan 已安装两次。现在删除另一个当前用户的副本吗？
+
+您的设置不会被删除。</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveMachine">KillerScan 已安装两次。现在删除另一个所有用户的副本吗？
+
+您的设置不会被删除。</sys:String>
+    <sys:String x:Key="Str_Install_Failed">安装失败：
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Title">卸载</sys:String>
+    <sys:String x:Key="Str_Uninstall_Confirm">从此计算机卸载 KillerScan 吗？</sys:String>
+    <sys:String x:Key="Str_Uninstall_NoAdmin">卸载无法请求管理员权限：
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Done">KillerScan 已卸载。</sys:String>
+    <sys:String x:Key="Str_Err_Export">导出错误：{0}</sys:String>
+    <sys:String x:Key="Str_Err_Scan">扫描错误：{0}</sys:String>
+    <sys:String x:Key="Str_Filter_Csv">CSV 文件</sys:String>
+    <sys:String x:Key="Str_Filter_Html">HTML 报告</sys:String>
+    <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Iface_Ethernet">以太网</sys:String>
+    <sys:String x:Key="Str_Vendor_Randomized">(随机)</sys:String>
+
+    <!-- Device shortcuts -->
+    <sys:String x:Key="Str_Sc_Browser">在浏览器中打开所选设备</sys:String>
+    <sys:String x:Key="Str_Sc_Ping">Ping 所选设备</sys:String>
+    <sys:String x:Key="Str_Sc_Rdp">远程桌面连接到所选设备</sys:String>
+    <sys:String x:Key="Str_Sc_Ssh">通过 SSH 连接到所选设备</sys:String>
+    <sys:String x:Key="Str_Sc_SshAs">选择 SSH 账户并连接</sys:String>
+    <sys:String x:Key="Str_Sc_CopyIp">复制所选 IP 地址</sys:String>
+    <sys:String x:Key="Str_Sc_CopyMac">复制所选 MAC 地址</sys:String>
+    <sys:String x:Key="Str_Sc_CopyHost">复制所选主机名</sys:String>
+    <sys:String x:Key="Str_Sc_DeviceMenu">打开所选设备的全部操作</sys:String>
+
+    <!-- Device types. Display labels only; the stored value stays English (see en-US.xaml). -->
+    <sys:String x:Key="Str_Dev_Router">路由器</sys:String>
+    <sys:String x:Key="Str_Dev_RouterDNS">路由器/DNS</sys:String>
+    <sys:String x:Key="Str_Dev_SwitchAP">交换机/AP</sys:String>
+    <sys:String x:Key="Str_Dev_Network">网络设备</sys:String>
+    <sys:String x:Key="Str_Dev_Windows">Windows</sys:String>
+    <sys:String x:Key="Str_Dev_WindowsServer">Windows Server</sys:String>
+    <sys:String x:Key="Str_Dev_LinuxSSH">Linux/SSH</sys:String>
+    <sys:String x:Key="Str_Dev_Server">服务器</sys:String>
+    <sys:String x:Key="Str_Dev_Printer">打印机</sys:String>
+    <sys:String x:Key="Str_Dev_SmartTV">智能电视</sys:String>
+    <sys:String x:Key="Str_Dev_AppleTV">Apple TV</sys:String>
+    <sys:String x:Key="Str_Dev_MediaStreamer">媒体流设备</sys:String>
+    <sys:String x:Key="Str_Dev_AppleDevice">Apple 设备</sys:String>
+    <sys:String x:Key="Str_Dev_iPhone">iPhone</sys:String>
+    <sys:String x:Key="Str_Dev_Android">Android</sys:String>
+    <sys:String x:Key="Str_Dev_Mobile">移动设备</sys:String>
+    <sys:String x:Key="Str_Dev_IoT">物联网</sys:String>
+    <sys:String x:Key="Str_Dev_NAS">NAS</sys:String>
+    <sys:String x:Key="Str_Dev_Camera">摄像头</sys:String>
+    <sys:String x:Key="Str_Dev_Hypervisor">虚拟机管理程序</sys:String>
+    <sys:String x:Key="Str_Dev_HomeAssistant">Home Assistant</sys:String>
+    <sys:String x:Key="Str_Dev_DNSServer">DNS 服务器</sys:String>
+    <sys:String x:Key="Str_Dev_WebDevice">Web 设备</sys:String>
+    <sys:String x:Key="Str_Dev_Other">其他</sys:String>
+    <sys:String x:Key="Str_Dev_Unknown">未知</sys:String>
 
 </ResourceDictionary>

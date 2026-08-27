@@ -25,6 +25,19 @@
 .outline a:hover { color: var(--text); background: color-mix(in srgb, var(--accent) 8%, transparent); filter: none; }
 .outline a.on { color: var(--accent-text); border-left-color: var(--accent); background: var(--accent); }
 .outline a.sub { padding-left: 32px; font-size: 12px; opacity: 0.82; }
+/* Collapsible outline. Subsections are hidden until their section is the one being read or is
+   opened by hand; the chevron sits on the row rather than in the link, so clicking the title
+   still navigates. */
+.ol-head { display: flex; align-items: stretch; }
+.ol-head > a { flex: 1 1 auto; min-width: 0; }
+.ol-chev { flex: 0 0 auto; width: 26px; padding: 0; margin: 0; border: 0; background: none;
+  color: var(--text2); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.ol-chev:hover { color: var(--accent); }
+.ol-chev svg { transition: transform .15s ease; }
+.ol-group.open .ol-chev svg { transform: rotate(90deg); }
+.ol-subs { display: none; }
+.ol-group.open .ol-subs { display: block; }
+@media (max-width: 900px) { .ol-subs, .ol-chev { display: none; } .ol-head { display: block; } }
 @media (max-width: 900px) { .outline { display:flex; flex-direction:row; flex-wrap:wrap; padding:8px; gap:4px; } .outline a { border-left:0; border-radius:5px; padding:6px 10px; } .outline a.on { border-left:0; } .outline a.sub { padding-left:10px; } }
 </style>
 </head>
@@ -159,17 +172,17 @@
 <tr><td><code>killerscan</code></td><td data-i18n="tk_cli_gui">Open the normal KillerScan window.</td></tr>
 <tr><td><code>killerscan /scan</code></td><td data-i18n="tk_cli_local">Detect and scan the active local IPv4 subnet.</td></tr>
 <tr><td><code>killerscan /scan &lt;targets&gt;</code></td><td data-i18n="tk_cli_targets">Scan one or more explicit IPv4 targets.</td></tr>
-<tr><td><code>killerscan /probe &lt;IPv4&gt;</code></td><td>Deep-probe one host, scanning ports 1-1024 plus KillerScan's extended service list and collecting every available fingerprint.</td></tr>
-<tr><td><code>killerscan /network</code></td><td>Print the detected interface, local address, subnet, gateway and DNS server without scanning.</td></tr>
-<tr><td><code>killerscan /vendor &lt;MAC&gt;</code></td><td>Resolve a MAC address against the embedded offline IEEE OUI database.</td></tr>
+<tr><td><code>killerscan /probe &lt;IPv4&gt;</code></td><td data-i18n="tk_cli_probe">Deep-probe one host, scanning ports 1-1024 plus KillerScan's extended service list and collecting every available fingerprint.</td></tr>
+<tr><td><code>killerscan /network</code></td><td data-i18n="tk_cli_network">Print the detected interface, local address, subnet, gateway and DNS server without scanning.</td></tr>
+<tr><td><code>killerscan /vendor &lt;MAC&gt;</code></td><td data-i18n="tk_cli_vendorcmd">Resolve a MAC address against the embedded offline IEEE OUI database.</td></tr>
 <tr><td><code>/quick</code></td><td data-i18n="tk_cli_quick">Run discovery, hostname, MAC, vendor, and lightweight device classification without the full port and fingerprint probe.</td></tr>
-<tr><td><code>/progress</code>, <code>/timeout N</code></td><td>Report status every five percent or cancel after a deadline.</td></tr>
-<tr><td><code>/filter text</code>, <code>/type text</code>, <code>/vendor-filter text</code>, <code>/ports p,p</code></td><td>Keep only matching devices. The general filter searches displayed values and every collected fingerprint.</td></tr>
-<tr><td><code>/sort field</code>, <code>/descending</code>, <code>/limit N</code></td><td>Order by IP, hostname, MAC, vendor, type or open-port count, reverse it if wanted, then cap the result count.</td></tr>
-<tr><td><code>/format kind</code></td><td>Select table, CSV, JSON or interactive HTML. The shorthand flags <code>/table</code>, <code>/csv</code>, <code>/json</code> and <code>/html</code> do the same.</td></tr>
+<tr><td><code>/progress</code>, <code>/timeout N</code></td><td data-i18n="tk_cli_progress">Report status every five percent or cancel after a deadline.</td></tr>
+<tr><td><code>/filter text</code>, <code>/type text</code>, <code>/vendor-filter text</code>, <code>/ports p,p</code></td><td data-i18n="tk_cli_filters">Keep only matching devices. The general filter searches displayed values and every collected fingerprint.</td></tr>
+<tr><td><code>/sort field</code>, <code>/descending</code>, <code>/limit N</code></td><td data-i18n="tk_cli_sorting">Order by IP, hostname, MAC, vendor, type or open-port count, reverse it if wanted, then cap the result count.</td></tr>
+<tr><td><code>/format kind</code></td><td data-i18n="tk_cli_format">Select table, CSV, JSON or interactive HTML. The shorthand flags <code>/table</code>, <code>/csv</code>, <code>/json</code> and <code>/html</code> do the same.</td></tr>
 <tr><td><code>/export &lt;path&gt;</code></td><td data-i18n="tk_cli_export">Write the output to a file. The .csv, .json, .html or .htm extension selects its format unless /format overrides it.</td></tr>
-<tr><td><code>/no-header</code>, <code>/theme name</code></td><td>Drop table/CSV headings, or select any of the thirteen app themes for HTML output.</td></tr>
-<tr><td><code>/fail-empty</code></td><td>Return exit code 3 when filtering leaves no devices, making empty automation results explicit.</td></tr>
+<tr><td><code>/no-header</code>, <code>/theme name</code></td><td data-i18n="tk_cli_headers">Drop table/CSV headings, or select any of the thirteen app themes for HTML output.</td></tr>
+<tr><td><code>/fail-empty</code></td><td data-i18n="tk_cli_failempty">Return exit code 3 when filtering leaves no devices, making empty automation results explicit.</td></tr>
 <tr><td><code>/quiet</code></td><td data-i18n="tk_cli_quiet">Suppress normal progress and results. Intended for unattended use with /export and an exit-code check.</td></tr>
 <tr><td><code>/help</code>, <code>-h</code>, <code>/?</code></td><td data-i18n="tk_cli_help">Print the complete built-in command reference.</td></tr>
 <tr><td><code>/version</code>, <code>-v</code></td><td data-i18n="tk_cli_version">Print the installed version.</td></tr>
@@ -194,7 +207,7 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
 <tr><td><code>0</code></td><td data-i18n="tk_cli_exit0">The scan and any requested export completed successfully.</td></tr>
 <tr><td><code>1</code></td><td data-i18n="tk_cli_exit1">The scan or export failed, or the scan was cancelled.</td></tr>
 <tr><td><code>2</code></td><td data-i18n="tk_cli_exit2">A required value or scan target was missing or invalid.</td></tr>
-<tr><td><code>3</code></td><td>No device matched, or an offline vendor lookup found no registration, when the command requested that distinction.</td></tr>
+<tr><td><code>3</code></td><td data-i18n="tk_cli_exit3">No device matched, or an offline vendor lookup found no registration, when the command requested that distinction.</td></tr>
 </table>
 </div>
 
@@ -495,12 +508,66 @@ some ports open, none telling  -> Other</div>
 <script src="ks-i18n.js?v=2"></script>
 <script src="ks.js?v=5"></script>
 <script>
+// COLLAPSIBLE OUTLINE. The page has eleven sections and thirteen subsections, and listing
+// all twenty-four flat made the sidebar a wall you had to read to navigate.
+//
+// The grouping is built HERE, at runtime, rather than by nesting the markup: the twenty-four
+// links carry tk_* keys that must stay byte-identical to the headings they name, so the safest
+// structure is one that never edits them. Wrapping moves the existing nodes, so the scroll-spy
+// below still finds all twenty-four through .outline a, in document order.
+(function(){
+  var nav=document.querySelector('.outline');
+  if(!nav) return;
+  var kids=[].slice.call(nav.children), groups=[], cur=null;
+  kids.forEach(function(a){
+    if(a.tagName!=='A') return;
+    if(a.classList.contains('sub')){
+      if(cur){ cur.subs.appendChild(a); }
+      return;
+    }
+    var g=document.createElement('div'); g.className='ol-group';
+    var head=document.createElement('div'); head.className='ol-head';
+    var subs=document.createElement('div'); subs.className='ol-subs';
+    nav.insertBefore(g,a); head.appendChild(a); g.appendChild(head); g.appendChild(subs);
+    cur={el:g,subs:subs,head:head};
+    groups.push(cur);
+  });
+  // A section with no subsections gets no chevron - an empty disclosure that opens onto
+  // nothing is worse than none at all.
+  groups.forEach(function(g){
+    if(!g.subs.children.length){ g.el.classList.add('ol-leaf'); return; }
+    var t=document.createElement('button');
+    t.className='ol-chev'; t.type='button'; t.setAttribute('aria-expanded','false');
+    t.setAttribute('aria-label','Expand section');
+    t.innerHTML='<svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="M3 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
+    t.addEventListener('click',function(e){
+      e.preventDefault(); e.stopPropagation();
+      var open=g.el.classList.toggle('open');
+      t.setAttribute('aria-expanded',open?'true':'false');
+      g.el.dataset.manual='1';   // a hand-opened section is not auto-closed by scrolling
+    });
+    g.head.appendChild(t);
+  });
+  // Reading a section opens it. Sections you opened by hand stay open; the rest close, so the
+  // sidebar keeps showing where you are rather than growing as you scroll.
+  window.knOutlineReveal=function(a){
+    var g=a&&a.closest?a.closest('.ol-group'):null;
+    groups.forEach(function(x){
+      var open=(x.el===g)||x.el.dataset.manual==='1';
+      x.el.classList.toggle('open',open);
+      var c=x.head.querySelector('.ol-chev');
+      if(c) c.setAttribute('aria-expanded',open?'true':'false');
+    });
+  };
+})();
 (function(){
   var links=[].slice.call(document.querySelectorAll('.outline a'));
   var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));}).filter(Boolean);
   var sc=document.querySelector('.content-scroll');
   function onScroll(){ var y=(sc?sc.scrollTop:window.scrollY)+100, cur=secs[0]; secs.forEach(function(s){ if(s&&s.offsetTop<=y) cur=s; });
-    links.forEach(function(a){ a.classList.toggle('on', cur && a.getAttribute('href')==='#'+cur.id); }); }
+    var active=null;
+    links.forEach(function(a){ var on=cur && a.getAttribute('href')==='#'+cur.id; a.classList.toggle('on', on); if(on) active=a; });
+    if(active && window.knOutlineReveal) window.knOutlineReveal(active); }
   (sc||window).addEventListener('scroll',onScroll,{passive:true}); onScroll();
 })();
 (function(){

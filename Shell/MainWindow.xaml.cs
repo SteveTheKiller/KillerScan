@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using KillerScan.Controls;
-using KillerScan.Features;
+using KillerScan.Features.About;
 using KillerScan.Models;
 using KillerScan.Services;
 

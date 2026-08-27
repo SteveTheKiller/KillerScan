@@ -111,7 +111,7 @@
     <sys:String x:Key="Str_St_RescanDone">再スキャン完了 - {0} 台のホストを更新しました</sys:String>
     <sys:String x:Key="Str_St_AppSize">アプリのサイズ {0}%</sys:String>
     <sys:String x:Key="Str_St_BadTarget">無効なターゲットです: 「{0}」 - 192.168.1.0/24、192.168.1.7、192.168.1.10-50 のようにカンマ区切りで指定してください</sys:String>
-    <sys:String x:Key="Str_St_TooManyAddresses">{0} 件のアドレスです - 1 回のスキャンには多すぎます (上限 {1})。範囲を狭めるか、タブに分けてください。</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">{0} 件のアドレスです - 1 回のスキャンには多すぎます (上限 {1})。範囲を狭めるか、分割してスキャンしてください。</sys:String>
     <sys:String x:Key="Str_St_NoTarget">スキャンするサブネット、アドレス、範囲を入力してください</sys:String>
     <sys:String x:Key="Str_Install_AllUsers">すべてのユーザー用にインストール (管理者権限が必要)</sys:String>
     <sys:String x:Key="Str_Install_AllUsersNote">この PC のすべてのアカウント用に Program Files へインストールします。Windows が許可を求めます。</sys:String>
@@ -138,5 +138,103 @@
     <sys:String x:Key="Str_Sc_AppReset">アプリのサイズをリセット</sys:String>
     <sys:String x:Key="Str_Sc_Help">この一覧を表示</sys:String>
     <sys:String x:Key="Str_Sc_Hint">アプリのサイズは、ロゴの上でマウスホイールを回しても変更できます。</sys:String>
+
+    <!-- Exported HTML report -->
+    <sys:String x:Key="Str_Rep_Theme">テーマ</sys:String>
+    <sys:String x:Key="Str_Rep_Accent">アクセント</sys:String>
+    <sys:String x:Key="Str_Rep_Subnet">サブネット</sys:String>
+    <sys:String x:Key="Str_Rep_Scanned">スキャン日時</sys:String>
+    <sys:String x:Key="Str_Rep_Devices">台のデバイス</sys:String>
+    <sys:String x:Key="Str_Rep_GeneratedBy">作成:</sys:String>
+    <sys:String x:Key="Str_Accent_Red">レッド</sys:String>
+    <sys:String x:Key="Str_Accent_Orange">オレンジ</sys:String>
+    <sys:String x:Key="Str_Accent_Green">グリーン</sys:String>
+    <sys:String x:Key="Str_Accent_Teal">ティール</sys:String>
+    <sys:String x:Key="Str_Accent_Blue">ブルー</sys:String>
+    <sys:String x:Key="Str_Accent_Purple">パープル</sys:String>
+
+    <!-- Dialogs, updates and errors -->
+    <sys:String x:Key="Str_About_Title">KillerScan について</sys:String>
+    <sys:String x:Key="Str_TT_About">KillerScan について</sys:String>
+    <sys:String x:Key="Str_About_Aka" xml:space="preserve">別名 </sys:String>
+    <sys:String x:Key="Str_About_Unsigned">(署名なし、またはチェーンの検証に失敗)</sys:String>
+    <sys:String x:Key="Str_About_Computing">計算中...</sys:String>
+    <sys:String x:Key="Str_Ssh_Title">SSH アカウント</sys:String>
+    <sys:String x:Key="Str_Btn_Install">インストール</sys:String>
+    <sys:String x:Key="Str_Install_BulletShortcut">- スタート メニューのショートカット</sys:String>
+    <sys:String x:Key="Str_Install_BulletArp">- 「プログラムの追加と削除」に表示されます</sys:String>
+    <sys:String x:Key="Str_Db_Checking">新しいベンダー データを確認しています...</sys:String>
+    <sys:String x:Key="Str_Db_Downloading">ベンダー データをダウンロードしています...</sys:String>
+    <sys:String x:Key="Str_Db_Fallback">代替ソースを試しています...</sys:String>
+    <sys:String x:Key="Str_Db_Blocked">更新に失敗しました - ダウンロードがブロックされたか、内容が空でした。一覧は変更されていません。</sys:String>
+    <sys:String x:Key="Str_Db_Smaller">最新データの項目数は {0} 件で、現在の {1} 件より少なかったため、既存の一覧を保持しました。</sys:String>
+    <sys:String x:Key="Str_Db_UpToDate">データベースは既に最新です ({0} 件)。</sys:String>
+    <sys:String x:Key="Str_Db_Updated">{0} 件に更新しました。</sys:String>
+    <sys:String x:Key="Str_Db_SaveFailed">データベースを保存できませんでした: {0}</sys:String>
+    <sys:String x:Key="Str_Db_Failed">更新に失敗しました: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Available">更新が利用可能: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Downloading">ダウンロード中...</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmHead">{0} {1} をダウンロードしてインストールしますか?</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBody">アプリは終了し、自動的に再起動します。</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBtn">更新</sys:String>
+    <sys:String x:Key="Str_Conflict_Title">インストールの競合</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveUser">KillerScan が二重にインストールされています。もう一方のユーザー単位のコピーを今すぐ削除しますか?
+
+設定は削除されません。</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveMachine">KillerScan が二重にインストールされています。もう一方の全ユーザー向けのコピーを今すぐ削除しますか?
+
+設定は削除されません。</sys:String>
+    <sys:String x:Key="Str_Install_Failed">インストールに失敗しました:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Title">アンインストール</sys:String>
+    <sys:String x:Key="Str_Uninstall_Confirm">このコンピューターから KillerScan をアンインストールしますか?</sys:String>
+    <sys:String x:Key="Str_Uninstall_NoAdmin">アンインストールで管理者権限を要求できませんでした:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Done">KillerScan はアンインストールされました。</sys:String>
+    <sys:String x:Key="Str_Err_Export">エクスポート エラー: {0}</sys:String>
+    <sys:String x:Key="Str_Err_Scan">スキャン エラー: {0}</sys:String>
+    <sys:String x:Key="Str_Filter_Csv">CSV ファイル</sys:String>
+    <sys:String x:Key="Str_Filter_Html">HTML レポート</sys:String>
+    <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Iface_Ethernet">イーサネット</sys:String>
+    <sys:String x:Key="Str_Vendor_Randomized">(ランダム)</sys:String>
+
+    <!-- Device shortcuts -->
+    <sys:String x:Key="Str_Sc_Browser">選択したデバイスをブラウザーで開く</sys:String>
+    <sys:String x:Key="Str_Sc_Ping">選択したデバイスに ping を送信</sys:String>
+    <sys:String x:Key="Str_Sc_Rdp">選択したデバイスにリモート デスクトップで接続</sys:String>
+    <sys:String x:Key="Str_Sc_Ssh">選択したデバイスに SSH で接続</sys:String>
+    <sys:String x:Key="Str_Sc_SshAs">SSH アカウントを選んで接続</sys:String>
+    <sys:String x:Key="Str_Sc_CopyIp">選択した IP アドレスをコピー</sys:String>
+    <sys:String x:Key="Str_Sc_CopyMac">選択した MAC アドレスをコピー</sys:String>
+    <sys:String x:Key="Str_Sc_CopyHost">選択したホスト名をコピー</sys:String>
+    <sys:String x:Key="Str_Sc_DeviceMenu">選択したデバイスのすべての操作を開く</sys:String>
+
+    <!-- Device types. Display labels only; the stored value stays English (see en-US.xaml). -->
+    <sys:String x:Key="Str_Dev_Router">ルーター</sys:String>
+    <sys:String x:Key="Str_Dev_RouterDNS">ルーター/DNS</sys:String>
+    <sys:String x:Key="Str_Dev_SwitchAP">スイッチ/AP</sys:String>
+    <sys:String x:Key="Str_Dev_Network">ネットワーク</sys:String>
+    <sys:String x:Key="Str_Dev_Windows">Windows</sys:String>
+    <sys:String x:Key="Str_Dev_WindowsServer">Windows Server</sys:String>
+    <sys:String x:Key="Str_Dev_LinuxSSH">Linux/SSH</sys:String>
+    <sys:String x:Key="Str_Dev_Server">サーバー</sys:String>
+    <sys:String x:Key="Str_Dev_Printer">プリンター</sys:String>
+    <sys:String x:Key="Str_Dev_SmartTV">スマートテレビ</sys:String>
+    <sys:String x:Key="Str_Dev_AppleTV">Apple TV</sys:String>
+    <sys:String x:Key="Str_Dev_MediaStreamer">メディア ストリーマー</sys:String>
+    <sys:String x:Key="Str_Dev_AppleDevice">Apple デバイス</sys:String>
+    <sys:String x:Key="Str_Dev_iPhone">iPhone</sys:String>
+    <sys:String x:Key="Str_Dev_Android">Android</sys:String>
+    <sys:String x:Key="Str_Dev_Mobile">モバイル</sys:String>
+    <sys:String x:Key="Str_Dev_IoT">IoT</sys:String>
+    <sys:String x:Key="Str_Dev_NAS">NAS</sys:String>
+    <sys:String x:Key="Str_Dev_Camera">カメラ</sys:String>
+    <sys:String x:Key="Str_Dev_Hypervisor">ハイパーバイザー</sys:String>
+    <sys:String x:Key="Str_Dev_HomeAssistant">Home Assistant</sys:String>
+    <sys:String x:Key="Str_Dev_DNSServer">DNS サーバー</sys:String>
+    <sys:String x:Key="Str_Dev_WebDevice">Web デバイス</sys:String>
+    <sys:String x:Key="Str_Dev_Other">その他</sys:String>
+    <sys:String x:Key="Str_Dev_Unknown">不明</sys:String>
 
 </ResourceDictionary>

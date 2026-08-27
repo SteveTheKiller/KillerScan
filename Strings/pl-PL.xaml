@@ -13,7 +13,7 @@
     <sys:String x:Key="Str_Lbl_Local">Lokalny</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Brama</sys:String>
     <sys:String x:Key="Str_Btn_Stop">Zatrzymaj</sys:String>
-    <sys:String x:Key="Str_Status_Ready">Gotowe — załadowano {0} dostawców OUI</sys:String>
+    <sys:String x:Key="Str_Status_Ready">Gotowe - załadowano {0} dostawców OUI</sys:String>
     <sys:String x:Key="Str_Count_Found">Znaleziono urządzeń: {0}</sys:String>
     <sys:String x:Key="Str_Count_Shown">Wyświetlono {0} z {1}</sys:String>
     <sys:String x:Key="Str_DiscoveredDevices">Wykryte urządzenia</sys:String>
@@ -57,7 +57,7 @@
     <sys:String x:Key="Str_St_ResolvingMacs">Rozpoznawanie {0} adresów MAC...</sys:String>
     <sys:String x:Key="Str_St_Probing">Sprawdzanie {0} aktywnych hostów...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Rozpoznawanie {0} hostów...</sys:String>
-    <sys:String x:Key="Str_St_ScanComplete">Skanowanie zakończone — znaleziono urządzeń: {0}</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">Skanowanie zakończone - znaleziono urządzeń: {0}</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Skanowanie anulowane</sys:String>
     <sys:String x:Key="Str_St_Exported">Wyeksportowano do {0}</sys:String>
     <sys:String x:Key="Str_InstallBtn">Zainstaluj KillerScan</sys:String>
@@ -68,4 +68,147 @@
     <sys:String x:Key="Str_Sys_Minimize">Minimalizuj</sys:String>
     <sys:String x:Key="Str_Sys_Maximize">Maksymalizuj</sys:String>
     <sys:String x:Key="Str_Sys_Close">Zamknij</sys:String>
+    <!-- ==== Filling the gaps that fell through to English before 1.6.1 ==== -->
+    <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
+    <sys:String x:Key="Str_Ctx_Ping">Ping</sys:String>
+    <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
+    <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">SSH jako...</sys:String>
+    <sys:String x:Key="Str_Ssh_Head">Połącz z {0} przez SSH</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">Konto, na które nastąpi logowanie. KillerScan zapamięta je dla tego urządzenia, więc następnym razem wystarczy nacisnąć SSH. Zapisywana jest wyłącznie nazwa użytkownika - hasło i klucz prywatny pozostają w kliencie SSH systemu Windows.</sys:String>
+    <sys:String x:Key="Str_Ssh_User">NAZWA UŻYTKOWNIKA</sys:String>
+    <sys:String x:Key="Str_About_Sha">SHA-256 PLIKU EXE</sys:String>
+    <sys:String x:Key="Str_About_Db">BAZA PRODUCENTÓW</sys:String>
+    <sys:String x:Key="Str_About_DbHint">Z listy OUI programu Wireshark.</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} wpisów</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">odświeżono {0}</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">dołączona do aplikacji</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">Skanowanie ARP i IP z rozpoznawaniem producenta, klasyfikacją urządzeń i raportem HTML w wybranym motywie. Bez konta, bez telemetrii, bez wysyłania czegokolwiek poza sieć lokalną. Narzędzie </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve"> na licencji GPLv3.</sys:String>
+    <sys:String x:Key="Str_St_Rescanning">Dokładne skanowanie {0} ...</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">Ponowne skanowanie zakończone - odświeżono hostów: {0}</sys:String>
+    <sys:String x:Key="Str_St_OverrideSet">Ustawiono typ: {0} = {1}</sys:String>
+    <sys:String x:Key="Str_St_OverrideCleared">Wyczyszczono typ dla {0}</sys:String>
+    <sys:String x:Key="Str_St_AppSize">Rozmiar aplikacji {0}%</sys:String>
+    <sys:String x:Key="Str_St_BadTarget">Nieprawidłowy cel: "{0}" - użyj 192.168.1.0/24, 192.168.1.7 lub 192.168.1.1-50</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">To {0} adresów - zbyt wiele na jedno skanowanie (limit {1}). Zawęź zakres.</sys:String>
+    <sys:String x:Key="Str_St_NoTarget">Podaj podsieć, adres lub zakres do skanowania</sys:String>
+    <sys:String x:Key="Str_Portable">PRZENOŚNA</sys:String>
+    <sys:String x:Key="Str_Install_AllUsers">Zainstaluj dla wszystkich użytkowników (wymaga uprawnień administratora)</sys:String>
+    <sys:String x:Key="Str_Install_AllUsersNote">Instaluje w folderze Program Files dla każdego konta na tym komputerze. System Windows poprosi o zgodę.</sys:String>
+    <sys:String x:Key="Str_Install_HeadUser">Zainstalować KillerScan w Twoim profilu użytkownika?</sys:String>
+    <sys:String x:Key="Str_Install_HeadAll">Zainstalować KillerScan dla wszystkich użytkowników tego komputera?</sys:String>
+    <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan jest już zainstalowany dla wszystkich użytkowników tego komputera, więc spowoduje to aktualizację tej instalacji.</sys:String>
+    <sys:String x:Key="Str_TT_Shortcuts">Skróty klawiaturowe (F1)</sys:String>
+    <sys:String x:Key="Str_Shortcuts_Title">Skróty klawiaturowe</sys:String>
+    <sys:String x:Key="Str_Sc_Scan">Rozpocznij lub zatrzymaj skanowanie</sys:String>
+    <sys:String x:Key="Str_Sc_Cancel">Anuluj skanowanie lub zamknij to okno</sys:String>
+    <sys:String x:Key="Str_Sc_Rescan">Dokładne ponowne skanowanie wybranych hostów</sys:String>
+    <sys:String x:Key="Str_Sc_Subnet">Przejdź do pola podsieci</sys:String>
+    <sys:String x:Key="Str_Sc_SelectAll">Zaznacz wszystkie urządzenia</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Eksportuj wyniki</sys:String>
+    <sys:String x:Key="Str_Sc_AppBigger">Powiększ aplikację</sys:String>
+    <sys:String x:Key="Str_Sc_AppSmaller">Pomniejsz aplikację</sys:String>
+    <sys:String x:Key="Str_Sc_AppReset">Przywróć domyślny rozmiar</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Pokaż tę listę</sys:String>
+    <sys:String x:Key="Str_Sc_Hint">Rozmiar aplikacji zmienia też kółko myszy nad logotypem.</sys:String>
+
+    <!-- Exported HTML report -->
+    <sys:String x:Key="Str_Rep_Theme">Motyw</sys:String>
+    <sys:String x:Key="Str_Rep_Accent">Akcent</sys:String>
+    <sys:String x:Key="Str_Rep_Subnet">Podsieć</sys:String>
+    <sys:String x:Key="Str_Rep_Scanned">Zeskanowano</sys:String>
+    <sys:String x:Key="Str_Rep_Devices">urządzeń</sys:String>
+    <sys:String x:Key="Str_Rep_GeneratedBy">Wygenerowano przez</sys:String>
+    <sys:String x:Key="Str_Accent_Red">Czerwony</sys:String>
+    <sys:String x:Key="Str_Accent_Orange">Pomarańczowy</sys:String>
+    <sys:String x:Key="Str_Accent_Green">Zielony</sys:String>
+    <sys:String x:Key="Str_Accent_Teal">Turkusowy</sys:String>
+    <sys:String x:Key="Str_Accent_Blue">Niebieski</sys:String>
+    <sys:String x:Key="Str_Accent_Purple">Fioletowy</sys:String>
+
+    <!-- Dialogs, updates and errors -->
+    <sys:String x:Key="Str_About_Title">O programie KillerScan</sys:String>
+    <sys:String x:Key="Str_TT_About">O programie KillerScan</sys:String>
+    <sys:String x:Key="Str_About_Aka" xml:space="preserve">ALIAS </sys:String>
+    <sys:String x:Key="Str_About_Unsigned">(niepodpisany lub nieprawidłowy łańcuch)</sys:String>
+    <sys:String x:Key="Str_About_Computing">obliczanie...</sys:String>
+    <sys:String x:Key="Str_Ssh_Title">Konto SSH</sys:String>
+    <sys:String x:Key="Str_Btn_Install">Zainstaluj</sys:String>
+    <sys:String x:Key="Str_Install_BulletShortcut">- Skrót w menu Start</sys:String>
+    <sys:String x:Key="Str_Install_BulletArp">- Pojawia się w Dodaj lub usuń programy</sys:String>
+    <sys:String x:Key="Str_Db_Checking">Sprawdzanie nowszych danych producentów...</sys:String>
+    <sys:String x:Key="Str_Db_Downloading">Pobieranie danych producentów...</sys:String>
+    <sys:String x:Key="Str_Db_Fallback">Próba źródła zapasowego...</sys:String>
+    <sys:String x:Key="Str_Db_Blocked">Aktualizacja nie powiodła się - pobieranie zostało zablokowane lub było puste. Twoja lista pozostaje bez zmian.</sys:String>
+    <sys:String x:Key="Str_Db_Smaller">Najnowsze dane miały {0} wpisów, mniej niż obecne {1}. Zachowano Twoją listę.</sys:String>
+    <sys:String x:Key="Str_Db_UpToDate">Baza danych jest już aktualna ({0} wpisów).</sys:String>
+    <sys:String x:Key="Str_Db_Updated">Zaktualizowano do {0} wpisów.</sys:String>
+    <sys:String x:Key="Str_Db_SaveFailed">Nie można zapisać bazy danych: {0}</sys:String>
+    <sys:String x:Key="Str_Db_Failed">Aktualizacja nie powiodła się: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Available">Dostępna aktualizacja: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Downloading">Pobieranie...</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmHead">Pobrać i zainstalować {0} {1}?</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBody">Aplikacja zamknie się i uruchomi ponownie automatycznie.</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBtn">Aktualizuj</sys:String>
+    <sys:String x:Key="Str_Conflict_Title">konflikt instalacji</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveUser">KillerScan jest zainstalowany dwukrotnie. Usunąć teraz drugą kopię dla tego użytkownika?
+
+Twoje ustawienia nie zostaną usunięte.</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveMachine">KillerScan jest zainstalowany dwukrotnie. Usunąć teraz drugą kopię dla wszystkich użytkowników?
+
+Twoje ustawienia nie zostaną usunięte.</sys:String>
+    <sys:String x:Key="Str_Install_Failed">Instalacja nie powiodła się:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Title">Dezinstalacja</sys:String>
+    <sys:String x:Key="Str_Uninstall_Confirm">Odinstalować KillerScan z tego komputera?</sys:String>
+    <sys:String x:Key="Str_Uninstall_NoAdmin">Dezinstalacja nie mogła uzyskać uprawnień administratora:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Done">KillerScan został odinstalowany.</sys:String>
+    <sys:String x:Key="Str_Err_Export">Błąd eksportu: {0}</sys:String>
+    <sys:String x:Key="Str_Err_Scan">Błąd skanowania: {0}</sys:String>
+    <sys:String x:Key="Str_Filter_Csv">Plik CSV</sys:String>
+    <sys:String x:Key="Str_Filter_Html">Raport HTML</sys:String>
+    <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
+    <sys:String x:Key="Str_Vendor_Randomized">(Losowy)</sys:String>
+
+    <!-- Device shortcuts -->
+    <sys:String x:Key="Str_Sc_Browser">Otwórz wybrane urządzenie w przeglądarce</sys:String>
+    <sys:String x:Key="Str_Sc_Ping">Wyślij ping do wybranego urządzenia</sys:String>
+    <sys:String x:Key="Str_Sc_Rdp">Otwórz Pulpit zdalny do wybranego urządzenia</sys:String>
+    <sys:String x:Key="Str_Sc_Ssh">Połącz się z wybranym urządzeniem przez SSH</sys:String>
+    <sys:String x:Key="Str_Sc_SshAs">Wybierz konto SSH i połącz</sys:String>
+    <sys:String x:Key="Str_Sc_CopyIp">Kopiuj wybrany adres IP</sys:String>
+    <sys:String x:Key="Str_Sc_CopyMac">Kopiuj wybrany adres MAC</sys:String>
+    <sys:String x:Key="Str_Sc_CopyHost">Kopiuj wybraną nazwę hosta</sys:String>
+    <sys:String x:Key="Str_Sc_DeviceMenu">Otwórz wszystkie akcje wybranego urządzenia</sys:String>
+
+    <!-- Device types. Display labels only; the stored value stays English (see en-US.xaml). -->
+    <sys:String x:Key="Str_Dev_Router">Router</sys:String>
+    <sys:String x:Key="Str_Dev_RouterDNS">Router/DNS</sys:String>
+    <sys:String x:Key="Str_Dev_SwitchAP">Przełącznik/AP</sys:String>
+    <sys:String x:Key="Str_Dev_Network">Urządzenie sieciowe</sys:String>
+    <sys:String x:Key="Str_Dev_Windows">Windows</sys:String>
+    <sys:String x:Key="Str_Dev_WindowsServer">Windows Server</sys:String>
+    <sys:String x:Key="Str_Dev_LinuxSSH">Linux/SSH</sys:String>
+    <sys:String x:Key="Str_Dev_Server">Serwer</sys:String>
+    <sys:String x:Key="Str_Dev_Printer">Drukarka</sys:String>
+    <sys:String x:Key="Str_Dev_SmartTV">Smart TV</sys:String>
+    <sys:String x:Key="Str_Dev_AppleTV">Apple TV</sys:String>
+    <sys:String x:Key="Str_Dev_MediaStreamer">Odtwarzacz multimedialny</sys:String>
+    <sys:String x:Key="Str_Dev_AppleDevice">Urządzenie Apple</sys:String>
+    <sys:String x:Key="Str_Dev_iPhone">iPhone</sys:String>
+    <sys:String x:Key="Str_Dev_Android">Android</sys:String>
+    <sys:String x:Key="Str_Dev_Mobile">Urządzenie mobilne</sys:String>
+    <sys:String x:Key="Str_Dev_IoT">IoT</sys:String>
+    <sys:String x:Key="Str_Dev_NAS">NAS</sys:String>
+    <sys:String x:Key="Str_Dev_Camera">Kamera</sys:String>
+    <sys:String x:Key="Str_Dev_Hypervisor">Hipernadzorca</sys:String>
+    <sys:String x:Key="Str_Dev_HomeAssistant">Home Assistant</sys:String>
+    <sys:String x:Key="Str_Dev_DNSServer">Serwer DNS</sys:String>
+    <sys:String x:Key="Str_Dev_WebDevice">Urządzenie webowe</sys:String>
+    <sys:String x:Key="Str_Dev_Other">Inne</sys:String>
+    <sys:String x:Key="Str_Dev_Unknown">Nieznane</sys:String>
+
 </ResourceDictionary>

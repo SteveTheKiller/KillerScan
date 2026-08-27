@@ -13,7 +13,15 @@ namespace KillerScan.Shell
 
             SubnetInput.Text    = net.Subnet;
             LocalIpLabel.Text   = net.LocalIp;
-            InterfaceLabel.Text = net.InterfaceLabel;
+            // Localized HERE rather than in LocalNetwork: the detector has no resource dictionary,
+            // and the label it produces for anything other than these two is a raw
+            // NetworkInterfaceType enum name, which has no translation to give it.
+            InterfaceLabel.Text = net.InterfaceLabel switch
+            {
+                "Wi-Fi"    => Loc("Str_Iface_WiFi"),
+                "Ethernet" => Loc("Str_Iface_Ethernet"),
+                _          => net.InterfaceLabel
+            };
             // RJ-45 glyph for wired, Wi-Fi glyph for wireless.
             InterfaceIcon.Text = net.Wireless ? "" : "";
 

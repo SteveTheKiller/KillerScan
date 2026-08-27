@@ -26,7 +26,7 @@
 
     <!-- Status bar + counts ({0}/{1} are filled in by the app - keep them) -->
     <sys:String x:Key="Str_Btn_Stop">Állj</sys:String>
-    <sys:String x:Key="Str_Status_Ready">Kész – {0} OUI-szolgáltató betöltve</sys:String>
+    <sys:String x:Key="Str_Status_Ready">Kész - {0} OUI-szolgáltató betöltve</sys:String>
     <sys:String x:Key="Str_Count_Found">{0} eszköz található</sys:String>
     <sys:String x:Key="Str_Count_Shown">{0}/{1} látható</sys:String>
 
@@ -101,16 +101,16 @@
     <sys:String x:Key="Str_St_ResolvingMacs">{0} MAC-cím feloldása...</sys:String>
     <sys:String x:Key="Str_St_Probing">{0} élő gazdagép vizsgálata...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">{0} gazdagép feloldása...</sys:String>
-    <sys:String x:Key="Str_St_ScanComplete">A vizsgálat befejeződött – {0} eszköz található</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">A vizsgálat befejeződött - {0} eszköz található</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Szkennelés megszakítva</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Mély vizsgálat {0}...</sys:String>
-    <sys:String x:Key="Str_St_RescanDone">Újrakeresés kész – {0} gazdagép frissítve</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">Újrakeresés kész - {0} gazdagép frissítve</sys:String>
     <sys:String x:Key="Str_St_Exported">Exportálva ide: {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Felülbírálási készlet: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">A(z) {0} felülbírálása törölve</sys:String>
     <sys:String x:Key="Str_St_AppSize">Alkalmazás mérete {0}%</sys:String>
     <sys:String x:Key="Str_St_BadTarget">Érvénytelen cél: &quot;{0}&quot; - használja a 192.168.1.0/24, 192.168.1.7 vagy 192.168.1.10-50 kódot, vesszővel elválasztva</sys:String>
-    <sys:String x:Key="Str_St_TooManyAddresses">Ez {0} cím – túl sok egy vizsgálathoz (korlát: {1}). Szűkítse a tartományt, vagy ossza fel lapokra.</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">Ez {0} cím - túl sok egy vizsgálathoz (korlát: {1}). Szűkítse a tartományt, vagy vizsgálja részletekben.</sys:String>
     <sys:String x:Key="Str_St_NoTarget">Adjon meg egy alhálózatot, címet vagy tartományt a vizsgálathoz</sys:String>
 
     <!-- Portable footer badge + install dialog -->
@@ -154,5 +154,92 @@
     <sys:String x:Key="Str_Sc_AppReset">Állítsa vissza az alkalmazás méretét</sys:String>
     <sys:String x:Key="Str_Sc_Help">Mutasd ezt a listát</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Az alkalmazás mérete is követi az egér görgőjét a szójel felett.</sys:String>
+
+    <!-- Exported HTML report -->
+    <sys:String x:Key="Str_Rep_Theme">Téma</sys:String>
+    <sys:String x:Key="Str_Rep_Accent">Kiemelés</sys:String>
+    <sys:String x:Key="Str_Rep_Subnet">Alhálózat</sys:String>
+    <sys:String x:Key="Str_Rep_Scanned">Vizsgálva</sys:String>
+    <sys:String x:Key="Str_Rep_Devices">eszköz</sys:String>
+    <sys:String x:Key="Str_Rep_GeneratedBy">Készítette:</sys:String>
+    <sys:String x:Key="Str_Accent_Red">Vörös</sys:String>
+    <sys:String x:Key="Str_Accent_Orange">Narancs</sys:String>
+    <sys:String x:Key="Str_Accent_Green">Zöld</sys:String>
+    <sys:String x:Key="Str_Accent_Teal">Türkiz</sys:String>
+    <sys:String x:Key="Str_Accent_Blue">Kék</sys:String>
+    <sys:String x:Key="Str_Accent_Purple">Lila</sys:String>
+
+    <!-- Dialogs, updates and errors -->
+    <sys:String x:Key="Str_About_Title">A KillerScan névjegye</sys:String>
+    <sys:String x:Key="Str_TT_About">A KillerScan névjegye</sys:String>
+    <sys:String x:Key="Str_About_Aka" xml:space="preserve">ALIÁS </sys:String>
+    <sys:String x:Key="Str_About_Unsigned">(nincs aláírva vagy a lánc érvénytelen)</sys:String>
+    <sys:String x:Key="Str_About_Computing">számítás...</sys:String>
+    <sys:String x:Key="Str_Ssh_Title">SSH-fiók</sys:String>
+    <sys:String x:Key="Str_Btn_Install">Telepítés</sys:String>
+    <sys:String x:Key="Str_Install_BulletShortcut">- Parancsikon a Start menüben</sys:String>
+    <sys:String x:Key="Str_Install_BulletArp">- Megjelenik a Programok telepítése és törlése listában</sys:String>
+    <sys:String x:Key="Str_Db_Checking">Újabb gyártói adatok keresése...</sys:String>
+    <sys:String x:Key="Str_Db_Downloading">Gyártói adatok letöltése...</sys:String>
+    <sys:String x:Key="Str_Db_Fallback">Tartalék forrás kipróbálása...</sys:String>
+    <sys:String x:Key="Str_Db_Blocked">A frissítés sikertelen - a letöltést blokkolták, vagy üres volt. A lista változatlan maradt.</sys:String>
+    <sys:String x:Key="Str_Db_Smaller">A legújabb adatok {0} bejegyzést tartalmaztak, kevesebbet, mint a jelenlegi {1}. A lista megmaradt.</sys:String>
+    <sys:String x:Key="Str_Db_UpToDate">Az adatbázis már naprakész ({0} bejegyzés).</sys:String>
+    <sys:String x:Key="Str_Db_Updated">Frissítve {0} bejegyzésre.</sys:String>
+    <sys:String x:Key="Str_Db_SaveFailed">Az adatbázist nem sikerült menteni: {0}</sys:String>
+    <sys:String x:Key="Str_Db_Failed">A frissítés sikertelen: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Available">Elérhető frissítés: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Downloading">Letöltés...</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmHead">Letölti és telepíti a következőt: {0} {1}?</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBody">Az alkalmazás bezárul, és automatikusan újraindul.</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBtn">Frissítés</sys:String>
+    <sys:String x:Key="Str_Conflict_Title">telepítési ütközés</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveUser">A KillerScan kétszer van telepítve. Eltávolítja most a másik, felhasználói példányt?
+
+A beállítások nem törlődnek.</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveMachine">A KillerScan kétszer van telepítve. Eltávolítja most a másik, minden felhasználós példányt?
+
+A beállítások nem törlődnek.</sys:String>
+    <sys:String x:Key="Str_Install_Failed">A telepítés sikertelen:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Title">Eltávolítás</sys:String>
+    <sys:String x:Key="Str_Uninstall_Confirm">Eltávolítja a KillerScant erről a számítógépről?</sys:String>
+    <sys:String x:Key="Str_Uninstall_NoAdmin">Az eltávolítás nem tudott rendszergazdai jogosultságot kérni:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Done">A KillerScan eltávolítva.</sys:String>
+    <sys:String x:Key="Str_Err_Export">Exportálási hiba: {0}</sys:String>
+    <sys:String x:Key="Str_Err_Scan">Vizsgálati hiba: {0}</sys:String>
+    <sys:String x:Key="Str_Filter_Csv">CSV-fájl</sys:String>
+    <sys:String x:Key="Str_Filter_Html">HTML-jelentés</sys:String>
+    <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
+    <sys:String x:Key="Str_Vendor_Randomized">(Véletlenszerű)</sys:String>
+
+    <!-- Device types. Display labels only; the stored value stays English (see en-US.xaml). -->
+    <sys:String x:Key="Str_Dev_Router">Router</sys:String>
+    <sys:String x:Key="Str_Dev_RouterDNS">Router/DNS</sys:String>
+    <sys:String x:Key="Str_Dev_SwitchAP">Switch/AP</sys:String>
+    <sys:String x:Key="Str_Dev_Network">Hálózati eszköz</sys:String>
+    <sys:String x:Key="Str_Dev_Windows">Windows</sys:String>
+    <sys:String x:Key="Str_Dev_WindowsServer">Windows Server</sys:String>
+    <sys:String x:Key="Str_Dev_LinuxSSH">Linux/SSH</sys:String>
+    <sys:String x:Key="Str_Dev_Server">Kiszolgáló</sys:String>
+    <sys:String x:Key="Str_Dev_Printer">Nyomtató</sys:String>
+    <sys:String x:Key="Str_Dev_SmartTV">Okostévé</sys:String>
+    <sys:String x:Key="Str_Dev_AppleTV">Apple TV</sys:String>
+    <sys:String x:Key="Str_Dev_MediaStreamer">Médialejátszó</sys:String>
+    <sys:String x:Key="Str_Dev_AppleDevice">Apple eszköz</sys:String>
+    <sys:String x:Key="Str_Dev_iPhone">iPhone</sys:String>
+    <sys:String x:Key="Str_Dev_Android">Android</sys:String>
+    <sys:String x:Key="Str_Dev_Mobile">Mobileszköz</sys:String>
+    <sys:String x:Key="Str_Dev_IoT">IoT</sys:String>
+    <sys:String x:Key="Str_Dev_NAS">NAS</sys:String>
+    <sys:String x:Key="Str_Dev_Camera">Kamera</sys:String>
+    <sys:String x:Key="Str_Dev_Hypervisor">Hipervizor</sys:String>
+    <sys:String x:Key="Str_Dev_HomeAssistant">Home Assistant</sys:String>
+    <sys:String x:Key="Str_Dev_DNSServer">DNS-kiszolgáló</sys:String>
+    <sys:String x:Key="Str_Dev_WebDevice">Webes eszköz</sys:String>
+    <sys:String x:Key="Str_Dev_Other">Egyéb</sys:String>
+    <sys:String x:Key="Str_Dev_Unknown">Ismeretlen</sys:String>
 
 </ResourceDictionary>

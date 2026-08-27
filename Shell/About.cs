@@ -4,7 +4,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using KillerScan.Controls;
-using KillerScan.Features;
+using KillerScan.Features.About;
 using KillerScan.Services;
 
 namespace KillerScan.Shell

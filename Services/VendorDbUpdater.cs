@@ -23,14 +23,29 @@ namespace KillerScan.Services
         private const string ManufUrl = "https://www.wireshark.org/download/automated/data/manuf";
         private const string NmapUrl  = "https://raw.githubusercontent.com/nmap/nmap/master/nmap-mac-prefixes";
 
-        public static async Task<(bool ok, int count, string message)> UpdateAsync(IProgress<string>? progress = null)
+        /// <summary>What the updater has to say, as a RESOURCE KEY plus its numeric arguments -
+        /// never as a finished sentence. This service has no access to the resource dictionary and
+        /// should not: giving a background downloader a localizer would point it at the UI. The
+        /// caller looks the key up and formats the counts in the user's own culture
+        /// (AboutController.Format). One exception message rides along as Detail, because an
+        /// exception's text is not ours to translate.</summary>
+        public readonly struct Status
+        {
+            public readonly string Key;
+            public readonly int[] Args;
+            public readonly string? Detail;
+            public Status(string key, params int[] args) { Key = key; Args = args; Detail = null; }
+            public Status(string key, string detail) { Key = key; Args = []; Detail = detail; }
+        }
+
+        public static async Task<(bool ok, int count, Status status)> UpdateAsync(IProgress<Status>? progress = null)
         {
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
             int current = OuiLookup.Count;
 
             StringBuilder? best = null; int bestCount = 0;
 
-            progress?.Report("Downloading vendor data...");
+            progress?.Report(new Status("Str_Db_Downloading"));
             try
             {
                 var (n, sb) = ParseManuf(await DownloadTextAsync(ManufUrl).ConfigureAwait(false));
@@ -40,7 +55,7 @@ namespace KillerScan.Services
 
             if (bestCount < Math.Max(1000, current))
             {
-                progress?.Report("Trying fallback source...");
+                progress?.Report(new Status("Str_Db_Fallback"));
                 try
                 {
                     var (n, sb) = ParseNmap(await DownloadTextAsync(NmapUrl).ConfigureAwait(false));
@@ -50,9 +65,9 @@ namespace KillerScan.Services
             }
 
             if (best == null || bestCount < 1000)
-                return (false, current, "Update failed - the download was blocked or empty. Your list is unchanged.");
+                return (false, current, new Status("Str_Db_Blocked"));
             if (bestCount < current)
-                return (false, current, $"Newest data had {bestCount:N0} entries, fewer than your current {current:N0}. Kept your list.");
+                return (false, current, new Status("Str_Db_Smaller", bestCount, current));
 
             var path = OuiLookup.ExternalFilePath;
             var newContent = best.ToString();
@@ -63,7 +78,7 @@ namespace KillerScan.Services
                 try
                 {
                     if (File.ReadAllText(path) == newContent)
-                        return (true, current, $"Database is already up to date ({current:N0} entries).");
+                        return (true, current, new Status("Str_Db_UpToDate", current));
                 }
                 catch { /* unreadable - fall through and rewrite */ }
             }
@@ -77,10 +92,10 @@ namespace KillerScan.Services
             }
             catch (Exception ex)
             {
-                return (false, current, "Could not save the database: " + ex.Message);
+                return (false, current, new Status("Str_Db_SaveFailed", ex.Message));
             }
 
-            return (true, OuiLookup.Count, $"Updated to {OuiLookup.Count:N0} entries.");
+            return (true, OuiLookup.Count, new Status("Str_Db_Updated", OuiLookup.Count));
         }
 
         private static async Task<string> DownloadTextAsync(string url)

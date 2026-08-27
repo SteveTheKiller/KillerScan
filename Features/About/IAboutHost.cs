@@ -1,4 +1,4 @@
-namespace KillerScan.Features
+namespace KillerScan.Features.About
 {
     /// <summary>
     /// What AboutController needs from the window hosting it, beyond the shared shell services.
