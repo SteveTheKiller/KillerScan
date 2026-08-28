@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ## [1.6.1] - Unreleased
 
 ### Added
+- Italian localization for the complete app interface and killerscan.net, bringing both to thirteen languages.
 - Hungarian localization for the complete app interface and killerscan.net, bringing both to twelve languages.
 - The command line now includes `/probe`, `/network`, and offline `/vendor` commands; table, CSV, JSON, and themed HTML output; text, device-type, vendor, and port filters; sorting, descending order, result limits, custom port checks, progress reporting, timeouts, header control, extension-based export formats, and an optional empty-result exit code for automation.
 

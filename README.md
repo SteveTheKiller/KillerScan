@@ -29,7 +29,7 @@ Part of [killertools.net](https://killertools.net).
 - Headless command line for scripts and RMM work: scan one or several targets, deep-probe one host, inspect the active network, or look up a MAC vendor. Filter by text, type, vendor, or ports; sort and limit results; set progress and timeout behavior; and emit table, CSV, JSON, or themed HTML to the console or a file. No window opens, it runs while the app is open, and it returns distinct exit codes for success, failure, bad usage, and empty results
 - Keyboard shortcuts (F1 for the list): F5 scan/stop, Esc cancel, Ctrl+R deep rescan the selection, Ctrl+F subnet box, Ctrl+A select all, Ctrl+E export
 - App-wide size control from 70% to 250%, on Ctrl+Shift+plus/minus/0 or the mouse wheel over the title-bar wordmark; text reflows at the new size and the setting is remembered
-- Thirteen themes, four of them (Dark, Light, Black and 98SE) with six accent colors each for 33 looks in all, including a full Windows 98 treatment; theme, accent, language, and app size are remembered; localized in 12 languages (English, Spanish, Traditional and Simplified Chinese, German, French, Turkish, Bengali, Japanese, Czech, Polish, Hungarian)
+- Thirteen themes, four of them (Dark, Light, Black and 98SE) with six accent colors each for 33 looks in all, including a full Windows 98 treatment; theme, accent, language, and app size are remembered; localized in 13 languages (English, Spanish, Traditional and Simplified Chinese, German, French, Turkish, Bengali, Japanese, Czech, Polish, Hungarian, Italian)
 
 ## Screenshots
 

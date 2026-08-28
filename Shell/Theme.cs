@@ -275,6 +275,7 @@ namespace KillerScan.Shell
             (Services.Locale.Es,   "Español",    "es"),
             (Services.Locale.Fr,   "Français",   "fr-FR"),
             (Services.Locale.HuHU, "Magyar",      "hu-HU"),
+            (Services.Locale.ItIT, "Italiano",    "it-IT"),
             (Services.Locale.Ja,   "日本語",      "ja-JP"),
             (Services.Locale.PlPL, "Polski",      "pl-PL"),
             (Services.Locale.TrTR, "Türkçe",     "tr-TR"),

@@ -13,6 +13,7 @@ Each language is a single XAML `ResourceDictionary` in the `Strings/` folder, na
 - `Strings/es.xaml` - Spanish
 - `Strings/fr-FR.xaml` - French
 - `Strings/hu-HU.xaml` - Hungarian
+- `Strings/it-IT.xaml` - Italian
 - `Strings/ja-JP.xaml` - Japanese
 - `Strings/pl-PL.xaml` - Polish
 - `Strings/tr-TR.xaml` - Turkish
