@@ -49,7 +49,7 @@ Part of [killertools.net](https://killertools.net).
 ## Download
 
 - Prebuilt binary: <https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe>
-- Source (GPL3 corresponding source for this release): <https://github.com/SteveTheKiller/KillerScan/releases/download/v1.6.0/KillerScan-1.6.0-src.zip>
+- Source (GPL3 corresponding source for this release): <https://github.com/SteveTheKiller/KillerScan/releases/download/v1.6.1/KillerScan-1.6.1-src.zip>
 
 Or install from a package manager:
 
