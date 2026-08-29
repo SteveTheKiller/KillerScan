@@ -1,0 +1,255 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ================================================================
+         KillerScan  -  Russian (ru-RU) strings
+         x:Key values are looked up at runtime - never change them.
+         Other locales layer over this file; any key they omit falls back here.
+         ================================================================ -->
+
+    <!-- Title bar / chrome -->
+    <sys:String x:Key="Str_Subtitle">Сетевой сканер</sys:String>
+    <sys:String x:Key="Str_TT_Language">Язык</sys:String>
+    <sys:String x:Key="Str_TT_AppSize">Прокрутите колесо мыши над логотипом, чтобы изменить размер приложения</sys:String>
+    <sys:String x:Key="Str_TT_Theme">Тема</sys:String>
+    <sys:String x:Key="Str_TT_Export">Экспорт</sys:String>
+    <sys:String x:Key="Str_Lbl_Theme">ТЕМА</sys:String>
+    <sys:String x:Key="Str_Lbl_Accent">АКЦЕНТ</sys:String>
+
+    <!-- Scan bar -->
+    <sys:String x:Key="Str_Lbl_Subnet">Подсеть</sys:String>
+    <sys:String x:Key="Str_Btn_Scan">Сканировать</sys:String>
+    <sys:String x:Key="Str_Lbl_Local">Локальный</sys:String>
+    <sys:String x:Key="Str_Lbl_Gateway">Шлюз</sys:String>
+    <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
+
+    <!-- Status bar + counts ({0}/{1} are filled in by the app - keep them) -->
+    <sys:String x:Key="Str_Btn_Stop">Стоп</sys:String>
+    <sys:String x:Key="Str_Status_Ready">Готово - загружено производителей OUI: {0}</sys:String>
+    <sys:String x:Key="Str_Count_Found">Найдено устройств: {0}</sys:String>
+    <sys:String x:Key="Str_Count_Shown">Показано {0} из {1}</sys:String>
+
+    <!-- Results pane -->
+    <sys:String x:Key="Str_DiscoveredDevices">Обнаруженные устройства</sys:String>
+    <sys:String x:Key="Str_FilterPlaceholder">Фильтр устройств...</sys:String>
+    <sys:String x:Key="Str_Export_Csv">Экспорт в CSV</sys:String>
+    <sys:String x:Key="Str_Export_Html">Экспорт в HTML</sys:String>
+
+    <!-- Results columns -->
+    <sys:String x:Key="Str_Col_Ip">IP-адрес</sys:String>
+    <sys:String x:Key="Str_Col_Host">Имя хоста</sys:String>
+    <sys:String x:Key="Str_Col_Mac">MAC-адрес</sys:String>
+    <sys:String x:Key="Str_Col_Vendor">Производитель</sys:String>
+    <sys:String x:Key="Str_Col_Type">Тип</sys:String>
+    <sys:String x:Key="Str_Col_Ports">Открытые порты</sys:String>
+
+    <!-- Right-click device menu -->
+    <sys:String x:Key="Str_Ctx_RescanOne">Пересканировать IP</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanMany">Пересканировать IP-адреса</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyIp">Копировать IP-адрес</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyMac">Копировать MAC-адрес</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyHost">Копировать имя хоста</sys:String>
+    <sys:String x:Key="Str_Ctx_Ping">Ping</sys:String>
+    <sys:String x:Key="Str_Ctx_OpenBrowser">Открыть в браузере</sys:String>
+    <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
+    <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">SSH как...</sys:String>
+    <sys:String x:Key="Str_Ctx_SetType">Задать тип устройства</sys:String>
+    <sys:String x:Key="Str_Ctx_ClearOverride">Сбросить переопределение</sys:String>
+
+    <!-- SSH username prompt ({0} is the device, filled in by the app) -->
+    <sys:String x:Key="Str_Ssh_Head">Подключение к {0} по SSH</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">Учетная запись для входа. KillerScan запоминает ее для этого устройства, поэтому вопрос задается только один раз. Оставьте поле пустым, чтобы SSH-клиент решил сам.</sys:String>
+    <sys:String x:Key="Str_Ssh_User">ИМЯ ПОЛЬЗОВАТЕЛЯ</sys:String>
+    <sys:String x:Key="Str_Ssh_Connect">Подключиться</sys:String>
+    <sys:String x:Key="Str_Btn_Cancel">Отмена</sys:String>
+
+    <!-- Theme names, shown in the rail's theme flyout. Shared with KillerShell and KillerNotes
+         key for key, so the same thirteen themes read the same way across the family. SE98 is
+         listed here ahead of the theme itself landing, because the name is not translated. -->
+    <sys:String x:Key="Str_Theme_Dark">Темная</sys:String>
+    <sys:String x:Key="Str_Theme_Light">Светлая</sys:String>
+    <sys:String x:Key="Str_Theme_Black">Черная</sys:String>
+    <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+    <sys:String x:Key="Str_Theme_Blood">Кровь</sys:String>
+    <sys:String x:Key="Str_Theme_Greed">Алчность</sys:String>
+    <sys:String x:Key="Str_Theme_Cyanotic">Цианоз</sys:String>
+    <sys:String x:Key="Str_Theme_Ectoplasm">Эктоплазма</sys:String>
+    <sys:String x:Key="Str_Theme_Decay">Распад</sys:String>
+    <sys:String x:Key="Str_Theme_Malaise">Недуг</sys:String>
+    <sys:String x:Key="Str_Theme_Sepulchre">Гробница</sys:String>
+    <sys:String x:Key="Str_Theme_Delirium">Бред</sys:String>
+    <sys:String x:Key="Str_Theme_Mourning">Траур</sys:String>
+
+    <!-- About overlay -->
+    <sys:String x:Key="Str_About_Version">ВЕРСИЯ</sys:String>
+    <sys:String x:Key="Str_About_Publisher">ИЗДАТЕЛЬ</sys:String>
+    <sys:String x:Key="Str_About_Thumbprint">ПОДПИСЬ</sys:String>
+    <sys:String x:Key="Str_About_Sha">EXE SHA-256</sys:String>
+    <sys:String x:Key="Str_About_Db">БАЗА ПРОИЗВОДИТЕЛЕЙ</sys:String>
+    <sys:String x:Key="Str_About_DbUpdate">Обновить из последних реестров</sys:String>
+    <sys:String x:Key="Str_About_DbHint">Из списка OUI Wireshark.</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} записей</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">обновлено {0}</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">поставляется с приложением</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">Сканирование ARP + IP с определением производителя, классификацией устройств и сортируемым HTML-отчетом с поддержкой тем. Утилита на базе </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve">.</sys:String>
+
+    <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
+    <sys:String x:Key="Str_St_Discovering">Поиск хостов в {0}...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingMacs">Определение {0} MAC-адресов...</sys:String>
+    <sys:String x:Key="Str_St_Probing">Проверка {0} активных хостов...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingHosts">Определение имен {0} хостов...</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">Сканирование завершено - найдено устройств: {0}</sys:String>
+    <sys:String x:Key="Str_St_ScanCanceled">Сканирование отменено</sys:String>
+    <sys:String x:Key="Str_St_Rescanning">Глубокое сканирование {0} ...</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">Пересканирование завершено - обновлено хостов: {0}</sys:String>
+    <sys:String x:Key="Str_St_Exported">Экспортировано в {0}</sys:String>
+    <sys:String x:Key="Str_St_OverrideSet">Переопределение задано: {0} = {1}</sys:String>
+    <sys:String x:Key="Str_St_OverrideCleared">Переопределение сброшено для {0}</sys:String>
+    <sys:String x:Key="Str_St_AppSize">Размер приложения {0}%</sys:String>
+    <sys:String x:Key="Str_St_BadTarget">Недопустимая цель: "{0}" - используйте 192.168.1.0/24, 192.168.1.7 или 192.168.1.10-50, через запятую</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">Это {0} адресов - слишком много для одного сканирования (лимит {1}). Сузьте диапазон или сканируйте его по частям.</sys:String>
+    <sys:String x:Key="Str_St_NoTarget">Введите подсеть, адрес или диапазон для сканирования</sys:String>
+
+    <!-- Portable footer badge + install dialog -->
+    <sys:String x:Key="Str_Portable">ПОРТАБЕЛЬНЫЙ</sys:String>
+    <sys:String x:Key="Str_InstallBtn">Установить KillerScan</sys:String>
+    <sys:String x:Key="Str_Install_AllUsers">Установить для всех пользователей (нужны права администратора)</sys:String>
+    <sys:String x:Key="Str_Install_AllUsersNote">Устанавливает в Program Files для всех учетных записей на этом компьютере. Windows запросит разрешение.</sys:String>
+    <sys:String x:Key="Str_Install_HeadUser">Установить KillerScan в ваш профиль пользователя?</sys:String>
+    <sys:String x:Key="Str_Install_HeadAll">Установить KillerScan для всех пользователей этого компьютера?</sys:String>
+    <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan уже установлен для всех пользователей этого компьютера, поэтому будет обновлена та копия. Windows запросит разрешение.</sys:String>
+    <sys:String x:Key="Str_St_InstallCanceled">Установка отменена</sys:String>
+
+    <!-- Themed window system menu (right-click the title bar / Alt+Space) -->
+    <sys:String x:Key="Str_Sys_Restore">Восстановить</sys:String>
+    <sys:String x:Key="Str_Sys_Move">Переместить</sys:String>
+    <sys:String x:Key="Str_Sys_Size">Размер</sys:String>
+    <sys:String x:Key="Str_Sys_Minimize">Свернуть</sys:String>
+    <sys:String x:Key="Str_Sys_Maximize">Развернуть</sys:String>
+    <sys:String x:Key="Str_Sys_Close">Закрыть</sys:String>
+
+    <!-- Keyboard shortcuts overlay (F1) -->
+    <sys:String x:Key="Str_TT_Shortcuts">Сочетания клавиш (F1)</sys:String>
+    <sys:String x:Key="Str_Shortcuts_Title">Сочетания клавиш</sys:String>
+    <sys:String x:Key="Str_Sc_Scan">Запустить или остановить сканирование</sys:String>
+    <sys:String x:Key="Str_Sc_Cancel">Отменить сканирование или закрыть это окно</sys:String>
+    <sys:String x:Key="Str_Sc_Rescan">Глубокое пересканирование выбранных хостов</sys:String>
+    <sys:String x:Key="Str_Sc_Subnet">Перейти к полю подсети</sys:String>
+    <sys:String x:Key="Str_Sc_SelectAll">Выбрать все устройства</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Экспортировать результаты</sys:String>
+    <sys:String x:Key="Str_Sc_Browser">Открыть выбранное устройство в браузере</sys:String>
+    <sys:String x:Key="Str_Sc_Ping">Выполнить ping выбранного устройства</sys:String>
+    <sys:String x:Key="Str_Sc_Rdp">Открыть удаленный рабочий стол к выбранному устройству</sys:String>
+    <sys:String x:Key="Str_Sc_Ssh">Подключиться к выбранному устройству по SSH</sys:String>
+    <sys:String x:Key="Str_Sc_SshAs">Выбрать учетную запись SSH и подключиться</sys:String>
+    <sys:String x:Key="Str_Sc_CopyIp">Копировать выбранный IP-адрес</sys:String>
+    <sys:String x:Key="Str_Sc_CopyMac">Копировать выбранный MAC-адрес</sys:String>
+    <sys:String x:Key="Str_Sc_CopyHost">Копировать выбранное имя хоста</sys:String>
+    <sys:String x:Key="Str_Sc_DeviceMenu">Открыть все действия для выбранного устройства</sys:String>
+    <sys:String x:Key="Str_Sc_AppBigger">Увеличить приложение</sys:String>
+    <sys:String x:Key="Str_Sc_AppSmaller">Уменьшить приложение</sys:String>
+    <sys:String x:Key="Str_Sc_AppReset">Сбросить размер приложения</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Показать этот список</sys:String>
+    <sys:String x:Key="Str_Sc_Hint">Размер приложения также меняется колесом мыши над логотипом.</sys:String>
+
+    <!-- Dialogs, updates and errors -->
+    <sys:String x:Key="Str_About_Title">О программе KillerScan</sys:String>
+    <sys:String x:Key="Str_TT_About">О программе KillerScan</sys:String>
+    <sys:String x:Key="Str_About_Aka" xml:space="preserve">ОН ЖЕ </sys:String>
+    <sys:String x:Key="Str_About_Unsigned">(не подписан или цепочка не прошла проверку)</sys:String>
+    <sys:String x:Key="Str_About_Computing">вычисление...</sys:String>
+    <sys:String x:Key="Str_Ssh_Title">Учетная запись SSH</sys:String>
+    <sys:String x:Key="Str_Btn_Install">Установить</sys:String>
+    <sys:String x:Key="Str_Install_BulletShortcut">- Ярлык в меню "Пуск"</sys:String>
+    <sys:String x:Key="Str_Install_BulletArp">- Отображается в списке "Установка и удаление программ"</sys:String>
+
+    <!-- Vendor database. {0} is a count, already formatted with the locale's own separators. -->
+    <sys:String x:Key="Str_Db_Checking">Проверка наличия новых данных о производителях...</sys:String>
+    <sys:String x:Key="Str_Db_Downloading">Загрузка данных о производителях...</sys:String>
+    <sys:String x:Key="Str_Db_Fallback">Попытка использовать резервный источник...</sys:String>
+    <sys:String x:Key="Str_Db_Blocked">Обновление не удалось - загрузка была заблокирована или пуста. Ваш список не изменен.</sys:String>
+    <sys:String x:Key="Str_Db_Smaller">В новых данных {0} записей - меньше, чем в ваших текущих {1}. Ваш список сохранен.</sys:String>
+    <sys:String x:Key="Str_Db_UpToDate">База данных уже актуальна ({0} записей).</sys:String>
+    <sys:String x:Key="Str_Db_Updated">Обновлено до {0} записей.</sys:String>
+    <sys:String x:Key="Str_Db_SaveFailed">Не удалось сохранить базу данных: {0}</sys:String>
+    <sys:String x:Key="Str_Db_Failed">Обновление не удалось: {0}</sys:String>
+
+    <!-- Self-update. {0} is the release tag; in the heading {0} is the app name and {1} the tag. -->
+    <sys:String x:Key="Str_Upd_Available">Доступно обновление: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Downloading">Загрузка...</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmHead">Загрузить и установить {0} {1}?</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBody">Приложение автоматически закроется и снова откроется.</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBtn">Обновить</sys:String>
+
+    <!-- Install conflict, uninstall -->
+    <sys:String x:Key="Str_Conflict_Title">конфликт установки</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveUser">KillerScan установлен дважды. Удалить сейчас другую копию для текущего пользователя?
+
+Ваши настройки не будут удалены.</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveMachine">KillerScan установлен дважды. Удалить сейчас другую копию для всех пользователей?
+
+Ваши настройки не будут удалены.</sys:String>
+    <sys:String x:Key="Str_Install_Failed">Установка не удалась:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Title">Удаление</sys:String>
+    <sys:String x:Key="Str_Uninstall_Confirm">Удалить KillerScan с этого компьютера?</sys:String>
+    <sys:String x:Key="Str_Uninstall_NoAdmin">Не удалось запросить права администратора для удаления:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Done">KillerScan был удален.</sys:String>
+
+    <!-- Errors and file dialogs -->
+    <sys:String x:Key="Str_Err_Export">Ошибка экспорта: {0}</sys:String>
+    <sys:String x:Key="Str_Err_Scan">Ошибка сканирования: {0}</sys:String>
+    <sys:String x:Key="Str_Filter_Csv">Файл CSV</sys:String>
+    <sys:String x:Key="Str_Filter_Html">Отчет HTML</sys:String>
+
+    <!-- Adapter kind and the randomized-MAC vendor placeholder. -->
+    <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
+    <sys:String x:Key="Str_Vendor_Randomized">(Случайный)</sys:String>
+
+    <!-- Exported HTML report -->
+    <sys:String x:Key="Str_Rep_Theme">Тема</sys:String>
+    <sys:String x:Key="Str_Rep_Accent">Акцент</sys:String>
+    <sys:String x:Key="Str_Rep_Subnet">Подсеть</sys:String>
+    <sys:String x:Key="Str_Rep_Scanned">Сканировано</sys:String>
+    <sys:String x:Key="Str_Rep_Devices">устройств</sys:String>
+    <sys:String x:Key="Str_Rep_GeneratedBy">Создано с помощью</sys:String>
+    <sys:String x:Key="Str_Accent_Red">Красный</sys:String>
+    <sys:String x:Key="Str_Accent_Orange">Оранжевый</sys:String>
+    <sys:String x:Key="Str_Accent_Green">Зеленый</sys:String>
+    <sys:String x:Key="Str_Accent_Teal">Бирюзовый</sys:String>
+    <sys:String x:Key="Str_Accent_Blue">Синий</sys:String>
+    <sys:String x:Key="Str_Accent_Purple">Фиолетовый</sys:String>
+
+    <!-- Device types. Display labels only; the stored value stays English (see en-US.xaml). -->
+    <sys:String x:Key="Str_Dev_Router">Маршрутизатор</sys:String>
+    <sys:String x:Key="Str_Dev_RouterDNS">Маршрутизатор/DNS</sys:String>
+    <sys:String x:Key="Str_Dev_SwitchAP">Коммутатор/AP</sys:String>
+    <sys:String x:Key="Str_Dev_Network">Сетевое устройство</sys:String>
+    <sys:String x:Key="Str_Dev_Windows">Windows</sys:String>
+    <sys:String x:Key="Str_Dev_WindowsServer">Windows Server</sys:String>
+    <sys:String x:Key="Str_Dev_LinuxSSH">Linux/SSH</sys:String>
+    <sys:String x:Key="Str_Dev_Server">Сервер</sys:String>
+    <sys:String x:Key="Str_Dev_Printer">Принтер</sys:String>
+    <sys:String x:Key="Str_Dev_SmartTV">Smart TV</sys:String>
+    <sys:String x:Key="Str_Dev_AppleTV">Apple TV</sys:String>
+    <sys:String x:Key="Str_Dev_MediaStreamer">Медиаплеер</sys:String>
+    <sys:String x:Key="Str_Dev_AppleDevice">Устройство Apple</sys:String>
+    <sys:String x:Key="Str_Dev_iPhone">iPhone</sys:String>
+    <sys:String x:Key="Str_Dev_Android">Android</sys:String>
+    <sys:String x:Key="Str_Dev_Mobile">Мобильное устройство</sys:String>
+    <sys:String x:Key="Str_Dev_IoT">IoT</sys:String>
+    <sys:String x:Key="Str_Dev_NAS">NAS</sys:String>
+    <sys:String x:Key="Str_Dev_Camera">Камера</sys:String>
+    <sys:String x:Key="Str_Dev_Hypervisor">Гипервизор</sys:String>
+    <sys:String x:Key="Str_Dev_HomeAssistant">Home Assistant</sys:String>
+    <sys:String x:Key="Str_Dev_DNSServer">DNS-сервер</sys:String>
+    <sys:String x:Key="Str_Dev_WebDevice">Веб-устройство</sys:String>
+    <sys:String x:Key="Str_Dev_Other">Другое</sys:String>
+    <sys:String x:Key="Str_Dev_Unknown">Неизвестно</sys:String>
+
+</ResourceDictionary>

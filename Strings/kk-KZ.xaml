@@ -1,0 +1,271 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ================================================================
+         KillerScan  -  Kazakh (kk-KZ) strings
+         x:Key values are looked up at runtime - never change them.
+         Other locales layer over this file; any key they omit falls back here.
+         ================================================================ -->
+
+    <!-- Title bar / chrome -->
+    <sys:String x:Key="Str_Subtitle">Желі сканері</sys:String>
+    <sys:String x:Key="Str_TT_Language">Тіл</sys:String>
+    <sys:String x:Key="Str_TT_AppSize">Қолданба өлшемін өзгерту үшін логотиптің үстінде айналдырыңыз</sys:String>
+    <sys:String x:Key="Str_TT_Theme">Тақырып</sys:String>
+    <sys:String x:Key="Str_TT_Export">Экспорттау</sys:String>
+    <sys:String x:Key="Str_Lbl_Theme">ТАҚЫРЫП</sys:String>
+    <sys:String x:Key="Str_Lbl_Accent">АКЦЕНТ</sys:String>
+
+    <!-- Scan bar -->
+    <sys:String x:Key="Str_Lbl_Subnet">Ішкі желі</sys:String>
+    <sys:String x:Key="Str_Btn_Scan">Сканерлеу</sys:String>
+    <sys:String x:Key="Str_Lbl_Local">Жергілікті</sys:String>
+    <sys:String x:Key="Str_Lbl_Gateway">Шлюз</sys:String>
+    <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
+
+    <!-- Status bar + counts ({0}/{1} are filled in by the app - keep them) -->
+    <sys:String x:Key="Str_Btn_Stop">Тоқтату</sys:String>
+    <sys:String x:Key="Str_Status_Ready">Дайын - {0} OUI өндірушісі жүктелді</sys:String>
+    <sys:String x:Key="Str_Count_Found">{0} құрылғы табылды</sys:String>
+    <sys:String x:Key="Str_Count_Shown">{1} ішінен {0} көрсетілді</sys:String>
+
+    <!-- Results pane -->
+    <sys:String x:Key="Str_DiscoveredDevices">Табылған құрылғылар</sys:String>
+    <sys:String x:Key="Str_FilterPlaceholder">Құрылғыларды сүзу...</sys:String>
+    <sys:String x:Key="Str_Export_Csv">CSV ретінде экспорттау</sys:String>
+    <sys:String x:Key="Str_Export_Html">HTML ретінде экспорттау</sys:String>
+
+    <!-- Results columns -->
+    <sys:String x:Key="Str_Col_Ip">IP мекенжайы</sys:String>
+    <sys:String x:Key="Str_Col_Host">Хост атауы</sys:String>
+    <sys:String x:Key="Str_Col_Mac">MAC мекенжайы</sys:String>
+    <sys:String x:Key="Str_Col_Vendor">Өндіруші</sys:String>
+    <sys:String x:Key="Str_Col_Type">Түрі</sys:String>
+    <sys:String x:Key="Str_Col_Ports">Ашық порттар</sys:String>
+
+    <!-- Right-click device menu -->
+    <sys:String x:Key="Str_Ctx_RescanOne">IP қайта сканерлеу</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanMany">IP мекенжайларын қайта сканерлеу</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyIp">IP мекенжайын көшіру</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyMac">MAC мекенжайын көшіру</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyHost">Хост атауын көшіру</sys:String>
+    <sys:String x:Key="Str_Ctx_Ping">Ping</sys:String>
+    <sys:String x:Key="Str_Ctx_OpenBrowser">Браузерде ашу</sys:String>
+    <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
+    <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">SSH атымен кіру...</sys:String>
+    <sys:String x:Key="Str_Ctx_SetType">Құрылғы түрін орнату</sys:String>
+    <sys:String x:Key="Str_Ctx_ClearOverride">Қайта анықтауды тазалау</sys:String>
+
+    <!-- SSH username prompt ({0} is the device, filled in by the app) -->
+    <sys:String x:Key="Str_Ssh_Head">{0} құрылғысына SSH арқылы қосылу</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">Кіру үшін пайдаланылатын тіркелгі. KillerScan оны осы құрылғы үшін есте сақтайды, сондықтан тек бір рет сұралады. SSH клиенті өзі шешсін десеңіз, бос қалдырыңыз.</sys:String>
+    <sys:String x:Key="Str_Ssh_User">ПАЙДАЛАНУШЫ АТЫ</sys:String>
+    <sys:String x:Key="Str_Ssh_Connect">Қосылу</sys:String>
+    <sys:String x:Key="Str_Btn_Cancel">Болдырмау</sys:String>
+
+    <!-- Theme names, shown in the rail's theme flyout. Shared with KillerShell and KillerNotes
+         key for key, so the same thirteen themes read the same way across the family. SE98 is
+         listed here ahead of the theme itself landing, because the name is not translated. -->
+    <sys:String x:Key="Str_Theme_Dark">Қараңғы</sys:String>
+    <sys:String x:Key="Str_Theme_Light">Жарық</sys:String>
+    <sys:String x:Key="Str_Theme_Black">Қара</sys:String>
+    <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+    <sys:String x:Key="Str_Theme_Blood">Қан</sys:String>
+    <sys:String x:Key="Str_Theme_Greed">Ашкөздік</sys:String>
+    <sys:String x:Key="Str_Theme_Cyanotic">Цианозды</sys:String>
+    <sys:String x:Key="Str_Theme_Ectoplasm">Эктоплазма</sys:String>
+    <sys:String x:Key="Str_Theme_Decay">Ыдырау</sys:String>
+    <sys:String x:Key="Str_Theme_Malaise">Әлсіздік</sys:String>
+    <sys:String x:Key="Str_Theme_Sepulchre">Қабірхана</sys:String>
+    <sys:String x:Key="Str_Theme_Delirium">Делирий</sys:String>
+    <sys:String x:Key="Str_Theme_Mourning">Жоқтау</sys:String>
+
+    <!-- About overlay -->
+    <sys:String x:Key="Str_About_Version">НҰСҚА</sys:String>
+    <sys:String x:Key="Str_About_Publisher">ЖАРИЯЛАУШЫ</sys:String>
+    <sys:String x:Key="Str_About_Thumbprint">БАРМАҚ ІЗІ</sys:String>
+    <sys:String x:Key="Str_About_Sha">EXE SHA-256</sys:String>
+    <sys:String x:Key="Str_About_Db">ӨНДІРУШІЛЕР ДЕРЕКҚОРЫ</sys:String>
+    <sys:String x:Key="Str_About_DbUpdate">Соңғы тізілімдерден жаңарту</sys:String>
+    <sys:String x:Key="Str_About_DbHint">Wireshark OUI тізімінен.</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} жазба</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">{0} жаңартылды</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">қолданбамен бірге келген</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">ARP + IP шолуы, өндірушіні анықтау, құрылғыларды жіктеу және тақырыбын өзгертуге болатын, сұрыпталатын HTML экспорты. </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve"> құралы.</sys:String>
+
+    <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
+    <sys:String x:Key="Str_St_Discovering">{0} желісінде хосттар ізделуде...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingMacs">{0} MAC мекенжайы анықталуда...</sys:String>
+    <sys:String x:Key="Str_St_Probing">{0} белсенді хост тексерілуде...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingHosts">{0} хост анықталуда...</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">Сканерлеу аяқталды - {0} құрылғы табылды</sys:String>
+    <sys:String x:Key="Str_St_ScanCanceled">Сканерлеу болдырылмады</sys:String>
+    <sys:String x:Key="Str_St_Rescanning">{0} терең сканерленуде...</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">Қайта сканерлеу аяқталды - {0} хост жаңартылды</sys:String>
+    <sys:String x:Key="Str_St_Exported">{0} ішіне экспортталды</sys:String>
+    <sys:String x:Key="Str_St_OverrideSet">Қайта анықтау орнатылды: {0} = {1}</sys:String>
+    <sys:String x:Key="Str_St_OverrideCleared">{0} үшін қайта анықтау тазаланды</sys:String>
+    <sys:String x:Key="Str_St_AppSize">Қолданба өлшемі {0}%</sys:String>
+    <sys:String x:Key="Str_St_BadTarget">Жарамсыз нысана: "{0}" - 192.168.1.0/24, 192.168.1.7 немесе 192.168.1.10-50 пішімін пайдаланыңыз, үтірмен бөліңіз</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">Бұл {0} мекенжай - бір сканерлеу үшін тым көп (шегі {1}). Ауқымды тарылтыңыз немесе бөліп сканерлеңіз.</sys:String>
+    <sys:String x:Key="Str_St_NoTarget">Сканерлеу үшін ішкі желіні, мекенжайды немесе ауқымды енгізіңіз</sys:String>
+
+    <!-- Portable footer badge + install dialog -->
+    <sys:String x:Key="Str_Portable">ТАСЫМАЛДЫ</sys:String>
+    <sys:String x:Key="Str_InstallBtn">KillerScan орнату</sys:String>
+    <sys:String x:Key="Str_Install_AllUsers">Барлық пайдаланушылар үшін орнату (әкімші құқығы керек)</sys:String>
+    <sys:String x:Key="Str_Install_AllUsersNote">Осы компьютердегі барлық тіркелгілер үшін Program Files ішіне орнатады. Windows рұқсат сұрайды.</sys:String>
+    <sys:String x:Key="Str_Install_HeadUser">KillerScan қолданбасын пайдаланушы профиліңізге орнату керек пе?</sys:String>
+    <sys:String x:Key="Str_Install_HeadAll">KillerScan қолданбасын осы компьютердегі барлық пайдаланушылар үшін орнату керек пе?</sys:String>
+    <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan осы компьютерде барлық пайдаланушылар үшін әлдеқашан орнатылған, сондықтан бұл сол көшірмені жаңартады. Windows рұқсат сұрайды.</sys:String>
+    <sys:String x:Key="Str_St_InstallCanceled">Орнату болдырылмады</sys:String>
+
+    <!-- Themed window system menu (right-click the title bar / Alt+Space) -->
+    <sys:String x:Key="Str_Sys_Restore">Қалпына келтіру</sys:String>
+    <sys:String x:Key="Str_Sys_Move">Жылжыту</sys:String>
+    <sys:String x:Key="Str_Sys_Size">Өлшем</sys:String>
+    <sys:String x:Key="Str_Sys_Minimize">Жиыру</sys:String>
+    <sys:String x:Key="Str_Sys_Maximize">Жаю</sys:String>
+    <sys:String x:Key="Str_Sys_Close">Жабу</sys:String>
+
+    <!-- Keyboard shortcuts overlay (F1) -->
+    <sys:String x:Key="Str_TT_Shortcuts">Пернелер тіркесімі (F1)</sys:String>
+    <sys:String x:Key="Str_Shortcuts_Title">Пернелер тіркесімі</sys:String>
+    <sys:String x:Key="Str_Sc_Scan">Сканерлеуді бастау немесе тоқтату</sys:String>
+    <sys:String x:Key="Str_Sc_Cancel">Сканерлеуді болдырмау немесе осыны жабу</sys:String>
+    <sys:String x:Key="Str_Sc_Rescan">Таңдалған хосттарды терең қайта сканерлеу</sys:String>
+    <sys:String x:Key="Str_Sc_Subnet">Ішкі желі өрісіне өту</sys:String>
+    <sys:String x:Key="Str_Sc_SelectAll">Барлық құрылғыны таңдау</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Нәтижелерді экспорттау</sys:String>
+    <sys:String x:Key="Str_Sc_Browser">Таңдалған құрылғыны браузерде ашу</sys:String>
+    <sys:String x:Key="Str_Sc_Ping">Таңдалған құрылғыға Ping жіберу</sys:String>
+    <sys:String x:Key="Str_Sc_Rdp">Таңдалған құрылғыға қашықтағы жұмыс үстелін ашу</sys:String>
+    <sys:String x:Key="Str_Sc_Ssh">Таңдалған құрылғыға SSH арқылы қосылу</sys:String>
+    <sys:String x:Key="Str_Sc_SshAs">SSH тіркелгісін таңдап қосылу</sys:String>
+    <sys:String x:Key="Str_Sc_CopyIp">Таңдалған IP мекенжайын көшіру</sys:String>
+    <sys:String x:Key="Str_Sc_CopyMac">Таңдалған MAC мекенжайын көшіру</sys:String>
+    <sys:String x:Key="Str_Sc_CopyHost">Таңдалған хост атауын көшіру</sys:String>
+    <sys:String x:Key="Str_Sc_DeviceMenu">Таңдалған құрылғының барлық әрекеттерін ашу</sys:String>
+    <sys:String x:Key="Str_Sc_AppBigger">Қолданбаны үлкейту</sys:String>
+    <sys:String x:Key="Str_Sc_AppSmaller">Қолданбаны кішірейту</sys:String>
+    <sys:String x:Key="Str_Sc_AppReset">Қолданба өлшемін қалпына келтіру</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Осы тізімді көрсету</sys:String>
+    <sys:String x:Key="Str_Sc_Hint">Қолданба өлшемі логотиптің үстінде тінтуір дөңгелегімен де өзгереді.</sys:String>
+
+    <!-- ==== DIALOGS, UPDATES AND ERRORS ==== -->
+    <sys:String x:Key="Str_About_Title">KillerScan туралы</sys:String>
+    <sys:String x:Key="Str_TT_About">KillerScan туралы</sys:String>
+    <sys:String x:Key="Str_About_Aka" xml:space="preserve">AKA </sys:String>
+    <sys:String x:Key="Str_About_Unsigned">(қол қойылмаған немесе тізбек расталмады)</sys:String>
+    <sys:String x:Key="Str_About_Computing">есептелуде...</sys:String>
+    <sys:String x:Key="Str_Ssh_Title">SSH тіркелгісі</sys:String>
+    <sys:String x:Key="Str_Btn_Install">Орнату</sys:String>
+    <sys:String x:Key="Str_Install_BulletShortcut">- Бастау мәзірінде төте жол</sys:String>
+    <sys:String x:Key="Str_Install_BulletArp">- Бағдарламаларды қосу/жою тізімінде көрінеді</sys:String>
+
+    <!-- Vendor database. {0} is a count, already formatted with the locale's own separators. -->
+    <sys:String x:Key="Str_Db_Checking">Жаңа өндіруші деректері тексерілуде...</sys:String>
+    <sys:String x:Key="Str_Db_Downloading">Өндіруші деректері жүктелуде...</sys:String>
+    <sys:String x:Key="Str_Db_Fallback">Қосалқы дереккөз қолданылуда...</sys:String>
+    <sys:String x:Key="Str_Db_Blocked">Жаңарту сәтсіз - жүктеу бұғатталды немесе бос болды. Тізіміңіз өзгерген жоқ.</sys:String>
+    <sys:String x:Key="Str_Db_Smaller">Ең жаңа деректерде {0} жазба бар, бұл қазіргі {1} жазбадан аз. Тізіміңіз сақталды.</sys:String>
+    <sys:String x:Key="Str_Db_UpToDate">Дерекқор әлдеқашан жаңартылған ({0} жазба).</sys:String>
+    <sys:String x:Key="Str_Db_Updated">{0} жазбаға дейін жаңартылды.</sys:String>
+    <sys:String x:Key="Str_Db_SaveFailed">Дерекқорды сақтау мүмкін болмады: {0}</sys:String>
+    <sys:String x:Key="Str_Db_Failed">Жаңарту сәтсіз: {0}</sys:String>
+
+    <!-- Self-update. {0} is the release tag; in the heading {0} is the app name and {1} the tag. -->
+    <sys:String x:Key="Str_Upd_Available">Жаңарту бар: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Downloading">Жүктелуде...</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmHead">{0} {1} жүктеп орнату керек пе?</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBody">Қолданба автоматты түрде жабылып, қайта ашылады.</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBtn">Жаңарту</sys:String>
+
+    <!-- Install conflict, uninstall. Two whole sentences rather than one with the scope
+         substituted in: a language that inflects the noun cannot take a drop-in word. -->
+    <sys:String x:Key="Str_Conflict_Title">орнату қайшылығы</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveUser">KillerScan екі рет орнатылған. Басқа пайдаланушылық көшірмені қазір жою керек пе?
+
+Параметрлеріңіз жойылмайды.</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveMachine">KillerScan екі рет орнатылған. Барлық пайдаланушыларға арналған басқа көшірмені қазір жою керек пе?
+
+Параметрлеріңіз жойылмайды.</sys:String>
+    <sys:String x:Key="Str_Install_Failed">Орнату сәтсіз:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Title">Орнатуды жою</sys:String>
+    <sys:String x:Key="Str_Uninstall_Confirm">KillerScan қолданбасын осы компьютерден жою керек пе?</sys:String>
+    <sys:String x:Key="Str_Uninstall_NoAdmin">Жою әкімші құқығын сұрай алмады:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Done">KillerScan жойылды.</sys:String>
+
+    <!-- Errors and file dialogs. The text before the | in a save filter is what Windows shows
+         in its type dropdown; the *.ext pattern after it is not interface text. -->
+    <sys:String x:Key="Str_Err_Export">Экспорт қатесі: {0}</sys:String>
+    <sys:String x:Key="Str_Err_Scan">Сканерлеу қатесі: {0}</sys:String>
+    <sys:String x:Key="Str_Filter_Csv">CSV файлы</sys:String>
+    <sys:String x:Key="Str_Filter_Html">HTML есебі</sys:String>
+
+    <!-- Adapter kind and the randomized-MAC vendor placeholder. -->
+    <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
+    <sys:String x:Key="Str_Vendor_Randomized">(Кездейсоқ)</sys:String>
+
+    <!-- ==== EXPORTED HTML REPORT ====
+         The report reuses the grid's Str_Col_* headers and the picker's Str_Theme_* names, so it
+         can never disagree with the app that produced it. Only these are its own. Accent names
+         are new: the app's accent dots are swatches with no text, but the report's need titles. -->
+    <sys:String x:Key="Str_Rep_Theme">Тақырып</sys:String>
+    <sys:String x:Key="Str_Rep_Accent">Акцент</sys:String>
+    <sys:String x:Key="Str_Rep_Subnet">Ішкі желі</sys:String>
+    <sys:String x:Key="Str_Rep_Scanned">Сканерленді</sys:String>
+    <sys:String x:Key="Str_Rep_Devices">құрылғы</sys:String>
+    <sys:String x:Key="Str_Rep_GeneratedBy">Жасаған</sys:String>
+    <sys:String x:Key="Str_Accent_Red">Қызыл</sys:String>
+    <sys:String x:Key="Str_Accent_Orange">Қызғылт сары</sys:String>
+    <sys:String x:Key="Str_Accent_Green">Жасыл</sys:String>
+    <sys:String x:Key="Str_Accent_Teal">Көкшіл жасыл</sys:String>
+    <sys:String x:Key="Str_Accent_Blue">Көк</sys:String>
+    <sys:String x:Key="Str_Accent_Purple">Күлгін</sys:String>
+
+    <!-- ==== DEVICE TYPES ====================================================================
+         DISPLAY LABELS ONLY. The stored value stays English in every locale - it is written to
+         the override registry, matched by the Type column's color triggers, used as a CSS class
+         in the exported report and accepted by the CLI's /type filter. DeviceTypeConverter maps
+         one to the other on the way to the screen, and derives each key by stripping everything
+         that is not a letter or digit ("Switch/AP" -> Str_Dev_SwitchAP).
+
+         The list covers the classifier's whole vocabulary, not just the 21 rows in the "Set
+         device type" menu: a type the menu cannot set can still be detected and shown.
+
+         Product names (Windows, Linux, NAS, IoT, DNS, Apple, Android) are proper nouns and stay
+         as they are when translated - only the surrounding words change. -->
+    <sys:String x:Key="Str_Dev_Router">Маршрутизатор</sys:String>
+    <sys:String x:Key="Str_Dev_RouterDNS">Маршрутизатор/DNS</sys:String>
+    <sys:String x:Key="Str_Dev_SwitchAP">Коммутатор/AP</sys:String>
+    <sys:String x:Key="Str_Dev_Network">Желі</sys:String>
+    <sys:String x:Key="Str_Dev_Windows">Windows</sys:String>
+    <sys:String x:Key="Str_Dev_WindowsServer">Windows Server</sys:String>
+    <sys:String x:Key="Str_Dev_LinuxSSH">Linux/SSH</sys:String>
+    <sys:String x:Key="Str_Dev_Server">Сервер</sys:String>
+    <sys:String x:Key="Str_Dev_Printer">Принтер</sys:String>
+    <sys:String x:Key="Str_Dev_SmartTV">Smart TV</sys:String>
+    <sys:String x:Key="Str_Dev_AppleTV">Apple TV</sys:String>
+    <sys:String x:Key="Str_Dev_MediaStreamer">Медиа стример</sys:String>
+    <sys:String x:Key="Str_Dev_AppleDevice">Apple құрылғысы</sys:String>
+    <sys:String x:Key="Str_Dev_iPhone">iPhone</sys:String>
+    <sys:String x:Key="Str_Dev_Android">Android</sys:String>
+    <sys:String x:Key="Str_Dev_Mobile">Мобильді</sys:String>
+    <sys:String x:Key="Str_Dev_IoT">IoT</sys:String>
+    <sys:String x:Key="Str_Dev_NAS">NAS</sys:String>
+    <sys:String x:Key="Str_Dev_Camera">Камера</sys:String>
+    <sys:String x:Key="Str_Dev_Hypervisor">Гипервизор</sys:String>
+    <sys:String x:Key="Str_Dev_HomeAssistant">Home Assistant</sys:String>
+    <sys:String x:Key="Str_Dev_DNSServer">DNS сервері</sys:String>
+    <sys:String x:Key="Str_Dev_WebDevice">Веб-құрылғы</sys:String>
+    <sys:String x:Key="Str_Dev_Other">Басқа</sys:String>
+    <sys:String x:Key="Str_Dev_Unknown">Белгісіз</sys:String>
+
+</ResourceDictionary>

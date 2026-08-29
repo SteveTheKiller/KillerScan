@@ -7,17 +7,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ## [1.6.1] - Unreleased
 
 ### Added
-- Italian localization for the complete app interface and killerscan.net, bringing both to thirteen languages.
-- Hungarian localization for the complete app interface and killerscan.net, bringing both to twelve languages.
+- Italian, Hungarian, Kazakh and Russian localizations for the complete app interface and killerscan.net, bringing both to fifteen languages - the same set as KillerPDF.
 - The command line now includes `/probe`, `/network`, and offline `/vendor` commands; table, CSV, JSON, and themed HTML output; text, device-type, vendor, and port filters; sorting, descending order, result limits, custom port checks, progress reporting, timeouts, header control, extension-based export formats, and an optional empty-result exit code for automation.
 
 ### Changed
 - The interface is now translated where it was not. Device types read in your own language throughout the results grid, the "Set device type" menu and the exported report; so do the install, update and uninstall prompts, the vendor-database messages, the About and Keyboard shortcuts titles, the export and scan errors, and the save dialog's file types. The stored device-type value stays English so overrides, colors, report styling and the command line's `/type` filter are unaffected by the interface language.
 - The exported HTML report follows the app's language, reusing the same column and theme names rather than its own.
-- Polish was missing over a third of the interface and nine other languages were short a handful of strings; all twelve are now complete.
+- Polish was missing over a third of the interface and nine other languages were short a handful of strings; every language is now complete.
 - The too-many-addresses message no longer suggests splitting the scan across tabs, which this release removes.
 - Removed the unused tab-session scaffolding. A single scan already accepts several subnets, hosts, and ranges together, so the app now keeps one results session without carrying unreachable tab handlers or claiming a tabbed interface in package copy.
-- killerscan.net now explains in all twelve languages that per-device SSH preferences store only a username; passwords, private keys, the connection, and authentication remain entirely with the Windows SSH client.
+- killerscan.net now explains in every language that per-device SSH preferences store only a username; passwords, private keys, the connection, and authentication remain entirely with the Windows SSH client.
 - Internal cancellation resource keys now use the same American spelling as their displayed text.
 - Themes are now complete, app-owned resources with no private template overlay or external build dependency.
 - The About card now takes its outer edge from the app-frame color and its information panel directly from the context-menu surface, with the pane-border color around that panel. The old About-only color override is gone, so every theme uses the same semantic keys as the rest of its interface.
