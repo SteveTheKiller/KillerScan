@@ -6,11 +6,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.6.1] - Unreleased
 
+1.6.1 makes the command line actually work and grows it into a full scripting tool, brings the app and killerscan.net to fifteen languages, and cleans up install, uninstall and theme rough edges.
+
 ### Added
 - Italian, Hungarian, Kazakh and Russian localizations for the complete app interface and killerscan.net, bringing both to fifteen languages - the same set as KillerPDF.
 - The command line now includes `/probe`, `/network`, and offline `/vendor` commands; table, CSV, JSON, and themed HTML output; text, device-type, vendor, and port filters; sorting, descending order, result limits, custom port checks, progress reporting, timeouts, header control, extension-based export formats, and an optional empty-result exit code for automation.
 
 ### Changed
+- F12 now opens the About window, matching the rest of the family, and the shortcut list in the app and on killerscan.net now covers every shortcut, including the device actions.
+- The language menu now uses the family's radio-row list with the locale code right-aligned, matching KillerPDF.
 - The interface is now translated where it was not. Device types read in your own language throughout the results grid, the "Set device type" menu and the exported report; so do the install, update and uninstall prompts, the vendor-database messages, the About and Keyboard shortcuts titles, the export and scan errors, and the save dialog's file types. The stored device-type value stays English so overrides, colors, report styling and the command line's `/type` filter are unaffected by the interface language.
 - The exported HTML report follows the app's language, reusing the same column and theme names rather than its own.
 - Polish was missing over a third of the interface and nine other languages were short a handful of strings; every language is now complete.
@@ -22,6 +26,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The About card now takes its outer edge from the app-frame color and its information panel directly from the context-menu surface, with the pane-border color around that panel. The old About-only color override is gone, so every theme uses the same semantic keys as the rest of its interface.
 
 ### Fixed
+- The About card's info panel has its film grain back instead of being the one flat surface on the card.
 - Command-line scans no longer hang forever after printing the "Scanning..." line, so `/export` actually writes its file. The CLI had deadlocked this way since it shipped in 1.6.0.
 - Machine-wide uninstall now requests administrator access and removes the Program Files copy, Common Start Menu shortcut, machine PATH entry and HKLM registration instead of targeting the per-user installation.
 - The confirmation dialog's close-button corner now follows the active theme, so 98SE no longer leaves one rounded corner in otherwise square dialog chrome.

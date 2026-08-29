@@ -39,6 +39,7 @@ namespace KillerScan.Shell
             ("Ctrl + Shift + -", "Str_Sc_AppSmaller"),
             ("Ctrl + Shift + 0", "Str_Sc_AppReset"),
             ("F1",              "Str_Sc_Help"),
+            ("F12",             "Str_Sc_About"),
         ];
 
         // Wired from MainWindow.xaml (PreviewKeyDown on the window) so the keys work wherever
@@ -50,6 +51,7 @@ namespace KillerScan.Shell
             bool alt   = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
 
             // Esc closes the overlays first, then falls through to canceling a running scan.
+            // (F12 below toggles About; Esc remains the close for both overlays.)
             if (e.Key == Key.Escape)
             {
                 if (ShortcutsOverlay.Visibility == Visibility.Visible) { HideShortcuts(); e.Handled = true; return; }
@@ -59,6 +61,14 @@ namespace KillerScan.Shell
             }
 
             if (e.Key == Key.F1) { ToggleShortcuts(); e.Handled = true; return; }
+
+            // Family standard: F12 is always the About card.
+            if (e.Key == Key.F12)
+            {
+                if (AboutOverlay.Visibility == Visibility.Visible) FadeOverlayOut(AboutOverlay);
+                else ShowAboutOverlay();
+                e.Handled = true; return;
+            }
 
             // Typing in the subnet or filter box must keep its own Ctrl+A / Ctrl+F behavior.
             bool inTextBox = Keyboard.FocusedElement is TextBox;

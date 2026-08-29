@@ -65,8 +65,9 @@ namespace KillerScan.Shell
             // also removes the second background it paints.
             if (FindName("AboutShadow") is UIElement sh)
                 sh.Visibility = flat ? Visibility.Collapsed : Visibility.Visible;
-            if (FindName("AboutInfoShadow") is UIElement infoShadow)
-                infoShadow.Visibility = flat ? Visibility.Collapsed : Visibility.Visible;
+            // AboutInfoShadow is NOT collapsed here any more: it now carries the info panel's
+            // opaque fill (KillerShell construction), and its shadow opacity is the
+            // FlyoutShadowOpacity theme token, which 98SE already zeroes.
 
             var wordmark = flat ? Visibility.Collapsed : Visibility.Visible;
             var plain    = flat ? Visibility.Visible   : Visibility.Collapsed;
@@ -285,52 +286,70 @@ namespace KillerScan.Shell
             (Services.Locale.ZhTW, "中文 (繁體)", "zh-TW"),
         ];
 
+        // Family standard (KillerPDF is the reference): ThemeRadio rows in a bare panel, autonym
+        // on the left, the plain locale code right-aligned in MutedTextBrush - no parentheses, no
+        // menu checkmark. Hosted through the same pass-through MenuItem container the theme
+        // flyout uses, so the radios render as rows instead of menu entries.
         private void BuildLanguageMenu(ContextMenu menu)
         {
             menu.Items.Clear();
+
+            var itemStyle = new Style(typeof(MenuItem));
+            var itemTemplate = new ControlTemplate(typeof(MenuItem));
+            var presenter = new FrameworkElementFactory(typeof(ContentPresenter));
+            presenter.SetValue(ContentPresenter.ContentSourceProperty, "Header");
+            presenter.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
+            itemTemplate.VisualTree = presenter;
+            itemStyle.Setters.Add(new Setter(Control.TemplateProperty, itemTemplate));
+            menu.ItemContainerStyle = itemStyle;
+
+            var panel = new StackPanel { Margin = new Thickness(12, 10, 14, 10) };
             var current = Services.LocaleManager.Current;
 
             foreach (var (loc, name, code) in Languages)
             {
-                var grid = new Grid { MinWidth = 160 };
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                var grid = new Grid();
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
-                var nameBlock = new TextBlock { Text = name, VerticalAlignment = VerticalAlignment.Center };
+                var nameBlock = new TextBlock
+                {
+                    Text = name,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontFamily = new FontFamily("Segoe UI, Microsoft JhengHei UI, Nirmala UI"),
+                };
                 var codeBlock = new TextBlock
                 {
-                    Text = "(" + code + ")",
-                    Opacity = 0.5,
-                    Margin = new Thickness(22, 0, 0, 0),
+                    Text = code,
+                    Margin = new Thickness(12, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Right,
                 };
+                codeBlock.SetResourceReference(TextBlock.ForegroundProperty, "MutedTextBrush");
                 Grid.SetColumn(codeBlock, 1);
                 grid.Children.Add(nameBlock);
                 grid.Children.Add(codeBlock);
 
-                var item = new MenuItem
+                var radio = new RadioButton
                 {
-                    Header = grid,
+                    GroupName = "LangGroup",
+                    Content = grid,
                     Tag = loc.ToString(),
-                    HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                    Style = TryFindResource("ThemeRadio") as Style,
                     IsChecked = loc == current,
                 };
-                if (loc == current && TryFindResource("PrimaryBrush") is Brush accent)
-                {
-                    nameBlock.Foreground = accent;
-                    nameBlock.FontWeight = FontWeights.SemiBold;
-                    codeBlock.Foreground = accent;
-                    codeBlock.Opacity = 0.85;
-                }
-                item.Click += Lang_Click;
-                menu.Items.Add(item);
+                // Subscribed after IsChecked is set, so building the menu never fires a locale apply.
+                radio.Checked += Lang_Checked;
+                panel.Children.Add(radio);
             }
+            menu.Items.Add(panel);
         }
 
-        private void Lang_Click(object sender, RoutedEventArgs e)
+        private void Lang_Checked(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuItem mi && mi.Tag is string tag
-                && Enum.TryParse<Services.Locale>(tag, out var loc))
+            if (sender is RadioButton rb && rb.Tag is string tag
+                && Enum.TryParse<Services.Locale>(tag, out var loc)
+                && loc != Services.LocaleManager.Current)
             {
                 Services.LocaleManager.Apply(loc);
                 RelocalizeDynamicUi();

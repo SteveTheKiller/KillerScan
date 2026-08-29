@@ -153,6 +153,7 @@
     <sys:String x:Key="Str_Sc_AppSmaller">Қолданбаны кішірейту</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">Қолданба өлшемін қалпына келтіру</sys:String>
     <sys:String x:Key="Str_Sc_Help">Осы тізімді көрсету</sys:String>
+    <sys:String x:Key="Str_Sc_About">Қолданба туралы терезесін ашу</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Қолданба өлшемі логотиптің үстінде тінтуір дөңгелегімен де өзгереді.</sys:String>
 
     <!-- ==== DIALOGS, UPDATES AND ERRORS ==== -->

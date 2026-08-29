@@ -126,6 +126,7 @@
     <sys:String x:Key="Str_Sc_AppSmaller">অ্যাপ ছোট করুন</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">অ্যাপের আকার রিসেট করুন</sys:String>
     <sys:String x:Key="Str_Sc_Help">এই তালিকা দেখান</sys:String>
+    <sys:String x:Key="Str_Sc_About">সম্পর্কে উইন্ডোটি খুলুন</sys:String>
     <sys:String x:Key="Str_Sc_Hint">লোগোর উপর মাউস হুইল ঘোরালেও অ্যাপের আকার বদলায়।</sys:String>
 
     <!-- Exported HTML report -->

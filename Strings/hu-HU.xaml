@@ -153,6 +153,7 @@
     <sys:String x:Key="Str_Sc_AppSmaller">Csökkentse az alkalmazást</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">Állítsa vissza az alkalmazás méretét</sys:String>
     <sys:String x:Key="Str_Sc_Help">Mutasd ezt a listát</sys:String>
+    <sys:String x:Key="Str_Sc_About">Nyissa meg a névjegy ablakát</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Az alkalmazás mérete is követi az egér görgőjét a szójel felett.</sys:String>
 
     <!-- Exported HTML report -->

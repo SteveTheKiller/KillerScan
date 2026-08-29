@@ -1207,12 +1207,23 @@
                             <!-- Info panel - matte, lifted above the grainy card. Named: the header
                                  binds its width to this panel (see above). -->
                             <Grid x:Name="AboutInfoGrid">
+                                <!-- Carries the panel's opaque fill AND the shadow (KillerShell's
+                                     construction). The shadow opacity is the theme token, 0 on
+                                     98SE, so this border must stay visible there - it is now the
+                                     panel's only fill. -->
                                 <Border x:Name="AboutInfoShadow" Background="{DynamicResource MenuBackgroundBrush}" CornerRadius="{DynamicResource ControlCornerRadius}" IsHitTestVisible="False">
                                     <Border.Effect>
-                                        <DropShadowEffect Color="Black" BlurRadius="14" ShadowDepth="2" Direction="270" Opacity="0.5"/>
+                                        <DropShadowEffect Color="Black" BlurRadius="14" ShadowDepth="2" Direction="270" Opacity="{DynamicResource FlyoutShadowOpacity}"/>
                                     </Border.Effect>
                                 </Border>
-                                <Border Background="{DynamicResource MenuBackgroundBrush}"
+                                <!-- Grain on the info panel too, KillerShell's About verbatim: the
+                                     opaque fill lives on the shadow border above, the grain is its
+                                     own layer, and the content border below is transparent so both
+                                     show through. Text renders above the grain and stays crisp.
+                                     98SE needs no special case - its GrainOpacity is 0. -->
+                                <Border IsHitTestVisible="False" CornerRadius="{DynamicResource ControlCornerRadius}"
+                                        Opacity="{DynamicResource GrainOpacity}" Background="{DynamicResource GrainTileBrush}"/>
+                                <Border Background="Transparent"
                                         BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1"
                                         CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14,12,14,4">
                                     <StackPanel>

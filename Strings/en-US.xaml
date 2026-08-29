@@ -153,6 +153,7 @@
     <sys:String x:Key="Str_Sc_AppSmaller">Make the app smaller</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">Reset the app size</sys:String>
     <sys:String x:Key="Str_Sc_Help">Show this list</sys:String>
+    <sys:String x:Key="Str_Sc_About">Open the About window</sys:String>
     <sys:String x:Key="Str_Sc_Hint">The app size also follows the mouse wheel over the wordmark.</sys:String>
 
     <!-- ==== DIALOGS, UPDATES AND ERRORS ==== -->

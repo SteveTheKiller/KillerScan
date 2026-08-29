@@ -153,6 +153,7 @@
     <sys:String x:Key="Str_Sc_AppSmaller">Rimpicciolisci l'app</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">Ripristina la dimensione dell'app</sys:String>
     <sys:String x:Key="Str_Sc_Help">Mostra questo elenco</sys:String>
+    <sys:String x:Key="Str_Sc_About">Apri la finestra Informazioni</sys:String>
     <sys:String x:Key="Str_Sc_Hint">La dimensione dell'app segue anche la rotellina del mouse sopra il logotipo.</sys:String>
 
     <!-- Exported HTML report -->

@@ -126,6 +126,7 @@
     <sys:String x:Key="Str_Sc_AppSmaller">Reducir la aplicación</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">Restablecer el tamaño de la aplicación</sys:String>
     <sys:String x:Key="Str_Sc_Help">Mostrar esta lista</sys:String>
+    <sys:String x:Key="Str_Sc_About">Abrir la ventana Acerca de</sys:String>
     <sys:String x:Key="Str_Sc_Hint">El tamaño de la aplicación también responde a la rueda del ratón sobre el logotipo.</sys:String>
 
     <!-- Exported HTML report -->
