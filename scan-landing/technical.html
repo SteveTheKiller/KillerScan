@@ -150,7 +150,7 @@
 <tr><td data-i18n="tk_9">Host discovery</td><td data-i18n="tk_10">ARP cache parse + <code>SendARP</code> P/Invoke (iphlpapi.dll), async parallel ICMP ping sweep with a <code>TcpClient</code> connect fallback for hosts that block ping</td></tr>
 <tr><td data-i18n="tk_11">Port scan</td><td data-i18n="tk_12">Raw async <code>TcpClient</code> connect probes, throttled</td></tr>
 <tr><td data-i18n="tk_13">Service discovery</td><td data-i18n="tk_14">mDNS and SSDP over raw <code>UdpClient</code> multicast sockets. The underlying network packets are built and read by hand.</td></tr>
-<tr><td data-i18n="tk_15">Vendor data</td><td data-i18n="tk_16">Full IEEE manufacturer database (~57,000 entries across MA-L, MA-M, and MA-S) built into the app</td></tr>
+<tr><td data-i18n="tk_15">Vendor data</td><td data-i18n="tk_16">Full IEEE manufacturer database (~58,000 entries across MA-L, MA-M, and MA-S) built into the app</td></tr>
 <tr><td data-i18n="tk_17">Packaging</td><td data-i18n="tk_18">Single executable. Install it for your user account, install it for every account on the PC, or run it portable.</td></tr>
 </table>
 </div>
@@ -208,7 +208,7 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
 <span class="prompt">Start-Process -Wait</span> killerscan <span class="arg">-ArgumentList '/scan 192.168.8.0/24 /export hosts.csv'</span></div>
 <table class="spec-table exit-table"><tr><th data-i18n="tk_cli_exit">Exit code</th><th data-i18n="tk_cli_meaning">Meaning</th></tr>
 <tr><td><code>0</code></td><td data-i18n="tk_cli_exit0">The scan and any requested export completed successfully.</td></tr>
-<tr><td><code>1</code></td><td data-i18n="tk_cli_exit1">The scan or export failed, or the scan was cancelled.</td></tr>
+<tr><td><code>1</code></td><td data-i18n="tk_cli_exit1">The scan or export failed, or the scan was canceled.</td></tr>
 <tr><td><code>2</code></td><td data-i18n="tk_cli_exit2">A required value or scan target was missing or invalid.</td></tr>
 <tr><td><code>3</code></td><td data-i18n="tk_cli_exit3">No device matched, or an offline vendor lookup found no registration, when the command requested that distinction.</td></tr>
 </table>
@@ -411,7 +411,7 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
 <p data-i18n="tk_77">A 9-digit match beats a 7-digit match, which beats a 6-digit match, so the smaller, more specific owner always wins over the larger company that holds the parent range.</p>
 
 <h3 id="database" data-i18n="tk_78">The database itself</h3>
-<p data-i18n="tk_79">The full IEEE manufacturer list, roughly 57,000 entries across all three registries (MA-L, MA-M, and MA-S), ships inside the .exe, so manufacturer names appear instantly and without any internet connection.</p>
+<p data-i18n="tk_79">The full IEEE manufacturer list, roughly 58,000 entries across all three registries (MA-L, MA-M, and MA-S), ships inside the .exe, so manufacturer names appear instantly and without any internet connection.</p>
 <p data-i18n="tk_80">You can update it to the latest data from inside the app. The <b>About</b> screen shows how many entries you have and when they were last refreshed, with a one-click update that downloads the newest list. The update is built so it can never leave you worse off: if a download is blocked or incomplete, a safety check refuses to replace your list with a smaller one, so an update can never wipe out or shrink what you already have.</p>
 </div>
 
@@ -518,8 +518,8 @@ some ports open, none telling  -> Other</div>
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 <div class="dlightbox" id="diagram-lightbox" hidden><div class="dlb-inner"></div></div>
-<script src="ks-i18n.js?v=3"></script>
-<script src="ks.js?v=6"></script>
+<script src="ks-i18n.js?v=4"></script>
+<script src="ks.js?v=7"></script>
 <script>
 // COLLAPSIBLE OUTLINE. The page has eleven sections and thirteen subsections, and listing
 // all twenty-four flat made the sidebar a wall you had to read to navigate.

@@ -21,6 +21,90 @@ namespace KillerScan.Features.Cli
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool AttachConsole(int dwProcessId);
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr GetStdHandle(int nStdHandle);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+        private const int StdOutputHandle = -11;
+        private const int StdErrorHandle = -12;
+        private const uint EnableVirtualTerminalProcessing = 0x0004;
+
+        // ANSI color state, per stream. True only when that stream is a real interactive console
+        // (not redirected or piped) whose VT processing could be enabled - so CSV/JSON piped to a
+        // file, and everything written by /export, stays free of escape codes.
+        private static bool _outAnsi, _errAnsi;
+
+        private const string AnsiReset = "\x1b[0m";
+        private const string AnsiIp = "\x1b[96m";      // bright cyan
+        private const string AnsiHost = "\x1b[97m";    // bright white
+        private const string AnsiMac = "\x1b[93m";     // bright yellow
+        private const string AnsiType = "\x1b[95m";    // bright magenta
+        private const string AnsiPorts = "\x1b[92m";   // bright green
+        private const string AnsiGood = "\x1b[92m";    // bright green
+        private const string AnsiBad = "\x1b[91m";     // bright red
+        private const string AnsiDim = "\x1b[90m";
+
+        /// <summary>Returns true when the given std stream is an interactive console; enables VT
+        /// escape processing on it so ANSI colors render (a no-op on Windows Terminal, required
+        /// on classic conhost).</summary>
+        private static bool TryEnableVt(int stdHandle)
+        {
+            try
+            {
+                IntPtr handle = GetStdHandle(stdHandle);
+                if (handle == IntPtr.Zero || !GetConsoleMode(handle, out uint mode)) return false;
+                return (mode & EnableVirtualTerminalProcessing) != 0
+                    || SetConsoleMode(handle, mode | EnableVirtualTerminalProcessing);
+            }
+            catch { return false; }
+        }
+
+        private static string PaintErr(string text, string code) => _errAnsi ? code + text + AnsiReset : text;
+
+        /// <summary>Little stderr spinner shown while a scan or probe runs on an interactive
+        /// console. Skipped when stderr is redirected (a \r animation would be garbage in a log),
+        /// and when /quiet or /progress already own the status stream.</summary>
+        private sealed class Spinner : IDisposable
+        {
+            private static readonly char[] Frames = ['|', '/', '-', '\\'];
+            private readonly TextWriter _err;
+            private readonly string _label;
+            private readonly int _visibleLength;
+            private readonly Thread _thread;
+            private volatile bool _running = true;
+
+            /// <summary>The label may carry ANSI color codes; visibleLength is its on-screen
+            /// character count, used to wipe the line without wrapping past it.</summary>
+            internal Spinner(TextWriter err, string label, int visibleLength)
+            {
+                _err = err;
+                _label = label;
+                _visibleLength = visibleLength;
+                _thread = new Thread(Run) { IsBackground = true };
+                _thread.Start();
+            }
+
+            private void Run()
+            {
+                int frame = 0;
+                while (_running)
+                {
+                    try { _err.Write($"\r{AnsiMac}{Frames[frame++ % Frames.Length]}{AnsiReset} {_label}"); } catch { return; }
+                    Thread.Sleep(120);
+                }
+            }
+
+            public void Dispose()
+            {
+                _running = false;
+                try { _thread.Join(300); } catch { }
+                // Wipe the spinner line so the results start on a clean row.
+                try { _err.Write("\r" + new string(' ', _visibleLength + 2) + "\r"); } catch { }
+            }
+        }
+
         private static readonly string[] ValueOptions =
         [
             "/export", "--export", "/output", "--output", "/format", "--format",
@@ -33,7 +117,7 @@ namespace KillerScan.Features.Cli
         [
             "/quick", "--quick", "/full", "--full", "/quiet", "--quiet",
             "/progress", "--progress", "/descending", "--descending", "/desc", "--desc",
-            "/no-header", "--no-header", "/fail-empty", "--fail-empty",
+            "/no-header", "--no-header", "/fail-empty", "--fail-empty", "/demo", "--demo",
             "/json", "--json", "/csv", "--csv", "/html", "--html", "/table", "--table"
         ];
 
@@ -69,7 +153,7 @@ namespace KillerScan.Features.Cli
             try
             {
                 var (positionals, options, parseError) = ParseArgs(args, command);
-                if (parseError != null) { err.WriteLine("Error: " + parseError); exitCode = 2; }
+                if (parseError != null) { err.WriteLine(PaintErr("Error: " + parseError, AnsiBad)); exitCode = 2; }
                 else if (Eq(command, "/network") || Eq(command, "--network"))
                     exitCode = RunNetwork(positionals, options, @out, err);
                 else if (Eq(command, "/vendor") || Eq(command, "--vendor"))
@@ -78,7 +162,7 @@ namespace KillerScan.Features.Cli
                     exitCode = RunDevices(positionals, options, @out, err,
                         probe: Eq(command, "/probe") || Eq(command, "--probe"));
             }
-            catch (Exception ex) { err.WriteLine("Error: " + Flatten(ex.Message)); exitCode = 1; }
+            catch (Exception ex) { err.WriteLine(PaintErr("Error: " + Flatten(ex.Message), AnsiBad)); exitCode = 1; }
             return true;
         }
 
@@ -117,7 +201,7 @@ namespace KillerScan.Features.Cli
             bool noHeader = Has(options, "/no-header", "--no-header");
             bool failEmpty = Has(options, "/fail-empty", "--fail-empty");
             string? exportPath = Value(options, "/export", "--export", "/output", "--output");
-            string format = ResolveFormat(options, Value(options, "/format", "--format"), exportPath);
+            var (format, formatFromExtension) = ResolveFormat(options, Value(options, "/format", "--format"), exportPath);
             if (format.Length == 0) return Usage(err, "format must be table, csv, json, or html, with only one format selected.");
             if (exportPath != null && exportPath.Length == 0) return Usage(err, "/export needs a file path.");
             IPAddress? probeIp = null;
@@ -125,9 +209,15 @@ namespace KillerScan.Features.Cli
             if (probe && (!IPAddress.TryParse(positionals[0], out probeIp) || probeIp.GetAddressBytes().Length != 4))
                 return Usage(err, "/probe currently accepts an IPv4 address, not a hostname.");
 
+            // Screenshot mode: same fabricated-network generator the GUI's --demo uses, so the
+            // console output never shows a real environment. Scan only; no network is touched.
+            bool demo = Has(options, "/demo", "--demo");
+            if (demo && probe) return Usage(err, "/demo works with /scan only.");
+            DemoScan? demoScan = demo ? DemoData.Generate(new Random()) : null;
+
             string targetText = string.Join(",", positionals);
             ScanTargetResult? parsed = null;
-            if (!probe)
+            if (!probe && !demo)
             {
                 if (targetText.Length == 0)
                 {
@@ -170,10 +260,32 @@ namespace KillerScan.Features.Cli
                     { lastProgress = p; err.WriteLine($"Progress: {p}%"); }
                 };
             }
+            string target = probe ? positionals[0] : demo ? demoScan!.Subnet : parsed!.Summary;
+            string suffix = probe ? "..." : $" ({(demo ? 254 : parsed!.Addresses.Count):N0} addresses)...";
+            string verb = probe ? "Deep-probing " : "Scanning ";
+            // Interactive console gets the animated spinner on the same line, with the target in
+            // the IP color and the spinner glyph in the MAC color; a redirected stderr gets the
+            // plain one-shot line so logs stay clean.
+            Spinner? spinner = null;
             if (!quiet && !progress)
-                err.WriteLine(probe ? $"Deep-probing {positionals[0]}..." : $"Scanning {parsed!.Summary} ({parsed.Addresses.Count:N0} addresses)...");
+            {
+                if (_errAnsi)
+                    spinner = new Spinner(err, verb + AnsiIp + target + AnsiReset + suffix,
+                        (verb + target + suffix).Length);
+                else err.WriteLine(verb + target + suffix);
+            }
 
             List<NetworkDevice> devices;
+            if (demo)
+            {
+                // A short beat so the spinner is visible (and screenshottable), then the
+                // fabricated device list - nothing on the wire.
+                if (spinner != null) Thread.Sleep(1500);
+                spinner?.Dispose(); spinner = null;
+                try { Console.CancelKeyPress -= OnCancel; } catch { }
+                devices = [.. demoScan!.Devices];
+            }
+            else
             try
             {
                 Task<List<NetworkDevice>> operation = probe
@@ -185,7 +297,8 @@ namespace KillerScan.Features.Cli
                     if (Task.WhenAny(operation, deadline).GetAwaiter().GetResult() != operation)
                     {
                         cts.Cancel();
-                        err.WriteLine($"Operation timed out after {timeout} seconds.");
+                        spinner?.Dispose(); spinner = null;
+                        err.WriteLine(PaintErr($"Operation timed out after {timeout} seconds.", AnsiBad));
                         return 1;
                     }
                 }
@@ -193,10 +306,15 @@ namespace KillerScan.Features.Cli
             }
             catch (OperationCanceledException)
             {
-                err.WriteLine(timeout > 0 ? $"Operation timed out after {timeout} seconds." : "Operation cancelled.");
+                spinner?.Dispose(); spinner = null;
+                err.WriteLine(PaintErr(timeout > 0 ? $"Operation timed out after {timeout} seconds." : "Operation canceled.", AnsiBad));
                 return 1;
             }
-            finally { try { Console.CancelKeyPress -= OnCancel; } catch { } }
+            finally
+            {
+                spinner?.Dispose();
+                try { Console.CancelKeyPress -= OnCancel; } catch { }
+            }
 
             devices = ApplyFilters(devices, options, ports);
             var sorted = ApplySort(devices, Value(options, "/sort", "--sort"),
@@ -205,9 +323,16 @@ namespace KillerScan.Features.Cli
             devices = sorted;
             if (limit > 0) devices = [.. devices.Take(limit)];
 
-            string label = probe ? positionals[0] : parsed!.Summary;
+            string label = probe ? positionals[0] : demo ? demoScan!.Subnet : parsed!.Summary;
+            // The plain body is what exports and pipes receive; an interactive console gets the
+            // colorized table instead. That includes the case where the format is csv/json/html
+            // only because the /export extension picked it - the FILE gets that format, but raw
+            // CSV on a live console helps nobody. An EXPLICIT /csv, /json or /format choice is
+            // honored on stdout as-is (that is the scripting contract), just without colors.
             string body = Render(format, devices, label, theme, noHeader);
-            if (!quiet) @out.WriteLine(body);
+            bool showTable = _outAnsi && (format == "table" || formatFromExtension);
+            if (!quiet)
+                @out.WriteLine(showTable ? Table(devices, !noHeader, ansi: true) : body);
             if (exportPath != null)
             {
                 try
@@ -216,11 +341,17 @@ namespace KillerScan.Features.Cli
                     string? dir = Path.GetDirectoryName(full);
                     if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
                     File.WriteAllText(full, body, new UTF8Encoding(false));
-                    if (!quiet) err.WriteLine("Wrote " + full);
+                    if (!quiet) err.WriteLine(PaintErr("Wrote " + full, AnsiGood));
                 }
-                catch (Exception ex) { err.WriteLine("Error: could not write the export - " + Flatten(ex.Message)); return 1; }
+                catch (Exception ex) { err.WriteLine(PaintErr("Error: could not write the export - " + Flatten(ex.Message), AnsiBad)); return 1; }
             }
-            if (!quiet) err.WriteLine($"{devices.Count} matching device{(devices.Count == 1 ? "" : "s")}.");
+            if (!quiet)
+            {
+                err.WriteLine($"{devices.Count} matching device{(devices.Count == 1 ? "" : "s")}.");
+                err.WriteLine(PaintErr("KillerScan complete.", AnsiGood));
+                // Interactive consoles only.
+                if (_errAnsi) err.WriteLine(PaintErr("Press ENTER to exit", AnsiDim));
+            }
             return devices.Count == 0 && failEmpty ? 3 : 0;
         }
 
@@ -267,7 +398,7 @@ namespace KillerScan.Features.Cli
             _ => Table(devices, !noHeader),
         };
 
-        private static string Table(List<NetworkDevice> devices, bool header)
+        private static string Table(List<NetworkDevice> devices, bool header, bool ansi = false)
         {
             string[] headers = ["IP ADDRESS", "HOSTNAME", "MAC ADDRESS", "VENDOR", "TYPE", "OPEN PORTS"];
             var rows = devices.Select(d => new[] { d.IpAddress, d.Hostname, d.MacAddress, Clip(d.Vendor, 32), d.DeviceType, d.OpenPortsDisplay }).ToList();
@@ -275,8 +406,27 @@ namespace KillerScan.Features.Cli
             for (int c = 0; c < headers.Length; c++)
             { width[c] = header ? headers[c].Length : 0; foreach (var row in rows) width[c] = Math.Max(width[c], (row[c] ?? "").Length); }
             var sb = new StringBuilder();
-            if (header) { AppendRow(sb, headers, width); AppendRow(sb, [.. width.Select(w => new string('-', w))], width); }
-            foreach (var row in rows) AppendRow(sb, row, width);
+            // Colors wrap the ALREADY-PADDED cell so escape codes never disturb column alignment.
+            string ColorFor(int c) => c switch
+            {
+                0 => AnsiIp, 1 => AnsiHost, 2 => AnsiMac, 4 => AnsiType, 5 => AnsiPorts, _ => "",
+            };
+            void Row(string[] cells, string forceColor)
+            {
+                for (int c = 0; c < cells.Length; c++)
+                {
+                    string cell = c == cells.Length - 1 ? cells[c] ?? "" : (cells[c] ?? "").PadRight(width[c]) + "  ";
+                    string color = forceColor.Length > 0 ? forceColor : ColorFor(c);
+                    sb.Append(ansi && color.Length > 0 ? color + cell + AnsiReset : cell);
+                }
+                sb.AppendLine();
+            }
+            if (header)
+            {
+                Row(headers, ansi ? AnsiDim : "");
+                Row([.. width.Select(w => new string('-', w))], ansi ? AnsiDim : "");
+            }
+            foreach (var row in rows) Row(row, "");
             return sb.ToString().TrimEnd();
         }
 
@@ -291,24 +441,26 @@ namespace KillerScan.Features.Cli
 
         private static string CsvCell(string? value)
         { value ??= ""; return value.IndexOfAny([',', '"', '\r', '\n']) >= 0 ? "\"" + value.Replace("\"", "\"\"") + "\"" : value; }
-        private static void AppendRow(StringBuilder sb, string[] cells, int[] width)
-        { for (int c = 0; c < cells.Length; c++) if (c == cells.Length - 1) sb.Append(cells[c] ?? ""); else sb.Append((cells[c] ?? "").PadRight(width[c])).Append("  "); sb.AppendLine(); }
 
         private static string SearchText(NetworkDevice d) => string.Join(" ", d.IpAddress, d.Hostname,
             d.MacAddress, d.Vendor, d.DeviceType, d.OpenPortsDisplay, d.HttpTitle, d.HttpServer,
             d.SshBanner, d.TlsSubject, d.SmbOs, d.SnmpDescr, d.NetbiosName, string.Join(" ", d.MdnsServices), d.SsdpServer);
 
-        private static string ResolveFormat(Dictionary<string, string> options, string? explicitFormat, string? path)
+        /// <summary>Resolves the output format. FromExtension is true only when nothing explicit
+        /// chose it and the /export file extension did - the one case where the console display
+        /// may substitute the table while the file keeps the extension's format.</summary>
+        private static (string Format, bool FromExtension) ResolveFormat(
+            Dictionary<string, string> options, string? explicitFormat, string? path)
         {
             var flags = new[] { ("table", Has(options, "/table", "--table")), ("csv", Has(options, "/csv", "--csv")),
                 ("json", Has(options, "/json", "--json")), ("html", Has(options, "/html", "--html")) }
                 .Where(x => x.Item2).Select(x => x.Item1).ToList();
-            if (flags.Count > 1 || (flags.Count == 1 && explicitFormat != null)) return "";
-            if (flags.Count == 1) return flags[0];
-            if (explicitFormat != null) return new[] { "table", "csv", "json", "html" }.Contains(explicitFormat, StringComparer.OrdinalIgnoreCase) ? explicitFormat.ToLowerInvariant() : "";
+            if (flags.Count > 1 || (flags.Count == 1 && explicitFormat != null)) return ("", false);
+            if (flags.Count == 1) return (flags[0], false);
+            if (explicitFormat != null) return (new[] { "table", "csv", "json", "html" }.Contains(explicitFormat, StringComparer.OrdinalIgnoreCase) ? explicitFormat.ToLowerInvariant() : "", false);
             if (path != null)
-            { string ext = Path.GetExtension(path).ToLowerInvariant(); if (ext is ".html" or ".htm") return "html"; if (ext == ".json") return "json"; if (ext == ".csv") return "csv"; }
-            return "table";
+            { string ext = Path.GetExtension(path).ToLowerInvariant(); if (ext is ".html" or ".htm") return ("html", true); if (ext == ".json") return ("json", true); if (ext == ".csv") return ("csv", true); }
+            return ("table", false);
         }
 
         private static int[]? ParsePorts(string? value)
@@ -343,7 +495,8 @@ namespace KillerScan.Features.Cli
             "  /sort <field>          ip, hostname, mac, vendor, type, or ports",
             "  /descending            reverse the selected sort",
             "  /limit <count>         keep the first N rows after filtering and sorting",
-            "  /fail-empty            return exit code 3 when no rows remain", "", "OUTPUT OPTIONS",
+            "  /fail-empty            return exit code 3 when no rows remain",
+            "  /demo                  fabricated network for screenshots; scans nothing (with /scan)", "", "OUTPUT OPTIONS",
             "  /format <kind>         table, csv, json, or html",
             "  /table | /csv | /json | /html   shorthand for /format",
             "  /export <path>         write output; extension selects format unless overridden",
@@ -383,7 +536,7 @@ namespace KillerScan.Features.Cli
         private static bool Has(Dictionary<string, string> options, params string[] names) => names.Any(options.ContainsKey);
         private static string? Value(Dictionary<string, string> options, params string[] names)
         { foreach (string name in names) if (options.TryGetValue(name, out string? value)) return value; return null; }
-        private static int Usage(TextWriter err, string message, int code = 2) { err.WriteLine("Error: " + message); return code; }
+        private static int Usage(TextWriter err, string message, int code = 2) { err.WriteLine(PaintErr("Error: " + message, AnsiBad)); return code; }
         private static bool Eq(string a, string b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
         private static bool IsHelp(string a) => Eq(a, "/help") || Eq(a, "--help") || Eq(a, "-h") || Eq(a, "/?") || Eq(a, "-?");
         private static bool IsVersion(string a) => Eq(a, "/version") || Eq(a, "--version") || Eq(a, "-v");
@@ -396,6 +549,8 @@ namespace KillerScan.Features.Cli
             {
                 if (AttachConsole(AttachParentProcess))
                 {
+                    _outAnsi = TryEnableVt(StdOutputHandle);
+                    _errAnsi = TryEnableVt(StdErrorHandle);
                     var @out = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
                     var err = new StreamWriter(Console.OpenStandardError()) { AutoFlush = true };
                     Console.SetOut(@out); Console.SetError(err); return (@out, err);

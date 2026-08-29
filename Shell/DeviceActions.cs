@@ -82,7 +82,7 @@ namespace KillerScan.Shell
             LaunchSsh(d.IpAddress, user);
         }
 
-        /// <summary>Prompts for the username. Returns false when the dialog was cancelled, which
+        /// <summary>Prompts for the username. Returns false when the dialog was canceled, which
         /// must not launch anything and must not overwrite what is already remembered.</summary>
         private bool AskSshUser(NetworkDevice d, string initial, out string user)
         {

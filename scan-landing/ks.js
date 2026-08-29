@@ -173,6 +173,9 @@
     langItems.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'); });
     if (langToggle) langToggle.innerHTML = FLAGS[lang] || FLAGS.en;
     try { localStorage.setItem('kscan-lang', lang); } catch (e) {}
+    // For text that is not in the DOM as a data-i18n node - the screenshot captions, which live
+    // in a script array and are used as alt/title/aria-label - so those follow the language too.
+    document.dispatchEvent(new CustomEvent('kscan-languagechange', { detail: { lang: lang } }));
   }
   function closeLangMenu() { if (langMenu) { langMenu.hidden = true; langToggle.setAttribute('aria-expanded', 'false'); } }
   if (langToggle && langMenu) {

@@ -5,7 +5,8 @@ using System.Reflection;
 namespace KillerScan.Services
 {
     /// <summary>
-    /// MAC OUI vendor lookup using the full IEEE OUI database (~41k entries across MA-L/MA-M/MA-S).
+    /// MAC OUI vendor lookup using the full MA-L/MA-M/MA-S registry set (~58k entries, from the
+    /// Wireshark manuf list; build/update-oui.ps1 refreshes the bundled copy).
     /// Prefers a user-refreshed copy in %LOCALAPPDATA%\KillerScan\oui.txt; otherwise falls back to
     /// the copy embedded in the .exe. The in-app "update vendor database" action writes the external
     /// file and calls Reload().

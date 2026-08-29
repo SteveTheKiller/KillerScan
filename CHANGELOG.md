@@ -4,15 +4,18 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.6.1] - Unreleased
+## [1.6.1] - 2026-08-29
 
 1.6.1 makes the command line actually work and grows it into a full scripting tool, brings the app and killerscan.net to fifteen languages, and cleans up install, uninstall and theme rough edges.
 
 ### Added
 - Italian, Hungarian, Kazakh and Russian localizations for the complete app interface and killerscan.net, bringing both to fifteen languages - the same set as KillerPDF.
 - The command line now includes `/probe`, `/network`, and offline `/vendor` commands; table, CSV, JSON, and themed HTML output; text, device-type, vendor, and port filters; sorting, descending order, result limits, custom port checks, progress reporting, timeouts, header control, extension-based export formats, and an optional empty-result exit code for automation.
+- `/scan /demo` produces the same fabricated network as the GUI's demo mode, for screenshots that show no real environment.
+- On an interactive console the command line shows a spinner while scanning and colors its output - each results column in its own color, errors red, and a green "KillerScan complete." when done. When `/export`'s file extension picks the format, the console still shows the readable table while the file gets that format. Redirected output, pipes, exports and explicit `/csv` or `/json` stay plain.
 
 ### Changed
+- The bundled OUI vendor database was refreshed to the current Wireshark manuf list (58,049 entries).
 - F12 now opens the About window, matching the rest of the family, and the shortcut list in the app and on killerscan.net now covers every shortcut, including the device actions.
 - The language menu now uses the family's radio-row list with the locale code right-aligned, matching KillerPDF.
 - The interface is now translated where it was not. Device types read in your own language throughout the results grid, the "Set device type" menu and the exported report; so do the install, update and uninstall prompts, the vendor-database messages, the About and Keyboard shortcuts titles, the export and scan errors, and the save dialog's file types. The stored device-type value stays English so overrides, colors, report styling and the command line's `/type` filter are unaffected by the interface language.
