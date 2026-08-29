@@ -23,6 +23,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The About card now takes its outer edge from the app-frame color and its information panel directly from the context-menu surface, with the pane-border color around that panel. The old About-only color override is gone, so every theme uses the same semantic keys as the rest of its interface.
 
 ### Fixed
+- Command-line scans no longer hang forever after printing the "Scanning..." line, so `/export` actually writes its file. The CLI had deadlocked this way since it shipped in 1.6.0.
 - Machine-wide uninstall now requests administrator access and removes the Program Files copy, Common Start Menu shortcut, machine PATH entry and HKLM registration instead of targeting the per-user installation.
 - The confirmation dialog's close-button corner now follows the active theme, so 98SE no longer leaves one rounded corner in otherwise square dialog chrome.
 - Black theme card borders now match the rest of the dark-theme family instead of drawing a bright ring around every card and dialog.

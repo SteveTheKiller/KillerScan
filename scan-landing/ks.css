@@ -45,7 +45,7 @@ html[data-theme="delirium"] body .download-btn:hover { background:#ffad2f; color
 html[data-theme="malaise"] .tb-dl:hover,
 html[data-theme="malaise"] body .download-btn:hover { background:#ff9fba; color:#292c31; filter:none; }
 
-html { --scroll-thumb: color-mix(in srgb, var(--accent) 55%, var(--bg)); --scroll-thumb-hover: var(--accent); background: var(--bg); height: 100%; }
+html { --scroll-thumb: var(--accent); --scroll-thumb-hover: color-mix(in srgb, var(--accent) 82%, var(--text)); background: var(--bg); height: 100%; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; height: 100%; overflow: hidden; display: flex; flex-direction: column; position: relative; isolation: isolate; transition: background-color 0.2s, color 0.2s; }
 /* Grain: chrome bars carry their own (fixed); the document-pane grain lives on .content so it scrolls with the content. grain.png is a sparse transparent speckle (matches the app's generated texture) so it composites normally - no blend mode, no lightening. */
 body > * { position: relative; z-index: 1; }

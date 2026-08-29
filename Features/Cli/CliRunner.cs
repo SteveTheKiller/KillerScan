@@ -52,6 +52,16 @@ namespace KillerScan.Features.Cli
                 Eq(a, "/network") || Eq(a, "--network") || Eq(a, "/vendor") || Eq(a, "--vendor"));
             if (command is null) return false;
 
+            // CLI mode runs on the WPF dispatcher thread inside OnStartup, where a
+            // DispatcherSynchronizationContext is current. The commands below block with
+            // GetAwaiter().GetResult() while the scanner's awaits (no ConfigureAwait(false))
+            // post their continuations back to that context - a guaranteed deadlock, seen in
+            // the field as a /scan that prints its status line and then hangs forever with
+            // /export never written. Dropping the context sends every continuation to the
+            // thread pool instead. Safe here: the CLI never returns to the GUI - App.OnStartup
+            // calls Shutdown as soon as this method returns.
+            SynchronizationContext.SetSynchronizationContext(null);
+
             var (@out, err) = OpenConsole();
             if (IsHelp(command)) { @out.WriteLine(HelpText()); return true; }
             if (IsVersion(command)) { @out.WriteLine(AppInfo.Version); return true; }

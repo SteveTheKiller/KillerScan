@@ -1,0 +1,119 @@
+/* Shared compact feature carousel used across the KillerTools landing pages. */
+.features > h2 { text-align: left; margin-bottom: 16px; }
+.feature-carousel { position: relative; }
+.js .feature-carousel .feature-grid {
+  display: block;
+  min-height: 190px;
+  background: var(--modal) url('grain.png') repeat;
+  background-size: 256px 256px;
+  border: 1px solid var(--pane-border);
+  border-left: 3px solid var(--accent);
+  border-radius: 7px;
+  box-shadow: 0 12px 26px rgba(0,0,0,.26);
+  overflow: hidden;
+}
+.js .feature-carousel .feature-card {
+  display: none;
+  min-height: 190px;
+  padding: 34px clamp(150px,16vw,190px) 32px clamp(28px,5vw,54px);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  transform: none;
+}
+.js .feature-carousel .feature-card:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+.js .feature-carousel .feature-card.is-active {
+  display: block;
+  animation: killer-feature-in .18s ease-out;
+}
+.feature-carousel .feature-card h3 {
+  font-size: clamp(20px,2.5vw,27px);
+  margin-bottom: 10px;
+  text-shadow: 0 3px 7px rgba(0,0,0,.52);
+}
+.feature-carousel .feature-card p {
+  max-width: 830px;
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.68;
+}
+.feature-carousel .feature-card code { font-size: 13px; }
+.feature-carousel-controls {
+  position: absolute;
+  top: 26px;
+  right: 28px;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 36px 58px 36px;
+  align-items: center;
+  gap: 6px;
+}
+.feature-carousel-arrow {
+  width: 36px;
+  height: 34px;
+  border: 1px solid var(--pane-border);
+  border-radius: 5px;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 17px;
+  cursor: pointer;
+  transition: border-color .15s,color .15s,transform .1s;
+}
+.feature-carousel-arrow:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+.feature-carousel-arrow:focus-visible,
+.feature-carousel-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.feature-carousel-count {
+  color: var(--muted);
+  font: 11px Consolas,monospace;
+  text-align: center;
+}
+.feature-carousel-rail {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 15px 8px 2px;
+}
+.feature-carousel-tab {
+  width: 24px;
+  height: 5px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb,var(--muted) 36%,transparent);
+  font-size: 0;
+  cursor: pointer;
+  transition: width .16s,background .16s;
+}
+.feature-carousel-tab:hover { background: color-mix(in srgb,var(--accent) 62%,transparent); }
+.feature-carousel-tab[aria-selected="true"] { width: 42px; background: var(--accent); }
+@keyframes killer-feature-in {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .feature-carousel .feature-card.is-active { animation: none; }
+}
+@media (max-width: 560px) {
+  .js .feature-carousel .feature-grid,
+  .js .feature-carousel .feature-card { min-height: 250px; }
+  .js .feature-carousel .feature-card { padding: 74px 24px 26px; }
+  .feature-carousel-controls { top: 20px; left: 24px; right: auto; }
+  .feature-carousel .feature-card h3 { font-size: 22px; }
+  .feature-carousel .feature-card p { font-size: 14px; line-height: 1.62; }
+  .feature-carousel-rail { gap: 5px; padding-inline: 0; }
+  .feature-carousel-tab { width: 14px; }
+  .feature-carousel-tab[aria-selected="true"] { width: 28px; }
+}
+
