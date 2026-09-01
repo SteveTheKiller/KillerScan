@@ -14,12 +14,12 @@
     <!-- GREED, aligned to the family 2026-08-11: the accent is the GOLD, and the signature green
          stays in HeaderLineBrush for the wordmark. KillerScan had the two the other way round.
          See the longer note in Blood.xaml, which had the same swap. -->
-    <SolidColorBrush x:Key="PrimaryBrush"        Color="#e0d49a" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#e0d49a" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#e0d49a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryBrush"        Color="#ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#ffffff" po:Freeze="True"/>
     <SolidColorBrush x:Key="HeaderLineBrush" Color="#3fbf6f" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="OnPrimaryBrush" Color="#002e1c" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
-    <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#e0d49a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#3fbf6f" po:Freeze="True"/>
     <SolidColorBrush x:Key="InputHoverBrush" Color="#2a7a52" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="TextFooter"          Color="#3a8a5a" po:Freeze="True"/>
 
@@ -38,13 +38,13 @@
     <SolidColorBrush x:Key="RowAltBrush" Color="#18FFFFFF" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="RowHoverBrush" Color="#00593a" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#44ffffff" po:Freeze="True"/>
-    <SolidColorBrush x:Key="SelectionBg"         Color="#44e0d49a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionBg"         Color="#44ffffff" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionFg" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
     <SolidColorBrush x:Key="InputBorderBrush" Color="#0f4a30" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <!-- Menu surface, aligned 2026-08-11 to what the family resolves to. See Dark.xaml. -->
     <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#001e13" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
-    <SolidColorBrush x:Key="MenuBorderBrush" Color="#0f4a30" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <SolidColorBrush x:Key="MenuBorderBrush" Color="#07371f" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="MenuTextBrush"       Color="#e0d49a" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuHoverBrush" Color="#00593a" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#44ffffff" po:Freeze="True"/>
