@@ -189,6 +189,8 @@ namespace KillerScan.Services
                 newDict["OutlineHoverTextBrush"] = newDict["OnPrimaryBrush"];
             if (!newDict.Contains("OutlinePressedBrush"))
                 newDict["OutlinePressedBrush"] = Brushes.Transparent;
+            if (!newDict.Contains("SurfaceHoverBrush"))
+                newDict["SurfaceHoverBrush"] = newDict["RowHoverBrush"];
             var merged  = Application.Current.Resources.MergedDictionaries;
 
             // In-place per-key update: fires a targeted change notification for each key

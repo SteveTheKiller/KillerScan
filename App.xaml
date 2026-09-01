@@ -314,8 +314,7 @@
                                 <!-- A real fill change, not an opacity fade - the fade is invisible
                                      on a dark panel and the button reads as dead. (2026-07-30) -->
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
-                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource OutlineBtnBrush}"/>
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
                                     <Setter TargetName="border" Property="Background" Value="{DynamicResource SurfaceBrush}"/>
