@@ -1,0 +1,12 @@
+# Cloudflare Pages redirects.
+#
+# /download is a stable, memorable link that always lands on the newest release asset, so it can
+# be typed on a client machine without visiting the site first. GitHub's /releases/latest/download/
+# path resolves to whatever the most recent release published under that exact filename, so this
+# never needs updating for a new version - but it DOES depend on the asset staying named
+# KillerScan.exe (release.ps1 uploads it under that name).
+#
+# 302, not 301: a permanent redirect would be cached by browsers and proxies, and the target is
+# only "permanent" until the next release. 302 keeps the alias re-resolving.
+/download   https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe   302
+/download/  https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe   302
