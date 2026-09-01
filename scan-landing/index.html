@@ -166,20 +166,6 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <img class="wm-logo" src="brand/killerscan-logo-dark-orange.svg" alt="KillerScan">
 </div>
 <p class="tagline" data-i18n="tagline">A fast, local network scanner that finds every device on the LAN, identifies who made it, and works out what it is - all from one portable .exe.</p>
-<div class="hero-blurbs">
-<div class="blurb"><h3 data-i18n="b1_t">Fully featured</h3><ul class="blurb-list" data-i18n="b1_d">
-<li>ARP cache plus a parallel ping sweep, then a second ARP read to catch ICMP-blockers</li>
-<li>TCP fingerprinting across 30+ service ports</li>
-<li>mDNS (Bonjour) and SSDP (UPnP) discovery</li>
-<li>IEEE OUI vendor ID - MA-L, MA-M and MA-S</li>
-<li>Weighted classifier: routers, NAS, printers, cameras, IoT, phones and more</li>
-<li>Export results to CSV or HTML</li>
-<li>Headless command line for scripts, scheduled tasks and RMM</li>
-<li>Thirteen themes with live accent colors and remembered appearance settings</li>
-</ul></div>
-<div class="blurb"><h3 data-i18n="b2_t">Built from scratch</h3><p data-i18n="b2_d">KillerScan is written in C# and WPF on .NET Framework 4.8, so it runs as one self-contained native .exe with no runtime to install. The full IEEE OUI database (~58,000 entries) is embedded, and mDNS and SSDP discovery are done with raw sockets; There is no bundled scanner engine.<br><br>The <a href="technical.html">Technical</a> page has the full breakdown of how it decides what each device is.</p></div>
-<div class="blurb"><h3 data-i18n="b3_t">By a field tech, for field techs</h3><p data-i18n="b3_d">KillerScan was built on the bench while working at a large MSP, to answer the question every tech asks on a strange network: what is actually here?</p><p data-i18n="b3_d2">Through constant and ongoing experience (trial and error) the discovery and classification algorithms are still being perfected.</p><p data-i18n="b3_d3">The <a href="https://github.com/SteveTheKiller/KillerScan/issues" target="_blank" rel="noopener">GitHub issues</a> page is open to anyone.</p><br><p data-i18n="b3_d4">Read the story behind it on the <a href="about.html">About</a> page.</p></div>
-</div>
 <div class="hero-grid">
 <div class="hero-cta">
 <div class="cta-row">
@@ -196,24 +182,38 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <p class="note" data-i18n="hero_note">Install or run portable. Free, open source, GPLv3.<br>No agent, no account, no subscription.<br>No telemetry is sent and no ads... ever.</p>
 </div>
 </div>
+<div class="hero-blurbs">
+<div class="blurb"><h3 data-i18n="b3_t">By a field tech, for field techs</h3><p data-i18n="b3_d">KillerScan was built on the bench while working at a large MSP, to answer the question every tech asks on a strange network: what is actually here?</p><p data-i18n="b3_d2">Through constant and ongoing experience (trial and error) the discovery and classification algorithms are still being perfected.</p><p data-i18n="b3_d3">The <a href="https://github.com/SteveTheKiller/KillerScan/issues" target="_blank" rel="noopener">GitHub issues</a> page is open to anyone.</p><br><p data-i18n="b3_d4">Read the story behind it on the <a href="about.html">About</a> page.</p></div>
+<div class="blurb"><h3 data-i18n="b2_t">Built from scratch</h3><p data-i18n="b2_d">KillerScan is written in C# and WPF on .NET Framework 4.8, so it runs as one self-contained native .exe with no runtime to install. The full IEEE OUI database (~58,000 entries) is embedded, and mDNS and SSDP discovery are done with raw sockets; There is no bundled scanner engine.<br><br>The <a href="technical.html">Technical</a> page has the full breakdown of how it decides what each device is.</p></div>
+<div class="blurb"><h3 data-i18n="b1_t">Fully featured</h3><ul class="blurb-list" data-i18n="b1_d">
+<li>ARP cache plus a parallel ping sweep, then a second ARP read to catch ICMP-blockers</li>
+<li>TCP fingerprinting across 30+ service ports</li>
+<li>mDNS (Bonjour) and SSDP (UPnP) discovery</li>
+<li>IEEE OUI vendor ID - MA-L, MA-M and MA-S</li>
+<li>Weighted classifier: routers, NAS, printers, cameras, IoT, phones and more</li>
+<li>Export results to CSV or HTML</li>
+<li>Headless command line for scripts, scheduled tasks and RMM</li>
+<li>Thirteen themes with live accent colors and remembered appearance settings</li>
+</ul></div>
+</div>
 </section>
 
 <section class="features">
 <h2 data-i18n="features_h">What it does</h2>
 <div class="feature-grid">
 <div class="feature-card"><h3 data-i18n="f_discover_t">Discover hosts</h3><p data-i18n="f_discover_d">KillerScan Reads the ARP cache and runs a parallel ICMP ping sweep, then reads ARP a second time so devices that ignore ping but answer ARP (phones, tablets, some IoT...) still show up.</p></div>
+<div class="feature-card"><h3 data-i18n="f_classify_t">Device classification</h3><p data-i18n="f_classify_d">A weighted scorer combines hostname, vendor, open ports, banners, mDNS and SSDP into a best-guess type:<br>Router, switch/AP, NAS, printer, camera, hypervisor, phone, IoT and more.</p></div>
 <div class="feature-card"><h3 data-i18n="f_ports_t">Port fingerprinting</h3><p data-i18n="f_ports_d">A throttled TCP connect scan across 30+ service ports (SSH, RDP, SMB, HTTP, printing, RTSP, MQTT, hypervisor, NAS, and more), with banner, HTTP, TLS, NetBIOS and SNMP probes for stronger identification.</p></div>
 <div class="feature-card"><h3 data-i18n="f_mdns_t">mDNS &amp; SSDP</h3><p data-i18n="f_mdns_d">A network-wide multicast pass runs alongside the sweep.<br>Bonjour service types and UPnP SERVER strings reveal Chromecasts, printers, Sonos, AirPlay, HomeKit, Roku, Plex and Synology boxes.</p></div>
 <div class="feature-card"><h3 data-i18n="f_vendor_t">Vendor identification</h3><p data-i18n="f_vendor_d">Longest-prefix MAC OUI lookup across the full IEEE registries - MA-L, MA-M and MA-S - with brand overrides for blocks IEEE hides as "Private", and a clear label for randomized privacy MACs.</p></div>
-<div class="feature-card"><h3 data-i18n="f_classify_t">Device classification</h3><p data-i18n="f_classify_d">A weighted scorer combines hostname, vendor, open ports, banners, mDNS and SSDP into a best-guess type:<br>Router, switch/AP, NAS, printer, camera, hypervisor, phone, IoT and more.</p></div>
 <div class="feature-card"><h3 data-i18n="f_gateway_t">Gateway &amp; DNS aware</h3><p data-i18n="f_gateway_d">The gateway is labeled Router, DNS Server, or Router/DNS - and only Router/DNS when the gateway really is your configured DNS, so a dedicated DNS server is never mislabeled.</p></div>
-<div class="feature-card"><h3 data-i18n="f_export_t">Export</h3><p data-i18n="f_export_d">Export the full device list to CSV, or to a self-contained HTML report that stays fully re-sortable by any column and re-themeable with the same thirteen themes and accent colors as the app. Right-click any device to copy its IP, MAC or hostname, or jump straight to it.</p></div>
-<div class="feature-card cli-feature"><h3 data-i18n="f_cli_t">Command line ready</h3><p data-i18n="f_cli_d">Scan several networks, deep-probe one host, inspect the active network, or resolve a MAC vendor offline. Filter and sort the results, select ports and device types, set limits and timeouts, show progress, and emit table, CSV, JSON or themed HTML output with dependable automation exit codes. <a href="technical.html#command-line">See every command.</a></p></div>
-<div class="feature-card"><h3 data-i18n="f_themes_t">Themes &amp; settings</h3><p data-i18n="f_themes_d">Thirteen themes, all switchable live, with six accent colors each for Dark, Light, Black and 98SE - 33 looks in all - plus per-theme device-type coloring. KillerScan remembers your theme, accent, language and app size between runs.</p></div>
-<div class="feature-card"><h3 data-i18n="f_install_t">Install or run portable</h3><p data-i18n="f_install_d">Drop the .exe anywhere and run it, or use the built-in installer.<br>It installs just for you by default, with no admin rights, extra runtimes or dependencies required, or tick "Install for all users" to put it in Program Files for everyone on the PC.<br>A "PORTABLE" badge and an Install button appear when you're running it loose.</p></div>
-<div class="feature-card"><h3 data-i18n="f_oui_t">Vendor database</h3><p data-i18n="f_oui_d">The full IEEE OUI registries, MA-L, MA-M and MA-S (around 58,000 entries), ship embedded so vendor names resolve offline, and are kept current from the latest IEEE data so they don't go stale.</p></div>
 <div class="feature-card"><h3 data-i18n="f_actions_t">Quick actions</h3><p data-i18n="f_actions_d">Right-click any device to copy its IP, MAC or hostname, or jump straight to it.<br>Open its web UI, or launch RDP or SSH directly, and set a manual device type that sticks.</p></div>
+<div class="feature-card cli-feature"><h3 data-i18n="f_cli_t">Command line ready</h3><p data-i18n="f_cli_d">Scan several networks, deep-probe one host, inspect the active network, or resolve a MAC vendor offline. Filter and sort the results, select ports and device types, set limits and timeouts, show progress, and emit table, CSV, JSON or themed HTML output with dependable automation exit codes. <a href="technical.html#command-line">See every command.</a></p></div>
+<div class="feature-card"><h3 data-i18n="f_export_t">Export</h3><p data-i18n="f_export_d">Export the full device list to CSV, or to a self-contained HTML report that stays fully re-sortable by any column and re-themeable with the same thirteen themes and accent colors as the app. Right-click any device to copy its IP, MAC or hostname, or jump straight to it.</p></div>
+<div class="feature-card"><h3 data-i18n="f_oui_t">Vendor database</h3><p data-i18n="f_oui_d">The full IEEE OUI registries, MA-L, MA-M and MA-S (around 58,000 entries), ship embedded so vendor names resolve offline, and are kept current from the latest IEEE data so they don't go stale.</p></div>
 <div class="feature-card"><h3 data-i18n="f_private_t">Private by design</h3><p data-i18n="f_private_d">Everything runs on your machine. No extra agent is installed, no account is required, no cloud lookups (Vendor names resolve offline from the embedded database), and no telemetry is sent anywhere.<br>Nothing about your network leaves the device.</p></div>
+<div class="feature-card"><h3 data-i18n="f_install_t">Install or run portable</h3><p data-i18n="f_install_d">Drop the .exe anywhere and run it, or use the built-in installer.<br>It installs just for you by default, with no admin rights, extra runtimes or dependencies required, or tick "Install for all users" to put it in Program Files for everyone on the PC.<br>A "PORTABLE" badge and an Install button appear when you're running it loose.</p></div>
+<div class="feature-card"><h3 data-i18n="f_themes_t">Themes &amp; settings</h3><p data-i18n="f_themes_d">Thirteen themes, all switchable live, with six accent colors each for Dark, Light, Black and 98SE - 33 looks in all - plus per-theme device-type coloring. KillerScan remembers your theme, accent, language and app size between runs.</p></div>
 </div>
 </section>
 
