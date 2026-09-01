@@ -91,6 +91,9 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 .help-link { color: var(--accent); font-size: 13px; font-weight: 600; border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); border-radius: 6px; padding: 4px 12px; }
 .help-link:hover { background: var(--btn); color: var(--btn-text); }
 .tgrp { display: inline-flex; align-items: center; gap: 7px; }
+.theme-toggle { display: none; width: 27px; height: 27px; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 7px; background: var(--modal); padding: 0; cursor: pointer; }
+.theme-toggle:hover, .theme-toggle[aria-expanded="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.theme-toggle .swatch { pointer-events: none; }
 .tlabel { font-size: 11px; color: var(--muted); font-family: Consolas, monospace; }
 .swatch { width: 19px; height: 19px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.22); padding: 0; position: relative; transition: transform 0.12s, border-color 0.12s; }
 .swatch:hover { transform: scale(1.15); }
@@ -144,7 +147,7 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 .sidebar::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url('grain.png?v=2') repeat fixed; background-size: 256px 256px; opacity: 1; }
 .sidebar { background: transparent; }
 .sidebar::before { background: none; }
-.sb-thumbs { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 0; }
+.sb-thumbs { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 12px; }
 /* Bottom fade while the strip overflows and isn't scrolled to the last shot (toggled in JS),
    matching the app sidebar: the mask reveals the grainy sidebar behind, so grain stays intact. */
 .sb-thumbs.faded { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 36px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 36px), transparent); }
@@ -206,9 +209,14 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 @supports not selector(::-webkit-scrollbar) {
   * { scrollbar-width: thin; scrollbar-color: var(--scroll-thumb) transparent; }
 }
+html,
+body,
+.content-scroll,
+.sb-thumbs,
+.outline { scrollbar-width: thin; scrollbar-color: var(--accent) transparent; }
 ::-webkit-scrollbar { width: 8px; height: 8px; background: transparent; }
 ::-webkit-scrollbar-track,
-::-webkit-scrollbar-track-piece { background: var(--bg) url('grain.png?v=2') repeat; background-size: 256px 256px; }
+::-webkit-scrollbar-track-piece { background: transparent; }
 ::-webkit-scrollbar-thumb { background-color: var(--accent) !important; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background-color: var(--scroll-thumb-hover) !important; }
 ::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
@@ -219,6 +227,19 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 .sidebar::-webkit-scrollbar-track-piece,
 .sidebar ::-webkit-scrollbar-track,
 .sidebar ::-webkit-scrollbar-track-piece { background: transparent; }
+.content-scroll::-webkit-scrollbar-track,
+.content-scroll::-webkit-scrollbar-track-piece,
+.sb-thumbs::-webkit-scrollbar-track,
+.sb-thumbs::-webkit-scrollbar-track-piece,
+.outline::-webkit-scrollbar-track,
+.outline::-webkit-scrollbar-track-piece { background: transparent !important; }
+
+@media (max-width: 1120px) {
+  .topbar { flex-wrap: nowrap; padding-bottom: 8px; }
+  .theme-toggle { display: inline-flex; flex: 0 0 auto; }
+  .topbar .tgrp { display: none; position: absolute; top: calc(100% + 7px); right: 12px; z-index: 120; width: 170px; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 12px; border: 1px solid var(--border); border-radius: 9px; background: var(--modal) url('grain.png?v=2') repeat; background-size: 256px 256px; box-shadow: 0 10px 28px rgba(0,0,0,0.48); }
+  .topbar .tgrp.open { display: flex; }
+}
 
 @media (max-width: 900px) {
   html, body { height: auto; overflow: visible; display: block; }
@@ -240,8 +261,8 @@ html[data-theme="light"] .page-title { text-shadow: none; }
   /* Row 2: section nav on its own full-width centered line */
   .topbar .tb-nav { order: 1; flex-basis: 100%; justify-content: center; gap: 2px; padding-top: 7px; border-top: 1px solid var(--border); }
   .tb-nav a { padding: 6px 10px; font-size: 13.5px; }
-  /* Row 3: theme swatches, accent, and language, centered together */
-  .topbar .tgrp { order: 2; }
+  /* Row 3: compact theme, accent, and language controls */
+  .topbar .theme-toggle { order: 2; }
   .topbar .accent-switch { order: 3; }
   .topbar .lang-switch { order: 4; }
   /* Footer: stack the two status lines and center them */

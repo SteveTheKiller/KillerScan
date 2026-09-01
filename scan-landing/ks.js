@@ -26,6 +26,52 @@
   var accPop = document.getElementById('accentPop');
   var curAccent = 'orange';
 
+  function buildThemeFlyout() {
+    var group = document.querySelector('.topbar .tgrp');
+    if (!group || !group.parentNode) return;
+    var toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'theme-toggle';
+    toggle.title = 'Theme';
+    toggle.setAttribute('aria-label', 'Choose theme');
+    toggle.setAttribute('aria-haspopup', 'true');
+    toggle.setAttribute('aria-expanded', 'false');
+    var preview = document.createElement('span');
+    preview.setAttribute('aria-hidden', 'true');
+    toggle.appendChild(preview);
+    group.parentNode.insertBefore(toggle, group);
+    function closeFlyout(focusToggle) {
+      group.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      if (focusToggle) toggle.focus();
+    }
+    function syncPreview(name) {
+      var active = group.querySelector('.swatch[data-theme="' + name + '"]') || group.querySelector('.swatch');
+      if (active) preview.className = active.className;
+      preview.removeAttribute('aria-pressed');
+    }
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var opening = !group.classList.contains('open');
+      group.classList.toggle('open', opening);
+      toggle.setAttribute('aria-expanded', opening ? 'true' : 'false');
+    });
+    group.addEventListener('click', function (e) {
+      var swatch = e.target.closest('.swatch[data-theme]');
+      if (!swatch) return;
+      syncPreview(swatch.getAttribute('data-theme'));
+      closeFlyout(false);
+    });
+    document.addEventListener('click', function (e) {
+      if (!group.contains(e.target) && !toggle.contains(e.target)) closeFlyout(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && group.classList.contains('open')) closeFlyout(true);
+    });
+    syncPreview(root.getAttribute('data-theme') || 'dark');
+  }
+  buildThemeFlyout();
+
   function applyAccent(name) {
     var theme = root.getAttribute('data-theme');
     var fam = famFor(theme);
