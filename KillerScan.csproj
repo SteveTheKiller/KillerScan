@@ -9,12 +9,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\ks-icon.ico</ApplicationIcon>
-    <Version>1.6.1</Version>
-    <FileVersion>1.6.1.0</FileVersion>
-    <AssemblyVersion>1.6.1.0</AssemblyVersion>
+    <Version>1.6.2</Version>
+    <FileVersion>1.6.2.0</FileVersion>
+    <AssemblyVersion>1.6.2.0</AssemblyVersion>
     <!-- Shown in the About card beside the version so a user can tell how old their build
-         is. Must match the date on this version's CHANGELOG section - release.ps1 preflight
-         fails the release if it does not. Bump it with the version. -->
+         is. Keep the prior release date while development is Unreleased. Set the new date
+         immediately before release so it matches the dated CHANGELOG section. -->
     <ReleaseDate>2026-08-29</ReleaseDate>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>

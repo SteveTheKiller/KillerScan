@@ -4,6 +4,13 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.2] - Unreleased
+
+1.6.2 improves command-line integration with other applications.
+
+### Fixed
+- Command-line output now reaches applications that launch KillerScan with redirected streams but no parent console.
+
 ## [1.6.1] - 2026-08-29
 
 1.6.1 makes the command line actually work and grows it into a full scripting tool, brings the app and killerscan.net to fifteen languages, and cleans up install, uninstall and theme rough edges.

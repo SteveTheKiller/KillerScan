@@ -24,11 +24,15 @@ namespace KillerScan.Features.Cli
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern IntPtr GetStdHandle(int nStdHandle);
         [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern uint GetFileType(IntPtr hFile);
+        [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
         private const int StdOutputHandle = -11;
         private const int StdErrorHandle = -12;
+        private const uint FileTypeDisk = 0x0001;
+        private const uint FileTypePipe = 0x0003;
         private const uint EnableVirtualTerminalProcessing = 0x0004;
 
         // ANSI color state, per stream. True only when that stream is a real interactive console
@@ -57,6 +61,18 @@ namespace KillerScan.Features.Cli
                 if (handle == IntPtr.Zero || !GetConsoleMode(handle, out uint mode)) return false;
                 return (mode & EnableVirtualTerminalProcessing) != 0
                     || SetConsoleMode(handle, mode | EnableVirtualTerminalProcessing);
+            }
+            catch { return false; }
+        }
+
+        private static bool IsRedirected(int stdHandle)
+        {
+            try
+            {
+                IntPtr handle = GetStdHandle(stdHandle);
+                if (handle == IntPtr.Zero || handle == new IntPtr(-1)) return false;
+                uint type = GetFileType(handle);
+                return type == FileTypeDisk || type == FileTypePipe;
             }
             catch { return false; }
         }
@@ -547,14 +563,17 @@ namespace KillerScan.Features.Cli
         {
             try
             {
-                if (AttachConsole(AttachParentProcess))
-                {
-                    _outAnsi = TryEnableVt(StdOutputHandle);
-                    _errAnsi = TryEnableVt(StdErrorHandle);
-                    var @out = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
-                    var err = new StreamWriter(Console.OpenStandardError()) { AutoFlush = true };
-                    Console.SetOut(@out); Console.SetError(err); return (@out, err);
-                }
+                // Preserve inherited pipe or file handles. Attaching first can replace them with
+                // console handles, which leaves a downstream process with no scan data.
+                if (!IsRedirected(StdOutputHandle) && !IsRedirected(StdErrorHandle))
+                    AttachConsole(AttachParentProcess);
+                _outAnsi = TryEnableVt(StdOutputHandle);
+                _errAnsi = TryEnableVt(StdErrorHandle);
+                var @out = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
+                var err = new StreamWriter(Console.OpenStandardError()) { AutoFlush = true };
+                Console.SetOut(@out);
+                Console.SetError(err);
+                return (@out, err);
             }
             catch { }
             return (TextWriter.Null, TextWriter.Null);
