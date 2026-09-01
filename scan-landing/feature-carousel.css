@@ -11,6 +11,15 @@
   border-radius: 7px;
   box-shadow: 0 12px 26px rgba(0,0,0,.26);
   overflow: hidden;
+  transition: transform .12s, box-shadow .15s, border-color .12s;
+}
+.js .feature-carousel .feature-grid:hover {
+  transform: translateY(-3px);
+  border-left-color: var(--accent);
+  border-right-color: var(--accent);
+  border-top-color: var(--dragline);
+  border-bottom-color: var(--dragline);
+  box-shadow: 0 20px 40px rgba(0,0,0,.5);
 }
 .js .feature-carousel .feature-card {
   display: none;
@@ -116,4 +125,3 @@
   .feature-carousel-tab { width: 14px; }
   .feature-carousel-tab[aria-selected="true"] { width: 28px; }
 }
-
