@@ -76,6 +76,12 @@
     var theme = root.getAttribute('data-theme');
     var fam = famFor(theme);
     if (!ACCENTS[fam][name]) name = 'green';
+    ['dark', 'light', 'hc'].forEach(function (neutralTheme) {
+      var preview = ACCENTS[neutralTheme][name];
+      if (preview) document.querySelectorAll('.sw-' + neutralTheme).forEach(function (dot) {
+        dot.style.setProperty('--sw-accent', preview[0]);
+      });
+    });
     curAccent = name;
     var pair = ACCENTS[fam][name];
     var neutral = NEUTRAL.indexOf(theme) >= 0;
