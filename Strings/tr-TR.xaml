@@ -280,4 +280,6 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Trust_Device">Güvenilir cihaz</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">{0} cihazla güvenilir temel oluşturuldu.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Uyarı: {0} bilinmeyen cihaz bulundu.</sys:String>
+    <sys:String x:Key="Str_Services_Title">Hizmetler</sys:String>
+    <sys:String x:Key="Str_Services_Service">Hizmet</sys:String>
 </ResourceDictionary>

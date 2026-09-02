@@ -278,4 +278,6 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Trust_Device">Důvěryhodné zařízení</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Důvěryhodný základ vytvořen s {0} zařízeními.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Upozornění: nalezeno {0} neznámých zařízení.</sys:String>
+    <sys:String x:Key="Str_Services_Title">Služby</sys:String>
+    <sys:String x:Key="Str_Services_Service">Služba</sys:String>
 </ResourceDictionary>

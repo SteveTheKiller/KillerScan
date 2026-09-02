@@ -280,4 +280,6 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Trust_Device">Appareil approuvé</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Base approuvée créée avec {0} appareils.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alerte : {0} appareils inconnus détectés.</sys:String>
+    <sys:String x:Key="Str_Services_Title">Services</sys:String>
+    <sys:String x:Key="Str_Services_Service">Service</sys:String>
 </ResourceDictionary>

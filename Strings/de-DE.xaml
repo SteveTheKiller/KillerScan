@@ -281,4 +281,6 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Trust_Device">Vertrauenswürdiges Gerät</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Vertrauensbasis mit {0} Geräten erstellt.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Warnung: {0} unbekannte Geräte gefunden.</sys:String>
+    <sys:String x:Key="Str_Services_Title">Dienste</sys:String>
+    <sys:String x:Key="Str_Services_Service">Dienst</sys:String>
 </ResourceDictionary>

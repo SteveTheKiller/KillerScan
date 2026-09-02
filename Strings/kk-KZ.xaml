@@ -322,4 +322,6 @@
     <sys:String x:Key="Str_Trust_Device">Сенімді құрылғы</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">{0} құрылғымен сенімді негіз жасалды.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Ескерту: {0} белгісіз құрылғы табылды.</sys:String>
+    <sys:String x:Key="Str_Services_Title">Қызметтер</sys:String>
+    <sys:String x:Key="Str_Services_Service">Қызмет</sys:String>
 </ResourceDictionary>

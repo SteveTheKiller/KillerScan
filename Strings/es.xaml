@@ -280,4 +280,6 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Trust_Device">Dispositivo de confianza</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Base de confianza creada con {0} dispositivos.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alerta: se encontraron {0} dispositivos desconocidos.</sys:String>
+    <sys:String x:Key="Str_Services_Title">Servicios</sys:String>
+    <sys:String x:Key="Str_Services_Service">Servicio</sys:String>
 </ResourceDictionary>

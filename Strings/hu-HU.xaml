@@ -296,4 +296,6 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Trust_Device">Megbízható eszköz</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Megbízható alap létrehozva {0} eszközzel.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Riasztás: {0} ismeretlen eszköz található.</sys:String>
+    <sys:String x:Key="Str_Services_Title">Szolgáltatások</sys:String>
+    <sys:String x:Key="Str_Services_Service">Szolgáltatás</sys:String>
 </ResourceDictionary>

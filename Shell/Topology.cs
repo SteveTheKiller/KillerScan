@@ -29,6 +29,13 @@ namespace KillerScan.Shell
         private void TopologyButton_Click(object sender, RoutedEventArgs e)
         {
             _showTopology = !_showTopology;
+            if (_showTopology && _showServices)
+            {
+                _showServices = false;
+                ServicesGrid.Visibility = Visibility.Collapsed;
+                ServicesButton.Tag = null;
+                FixedServicesButton.Tag = null;
+            }
             ResultsGrid.Visibility = _showTopology ? Visibility.Collapsed : Visibility.Visible;
             TopologyPane.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;
             TopologyOrderButton.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;

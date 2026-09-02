@@ -280,4 +280,6 @@
     <sys:String x:Key="Str_Trust_Device">信任的裝置</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">已使用 {0} 台裝置建立信任基準。</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">警示: 發現 {0} 台未知裝置。</sys:String>
+    <sys:String x:Key="Str_Services_Title">服務</sys:String>
+    <sys:String x:Key="Str_Services_Service">服務</sys:String>
 </ResourceDictionary>

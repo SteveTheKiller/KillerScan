@@ -280,4 +280,6 @@
     <sys:String x:Key="Str_Trust_Device">বিশ্বস্ত ডিভাইস</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">{0}টি ডিভাইস দিয়ে বিশ্বস্ত ভিত্তি তৈরি হয়েছে।</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">সতর্কতা: {0}টি অজানা ডিভাইস পাওয়া গেছে।</sys:String>
+    <sys:String x:Key="Str_Services_Title">সেবাসমূহ</sys:String>
+    <sys:String x:Key="Str_Services_Service">সেবা</sys:String>
 </ResourceDictionary>

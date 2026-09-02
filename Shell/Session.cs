@@ -24,6 +24,7 @@ namespace KillerScan.Shell
             _active.Devices.CollectionChanged += (_, _) =>
             {
                 if (_showTopology) RefreshTopology();
+                if (_showServices) RefreshServices();
             };
             _filteredView = CollectionViewSource.GetDefaultView(_active.Devices);
             if (_filteredView is ListCollectionView lcv)

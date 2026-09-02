@@ -19,6 +19,7 @@ namespace KillerScan.Shell
             ("F6",              "Str_History_Title"),
             ("F9",              "Str_TT_Topology"),
             ("F7",              "Str_Sc_CycleTopologyOrder"),
+            ("F8",              "Str_Services_Title"),
             ("Ctrl + 1",        "Str_Topology_Role"),
             ("Ctrl + 2",        "Str_Col_Type"),
             ("Ctrl + 3",        "Str_Col_Ip"),
@@ -175,6 +176,7 @@ namespace KillerScan.Shell
 
             if (e.Key == Key.F5) { ScanBtn_Click(this, new RoutedEventArgs()); e.Handled = true; }
             else if (e.Key == Key.F6) { HistoryButton_Click(this, new RoutedEventArgs()); e.Handled = true; }
+            else if (e.Key == Key.F8) { ServicesButton_Click(this, new RoutedEventArgs()); e.Handled = true; }
             else if (e.Key == Key.F9) { TopologyButton_Click(this, new RoutedEventArgs()); e.Handled = true; }
             else if (e.Key == Key.F7)
             {

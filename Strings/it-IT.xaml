@@ -296,4 +296,6 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Trust_Device">Dispositivo attendibile</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Base attendibile creata con {0} dispositivi.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Avviso: trovati {0} dispositivi sconosciuti.</sys:String>
+    <sys:String x:Key="Str_Services_Title">Servizi</sys:String>
+    <sys:String x:Key="Str_Services_Service">Servizio</sys:String>
 </ResourceDictionary>

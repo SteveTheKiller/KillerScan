@@ -291,4 +291,6 @@
     <sys:String x:Key="Str_Trust_Device">信頼済みデバイス</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">{0} 台のデバイスで信頼済み基準を作成しました。</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">警告: 不明なデバイスが {0} 台見つかりました。</sys:String>
+    <sys:String x:Key="Str_Services_Title">サービス</sys:String>
+    <sys:String x:Key="Str_Services_Service">サービス</sys:String>
 </ResourceDictionary>

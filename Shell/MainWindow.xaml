@@ -355,6 +355,13 @@
                     <TextBlock><Run Text="{DynamicResource Str_History_Title}"/><Run Text=" (F6)"/></TextBlock>
                 </Button.ToolTip>
             </Button>
+            <Button x:Name="ServicesButton" Style="{StaticResource RailButton}"
+                    Content="&#xE950;" FontSize="15"
+                    Click="ServicesButton_Click" Margin="0,0,0,10">
+                <Button.ToolTip>
+                    <TextBlock><Run Text="{DynamicResource Str_Services_Title}"/><Run Text=" (F8)"/></TextBlock>
+                </Button.ToolTip>
+            </Button>
             <Button x:Name="TopologyButton" Style="{StaticResource RailButton}"
                     Content="&#xE968;" FontSize="15"
                     Click="TopologyButton_Click" Margin="0,0,0,10">
@@ -999,6 +1006,23 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
+                <DataGrid Grid.Row="1" x:Name="ServicesGrid" Visibility="Collapsed"
+                          AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent"
+                          Foreground="{DynamicResource TextBrush}" BorderThickness="0"
+                          GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{DynamicResource PaneBorderBrush}"
+                          HeadersVisibility="Column" CanUserSortColumns="True" CanUserResizeColumns="True"
+                          SelectionMode="Extended" ColumnHeaderHeight="28" RowHeight="28"
+                          AlternationCount="2" RowStyle="{StaticResource DarkDataGridRow}"
+                          CellStyle="{StaticResource DarkDataGridCell}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{DynamicResource Str_Services_Service}" Binding="{Binding Service}" Width="160"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Ports}" Binding="{Binding Port}" Width="80"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Name}" Binding="{Binding DeviceName}" Width="*"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Ip}" Binding="{Binding IpAddress}" Width="130"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Type}" Binding="{Binding DeviceType}" Width="150"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
                 <!-- Phase one topology is deliberately an inferred local map. Every connection
                      is dotted so the view never presents a measured hop or confirmed switch port
                      that the current scanner cannot observe. -->
@@ -1026,6 +1050,13 @@
                     Click="HistoryButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip>
                     <TextBlock><Run Text="{DynamicResource Str_History_Title}"/><Run Text=" (F6)"/></TextBlock>
+                </Button.ToolTip>
+            </Button>
+            <Button x:Name="FixedServicesButton" Style="{StaticResource RailButton}"
+                    Content="&#xE950;" FontSize="15"
+                    Click="ServicesButton_Click" Margin="0,0,0,10">
+                <Button.ToolTip>
+                    <TextBlock><Run Text="{DynamicResource Str_Services_Title}"/><Run Text=" (F8)"/></TextBlock>
                 </Button.ToolTip>
             </Button>
             <Button x:Name="FixedTopologyButton" Style="{StaticResource RailButton}"

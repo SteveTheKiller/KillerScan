@@ -280,4 +280,6 @@
     <sys:String x:Key="Str_Trust_Device">可信设备</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">已使用 {0} 台设备创建可信基线。</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">警报: 发现 {0} 台未知设备。</sys:String>
+    <sys:String x:Key="Str_Services_Title">服务</sys:String>
+    <sys:String x:Key="Str_Services_Service">服务</sys:String>
 </ResourceDictionary>

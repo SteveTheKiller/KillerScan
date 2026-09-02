@@ -265,4 +265,6 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Trust_Device">Zaufane urządzenie</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Utworzono zaufaną bazę z {0} urządzeniami.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alert: znaleziono {0} nieznanych urządzeń.</sys:String>
+    <sys:String x:Key="Str_Services_Title">Usługi</sys:String>
+    <sys:String x:Key="Str_Services_Service">Usługa</sys:String>
 </ResourceDictionary>

@@ -306,4 +306,6 @@
     <sys:String x:Key="Str_Trust_Device">Доверенное устройство</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Доверенная база создана с {0} устройствами.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Внимание: обнаружено {0} неизвестных устройств.</sys:String>
+    <sys:String x:Key="Str_Services_Title">Службы</sys:String>
+    <sys:String x:Key="Str_Services_Service">Служба</sys:String>
 </ResourceDictionary>
