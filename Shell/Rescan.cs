@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using KillerScan.Models;
-using KillerScan.Services;
 
 namespace KillerScan.Shell
 {
@@ -61,7 +60,7 @@ namespace KillerScan.Shell
             ScanProgress.Value = 0;
             ScanProgress.Visibility = Visibility.Visible;
             int done = 0;
-            NetworkScanner.FlushLocalDnsCache();
+            KillerScan.Services.NetworkScanner.FlushLocalDnsCache();
 
             try
             {
@@ -122,7 +121,7 @@ namespace KillerScan.Shell
             ScanProgress.Value = 0;
             ScanProgress.Visibility = Visibility.Visible;
             UpdateDeepScanButton();
-            NetworkScanner.FlushLocalDnsCache();
+            KillerScan.Services.NetworkScanner.FlushLocalDnsCache();
 
             try
             {

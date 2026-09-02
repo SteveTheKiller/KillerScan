@@ -279,10 +279,9 @@ namespace KillerScan.Services
                         var device = new NetworkDevice
                         {
                             IpAddress = entry.Addr.ToString(),
-                            MacAddress = entry.Mac
+                            MacAddress = entry.Mac,
+                            Hostname = await ResolveVerifiedHostnameAsync(entry.Addr)
                         };
-
-                        device.Hostname = await ResolveVerifiedHostnameAsync(entry.Addr);
 
                         if (!string.IsNullOrEmpty(entry.Mac))
                             device.Vendor = ResolveVendor(entry.Mac);

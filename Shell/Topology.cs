@@ -23,7 +23,7 @@ namespace KillerScan.Shell
         private bool _showTopology;
         private readonly Dictionary<string, Point> _topologyPositions = new(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, Line> _topologyLinks = new(StringComparer.OrdinalIgnoreCase);
-        private readonly Dictionary<Border, Point> _topologyDragStarts = new();
+        private readonly Dictionary<Border, Point> _topologyDragStarts = [];
         private Point _topologyDragMouseStart;
 
         private void TopologyButton_Click(object sender, RoutedEventArgs e)
@@ -104,8 +104,8 @@ namespace KillerScan.Shell
             if (TopologyCanvas == null || TopologyPane == null || !_showTopology) return;
 
             double width = Math.Max(TopologyPane.ActualWidth, 640);
-            var visible = _filteredView?.Cast<object>().OfType<NetworkDevice>().ToList()
-                          ?? ActiveDevices.ToList();
+            List<NetworkDevice> visible =
+                [.. (_filteredView?.Cast<object>().OfType<NetworkDevice>() ?? ActiveDevices)];
             string localIp = LocalIpLabel?.Text ?? string.Empty;
             string gatewayIp = GatewayLabel?.Text ?? string.Empty;
             string dnsIp = DnsLabel?.Text ?? string.Empty;
@@ -163,15 +163,15 @@ namespace KillerScan.Shell
             double rowY = 218;
             for (int rowIndex = 0; rowIndex < deviceRows.Count; rowIndex++)
             {
-                var row = deviceRows[rowIndex];
-                if (rowIndex > 0 && row.StartsGroup) rowY += 10;
-                int rowCount = row.Devices.Count;
+                var (rowDevices, startsGroup) = deviceRows[rowIndex];
+                if (rowIndex > 0 && startsGroup) rowY += 10;
+                int rowCount = rowDevices.Count;
                 double rowWidth = rowCount * TopologyNodeWidth + (rowCount - 1) * 22;
                 double left = (width - rowWidth) / 2 + TopologyNodeWidth / 2;
                 for (int column = 0; column < rowCount; column++)
                 {
                     var point = new Point(left + column * (TopologyNodeWidth + 22), rowY);
-                    var device = row.Devices[column];
+                    var device = rowDevices[column];
                     if (_topologyPositions.TryGetValue(device.IpAddress, out var saved))
                         point = new Point(
                             Math.Max(TopologyNodeWidth / 2, Math.Min(width - TopologyNodeWidth / 2, saved.X)),
@@ -189,7 +189,7 @@ namespace KillerScan.Shell
             var rows = new List<(List<NetworkDevice>, bool)>();
             if (order == TopologyOrder.Ip)
             {
-                var items = devices.OrderBy(d => d.IpSortKey).ToList();
+                List<NetworkDevice> items = [.. devices.OrderBy(d => d.IpSortKey)];
                 for (int offset = 0; offset < items.Count; offset += columns)
                     rows.Add((items.Skip(offset).Take(columns).ToList(), false));
                 return rows;
@@ -214,7 +214,7 @@ namespace KillerScan.Shell
 
             foreach (var group in grouped)
             {
-                var items = group.ToList();
+                List<NetworkDevice> items = [.. group];
                 for (int offset = 0; offset < items.Count; offset += columns)
                     rows.Add((items.Skip(offset).Take(columns).ToList(), offset == 0));
             }
@@ -245,7 +245,7 @@ namespace KillerScan.Shell
                 X2 = to.X,
                 Y2 = to.Y,
                 StrokeThickness = 1,
-                StrokeDashArray = new DoubleCollection { 2, 4 },
+                StrokeDashArray = [2, 4],
                 Opacity = 0.65,
                 IsHitTestVisible = false
             };
