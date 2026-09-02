@@ -675,7 +675,7 @@
                                         <ColumnDefinition Width="16"/>     <!-- icon gutter -->
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>   <!-- shortcut -->
-                                        <ColumnDefinition Width="Auto"/>   <!-- check / chevron -->
+                                        <ColumnDefinition Width="Auto"/>   <!-- submenu chevron -->
                                     </Grid.ColumnDefinitions>
                                     <!-- Fixed 16, not Auto: the gutter is reserved whether or not an
                                          item carries an icon, so headers line up down the menu and
@@ -684,6 +684,11 @@
                                                       TextElement.FontFamily="Segoe MDL2 Assets"
                                                       TextElement.FontSize="12"
                                                       VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                    <TextBlock x:Name="check" Grid.Column="0" Text="&#xE73E;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="11"
+                                               VerticalAlignment="Center" HorizontalAlignment="Left"
+                                               Visibility="Collapsed"
+                                               Foreground="{DynamicResource PrimaryBrush}"/>
                                     <ContentPresenter Grid.Column="1" ContentSource="Header" VerticalAlignment="Center"/>
                                     <!-- Keyboard shortcut, right-aligned. This column was missing
                                          entirely, so InputGestureText never rendered - the family
@@ -692,16 +697,6 @@
                                     <TextBlock x:Name="Gesture" Grid.Column="2" Text="{TemplateBinding InputGestureText}"
                                                Foreground="{DynamicResource MutedTextBrush}" FontSize="11"
                                                VerticalAlignment="Center" Margin="24,0,0,0"/>
-                                    <!-- Tick for the currently-applied choice (the device's own type
-                                         in Set Device Type). Sits on the RIGHT rather than in the
-                                         icon gutter, because the gutter already carries that type's
-                                         own glyph and the two need to show at once. A leaf item
-                                         never has a chevron, so they cannot collide. -->
-                                    <TextBlock x:Name="check" Grid.Column="3" Text="&#xE73E;"
-                                               FontFamily="Segoe MDL2 Assets" FontSize="11"
-                                               Margin="18,0,0,0" VerticalAlignment="Center"
-                                               Visibility="Collapsed"
-                                               Foreground="{DynamicResource PrimaryBrush}"/>
                                     <!-- Submenu chevron, shown only when the item actually has children -->
                                     <TextBlock x:Name="arrow" Grid.Column="3" Text="&#xE76C;"
                                                FontFamily="Segoe MDL2 Assets" FontSize="10"
@@ -770,6 +765,7 @@
                                 </Trigger>
                                 <Trigger Property="IsChecked" Value="True">
                                     <Setter TargetName="check" Property="Visibility" Value="Visible"/>
+                                    <Setter TargetName="ico" Property="Visibility" Value="Collapsed"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
