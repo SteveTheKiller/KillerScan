@@ -35,10 +35,14 @@ namespace KillerScan.Shell
         private ICollectionView? _filteredView;
         private readonly StackPanel _portableBadge = null!;
         private readonly ImageBrush _grainBrush = null!;
+        private readonly string? _startupScanTarget;
+        private readonly bool _startScanOnLoad;
         private bool _closeFaded;
 
-        public MainWindow()
+        public MainWindow(string? startupScanTarget = null, bool startScanOnLoad = false)
         {
+            _startupScanTarget = startupScanTarget;
+            _startScanOnLoad = startScanOnLoad;
             InitializeComponent();
             // Family standard: rail flyouts hug the results pane's lower-left corner. That is
             // inside the window, above the footer, and just to the right of the icon rail.
@@ -55,8 +59,10 @@ namespace KillerScan.Shell
             VersionLabel.Text = $"v{AppInfo.Version}";
 
             PopulateNetworkInfo();                                   // NetworkInfo.cs (sets SubnetInput.Text)
+            if (!string.IsNullOrWhiteSpace(_startupScanTarget))
+                SubnetInput.Text = _startupScanTarget;
 
-            _active = new ScanSession(SubnetInput.Text)
+            _active = new ScanSession(SubnetInput.Text ?? string.Empty)
             {
                 Status = string.Format(Loc("Str_Status_Ready"), OuiLookup.Count.ToString("N0"))
             };
@@ -79,6 +85,9 @@ namespace KillerScan.Shell
                 ApplyFlatChrome();                                  // Theme.cs (98SE drops the shadow)
                 FadeInContent();                                    // WindowChrome.cs
                 if (DemoMode) GenerateDemoScan();                   // DemoMode.cs (--demo: initial roll)
+                else if (_startScanOnLoad)
+                    Dispatcher.BeginInvoke(new Action(() => ScanBtn_Click(this, new RoutedEventArgs())),
+                        System.Windows.Threading.DispatcherPriority.ApplicationIdle);
             };
         }
 

@@ -99,11 +99,19 @@ namespace KillerScan
                 return;
             }
 
+            int uiScanIndex = Array.FindIndex(e.Args, a =>
+                string.Equals(a, "/uiscan", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(a, "--uiscan", StringComparison.OrdinalIgnoreCase));
+            bool startUiScan = uiScanIndex >= 0;
+            string? uiScanTarget = startUiScan
+                ? string.Join(",", e.Args.Skip(uiScanIndex + 1))
+                : null;
+
             // Headless command line: /scan, /help, /version (Features/Cli/CliRunner.cs). Handled
             // before anything builds a window, so a CLI run never shows one and works while a GUI
             // instance is already open. Arguments carrying no recognized command fall through to
-            // the normal launch below.
-            if (Features.Cli.CliRunner.TryRunCli(e.Args, out int cliExit))
+            // the normal launch below. /uiscan deliberately bypasses this path and opens the UI.
+            if (!startUiScan && Features.Cli.CliRunner.TryRunCli(e.Args, out int cliExit))
             {
                 Shutdown(cliExit);
                 return;
@@ -122,7 +130,7 @@ namespace KillerScan
             Services.LocaleManager.Initialize();
 
             ShutdownMode = ShutdownMode.OnLastWindowClose;
-            new Shell.MainWindow().Show();
+            new Shell.MainWindow(uiScanTarget, startUiScan).Show();
         }
 
         // ============================================================

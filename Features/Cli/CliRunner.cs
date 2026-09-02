@@ -496,6 +496,7 @@ namespace KillerScan.Features.Cli
         [
             $"KillerScan {AppInfo.Version} - command line", "", "COMMANDS",
             "  /scan [targets]        scan one or several CIDRs, hosts, or ranges",
+            "  /uiscan [targets]      open the interface and begin scanning",
             "  /probe <IPv4>          deep-probe one host, including ports 1-1024",
             "  /network               show the detected interface, subnet, gateway, and DNS",
             "  /vendor <MAC>          look up a MAC address in the offline OUI database",
@@ -520,6 +521,7 @@ namespace KillerScan.Features.Cli
             "  /theme <name>          HTML theme (dark, light, black, 98se, or a grunge theme)",
             "  /quiet                 suppress stdout and status; normally paired with /export", "", "TARGET EXAMPLES",
             "  192.168.1.0/24   192.168.1.7   192.168.1.10-50",
+            "  /uiscan 192.168.1.10-50",
             "  /scan 10.0.0.0/24,10.0.1.0/24 /json /ports 22,443 /sort vendor",
             "  /probe 192.168.1.20 /json /export host.json /timeout 30",
             "  /scan /quick /progress /filter printer /csv /no-header", "",

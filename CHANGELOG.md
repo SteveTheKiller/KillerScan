@@ -10,6 +10,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Added
 - An inferred topology view maps the local network, gateway, DNS server and discovered devices without presenting guesses as measured links. (#3)
+- `/uiscan [targets]` opens the full interface and begins scanning the supplied targets immediately. (#1)
 
 ### Fixed
 - CSV and HTML exports now use the family file picker, including complete filename tooltips.
