@@ -243,4 +243,33 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Dev_Other">Altro</sys:String>
     <sys:String x:Key="Str_Dev_Unknown">Sconosciuto</sys:String>
 
+    <sys:String x:Key="Str_Btn_Open">Apri</sys:String>
+    <sys:String x:Key="Str_Btn_Save">Salva</sys:String>
+    <sys:String x:Key="Str_Col_Modified">modificato</sys:String>
+    <sys:String x:Key="Str_Col_Name">nome</sys:String>
+    <sys:String x:Key="Str_Col_Size">dimensione</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">Tutti i file</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">Nome file:</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">Tipo di file:</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">Niente qui corrisponde al tipo di file corrente.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">Nessuna anteprima disponibile</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">Quel file non esiste.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">Quella cartella non esiste.</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">Sostituire {0}?</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">Aggiungi ai percorsi</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">Rimuovi dai percorsi</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">Desktop</sys:String>
+    <sys:String x:Key="Str_QA_Documents">Documenti</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">Download</sys:String>
+    <sys:String x:Key="Str_QA_Home">Home</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">Immagini</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">{0} cartelle, {1} file</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">Posizioni recenti</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">Mostra elementi nascosti e di sistema</sys:String>
+    <sys:String x:Key="Str_TT_Up">Su di una cartella</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">Vista dettagli</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">Vista icone</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">Vista elenco</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
 </ResourceDictionary>

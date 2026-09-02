@@ -227,4 +227,33 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Dev_Other">Otro</sys:String>
     <sys:String x:Key="Str_Dev_Unknown">Desconocido</sys:String>
 
+    <sys:String x:Key="Str_Btn_Open">Abrir</sys:String>
+    <sys:String x:Key="Str_Btn_Save">Guardar</sys:String>
+    <sys:String x:Key="Str_Col_Modified">modificado</sys:String>
+    <sys:String x:Key="Str_Col_Name">nombre</sys:String>
+    <sys:String x:Key="Str_Col_Size">tamaño</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">Todos los archivos</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">Nombre de archivo:</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">Tipo de archivo:</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">Aquí no hay nada que coincida con el tipo de archivo actual.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">Vista previa no disponible</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">Ese archivo no existe.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">Esa carpeta no existe.</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">¿Reemplazar {0}?</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">Anclar a lugares</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">Quitar de lugares</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">Escritorio</sys:String>
+    <sys:String x:Key="Str_QA_Documents">Documentos</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">Descargas</sys:String>
+    <sys:String x:Key="Str_QA_Home">Inicio</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">Imágenes</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">{0} carpeta(s), {1} archivo(s)</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">Ubicaciones recientes</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">Mostrar elementos ocultos y del sistema</sys:String>
+    <sys:String x:Key="Str_TT_Up">Subir una carpeta</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">Vista de detalles</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">Vista de iconos</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">Vista de lista</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
 </ResourceDictionary>

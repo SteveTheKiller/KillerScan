@@ -225,4 +225,33 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Dev_Other">Jiné</sys:String>
     <sys:String x:Key="Str_Dev_Unknown">Neznámé</sys:String>
 
+    <sys:String x:Key="Str_Btn_Open">Otevřít</sys:String>
+    <sys:String x:Key="Str_Btn_Save">Uložit</sys:String>
+    <sys:String x:Key="Str_Col_Modified">změněno</sys:String>
+    <sys:String x:Key="Str_Col_Name">název</sys:String>
+    <sys:String x:Key="Str_Col_Size">velikost</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">Všechny soubory</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">Název souboru:</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">Typ souboru:</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">Zde nic neodpovídá aktuálnímu typu souboru.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">Náhled není k dispozici</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">Tento soubor neexistuje.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">Tato složka neexistuje.</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">Nahradit {0}?</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">Připnout k místům</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">Odebrat z míst</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">Plocha</sys:String>
+    <sys:String x:Key="Str_QA_Documents">Dokumenty</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">Stažené soubory</sys:String>
+    <sys:String x:Key="Str_QA_Home">Domů</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">Obrázky</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">složek: {0}, souborů: {1}</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">Nedávná umístění</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">Zobrazit skryté a systémové položky</sys:String>
+    <sys:String x:Key="Str_TT_Up">O složku výš</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">Zobrazení podrobností</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">Zobrazení ikon</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">Zobrazení seznamu</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
 </ResourceDictionary>

@@ -269,4 +269,33 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Dev_Other">Other</sys:String>
     <sys:String x:Key="Str_Dev_Unknown">Unknown</sys:String>
 
+    <sys:String x:Key="Str_Btn_Open">Open</sys:String>
+    <sys:String x:Key="Str_Btn_Save">Save</sys:String>
+    <sys:String x:Key="Str_Col_Modified">modified</sys:String>
+    <sys:String x:Key="Str_Col_Name">name</sys:String>
+    <sys:String x:Key="Str_Col_Size">size</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">All files</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">File name:</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">File type:</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">Nothing here matches the current file type.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">No preview available</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">That file does not exist.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">That folder does not exist.</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">Replace {0}?</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">Pin to places</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">Remove from places</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">Desktop</sys:String>
+    <sys:String x:Key="Str_QA_Documents">Documents</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">Downloads</sys:String>
+    <sys:String x:Key="Str_QA_Home">Home</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">Pictures</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">{0} folder(s), {1} file(s)</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">Recent locations</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">Show hidden and system items</sys:String>
+    <sys:String x:Key="Str_TT_Up">Up one folder</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">Details view</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">Icon view</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">List view</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
 </ResourceDictionary>

@@ -253,4 +253,33 @@
     <sys:String x:Key="Str_Dev_Other">Другое</sys:String>
     <sys:String x:Key="Str_Dev_Unknown">Неизвестно</sys:String>
 
+    <sys:String x:Key="Str_Btn_Open">Открыть</sys:String>
+    <sys:String x:Key="Str_Btn_Save">Сохранить</sys:String>
+    <sys:String x:Key="Str_Col_Modified">изменён</sys:String>
+    <sys:String x:Key="Str_Col_Name">имя</sys:String>
+    <sys:String x:Key="Str_Col_Size">размер</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">Все файлы</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">Имя файла:</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">Тип файла:</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">Здесь нет ничего, что подходит под текущий тип файла.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">Предпросмотр недоступен</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">Такого файла не существует.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">Такой папки не существует.</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">Заменить {0}?</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">Закрепить в местах</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">Убрать из мест</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">Рабочий стол</sys:String>
+    <sys:String x:Key="Str_QA_Documents">Документы</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">Загрузки</sys:String>
+    <sys:String x:Key="Str_QA_Home">Домашняя папка</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">Изображения</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">папок: {0}, файлов: {1}</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">Недавние места</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">Показывать скрытые и системные элементы</sys:String>
+    <sys:String x:Key="Str_TT_Up">На папку вверх</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">Таблица</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">Значки</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">Список</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
 </ResourceDictionary>

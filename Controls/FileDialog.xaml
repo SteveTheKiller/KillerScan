@@ -1,0 +1,707 @@
+<!-- Themed replacement for Microsoft.Win32.OpenFileDialog / SaveFileDialog.
+     Chrome, places rail, view modes, sortable columns, a file name box, a filter combo and
+     Open/Save behavior; row styles and templates come from Controls.xaml. The property surface
+     deliberately mirrors the Win32 dialogs (Title, Filter, FilterIndex, FileName,
+     InitialDirectory, DefaultExt, ...) so a call site changes by one word.
+
+     THE ONLY PICKER IN THE APP. FolderPickerDialog was a second copy of all of this for choosing
+     a folder and was deleted 2026-08-07; the two had drifted apart. Choosing a folder is this
+     dialog with CheckFileExists off. Do not add a second one back. -->
+<Window x:Class="KillerScan.Controls.FileDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:kui="clr-namespace:KillerScan.Controls"
+        Title="KillerScan"
+        Width="720" Height="520" MinWidth="560" MinHeight="420"
+        WindowStyle="None" ResizeMode="CanResize" ShowInTaskbar="False"
+        AllowsTransparency="True"
+        Background="Transparent"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        WindowStartupLocation="CenterOwner">
+
+    <!-- The picker's styles are merged HERE, not into App.xaml. LocaleManager owns application
+         merged-dictionary slot [2] - it assigns the locale override there and, for English,
+         REMOVES it - so anything parked at [2] is deleted at startup. That is what "Cannot find
+         resource named 'DarkTextBox'" was. These styles are the picker's own, so scoping them to
+         the picker removes the index coupling entirely rather than competing for a slot. -->
+    <Window.Resources>
+        <ResourceDictionary Source="pack://application:,,,/Controls/PickerStyles.xaml"/>
+    </Window.Resources>
+
+    <!-- NO shell:WindowChrome. On an AllowsTransparency window it fills its own non-client area,
+         which paints as a flat band all the way round the card - the "halo". It was NOT the only
+         difference from the other four dialogs: the code-behind also called
+         DwmChrome.SetRoundedCorners/SetThemeBorder, and on a layered window the DWM corner
+         preference composites DWM's own rounded frame around the WINDOW rect (halo included),
+         tinted by the border color - the band survived the WindowChrome removal because of it.
+         Both are gone now; no WindowChrome, no DWM calls, same as the other four.
+
+         Resize is done by hand instead, on the halo itself: Resize_MouseDown works out which edge
+         or corner the pointer is in and hands the drag to Windows with WM_NCLBUTTONDOWN, the same
+         mechanism Shell/Chrome.cs uses for the main window's grip. That needs the halo to receive
+         mouse input, which is why this Grid is #01000000 (alpha 1/255) rather than Transparent -
+         a fully transparent area gets no mouse events at all.
+
+         Two earlier attempts blamed the wrong thing. The shadow WAS also wrong - it sat on the
+         content Border, and this is the only dialog with a ComboBox, whose dropdown is an
+         AllowsTransparency Popup; a WPF Effect over a subtree containing one renders as a filled
+         rectangle. That is fixed below and is a real bug, it just was not this one.
+         (2026-07-30, four attempts) -->
+    <!-- RootFade, not RootBorder, is what the open/close animation drives - and it starts at 0,
+         the same way KillerShell's RootGrid does. The fade used to run on RootBorder alone, but
+         the shadow layer below is a SIBLING carrying the identical BackgroundBrush and geometry,
+         with no starting opacity: it slammed in solid on the first frame and only the card faded
+         on top of it, so the dialog read as blinking into existence rather than fading. Fading the
+         shared parent takes the shadow with it. (2026-07-31) -->
+    <Grid x:Name="RootFade" Opacity="0" Background="#01000000"
+          MouseMove="Resize_MouseMove" MouseLeftButtonDown="Resize_MouseDown">
+
+        <!-- Shadow layer: same geometry, NO content, not hit-testable. -->
+        <Border Margin="{DynamicResource DialogHaloMargin}" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource BackgroundBrush}"
+                IsHitTestVisible="False">
+            <Border.Effect>
+                <!-- RenderingBias Quality: at radius 18 the default Performance bias renders the
+                     blur at reduced resolution and scales it up, which blocks up into stair-steps
+                     on this card's rounded corners. Same fix as App.xaml's PaneShadow. -->
+                <!-- Opacity follows the theme. A flat palette sets FlyoutShadowOpacity to 0, which
+                     removes the cast entirely rather than leaving a soft halo round a hard-edged
+                     window. Every other theme keeps the 0.6 it had. -->
+                <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="3" Direction="270"
+                                  Opacity="{DynamicResource FlyoutShadowOpacity}"
+                                  RenderingBias="Quality"/>
+            </Border.Effect>
+        </Border>
+
+        <!-- Corner radius follows the theme, not a hardcoded 6: a square-cornered palette was
+             getting a rounded card, and its square bevel then cut across the corners. -->
+        <!-- BorderThickness from the theme, not a hardcoded 1. On a theme with a real 5px sizing
+             frame that extra invisible pixel sat OUTSIDE the frame, so the picker's edge measured
+             one wider than the main window's and its outermost pixel was the card background
+             rather than the frame. (2026-08-07) -->
+        <Border x:Name="RootBorder" BorderBrush="{DynamicResource WindowEdgeBrush}"
+                BorderThickness="{DynamicResource WindowEdgeThickness}"
+                Background="{DynamicResource BackgroundBrush}"
+                CornerRadius="{DynamicResource PanelCornerRadius}" Margin="{DynamicResource DialogHaloMargin}">
+            <!-- FrameHost: the window frame lives OUT here as a sibling of the content, never as
+                 an overlay on top of it. The same structure the main window and SketchPad use -
+                 see DialogChrome.WindowFrame. Content is inset by WindowFramePadding so the 5px
+                 edge occupies its own space instead of clipping the caption and the footer.
+                 Every frame key is transparent at zero thickness by default, so a flat theme is
+                 unchanged. (2026-08-07) -->
+            <Grid>
+            <Grid x:Name="ContentHost" Margin="{DynamicResource WindowFramePadding}">
+            <Grid.RowDefinitions>
+                <!-- Auto, with the height on the band itself: DialogTitleBarHeight is a Double and
+                     a RowDefinition wants a GridLength, which will not convert. -->
+                <RowDefinition Height="Auto"/>  <!-- title bar -->
+                <RowDefinition Height="Auto"/>  <!-- heading -->
+                <RowDefinition Height="Auto"/>  <!-- path row -->
+                <RowDefinition Height="*"/>     <!-- places | entries -->
+                <RowDefinition Height="Auto"/>  <!-- file name + filter -->
+                <RowDefinition Height="Auto"/>  <!-- buttons -->
+                <RowDefinition Height="Auto"/>  <!-- status bar -->
+            </Grid.RowDefinitions>
+
+            <!-- Shared film grain over the whole dialog surface -->
+            <Border Grid.RowSpan="7" IsHitTestVisible="False"
+                    Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+
+            <!-- Title bar. TitleBarBrush, not Transparent: the row already spans the card, so this
+                 gives it a real caption band - a gradient on the themes that define one, and
+                 identical to BackgroundBrush on the themes that do not, which is why the other
+                 palettes look unchanged. -->
+            <Border Grid.Row="0" Height="{DynamicResource DialogTitleBarHeight}"
+                    Background="{DynamicResource DialogTitleBarBrush}" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid Margin="{DynamicResource TitleBarPadding}">
+                    <!-- The plain caption, shown on a theme that declares a Win98-style bar. Without
+                         it this dialog kept the typewriter wordmark while every other window swapped,
+                         AND the wordmark's bold run uses AccentLogo - which on a theme whose caption
+                         band IS the accent color renders the product name invisible against it.
+                         That is why the bar read as "Killer" followed by a gap. -->
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" IsHitTestVisible="False"
+                               FontWeight="Bold" FontSize="11"
+                               FontFamily="{DynamicResource ChromeFontFamily}"
+                               Foreground="{DynamicResource ChromeTextBrush}"
+                               Visibility="{DynamicResource PlainTitleVisibility}">
+                        <Run x:Name="TitlePlainA" Text="{DynamicResource Str_Wordmark_A}"/><Run x:Name="TitlePlainB" Text="{DynamicResource Str_Wordmark_B}"/><Run x:Name="TitlePlainSub"/>
+                    </TextBlock>
+                    <Grid VerticalAlignment="Center" HorizontalAlignment="Left" IsHitTestVisible="False"
+                          Visibility="{DynamicResource WordmarkVisibility}">
+                        <!-- The wordmark is the HOST app's, not this file's. This dialog is compiled
+                             into several apps as linked source, so a hardcoded name showed
+                             "KillerPDF" inside KillerScan. Str_Wordmark_A / _B come from whichever
+                             app is running ("Killer" + "Notes", "Killer" + "PDF"), and the family
+                             two-run split is preserved: neutral first word, accent second.
+                             There is no "The " - that is Killendar's logotype flourish, not this
+                             family's, and it read as nonsense on every other app. -->
+                        <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15" Margin="1,2,0,0" Opacity="{DynamicResource IconShadowOpacity}">
+                            <TextBlock.Effect><BlurEffect Radius="3"/></TextBlock.Effect>
+                            <Run x:Name="TitleShadowA" Text="{DynamicResource Str_Wordmark_A}" Foreground="#D8000000"/><Run x:Name="TitleShadowB" Text="{DynamicResource Str_Wordmark_B}" FontSize="19.5" FontWeight="Bold" Foreground="#D8000000"/><Run x:Name="TitleSubShadow" FontSize="18" Foreground="#D8000000"/>
+                        </TextBlock>
+                        <!-- The caller's Title rides HERE, to the right of the wordmark, the same
+                             shape SketchPad / Databases / Dictation use. It used to be a heading in
+                             the BODY, which left the caption unlabeled and put "Insert image" in
+                             the content area as if it were part of the file list.
+                             ChromeTextBrush, not MutedTextBrush: muted is mixed against the CONTENT
+                             surface and vanishes on a theme that paints a real caption band. -->
+                        <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15">
+                            <Run x:Name="TitleWordA" Text="{DynamicResource Str_Wordmark_A}" Foreground="{DynamicResource ChromeTextBrush}"/><Run x:Name="TitleWordB" Text="{DynamicResource Str_Wordmark_B}" FontSize="19.5" FontWeight="Bold" Foreground="{DynamicResource AccentLogo}"/><Run x:Name="TitleSub" FontSize="18" Foreground="{DynamicResource ChromeTextBrush}"/>
+                        </TextBlock>
+                    </Grid>
+                    <!-- The family dialog close - see the note in DialogTitleBar.xaml. Same markup
+                         as KillerShell, KillerScan and the KillerUI kit. -->
+                    <Button Content="{DynamicResource AboutCloseGlyph}" Click="Cancel_Click"
+                            HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Width="{DynamicResource AboutCloseWidth}" Height="{DynamicResource AboutCloseHeight}"
+                            Style="{StaticResource OverlayCloseButton}">
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- The caller's Title has moved into the caption band beside the wordmark (TitleSub).
+                 Kept as a zero-height placeholder so the row indices below do not all shift. -->
+            <TextBlock x:Name="HeadingText" Grid.Row="1" Visibility="Collapsed"/>
+
+            <!-- Path row: up one level + current path + view modes -->
+            <!-- 8px of air under the caption. It was flush, so on a theme with a real colored
+                 caption band the address bar butted straight into it. Same reasoning as the main
+                 window's ContentPaneMargin: a distinct band needs a gap, a blended one does not. -->
+            <!-- DialogContentMargin: the dialog's own inset, 16 by default. A theme with a real
+                 sizing frame sets it much smaller, or the frame and this stack into a band several
+                 times the frame's width - the same mistake SidebarPanelMargin made in the main
+                 window. (2026-08-07) -->
+            <Grid Grid.Row="2" Margin="{DynamicResource DialogContentMargin}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="UpButton" Grid.Column="0" Content="&#xE74A;" Click="Up_Click" ToolTip="{DynamicResource Str_TT_Up}"
+                        Width="30" Height="28" Margin="0,0,6,0" FontSize="12" FontFamily="Segoe MDL2 Assets"
+                        Foreground="{DynamicResource TextBrush}" Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <!-- Bevels as siblings, like the view buttons. ButtonEdgeBrush rather
+                                 than InputBorderBrush so a beveled theme drops the flat outline and
+                                 the raised edge IS the button's edge. Bevel inverts while pressed. -->
+                            <Grid>
+                                <Border x:Name="ub" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource ButtonEdgeBrush}"
+                                        BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <Border x:Name="ubBevelLight" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelLightBrush}" BorderThickness="{DynamicResource BevelLightThickness}"/>
+                                <Border x:Name="ubBevelDark" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelDarkBrush}" BorderThickness="{DynamicResource BevelDarkThickness}"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="ub" Property="Background" Value="{DynamicResource RowHoverBrush}"/></Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="ubBevelLight" Property="BorderBrush" Value="{DynamicResource BevelDarkBrush}"/>
+                                    <Setter TargetName="ubBevelDark" Property="BorderBrush" Value="{DynamicResource BevelLightBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.4"/></Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <!-- Explicit style: an unstyled TextBox falls back to WPF's white fill and blue
+                     focus border. The chevron overlays the box's right edge (the box pads 28 to
+                     clear it) and drops the recent-locations list, like Explorer's address bar. -->
+                <!-- Height 22 and CENTERED, matching the TextBox inside it. The Grid used to stretch
+                     to the row's full 28, and the sunken bevel borders below are siblings sized to
+                     the GRID - so the recessed box was 28 tall around a 22 tall white field, and
+                     the leftover showed as gray bands above and below the text. (2026-08-07) -->
+                <Grid Grid.Column="1" Height="22" VerticalAlignment="Center">
+                    <!-- The address bar is an EDIT FIELD: TextFieldBrush (white on a theme whose
+                         darkest tone is the button face) with the crossed sunken bevel over it, so
+                         it reads as recessed rather than painted on. -->
+                    <!-- 22, matching the recents button exactly so the button fills the field's
+                         height and reads as attached to it rather than floating inside it.
+                         InputEdgeBrush, not the style's own InputBorderBrush: on a beveled theme
+                         the sunken bevel below IS the field's edge, and the flat 1px line drew a
+                         SECOND line right beside it along the top. (2026-08-07) -->
+                    <TextBox x:Name="PathBox" Height="22" Style="{StaticResource DarkTextBox}"
+                             Background="{DynamicResource TextFieldBrush}"
+                             BorderBrush="{DynamicResource InputEdgeBrush}"
+                             FontFamily="Consolas" FontSize="12" Padding="8,0,26,0"
+                             VerticalContentAlignment="Center" KeyDown="PathBox_KeyDown"/>
+                    <Border IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelDarkBrush}"
+                            BorderThickness="{DynamicResource FooterCellLightThickness}"/>
+                    <Border IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelLightBrush}"
+                            BorderThickness="{DynamicResource FooterCellDarkThickness}"/>
+                    <!-- The recents drop is a real BUTTON - a gray square with a raised bevel that
+                         inverts on press - not a bare chevron floating on the field. It was a
+                         transparent border with no edge and no pressed state at all. -->
+                    <Button x:Name="RecentsBtn" Content="&#xE70D;" Click="RecentsBtn_Click"
+                            ToolTip="{DynamicResource Str_TT_RecentLocations}"
+                            Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,1,0"
+                            FontFamily="Segoe MDL2 Assets" FontSize="10" Cursor="Hand" Focusable="False">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Grid>
+                                                <Border x:Name="rb" Background="{DynamicResource ChipFaceBrush}"
+                                                        BorderBrush="{DynamicResource ButtonEdgeBrush}" BorderThickness="1"
+                                                        CornerRadius="{DynamicResource SmallCornerRadius}"/>
+                                                <Border x:Name="rbLight" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelLightBrush}" BorderThickness="{DynamicResource BevelLightThickness}"/>
+                                                <Border x:Name="rbDark" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelDarkBrush}" BorderThickness="{DynamicResource BevelDarkThickness}"/>
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="rb" Property="Background" Value="{DynamicResource ChipHoverBrush}"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter TargetName="rbLight" Property="BorderBrush" Value="{DynamicResource BevelDarkBrush}"/>
+                                                    <Setter TargetName="rbDark" Property="BorderBrush" Value="{DynamicResource BevelLightBrush}"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <!-- Recent locations. Same raised-surface pattern as everything else:
+                         shadow on an item-free sibling, content border on top. -->
+                    <Popup x:Name="RecentsPopup" PlacementTarget="{Binding ElementName=PathBox}"
+                           Placement="Bottom" StaysOpen="False" AllowsTransparency="True"
+                           VerticalOffset="2" HorizontalOffset="-8">
+                        <Grid Margin="8">
+                            <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="{DynamicResource ControlCornerRadius}" IsHitTestVisible="False">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="Black" BlurRadius="14" ShadowDepth="2" Direction="270" Opacity="{DynamicResource FlyoutShadowOpacity}"/>
+                                </Border.Effect>
+                            </Border>
+                            <Border Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource MenuBorderBrush}"
+                                    BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}">
+                                <Grid>
+                                    <Border IsHitTestVisible="False" CornerRadius="{DynamicResource ControlCornerRadius}"
+                                            Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+                                    <ListBox x:Name="RecentsList" Background="Transparent" BorderThickness="0" Padding="2,4"
+                                             Width="{Binding ActualWidth, ElementName=PathBox}" MaxHeight="260"
+                                             ItemContainerStyle="{StaticResource PickerRow}"
+                                             SelectionChanged="RecentsList_SelectionChanged"
+                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}" FontFamily="Consolas" FontSize="12"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </Popup>
+                </Grid>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="8,0,0,0" VerticalAlignment="Center">
+                    <!-- E7B3 (off) / E890 (on) - KillerShell's build-proven pair (ViewOptions.cs). -->
+                    <Button x:Name="ShowHiddenBtn"  Style="{StaticResource PickerViewBtn}" Content="&#xE7B3;" ToolTip="{DynamicResource Str_TT_ShowHidden}"  Click="ShowHidden_Click"  Margin="0,0,6,0"/>
+                    <Button x:Name="ViewListBtn"    Style="{StaticResource PickerViewBtn}" Content="&#xE8FD;" ToolTip="{DynamicResource Str_TT_ViewList}"    Click="ViewList_Click"/>
+                    <Button x:Name="ViewIconsBtn"   Style="{StaticResource PickerViewBtn}" Content="&#xE80A;" ToolTip="{DynamicResource Str_TT_ViewIcons}"   Click="ViewIcons_Click"   Margin="2,0"/>
+                    <Button x:Name="ViewDetailsBtn" Style="{StaticResource PickerViewBtn}" Content="&#xE700;" ToolTip="{DynamicResource Str_TT_ViewDetails}" Click="ViewDetails_Click"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Main: quick places on the left, folder contents on the right -->
+            <Grid Grid.Row="3" Margin="{DynamicResource DialogRowMargin}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="170"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="*"/>
+                    <!-- Preview column. Width 0 when the pane is off, so a picker that does not
+                         want it (the db folder picker) costs nothing and the layout is unchanged. -->
+                    <ColumnDefinition x:Name="PreviewGapCol" Width="0"/>
+                    <ColumnDefinition x:Name="PreviewCol" Width="0"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- NOT a raised pane, deliberately (2026-07-30): KillerShell's sidebar
+                     sits flat on the chrome background, and this one matches - only the file
+                     LIST is the lifted card. No fill, no shadow, no grain of its own; the
+                     dialog card's shared grain shows through.
+
+                     BOOKMARKS ONLY, no folder tree (2026-08-07). The tree was Explorer's
+                     1995 answer to navigation and nothing modern ships one: it duplicated the file
+                     list's own folder rows, ate the whole panel, and made the places - the part
+                     people actually use - a cramped drawer at the bottom. Places now fill the
+                     column. Right-click any folder in the file list to add it here. -->
+                <Grid Grid.Column="0">
+                    <!-- The left column IS a client area on a beveled theme - a Win98 places list
+                         is white and recessed, like Explorer's. SidebarPaneBrush and the bevel
+                         pair are transparent by default, so the flat sidebar the family uses
+                         everywhere else is unchanged. -->
+                    <Border Background="{DynamicResource SidebarPaneBrush}"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"/>
+                    <!-- Two-tone sunken edge, the same PaneBevel* pair as the main window's panes:
+                         #808080 then #000000 down the top/left, #ffffff then the face up the
+                         bottom/right. These were on the shallow FooterCell* keys, which are the
+                         status-bar recess and one tone only. (2026-08-07) -->
+                    <Border Panel.ZIndex="9" IsHitTestVisible="False"
+                            BorderBrush="{DynamicResource PaneBevelDarkBrush}"
+                            BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
+                    <Border Panel.ZIndex="9" IsHitTestVisible="False"
+                            BorderBrush="{DynamicResource PaneBevelLightBrush}"
+                            BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
+                    <Border Panel.ZIndex="9" IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}"
+                            BorderBrush="{DynamicResource PaneBevelDark2Brush}"
+                            BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
+                    <Border Panel.ZIndex="9" IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}"
+                            BorderBrush="{DynamicResource PaneBevelLight2Brush}"
+                            BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
+                    <ListBox x:Name="PlacesList" Background="Transparent" BorderThickness="0" Padding="2,4"
+                             ItemContainerStyle="{StaticResource PickerPlaceRow}" SelectionChanged="Places_SelectionChanged"
+                             ContextMenuOpening="Places_ContextMenuOpening"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <!-- E8D9 unfavorite (outline star), the counterpart to E735. -->
+                                <MenuItem Header="{DynamicResource Str_Menu_UnpinPlace}" Icon="&#xE8D9;" Click="UnpinPlace_Click"/>
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Style="{StaticResource PickerRowContent}">
+                                    <Image Source="{Binding Icon}" Width="16" Height="16" VerticalAlignment="Center"
+                                           Margin="0,0,8,0" SnapsToDevicePixels="True"
+                                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                    <TextBlock Text="{Binding Label}" FontFamily="Consolas" FontSize="12" VerticalAlignment="Center"
+                                               TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <!-- Edge fades for the places list (2026-07-30): rows dissolve
+                         at both ends unless the list is flush there. Same surface, same ramp
+                         (SyncPlacesEdgeFades); no scrollbar lift needed - horizontal scrolling
+                         is disabled on this list. -->
+                    <Border x:Name="PlacesFadeTop" Height="18" Opacity="0"
+                            VerticalAlignment="Top" Margin="0,0,12,0" IsHitTestVisible="False">
+                        <Border.OpacityMask>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#FF000000" Offset="0"/>
+                                <GradientStop Color="#00000000" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.OpacityMask>
+                        <Grid>
+                            <Border Background="{DynamicResource BackgroundBrush}"/>
+                            <Border Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+                        </Grid>
+                    </Border>
+                    <Border x:Name="PlacesFadeBottom" Height="22" Opacity="0"
+                            VerticalAlignment="Bottom" Margin="0,0,12,0" IsHitTestVisible="False">
+                        <Border.OpacityMask>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#00000000" Offset="0"/>
+                                <GradientStop Color="#FF000000" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.OpacityMask>
+                        <Grid>
+                            <Border Background="{DynamicResource BackgroundBrush}"/>
+                            <Border Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- Preview pane: the selected image at size, so choosing a picture is not a guess
+                     from a filename. Same pane treatment as the file list - fill, sunken edge - and
+                     it shows a hint instead when the selection is not an image. -->
+                <Grid x:Name="PreviewPane" Grid.Column="4" Visibility="Collapsed">
+                    <Border Background="{DynamicResource PaneBrush}" CornerRadius="{DynamicResource ControlCornerRadius}"/>
+                    <Border Panel.ZIndex="9" IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelDarkBrush}"
+                            BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
+                    <Border Panel.ZIndex="9" IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelLightBrush}"
+                            BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
+                    <Border Panel.ZIndex="9" IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}"
+                            BorderBrush="{DynamicResource PaneBevelDark2Brush}"
+                            BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
+                    <Border Panel.ZIndex="9" IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}"
+                            BorderBrush="{DynamicResource PaneBevelLight2Brush}"
+                            BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
+                    <!-- Uniform with NO StretchDirection, so the image always fills one dimension
+                         of the pane. DownOnly looked right until a file carried a DPI above 96:
+                         a bitmap's size in device-independent units is pixels * 96 / dpi, so a
+                         150dpi photo measures well under the pane, DownOnly refuses to scale UP,
+                         and the preview renders as a postage stamp in the middle of the pane. -->
+                    <Image x:Name="PreviewImage" Margin="8" Stretch="Uniform"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <TextBlock x:Name="PreviewHint" Margin="12" TextWrapping="Wrap"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               TextAlignment="Center" FontSize="11"
+                               Foreground="{DynamicResource DimTextBrush}"
+                               Text="{DynamicResource Str_Dlg_NoPreview}"/>
+                </Grid>
+
+                <Grid Grid.Column="2">
+                  <Border Background="{DynamicResource PaneBrush}" CornerRadius="{DynamicResource ControlCornerRadius}" IsHitTestVisible="False">
+                    <Border.Effect>
+                      <DropShadowEffect Color="Black" BlurRadius="14" ShadowDepth="2" Direction="270" Opacity="{DynamicResource FlyoutShadowOpacity}"/>
+                    </Border.Effect>
+                  </Border>
+                  <!-- The file list's SUNKEN edge. It is the dialog's main client area and was the
+                       one pane here with no recess at all. Above the pane (ZIndex) so the edge draws
+                       over its first and last rows, the way a real client border does. -->
+                  <Border Panel.ZIndex="9" IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelDarkBrush}"
+                          BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
+                  <Border Panel.ZIndex="9" IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelLightBrush}"
+                          BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
+                  <Border Panel.ZIndex="9" IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}"
+                          BorderBrush="{DynamicResource PaneBevelDark2Brush}"
+                          BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
+                  <Border Panel.ZIndex="9" IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}"
+                          BorderBrush="{DynamicResource PaneBevelLight2Brush}"
+                          BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
+                  <Border Background="{DynamicResource PaneBrush}" CornerRadius="{DynamicResource ControlCornerRadius}">
+                  <Grid>
+                    <Border IsHitTestVisible="False" CornerRadius="{DynamicResource ControlCornerRadius}"
+                            Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+                    <DockPanel>
+                        <Grid DockPanel.Dock="Top" x:Name="DetailsHeader" Visibility="Collapsed" Margin="12,4,26,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="150"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Style="{StaticResource PickerColBtn}" Click="SortName_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{DynamicResource Str_Col_Name}"/>
+                                    <TextBlock x:Name="NameArrow" FontFamily="Segoe MDL2 Assets" FontSize="8" Margin="4,1,0,0"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Grid.Column="1" Style="{StaticResource PickerColBtn}" HorizontalContentAlignment="Right" Click="SortSize_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{DynamicResource Str_Col_Size}"/>
+                                    <TextBlock x:Name="SizeArrow" FontFamily="Segoe MDL2 Assets" FontSize="8" Margin="4,1,0,0"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Grid.Column="2" Style="{StaticResource PickerColBtn}" Margin="10,0,0,0" Click="SortModified_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{DynamicResource Str_Col_Modified}"/>
+                                    <TextBlock x:Name="ModArrow" FontFamily="Segoe MDL2 Assets" FontSize="8" Margin="4,1,0,0"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                        <Grid>
+                            <ListBox x:Name="FileList" Background="Transparent" BorderThickness="0" Padding="2,4"
+                                     ItemContainerStyle="{StaticResource PickerRow}"
+                                     ItemTemplate="{StaticResource RowTemplate}"
+                                     ItemsPanel="{StaticResource PanelStack}"
+                                     SelectionChanged="Files_SelectionChanged" MouseDoubleClick="Files_DoubleClick"
+                                     ContextMenuOpening="Files_ContextMenuOpening"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     ScrollViewer.CanContentScroll="False"
+                                     PreviewMouseWheel="FileList_PreviewMouseWheel">
+                                <ListBox.ContextMenu>
+                                    <ContextMenu>
+                                        <!-- E735 filled star. The rail is a BOOKMARKS list, which is
+                                             what KillerShell calls the same thing, so a star reads
+                                             right where a pushpin implied something docked. -->
+                                        <MenuItem Header="{DynamicResource Str_Menu_PinPlace}" Icon="&#xE735;" Click="FilePin_Click"/>
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
+                            </ListBox>
+                            <TextBlock x:Name="EmptyHint" Text="{DynamicResource Str_Dlg_NoMatchingFiles}" Visibility="Collapsed"
+                                       Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="11"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"
+                                       TextAlignment="Center" Margin="20"/>
+                        </Grid>
+                    </DockPanel>
+                  </Grid>
+                  </Border>
+                </Grid>
+            </Grid>
+
+            <!-- File name + filter. Labels are DimTextBrush on the dark card: 3.15:1, the tier
+                 these brushes are calibrated for. -->
+            <Grid Grid.Row="4" Margin="{DynamicResource DialogFieldMargin}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource Str_Dlg_FileName}" VerticalAlignment="Center"
+                           Margin="0,0,10,0" Foreground="{DynamicResource MutedTextBrush}" FontFamily="Consolas" FontSize="11"/>
+                <!-- Left padding 5, not 8: a TextBox's content host carries its own ~2px inset
+                     (WPF's TextBoxView), so at 8 the name started visibly right of the filter
+                     combo's text directly below it (combo padding is 7 with no inherent inset).
+                     5 + 2 lines the two up. (2026-07-31) -->
+                <!-- An edit field, so white and sunken like the address bar and every other input. -->
+                <!-- Same 22 and centered as the address bar, for the same reason. -->
+                <Grid Grid.Row="0" Grid.Column="1" Height="22" VerticalAlignment="Center">
+                    <TextBox x:Name="FileNameBox" Height="22"
+                             Style="{StaticResource DarkTextBox}"
+                             Background="{DynamicResource TextFieldBrush}"
+                             BorderBrush="{DynamicResource InputEdgeBrush}"
+                             FontFamily="Consolas" FontSize="12" Padding="5,0,8,0"
+                             VerticalContentAlignment="Center" KeyDown="FileNameBox_KeyDown"/>
+                    <Border IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelDarkBrush}"
+                            BorderThickness="{DynamicResource FooterCellLightThickness}"/>
+                    <Border IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelLightBrush}"
+                            BorderThickness="{DynamicResource FooterCellDarkThickness}"/>
+                </Grid>
+
+                <TextBlock x:Name="FilterLabel" Grid.Row="1" Grid.Column="0" Text="{DynamicResource Str_Dlg_FileType}" VerticalAlignment="Center"
+                           Margin="0,8,10,0" Foreground="{DynamicResource MutedTextBrush}" FontFamily="Consolas" FontSize="11"/>
+                <!-- 22, matching the file name box directly above it and the address bar. It was
+                     28, so the two fields that read as a pair were visibly different heights. -->
+                <ComboBox x:Name="FilterCombo" Grid.Row="1" Grid.Column="1" Height="22" Margin="0,6,0,0"
+                          Style="{StaticResource DarkComboBox}"
+                          SelectionChanged="Filter_SelectionChanged"/>
+            </Grid>
+
+            <!-- Buttons row. The selection details moved OUT of here and into a real status bar
+                 below, so this row is just the actions. -->
+            <Grid Grid.Row="5" Margin="{DynamicResource DialogButtonsMargin}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <!-- SelName / SelMeta live HERE, where they always have - the code writes to these
+                     two by name. The 98SE status bar below mirrors them with ElementName bindings
+                     rather than owning a second pair, so there is one source of truth and no code
+                     change. This block hides itself on a theme that shows the status bar.
+                     (2026-08-07) -->
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,12,0"
+                            Visibility="{DynamicResource DialogInlineSelVisibility}">
+                    <TextBlock x:Name="SelName" FontFamily="Consolas" FontSize="12" Foreground="{DynamicResource TextBrush}"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock x:Name="SelMeta" FontFamily="Consolas" FontSize="10" Foreground="{DynamicResource MutedTextBrush}"
+                               TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="{DynamicResource Str_Btn_Cancel}" Style="{StaticResource SurfaceButton}" MinWidth="90" Margin="0,0,8,0" Click="Cancel_Click"/>
+                    <Button x:Name="AcceptButton" Style="{StaticResource OutlineButton}" MinWidth="90" Click="OK_Click"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- ==== Status bar ====
+                 The same footer the main window has: sunken cells on the chrome tier with the
+                 resize grip in the corner. The selection name and its size/date used to be two
+                 stacked lines floating in the button row, which is not what a Win32 dialog does -
+                 it puts them in a status bar at the very bottom. Cell margins, padding and bevels
+                 all come from the shared Footer* keys, so this footer and the main window's are
+                 the same object. It is meant to look exactly like the old Win32 dialog.
+                 (2026-08-07) -->
+            <!-- 98SE ONLY (2026-08-07). A Win32 file dialog puts the selection in a status
+                 bar at the bottom; the family's floating card puts it beside the buttons, and a
+                 bare strip along the bottom of a rounded dark card reads as bolted on. Height and
+                 visibility both come from DialogStatusBarHeight / DialogStatusBarVisibility, which
+                 are 0 and Collapsed by default - so on the other twelve themes this row does not
+                 exist and SelName / SelMeta fall back to the buttons row above. -->
+            <Border Grid.Row="6" Height="{DynamicResource DialogStatusBarHeight}"
+                    Visibility="{DynamicResource DialogStatusBarVisibility}"
+                    Background="{DynamicResource BackgroundBrush}">
+                <Grid Margin="{DynamicResource FooterPadding}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Cell 1: the selected entry's name. -->
+                    <Grid Grid.Column="0" Margin="{DynamicResource FooterCellMargin}">
+                        <Border Panel.ZIndex="2" IsHitTestVisible="False"
+                                BorderBrush="{DynamicResource FooterBevelDarkBrush}"
+                                BorderThickness="{DynamicResource FooterCellLightThickness}"/>
+                        <Border Panel.ZIndex="2" IsHitTestVisible="False"
+                                BorderBrush="{DynamicResource FooterBevelLightBrush}"
+                                BorderThickness="{DynamicResource FooterCellDarkThickness}"/>
+                        <TextBlock Text="{Binding Text, ElementName=SelName}"
+                                   Margin="{DynamicResource FooterCellPadding}"
+                                   FontFamily="Consolas" FontSize="11" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextBrush}"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </Grid>
+
+                    <!-- Cell 2: its size and date. -->
+                    <Grid Grid.Column="1" Margin="{DynamicResource FooterCellMargin}">
+                        <Border Panel.ZIndex="2" IsHitTestVisible="False"
+                                BorderBrush="{DynamicResource FooterBevelDarkBrush}"
+                                BorderThickness="{DynamicResource FooterCellLightThickness}"/>
+                        <Border Panel.ZIndex="2" IsHitTestVisible="False"
+                                BorderBrush="{DynamicResource FooterBevelLightBrush}"
+                                BorderThickness="{DynamicResource FooterCellDarkThickness}"/>
+                        <TextBlock Text="{Binding Text, ElementName=SelMeta}"
+                                   Margin="{DynamicResource FooterCellPadding}"
+                                   FontFamily="Consolas" FontSize="11" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource MutedTextBrush}"
+                                   TextTrimming="CharacterEllipsis"/>
+
+                    <!-- The grip lives INSIDE this cell, in its bottom-right corner - that is where
+                         Win98 draws it, over the last panel of the status bar rather than in a
+                         column of its own past the end of it. Dots or diagonal hatch on the same
+                         visibility keys as every other grip in the app; it starts a resize, it is
+                         not decorative. (2026-08-07) -->
+                    <Canvas Panel.ZIndex="3" Width="13" Height="13"
+                            Background="Transparent" Cursor="SizeNWSE"
+                            VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                            MouseLeftButtonDown="Resize_MouseDown" MouseMove="Resize_MouseMove">
+                        <Canvas Width="13" Height="13" IsHitTestVisible="False"
+                                Visibility="{DynamicResource GripDotsVisibility}">
+                            <Rectangle Canvas.Left="9" Canvas.Top="3" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+                            <Rectangle Canvas.Left="5" Canvas.Top="7" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+                            <Rectangle Canvas.Left="9" Canvas.Top="7" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+                            <Rectangle Canvas.Left="1" Canvas.Top="11" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+                            <Rectangle Canvas.Left="5" Canvas.Top="11" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+                            <Rectangle Canvas.Left="9" Canvas.Top="11" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
+                        </Canvas>
+                        <!-- Half-pixel centers so a 1px diagonal stays crisp instead of smearing
+                             across two rows - the same lines the main window draws. -->
+                        <Canvas Width="13" Height="13" IsHitTestVisible="False"
+                                Visibility="{DynamicResource GripHatchVisibility}">
+                            <Line X1="12.5" Y1="3.5"  X2="3.5"  Y2="12.5" Stroke="{DynamicResource BevelDarkBrush}"/>
+                            <Line X1="12.5" Y1="4.5"  X2="4.5"  Y2="12.5" Stroke="{DynamicResource BevelLightBrush}"/>
+                            <Line X1="12.5" Y1="6.5"  X2="6.5"  Y2="12.5" Stroke="{DynamicResource BevelDarkBrush}"/>
+                            <Line X1="12.5" Y1="7.5"  X2="7.5"  Y2="12.5" Stroke="{DynamicResource BevelLightBrush}"/>
+                            <Line X1="12.5" Y1="9.5"  X2="9.5"  Y2="12.5" Stroke="{DynamicResource BevelDarkBrush}"/>
+                            <Line X1="12.5" Y1="10.5" X2="10.5" Y2="12.5" Stroke="{DynamicResource BevelLightBrush}"/>
+                        </Canvas>
+                    </Canvas>
+                    </Grid>
+                </Grid>
+            </Border>
+            </Grid>
+
+            <!-- ==== Window frame ====
+                 Siblings of the content, each ring inset past the one outside it. A Border draws
+                 its edge INSIDE its own bounds, so rings with no margin all anchor to the same
+                 pixel and paint over each other. Mirrors DialogChrome.WindowFrame exactly; this
+                 window is XAML, so it declares them rather than calling the builder. -->
+            <Border Panel.ZIndex="9001" IsHitTestVisible="False"
+                    Margin="{DynamicResource WindowFrameMargin}"
+                    BorderBrush="{DynamicResource WindowFrameBrush}"
+                    BorderThickness="{DynamicResource WindowFrameThickness}"/>
+            <Border Panel.ZIndex="9002" IsHitTestVisible="False"
+                    Margin="{DynamicResource FrameInnerMargin}"
+                    BorderBrush="{DynamicResource FrameInnerLightBrush}"
+                    BorderThickness="{DynamicResource FrameInnerLightThickness}"/>
+            <Border Panel.ZIndex="9002" IsHitTestVisible="False"
+                    Margin="{DynamicResource FrameInnerMargin}"
+                    BorderBrush="{DynamicResource FrameInnerDarkBrush}"
+                    BorderThickness="{DynamicResource FrameInnerDarkThickness}"/>
+            <Border Panel.ZIndex="9003" IsHitTestVisible="False"
+                    BorderBrush="{DynamicResource FrameOuterLightBrush}"
+                    BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
+            <Border Panel.ZIndex="9003" IsHitTestVisible="False"
+                    BorderBrush="{DynamicResource FrameOuterDarkBrush}"
+                    BorderThickness="{DynamicResource FrameOuterDarkThickness}"/>
+            </Grid>
+        </Border>
+
+        <!-- Raised edge, as SIBLINGS of the card sharing its Margin so they land on its outer
+             edge rather than inside its 1px border. Transparent and zero-thickness in every theme
+             except the beveled ones, where they are the card's edge. -->
+        <Border Margin="{DynamicResource DialogHaloMargin}" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelLightBrush}"
+                BorderThickness="{DynamicResource BevelLightThickness}"/>
+        <Border Margin="{DynamicResource DialogHaloMargin}" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelDarkBrush}"
+                BorderThickness="{DynamicResource BevelDarkThickness}"/>
+    </Grid>
+</Window>

@@ -227,4 +227,33 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Dev_Other">Diğer</sys:String>
     <sys:String x:Key="Str_Dev_Unknown">Bilinmiyor</sys:String>
 
+    <sys:String x:Key="Str_Btn_Open">Aç</sys:String>
+    <sys:String x:Key="Str_Btn_Save">Kaydet</sys:String>
+    <sys:String x:Key="Str_Col_Modified">değiştirilme</sys:String>
+    <sys:String x:Key="Str_Col_Name">ad</sys:String>
+    <sys:String x:Key="Str_Col_Size">boyut</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">Tüm dosyalar</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">Dosya adı:</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">Dosya türü:</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">Burada geçerli dosya türüyle eşleşen bir şey yok.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">Önizleme yok</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">Bu dosya mevcut değil.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">Bu klasör mevcut değil.</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">{0} değiştirilsin mi?</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">Yerlere sabitle</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">Yerlerden kaldır</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">Masaüstü</sys:String>
+    <sys:String x:Key="Str_QA_Documents">Belgeler</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">İndirilenler</sys:String>
+    <sys:String x:Key="Str_QA_Home">Ana klasör</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">Resimler</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">{0} klasör, {1} dosya</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">Son konumlar</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">Gizli ve sistem öğelerini göster</sys:String>
+    <sys:String x:Key="Str_TT_Up">Bir klasör yukarı</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">Ayrıntılar görünümü</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">Simge görünümü</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">Liste görünümü</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
 </ResourceDictionary>

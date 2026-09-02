@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 1.6.2 improves command-line integration with other applications.
 
 ### Fixed
+- CSV and HTML exports now use the family file picker, including complete filename tooltips.
 - Command-line output now reaches applications that launch KillerScan with redirected streams but no parent console.
 - On the Sepulchre and Mourning themes the selected theme picker row no longer loses its ring, dot and label while hovered; they turn white.
 

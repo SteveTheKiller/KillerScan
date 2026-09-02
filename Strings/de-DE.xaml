@@ -228,4 +228,33 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Dev_Other">Sonstiges</sys:String>
     <sys:String x:Key="Str_Dev_Unknown">Unbekannt</sys:String>
 
+    <sys:String x:Key="Str_Btn_Open">Öffnen</sys:String>
+    <sys:String x:Key="Str_Btn_Save">Speichern</sys:String>
+    <sys:String x:Key="Str_Col_Modified">geändert</sys:String>
+    <sys:String x:Key="Str_Col_Name">Name</sys:String>
+    <sys:String x:Key="Str_Col_Size">größe</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">Alle Dateien</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">Dateiname:</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">Dateityp:</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">Hier passt nichts zum aktuellen Dateityp.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">Keine Vorschau verfügbar</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">Diese Datei existiert nicht.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">Dieser Ordner existiert nicht.</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">{0} ersetzen?</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">An Orte anheften</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">Von Orten entfernen</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">Desktop</sys:String>
+    <sys:String x:Key="Str_QA_Documents">Dokumente</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">Downloads</sys:String>
+    <sys:String x:Key="Str_QA_Home">Benutzerordner</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">Bilder</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">{0} Ordner, {1} Datei(en)</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">Zuletzt verwendete Orte</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">Versteckte und Systemelemente anzeigen</sys:String>
+    <sys:String x:Key="Str_TT_Up">Eine Ordnerebene nach oben</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">Detailansicht</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">Symbolansicht</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">Listenansicht</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
 </ResourceDictionary>

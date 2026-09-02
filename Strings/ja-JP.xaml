@@ -238,4 +238,33 @@
     <sys:String x:Key="Str_Dev_Other">その他</sys:String>
     <sys:String x:Key="Str_Dev_Unknown">不明</sys:String>
 
+    <sys:String x:Key="Str_Btn_Open">開く</sys:String>
+    <sys:String x:Key="Str_Btn_Save">保存</sys:String>
+    <sys:String x:Key="Str_Col_Modified">更新日時</sys:String>
+    <sys:String x:Key="Str_Col_Name">名前</sys:String>
+    <sys:String x:Key="Str_Col_Size">サイズ</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">すべてのファイル</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">ファイル名:</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">ファイルの種類:</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">現在のファイルの種類に一致するものはありません。</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">プレビューはありません</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">そのファイルは存在しません。</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">そのフォルダーは存在しません。</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">{0} を置き換えますか?</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">場所にピン留め</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">場所から削除</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">デスクトップ</sys:String>
+    <sys:String x:Key="Str_QA_Documents">ドキュメント</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">ダウンロード</sys:String>
+    <sys:String x:Key="Str_QA_Home">ホーム</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">ピクチャ</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">フォルダー {0} 個、ファイル {1} 個</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">最近使った場所</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">隠しファイルとシステム項目を表示</sys:String>
+    <sys:String x:Key="Str_TT_Up">1 つ上のフォルダーへ</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">詳細表示</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">アイコン表示</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">一覧表示</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
 </ResourceDictionary>

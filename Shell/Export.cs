@@ -2,8 +2,8 @@ using System;
 using System.IO;
 using System.Text;
 using System.Windows;
+using KillerScan.Controls;
 using KillerScan.Services;
-using Microsoft.Win32;
 
 namespace KillerScan.Shell
 {
@@ -21,10 +21,12 @@ namespace KillerScan.Shell
 
         private void ExportCsv_Click(object sender, RoutedEventArgs e)
         {
-            // The description before the | is what the Windows save dialog shows in its type
-            // dropdown, so it is interface text; the *.csv pattern after it is not.
-            var dlg = new SaveFileDialog { Filter = Loc("Str_Filter_Csv") + "|*.csv", FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.csv" };
-            if (dlg.ShowDialog() != true) return;
+            var dlg = new FileDialog(FileDialogMode.Save)
+            {
+                Filter = Loc("Str_Filter_Csv") + "|*.csv",
+                FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
+            };
+            if (dlg.ShowDialog(this) != true) return;
             try
             {
                 File.WriteAllText(dlg.FileName, ReportExport.BuildCsv(ActiveDevices), Encoding.UTF8);
@@ -36,8 +38,12 @@ namespace KillerScan.Shell
 
         private void ExportHtml_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new SaveFileDialog { Filter = Loc("Str_Filter_Html") + "|*.html", FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.html" };
-            if (dlg.ShowDialog() != true) return;
+            var dlg = new FileDialog(FileDialogMode.Save)
+            {
+                Filter = Loc("Str_Filter_Html") + "|*.html",
+                FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.html"
+            };
+            if (dlg.ShowDialog(this) != true) return;
             try
             {
                 // The report opens in whatever theme the app is in; all thirteen palettes ride along, so

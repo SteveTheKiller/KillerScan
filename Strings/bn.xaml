@@ -227,4 +227,33 @@
     <sys:String x:Key="Str_Dev_Other">অন্যান্য</sys:String>
     <sys:String x:Key="Str_Dev_Unknown">অজানা</sys:String>
 
+    <sys:String x:Key="Str_Btn_Open">খুলুন</sys:String>
+    <sys:String x:Key="Str_Btn_Save">সংরক্ষণ</sys:String>
+    <sys:String x:Key="Str_Col_Modified">পরিবর্তিত</sys:String>
+    <sys:String x:Key="Str_Col_Name">নাম</sys:String>
+    <sys:String x:Key="Str_Col_Size">আকার</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">সব ফাইল</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">ফাইলের নাম:</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">ফাইলের ধরন:</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">বর্তমান ফাইলের ধরনের সঙ্গে এখানে কিছুই মেলে না।</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">কোনো প্রিভিউ নেই</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">ওই ফাইলটি নেই।</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">ওই ফোল্ডারটি নেই।</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">{0} প্রতিস্থাপন করবেন?</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">স্থানে পিন করুন</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">স্থান থেকে সরান</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">ডেস্কটপ</sys:String>
+    <sys:String x:Key="Str_QA_Documents">ডকুমেন্ট</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">ডাউনলোড</sys:String>
+    <sys:String x:Key="Str_QA_Home">হোম</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">ছবি</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">{0}টি ফোল্ডার, {1}টি ফাইল</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">সাম্প্রতিক জায়গা</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">লুকানো ও সিস্টেম আইটেম দেখান</sys:String>
+    <sys:String x:Key="Str_TT_Up">এক ফোল্ডার উপরে</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">বিস্তারিত ভিউ</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">আইকন ভিউ</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">তালিকা ভিউ</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
 </ResourceDictionary>

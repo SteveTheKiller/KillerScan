@@ -227,4 +227,33 @@
     <sys:String x:Key="Str_Dev_Other">其他</sys:String>
     <sys:String x:Key="Str_Dev_Unknown">未知</sys:String>
 
+    <sys:String x:Key="Str_Btn_Open">打开</sys:String>
+    <sys:String x:Key="Str_Btn_Save">保存</sys:String>
+    <sys:String x:Key="Str_Col_Modified">修改时间</sys:String>
+    <sys:String x:Key="Str_Col_Name">名称</sys:String>
+    <sys:String x:Key="Str_Col_Size">大小</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">所有文件</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">文件名:</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">文件类型:</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">此处没有符合当前文件类型的内容。</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">无预览</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">该文件不存在。</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">该文件夹不存在。</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">替换 {0}?</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">固定到位置</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">从位置中移除</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">桌面</sys:String>
+    <sys:String x:Key="Str_QA_Documents">文档</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">下载</sys:String>
+    <sys:String x:Key="Str_QA_Home">主目录</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">图片</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">{0} 个文件夹，{1} 个文件</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">最近的位置</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">显示隐藏项目和系统项目</sys:String>
+    <sys:String x:Key="Str_TT_Up">向上一级文件夹</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">详细信息视图</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">图标视图</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">列表视图</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
 </ResourceDictionary>

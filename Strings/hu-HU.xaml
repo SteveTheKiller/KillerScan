@@ -243,4 +243,33 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Dev_Other">Egyéb</sys:String>
     <sys:String x:Key="Str_Dev_Unknown">Ismeretlen</sys:String>
 
+    <sys:String x:Key="Str_Btn_Open">Nyissa meg</sys:String>
+    <sys:String x:Key="Str_Btn_Save">Mentés</sys:String>
+    <sys:String x:Key="Str_Col_Modified">módosított</sys:String>
+    <sys:String x:Key="Str_Col_Name">nevet</sys:String>
+    <sys:String x:Key="Str_Col_Size">méretet</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">Minden fájl</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">Fájlnév:</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">Fájl típusa:</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">Itt semmi sem egyezik az aktuális fájltípussal.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">Nincs elérhető előnézet</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">Ez a fájl nem létezik.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">Ez a mappa nem létezik.</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">Lecseréli a következőt: {0}?</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">Rögzítés helyekre</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">Távolítsa el a helyekről</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">Asztali</sys:String>
+    <sys:String x:Key="Str_QA_Documents">Dokumentumok</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">Letöltések</sys:String>
+    <sys:String x:Key="Str_QA_Home">Otthon</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">Képek</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">{0} mappa, {1} fájl</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">Legutóbbi helyszínek</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">Rejtett és rendszerelemek megjelenítése</sys:String>
+    <sys:String x:Key="Str_TT_Up">Egy mappával feljebb</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">Részletek nézet</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">Ikon nézet</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">Lista nézet</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
 </ResourceDictionary>

@@ -227,4 +227,33 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Dev_Other">Autre</sys:String>
     <sys:String x:Key="Str_Dev_Unknown">Inconnu</sys:String>
 
+    <sys:String x:Key="Str_Btn_Open">Ouvrir</sys:String>
+    <sys:String x:Key="Str_Btn_Save">Enregistrer</sys:String>
+    <sys:String x:Key="Str_Col_Modified">modifié</sys:String>
+    <sys:String x:Key="Str_Col_Name">nom</sys:String>
+    <sys:String x:Key="Str_Col_Size">taille</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">Tous les fichiers</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">Nom du fichier :</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">Type de fichier :</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">Rien ici ne correspond au type de fichier actuel.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">Aucun aperçu disponible</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">Ce fichier n'existe pas.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">Ce dossier n'existe pas.</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">Remplacer {0} ?</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">Épingler aux emplacements</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">Retirer des emplacements</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">Bureau</sys:String>
+    <sys:String x:Key="Str_QA_Documents">Documents</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">Téléchargements</sys:String>
+    <sys:String x:Key="Str_QA_Home">Dossier personnel</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">Images</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">{0} dossier(s), {1} fichier(s)</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">Emplacements récents</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">Afficher les éléments masqués et système</sys:String>
+    <sys:String x:Key="Str_TT_Up">Dossier parent</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">Affichage détaillé</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">Affichage en icônes</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">Affichage en liste</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
 </ResourceDictionary>
