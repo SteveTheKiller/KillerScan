@@ -298,4 +298,10 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Riasztás: {0} ismeretlen eszköz található.</sys:String>
     <sys:String x:Key="Str_Services_Title">Szolgáltatások</sys:String>
     <sys:String x:Key="Str_Services_Service">Szolgáltatás</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">Vizsgálati profilok</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">Jelenlegi profil mentése</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">Profil futtatása</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">Cél betöltése</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">Utána teljes mélyvizsgálat</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">Profil törlése</sys:String>
 </ResourceDictionary>

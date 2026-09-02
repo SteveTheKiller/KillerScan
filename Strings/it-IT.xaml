@@ -298,4 +298,10 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Avviso: trovati {0} dispositivi sconosciuti.</sys:String>
     <sys:String x:Key="Str_Services_Title">Servizi</sys:String>
     <sys:String x:Key="Str_Services_Service">Servizio</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">Profili di scansione</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">Salva profilo corrente</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">Esegui profilo</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">Carica destinazione</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">Scansione profonda dopo</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">Elimina profilo</sys:String>
 </ResourceDictionary>

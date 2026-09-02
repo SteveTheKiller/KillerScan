@@ -55,6 +55,7 @@ namespace KillerScan.Shell
             DeviceLogins.Load();
             DevicePreferences.Load();
             ScanHistory.Load();
+            ScanProfiles.Load();
 
             _about = new AboutController(this);
 

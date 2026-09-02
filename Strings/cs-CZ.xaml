@@ -280,4 +280,10 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Upozornění: nalezeno {0} neznámých zařízení.</sys:String>
     <sys:String x:Key="Str_Services_Title">Služby</sys:String>
     <sys:String x:Key="Str_Services_Service">Služba</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">Profily skenování</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">Uložit aktuální profil</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">Spustit profil</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">Načíst cíl</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">Poté hloubkově skenovat vše</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">Odstranit profil</sys:String>
 </ResourceDictionary>

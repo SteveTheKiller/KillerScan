@@ -293,4 +293,10 @@
     <sys:String x:Key="Str_St_UnknownDevices">警告: 不明なデバイスが {0} 台見つかりました。</sys:String>
     <sys:String x:Key="Str_Services_Title">サービス</sys:String>
     <sys:String x:Key="Str_Services_Service">サービス</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">スキャンプロファイル</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">現在のプロファイルを保存</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">プロファイルを実行</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">対象を読み込む</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">終了後にすべてを詳細スキャン</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">プロファイルを削除</sys:String>
 </ResourceDictionary>

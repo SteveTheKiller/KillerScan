@@ -267,4 +267,10 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alert: znaleziono {0} nieznanych urządzeń.</sys:String>
     <sys:String x:Key="Str_Services_Title">Usługi</sys:String>
     <sys:String x:Key="Str_Services_Service">Usługa</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">Profile skanowania</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">Zapisz bieżący profil</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">Uruchom profil</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">Wczytaj cel</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">Potem głęboki skan wszystkiego</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">Usuń profil</sys:String>
 </ResourceDictionary>

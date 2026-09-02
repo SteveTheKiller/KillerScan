@@ -282,4 +282,10 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alerte : {0} appareils inconnus détectés.</sys:String>
     <sys:String x:Key="Str_Services_Title">Services</sys:String>
     <sys:String x:Key="Str_Services_Service">Service</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">Profils d’analyse</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">Enregistrer le profil actuel</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">Exécuter le profil</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">Charger la cible</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">Analyse approfondie ensuite</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">Supprimer le profil</sys:String>
 </ResourceDictionary>

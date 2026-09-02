@@ -324,4 +324,10 @@
     <sys:String x:Key="Str_St_UnknownDevices">Ескерту: {0} белгісіз құрылғы табылды.</sys:String>
     <sys:String x:Key="Str_Services_Title">Қызметтер</sys:String>
     <sys:String x:Key="Str_Services_Service">Қызмет</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">Сканерлеу профильдері</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">Ағымдағы профильді сақтау</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">Профильді іске қосу</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">Нысанды жүктеу</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">Содан кейін толық терең сканерлеу</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">Профильді жою</sys:String>
 </ResourceDictionary>

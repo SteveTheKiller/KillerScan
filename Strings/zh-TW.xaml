@@ -282,4 +282,10 @@
     <sys:String x:Key="Str_St_UnknownDevices">警示: 發現 {0} 台未知裝置。</sys:String>
     <sys:String x:Key="Str_Services_Title">服務</sys:String>
     <sys:String x:Key="Str_Services_Service">服務</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">掃描設定檔</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">儲存目前設定檔</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">執行設定檔</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">載入目標</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">之後深度掃描全部</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">刪除設定檔</sys:String>
 </ResourceDictionary>

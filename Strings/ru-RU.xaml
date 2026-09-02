@@ -308,4 +308,10 @@
     <sys:String x:Key="Str_St_UnknownDevices">Внимание: обнаружено {0} неизвестных устройств.</sys:String>
     <sys:String x:Key="Str_Services_Title">Службы</sys:String>
     <sys:String x:Key="Str_Services_Service">Служба</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">Профили сканирования</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">Сохранить текущий профиль</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">Запустить профиль</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">Загрузить цель</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">Затем глубокое сканирование всех</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">Удалить профиль</sys:String>
 </ResourceDictionary>

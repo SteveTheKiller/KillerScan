@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 1.6.2 adds network mapping and improves command-line integration with other applications.
 
 ### Added
+- Saved scan profiles can load or run remembered targets and optionally follow with Deep Scan All.
 - F8 opens a service-centric view organized by discovered service, port, and device.
 - Scan history compares added, missing, and changed devices, with trusted-device baselines and unknown-device alerts.
 - Manual device names now persist alongside manual classifications.

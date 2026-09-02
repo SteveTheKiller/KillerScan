@@ -206,6 +206,16 @@
                     <!-- Quiet at rest, accent-filled on hover: the same primary-action treatment
                          used by the other family toolbars. -->
                     <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="10,0,0,0">
+                        <Button x:Name="ProfilesButton" Content="&#xE8D5;" FontFamily="Segoe MDL2 Assets"
+                                Style="{StaticResource OutlineButton}" Click="ProfilesButton_Click"
+                                FontSize="13" Width="30" Padding="0" Margin="0,0,6,0">
+                            <Button.ToolTip>
+                                <TextBlock><Run Text="{DynamicResource Str_Profiles_Title}"/><Run Text=" (F10)"/></TextBlock>
+                            </Button.ToolTip>
+                            <Button.ContextMenu>
+                                <ContextMenu x:Name="ProfilesMenu" Placement="Bottom"/>
+                            </Button.ContextMenu>
+                        </Button>
                         <Button x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}"
                                 Style="{StaticResource OutlineButton}"
                                 Click="ScanBtn_Click"

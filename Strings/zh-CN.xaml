@@ -282,4 +282,10 @@
     <sys:String x:Key="Str_St_UnknownDevices">警报: 发现 {0} 台未知设备。</sys:String>
     <sys:String x:Key="Str_Services_Title">服务</sys:String>
     <sys:String x:Key="Str_Services_Service">服务</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">扫描配置</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">保存当前配置</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">运行配置</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">加载目标</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">随后深度扫描全部</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">删除配置</sys:String>
 </ResourceDictionary>

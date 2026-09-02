@@ -282,4 +282,10 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alerta: se encontraron {0} dispositivos desconocidos.</sys:String>
     <sys:String x:Key="Str_Services_Title">Servicios</sys:String>
     <sys:String x:Key="Str_Services_Service">Servicio</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">Perfiles de análisis</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">Guardar perfil actual</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">Ejecutar perfil</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">Cargar destino</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">Análisis profundo después</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">Eliminar perfil</sys:String>
 </ResourceDictionary>

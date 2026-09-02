@@ -127,6 +127,11 @@ namespace KillerScan.Shell
                             StatusText.Text = string.Format(Loc("Str_St_UnknownDevices"), unknown);
                     }
                 }
+                if (completed && _runDeepAfterScan)
+                {
+                    _runDeepAfterScan = false;
+                    _ = Dispatcher.BeginInvoke(new Action(() => DeepScanAll_Click(this, new RoutedEventArgs())));
+                }
             }
         }
     }

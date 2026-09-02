@@ -282,4 +282,10 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Uyarı: {0} bilinmeyen cihaz bulundu.</sys:String>
     <sys:String x:Key="Str_Services_Title">Hizmetler</sys:String>
     <sys:String x:Key="Str_Services_Service">Hizmet</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">Tarama profilleri</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">Geçerli profili kaydet</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">Profili çalıştır</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">Hedefi yükle</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">Ardından tümünü derin tara</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">Profili sil</sys:String>
 </ResourceDictionary>

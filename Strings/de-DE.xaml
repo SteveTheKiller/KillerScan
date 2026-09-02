@@ -283,4 +283,10 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Warnung: {0} unbekannte Geräte gefunden.</sys:String>
     <sys:String x:Key="Str_Services_Title">Dienste</sys:String>
     <sys:String x:Key="Str_Services_Service">Dienst</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">Scanprofile</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">Aktuelles Profil speichern</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">Profil ausführen</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">Ziel laden</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">Danach Tiefenscan für alle</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">Profil löschen</sys:String>
 </ResourceDictionary>

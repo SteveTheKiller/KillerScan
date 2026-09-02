@@ -282,4 +282,10 @@
     <sys:String x:Key="Str_St_UnknownDevices">সতর্কতা: {0}টি অজানা ডিভাইস পাওয়া গেছে।</sys:String>
     <sys:String x:Key="Str_Services_Title">সেবাসমূহ</sys:String>
     <sys:String x:Key="Str_Services_Service">সেবা</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">স্ক্যান প্রোফাইল</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">বর্তমান প্রোফাইল সংরক্ষণ করুন</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">প্রোফাইল চালান</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">লক্ষ্য লোড করুন</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">পরে সব গভীর স্ক্যান করুন</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">প্রোফাইল মুছুন</sys:String>
 </ResourceDictionary>
