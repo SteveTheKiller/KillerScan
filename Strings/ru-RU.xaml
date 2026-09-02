@@ -32,6 +32,11 @@
 
     <!-- Results pane -->
     <sys:String x:Key="Str_DiscoveredDevices">Обнаруженные устройства</sys:String>
+    <sys:String x:Key="Str_Topology_Title">Топология сети</sys:String>
+    <sys:String x:Key="Str_TT_Topology">Показать или скрыть топологию сети</sys:String>
+    <sys:String x:Key="Str_Topology_Network">Локальная сеть</sys:String>
+    <sys:String x:Key="Str_Topology_Inferred">Предполагаемое соединение</sys:String>
+    <sys:String x:Key="Str_Topology_Empty">Выполните сканирование сети, чтобы добавить обнаруженные устройства.</sys:String>
     <sys:String x:Key="Str_FilterPlaceholder">Фильтр устройств...</sys:String>
     <sys:String x:Key="Str_Export_Csv">Экспорт в CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Экспорт в HTML</sys:String>

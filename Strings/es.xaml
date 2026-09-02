@@ -18,6 +18,11 @@
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
 
     <sys:String x:Key="Str_DiscoveredDevices">Dispositivos detectados</sys:String>
+    <sys:String x:Key="Str_Topology_Title">Topología de red</sys:String>
+    <sys:String x:Key="Str_TT_Topology">Alternar topología de red</sys:String>
+    <sys:String x:Key="Str_Topology_Network">Red local</sys:String>
+    <sys:String x:Key="Str_Topology_Inferred">Conexión inferida</sys:String>
+    <sys:String x:Key="Str_Topology_Empty">Escanea la red para añadir los dispositivos detectados.</sys:String>
     <sys:String x:Key="Str_FilterPlaceholder">Filtrar dispositivos...</sys:String>
     <sys:String x:Key="Str_Export_Csv">Exportar como CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Exportar como HTML</sys:String>

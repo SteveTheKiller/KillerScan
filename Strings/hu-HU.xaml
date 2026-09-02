@@ -32,6 +32,11 @@
 
     <!-- Results pane -->
     <sys:String x:Key="Str_DiscoveredDevices">Felfedezett eszközök</sys:String>
+    <sys:String x:Key="Str_Topology_Title">Hálózati topológia</sys:String>
+    <sys:String x:Key="Str_TT_Topology">Hálózati topológia megjelenítése</sys:String>
+    <sys:String x:Key="Str_Topology_Network">Helyi hálózat</sys:String>
+    <sys:String x:Key="Str_Topology_Inferred">Kikövetkeztetett kapcsolat</sys:String>
+    <sys:String x:Key="Str_Topology_Empty">A felfedezett eszközök hozzáadásához vizsgálja át a hálózatot.</sys:String>
     <sys:String x:Key="Str_FilterPlaceholder">Eszközök szűrése...</sys:String>
     <sys:String x:Key="Str_Export_Csv">Exportálás CSV-ként</sys:String>
     <sys:String x:Key="Str_Export_Html">Exportálás HTML-ként</sys:String>

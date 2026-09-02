@@ -18,6 +18,11 @@
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
 
     <sys:String x:Key="Str_DiscoveredDevices">শনাক্ত করা ডিভাইস</sys:String>
+    <sys:String x:Key="Str_Topology_Title">নেটওয়ার্ক টপোলজি</sys:String>
+    <sys:String x:Key="Str_TT_Topology">নেটওয়ার্ক টপোলজি দেখান বা লুকান</sys:String>
+    <sys:String x:Key="Str_Topology_Network">স্থানীয় নেটওয়ার্ক</sys:String>
+    <sys:String x:Key="Str_Topology_Inferred">অনুমান করা সংযোগ</sys:String>
+    <sys:String x:Key="Str_Topology_Empty">শনাক্ত করা ডিভাইস যোগ করতে নেটওয়ার্ক স্ক্যান করুন।</sys:String>
     <sys:String x:Key="Str_FilterPlaceholder">ডিভাইস ফিল্টার করুন...</sys:String>
     <sys:String x:Key="Str_Export_Csv">CSV হিসেবে এক্সপোর্ট</sys:String>
     <sys:String x:Key="Str_Export_Html">HTML হিসেবে এক্সপোর্ট</sys:String>

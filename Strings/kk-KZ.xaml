@@ -32,6 +32,11 @@
 
     <!-- Results pane -->
     <sys:String x:Key="Str_DiscoveredDevices">Табылған құрылғылар</sys:String>
+    <sys:String x:Key="Str_Topology_Title">Желі топологиясы</sys:String>
+    <sys:String x:Key="Str_TT_Topology">Желі топологиясын көрсету немесе жасыру</sys:String>
+    <sys:String x:Key="Str_Topology_Network">Жергілікті желі</sys:String>
+    <sys:String x:Key="Str_Topology_Inferred">Болжалды байланыс</sys:String>
+    <sys:String x:Key="Str_Topology_Empty">Табылған құрылғыларды қосу үшін желіні сканерлеңіз.</sys:String>
     <sys:String x:Key="Str_FilterPlaceholder">Құрылғыларды сүзу...</sys:String>
     <sys:String x:Key="Str_Export_Csv">CSV ретінде экспорттау</sys:String>
     <sys:String x:Key="Str_Export_Html">HTML ретінде экспорттау</sys:String>

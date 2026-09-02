@@ -6,7 +6,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.6.2] - Unreleased
 
-1.6.2 improves command-line integration with other applications.
+1.6.2 adds network mapping and improves command-line integration with other applications.
+
+### Added
+- An inferred topology view maps the local network, gateway, DNS server and discovered devices without presenting guesses as measured links. (#3)
 
 ### Fixed
 - CSV and HTML exports now use the family file picker, including complete filename tooltips.

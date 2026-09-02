@@ -18,6 +18,11 @@
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
 
     <sys:String x:Key="Str_DiscoveredDevices">Bulunan Cihazlar</sys:String>
+    <sys:String x:Key="Str_Topology_Title">Ağ Topolojisi</sys:String>
+    <sys:String x:Key="Str_TT_Topology">Ağ topolojisini aç veya kapat</sys:String>
+    <sys:String x:Key="Str_Topology_Network">Yerel ağ</sys:String>
+    <sys:String x:Key="Str_Topology_Inferred">Çıkarılan bağlantı</sys:String>
+    <sys:String x:Key="Str_Topology_Empty">Bulunan cihazları eklemek için ağı tarayın.</sys:String>
     <sys:String x:Key="Str_FilterPlaceholder">Cihazları filtrele...</sys:String>
     <sys:String x:Key="Str_Export_Csv">CSV olarak dışa aktar</sys:String>
     <sys:String x:Key="Str_Export_Html">HTML olarak dışa aktar</sys:String>

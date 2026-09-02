@@ -21,6 +21,10 @@ namespace KillerScan.Shell
         private void ActivateSession()
         {
             ResultsGrid.ItemsSource = _active.Devices;
+            _active.Devices.CollectionChanged += (_, _) =>
+            {
+                if (_showTopology) RefreshTopology();
+            };
             _filteredView = CollectionViewSource.GetDefaultView(_active.Devices);
             if (_filteredView is ListCollectionView lcv)
             {

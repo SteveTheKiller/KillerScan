@@ -18,6 +18,11 @@
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
 
     <sys:String x:Key="Str_DiscoveredDevices">發現的裝置</sys:String>
+    <sys:String x:Key="Str_Topology_Title">網路拓撲</sys:String>
+    <sys:String x:Key="Str_TT_Topology">切換網路拓撲</sys:String>
+    <sys:String x:Key="Str_Topology_Network">本機網路</sys:String>
+    <sys:String x:Key="Str_Topology_Inferred">推斷的連線</sys:String>
+    <sys:String x:Key="Str_Topology_Empty">掃描網路以加入發現的裝置。</sys:String>
     <sys:String x:Key="Str_FilterPlaceholder">篩選裝置...</sys:String>
     <sys:String x:Key="Str_Export_Csv">匯出為 CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">匯出為 HTML</sys:String>

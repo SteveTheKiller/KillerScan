@@ -24,6 +24,11 @@
     <sys:String x:Key="Str_Count_Shown">Zobrazeno {0} z {1}</sys:String>
 
     <sys:String x:Key="Str_DiscoveredDevices">Nalezená zařízení</sys:String>
+    <sys:String x:Key="Str_Topology_Title">Topologie sítě</sys:String>
+    <sys:String x:Key="Str_TT_Topology">Přepnout topologii sítě</sys:String>
+    <sys:String x:Key="Str_Topology_Network">Místní síť</sys:String>
+    <sys:String x:Key="Str_Topology_Inferred">Odvozené připojení</sys:String>
+    <sys:String x:Key="Str_Topology_Empty">Prohledáním sítě přidáte nalezená zařízení.</sys:String>
     <sys:String x:Key="Str_FilterPlaceholder">Filtrovat zařízení...</sys:String>
     <sys:String x:Key="Str_Export_Csv">Exportovat jako CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Exportovat jako HTML</sys:String>

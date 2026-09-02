@@ -370,6 +370,8 @@ namespace KillerScan.Shell
             ColVendor?.Header = Loc("Str_Col_Vendor");
             ColType?.Header   = Loc("Str_Col_Type");
             ColPorts?.Header  = Loc("Str_Col_Ports");
+            PaneTitle.Text = Loc(_showTopology ? "Str_Topology_Title" : "Str_DiscoveredDevices");
+            if (_showTopology) RefreshTopology();
 
             if (_active != null)
             {

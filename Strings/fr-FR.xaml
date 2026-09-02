@@ -18,6 +18,11 @@
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
 
     <sys:String x:Key="Str_DiscoveredDevices">Appareils détectés</sys:String>
+    <sys:String x:Key="Str_Topology_Title">Topologie du réseau</sys:String>
+    <sys:String x:Key="Str_TT_Topology">Afficher ou masquer la topologie du réseau</sys:String>
+    <sys:String x:Key="Str_Topology_Network">Réseau local</sys:String>
+    <sys:String x:Key="Str_Topology_Inferred">Connexion déduite</sys:String>
+    <sys:String x:Key="Str_Topology_Empty">Analysez le réseau pour ajouter les appareils détectés.</sys:String>
     <sys:String x:Key="Str_FilterPlaceholder">Filtrer les appareils...</sys:String>
     <sys:String x:Key="Str_Export_Csv">Exporter en CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Exporter en HTML</sys:String>

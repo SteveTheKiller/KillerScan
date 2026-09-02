@@ -32,6 +32,11 @@
 
     <!-- Results pane -->
     <sys:String x:Key="Str_DiscoveredDevices">Dispositivi rilevati</sys:String>
+    <sys:String x:Key="Str_Topology_Title">Topologia di rete</sys:String>
+    <sys:String x:Key="Str_TT_Topology">Mostra o nascondi la topologia di rete</sys:String>
+    <sys:String x:Key="Str_Topology_Network">Rete locale</sys:String>
+    <sys:String x:Key="Str_Topology_Inferred">Connessione dedotta</sys:String>
+    <sys:String x:Key="Str_Topology_Empty">Esegui la scansione della rete per aggiungere i dispositivi rilevati.</sys:String>
     <sys:String x:Key="Str_FilterPlaceholder">Filtra dispositivi...</sys:String>
     <sys:String x:Key="Str_Export_Csv">Esporta come CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Esporta come HTML</sys:String>

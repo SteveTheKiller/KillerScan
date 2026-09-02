@@ -36,6 +36,7 @@ namespace KillerScan.Shell
                                .IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
                 };
             RefreshDeviceCount();
+            if (_showTopology) RefreshTopology();
         }
 
         /// <summary>Rebuilds the device-count readout from current state, in the active language.</summary>

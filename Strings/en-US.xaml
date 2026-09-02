@@ -32,6 +32,11 @@
 
     <!-- Results pane -->
     <sys:String x:Key="Str_DiscoveredDevices">Discovered Devices</sys:String>
+    <sys:String x:Key="Str_Topology_Title">Network Topology</sys:String>
+    <sys:String x:Key="Str_TT_Topology">Toggle network topology</sys:String>
+    <sys:String x:Key="Str_Topology_Network">Local network</sys:String>
+    <sys:String x:Key="Str_Topology_Inferred">Inferred connection</sys:String>
+    <sys:String x:Key="Str_Topology_Empty">Scan the network to add discovered devices.</sys:String>
     <sys:String x:Key="Str_FilterPlaceholder">Filter devices...</sys:String>
     <sys:String x:Key="Str_Export_Csv">Export as CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Export as HTML</sys:String>
