@@ -34,9 +34,7 @@ namespace KillerScan.Shell
             TopologyOrderButton.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;
             TopologyButton.Tag = _showTopology ? "on" : null;
             FixedTopologyButton.Tag = _showTopology ? "on" : null;
-            PaneTitle.Text = _showTopology
-                ? $"{Loc("Str_Topology_Title")} ({Loc("Str_Topology_Inferred")})"
-                : Loc("Str_DiscoveredDevices");
+            PaneTitle.Text = _showTopology ? Loc("Str_Topology_Title") : Loc("Str_DiscoveredDevices");
             if (_showTopology)
             {
                 LoadTopologyOrder();
@@ -81,13 +79,6 @@ namespace KillerScan.Shell
 
         private void UpdateTopologyOrderUi()
         {
-            TopologyOrderLabel.Text = Loc(_topologyOrder switch
-            {
-                TopologyOrder.Type => "Str_Col_Type",
-                TopologyOrder.Ip => "Str_Col_Ip",
-                TopologyOrder.Vendor => "Str_Col_Vendor",
-                _ => "Str_Topology_Role"
-            });
             TopologyRoleItem.IsChecked = _topologyOrder == TopologyOrder.Role;
             TopologyTypeItem.IsChecked = _topologyOrder == TopologyOrder.Type;
             TopologyIpItem.IsChecked = _topologyOrder == TopologyOrder.Ip;
@@ -127,19 +118,28 @@ namespace KillerScan.Shell
 
             var gateway = new Point(center.X, 42);
             var local = new Point(Math.Max(76, center.X - 190), center.Y);
-            DrawInferredLink(center, gateway);
-            DrawInferredLink(center, local);
+            var gatewayDevice = visible.FirstOrDefault(d => SameIp(d.IpAddress, gatewayIp));
+            var localDevice = visible.FirstOrDefault(d => SameIp(d.IpAddress, localIp));
+            if (gatewayDevice != null && _topologyPositions.TryGetValue(gatewayDevice.IpAddress, out var savedGateway))
+                gateway = savedGateway;
+            if (localDevice != null && _topologyPositions.TryGetValue(localDevice.IpAddress, out var savedLocal))
+                local = savedLocal;
+            var gatewayLink = DrawInferredLink(center, gateway);
+            var localLink = DrawInferredLink(center, local);
             AddRoleNode(gateway.X, gateway.Y, Loc("Str_Lbl_Gateway"), gatewayIp, "TypeRouter",
-                visible.FirstOrDefault(d => SameIp(d.IpAddress, gatewayIp)));
+                gatewayDevice, gatewayLink);
             AddRoleNode(local.X, local.Y, Loc("Str_Lbl_Local"), localIp, "PrimaryBrush",
-                visible.FirstOrDefault(d => SameIp(d.IpAddress, localIp)));
+                localDevice, localLink);
 
             if (!string.IsNullOrWhiteSpace(dnsIp) && dnsIp != "--" && !SameIp(dnsIp, gatewayIp))
             {
                 var dns = new Point(Math.Min(width - 76, center.X + 190), center.Y);
-                DrawInferredLink(center, dns);
+                var dnsDevice = visible.FirstOrDefault(d => SameIp(d.IpAddress, dnsIp));
+                if (dnsDevice != null && _topologyPositions.TryGetValue(dnsDevice.IpAddress, out var savedDns))
+                    dns = savedDns;
+                var dnsLink = DrawInferredLink(center, dns);
                 AddRoleNode(dns.X, dns.Y, Loc("Str_Lbl_Dns"), dnsIp, "TypeDns",
-                    visible.FirstOrDefault(d => SameIp(d.IpAddress, dnsIp)));
+                    dnsDevice, dnsLink);
             }
 
             AddNetworkNode(center.X, center.Y);
@@ -191,7 +191,7 @@ namespace KillerScan.Shell
             {
                 List<NetworkDevice> items = [.. devices.OrderBy(d => d.IpSortKey)];
                 for (int offset = 0; offset < items.Count; offset += columns)
-                    rows.Add((items.Skip(offset).Take(columns).ToList(), false));
+                    rows.Add(([.. items.Skip(offset).Take(columns)], false));
                 return rows;
             }
 
@@ -216,7 +216,7 @@ namespace KillerScan.Shell
             {
                 List<NetworkDevice> items = [.. group];
                 for (int offset = 0; offset < items.Count; offset += columns)
-                    rows.Add((items.Skip(offset).Take(columns).ToList(), offset == 0));
+                    rows.Add(([.. items.Skip(offset).Take(columns)], offset == 0));
             }
             return rows;
         }
@@ -261,10 +261,12 @@ namespace KillerScan.Shell
         }
 
         private void AddRoleNode(double x, double y, string role, string value, string brushKey,
-                                 NetworkDevice? device)
+                                 NetworkDevice? device, Line link)
         {
             if (string.IsNullOrWhiteSpace(value) || value == "--") value = Loc("Str_Dev_Unknown");
             AddNode(x, y, role, value, brushKey, device);
+            if (device != null)
+                _topologyLinks[device.IpAddress] = link;
         }
 
         private void AddDeviceNode(double x, double y, NetworkDevice device, Line link)

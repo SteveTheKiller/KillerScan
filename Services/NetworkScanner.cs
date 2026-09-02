@@ -18,11 +18,16 @@ namespace KillerScan.Services
         private static readonly int[] ProbePorts = [
             22,    // SSH
             53,    // DNS
+            88,    // Kerberos (Active Directory)
             80,    // HTTP
+            135,   // Windows RPC
             443,   // HTTPS
             445,   // SMB
+            464,   // Kerberos password service
             515,   // LPR printing
+            389,   // LDAP (Active Directory)
             631,   // IPP (printers)
+            636,   // LDAPS (Active Directory)
             902,   // VMware ESXi
             2179,  // Hyper-V
             3389,  // RDP
@@ -46,6 +51,8 @@ namespace KillerScan.Services
             8883,  // MQTT over TLS
             5357,  // WSD (Web Services for Devices)
             32400, // Plex media server
+            3268,  // Active Directory global catalog
+            3269,  // Active Directory global catalog TLS
         ];
 
         // Ports probed to decide a host is alive when ICMP is filtered. Kept short and high-signal
@@ -736,6 +743,8 @@ namespace KillerScan.Services
             }
 
             bool hasWorkstationPorts = ports.Contains(3389) || ports.Contains(445);
+            bool hasPrintProtocol = ports.Contains(9100) || ports.Contains(515) || ports.Contains(631);
+            bool hasActiveDirectoryPorts = ports.Contains(88) && ports.Contains(389) && ports.Contains(445);
 
             // -- Hypervisor --
             if (ports.Contains(8006)) Add("Hypervisor", 15);
@@ -754,6 +763,11 @@ namespace KillerScan.Services
             // -- Windows Server --
             if (ports.Contains(3389) && ports.Contains(445) && (ports.Contains(80) || ports.Contains(443) || ports.Contains(53)))
                 Add("Windows Server", 6);
+            if (hasActiveDirectoryPorts) Add("Windows Server", 20);
+            if (ports.Contains(53) && ports.Contains(88) && ports.Contains(389)) Add("Windows Server", 16);
+            if (ports.Contains(445) && (ports.Contains(636) || ports.Contains(3268) || ports.Contains(3269)))
+                Add("Windows Server", 14);
+            if (ports.Contains(135) && ports.Contains(445) && ports.Contains(3389)) Add("Windows Server", 8);
             if (title.Contains("exchange") || server.Contains("exchange")) Add("Windows Server", 10);
             if (snmp.Contains("windows server")) Add("Windows Server", 15);
 
@@ -786,8 +800,9 @@ namespace KillerScan.Services
                 || vendor.Contains("brother") || vendor.Contains("xerox") || vendor.Contains("lexmark")
                 || vendor.Contains("ricoh") || vendor.Contains("konica") || vendor.Contains("kyocera");
             // HP vendor alone is ambiguous (laptops, servers, printers). Only trust with printer ports.
-            if (ports.Contains(9100) || ports.Contains(515) || ports.Contains(631)) Add("Printer", 8);
-            if (isPrinterVendor && (ports.Contains(9100) || ports.Contains(515) || ports.Contains(631))) Add("Printer", 10);
+            if (ports.Contains(9100)) Add("Printer", 10);
+            if (!hasActiveDirectoryPorts && (ports.Contains(515) || ports.Contains(631))) Add("Printer", 4);
+            if (isPrinterVendor && hasPrintProtocol) Add("Printer", 12);
             if (isPrinterVendor && ports.Count <= 3) Add("Printer", 6);
             if (vendor.Contains("hewlett packard") && ports.Contains(9100)) Add("Printer", 12);
             if (snmp.Contains("laserjet") || snmp.Contains("officejet") || snmp.Contains("printer")) Add("Printer", 15);

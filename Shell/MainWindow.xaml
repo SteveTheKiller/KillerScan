@@ -350,8 +350,11 @@
                     Visibility="{DynamicResource ScaledRailVisibility}">
             <Button x:Name="TopologyButton" Style="{StaticResource RailButton}"
                     Content="&#xE968;" FontSize="15"
-                    Click="TopologyButton_Click" Margin="0,0,0,10"
-                    ToolTip="{DynamicResource Str_TT_Topology}"/>
+                    Click="TopologyButton_Click" Margin="0,0,0,10">
+                <Button.ToolTip>
+                    <TextBlock><Run Text="{DynamicResource Str_TT_Topology}"/><Run Text=" (F6)"/></TextBlock>
+                </Button.ToolTip>
+            </Button>
             <Button x:Name="ShortcutsButton" Style="{StaticResource RailButton}"
                     Content="?" FontFamily="Consolas" FontSize="18"
                     Click="ShortcutHelp_Click" Margin="0,0,0,10"
@@ -479,13 +482,15 @@
                         </Grid>
                     </Border>
                     <Button x:Name="TopologyOrderButton" Grid.Column="2" Visibility="Collapsed"
-                            HorizontalAlignment="Left" Margin="10,0,0,0" Height="26" MinWidth="112"
-                            Padding="9,0" VerticalAlignment="Center" Cursor="Hand"
+                            HorizontalAlignment="Left" Margin="10,0,0,0" Width="32" Height="26"
+                            Padding="0" VerticalAlignment="Center" Cursor="Hand"
                             Background="{DynamicResource TextFieldBrush}"
                             Foreground="{DynamicResource TextBrush}"
                             BorderBrush="{DynamicResource InputBorderBrush}" BorderThickness="1"
-                            Click="TopologyOrderButton_Click"
-                            ToolTip="{DynamicResource Str_TT_TopologyOrder}">
+                            Click="TopologyOrderButton_Click">
+                        <Button.ToolTip>
+                            <TextBlock><Run Text="{DynamicResource Str_TT_TopologyOrder}"/><Run Text=" (F7-F10)"/></TextBlock>
+                        </Button.ToolTip>
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border x:Name="OrderBorder"
@@ -504,21 +509,11 @@
                                         <Setter Property="Foreground"
                                                 Value="{DynamicResource OutlineHoverTextBrush}"/>
                                     </Trigger>
-                                    <Trigger Property="IsPressed" Value="True">
-                                        <Setter TargetName="OrderBorder" Property="Background"
-                                                Value="{DynamicResource OutlinePressedBrush}"/>
-                                        <Setter Property="Foreground"
-                                                Value="{DynamicResource OutlineTextBrush}"/>
-                                    </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
                         </Button.Template>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE8CB;" FontFamily="Segoe MDL2 Assets" FontSize="11"
-                                       VerticalAlignment="Center" Margin="0,0,7,0"/>
-                            <TextBlock x:Name="TopologyOrderLabel" Text="{DynamicResource Str_Topology_Role}"
-                                       VerticalAlignment="Center"/>
-                        </StackPanel>
+                        <TextBlock Text="&#xE8CB;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         <Button.ContextMenu>
                             <ContextMenu PreviewMouseWheel="Menu_ForwardWheelToGrid">
                                 <MenuItem x:Name="TopologyRoleItem" Header="{DynamicResource Str_Topology_Role}"
@@ -1012,8 +1007,11 @@
                     Visibility="{DynamicResource FixedRailVisibility}">
             <Button x:Name="FixedTopologyButton" Style="{StaticResource RailButton}"
                     Content="&#xE968;" FontSize="15"
-                    Click="TopologyButton_Click" Margin="0,0,0,10"
-                    ToolTip="{DynamicResource Str_TT_Topology}"/>
+                    Click="TopologyButton_Click" Margin="0,0,0,10">
+                <Button.ToolTip>
+                    <TextBlock><Run Text="{DynamicResource Str_TT_Topology}"/><Run Text=" (F6)"/></TextBlock>
+                </Button.ToolTip>
+            </Button>
             <Button x:Name="FixedShortcutsButton" Style="{StaticResource RailButton}"
                     Content="?" FontFamily="Consolas" FontSize="18"
                     Click="ShortcutHelp_Click" Margin="0,0,0,10"
