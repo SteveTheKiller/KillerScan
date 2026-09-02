@@ -352,7 +352,7 @@
                     Content="&#xE968;" FontSize="15"
                     Click="TopologyButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip>
-                    <TextBlock><Run Text="{DynamicResource Str_TT_Topology}"/><Run Text=" (F6)"/></TextBlock>
+                    <TextBlock><Run Text="{DynamicResource Str_TT_Topology}"/><Run Text=" (F9)"/></TextBlock>
                 </Button.ToolTip>
             </Button>
             <Button x:Name="ShortcutsButton" Style="{StaticResource RailButton}"
@@ -1009,7 +1009,7 @@
                     Content="&#xE968;" FontSize="15"
                     Click="TopologyButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip>
-                    <TextBlock><Run Text="{DynamicResource Str_TT_Topology}"/><Run Text=" (F6)"/></TextBlock>
+                    <TextBlock><Run Text="{DynamicResource Str_TT_Topology}"/><Run Text=" (F9)"/></TextBlock>
                 </Button.ToolTip>
             </Button>
             <Button x:Name="FixedShortcutsButton" Style="{StaticResource RailButton}"

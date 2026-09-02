@@ -11,7 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Added
 - F1 now switches between the shortcut list and a persistent keyboard-map view.
 - Deep Scan All performs an exhaustive, cancellable rescan of every discovered host.
-- F6 opens an inferred topology view with movable, multi-select device boxes and four arrangement modes. (#3)
+- F9 opens an inferred topology view with movable, multi-select device boxes and four arrangement modes. (#3)
 - `/uiscan [targets]` opens the full interface and begins scanning the supplied targets immediately. (#1)
 
 ### Fixed

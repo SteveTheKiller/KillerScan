@@ -16,7 +16,7 @@ namespace KillerScan.Shell
         private static readonly (string Keys, string Desc)[] ShortcutRows =
         [
             ("F5",              "Str_Sc_Scan"),
-            ("F6",              "Str_TT_Topology"),
+            ("F9",              "Str_TT_Topology"),
             ("F7",              "Str_Sc_CycleTopologyOrder"),
             ("Ctrl + 1",        "Str_Topology_Role"),
             ("Ctrl + 2",        "Str_Col_Type"),
@@ -172,7 +172,7 @@ namespace KillerScan.Shell
             }
 
             if (e.Key == Key.F5) { ScanBtn_Click(this, new RoutedEventArgs()); e.Handled = true; }
-            else if (e.Key == Key.F6) { TopologyButton_Click(this, new RoutedEventArgs()); e.Handled = true; }
+            else if (e.Key == Key.F9) { TopologyButton_Click(this, new RoutedEventArgs()); e.Handled = true; }
             else if (e.Key == Key.F7)
             {
                 if (!_showTopology) TopologyButton_Click(this, new RoutedEventArgs());
