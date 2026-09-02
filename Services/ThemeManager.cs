@@ -191,6 +191,11 @@ namespace KillerScan.Services
                 newDict["OutlinePressedBrush"] = Brushes.Transparent;
             if (!newDict.Contains("SurfaceHoverBrush"))
                 newDict["SurfaceHoverBrush"] = newDict["RowHoverBrush"];
+            // The theme picker's checked row while HOVERED (ring, dot, label). Defaults to the
+            // accent so nothing changes; Sepulchre, whose accent is its hover teal, sets white.
+            // KillerPDF's key.
+            if (!newDict.Contains("RadioHoverFgBrush"))
+                newDict["RadioHoverFgBrush"] = newDict["PrimaryBrush"];
             var merged  = Application.Current.Resources.MergedDictionaries;
 
             // In-place per-key update: fires a targeted change notification for each key

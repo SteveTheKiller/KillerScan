@@ -946,6 +946,19 @@
                                          Ectoplasm's yellow. Keep depth on idle labels, not selection. -->
                                     <Setter TargetName="label" Property="Effect" Value="{x:Null}"/>
                                 </Trigger>
+                                <!-- Checked AND hovered: ring, dot and label take RadioHoverFgBrush,
+                                     which ThemeManager aliases to PrimaryBrush so twelve themes are
+                                     unchanged. Sepulchre's accent sits on its own hover teal, so it
+                                     sets the key to white. Declared last so it wins both single triggers. -->
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsChecked" Value="True"/>
+                                        <Condition Property="IsMouseOver" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter TargetName="ring" Property="Stroke" Value="{DynamicResource RadioHoverFgBrush}"/>
+                                    <Setter TargetName="dot" Property="Fill" Value="{DynamicResource RadioHoverFgBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource RadioHoverFgBrush}"/>
+                                </MultiTrigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>

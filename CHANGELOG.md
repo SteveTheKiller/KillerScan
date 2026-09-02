@@ -10,6 +10,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 - Command-line output now reaches applications that launch KillerScan with redirected streams but no parent console.
+- On the Sepulchre theme the selected theme picker row no longer loses its ring, dot and label while hovered; they turn white.
 
 ## [1.6.1] - 2026-08-29
 
