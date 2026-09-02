@@ -22,6 +22,7 @@
     <sys:String x:Key="Str_Topology_Title">Topologie du réseau</sys:String>
     <sys:String x:Key="Str_Topology_Role">Rôle</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Organiser la topologie par</sys:String>
+    <sys:String x:Key="Str_Sc_CycleTopologyOrder">Changer la disposition de la topologie</sys:String>
     <sys:String x:Key="Str_TT_Topology">Afficher ou masquer la topologie du réseau</sys:String>
     <sys:String x:Key="Str_Topology_Network">Réseau local</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Connexion déduite</sys:String>

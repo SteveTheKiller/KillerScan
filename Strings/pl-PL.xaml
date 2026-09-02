@@ -21,6 +21,7 @@
     <sys:String x:Key="Str_Topology_Title">Topologia sieci</sys:String>
     <sys:String x:Key="Str_Topology_Role">Rola</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Rozmieść topologię według</sys:String>
+    <sys:String x:Key="Str_Sc_CycleTopologyOrder">Przełącz układ topologii</sys:String>
     <sys:String x:Key="Str_TT_Topology">Przełącz topologię sieci</sys:String>
     <sys:String x:Key="Str_Topology_Network">Sieć lokalna</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Połączenie wywnioskowane</sys:String>

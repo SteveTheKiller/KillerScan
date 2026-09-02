@@ -28,6 +28,7 @@
     <sys:String x:Key="Str_Topology_Title">Topologie sítě</sys:String>
     <sys:String x:Key="Str_Topology_Role">Role</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Uspořádat topologii podle</sys:String>
+    <sys:String x:Key="Str_Sc_CycleTopologyOrder">Procházet uspořádání topologie</sys:String>
     <sys:String x:Key="Str_TT_Topology">Přepnout topologii sítě</sys:String>
     <sys:String x:Key="Str_Topology_Network">Místní síť</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Odvozené připojení</sys:String>

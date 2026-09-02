@@ -9,13 +9,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 1.6.2 adds network mapping and improves command-line integration with other applications.
 
 ### Added
+- F1 now switches between the shortcut list and a persistent keyboard-map view.
 - Deep Scan All performs an exhaustive, cancellable rescan of every discovered host.
 - F6 opens an inferred topology view with movable, multi-select device boxes and four arrangement modes. (#3)
 - `/uiscan [targets]` opens the full interface and begins scanning the supplied targets immediately. (#1)
 
 ### Fixed
 - Device detection now distinguishes physical printers from Windows servers that share print queues, including domain controllers.
-- Topology sorting is now icon-only, shows its shortcuts, and keeps connectors attached to moved role boxes.
+- Topology sorting is now icon-only, uses F7 to cycle or Ctrl+1 through Ctrl+4 for direct selection, and keeps connectors attached to moved role boxes.
 - Scans clear the local DNS cache and reject reverse-DNS names that do not resolve back to the same IP address.
 - On first launch, the interface follows the Windows display language when it is supported.
 - CSV and HTML exports now use the family file picker, including complete filename tooltips.

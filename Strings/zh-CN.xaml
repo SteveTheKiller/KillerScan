@@ -22,6 +22,7 @@
     <sys:String x:Key="Str_Topology_Title">网络拓扑</sys:String>
     <sys:String x:Key="Str_Topology_Role">角色</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">拓扑排列方式</sys:String>
+    <sys:String x:Key="Str_Sc_CycleTopologyOrder">切换拓扑排列方式</sys:String>
     <sys:String x:Key="Str_TT_Topology">切换网络拓扑</sys:String>
     <sys:String x:Key="Str_Topology_Network">本地网络</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">推断的连接</sys:String>

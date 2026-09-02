@@ -22,6 +22,7 @@
     <sys:String x:Key="Str_Topology_Title">Ağ Topolojisi</sys:String>
     <sys:String x:Key="Str_Topology_Role">Rol</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Topolojiyi şuna göre düzenle</sys:String>
+    <sys:String x:Key="Str_Sc_CycleTopologyOrder">Topoloji düzenini değiştir</sys:String>
     <sys:String x:Key="Str_TT_Topology">Ağ topolojisini aç veya kapat</sys:String>
     <sys:String x:Key="Str_Topology_Network">Yerel ağ</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Çıkarılan bağlantı</sys:String>

@@ -2,30 +2,26 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using KillerScan.Controls;
 
 namespace KillerScan.Shell
 {
-    // Keyboard shortcuts and the F1 list overlay.
-    //
-    // Deliberately lighter than the KillerNotes / KillerPDF treatment: those apps have 40-80
-    // shortcuts and earn a drawn keyboard with Ctrl and Shift layers. KillerScan has ten, so
-    // this is a plain two-column list on the same card chrome the About overlay uses - no new
-    // theme brushes, no category colors, one entry point.
-    //
-    // Single source of truth: the Rows table below feeds both the overlay and nothing else, so
-    // adding a shortcut means adding its handler in Window_PreviewKeyDown and a row here.
+    // Keyboard shortcuts and the F1 list and keyboard-map overlay.
+    // The shortcut table feeds both views so their gestures and descriptions stay together.
     public partial class MainWindow
     {
-        // (gesture, description resource key). Order is the order shown.
+        // (gesture, description resource key). Order is the list order and map tooltip order.
         private static readonly (string Keys, string Desc)[] ShortcutRows =
         [
             ("F5",              "Str_Sc_Scan"),
             ("F6",              "Str_TT_Topology"),
-            ("F7",              "Str_Topology_Role"),
-            ("F8",              "Str_Col_Type"),
-            ("F9",              "Str_Col_Ip"),
-            ("F10",             "Str_Col_Vendor"),
+            ("F7",              "Str_Sc_CycleTopologyOrder"),
+            ("Ctrl + 1",        "Str_Topology_Role"),
+            ("Ctrl + 2",        "Str_Col_Type"),
+            ("Ctrl + 3",        "Str_Col_Ip"),
+            ("Ctrl + 4",        "Str_Col_Vendor"),
             ("Esc",             "Str_Sc_Cancel"),
             ("Ctrl + R",        "Str_Sc_Rescan"),
             ("Ctrl + F",        "Str_Sc_Subnet"),
@@ -46,6 +42,30 @@ namespace KillerScan.Shell
             ("F1",              "Str_Sc_Help"),
             ("F12",             "Str_Sc_About"),
         ];
+
+        private static readonly (string Id, string Cap, double Width)[][] KeyboardRows =
+        [
+            [("Esc", "Esc", 1), ("", "", .8), ("F1", "F1", 1), ("F2", "F2", 1), ("F3", "F3", 1),
+             ("F4", "F4", 1), ("", "", .6), ("F5", "F5", 1), ("F6", "F6", 1), ("F7", "F7", 1),
+             ("F8", "F8", 1), ("", "", .6), ("F9", "F9", 1), ("F10", "F10", 1), ("F11", "F11", 1), ("F12", "F12", 1)],
+            [("Grave", "`", 1), ("D1", "1", 1), ("D2", "2", 1), ("D3", "3", 1), ("D4", "4", 1),
+             ("D5", "5", 1), ("D6", "6", 1), ("D7", "7", 1), ("D8", "8", 1), ("D9", "9", 1),
+             ("D0", "0", 1), ("Minus", "-", 1), ("Equals", "=", 1), ("Back", "Back", 2)],
+            [("Tab", "Tab", 1.5), ("Q", "Q", 1), ("W", "W", 1), ("E", "E", 1), ("R", "R", 1),
+             ("T", "T", 1), ("Y", "Y", 1), ("U", "U", 1), ("I", "I", 1), ("O", "O", 1),
+             ("P", "P", 1), ("LBr", "[", 1), ("RBr", "]", 1), ("BSl", "\\", 1.5)],
+            [("Caps", "Caps", 1.8), ("A", "A", 1), ("S", "S", 1), ("D", "D", 1), ("F", "F", 1),
+             ("G", "G", 1), ("H", "H", 1), ("J", "J", 1), ("K", "K", 1), ("L", "L", 1),
+             ("Semi", ";", 1), ("Quote", "'", 1), ("Enter", "Enter", 2.2)],
+            [("Shift", "Shift", 2.3), ("Z", "Z", 1), ("X", "X", 1), ("C", "C", 1), ("V", "V", 1),
+             ("B", "B", 1), ("N", "N", 1), ("M", "M", 1), ("Comma", ",", 1), ("Period", ".", 1),
+             ("Slash", "/", 1), ("RShift", "Shift", 2.7)],
+            [("Ctrl", "Ctrl", 1.5), ("Win", "Win", 1.2), ("Alt", "Alt", 1.5), ("Space", "", 6.8),
+             ("RAlt", "Alt", 1.5), ("Menu", "Menu", 1), ("RCtrl", "Ctrl", 1.5)]
+        ];
+
+        private const double KeyboardUnit = 42;
+        private bool _shortcutMapView;
 
         // Wired from MainWindow.xaml (PreviewKeyDown on the window) so the keys work wherever
         // focus is, including inside the results grid.
@@ -120,6 +140,14 @@ namespace KillerScan.Shell
                         if (RescanMenuItem.IsEnabled && ResultsGrid.SelectedItems.Count > 0)
                         { RescanSelected_Click(this, new RoutedEventArgs()); e.Handled = true; }
                         return;
+                    case Key.D1: case Key.NumPad1:
+                        ShowTopologyAndSetOrder(TopologyOrder.Role); e.Handled = true; return;
+                    case Key.D2: case Key.NumPad2:
+                        ShowTopologyAndSetOrder(TopologyOrder.Type); e.Handled = true; return;
+                    case Key.D3: case Key.NumPad3:
+                        ShowTopologyAndSetOrder(TopologyOrder.Ip); e.Handled = true; return;
+                    case Key.D4: case Key.NumPad4:
+                        ShowTopologyAndSetOrder(TopologyOrder.Vendor); e.Handled = true; return;
                     case Key.A:
                         if (!inTextBox) { ResultsGrid.SelectAll(); e.Handled = true; }
                         return;
@@ -145,16 +173,10 @@ namespace KillerScan.Shell
 
             if (e.Key == Key.F5) { ScanBtn_Click(this, new RoutedEventArgs()); e.Handled = true; }
             else if (e.Key == Key.F6) { TopologyButton_Click(this, new RoutedEventArgs()); e.Handled = true; }
-            else if (e.Key is Key.F7 or Key.F8 or Key.F9 or Key.F10)
+            else if (e.Key == Key.F7)
             {
                 if (!_showTopology) TopologyButton_Click(this, new RoutedEventArgs());
-                SetTopologyOrder(e.Key switch
-                {
-                    Key.F8 => TopologyOrder.Type,
-                    Key.F9 => TopologyOrder.Ip,
-                    Key.F10 => TopologyOrder.Vendor,
-                    _ => TopologyOrder.Role
-                });
+                SetTopologyOrder((TopologyOrder)(((int)_topologyOrder + 1) % 4));
                 e.Handled = true;
             }
             else if (e.Key == Key.Enter && ResultsGrid.IsKeyboardFocusWithin && GetSelectedDevice() != null)
@@ -164,6 +186,12 @@ namespace KillerScan.Shell
         // Title-bar "?" button (MainWindow.xaml), matching KillerNotes and KillerPDF.
         private void ShortcutHelp_Click(object sender, RoutedEventArgs e) => ToggleShortcuts();
 
+        private void ShowTopologyAndSetOrder(TopologyOrder order)
+        {
+            if (!_showTopology) TopologyButton_Click(this, new RoutedEventArgs());
+            SetTopologyOrder(order);
+        }
+
         private void ToggleShortcuts()
         {
             if (ShortcutsOverlay.Visibility == Visibility.Visible) HideShortcuts();
@@ -172,7 +200,7 @@ namespace KillerScan.Shell
 
         private void ShowShortcuts()
         {
-            BuildShortcutRows();
+            ApplyShortcutView(read: true);
             FadeOverlayIn(ShortcutsOverlay);
         }
 
@@ -183,6 +211,23 @@ namespace KillerScan.Shell
         private void ShortcutsOverlay_Click(object sender, MouseButtonEventArgs e) => HideShortcuts();
         private void ShortcutsCard_Click(object sender, MouseButtonEventArgs e) => e.Handled = true;
         private void ShortcutsClose_Click(object sender, RoutedEventArgs e) => HideShortcuts();
+
+        private void ShortcutListView_Click(object sender, RoutedEventArgs e) => ApplyShortcutView(false, persist: true);
+        private void ShortcutMapView_Click(object sender, RoutedEventArgs e) => ApplyShortcutView(true, persist: true);
+
+        private void ApplyShortcutView(bool map = false, bool persist = false, bool read = false)
+        {
+            if (read) map = App.GetSetting("ShortcutsMapView") == "1";
+            _shortcutMapView = map;
+            if (persist) App.SetSetting("ShortcutsMapView", map ? "1" : "0");
+
+            ShortcutListHost.Visibility = map ? Visibility.Collapsed : Visibility.Visible;
+            ShortcutMapHost.Visibility = map ? Visibility.Visible : Visibility.Collapsed;
+            ShortcutListViewButton.Opacity = map ? 0.55 : 1;
+            ShortcutMapViewButton.Opacity = map ? 1 : 0.55;
+            ShortcutCardGrid.MaxWidth = map ? 900 : 420;
+            if (map) BuildKeyboardMap(); else BuildShortcutRows();
+        }
 
         /// <summary>Fill the list once. Rebuilt on every show so a language switch is picked up.</summary>
         private void BuildShortcutRows()
@@ -209,7 +254,7 @@ namespace KillerScan.Shell
 
                 var d = new TextBlock
                 {
-                    Text = Loc(descKey),
+                    Text = ShortcutDescription(keys, descKey),
                     FontSize = 12,
                     Margin = new Thickness(0, 3, 0, 3),
                     TextWrapping = TextWrapping.Wrap,
@@ -221,6 +266,111 @@ namespace KillerScan.Shell
 
             ShortcutsTitle.Text = Loc("Str_Shortcuts_Title");
             ShortcutsHint.Text = Loc("Str_Sc_Hint");
+        }
+
+        private void BuildKeyboardMap()
+        {
+            ShortcutMapRows.Children.Clear();
+            var bindings = ShortcutRows
+                .Select(row => (Id: ShortcutKeyId(row.Keys), row.Keys, row.Desc))
+                .Where(row => row.Id.Length > 0)
+                .GroupBy(row => row.Id)
+                .ToDictionary(group => group.Key, group => group.ToList());
+
+            foreach (var row in KeyboardRows)
+            {
+                var panel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 4) };
+                foreach (var (id, cap, width) in row)
+                {
+                    if (id.Length == 0)
+                    {
+                        panel.Children.Add(new Border { Width = KeyboardUnit * width });
+                        continue;
+                    }
+                    bindings.TryGetValue(id, out var actions);
+                    panel.Children.Add(BuildKeyboardKey(cap, width, actions));
+                }
+                ShortcutMapRows.Children.Add(panel);
+            }
+            ShortcutsTitle.Text = Loc("Str_Shortcuts_Title");
+        }
+
+        private static string ShortcutKeyId(string keys)
+        {
+            if (keys.EndsWith(" +", StringComparison.Ordinal)) return "Equals";
+            if (keys.EndsWith(" -", StringComparison.Ordinal)) return "Minus";
+            string key = keys[(keys.LastIndexOf('+') + 1)..].Trim();
+            return key switch
+            {
+                "Esc" => "Esc",
+                "Enter" => "Enter",
+                _ when key.Length == 1 && char.IsDigit(key[0]) => "D" + key,
+                _ when key.Length == 1 => key.ToUpperInvariant(),
+                _ when key.StartsWith("F", StringComparison.Ordinal) => key,
+                _ => ""
+            };
+        }
+
+        private Border BuildKeyboardKey(string cap, double width, List<(string Id, string Keys, string Desc)>? actions)
+        {
+            var capText = new TextBlock
+            {
+                Text = cap,
+                FontFamily = new FontFamily("Consolas"),
+                FontSize = 10,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(0, 4, 0, 0)
+            };
+            capText.SetResourceReference(TextBlock.ForegroundProperty, actions == null ? "DimTextBrush" : "TextBrush");
+
+            var grid = new Grid();
+            grid.Children.Add(capText);
+            var key = new Border
+            {
+                Width = KeyboardUnit * width - 4,
+                Height = 40,
+                Margin = new Thickness(0, 0, 4, 0),
+                CornerRadius = new CornerRadius(3),
+                BorderThickness = new Thickness(1),
+                Child = grid
+            };
+            key.SetResourceReference(Border.BackgroundProperty, "SurfaceBrush");
+            key.SetResourceReference(Border.BorderBrushProperty, actions == null ? "CardBorderBrush" : "PrimaryBrush");
+
+            if (actions != null)
+            {
+                var actionText = new TextBlock
+                {
+                    Text = ShortcutDescription(actions[0].Keys, actions[0].Desc),
+                    FontSize = 7.5,
+                    TextTrimming = TextTrimming.CharacterEllipsis,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    Margin = new Thickness(2, 0, 2, 5)
+                };
+                actionText.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryBrush");
+                var bar = new Rectangle
+                {
+                    Height = 3,
+                    Margin = new Thickness(3, 0, 3, 0),
+                    VerticalAlignment = VerticalAlignment.Bottom
+                };
+                bar.SetResourceReference(Shape.FillProperty, "PrimaryBrush");
+                grid.Children.Add(actionText);
+                grid.Children.Add(bar);
+                key.ToolTip = string.Join(Environment.NewLine,
+                    actions.Select(action => $"{action.Keys}  {ShortcutDescription(action.Keys, action.Desc)}"));
+            }
+            return key;
+        }
+
+        private string ShortcutDescription(string keys, string descriptionKey)
+        {
+            if (keys.StartsWith("Ctrl + ", StringComparison.Ordinal) &&
+                keys.Length == 8 && keys[^1] is >= '1' and <= '4')
+                return $"{Loc("Str_TT_TopologyOrder")} {Loc(descriptionKey)}";
+            return Loc(descriptionKey);
         }
     }
 }

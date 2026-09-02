@@ -489,7 +489,7 @@
                             BorderBrush="{DynamicResource InputBorderBrush}" BorderThickness="1"
                             Click="TopologyOrderButton_Click">
                         <Button.ToolTip>
-                            <TextBlock><Run Text="{DynamicResource Str_TT_TopologyOrder}"/><Run Text=" (F7-F10)"/></TextBlock>
+                            <TextBlock><Run Text="{DynamicResource Str_TT_TopologyOrder}"/><Run Text=" (F7)"/></TextBlock>
                         </Button.ToolTip>
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
@@ -517,13 +517,13 @@
                         <Button.ContextMenu>
                             <ContextMenu PreviewMouseWheel="Menu_ForwardWheelToGrid">
                                 <MenuItem x:Name="TopologyRoleItem" Header="{DynamicResource Str_Topology_Role}"
-                                          Tag="Role" InputGestureText="F7" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                          Tag="Role" InputGestureText="Ctrl+1" IsCheckable="True" Click="TopologyOrderItem_Click"/>
                                 <MenuItem x:Name="TopologyTypeItem" Header="{DynamicResource Str_Col_Type}"
-                                          Tag="Type" InputGestureText="F8" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                          Tag="Type" InputGestureText="Ctrl+2" IsCheckable="True" Click="TopologyOrderItem_Click"/>
                                 <MenuItem x:Name="TopologyIpItem" Header="{DynamicResource Str_Col_Ip}"
-                                          Tag="Ip" InputGestureText="F9" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                          Tag="Ip" InputGestureText="Ctrl+3" IsCheckable="True" Click="TopologyOrderItem_Click"/>
                                 <MenuItem x:Name="TopologyVendorItem" Header="{DynamicResource Str_Col_Vendor}"
-                                          Tag="Vendor" InputGestureText="F10" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                          Tag="Vendor" InputGestureText="Ctrl+4" IsCheckable="True" Click="TopologyOrderItem_Click"/>
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
@@ -1152,7 +1152,9 @@
         <Grid x:Name="ShortcutsOverlay" Grid.RowSpan="4" Panel.ZIndex="9000" Visibility="Collapsed"
               Margin="{DynamicResource OverlayFrameBleed}"
               Background="#88000000" MouseLeftButtonDown="ShortcutsOverlay_Click">
-            <Grid Width="420" VerticalAlignment="Center" MouseLeftButtonDown="ShortcutsCard_Click">
+            <Grid x:Name="ShortcutCardGrid" MaxWidth="420" Margin="24"
+                  HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                  MouseLeftButtonDown="ShortcutsCard_Click">
                 <Border Background="{DynamicResource OverlayWindowBrush}" CornerRadius="{DynamicResource PanelCornerRadius}" IsHitTestVisible="False">
                     <Border.Effect>
                         <DropShadowEffect Color="Black" BlurRadius="26" ShadowDepth="5" Direction="270" Opacity="0.6"/>
@@ -1186,19 +1188,41 @@
                                 Height="{DynamicResource AboutCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"
                                 Panel.ZIndex="7"/>
 
-                        <StackPanel Margin="{DynamicResource ShortcutsContentMargin}">
-                            <TextBlock x:Name="ShortcutsTitle" Text="Keyboard shortcuts"
-                                       Foreground="{DynamicResource TextBrush}"
-                                       FontSize="14" FontWeight="SemiBold" Margin="0,0,0,14"/>
-                            <Grid x:Name="ShortcutList">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" MinWidth="112"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
+                        <Grid Margin="{DynamicResource ShortcutsContentMargin}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Margin="0,0,0,14">
+                                <TextBlock x:Name="ShortcutsTitle" Text="Keyboard shortcuts"
+                                           Foreground="{DynamicResource TextBrush}"
+                                           FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button x:Name="ShortcutListViewButton" Content="&#xE8FD;" FontFamily="Segoe MDL2 Assets"
+                                            Width="28" Height="24" Margin="0,0,6,0" Click="ShortcutListView_Click"/>
+                                    <Button x:Name="ShortcutMapViewButton" Content="&#xE765;" FontFamily="Segoe MDL2 Assets"
+                                            Width="28" Height="24" Click="ShortcutMapView_Click"/>
+                                </StackPanel>
                             </Grid>
-                            <TextBlock x:Name="ShortcutsHint" Foreground="{DynamicResource MutedTextBrush}"
-                                       FontSize="11" TextWrapping="Wrap" Margin="0,14,0,0"/>
-                        </StackPanel>
+                            <ScrollViewer x:Name="ShortcutListHost" Grid.Row="1"
+                                          VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <StackPanel>
+                                    <Grid x:Name="ShortcutList">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" MinWidth="112"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                    </Grid>
+                                    <TextBlock x:Name="ShortcutsHint" Foreground="{DynamicResource MutedTextBrush}"
+                                               FontSize="11" TextWrapping="Wrap" Margin="0,14,0,0"/>
+                                </StackPanel>
+                            </ScrollViewer>
+                            <Viewbox x:Name="ShortcutMapHost" Grid.Row="1" Visibility="Collapsed"
+                                     Stretch="Uniform" StretchDirection="DownOnly"
+                                     HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <StackPanel x:Name="ShortcutMapRows"/>
+                            </Viewbox>
+                        </Grid>
                     </Grid>
                 </Border>
             </Grid>
