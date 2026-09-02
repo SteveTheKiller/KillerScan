@@ -21,6 +21,10 @@ namespace KillerScan.Shell
         private TopologyOrder _topologyOrder = TopologyOrder.Role;
         private bool _topologyOrderLoaded;
         private bool _showTopology;
+        private readonly Dictionary<string, Point> _topologyPositions = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Line> _topologyLinks = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<Border, Point> _topologyDragStarts = new();
+        private Point _topologyDragMouseStart;
 
         private void TopologyButton_Click(object sender, RoutedEventArgs e)
         {
@@ -69,6 +73,7 @@ namespace KillerScan.Shell
         private void SetTopologyOrder(TopologyOrder order)
         {
             _topologyOrder = order;
+            _topologyPositions.Clear();
             App.SetSetting("TopologyOrder", order.ToString());
             UpdateTopologyOrderUi();
             RefreshTopology();
@@ -116,6 +121,7 @@ namespace KillerScan.Shell
             TopologyCanvas.Width = width;
             TopologyCanvas.Height = height;
             TopologyCanvas.Children.Clear();
+            _topologyLinks.Clear();
 
             var center = new Point(width / 2, 138);
 
@@ -165,8 +171,13 @@ namespace KillerScan.Shell
                 for (int column = 0; column < rowCount; column++)
                 {
                     var point = new Point(left + column * (TopologyNodeWidth + 22), rowY);
-                    DrawInferredLink(center, point);
-                    AddDeviceNode(point.X, point.Y, row.Devices[column]);
+                    var device = row.Devices[column];
+                    if (_topologyPositions.TryGetValue(device.IpAddress, out var saved))
+                        point = new Point(
+                            Math.Max(TopologyNodeWidth / 2, Math.Min(width - TopologyNodeWidth / 2, saved.X)),
+                            Math.Max(TopologyNodeHeight / 2, Math.Min(height - TopologyNodeHeight / 2, saved.Y)));
+                    var link = DrawInferredLink(center, point);
+                    AddDeviceNode(point.X, point.Y, device, link);
                 }
                 rowY += 56;
             }
@@ -225,7 +236,7 @@ namespace KillerScan.Shell
             !string.IsNullOrWhiteSpace(left) && left != "--" &&
             string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
 
-        private void DrawInferredLink(Point from, Point to)
+        private Line DrawInferredLink(Point from, Point to)
         {
             var line = new Line
             {
@@ -240,6 +251,7 @@ namespace KillerScan.Shell
             };
             line.SetResourceReference(Shape.StrokeProperty, "MutedTextBrush");
             TopologyCanvas.Children.Add(line);
+            return line;
         }
 
         private void AddNetworkNode(double x, double y)
@@ -255,13 +267,14 @@ namespace KillerScan.Shell
             AddNode(x, y, role, value, brushKey, device);
         }
 
-        private void AddDeviceNode(double x, double y, NetworkDevice device)
+        private void AddDeviceNode(double x, double y, NetworkDevice device, Line link)
         {
             string title = string.IsNullOrWhiteSpace(device.Hostname)
                 ? Controls.DeviceTypeConverter.Display(device.DeviceType)
                 : device.Hostname;
             string brush = DeviceBrush(device.DeviceType);
             var node = AddNode(x, y, title, device.IpAddress, brush, device);
+            _topologyLinks[device.IpAddress] = link;
             node.ToolTip = string.Join(Environment.NewLine,
                 new[] { title, device.IpAddress, Controls.DeviceTypeConverter.Display(device.DeviceType), device.Vendor }
                     .Where(s => !string.IsNullOrWhiteSpace(s)));
@@ -313,6 +326,8 @@ namespace KillerScan.Shell
             {
                 border.Cursor = Cursors.Hand;
                 border.MouseLeftButtonDown += TopologyNode_Click;
+                border.MouseMove += TopologyNode_MouseMove;
+                border.MouseLeftButtonUp += TopologyNode_MouseLeftButtonUp;
                 border.PreviewMouseRightButtonDown += TopologyNode_RightClick;
                 border.MouseEnter += TopologyNode_MouseEnter;
                 border.MouseLeave += TopologyNode_MouseLeave;
@@ -322,20 +337,84 @@ namespace KillerScan.Shell
             Canvas.SetTop(border, y - TopologyNodeHeight / 2);
             Panel.SetZIndex(border, 2);
             TopologyCanvas.Children.Add(border);
+            UpdateTopologyNodeSelection(border);
             return border;
         }
 
         private void TopologyNode_Click(object sender, MouseButtonEventArgs e)
         {
-            if (sender is not Border { Tag: NetworkDevice device }) return;
-            SelectTopologyDevice(device);
+            if (sender is not Border { Tag: NetworkDevice device } border) return;
+            bool ctrl = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+            bool selected = ResultsGrid.SelectedItems.Contains(device);
+            if (ctrl)
+            {
+                if (selected) ResultsGrid.SelectedItems.Remove(device);
+                else ResultsGrid.SelectedItems.Add(device);
+            }
+            else if (!selected)
+            {
+                ResultsGrid.SelectedItems.Clear();
+                ResultsGrid.SelectedItems.Add(device);
+            }
+
+            UpdateTopologySelectionVisuals();
+            _topologyDragStarts.Clear();
+            if (ResultsGrid.SelectedItems.Contains(device))
+            {
+                foreach (var node in TopologyCanvas.Children.OfType<Border>()
+                             .Where(n => n.Tag is NetworkDevice d && ResultsGrid.SelectedItems.Contains(d)))
+                    _topologyDragStarts[node] = new Point(Canvas.GetLeft(node), Canvas.GetTop(node));
+                _topologyDragMouseStart = e.GetPosition(TopologyCanvas);
+                border.CaptureMouse();
+            }
+            e.Handled = true;
+        }
+
+        private void TopologyNode_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (sender is not Border border || !border.IsMouseCaptured ||
+                e.LeftButton != MouseButtonState.Pressed || _topologyDragStarts.Count == 0) return;
+
+            Point now = e.GetPosition(TopologyCanvas);
+            Vector delta = now - _topologyDragMouseStart;
+            foreach (var item in _topologyDragStarts)
+            {
+                double left = Math.Max(0, Math.Min(TopologyCanvas.Width - TopologyNodeWidth,
+                    item.Value.X + delta.X));
+                double top = Math.Max(0, Math.Min(TopologyCanvas.Height - TopologyNodeHeight,
+                    item.Value.Y + delta.Y));
+                Canvas.SetLeft(item.Key, left);
+                Canvas.SetTop(item.Key, top);
+
+                if (item.Key.Tag is not NetworkDevice device) continue;
+                var center = new Point(left + TopologyNodeWidth / 2, top + TopologyNodeHeight / 2);
+                _topologyPositions[device.IpAddress] = center;
+                if (_topologyLinks.TryGetValue(device.IpAddress, out var link))
+                {
+                    link.X2 = center.X;
+                    link.Y2 = center.Y;
+                }
+            }
+            e.Handled = true;
+        }
+
+        private void TopologyNode_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Border border && border.IsMouseCaptured) border.ReleaseMouseCapture();
+            _topologyDragStarts.Clear();
             e.Handled = true;
         }
 
         private void TopologyNode_RightClick(object sender, MouseButtonEventArgs e)
         {
             if (sender is not Border { Tag: NetworkDevice device }) return;
-            SelectTopologyDevice(device);
+            if (!ResultsGrid.SelectedItems.Contains(device))
+            {
+                ResultsGrid.SelectedItems.Clear();
+                ResultsGrid.SelectedItems.Add(device);
+                UpdateTopologySelectionVisuals();
+            }
+            ResultsGrid.ScrollIntoView(device);
             PrepareDeviceContextMenu();
             if (ResultsGrid.ContextMenu != null)
             {
@@ -347,11 +426,18 @@ namespace KillerScan.Shell
             e.Handled = true;
         }
 
-        private void SelectTopologyDevice(NetworkDevice device)
+        private void UpdateTopologySelectionVisuals()
         {
-            ResultsGrid.SelectedItems.Clear();
-            ResultsGrid.SelectedItem = device;
-            ResultsGrid.ScrollIntoView(device);
+            foreach (var border in TopologyCanvas.Children.OfType<Border>())
+                UpdateTopologyNodeSelection(border);
+        }
+
+        private void UpdateTopologyNodeSelection(Border border)
+        {
+            bool selected = border.Tag is NetworkDevice device && ResultsGrid.SelectedItems.Contains(device);
+            border.BorderThickness = new Thickness(selected ? 2 : 1);
+            border.SetResourceReference(Border.BorderBrushProperty,
+                selected ? "PrimaryBrush" : "MenuBorderBrush");
         }
 
         private static void TopologyNode_MouseEnter(object sender, MouseEventArgs e)
