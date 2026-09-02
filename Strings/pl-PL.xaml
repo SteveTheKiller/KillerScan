@@ -37,6 +37,7 @@
     <sys:String x:Key="Str_FilterPlaceholder">Filtruj urządzenia...</sys:String>
     <sys:String x:Key="Str_Export_Csv">Eksportuj jako CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Eksportuj jako HTML</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">Eksportuj topologię jako PNG</sys:String>
     <sys:String x:Key="Str_Col_Ip">Adres IP</sys:String>
     <sys:String x:Key="Str_Col_Host">Nazwa hosta</sys:String>
     <sys:String x:Key="Str_Col_Mac">Adres MAC</sys:String>
@@ -187,6 +188,7 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Err_Scan">Błąd skanowania: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">Plik CSV</sys:String>
     <sys:String x:Key="Str_Filter_Html">Raport HTML</sys:String>
+    <sys:String x:Key="Str_Filter_Png">Obraz PNG</sys:String>
     <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
     <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
     <sys:String x:Key="Str_Vendor_Randomized">(Losowy)</sys:String>

@@ -38,6 +38,7 @@
     <sys:String x:Key="Str_FilterPlaceholder">ডিভাইস ফিল্টার করুন...</sys:String>
     <sys:String x:Key="Str_Export_Csv">CSV হিসেবে এক্সপোর্ট</sys:String>
     <sys:String x:Key="Str_Export_Html">HTML হিসেবে এক্সপোর্ট</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">PNG হিসেবে টপোলজি এক্সপোর্ট করুন</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">IP ঠিকানা</sys:String>
     <sys:String x:Key="Str_Col_Host">হোস্টনেম</sys:String>
@@ -202,6 +203,7 @@
     <sys:String x:Key="Str_Err_Scan">স্ক্যান ত্রুটি: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">CSV ফাইল</sys:String>
     <sys:String x:Key="Str_Filter_Html">HTML প্রতিবেদন</sys:String>
+    <sys:String x:Key="Str_Filter_Png">PNG ছবি</sys:String>
     <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
     <sys:String x:Key="Str_Iface_Ethernet">ইথারনেট</sys:String>
     <sys:String x:Key="Str_Vendor_Randomized">(এলোমেলো)</sys:String>

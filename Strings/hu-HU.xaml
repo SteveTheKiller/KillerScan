@@ -52,6 +52,7 @@
     <sys:String x:Key="Str_FilterPlaceholder">Eszközök szűrése...</sys:String>
     <sys:String x:Key="Str_Export_Csv">Exportálás CSV-ként</sys:String>
     <sys:String x:Key="Str_Export_Html">Exportálás HTML-ként</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">Topológia exportálása PNG-ként</sys:String>
 
     <!-- Results columns -->
     <sys:String x:Key="Str_Col_Ip">IP-cím</sys:String>
@@ -229,6 +230,7 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Err_Scan">Vizsgálati hiba: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">CSV-fájl</sys:String>
     <sys:String x:Key="Str_Filter_Html">HTML-jelentés</sys:String>
+    <sys:String x:Key="Str_Filter_Png">PNG-kép</sys:String>
     <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
     <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
     <sys:String x:Key="Str_Vendor_Randomized">(Véletlenszerű)</sys:String>

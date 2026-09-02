@@ -51,6 +51,7 @@
     <sys:String x:Key="Str_FilterPlaceholder">デバイスを絞り込み...</sys:String>
     <sys:String x:Key="Str_Export_Csv">CSV としてエクスポート</sys:String>
     <sys:String x:Key="Str_Export_Html">HTML としてエクスポート</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">トポロジを PNG としてエクスポート</sys:String>
 
     <!-- Results columns -->
     <sys:String x:Key="Str_Col_Ip">IP アドレス</sys:String>
@@ -213,6 +214,7 @@
     <sys:String x:Key="Str_Err_Scan">スキャン エラー: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">CSV ファイル</sys:String>
     <sys:String x:Key="Str_Filter_Html">HTML レポート</sys:String>
+    <sys:String x:Key="Str_Filter_Png">PNG 画像</sys:String>
     <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
     <sys:String x:Key="Str_Iface_Ethernet">イーサネット</sys:String>
     <sys:String x:Key="Str_Vendor_Randomized">(ランダム)</sys:String>

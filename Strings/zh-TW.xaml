@@ -38,6 +38,7 @@
     <sys:String x:Key="Str_FilterPlaceholder">篩選裝置...</sys:String>
     <sys:String x:Key="Str_Export_Csv">匯出為 CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">匯出為 HTML</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">將拓撲匯出為 PNG</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">IP 位址</sys:String>
     <sys:String x:Key="Str_Col_Host">主機名稱</sys:String>
@@ -202,6 +203,7 @@
     <sys:String x:Key="Str_Err_Scan">掃描錯誤：{0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">CSV 檔案</sys:String>
     <sys:String x:Key="Str_Filter_Html">HTML 報告</sys:String>
+    <sys:String x:Key="Str_Filter_Png">PNG 影像</sys:String>
     <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
     <sys:String x:Key="Str_Iface_Ethernet">乙太網路</sys:String>
     <sys:String x:Key="Str_Vendor_Randomized">(隨機)</sys:String>

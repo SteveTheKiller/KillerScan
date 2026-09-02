@@ -52,6 +52,7 @@
     <sys:String x:Key="Str_FilterPlaceholder">Filter devices...</sys:String>
     <sys:String x:Key="Str_Export_Csv">Export as CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Export as HTML</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">Export topology as PNG</sys:String>
 
     <!-- Results columns -->
     <sys:String x:Key="Str_Col_Ip">IP Address</sys:String>
@@ -225,6 +226,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Err_Scan">Scan error: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">CSV File</sys:String>
     <sys:String x:Key="Str_Filter_Html">HTML Report</sys:String>
+    <sys:String x:Key="Str_Filter_Png">PNG Image</sys:String>
 
     <!-- Adapter kind and the randomized-MAC vendor placeholder. -->
     <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>

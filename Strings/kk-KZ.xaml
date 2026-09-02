@@ -52,6 +52,7 @@
     <sys:String x:Key="Str_FilterPlaceholder">Құрылғыларды сүзу...</sys:String>
     <sys:String x:Key="Str_Export_Csv">CSV ретінде экспорттау</sys:String>
     <sys:String x:Key="Str_Export_Html">HTML ретінде экспорттау</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">Топологияны PNG ретінде экспорттау</sys:String>
 
     <!-- Results columns -->
     <sys:String x:Key="Str_Col_Ip">IP мекенжайы</sys:String>
@@ -225,6 +226,7 @@
     <sys:String x:Key="Str_Err_Scan">Сканерлеу қатесі: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">CSV файлы</sys:String>
     <sys:String x:Key="Str_Filter_Html">HTML есебі</sys:String>
+    <sys:String x:Key="Str_Filter_Png">PNG кескіні</sys:String>
 
     <!-- Adapter kind and the randomized-MAC vendor placeholder. -->
     <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>

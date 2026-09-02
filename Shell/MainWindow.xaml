@@ -602,6 +602,10 @@
                                 <MenuItem Header="{DynamicResource Str_Export_Html}" Click="ExportHtml_Click">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE943;"/></MenuItem.Icon>
                                 </MenuItem>
+                                <MenuItem x:Name="ExportTopologyPngItem" Header="{DynamicResource Str_Export_TopologyPng}"
+                                          Click="ExportTopologyPng_Click" Visibility="Collapsed">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xEB9F;"/></MenuItem.Icon>
+                                </MenuItem>
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>

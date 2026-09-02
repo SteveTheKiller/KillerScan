@@ -52,6 +52,7 @@
     <sys:String x:Key="Str_FilterPlaceholder">Фильтр устройств...</sys:String>
     <sys:String x:Key="Str_Export_Csv">Экспорт в CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Экспорт в HTML</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">Экспорт топологии в PNG</sys:String>
 
     <!-- Results columns -->
     <sys:String x:Key="Str_Col_Ip">IP-адрес</sys:String>
@@ -223,6 +224,7 @@
     <sys:String x:Key="Str_Err_Scan">Ошибка сканирования: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">Файл CSV</sys:String>
     <sys:String x:Key="Str_Filter_Html">Отчет HTML</sys:String>
+    <sys:String x:Key="Str_Filter_Png">Изображение PNG</sys:String>
 
     <!-- Adapter kind and the randomized-MAC vendor placeholder. -->
     <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>

@@ -38,6 +38,7 @@
     <sys:String x:Key="Str_FilterPlaceholder">Filtrer les appareils...</sys:String>
     <sys:String x:Key="Str_Export_Csv">Exporter en CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Exporter en HTML</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">Exporter la topologie en PNG</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">Adresse IP</sys:String>
     <sys:String x:Key="Str_Col_Host">Nom d'hôte</sys:String>
@@ -202,6 +203,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Err_Scan">Erreur d'analyse : {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">Fichier CSV</sys:String>
     <sys:String x:Key="Str_Filter_Html">Rapport HTML</sys:String>
+    <sys:String x:Key="Str_Filter_Png">Image PNG</sys:String>
     <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
     <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
     <sys:String x:Key="Str_Vendor_Randomized">(Aléatoire)</sys:String>

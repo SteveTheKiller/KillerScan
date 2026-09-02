@@ -44,6 +44,7 @@
     <sys:String x:Key="Str_FilterPlaceholder">Filtrovat zařízení...</sys:String>
     <sys:String x:Key="Str_Export_Csv">Exportovat jako CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Exportovat jako HTML</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">Exportovat topologii jako PNG</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">IP adresa</sys:String>
     <sys:String x:Key="Str_Col_Host">Název hostitele</sys:String>
@@ -200,6 +201,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Err_Scan">Chyba skenování: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">Soubor CSV</sys:String>
     <sys:String x:Key="Str_Filter_Html">Zpráva HTML</sys:String>
+    <sys:String x:Key="Str_Filter_Png">Obrázek PNG</sys:String>
     <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
     <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
     <sys:String x:Key="Str_Vendor_Randomized">(Náhodná)</sys:String>

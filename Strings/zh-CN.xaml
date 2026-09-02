@@ -38,6 +38,7 @@
     <sys:String x:Key="Str_FilterPlaceholder">筛选设备...</sys:String>
     <sys:String x:Key="Str_Export_Csv">导出为 CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">导出为 HTML</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">将拓扑导出为 PNG</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">IP 地址</sys:String>
     <sys:String x:Key="Str_Col_Host">主机名</sys:String>
@@ -202,6 +203,7 @@
     <sys:String x:Key="Str_Err_Scan">扫描错误：{0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">CSV 文件</sys:String>
     <sys:String x:Key="Str_Filter_Html">HTML 报告</sys:String>
+    <sys:String x:Key="Str_Filter_Png">PNG 图像</sys:String>
     <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
     <sys:String x:Key="Str_Iface_Ethernet">以太网</sys:String>
     <sys:String x:Key="Str_Vendor_Randomized">(随机)</sys:String>

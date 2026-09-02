@@ -38,6 +38,7 @@
     <sys:String x:Key="Str_FilterPlaceholder">Cihazları filtrele...</sys:String>
     <sys:String x:Key="Str_Export_Csv">CSV olarak dışa aktar</sys:String>
     <sys:String x:Key="Str_Export_Html">HTML olarak dışa aktar</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">Topolojiyi PNG olarak dışa aktar</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">IP Adresi</sys:String>
     <sys:String x:Key="Str_Col_Host">Ana bilgisayar adı</sys:String>
@@ -202,6 +203,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Err_Scan">Tarama hatası: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">CSV dosyası</sys:String>
     <sys:String x:Key="Str_Filter_Html">HTML raporu</sys:String>
+    <sys:String x:Key="Str_Filter_Png">PNG görüntüsü</sys:String>
     <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
     <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
     <sys:String x:Key="Str_Vendor_Randomized">(Rastgele)</sys:String>
