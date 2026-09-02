@@ -37,6 +37,14 @@
     <sys:String x:Key="Str_Topology_Role">Ruolo</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Disponi topologia per</sys:String>
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Cambia disposizione topologia</sys:String>
+    <sys:String x:Key="Str_History_Title">Cronologia scansioni</sys:String>
+    <sys:String x:Key="Str_History_Empty">Nessuna scansione completata.</sys:String>
+    <sys:String x:Key="Str_History_Change">Modifica</sys:String>
+    <sys:String x:Key="Str_History_Added">Aggiunto</sys:String>
+    <sys:String x:Key="Str_History_Removed">Assente</sys:String>
+    <sys:String x:Key="Str_History_Changed">Modificato</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">Prima scansione di questa destinazione. Tutti i dispositivi sono nuovi.</sys:String>
+    <sys:String x:Key="Str_History_Summary">{0} aggiunti, {1} assenti, {2} modificati</sys:String>
     <sys:String x:Key="Str_TT_Topology">Mostra o nascondi la topologia di rete</sys:String>
     <sys:String x:Key="Str_Topology_Network">Rete locale</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Connessione dedotta</sys:String>
@@ -281,4 +289,11 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_TT_ViewList">Vista elenco</sys:String>
     <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
     <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">Rinomina dispositivo</sys:String>
+    <sys:String x:Key="Str_Rename_Label">Nome:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">Salva</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">Cancella nome manuale</sys:String>
+    <sys:String x:Key="Str_Trust_Device">Dispositivo attendibile</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">Base attendibile creata con {0} dispositivi.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">Avviso: trovati {0} dispositivi sconosciuti.</sys:String>
 </ResourceDictionary>

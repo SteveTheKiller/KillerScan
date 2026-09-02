@@ -37,6 +37,14 @@
     <sys:String x:Key="Str_Topology_Role">Szerep</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Topológia rendezése</sys:String>
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Topológiaelrendezés váltása</sys:String>
+    <sys:String x:Key="Str_History_Title">Vizsgálati előzmények</sys:String>
+    <sys:String x:Key="Str_History_Empty">Még nincs befejezett vizsgálat.</sys:String>
+    <sys:String x:Key="Str_History_Change">Változás</sys:String>
+    <sys:String x:Key="Str_History_Added">Hozzáadva</sys:String>
+    <sys:String x:Key="Str_History_Removed">Hiányzik</sys:String>
+    <sys:String x:Key="Str_History_Changed">Módosítva</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">A cél első vizsgálata. Minden eszköz új.</sys:String>
+    <sys:String x:Key="Str_History_Summary">{0} hozzáadva, {1} hiányzik, {2} módosítva</sys:String>
     <sys:String x:Key="Str_TT_Topology">Hálózati topológia megjelenítése</sys:String>
     <sys:String x:Key="Str_Topology_Network">Helyi hálózat</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Kikövetkeztetett kapcsolat</sys:String>
@@ -281,4 +289,11 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_TT_ViewList">Lista nézet</sys:String>
     <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
     <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">Eszköz átnevezése</sys:String>
+    <sys:String x:Key="Str_Rename_Label">Név:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">Mentés</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">Kézi név törlése</sys:String>
+    <sys:String x:Key="Str_Trust_Device">Megbízható eszköz</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">Megbízható alap létrehozva {0} eszközzel.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">Riasztás: {0} ismeretlen eszköz található.</sys:String>
 </ResourceDictionary>

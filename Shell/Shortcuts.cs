@@ -16,6 +16,7 @@ namespace KillerScan.Shell
         private static readonly (string Keys, string Desc)[] ShortcutRows =
         [
             ("F5",              "Str_Sc_Scan"),
+            ("F6",              "Str_History_Title"),
             ("F9",              "Str_TT_Topology"),
             ("F7",              "Str_Sc_CycleTopologyOrder"),
             ("Ctrl + 1",        "Str_Topology_Role"),
@@ -80,6 +81,7 @@ namespace KillerScan.Shell
             if (e.Key == Key.Escape)
             {
                 if (ShortcutsOverlay.Visibility == Visibility.Visible) { HideShortcuts(); e.Handled = true; return; }
+                if (HistoryOverlay.Visibility == Visibility.Visible) { HideHistory(); e.Handled = true; return; }
                 if (AboutOverlay.Visibility == Visibility.Visible) { AboutClose_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
                 if (_active?.Cts != null) { ScanBtn_Click(this, new RoutedEventArgs()); e.Handled = true; }
                 return;
@@ -172,6 +174,7 @@ namespace KillerScan.Shell
             }
 
             if (e.Key == Key.F5) { ScanBtn_Click(this, new RoutedEventArgs()); e.Handled = true; }
+            else if (e.Key == Key.F6) { HistoryButton_Click(this, new RoutedEventArgs()); e.Handled = true; }
             else if (e.Key == Key.F9) { TopologyButton_Click(this, new RoutedEventArgs()); e.Handled = true; }
             else if (e.Key == Key.F7)
             {

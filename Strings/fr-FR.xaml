@@ -23,6 +23,14 @@
     <sys:String x:Key="Str_Topology_Role">Rôle</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Organiser la topologie par</sys:String>
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Changer la disposition de la topologie</sys:String>
+    <sys:String x:Key="Str_History_Title">Historique des analyses</sys:String>
+    <sys:String x:Key="Str_History_Empty">Aucune analyse terminée.</sys:String>
+    <sys:String x:Key="Str_History_Change">Modification</sys:String>
+    <sys:String x:Key="Str_History_Added">Ajouté</sys:String>
+    <sys:String x:Key="Str_History_Removed">Absent</sys:String>
+    <sys:String x:Key="Str_History_Changed">Modifié</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">Première analyse de cette cible. Tous les appareils sont nouveaux.</sys:String>
+    <sys:String x:Key="Str_History_Summary">{0} ajoutés, {1} absents, {2} modifiés</sys:String>
     <sys:String x:Key="Str_TT_Topology">Afficher ou masquer la topologie du réseau</sys:String>
     <sys:String x:Key="Str_Topology_Network">Réseau local</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Connexion déduite</sys:String>
@@ -265,4 +273,11 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_TT_ViewList">Affichage en liste</sys:String>
     <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
     <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">Renommer l’appareil</sys:String>
+    <sys:String x:Key="Str_Rename_Label">Nom :</sys:String>
+    <sys:String x:Key="Str_Rename_Save">Enregistrer</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">Effacer le nom manuel</sys:String>
+    <sys:String x:Key="Str_Trust_Device">Appareil approuvé</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">Base approuvée créée avec {0} appareils.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">Alerte : {0} appareils inconnus détectés.</sys:String>
 </ResourceDictionary>

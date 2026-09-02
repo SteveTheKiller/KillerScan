@@ -23,6 +23,14 @@
     <sys:String x:Key="Str_Topology_Role">Rol</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Topolojiyi şuna göre düzenle</sys:String>
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Topoloji düzenini değiştir</sys:String>
+    <sys:String x:Key="Str_History_Title">Tarama geçmişi</sys:String>
+    <sys:String x:Key="Str_History_Empty">Henüz tamamlanmış tarama yok.</sys:String>
+    <sys:String x:Key="Str_History_Change">Değişiklik</sys:String>
+    <sys:String x:Key="Str_History_Added">Eklendi</sys:String>
+    <sys:String x:Key="Str_History_Removed">Eksik</sys:String>
+    <sys:String x:Key="Str_History_Changed">Değiştirildi</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">Bu hedefin ilk taraması. Tüm cihazlar yeni.</sys:String>
+    <sys:String x:Key="Str_History_Summary">{0} eklendi, {1} eksik, {2} değiştirildi</sys:String>
     <sys:String x:Key="Str_TT_Topology">Ağ topolojisini aç veya kapat</sys:String>
     <sys:String x:Key="Str_Topology_Network">Yerel ağ</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Çıkarılan bağlantı</sys:String>
@@ -265,4 +273,11 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_TT_ViewList">Liste görünümü</sys:String>
     <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
     <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">Cihazı yeniden adlandır</sys:String>
+    <sys:String x:Key="Str_Rename_Label">Ad:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">Kaydet</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">Elle verilen adı temizle</sys:String>
+    <sys:String x:Key="Str_Trust_Device">Güvenilir cihaz</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">{0} cihazla güvenilir temel oluşturuldu.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">Uyarı: {0} bilinmeyen cihaz bulundu.</sys:String>
 </ResourceDictionary>

@@ -152,5 +152,39 @@ namespace KillerScan.Shell
             if (_showTopology) RefreshTopology();
             StatusText.Text = string.Format(Loc("Str_St_OverrideCleared"), d.MacAddress);
         }
+
+        private void RenameDevice_Click(object sender, RoutedEventArgs e)
+        {
+            var d = GetSelectedDevice(); if (d == null) return;
+            var dlg = new InputDialog(
+                Loc("Str_Rename_Title"),
+                d.IpAddress,
+                Loc("Str_Rename_Label"),
+                DevicePreferences.GetName(d) ?? d.Hostname,
+                Loc("Str_Rename_Save"),
+                Loc("Str_Btn_Cancel")) { Owner = this };
+            dlg.ShowDialog();
+            if (!dlg.Confirmed) return;
+            DevicePreferences.SetName(d, dlg.Value);
+            if (!string.IsNullOrWhiteSpace(dlg.Value)) d.Hostname = dlg.Value.Trim();
+            _filteredView?.Refresh();
+            if (_showTopology) RefreshTopology();
+        }
+
+        private void ClearDeviceName_Click(object sender, RoutedEventArgs e)
+        {
+            var d = GetSelectedDevice(); if (d == null) return;
+            DevicePreferences.SetName(d, null);
+            d.Hostname = string.IsNullOrWhiteSpace(d.NetbiosName) ? string.Empty : d.NetbiosName;
+            _filteredView?.Refresh();
+            if (_showTopology) RefreshTopology();
+        }
+
+        private void TrustDevice_Click(object sender, RoutedEventArgs e)
+        {
+            var d = GetSelectedDevice(); if (d == null) return;
+            DevicePreferences.SetTrusted(d, !DevicePreferences.IsTrusted(d));
+            TrustDeviceMenuItem.IsChecked = DevicePreferences.IsTrusted(d);
+        }
     }
 }

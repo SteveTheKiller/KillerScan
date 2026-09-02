@@ -36,6 +36,14 @@
     <sys:String x:Key="Str_Topology_Role">役割</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">トポロジの並べ替え</sys:String>
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">トポロジの配置を切り替える</sys:String>
+    <sys:String x:Key="Str_History_Title">スキャン履歴</sys:String>
+    <sys:String x:Key="Str_History_Empty">完了したスキャンはまだありません。</sys:String>
+    <sys:String x:Key="Str_History_Change">変更</sys:String>
+    <sys:String x:Key="Str_History_Added">追加</sys:String>
+    <sys:String x:Key="Str_History_Removed">不明</sys:String>
+    <sys:String x:Key="Str_History_Changed">変更済み</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">この対象の最初のスキャンです。すべてのデバイスが新規です。</sys:String>
+    <sys:String x:Key="Str_History_Summary">追加 {0}、不明 {1}、変更 {2}</sys:String>
     <sys:String x:Key="Str_TT_Topology">ネットワーク トポロジの表示を切り替えます</sys:String>
     <sys:String x:Key="Str_Topology_Network">ローカル ネットワーク</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">推定された接続</sys:String>
@@ -276,4 +284,11 @@
     <sys:String x:Key="Str_TT_ViewList">一覧表示</sys:String>
     <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
     <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">デバイス名を変更</sys:String>
+    <sys:String x:Key="Str_Rename_Label">名前:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">保存</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">手動名を消去</sys:String>
+    <sys:String x:Key="Str_Trust_Device">信頼済みデバイス</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">{0} 台のデバイスで信頼済み基準を作成しました。</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">警告: 不明なデバイスが {0} 台見つかりました。</sys:String>
 </ResourceDictionary>

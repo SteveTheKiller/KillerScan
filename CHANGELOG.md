@@ -9,6 +9,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 1.6.2 adds network mapping and improves command-line integration with other applications.
 
 ### Added
+- Scan history compares added, missing, and changed devices, with trusted-device baselines and unknown-device alerts.
+- Manual device names now persist alongside manual classifications.
 - F1 now switches between the shortcut list and a persistent keyboard-map view.
 - Deep Scan All performs an exhaustive, cancellable rescan of every discovered host.
 - F9 opens an inferred topology view with movable, multi-select device boxes and four arrangement modes. (#3)

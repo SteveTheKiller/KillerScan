@@ -22,6 +22,14 @@
     <sys:String x:Key="Str_Topology_Role">Rola</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Rozmieść topologię według</sys:String>
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Przełącz układ topologii</sys:String>
+    <sys:String x:Key="Str_History_Title">Historia skanowania</sys:String>
+    <sys:String x:Key="Str_History_Empty">Brak ukończonych skanów.</sys:String>
+    <sys:String x:Key="Str_History_Change">Zmiana</sys:String>
+    <sys:String x:Key="Str_History_Added">Dodano</sys:String>
+    <sys:String x:Key="Str_History_Removed">Brak</sys:String>
+    <sys:String x:Key="Str_History_Changed">Zmieniono</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">Pierwszy skan tego celu. Wszystkie urządzenia są nowe.</sys:String>
+    <sys:String x:Key="Str_History_Summary">{0} dodano, {1} brak, {2} zmieniono</sys:String>
     <sys:String x:Key="Str_TT_Topology">Przełącz topologię sieci</sys:String>
     <sys:String x:Key="Str_Topology_Network">Sieć lokalna</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Połączenie wywnioskowane</sys:String>
@@ -250,4 +258,11 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_TT_ViewList">Widok listy</sys:String>
     <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
     <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">Zmień nazwę urządzenia</sys:String>
+    <sys:String x:Key="Str_Rename_Label">Nazwa:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">Zapisz</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">Wyczyść nazwę ręczną</sys:String>
+    <sys:String x:Key="Str_Trust_Device">Zaufane urządzenie</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">Utworzono zaufaną bazę z {0} urządzeniami.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">Alert: znaleziono {0} nieznanych urządzeń.</sys:String>
 </ResourceDictionary>

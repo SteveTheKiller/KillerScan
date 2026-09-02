@@ -295,6 +295,7 @@ namespace KillerScan.Services
 
                         // Classify even in quick scan (hostname + OUI, no ports)
                         device.DeviceType = ClassifyDevice(device);
+                        DevicePreferences.Apply(device);
 
                         DeviceFound?.Invoke(device);
                         int done = Interlocked.Increment(ref completed);
@@ -458,6 +459,7 @@ namespace KillerScan.Services
 
             // Classify device type using weighted scoring over all signals.
             device.DeviceType = ClassifyDevice(device);
+            DevicePreferences.Apply(device);
 
             return device;
         }
@@ -548,6 +550,7 @@ namespace KillerScan.Services
                 device.Hostname = device.NetbiosName;
 
             device.DeviceType = ClassifyDevice(device);
+            DevicePreferences.Apply(device);
             return device;
         }
 

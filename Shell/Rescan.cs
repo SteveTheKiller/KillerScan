@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using KillerScan.Models;
+using KillerScan.Services;
 
 namespace KillerScan.Shell
 {
@@ -39,6 +40,9 @@ namespace KillerScan.Shell
             int n = ResultsGrid.SelectedItems.Count;
             RescanMenuItem.Header = Loc(n > 1 ? "Str_Ctx_RescanMany" : "Str_Ctx_RescanOne");
             RescanMenuItem.IsEnabled = n > 0 && _rescanCts == null && _active.Cts == null;
+            var selected = GetSelectedDevice();
+            TrustDeviceMenuItem.IsChecked = selected != null && DevicePreferences.IsTrusted(selected);
+            TrustDeviceMenuItem.IsEnabled = selected != null;
         }
 
         private async void RescanSelected_Click(object sender, RoutedEventArgs e)

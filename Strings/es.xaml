@@ -23,6 +23,14 @@
     <sys:String x:Key="Str_Topology_Role">Función</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Organizar topología por</sys:String>
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Cambiar disposición de topología</sys:String>
+    <sys:String x:Key="Str_History_Title">Historial de análisis</sys:String>
+    <sys:String x:Key="Str_History_Empty">Aún no hay análisis completados.</sys:String>
+    <sys:String x:Key="Str_History_Change">Cambio</sys:String>
+    <sys:String x:Key="Str_History_Added">Añadido</sys:String>
+    <sys:String x:Key="Str_History_Removed">Ausente</sys:String>
+    <sys:String x:Key="Str_History_Changed">Modificado</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">Primer análisis de este destino. Todos los dispositivos son nuevos.</sys:String>
+    <sys:String x:Key="Str_History_Summary">{0} añadidos, {1} ausentes, {2} modificados</sys:String>
     <sys:String x:Key="Str_TT_Topology">Alternar topología de red</sys:String>
     <sys:String x:Key="Str_Topology_Network">Red local</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Conexión inferida</sys:String>
@@ -265,4 +273,11 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_TT_ViewList">Vista de lista</sys:String>
     <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
     <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">Cambiar nombre del dispositivo</sys:String>
+    <sys:String x:Key="Str_Rename_Label">Nombre:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">Guardar</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">Borrar nombre manual</sys:String>
+    <sys:String x:Key="Str_Trust_Device">Dispositivo de confianza</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">Base de confianza creada con {0} dispositivos.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">Alerta: se encontraron {0} dispositivos desconocidos.</sys:String>
 </ResourceDictionary>

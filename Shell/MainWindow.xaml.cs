@@ -53,6 +53,8 @@ namespace KillerScan.Shell
             OuiLookup.Load();
             DeviceOverrides.Load();
             DeviceLogins.Load();
+            DevicePreferences.Load();
+            ScanHistory.Load();
 
             _about = new AboutController(this);
 

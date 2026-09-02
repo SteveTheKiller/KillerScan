@@ -37,6 +37,14 @@
     <sys:String x:Key="Str_Topology_Role">Роль</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Упорядочить топологию по</sys:String>
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Переключить расположение топологии</sys:String>
+    <sys:String x:Key="Str_History_Title">История сканирования</sys:String>
+    <sys:String x:Key="Str_History_Empty">Завершенных сканирований пока нет.</sys:String>
+    <sys:String x:Key="Str_History_Change">Изменение</sys:String>
+    <sys:String x:Key="Str_History_Added">Добавлено</sys:String>
+    <sys:String x:Key="Str_History_Removed">Отсутствует</sys:String>
+    <sys:String x:Key="Str_History_Changed">Изменено</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">Первое сканирование этой цели. Все устройства новые.</sys:String>
+    <sys:String x:Key="Str_History_Summary">Добавлено: {0}, отсутствует: {1}, изменено: {2}</sys:String>
     <sys:String x:Key="Str_TT_Topology">Показать или скрыть топологию сети</sys:String>
     <sys:String x:Key="Str_Topology_Network">Локальная сеть</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Предполагаемое соединение</sys:String>
@@ -291,4 +299,11 @@
     <sys:String x:Key="Str_TT_ViewList">Список</sys:String>
     <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
     <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">Переименовать устройство</sys:String>
+    <sys:String x:Key="Str_Rename_Label">Имя:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">Сохранить</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">Удалить заданное имя</sys:String>
+    <sys:String x:Key="Str_Trust_Device">Доверенное устройство</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">Доверенная база создана с {0} устройствами.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">Внимание: обнаружено {0} неизвестных устройств.</sys:String>
 </ResourceDictionary>

@@ -37,6 +37,14 @@
     <sys:String x:Key="Str_Topology_Role">Role</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Arrange topology by</sys:String>
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Cycle topology arrangement</sys:String>
+    <sys:String x:Key="Str_History_Title">Scan history</sys:String>
+    <sys:String x:Key="Str_History_Empty">No completed scans yet.</sys:String>
+    <sys:String x:Key="Str_History_Change">Change</sys:String>
+    <sys:String x:Key="Str_History_Added">Added</sys:String>
+    <sys:String x:Key="Str_History_Removed">Missing</sys:String>
+    <sys:String x:Key="Str_History_Changed">Changed</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">First scan of this target. All devices are new.</sys:String>
+    <sys:String x:Key="Str_History_Summary">{0} added, {1} missing, {2} changed</sys:String>
     <sys:String x:Key="Str_TT_Topology">Toggle network topology</sys:String>
     <sys:String x:Key="Str_Topology_Network">Local network</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Inferred connection</sys:String>
@@ -307,4 +315,11 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_TT_ViewList">List view</sys:String>
     <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
     <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">Rename device</sys:String>
+    <sys:String x:Key="Str_Rename_Label">Name:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">Save</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">Clear manual name</sys:String>
+    <sys:String x:Key="Str_Trust_Device">Trusted device</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">Trusted baseline created with {0} devices.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">Alert: {0} unknown devices found.</sys:String>
 </ResourceDictionary>

@@ -23,6 +23,14 @@
     <sys:String x:Key="Str_Topology_Role">角色</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">拓撲排列方式</sys:String>
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">切換拓撲排列方式</sys:String>
+    <sys:String x:Key="Str_History_Title">掃描歷史</sys:String>
+    <sys:String x:Key="Str_History_Empty">尚無已完成的掃描。</sys:String>
+    <sys:String x:Key="Str_History_Change">變更</sys:String>
+    <sys:String x:Key="Str_History_Added">新增</sys:String>
+    <sys:String x:Key="Str_History_Removed">缺少</sys:String>
+    <sys:String x:Key="Str_History_Changed">已變更</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">這是此目標的首次掃描。所有裝置均為新增。</sys:String>
+    <sys:String x:Key="Str_History_Summary">新增 {0}，缺少 {1}，變更 {2}</sys:String>
     <sys:String x:Key="Str_TT_Topology">切換網路拓撲</sys:String>
     <sys:String x:Key="Str_Topology_Network">本機網路</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">推斷的連線</sys:String>
@@ -265,4 +273,11 @@
     <sys:String x:Key="Str_TT_ViewList">清單檢視</sys:String>
     <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
     <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">重新命名裝置</sys:String>
+    <sys:String x:Key="Str_Rename_Label">名稱:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">儲存</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">清除手動名稱</sys:String>
+    <sys:String x:Key="Str_Trust_Device">信任的裝置</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">已使用 {0} 台裝置建立信任基準。</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">警示: 發現 {0} 台未知裝置。</sys:String>
 </ResourceDictionary>

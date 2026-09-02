@@ -93,9 +93,11 @@ namespace KillerScan.Shell
                 ScanBtn.Content = Loc("Str_Btn_Stop");
             }
             s.Cts = new CancellationTokenSource();
+            bool completed = false;
             try
             {
                 await s.Scanner.ScanSubnetAsync(s.SubnetText, s.Cts.Token, fullScan: true);
+                completed = true;
             }
             catch (OperationCanceledException) { s.Status = Loc("Str_St_ScanCanceled"); if (s == _active) StatusText.Text = s.Status; }
             catch (Exception ex) { MessageBox.Show(string.Format(Loc("Str_Err_Scan"), ex.Message), AppInfo.DisplayName, MessageBoxButton.OK, MessageBoxImage.Error); }
@@ -109,6 +111,21 @@ namespace KillerScan.Shell
                     ScanProgress.Visibility = Visibility.Collapsed;
                     ExportButton.IsEnabled = s.Devices.Count > 0;
                     UpdateDeepScanButton();
+                }
+                if (completed && s.Devices.Count > 0)
+                {
+                    ScanHistory.Record(s.ScannedSubnet, s.Devices);
+                    if (!DevicePreferences.HasTrustedDevices)
+                    {
+                        DevicePreferences.TrustAll(s.Devices);
+                        StatusText.Text = string.Format(Loc("Str_St_TrustedBaseline"), s.Devices.Count);
+                    }
+                    else
+                    {
+                        int unknown = s.Devices.Count(device => !DevicePreferences.IsTrusted(device));
+                        if (unknown > 0)
+                            StatusText.Text = string.Format(Loc("Str_St_UnknownDevices"), unknown);
+                    }
                 }
             }
         }

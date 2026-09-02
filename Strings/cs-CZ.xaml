@@ -29,6 +29,14 @@
     <sys:String x:Key="Str_Topology_Role">Role</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Uspořádat topologii podle</sys:String>
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Procházet uspořádání topologie</sys:String>
+    <sys:String x:Key="Str_History_Title">Historie skenování</sys:String>
+    <sys:String x:Key="Str_History_Empty">Zatím žádná dokončená skenování.</sys:String>
+    <sys:String x:Key="Str_History_Change">Změna</sys:String>
+    <sys:String x:Key="Str_History_Added">Přidáno</sys:String>
+    <sys:String x:Key="Str_History_Removed">Chybí</sys:String>
+    <sys:String x:Key="Str_History_Changed">Změněno</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">První sken tohoto cíle. Všechna zařízení jsou nová.</sys:String>
+    <sys:String x:Key="Str_History_Summary">{0} přidáno, {1} chybí, {2} změněno</sys:String>
     <sys:String x:Key="Str_TT_Topology">Přepnout topologii sítě</sys:String>
     <sys:String x:Key="Str_Topology_Network">Místní síť</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Odvozené připojení</sys:String>
@@ -263,4 +271,11 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_TT_ViewList">Zobrazení seznamu</sys:String>
     <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
     <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">Přejmenovat zařízení</sys:String>
+    <sys:String x:Key="Str_Rename_Label">Název:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">Uložit</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">Vymazat ruční název</sys:String>
+    <sys:String x:Key="Str_Trust_Device">Důvěryhodné zařízení</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">Důvěryhodný základ vytvořen s {0} zařízeními.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">Upozornění: nalezeno {0} neznámých zařízení.</sys:String>
 </ResourceDictionary>

@@ -37,6 +37,14 @@
     <sys:String x:Key="Str_Topology_Role">Рөл</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Топологияны реттеу</sys:String>
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Топология орналасуын ауыстыру</sys:String>
+    <sys:String x:Key="Str_History_Title">Сканерлеу тарихы</sys:String>
+    <sys:String x:Key="Str_History_Empty">Аяқталған сканерлеулер әлі жоқ.</sys:String>
+    <sys:String x:Key="Str_History_Change">Өзгеріс</sys:String>
+    <sys:String x:Key="Str_History_Added">Қосылды</sys:String>
+    <sys:String x:Key="Str_History_Removed">Жоқ</sys:String>
+    <sys:String x:Key="Str_History_Changed">Өзгертілді</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">Бұл нысанның алғашқы сканерлеуі. Барлық құрылғы жаңа.</sys:String>
+    <sys:String x:Key="Str_History_Summary">{0} қосылды, {1} жоқ, {2} өзгертілді</sys:String>
     <sys:String x:Key="Str_TT_Topology">Желі топологиясын көрсету немесе жасыру</sys:String>
     <sys:String x:Key="Str_Topology_Network">Жергілікті желі</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Болжалды байланыс</sys:String>
@@ -307,4 +315,11 @@
     <sys:String x:Key="Str_TT_ViewList">Тізім</sys:String>
     <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
     <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">Құрылғы атын өзгерту</sys:String>
+    <sys:String x:Key="Str_Rename_Label">Атауы:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">Сақтау</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">Қолмен берілген атауды тазалау</sys:String>
+    <sys:String x:Key="Str_Trust_Device">Сенімді құрылғы</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">{0} құрылғымен сенімді негіз жасалды.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">Ескерту: {0} белгісіз құрылғы табылды.</sys:String>
 </ResourceDictionary>

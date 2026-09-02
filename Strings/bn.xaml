@@ -23,6 +23,14 @@
     <sys:String x:Key="Str_Topology_Role">ভূমিকা</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">টপোলজি সাজান</sys:String>
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">টপোলজি বিন্যাস পরিবর্তন করুন</sys:String>
+    <sys:String x:Key="Str_History_Title">স্ক্যান ইতিহাস</sys:String>
+    <sys:String x:Key="Str_History_Empty">এখনও কোনো সম্পূর্ণ স্ক্যান নেই।</sys:String>
+    <sys:String x:Key="Str_History_Change">পরিবর্তন</sys:String>
+    <sys:String x:Key="Str_History_Added">যোগ হয়েছে</sys:String>
+    <sys:String x:Key="Str_History_Removed">অনুপস্থিত</sys:String>
+    <sys:String x:Key="Str_History_Changed">পরিবর্তিত</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">এই লক্ষ্যটির প্রথম স্ক্যান। সব ডিভাইস নতুন।</sys:String>
+    <sys:String x:Key="Str_History_Summary">{0} যোগ হয়েছে, {1} অনুপস্থিত, {2} পরিবর্তিত</sys:String>
     <sys:String x:Key="Str_TT_Topology">নেটওয়ার্ক টপোলজি দেখান বা লুকান</sys:String>
     <sys:String x:Key="Str_Topology_Network">স্থানীয় নেটওয়ার্ক</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">অনুমান করা সংযোগ</sys:String>
@@ -265,4 +273,11 @@
     <sys:String x:Key="Str_TT_ViewList">তালিকা ভিউ</sys:String>
     <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
     <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">ডিভাইসের নাম পরিবর্তন করুন</sys:String>
+    <sys:String x:Key="Str_Rename_Label">নাম:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">সংরক্ষণ</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">ম্যানুয়াল নাম মুছুন</sys:String>
+    <sys:String x:Key="Str_Trust_Device">বিশ্বস্ত ডিভাইস</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">{0}টি ডিভাইস দিয়ে বিশ্বস্ত ভিত্তি তৈরি হয়েছে।</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">সতর্কতা: {0}টি অজানা ডিভাইস পাওয়া গেছে।</sys:String>
 </ResourceDictionary>
