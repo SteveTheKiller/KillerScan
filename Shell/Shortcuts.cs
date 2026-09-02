@@ -22,6 +22,10 @@ namespace KillerScan.Shell
         [
             ("F5",              "Str_Sc_Scan"),
             ("F6",              "Str_TT_Topology"),
+            ("F7",              "Str_Topology_Role"),
+            ("F8",              "Str_Col_Type"),
+            ("F9",              "Str_Col_Ip"),
+            ("F10",             "Str_Col_Vendor"),
             ("Esc",             "Str_Sc_Cancel"),
             ("Ctrl + R",        "Str_Sc_Rescan"),
             ("Ctrl + F",        "Str_Sc_Subnet"),
@@ -141,6 +145,18 @@ namespace KillerScan.Shell
 
             if (e.Key == Key.F5) { ScanBtn_Click(this, new RoutedEventArgs()); e.Handled = true; }
             else if (e.Key == Key.F6) { TopologyButton_Click(this, new RoutedEventArgs()); e.Handled = true; }
+            else if (e.Key is Key.F7 or Key.F8 or Key.F9 or Key.F10)
+            {
+                if (!_showTopology) TopologyButton_Click(this, new RoutedEventArgs());
+                SetTopologyOrder(e.Key switch
+                {
+                    Key.F8 => TopologyOrder.Type,
+                    Key.F9 => TopologyOrder.Ip,
+                    Key.F10 => TopologyOrder.Vendor,
+                    _ => TopologyOrder.Role
+                });
+                e.Handled = true;
+            }
             else if (e.Key == Key.Enter && ResultsGrid.IsKeyboardFocusWithin && GetSelectedDevice() != null)
             { OpenBrowser_Click(this, new RoutedEventArgs()); e.Handled = true; }
         }

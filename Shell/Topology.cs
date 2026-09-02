@@ -16,7 +16,7 @@ namespace KillerScan.Shell
     public partial class MainWindow
     {
         private const double TopologyNodeWidth = 126;
-        private const double TopologyNodeHeight = 50;
+        private const double TopologyNodeHeight = 40;
         private enum TopologyOrder { Role, Type, Ip, Vendor }
         private TopologyOrder _topologyOrder = TopologyOrder.Role;
         private bool _topologyOrderLoaded;
@@ -30,7 +30,9 @@ namespace KillerScan.Shell
             TopologyOrderButton.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;
             TopologyButton.Tag = _showTopology ? "on" : null;
             FixedTopologyButton.Tag = _showTopology ? "on" : null;
-            PaneTitle.Text = Loc(_showTopology ? "Str_Topology_Title" : "Str_DiscoveredDevices");
+            PaneTitle.Text = _showTopology
+                ? $"{Loc("Str_Topology_Title")} ({Loc("Str_Topology_Inferred")})"
+                : Loc("Str_DiscoveredDevices");
             if (_showTopology)
             {
                 LoadTopologyOrder();
@@ -61,6 +63,11 @@ namespace KillerScan.Shell
         {
             if (sender is not MenuItem { Tag: string value } ||
                 !Enum.TryParse(value, out TopologyOrder order)) return;
+            SetTopologyOrder(order);
+        }
+
+        private void SetTopologyOrder(TopologyOrder order)
+        {
             _topologyOrder = order;
             App.SetSetting("TopologyOrder", order.ToString());
             UpdateTopologyOrderUi();
@@ -105,7 +112,7 @@ namespace KillerScan.Shell
             var deviceRows = BuildDeviceRows(regular, columns, _topologyOrder);
             int groupGaps = Math.Max(0, deviceRows.Count(r => r.StartsGroup) - 1);
             double height = Math.Max(TopologyPane.ActualHeight,
-                235 + deviceRows.Count * 76 + groupGaps * 16);
+                218 + deviceRows.Count * 56 + groupGaps * 10);
             TopologyCanvas.Width = width;
             TopologyCanvas.Height = height;
             TopologyCanvas.Children.Clear();
@@ -147,11 +154,11 @@ namespace KillerScan.Shell
                 return;
             }
 
-            double rowY = 235;
+            double rowY = 218;
             for (int rowIndex = 0; rowIndex < deviceRows.Count; rowIndex++)
             {
                 var row = deviceRows[rowIndex];
-                if (rowIndex > 0 && row.StartsGroup) rowY += 16;
+                if (rowIndex > 0 && row.StartsGroup) rowY += 10;
                 int rowCount = row.Devices.Count;
                 double rowWidth = rowCount * TopologyNodeWidth + (rowCount - 1) * 22;
                 double left = (width - rowWidth) / 2 + TopologyNodeWidth / 2;
@@ -161,7 +168,7 @@ namespace KillerScan.Shell
                     DrawInferredLink(center, point);
                     AddDeviceNode(point.X, point.Y, row.Devices[column]);
                 }
-                rowY += 76;
+                rowY += 56;
             }
         }
 
@@ -262,7 +269,7 @@ namespace KillerScan.Shell
 
         private Border AddNode(double x, double y, string title, string detail, string brushKey, NetworkDevice? device)
         {
-            var accent = new Border { Height = 3 };
+            var accent = new Border { Height = 2 };
             accent.SetResourceReference(Border.BackgroundProperty, brushKey);
 
             var titleBlock = new TextBlock
@@ -271,7 +278,7 @@ namespace KillerScan.Shell
                 FontSize = 11,
                 FontWeight = FontWeights.SemiBold,
                 TextTrimming = TextTrimming.CharacterEllipsis,
-                Margin = new Thickness(7, 4, 7, 0)
+                Margin = new Thickness(6, 2, 6, 0)
             };
             titleBlock.SetResourceReference(TextBlock.ForegroundProperty, "MenuTextBrush");
 
@@ -281,7 +288,7 @@ namespace KillerScan.Shell
                 FontFamily = new FontFamily("Consolas"),
                 FontSize = 10,
                 TextTrimming = TextTrimming.CharacterEllipsis,
-                Margin = new Thickness(7, 1, 7, 4)
+                Margin = new Thickness(6, 0, 6, 2)
             };
             detailBlock.SetResourceReference(TextBlock.ForegroundProperty, "MenuTextBrush");
             detailBlock.Opacity = 0.78;
@@ -307,7 +314,6 @@ namespace KillerScan.Shell
                 border.Cursor = Cursors.Hand;
                 border.MouseLeftButtonDown += TopologyNode_Click;
                 border.PreviewMouseRightButtonDown += TopologyNode_RightClick;
-                border.ContextMenu = ResultsGrid.ContextMenu;
                 border.MouseEnter += TopologyNode_MouseEnter;
                 border.MouseLeave += TopologyNode_MouseLeave;
             }
@@ -331,6 +337,14 @@ namespace KillerScan.Shell
             if (sender is not Border { Tag: NetworkDevice device }) return;
             SelectTopologyDevice(device);
             PrepareDeviceContextMenu();
+            if (ResultsGrid.ContextMenu != null)
+            {
+                ResultsGrid.ContextMenu.PlacementTarget = (Border)sender;
+                ResultsGrid.ContextMenu.Placement =
+                    System.Windows.Controls.Primitives.PlacementMode.MousePoint;
+                ResultsGrid.ContextMenu.IsOpen = true;
+            }
+            e.Handled = true;
         }
 
         private void SelectTopologyDevice(NetworkDevice device)

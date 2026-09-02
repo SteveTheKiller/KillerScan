@@ -479,6 +479,33 @@
                             BorderBrush="{DynamicResource InputBorderBrush}" BorderThickness="1"
                             Click="TopologyOrderButton_Click"
                             ToolTip="{DynamicResource Str_TT_TopologyOrder}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="OrderBorder"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="OrderBorder" Property="Background"
+                                                Value="{DynamicResource OutlineHoverBrush}"/>
+                                        <Setter Property="Foreground"
+                                                Value="{DynamicResource OutlineHoverTextBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="OrderBorder" Property="Background"
+                                                Value="{DynamicResource OutlinePressedBrush}"/>
+                                        <Setter Property="Foreground"
+                                                Value="{DynamicResource OutlineTextBrush}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE8CB;" FontFamily="Segoe MDL2 Assets" FontSize="11"
                                        VerticalAlignment="Center" Margin="0,0,7,0"/>
@@ -488,13 +515,13 @@
                         <Button.ContextMenu>
                             <ContextMenu PreviewMouseWheel="Menu_ForwardWheelToGrid">
                                 <MenuItem x:Name="TopologyRoleItem" Header="{DynamicResource Str_Topology_Role}"
-                                          Tag="Role" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                          Tag="Role" InputGestureText="F7" IsCheckable="True" Click="TopologyOrderItem_Click"/>
                                 <MenuItem x:Name="TopologyTypeItem" Header="{DynamicResource Str_Col_Type}"
-                                          Tag="Type" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                          Tag="Type" InputGestureText="F8" IsCheckable="True" Click="TopologyOrderItem_Click"/>
                                 <MenuItem x:Name="TopologyIpItem" Header="{DynamicResource Str_Col_Ip}"
-                                          Tag="Ip" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                          Tag="Ip" InputGestureText="F9" IsCheckable="True" Click="TopologyOrderItem_Click"/>
                                 <MenuItem x:Name="TopologyVendorItem" Header="{DynamicResource Str_Col_Vendor}"
-                                          Tag="Vendor" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                          Tag="Vendor" InputGestureText="F10" IsCheckable="True" Click="TopologyOrderItem_Click"/>
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
@@ -963,17 +990,6 @@
                                   VerticalScrollBarVisibility="Auto">
                         <Canvas x:Name="TopologyCanvas" Background="Transparent"/>
                     </ScrollViewer>
-                    <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,12"
-                            Padding="8,5" Background="{DynamicResource TextFieldBrush}"
-                            BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1"
-                            CornerRadius="{DynamicResource ControlCornerRadius}">
-                        <StackPanel Orientation="Horizontal">
-                            <Line X1="0" Y1="0" X2="24" Y2="0" Stroke="{DynamicResource MutedTextBrush}"
-                                  StrokeThickness="1" StrokeDashArray="2,3" VerticalAlignment="Center"/>
-                            <TextBlock Text="{DynamicResource Str_Topology_Inferred}" Margin="7,0,0,0"
-                                       Foreground="{DynamicResource MutedTextBrush}" FontSize="11"/>
-                        </StackPanel>
-                    </Border>
                 </Grid>
             </Grid>
         </Border>
