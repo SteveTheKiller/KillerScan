@@ -21,6 +21,7 @@ namespace KillerScan.Shell
         private static readonly (string Keys, string Desc)[] ShortcutRows =
         [
             ("F5",              "Str_Sc_Scan"),
+            ("F6",              "Str_TT_Topology"),
             ("Esc",             "Str_Sc_Cancel"),
             ("Ctrl + R",        "Str_Sc_Rescan"),
             ("Ctrl + F",        "Str_Sc_Subnet"),
@@ -139,6 +140,7 @@ namespace KillerScan.Shell
             }
 
             if (e.Key == Key.F5) { ScanBtn_Click(this, new RoutedEventArgs()); e.Handled = true; }
+            else if (e.Key == Key.F6) { TopologyButton_Click(this, new RoutedEventArgs()); e.Handled = true; }
             else if (e.Key == Key.Enter && ResultsGrid.IsKeyboardFocusWithin && GetSelectedDevice() != null)
             { OpenBrowser_Click(this, new RoutedEventArgs()); e.Handled = true; }
         }
