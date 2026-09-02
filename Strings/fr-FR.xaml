@@ -13,6 +13,7 @@
 
     <sys:String x:Key="Str_Lbl_Subnet">Sous-réseau</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Scanner</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Tout analyser en profondeur</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Local</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Passerelle</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>

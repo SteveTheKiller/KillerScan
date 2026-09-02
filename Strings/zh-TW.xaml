@@ -13,6 +13,7 @@
 
     <sys:String x:Key="Str_Lbl_Subnet">子網路</sys:String>
     <sys:String x:Key="Str_Btn_Scan">掃描</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">深度掃描全部</sys:String>
     <sys:String x:Key="Str_Lbl_Local">本機</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">閘道</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>

@@ -13,6 +13,7 @@
 
     <sys:String x:Key="Str_Lbl_Subnet">সাবনেট</sys:String>
     <sys:String x:Key="Str_Btn_Scan">স্ক্যান</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">সবকিছু গভীরভাবে স্ক্যান করুন</sys:String>
     <sys:String x:Key="Str_Lbl_Local">লোকাল</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">গেটওয়ে</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>

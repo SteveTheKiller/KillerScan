@@ -205,10 +205,17 @@
 
                     <!-- Quiet at rest, accent-filled on hover: the same primary-action treatment
                          used by the other family toolbars. -->
-                    <Button Grid.Column="2" x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}"
-                            Style="{StaticResource OutlineButton}"
-                            Click="ScanBtn_Click"
-                            FontSize="12" Padding="14,5" Margin="10,0,0,0"/>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="10,0,0,0">
+                        <Button x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}"
+                                Style="{StaticResource OutlineButton}"
+                                Click="ScanBtn_Click"
+                                FontSize="12" Padding="14,5"/>
+                        <Button x:Name="DeepScanAllButton"
+                                Content="{DynamicResource Str_Btn_DeepScanAll}"
+                                Style="{StaticResource OutlineButton}"
+                                Click="DeepScanAll_Click" Visibility="Collapsed"
+                                FontSize="12" Padding="10,5" Margin="6,0,0,0"/>
+                    </StackPanel>
 
                     <!-- Local network info - clean label/value pairs + an accent interface badge -->
                     <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right"

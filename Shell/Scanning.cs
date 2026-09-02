@@ -51,6 +51,7 @@ namespace KillerScan.Shell
                     ScanBtn.Content = Loc("Str_Btn_Scan");
                     ScanProgress.Visibility = Visibility.Collapsed;
                     ExportButton.IsEnabled = s.Devices.Count > 0;
+                    UpdateDeepScanButton();
                     if (s.Devices.Count > 0)
                     {
                         if (ResultsGrid.SelectedItem == null) ResultsGrid.SelectedIndex = 0;
@@ -85,6 +86,7 @@ namespace KillerScan.Shell
             if (s == _active)
             {
                 RefreshDeviceCount();
+                UpdateDeepScanButton();
                 ScanProgress.Value = 0;
                 ScanProgress.Visibility = Visibility.Visible;
                 ExportButton.IsEnabled = false;
@@ -106,6 +108,7 @@ namespace KillerScan.Shell
                     ScanBtn.Content = Loc("Str_Btn_Scan");
                     ScanProgress.Visibility = Visibility.Collapsed;
                     ExportButton.IsEnabled = s.Devices.Count > 0;
+                    UpdateDeepScanButton();
                 }
             }
         }

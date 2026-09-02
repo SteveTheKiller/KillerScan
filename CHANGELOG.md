@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 1.6.2 adds network mapping and improves command-line integration with other applications.
 
 ### Added
+- Deep Scan All performs an exhaustive, cancellable rescan of every discovered host.
 - F6 opens an inferred topology view that maps the local network, gateway, DNS server and discovered devices without presenting guesses as measured links. (#3)
 - `/uiscan [targets]` opens the full interface and begins scanning the supplied targets immediately. (#1)
 

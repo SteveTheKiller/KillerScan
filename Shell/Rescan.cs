@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using KillerScan.Models;
@@ -14,6 +15,17 @@ namespace KillerScan.Shell
     public partial class MainWindow
     {
         private CancellationTokenSource? _rescanCts;
+
+        private void UpdateDeepScanButton()
+        {
+            if (DeepScanAllButton == null) return;
+            DeepScanAllButton.Visibility = !DemoMode && ActiveDevices.Count > 0 && _active.Cts == null
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+            DeepScanAllButton.Content = Loc(_rescanCts == null
+                ? "Str_Btn_DeepScanAll"
+                : "Str_Btn_Stop");
+        }
 
         // Set the singular/plural label and enable state just before the menu opens.
         private void ResultsGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -43,6 +55,7 @@ namespace KillerScan.Shell
             var scanner = s.Scanner;
             _rescanCts = new CancellationTokenSource();
             var ct = _rescanCts.Token;
+            UpdateDeepScanButton();
 
             ScanProgress.Value = 0;
             ScanProgress.Visibility = Visibility.Visible;
@@ -77,6 +90,75 @@ namespace KillerScan.Shell
                 _rescanCts = null;
                 ScanProgress.Visibility = Visibility.Collapsed;
                 RefreshDeviceCount();
+                UpdateDeepScanButton();
+            }
+        }
+
+        private async void DeepScanAll_Click(object sender, RoutedEventArgs e)
+        {
+            if (_rescanCts != null)
+            {
+                _rescanCts.Cancel();
+                return;
+            }
+            if (_active.Cts != null || ActiveDevices.Count == 0) return;
+
+            var s = _active;
+            var scanner = s.Scanner;
+            var targets = s.Devices.OrderBy(d => d.IpSortKey).ToList();
+            _rescanCts = new CancellationTokenSource();
+            var ct = _rescanCts.Token;
+            using var hostGate = new SemaphoreSlim(4);
+            int done = 0;
+            int refreshed = 0;
+
+            ScanBtn.IsEnabled = false;
+            ScanProgress.Value = 0;
+            ScanProgress.Visibility = Visibility.Visible;
+            UpdateDeepScanButton();
+
+            try
+            {
+                var tasks = targets.Select(async old =>
+                {
+                    await hostGate.WaitAsync(ct);
+                    try
+                    {
+                        var fresh = await scanner.DeepProbeHostAsync(old.IpAddress, ct, 64);
+                        int idx = s.Devices.IndexOf(old);
+                        if (idx >= 0)
+                        {
+                            s.Devices[idx] = fresh;
+                            refreshed++;
+                        }
+                    }
+                    catch (OperationCanceledException) { throw; }
+                    catch { }
+                    finally
+                    {
+                        hostGate.Release();
+                        done++;
+                        ScanProgress.Value = done * 100.0 / targets.Count;
+                        StatusText.Text = string.Format(
+                            Loc("Str_St_Rescanning"), $"{done}/{targets.Count}");
+                    }
+                });
+
+                await Task.WhenAll(tasks);
+                StatusText.Text = string.Format(Loc("Str_St_RescanDone"), refreshed);
+            }
+            catch (OperationCanceledException)
+            {
+                StatusText.Text = Loc("Str_St_ScanCanceled");
+            }
+            finally
+            {
+                _rescanCts.Dispose();
+                _rescanCts = null;
+                ScanBtn.IsEnabled = true;
+                ScanProgress.Visibility = Visibility.Collapsed;
+                RefreshDeviceCount();
+                UpdateDeepScanButton();
             }
         }
     }

@@ -20,6 +20,7 @@
     <!-- Scan bar -->
     <sys:String x:Key="Str_Lbl_Subnet">Подсеть</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Сканировать</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Глубоко сканировать все</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Локальный</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Шлюз</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>

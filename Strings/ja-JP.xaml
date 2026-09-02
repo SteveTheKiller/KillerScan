@@ -19,6 +19,7 @@
     <!-- Scan bar -->
     <sys:String x:Key="Str_Lbl_Subnet">サブネット</sys:String>
     <sys:String x:Key="Str_Btn_Scan">スキャン</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">すべてを詳細スキャン</sys:String>
     <sys:String x:Key="Str_Lbl_Local">ローカル</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">ゲートウェイ</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>

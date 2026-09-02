@@ -20,6 +20,7 @@
     <!-- Scan bar -->
     <sys:String x:Key="Str_Lbl_Subnet">Alhálózat</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Scan</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Minden mélyvizsgálata</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Helyi</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Átjáró</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>

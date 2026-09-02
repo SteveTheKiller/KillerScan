@@ -10,6 +10,7 @@
     <sys:String x:Key="Str_Lbl_Accent">AKCENT</sys:String>
     <sys:String x:Key="Str_Lbl_Subnet">Podsieć</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Skanuj</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Dokładnie skanuj wszystko</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Lokalny</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Brama</sys:String>
     <sys:String x:Key="Str_Btn_Stop">Zatrzymaj</sys:String>

@@ -20,6 +20,7 @@
     <!-- Scan bar -->
     <sys:String x:Key="Str_Lbl_Subnet">Sottorete</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Scansiona</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Scansione approfondita completa</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Locale</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Gateway</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>

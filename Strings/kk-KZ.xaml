@@ -20,6 +20,7 @@
     <!-- Scan bar -->
     <sys:String x:Key="Str_Lbl_Subnet">Ішкі желі</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Сканерлеу</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Барлығын терең сканерлеу</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Жергілікті</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Шлюз</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>

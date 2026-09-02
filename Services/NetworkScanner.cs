@@ -445,7 +445,8 @@ namespace KillerScan.Services
         // per host) on purpose - it targets one host on demand, not a whole /24.
         // Reuses the last full scan's multicast (mDNS/SSDP) results for naming.
         // -------------------------------------------------------------------
-        public async Task<NetworkDevice> DeepProbeHostAsync(string ip, CancellationToken ct)
+        public async Task<NetworkDevice> DeepProbeHostAsync(
+            string ip, CancellationToken ct, int portConcurrency = 256)
         {
             var addr = IPAddress.Parse(ip);
             var device = new NetworkDevice
@@ -475,7 +476,7 @@ namespace KillerScan.Services
 
             // Exhaustive TCP sweep. Bounded concurrency keeps the open-socket count sane;
             // each port gets a generous timeout and one retry so slow/loaded hosts still answer.
-            using var gate = new SemaphoreSlim(256);
+            using var gate = new SemaphoreSlim(portConcurrency);
             var portTasks = DeepPortList.Select(async port =>
             {
                 await gate.WaitAsync(ct);

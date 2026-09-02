@@ -13,6 +13,7 @@
 
     <sys:String x:Key="Str_Lbl_Subnet">Subred</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Escanear</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Escanear todo en profundidad</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Local</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Puerta de enlace</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
