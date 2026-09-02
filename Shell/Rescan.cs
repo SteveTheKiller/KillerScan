@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using KillerScan.Models;
+using KillerScan.Services;
 
 namespace KillerScan.Shell
 {
@@ -60,6 +61,7 @@ namespace KillerScan.Shell
             ScanProgress.Value = 0;
             ScanProgress.Visibility = Visibility.Visible;
             int done = 0;
+            NetworkScanner.FlushLocalDnsCache();
 
             try
             {
@@ -69,7 +71,11 @@ namespace KillerScan.Shell
                     StatusText.Text = string.Format(Loc("Str_St_Rescanning"), old.IpAddress);
 
                     NetworkDevice fresh;
-                    try { fresh = await scanner.DeepProbeHostAsync(old.IpAddress, ct); }
+                    try
+                    {
+                        fresh = await scanner.DeepProbeHostAsync(
+                            old.IpAddress, ct, flushLocalDnsCache: false);
+                    }
                     catch (OperationCanceledException) { throw; }
                     catch { done++; ScanProgress.Value = done * 100.0 / targets.Count; continue; }
 
@@ -116,6 +122,7 @@ namespace KillerScan.Shell
             ScanProgress.Value = 0;
             ScanProgress.Visibility = Visibility.Visible;
             UpdateDeepScanButton();
+            NetworkScanner.FlushLocalDnsCache();
 
             try
             {
@@ -124,7 +131,8 @@ namespace KillerScan.Shell
                     await hostGate.WaitAsync(ct);
                     try
                     {
-                        var fresh = await scanner.DeepProbeHostAsync(old.IpAddress, ct, 128);
+                        var fresh = await scanner.DeepProbeHostAsync(
+                            old.IpAddress, ct, 128, flushLocalDnsCache: false);
                         int idx = s.Devices.IndexOf(old);
                         if (idx >= 0)
                         {

@@ -62,6 +62,15 @@ namespace KillerScan.Services
         [DllImport("iphlpapi.dll", ExactSpelling = true)]
         private static extern int SendARP(int destIp, int srcIp, byte[] macAddr, ref int macLen);
 
+        [DllImport("dnsapi.dll", ExactSpelling = true)]
+        private static extern bool DnsFlushResolverCache();
+
+        public static void FlushLocalDnsCache()
+        {
+            try { DnsFlushResolverCache(); }
+            catch { }
+        }
+
         public event Action<string>? StatusChanged;
         public event Action<int>? ProgressChanged;
         public event Action<NetworkDevice>? DeviceFound;
@@ -110,6 +119,7 @@ namespace KillerScan.Services
         /// </summary>
         public async Task<List<NetworkDevice>> ScanSubnetAsync(string cidr, CancellationToken ct, bool fullScan = true)
         {
+            FlushLocalDnsCache();
             // ScanTargets handles one or many comma-separated targets (CIDR, single host, or a
             // range) and de-duplicates overlaps. The UI validates the same string before getting
             // here, so a parse failure at this point yields an empty list rather than throwing.
@@ -272,12 +282,7 @@ namespace KillerScan.Services
                             MacAddress = entry.Mac
                         };
 
-                        try
-                        {
-                            var dns = await Dns.GetHostEntryAsync(entry.Addr);
-                            device.Hostname = dns.HostName;
-                        }
-                        catch { }
+                        device.Hostname = await ResolveVerifiedHostnameAsync(entry.Addr);
 
                         if (!string.IsNullOrEmpty(entry.Mac))
                             device.Vendor = ResolveVendor(entry.Mac);
@@ -345,6 +350,25 @@ namespace KillerScan.Services
         /// <summary>
         /// Probe a single host for hostname, open ports, fingerprints, and device type.
         /// </summary>
+        private static async Task<string> ResolveVerifiedHostnameAsync(IPAddress addr)
+        {
+            try
+            {
+                var reverse = await Dns.GetHostEntryAsync(addr);
+                string hostname = reverse.HostName?.Trim() ?? string.Empty;
+                if (hostname.Length == 0 || string.Equals(
+                        hostname, addr.ToString(), StringComparison.OrdinalIgnoreCase))
+                    return string.Empty;
+
+                var forward = await Dns.GetHostAddressesAsync(hostname);
+                return forward.Any(candidate => candidate.Equals(addr)) ? hostname : string.Empty;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
         private async Task<NetworkDevice> ProbeHostAsync(IPAddress addr, string cachedMac)
         {
             var device = new NetworkDevice
@@ -356,12 +380,7 @@ namespace KillerScan.Services
             // Resolve hostname + capture TTL (OS family hint) in parallel with port scan.
             var dnsTask = Task.Run(async () =>
             {
-                try
-                {
-                    var entry = await Dns.GetHostEntryAsync(addr);
-                    device.Hostname = entry.HostName;
-                }
-                catch { }
+                device.Hostname = await ResolveVerifiedHostnameAsync(addr);
             });
 
             var ttlTask = Task.Run(async () =>
@@ -446,8 +465,10 @@ namespace KillerScan.Services
         // Reuses the last full scan's multicast (mDNS/SSDP) results for naming.
         // -------------------------------------------------------------------
         public async Task<NetworkDevice> DeepProbeHostAsync(
-            string ip, CancellationToken ct, int portConcurrency = 256)
+            string ip, CancellationToken ct, int portConcurrency = 256,
+            bool flushLocalDnsCache = true)
         {
+            if (flushLocalDnsCache) FlushLocalDnsCache();
             var addr = IPAddress.Parse(ip);
             var device = new NetworkDevice
             {
@@ -459,8 +480,7 @@ namespace KillerScan.Services
             // Hostname + TTL alongside the port sweep.
             var dnsTask = Task.Run(async () =>
             {
-                try { var entry = await Dns.GetHostEntryAsync(addr); device.Hostname = entry.HostName; }
-                catch { }
+                device.Hostname = await ResolveVerifiedHostnameAsync(addr);
             }, ct);
             var ttlTask = Task.Run(async () =>
             {

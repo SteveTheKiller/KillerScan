@@ -14,6 +14,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - `/uiscan [targets]` opens the full interface and begins scanning the supplied targets immediately. (#1)
 
 ### Fixed
+- Scans clear the local DNS cache and reject reverse-DNS names that do not resolve back to the same IP address.
 - On first launch, the interface follows the Windows display language when it is supported.
 - CSV and HTML exports now use the family file picker, including complete filename tooltips.
 - Command-line output now reaches applications that launch KillerScan with redirected streams but no parent console.
