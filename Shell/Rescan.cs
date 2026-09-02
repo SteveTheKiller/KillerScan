@@ -108,7 +108,7 @@ namespace KillerScan.Shell
             var targets = s.Devices.OrderBy(d => d.IpSortKey).ToList();
             _rescanCts = new CancellationTokenSource();
             var ct = _rescanCts.Token;
-            using var hostGate = new SemaphoreSlim(4);
+            using var hostGate = new SemaphoreSlim(8);
             int done = 0;
             int refreshed = 0;
 
@@ -124,7 +124,7 @@ namespace KillerScan.Shell
                     await hostGate.WaitAsync(ct);
                     try
                     {
-                        var fresh = await scanner.DeepProbeHostAsync(old.IpAddress, ct, 64);
+                        var fresh = await scanner.DeepProbeHostAsync(old.IpAddress, ct, 128);
                         int idx = s.Devices.IndexOf(old);
                         if (idx >= 0)
                         {

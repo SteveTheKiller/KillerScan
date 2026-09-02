@@ -10,10 +10,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Added
 - Deep Scan All performs an exhaustive, cancellable rescan of every discovered host.
-- F6 opens an inferred topology view that maps the local network, gateway, DNS server and discovered devices without presenting guesses as measured links. (#3)
+- F6 opens an inferred topology view with movable, multi-select device boxes and four arrangement modes. (#3)
 - `/uiscan [targets]` opens the full interface and begins scanning the supplied targets immediately. (#1)
 
 ### Fixed
+- On first launch, the interface follows the Windows display language when it is supported.
 - CSV and HTML exports now use the family file picker, including complete filename tooltips.
 - Command-line output now reaches applications that launch KillerScan with redirected streams but no parent console.
 - On the Sepulchre and Mourning themes the selected theme picker row no longer loses its ring, dot and label while hovered; they turn white.
