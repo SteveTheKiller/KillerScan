@@ -18,6 +18,11 @@ namespace KillerScan.Shell
         // Set the singular/plural label and enable state just before the menu opens.
         private void ResultsGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
+            PrepareDeviceContextMenu();
+        }
+
+        private void PrepareDeviceContextMenu()
+        {
             if (RescanMenuItem == null) return;
             int n = ResultsGrid.SelectedItems.Count;
             RescanMenuItem.Header = Loc(n > 1 ? "Str_Ctx_RescanMany" : "Str_Ctx_RescanOne");

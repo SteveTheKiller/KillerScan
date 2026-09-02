@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -49,8 +50,10 @@ namespace KillerScan.Shell
                                           && !SameIp(d.IpAddress, gatewayIp)
                                           && !SameIp(d.IpAddress, dnsIp)).ToList();
             int columns = Math.Max(1, (int)((width - 36) / (TopologyNodeWidth + 22)));
-            int rows = (int)Math.Ceiling(regular.Count / (double)columns);
-            double height = Math.Max(TopologyPane.ActualHeight, 235 + rows * 76);
+            var deviceRows = BuildDeviceRows(regular, columns);
+            int groupGaps = Math.Max(0, deviceRows.Count(r => r.StartsGroup) - 1);
+            double height = Math.Max(TopologyPane.ActualHeight,
+                235 + deviceRows.Count * 76 + groupGaps * 16);
             TopologyCanvas.Width = width;
             TopologyCanvas.Height = height;
             TopologyCanvas.Children.Clear();
@@ -61,14 +64,17 @@ namespace KillerScan.Shell
             var local = new Point(Math.Max(76, center.X - 190), center.Y);
             DrawInferredLink(center, gateway);
             DrawInferredLink(center, local);
-            AddRoleNode(gateway.X, gateway.Y, Loc("Str_Lbl_Gateway"), gatewayIp, "TypeRouter");
-            AddRoleNode(local.X, local.Y, Loc("Str_Lbl_Local"), localIp, "PrimaryBrush");
+            AddRoleNode(gateway.X, gateway.Y, Loc("Str_Lbl_Gateway"), gatewayIp, "TypeRouter",
+                visible.FirstOrDefault(d => SameIp(d.IpAddress, gatewayIp)));
+            AddRoleNode(local.X, local.Y, Loc("Str_Lbl_Local"), localIp, "PrimaryBrush",
+                visible.FirstOrDefault(d => SameIp(d.IpAddress, localIp)));
 
             if (!string.IsNullOrWhiteSpace(dnsIp) && dnsIp != "--" && !SameIp(dnsIp, gatewayIp))
             {
                 var dns = new Point(Math.Min(width - 76, center.X + 190), center.Y);
                 DrawInferredLink(center, dns);
-                AddRoleNode(dns.X, dns.Y, Loc("Str_Lbl_Dns"), dnsIp, "TypeDns");
+                AddRoleNode(dns.X, dns.Y, Loc("Str_Lbl_Dns"), dnsIp, "TypeDns",
+                    visible.FirstOrDefault(d => SameIp(d.IpAddress, dnsIp)));
             }
 
             AddNetworkNode(center.X, center.Y);
@@ -89,18 +95,51 @@ namespace KillerScan.Shell
                 return;
             }
 
-            for (int i = 0; i < regular.Count; i++)
+            double rowY = 235;
+            for (int rowIndex = 0; rowIndex < deviceRows.Count; rowIndex++)
             {
-                int row = i / columns;
-                int column = i % columns;
-                int rowCount = Math.Min(columns, regular.Count - row * columns);
+                var row = deviceRows[rowIndex];
+                if (rowIndex > 0 && row.StartsGroup) rowY += 16;
+                int rowCount = row.Devices.Count;
                 double rowWidth = rowCount * TopologyNodeWidth + (rowCount - 1) * 22;
                 double left = (width - rowWidth) / 2 + TopologyNodeWidth / 2;
-                var point = new Point(left + column * (TopologyNodeWidth + 22), 235 + row * 76);
-                DrawInferredLink(center, point);
-                AddDeviceNode(point.X, point.Y, regular[i]);
+                for (int column = 0; column < rowCount; column++)
+                {
+                    var point = new Point(left + column * (TopologyNodeWidth + 22), rowY);
+                    DrawInferredLink(center, point);
+                    AddDeviceNode(point.X, point.Y, row.Devices[column]);
+                }
+                rowY += 76;
             }
         }
+
+        private static List<(List<NetworkDevice> Devices, bool StartsGroup)> BuildDeviceRows(
+            IEnumerable<NetworkDevice> devices, int columns)
+        {
+            var rows = new List<(List<NetworkDevice>, bool)>();
+            foreach (var group in devices
+                .OrderBy(d => TopologyGroup(d.DeviceType))
+                .ThenBy(d => d.DeviceType, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(d => d.IpSortKey)
+                .GroupBy(d => TopologyGroup(d.DeviceType)))
+            {
+                var items = group.ToList();
+                for (int offset = 0; offset < items.Count; offset += columns)
+                    rows.Add((items.Skip(offset).Take(columns).ToList(), offset == 0));
+            }
+            return rows;
+        }
+
+        private static int TopologyGroup(string type) => type switch
+        {
+            "Router" or "Router/DNS" or "Switch/AP" or "Network" or "DNS Server" => 0,
+            "Server" or "Windows Server" or "Linux/SSH" or "NAS" or "Hypervisor" or
+                "Home Assistant" => 1,
+            "Windows" or "Apple Device" or "Mobile" => 2,
+            "Printer" or "Camera" or "IoT" or "Smart TV" or "Apple TV" or
+                "Media Streamer" or "Web Device" => 3,
+            _ => 4
+        };
 
         private static bool SameIp(string left, string right) =>
             !string.IsNullOrWhiteSpace(left) && left != "--" &&
@@ -129,10 +168,11 @@ namespace KillerScan.Shell
             AddNode(x, y, Loc("Str_Topology_Network"), subnet, "PrimaryBrush", null);
         }
 
-        private void AddRoleNode(double x, double y, string role, string value, string brushKey)
+        private void AddRoleNode(double x, double y, string role, string value, string brushKey,
+                                 NetworkDevice? device)
         {
             if (string.IsNullOrWhiteSpace(value) || value == "--") value = Loc("Str_Dev_Unknown");
-            AddNode(x, y, role, value, brushKey, null);
+            AddNode(x, y, role, value, brushKey, device);
         }
 
         private void AddDeviceNode(double x, double y, NetworkDevice device)
@@ -160,7 +200,7 @@ namespace KillerScan.Shell
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 Margin = new Thickness(7, 4, 7, 0)
             };
-            titleBlock.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
+            titleBlock.SetResourceReference(TextBlock.ForegroundProperty, "MenuTextBrush");
 
             var detailBlock = new TextBlock
             {
@@ -170,7 +210,8 @@ namespace KillerScan.Shell
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 Margin = new Thickness(7, 1, 7, 4)
             };
-            detailBlock.SetResourceReference(TextBlock.ForegroundProperty, "MutedTextBrush");
+            detailBlock.SetResourceReference(TextBlock.ForegroundProperty, "MenuTextBrush");
+            detailBlock.Opacity = 0.78;
 
             var stack = new StackPanel();
             stack.Children.Add(accent);
@@ -186,12 +227,16 @@ namespace KillerScan.Shell
                 Child = stack,
                 Tag = device
             };
-            border.SetResourceReference(Border.BackgroundProperty, "TextFieldBrush");
-            border.SetResourceReference(Border.BorderBrushProperty, "PaneBorderBrush");
+            border.SetResourceReference(Border.BackgroundProperty, "MenuBackgroundBrush");
+            border.SetResourceReference(Border.BorderBrushProperty, "MenuBorderBrush");
             if (device != null)
             {
                 border.Cursor = Cursors.Hand;
                 border.MouseLeftButtonDown += TopologyNode_Click;
+                border.PreviewMouseRightButtonDown += TopologyNode_RightClick;
+                border.ContextMenu = ResultsGrid.ContextMenu;
+                border.MouseEnter += TopologyNode_MouseEnter;
+                border.MouseLeave += TopologyNode_MouseLeave;
             }
 
             Canvas.SetLeft(border, x - TopologyNodeWidth / 2);
@@ -204,9 +249,34 @@ namespace KillerScan.Shell
         private void TopologyNode_Click(object sender, MouseButtonEventArgs e)
         {
             if (sender is not Border { Tag: NetworkDevice device }) return;
+            SelectTopologyDevice(device);
+            e.Handled = true;
+        }
+
+        private void TopologyNode_RightClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is not Border { Tag: NetworkDevice device }) return;
+            SelectTopologyDevice(device);
+            PrepareDeviceContextMenu();
+        }
+
+        private void SelectTopologyDevice(NetworkDevice device)
+        {
+            ResultsGrid.SelectedItems.Clear();
             ResultsGrid.SelectedItem = device;
             ResultsGrid.ScrollIntoView(device);
-            e.Handled = true;
+        }
+
+        private static void TopologyNode_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (sender is Border border)
+                border.SetResourceReference(Border.BackgroundProperty, "MenuHoverBrush");
+        }
+
+        private static void TopologyNode_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (sender is Border border)
+                border.SetResourceReference(Border.BackgroundProperty, "MenuBackgroundBrush");
         }
 
         private static string DeviceBrush(string type) => type switch

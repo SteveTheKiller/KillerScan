@@ -137,6 +137,7 @@ namespace KillerScan.Shell
                 DeviceOverrides.Set(d.MacAddress, type);
                 d.DeviceType = type;
                 _filteredView?.Refresh();
+                if (_showTopology) RefreshTopology();
                 StatusText.Text = string.Format(Loc("Str_St_OverrideSet"), d.MacAddress, type);
             }
         }
@@ -148,6 +149,7 @@ namespace KillerScan.Shell
             // Reclassify without override
             d.DeviceType = NetworkScanner.ClassifyDevice(d);
             _filteredView?.Refresh();
+            if (_showTopology) RefreshTopology();
             StatusText.Text = string.Format(Loc("Str_St_OverrideCleared"), d.MacAddress);
         }
     }
