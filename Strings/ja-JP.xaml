@@ -32,6 +32,8 @@
     <!-- Results pane -->
     <sys:String x:Key="Str_DiscoveredDevices">検出されたデバイス</sys:String>
     <sys:String x:Key="Str_Topology_Title">ネットワーク トポロジ</sys:String>
+    <sys:String x:Key="Str_Topology_Role">役割</sys:String>
+    <sys:String x:Key="Str_TT_TopologyOrder">トポロジの並べ替え</sys:String>
     <sys:String x:Key="Str_TT_Topology">ネットワーク トポロジの表示を切り替えます</sys:String>
     <sys:String x:Key="Str_Topology_Network">ローカル ネットワーク</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">推定された接続</sys:String>

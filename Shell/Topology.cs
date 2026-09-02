@@ -17,6 +17,9 @@ namespace KillerScan.Shell
     {
         private const double TopologyNodeWidth = 126;
         private const double TopologyNodeHeight = 50;
+        private enum TopologyOrder { Role, Type, Ip, Vendor }
+        private TopologyOrder _topologyOrder = TopologyOrder.Role;
+        private bool _topologyOrderLoaded;
         private bool _showTopology;
 
         private void TopologyButton_Click(object sender, RoutedEventArgs e)
@@ -24,10 +27,59 @@ namespace KillerScan.Shell
             _showTopology = !_showTopology;
             ResultsGrid.Visibility = _showTopology ? Visibility.Collapsed : Visibility.Visible;
             TopologyPane.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;
+            TopologyOrderButton.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;
             TopologyButton.Tag = _showTopology ? "on" : null;
             FixedTopologyButton.Tag = _showTopology ? "on" : null;
             PaneTitle.Text = Loc(_showTopology ? "Str_Topology_Title" : "Str_DiscoveredDevices");
-            if (_showTopology) RefreshTopology();
+            if (_showTopology)
+            {
+                LoadTopologyOrder();
+                RefreshTopology();
+            }
+        }
+
+        private void LoadTopologyOrder()
+        {
+            if (_topologyOrderLoaded) return;
+            _topologyOrderLoaded = true;
+            if (Enum.TryParse(App.GetSetting("TopologyOrder"), out TopologyOrder saved))
+                _topologyOrder = saved;
+            UpdateTopologyOrderUi();
+        }
+
+        private void TopologyOrderButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (TopologyOrderButton.ContextMenu == null) return;
+            UpdateTopologyOrderUi();
+            TopologyOrderButton.ContextMenu.PlacementTarget = TopologyOrderButton;
+            TopologyOrderButton.ContextMenu.Placement =
+                System.Windows.Controls.Primitives.PlacementMode.Bottom;
+            TopologyOrderButton.ContextMenu.IsOpen = true;
+        }
+
+        private void TopologyOrderItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not MenuItem { Tag: string value } ||
+                !Enum.TryParse(value, out TopologyOrder order)) return;
+            _topologyOrder = order;
+            App.SetSetting("TopologyOrder", order.ToString());
+            UpdateTopologyOrderUi();
+            RefreshTopology();
+        }
+
+        private void UpdateTopologyOrderUi()
+        {
+            TopologyOrderLabel.Text = Loc(_topologyOrder switch
+            {
+                TopologyOrder.Type => "Str_Col_Type",
+                TopologyOrder.Ip => "Str_Col_Ip",
+                TopologyOrder.Vendor => "Str_Col_Vendor",
+                _ => "Str_Topology_Role"
+            });
+            TopologyRoleItem.IsChecked = _topologyOrder == TopologyOrder.Role;
+            TopologyTypeItem.IsChecked = _topologyOrder == TopologyOrder.Type;
+            TopologyIpItem.IsChecked = _topologyOrder == TopologyOrder.Ip;
+            TopologyVendorItem.IsChecked = _topologyOrder == TopologyOrder.Vendor;
         }
 
         private void TopologyPane_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -50,7 +102,7 @@ namespace KillerScan.Shell
                                           && !SameIp(d.IpAddress, gatewayIp)
                                           && !SameIp(d.IpAddress, dnsIp)).ToList();
             int columns = Math.Max(1, (int)((width - 36) / (TopologyNodeWidth + 22)));
-            var deviceRows = BuildDeviceRows(regular, columns);
+            var deviceRows = BuildDeviceRows(regular, columns, _topologyOrder);
             int groupGaps = Math.Max(0, deviceRows.Count(r => r.StartsGroup) - 1);
             double height = Math.Max(TopologyPane.ActualHeight,
                 235 + deviceRows.Count * 76 + groupGaps * 16);
@@ -114,14 +166,35 @@ namespace KillerScan.Shell
         }
 
         private static List<(List<NetworkDevice> Devices, bool StartsGroup)> BuildDeviceRows(
-            IEnumerable<NetworkDevice> devices, int columns)
+            IEnumerable<NetworkDevice> devices, int columns, TopologyOrder order)
         {
             var rows = new List<(List<NetworkDevice>, bool)>();
-            foreach (var group in devices
-                .OrderBy(d => TopologyGroup(d.DeviceType))
-                .ThenBy(d => d.DeviceType, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(d => d.IpSortKey)
-                .GroupBy(d => TopologyGroup(d.DeviceType)))
+            if (order == TopologyOrder.Ip)
+            {
+                var items = devices.OrderBy(d => d.IpSortKey).ToList();
+                for (int offset = 0; offset < items.Count; offset += columns)
+                    rows.Add((items.Skip(offset).Take(columns).ToList(), false));
+                return rows;
+            }
+
+            var grouped = order switch
+            {
+                TopologyOrder.Type => devices
+                    .OrderBy(d => d.DeviceType, StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(d => d.IpSortKey)
+                    .GroupBy(d => d.DeviceType),
+                TopologyOrder.Vendor => devices
+                    .OrderBy(d => d.Vendor, StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(d => d.IpSortKey)
+                    .GroupBy(d => string.IsNullOrWhiteSpace(d.Vendor) ? "~" : d.Vendor),
+                _ => devices
+                    .OrderBy(d => TopologyGroup(d.DeviceType))
+                    .ThenBy(d => d.DeviceType, StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(d => d.IpSortKey)
+                    .GroupBy(d => TopologyGroup(d.DeviceType).ToString())
+            };
+
+            foreach (var group in grouped)
             {
                 var items = group.ToList();
                 for (int offset = 0; offset < items.Count; offset += columns)

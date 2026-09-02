@@ -471,6 +471,33 @@
                             </Grid>
                         </Grid>
                     </Border>
+                    <Button x:Name="TopologyOrderButton" Grid.Column="2" Visibility="Collapsed"
+                            HorizontalAlignment="Left" Margin="10,0,0,0" Height="26" MinWidth="112"
+                            Padding="9,0" VerticalAlignment="Center" Cursor="Hand"
+                            Background="{DynamicResource TextFieldBrush}"
+                            Foreground="{DynamicResource TextBrush}"
+                            BorderBrush="{DynamicResource InputBorderBrush}" BorderThickness="1"
+                            Click="TopologyOrderButton_Click"
+                            ToolTip="{DynamicResource Str_TT_TopologyOrder}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE8CB;" FontFamily="Segoe MDL2 Assets" FontSize="11"
+                                       VerticalAlignment="Center" Margin="0,0,7,0"/>
+                            <TextBlock x:Name="TopologyOrderLabel" Text="{DynamicResource Str_Topology_Role}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Button.ContextMenu>
+                            <ContextMenu PreviewMouseWheel="Menu_ForwardWheelToGrid">
+                                <MenuItem x:Name="TopologyRoleItem" Header="{DynamicResource Str_Topology_Role}"
+                                          Tag="Role" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                <MenuItem x:Name="TopologyTypeItem" Header="{DynamicResource Str_Col_Type}"
+                                          Tag="Type" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                <MenuItem x:Name="TopologyIpItem" Header="{DynamicResource Str_Col_Ip}"
+                                          Tag="Ip" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                <MenuItem x:Name="TopologyVendorItem" Header="{DynamicResource Str_Col_Vendor}"
+                                          Tag="Vendor" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
                     <TextBlock Grid.Column="3" x:Name="DeviceCount"
                                Text="0 devices found"
                                Foreground="{DynamicResource MutedTextBrush}"

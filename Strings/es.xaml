@@ -19,6 +19,8 @@
 
     <sys:String x:Key="Str_DiscoveredDevices">Dispositivos detectados</sys:String>
     <sys:String x:Key="Str_Topology_Title">Topología de red</sys:String>
+    <sys:String x:Key="Str_Topology_Role">Función</sys:String>
+    <sys:String x:Key="Str_TT_TopologyOrder">Organizar topología por</sys:String>
     <sys:String x:Key="Str_TT_Topology">Alternar topología de red</sys:String>
     <sys:String x:Key="Str_Topology_Network">Red local</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Conexión inferida</sys:String>

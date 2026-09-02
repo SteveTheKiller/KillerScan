@@ -33,6 +33,8 @@
     <!-- Results pane -->
     <sys:String x:Key="Str_DiscoveredDevices">Обнаруженные устройства</sys:String>
     <sys:String x:Key="Str_Topology_Title">Топология сети</sys:String>
+    <sys:String x:Key="Str_Topology_Role">Роль</sys:String>
+    <sys:String x:Key="Str_TT_TopologyOrder">Упорядочить топологию по</sys:String>
     <sys:String x:Key="Str_TT_Topology">Показать или скрыть топологию сети</sys:String>
     <sys:String x:Key="Str_Topology_Network">Локальная сеть</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Предполагаемое соединение</sys:String>

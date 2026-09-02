@@ -19,6 +19,8 @@
 
     <sys:String x:Key="Str_DiscoveredDevices">發現的裝置</sys:String>
     <sys:String x:Key="Str_Topology_Title">網路拓撲</sys:String>
+    <sys:String x:Key="Str_Topology_Role">角色</sys:String>
+    <sys:String x:Key="Str_TT_TopologyOrder">拓撲排列方式</sys:String>
     <sys:String x:Key="Str_TT_Topology">切換網路拓撲</sys:String>
     <sys:String x:Key="Str_Topology_Network">本機網路</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">推斷的連線</sys:String>

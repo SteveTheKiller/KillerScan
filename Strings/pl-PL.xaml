@@ -18,6 +18,8 @@
     <sys:String x:Key="Str_Count_Shown">Wyświetlono {0} z {1}</sys:String>
     <sys:String x:Key="Str_DiscoveredDevices">Wykryte urządzenia</sys:String>
     <sys:String x:Key="Str_Topology_Title">Topologia sieci</sys:String>
+    <sys:String x:Key="Str_Topology_Role">Rola</sys:String>
+    <sys:String x:Key="Str_TT_TopologyOrder">Rozmieść topologię według</sys:String>
     <sys:String x:Key="Str_TT_Topology">Przełącz topologię sieci</sys:String>
     <sys:String x:Key="Str_Topology_Network">Sieć lokalna</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Połączenie wywnioskowane</sys:String>
