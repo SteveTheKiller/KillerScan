@@ -18,10 +18,32 @@ namespace KillerScan.Shell
         {
             var button = new Button
             {
-                Margin = new Thickness(0, 2, 6, 2), Padding = new Thickness(10, 3, 10, 3),
-                FontSize = 12, MinHeight = 26, VerticalAlignment = VerticalAlignment.Center, Tag = view
+                Margin = new Thickness(0, 0, 2, 0), Padding = new Thickness(6, 4, 6, 4),
+                Height = 52, VerticalAlignment = VerticalAlignment.Center
             };
-            button.SetResourceReference(ContentControl.ContentProperty, key);
+            button.SetResourceReference(StyleProperty, "ViewToolbarButton");
+            string glyph = view switch
+            {
+                "scan" => "\uE8FD",
+                "topology" => "\uE968",
+                "watch" => "\uE9D9",
+                _ => "\uE756"
+            };
+            var content = new StackPanel { HorizontalAlignment = HorizontalAlignment.Center };
+            content.Children.Add(new TextBlock
+            {
+                Text = glyph, FontFamily = new System.Windows.Media.FontFamily("Segoe MDL2 Assets"),
+                FontSize = 14, HorizontalAlignment = HorizontalAlignment.Center
+            });
+            var label = new TextBlock
+            {
+                FontFamily = new System.Windows.Media.FontFamily("Segoe UI"), FontSize = 10,
+                Margin = new Thickness(0, 2, 0, 0), HorizontalAlignment = HorizontalAlignment.Center,
+                TextAlignment = TextAlignment.Center
+            };
+            label.SetResourceReference(TextBlock.TextProperty, key);
+            content.Children.Add(label);
+            button.Content = content;
             var tip = new TextBlock();
             var caption = new System.Windows.Documents.Run();
             caption.SetResourceReference(System.Windows.Documents.Run.TextProperty, key);
@@ -38,7 +60,7 @@ namespace KillerScan.Shell
             foreach (var pair in _viewButtons)
             {
                 bool selected = pair.Key == _workspaceView;
-                pair.Value.SetResourceReference(StyleProperty, selected ? "PrimaryButton" : "OutlineButton");
+                pair.Value.Tag = selected ? "on" : null;
             }
         }
 

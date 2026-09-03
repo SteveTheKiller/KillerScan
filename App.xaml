@@ -963,6 +963,41 @@
                  the 24px column leaves a 2px inset per side and the app-wide zoom
                  scales icons rather than blank strip.
                  ================================================================ -->
+            <Style x:Key="ViewToolbarButton" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <ContentPresenter.Effect>
+                                        <DropShadowEffect Color="Black" BlurRadius="4" ShadowDepth="2"
+                                                          Direction="270" Opacity="{DynamicResource IconShadowOpacity}"/>
+                                    </ContentPresenter.Effect>
+                                </ContentPresenter>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                </Trigger>
+                                <Trigger Property="Tag" Value="on">
+                                    <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource OnPrimaryBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.4"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <Style x:Key="RailButton" TargetType="Button">
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
