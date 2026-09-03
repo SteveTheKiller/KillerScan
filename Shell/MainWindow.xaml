@@ -386,10 +386,13 @@
                     <Border IsHitTestVisible="False"
                             BorderBrush="{DynamicResource FooterBevelLightBrush}"
                             BorderThickness="{DynamicResource FooterCellDarkThickness}"/>
-                    <TextBlock x:Name="StatusText" Text="Ready"
+                    <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Name="StatusText" Text="Ready" MaxWidth="230" TextTrimming="CharacterEllipsis"
                                Margin="{DynamicResource FooterCellPadding}" HorizontalAlignment="Left"
                                Foreground="{DynamicResource MutedTextBrush}" FontFamily="Consolas"
                                FontSize="11.5" VerticalAlignment="Center"/>
+                    <StackPanel x:Name="DeviceCountFooter" Orientation="Horizontal" VerticalAlignment="Center"/>
+                    </StackPanel>
                 </Grid>
                 <!-- Compact portable install action, centered against the complete footer/window,
                      not merely the shortened status cell to the left of the version block. -->
@@ -416,8 +419,10 @@
                             BorderThickness="{DynamicResource FooterCellDarkThickness}"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
                             Margin="{DynamicResource FooterCellPadding}">
+                    <TextBlock x:Name="NetworkFooter" FontSize="10" FontFamily="Consolas"
+                               Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,12,0" VerticalAlignment="Center"/>
                     <ProgressBar x:Name="ScanProgress"
-                                 Width="200" Height="4" VerticalAlignment="Center"
+                                 Width="80" Height="4" VerticalAlignment="Center"
                                  Foreground="{DynamicResource PrimaryBrush}"
                                  Background="{DynamicResource CardBorderBrush}"
                                  Visibility="Collapsed" Margin="0,0,12,0"/>

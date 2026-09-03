@@ -100,7 +100,8 @@ namespace KillerScan.Terminal
         private void LoadFont()
         {
 
-            var order = FontOrder;
+            string[] order = Fonts.SystemFontFamilies.Any(f => f.Source == "ProFont IIx Nerd Font")
+                ? ["ProFont IIx Nerd Font", .. FontOrder] : FontOrder;
 
             foreach (var name in order)
             {

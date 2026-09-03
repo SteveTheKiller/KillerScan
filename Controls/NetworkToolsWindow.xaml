@@ -20,7 +20,8 @@
                         <TextBlock x:Name="Hint" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,12"/>
                         <TextBlock x:Name="TargetLabel" Text="{DynamicResource Str_Watch_Targets}"
                                    Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap"/>
-                        <TextBox x:Name="Targets" Style="{StaticResource DarkTextBox}" Padding="8,6"/>
+                        <TextBox x:Name="Targets" Style="{StaticResource DarkTextBox}" Padding="5,3,9,3"
+                                 FontSize="12" Height="28" Width="360" MaxWidth="360" HorizontalAlignment="Left"/>
                         <WrapPanel Margin="0,10,0,10">
                             <Button x:Name="StartButton" Style="{StaticResource OutlineButton}" Click="Start_Click" Margin="0,0,8,4"/>
                             <Button x:Name="StopButton" Content="{DynamicResource Str_Watch_Stop}" Style="{StaticResource SurfaceButton}" Click="Stop_Click" IsEnabled="False" Margin="0,0,8,4"/>
@@ -30,7 +31,7 @@
                         <DataGrid x:Name="Results" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
                                   CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserSortColumns="False"
                                   HeadersVisibility="Column" RowHeaderWidth="0" MinHeight="160" MaxHeight="330"
-                                  Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                                  Background="Transparent" Foreground="{DynamicResource TextBrush}"
                                   BorderBrush="{DynamicResource CardBorderBrush}" GridLinesVisibility="None"
                                   RowStyle="{StaticResource DarkDataGridRow}" CellStyle="{StaticResource DarkDataGridCell}">
                             <DataGrid.ColumnHeaderStyle>

@@ -50,13 +50,34 @@ namespace KillerScan.Shell
                 };
                 terminal.LayoutTransform = new ScaleTransform(_appScale, _appScale);
                 ShowWorkspaceContent(terminal, "terminal");
-                string shell = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
-                    "WindowsPowerShell", "v1.0", "powershell.exe");
+                string shell = ResolveTerminalShell();
                 terminal.Start(command ?? QuoteArgument(shell) + " -NoLogo",
                     Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
             }
             else ShowWorkspaceContent(_terminalControl, "terminal");
             _terminalControl.Focus();
+        }
+
+        private static string ResolveTerminalShell()
+        {
+            foreach (string directory in (Environment.GetEnvironmentVariable("PATH") ?? "").Split(Path.PathSeparator))
+            {
+                if (string.IsNullOrWhiteSpace(directory)) continue;
+                try
+                {
+                    string candidate = Path.Combine(directory.Trim().Trim('"'), "pwsh.exe");
+                    if (File.Exists(candidate)) return candidate;
+                }
+                catch (ArgumentException) { }
+            }
+            foreach (var folder in new[] { Environment.SpecialFolder.ProgramFiles, Environment.SpecialFolder.ProgramFilesX86 })
+                foreach (string version in new[] { "7", "7-preview" })
+                {
+                    string candidate = Path.Combine(Environment.GetFolderPath(folder), "PowerShell", version, "pwsh.exe");
+                    if (File.Exists(candidate)) return candidate;
+                }
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
+                "WindowsPowerShell", "v1.0", "powershell.exe");
         }
 
         private void RefreshTerminalPanelTheme()

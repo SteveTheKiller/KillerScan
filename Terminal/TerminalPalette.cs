@@ -107,7 +107,7 @@ namespace KillerScan.Terminal
 
             Array.Copy(AnsiFor(Services.ThemeManager.Current), p.Ansi, 16);
 
-            p.Background = Res("TerminalBackgroundBrush", Res("PaneBrush", C(0x1E1E1E)));
+            p.Background = Res("TerminalBackgroundBrush", Res("ScanContentPaneBrush", C(0x1E1E1E)));
             p.Foreground = Res("TerminalForegroundBrush", Res("TextBrush", C(0xE0E0E0)));
             p.Cursor     = Res("TerminalAccentBrush", Res("PrimaryBrush", C(0x50AEE8)));
             var sel = p.Cursor;

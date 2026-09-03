@@ -17,6 +17,7 @@ namespace KillerScan.Shell
                 var targets = new[] { local?.Gateway, local?.Dns, GetSelectedDevice()?.IpAddress }
                     .Where(s => !string.IsNullOrWhiteSpace(s)).Distinct();
                 _watchWorkspace = new NetworkToolsWindow(false, string.Join(", ", targets), [], _appScale);
+                _watchWorkspace.MatchScanTable((System.Windows.Controls.DataGrid)_scanWorkspace!.FindName("ResultsGrid"));
             }
             ShowWorkspaceContent(_watchWorkspace, "watch");
         }
@@ -43,6 +44,7 @@ namespace KillerScan.Shell
             }
             _diagnosticsWorkspace = new NetworkToolsWindow(true, device.IpAddress,
                 device.OpenPorts.Concat([22, 80, 443, 445, 3389]), _appScale);
+            _diagnosticsWorkspace.MatchScanTable((System.Windows.Controls.DataGrid)_scanWorkspace!.FindName("ResultsGrid"));
             ShowWorkspaceContent(_diagnosticsWorkspace, "diagnostics");
         }
     }

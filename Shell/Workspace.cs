@@ -29,6 +29,8 @@ namespace KillerScan.Shell
             _workspaceToolbar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             Grid.SetColumn(_workspaceNavigation, 1);
             _workspaceToolbar.Children.Add(_workspaceNavigation);
+            Grid.SetColumn(_toolbarOverflow, 1);
+            _workspaceToolbar.Children.Add(_toolbarOverflow);
             var toolbarSurface = new Grid { UseLayoutRounding = true };
             toolbarSurface.SetResourceReference(Panel.BackgroundProperty, "BackgroundBrush");
             var grain = new Border { IsHitTestVisible = false };
@@ -59,14 +61,35 @@ namespace KillerScan.Shell
             if (_scanWorkspace == null)
             {
                 _scanWorkspace = new ScanWorkspace(target, DemoMode);
-                _workspaceToolbar.Children.Add(new ScrollViewer
+                var scanToolbar = _scanWorkspace.DetachToolbar();
+                scanToolbar.Margin = new Thickness(8, 0, 0, 0);
+                scanToolbar.VerticalAlignment = VerticalAlignment.Center;
+                _workspaceToolbar.Children.Add(scanToolbar);
+                var networkDetails = new StackPanel();
+                foreach (string name in new[] { "LocalIpLabel", "GatewayLabel", "DnsLabel", "InterfaceLabel" })
                 {
-                    Content = _scanWorkspace.DetachToolbar(),
-                    Margin = new Thickness(8, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-                    VerticalScrollBarVisibility = ScrollBarVisibility.Disabled
-                });
+                    var label = (TextBlock)_scanWorkspace.FindName(name);
+                    var group = (FrameworkElement)label.Parent;
+                    ((Panel)group.Parent).Children.Remove(group);
+                    networkDetails.Children.Add(group);
+                }
+                NetworkFooter.ToolTip = networkDetails;
+                NetworkFooter.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("Text")
+                    { Source = _scanWorkspace.FindName("LocalIpLabel") });
+                var count = (TextBlock)_scanWorkspace.FindName("DeviceCount");
+                ((Panel)count.Parent).Children.Remove(count);
+                count.Margin = new Thickness(8, 0, 0, 0);
+                count.FontSize = 10;
+                DeviceCountFooter.Children.Add(count);
+                var export = (Button)_scanWorkspace.FindName("ExportButton");
+                ((Panel)export.Parent).Children.Remove(export);
+                export.ClearValue(Control.TemplateProperty);
+                export.ClearValue(Control.BackgroundProperty);
+                export.Margin = new Thickness(0, 0, 2, 0);
+                export.SetResourceReference(StyleProperty, "ViewToolbarButton");
+                _viewAppearance.Add(export, ("\uE896", "Str_TT_Export"));
+                _workspaceNavigation.Children.Insert(0, export);
+                ApplyToolbarAppearance();
                 _scanWorkspace.DeviceAction += (_, e) => WorkspaceDeviceAction(e.Device, e.Action);
                 _scanWorkspace.StateChanged += (_, _) =>
                 {
@@ -101,6 +124,9 @@ namespace KillerScan.Shell
             ScanProgress.Value = ActiveScan?.Progress ?? 0;
             ScanProgress.Visibility = ActiveScan?.IsProgressVisible == true ? Visibility.Visible : Visibility.Collapsed;
             if (_workspaceView == "terminal") UpdateTerminalPanelStatus();
+            if (_scanWorkspace?.FindName("DeviceCount") is TextBlock count)
+                count.Visibility = !string.IsNullOrEmpty(count.Text) && StatusText.Text.Contains(count.Text)
+                    ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void DisposeWorkspace()
@@ -125,6 +151,7 @@ namespace KillerScan.Shell
             ClipWorkspaceSurface();
             _scanWorkspace?.RefreshLocale();
             _historyWorkspace?.RefreshLocale();
+            FitToolbarViews();
             UpdateWorkspaceNavigation();
             UpdateWorkspaceStatus();
         }

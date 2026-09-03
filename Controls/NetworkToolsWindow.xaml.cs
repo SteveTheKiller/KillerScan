@@ -50,6 +50,19 @@ namespace KillerScan.Controls
 
         internal void ApplyScale(double scale) => BodyHost.LayoutTransform = new ScaleTransform(scale, scale);
 
+        internal void MatchScanTable(DataGrid reference)
+        {
+            Results.ColumnHeaderStyle = reference.ColumnHeaderStyle;
+            Results.RowStyle = reference.RowStyle;
+            Results.CellStyle = reference.CellStyle;
+            Results.ColumnHeaderHeight = reference.ColumnHeaderHeight;
+            Results.RowHeight = reference.RowHeight;
+            Results.FontFamily = reference.FontFamily;
+            Results.FontSize = reference.FontSize;
+            Results.BorderThickness = reference.BorderThickness;
+            Results.SetResourceReference(BorderBrushProperty, "PaneBorderBrush");
+        }
+
         internal void IncludeTarget(string address)
         {
             if (_diagnostics || _run != null) return;

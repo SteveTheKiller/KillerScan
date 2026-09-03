@@ -60,10 +60,9 @@ namespace KillerScan.Controls
             };
             ServicesGrid.ContextMenu = ResultsGrid.ContextMenu;
             ServicesGrid.ContextMenuOpening += ResultsGrid_ContextMenuOpening;
-            SizeChanged += (_, _) =>
-            {
-                SubnetInput.Width = Math.Max(40, Math.Min(ActualWidth < 1100 ? 180 : 220, ActualWidth - 28));
-            };
+            ScanToolbar.SizeChanged += (_, _) => FitToolbarInputs();
+            FilterBox.IsVisibleChanged += (_, _) => FitToolbarInputs();
+            DeepScanAllButton.IsVisibleChanged += (_, _) => FitToolbarInputs();
             SubnetInput.TextChanged += (_, _) => { _active.SubnetText = Targets; StateChanged?.Invoke(this, EventArgs.Empty); };
             SubnetInput.KeyDown += (_, e) => { if (e.Key == Key.Enter) { Scan(); e.Handled = true; } };
             Loaded += (_, _) =>
@@ -86,6 +85,20 @@ namespace KillerScan.Controls
         public void Scan() { if (!_disposed) ScanBtn_Click(this, new RoutedEventArgs()); }
         public void Stop() { _active.Cts?.Cancel(); _rescanCts?.Cancel(); }
         public void DeepScan() { if (!_disposed) DeepScanAll_Click(this, new RoutedEventArgs()); }
+        private void FitToolbarInputs()
+        {
+            if (ScanToolbar.ActualWidth <= 0) return;
+            var row = (Panel)SubnetInput.Parent;
+            double fixedWidth = row.Children.OfType<FrameworkElement>()
+                .Where(c => c != SubnetInput && c != FilterBox && c.Visibility == Visibility.Visible)
+                .Sum(c => c.DesiredSize.Width);
+            double available = Math.Max(0, ScanToolbar.ActualWidth - fixedWidth - SubnetInput.Margin.Left - SubnetInput.Margin.Right);
+            bool filtering = FilterBox.Visibility == Visibility.Visible;
+            double filterWidth = filtering ? Math.Min(150, Math.Max(60, (available - 100) / 2)) : 0;
+            SubnetInput.Width = Math.Max(40, Math.Min(220, available - filterWidth - (filtering ? 6 : 0)));
+            if (filtering) FilterBox.Width = filterWidth;
+        }
+
         public void FocusTargets() { SubnetInput.Focus(); SubnetInput.SelectAll(); }
         internal FrameworkElement DetachToolbar()
         {

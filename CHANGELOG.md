@@ -10,6 +10,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Added
 - Permanent views on the right of the scan toolbar preserve their state and offer a right-click menu for icon size and caption placement.
+- Compact toolbar with captioned Export, footer device count and network details, and overflow instead of scrolling. Keep Alive reuses the Scan table styling; terminals follow KillerShell's font and palette and prefer PowerShell 7.
 - Connection watch tracks replies, packet loss, latency, and state changes; device diagnostics checks DNS, ping, the local route, and TCP services.
 - The arranged topology can be exported as a full-resolution PNG.
 - Saved scan profiles can load or run remembered targets and optionally follow with Deep Scan All.

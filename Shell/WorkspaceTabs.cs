@@ -11,6 +11,12 @@ namespace KillerScan.Shell
         private ToolbarLabelMode _toolbarLabelMode = ToolbarLabelMode.Under;
         private readonly Dictionary<Button, (string Glyph, string Key)> _viewAppearance = [];
         private readonly ContextMenu _toolbarMenu = new();
+        private readonly Button _toolbarOverflow = new()
+        {
+            Content = "\uE712", FontFamily = new System.Windows.Media.FontFamily("Segoe MDL2 Assets"),
+            FontSize = 14, Width = 36, Height = 34, Margin = new Thickness(8, 2, 8, 2),
+            VerticalAlignment = VerticalAlignment.Center, Visibility = Visibility.Collapsed
+        };
 
         private void BuildWorkspaceNavigation()
         {
@@ -27,6 +33,10 @@ namespace KillerScan.Shell
             _workspaceToolbar.Background = System.Windows.Media.Brushes.Transparent;
             BuildToolbarMenu();
             ApplyToolbarAppearance();
+            _toolbarOverflow.SetResourceReference(StyleProperty, "ViewToolbarButton");
+            _toolbarOverflow.SetResourceReference(ToolTipProperty, "Str_Toolbar_Header");
+            _toolbarOverflow.Click += (_, _) => OpenToolbarOverflow();
+            _workspaceToolbar.SizeChanged += (_, _) => FitToolbarViews();
         }
 
         private void AddViewButton(string view, string key, string shortcut, Action action)
@@ -158,6 +168,48 @@ namespace KillerScan.Shell
                 }
                 else if (item.Tag is ToolbarLabelMode labels) item.IsChecked = labels == _toolbarLabelMode;
             }
+            FitToolbarViews();
+        }
+
+        private void FitToolbarViews()
+        {
+            if (_workspaceToolbar.ActualWidth <= 0) return;
+            double width = _workspaceNavigation.Margin.Left + _workspaceNavigation.Margin.Right;
+            foreach (Button button in _workspaceNavigation.Children)
+            {
+                button.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                width += button.DesiredSize.Width;
+            }
+            bool overflow = width > _workspaceToolbar.ActualWidth - 240;
+            _workspaceNavigation.Visibility = overflow ? Visibility.Collapsed : Visibility.Visible;
+            _toolbarOverflow.Visibility = overflow ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void OpenToolbarOverflow()
+        {
+            var menu = new ContextMenu { PlacementTarget = _toolbarOverflow,
+                Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom };
+            foreach (Button button in _workspaceNavigation.Children)
+            {
+                var item = new MenuItem { IsEnabled = button.IsEnabled };
+                item.SetResourceReference(HeaderedItemsControl.HeaderProperty, _viewAppearance[button].Key);
+                item.InputGestureText = _viewAppearance[button].Key switch
+                {
+                    "Str_View_Scan" => "Ctrl+T",
+                    "Str_View_Topology" => "F9",
+                    "Str_View_KeepAlive" => "F2",
+                    "Str_Workspace_Terminal" => "Ctrl+Shift+T",
+                    _ => "Ctrl+E"
+                };
+                item.ToolTip = button.ToolTip;
+                item.Click += (_, _) =>
+                {
+                    button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    if (button.ContextMenu?.IsOpen == true) button.ContextMenu.PlacementTarget = _toolbarOverflow;
+                };
+                menu.Items.Add(item);
+            }
+            menu.IsOpen = true;
         }
 
         private void NewTerminalView() => NewTerminal();
