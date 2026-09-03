@@ -34,7 +34,7 @@ namespace KillerScan.Shell
             var grain = new Border { IsHitTestVisible = false };
             grain.SetResourceReference(Border.BackgroundProperty, "GrainTileBrush");
             grain.SetResourceReference(OpacityProperty, "GrainOpacity");
-            toolbarSurface.Children.Add(grain);
+            toolbarSurface.Children.Add(new Border { Opacity = 0.20, Child = grain, IsHitTestVisible = false });
             toolbarSurface.Children.Add(_workspaceToolbar);
             WorkspaceHost.Children.Add(toolbarSurface);
             Grid.SetRow(_workspaceBody, 1);
