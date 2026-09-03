@@ -351,4 +351,11 @@
     <sys:String x:Key="Str_Workspace_OpenExternal">別のウィンドウで開く</sys:String>
     <sys:String x:Key="Str_Workspace_Exited">プロセスが終了しました ({0})</sys:String>
     <sys:String x:Key="Str_Workspace_StartFailed">ターミナルを起動できませんでした: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">ツールバー</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">文字なし</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">小さいアイコン</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">大きいアイコン</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">アイコンの横にテキスト</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">アイコンの下にテキスト</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">テキストのみ</sys:String>
 </ResourceDictionary>

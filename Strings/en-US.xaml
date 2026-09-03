@@ -382,4 +382,11 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Workspace_OpenExternal">Open in separate window</sys:String>
     <sys:String x:Key="Str_Workspace_Exited">Process exited ({0})</sys:String>
     <sys:String x:Key="Str_Workspace_StartFailed">Could not start the terminal: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">Toolbar</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">No text</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">Small icons</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">Large icons</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">Text beside icons</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">Text under icons</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">Text only</sys:String>
 </ResourceDictionary>

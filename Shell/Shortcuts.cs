@@ -17,6 +17,12 @@ namespace KillerScan.Shell
         [
             ("Ctrl + T",        "Str_View_Scan"),
             ("Ctrl + Shift + T", "Str_Workspace_Terminal"),
+            ("Ctrl + Shift + 1", "Str_Toolbar_SmallIcons"),
+            ("Ctrl + Shift + 2", "Str_Toolbar_LargeIcons"),
+            ("Ctrl + Shift + 3", "Str_Toolbar_TextNone"),
+            ("Ctrl + Shift + 4", "Str_Toolbar_TextBeside"),
+            ("Ctrl + Shift + 5", "Str_Toolbar_TextUnder"),
+            ("Ctrl + Shift + 6", "Str_Toolbar_TextOnly"),
             ("F2",              "Str_View_KeepAlive"),
             ("F3",              "Str_Diag_Title"),
             ("F5",              "Str_Sc_Scan"),
@@ -85,6 +91,11 @@ namespace KillerScan.Shell
             bool alt = modifiers.HasFlag(ModifierKeys.Alt);
             if (ctrl && !alt)
             {
+                if (shift && e.Key >= Key.D1 && e.Key <= Key.D6)
+                {
+                    SelectToolbarAppearance((int)e.Key - (int)Key.D1 + 1);
+                    e.Handled = true; return;
+                }
                 if (e.Key == Key.T)
                 {
                     if (shift) ToggleTerminalPanel(); else NewScan();

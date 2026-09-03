@@ -9,7 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 1.7.0 brings permanent Scan, Topology, Keep Alive, and Terminal views alongside diagnostics and scan history.
 
 ### Added
-- Permanent views use glyphs with captions on the right of the scan toolbar and switch between scans, topology, connection monitoring, and a full-width terminal while preserving their state.
+- Permanent views on the right of the scan toolbar preserve their state and offer a right-click menu for icon size and caption placement.
 - Connection watch tracks replies, packet loss, latency, and state changes; device diagnostics checks DNS, ping, the local route, and TCP services.
 - The arranged topology can be exported as a full-resolution PNG.
 - Saved scan profiles can load or run remembered targets and optionally follow with Deep Scan All.

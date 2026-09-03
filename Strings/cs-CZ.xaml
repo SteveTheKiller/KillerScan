@@ -338,4 +338,11 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Workspace_OpenExternal">Otevřít v samostatném okně</sys:String>
     <sys:String x:Key="Str_Workspace_Exited">Proces skončil ({0})</sys:String>
     <sys:String x:Key="Str_Workspace_StartFailed">Terminál se nepodařilo spustit: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">Panel nástrojů</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">Bez textu</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">Malé ikony</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">Velké ikony</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">Text vedle ikon</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">Text pod ikonami</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">Pouze text</sys:String>
 </ResourceDictionary>

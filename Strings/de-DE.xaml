@@ -341,4 +341,11 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Workspace_OpenExternal">In separatem Fenster öffnen</sys:String>
     <sys:String x:Key="Str_Workspace_Exited">Prozess beendet ({0})</sys:String>
     <sys:String x:Key="Str_Workspace_StartFailed">Terminal konnte nicht gestartet werden: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">Symbolleiste</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">Kein Text</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">Kleine Symbole</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">Große Symbole</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">Text neben Symbol</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">Text unter Symbol</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">Nur Text</sys:String>
 </ResourceDictionary>

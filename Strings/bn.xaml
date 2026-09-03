@@ -340,4 +340,11 @@
     <sys:String x:Key="Str_Workspace_OpenExternal">আলাদা উইন্ডোতে খুলুন</sys:String>
     <sys:String x:Key="Str_Workspace_Exited">প্রক্রিয়া শেষ হয়েছে ({0})</sys:String>
     <sys:String x:Key="Str_Workspace_StartFailed">টার্মিনাল চালু করা যায়নি: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">টুলবার</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">লেখা নেই</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">ছোট আইকন</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">বড় আইকন</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">আইকনের পাশে লেখা</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">আইকনের নিচে লেখা</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">শুধু লেখা</sys:String>
 </ResourceDictionary>

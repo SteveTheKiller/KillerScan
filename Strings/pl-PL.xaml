@@ -325,4 +325,11 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Workspace_OpenExternal">Otwórz w osobnym oknie</sys:String>
     <sys:String x:Key="Str_Workspace_Exited">Proces zakończony ({0})</sys:String>
     <sys:String x:Key="Str_Workspace_StartFailed">Nie udało się uruchomić terminala: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">Pasek narzędzi</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">Brak tekstu</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">Małe ikony</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">Duże ikony</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">Tekst obok ikon</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">Tekst pod ikonami</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">Tylko tekst</sys:String>
 </ResourceDictionary>

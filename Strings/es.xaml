@@ -340,4 +340,11 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Workspace_OpenExternal">Abrir en una ventana independiente</sys:String>
     <sys:String x:Key="Str_Workspace_Exited">El proceso terminó ({0})</sys:String>
     <sys:String x:Key="Str_Workspace_StartFailed">No se pudo iniciar la terminal: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">Barra de herramientas</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">Sin texto</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">Iconos pequeños</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">Iconos grandes</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">Texto junto a iconos</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">Texto bajo los iconos</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">Solo texto</sys:String>
 </ResourceDictionary>

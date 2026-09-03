@@ -366,4 +366,11 @@
     <sys:String x:Key="Str_Workspace_OpenExternal">Открыть в отдельном окне</sys:String>
     <sys:String x:Key="Str_Workspace_Exited">Процесс завершён ({0})</sys:String>
     <sys:String x:Key="Str_Workspace_StartFailed">Не удалось запустить терминал: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">панель инструментов</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">Нет текста</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">Маленькие иконки</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">Большие иконки</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">Текст рядом с иконками</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">Текст под иконками</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">Только текст</sys:String>
 </ResourceDictionary>

@@ -356,4 +356,11 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Workspace_OpenExternal">Megnyitás külön ablakban</sys:String>
     <sys:String x:Key="Str_Workspace_Exited">A folyamat kilépett ({0})</sys:String>
     <sys:String x:Key="Str_Workspace_StartFailed">Nem sikerült elindítani a terminált: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">Eszköztár</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">Nincs szöveg</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">Kis ikonok</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">Nagy ikonok</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">Szöveg az ikonok mellett</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">Szöveg az ikonok alatt</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">Csak szöveg</sys:String>
 </ResourceDictionary>

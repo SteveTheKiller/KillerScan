@@ -340,4 +340,11 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Workspace_OpenExternal">Ouvrir dans une fenêtre séparée</sys:String>
     <sys:String x:Key="Str_Workspace_Exited">Processus terminé ({0})</sys:String>
     <sys:String x:Key="Str_Workspace_StartFailed">Impossible de démarrer le terminal : {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">Barre d'outils</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">Sans texte</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">Petites icônes</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">Grandes icônes</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">Texte à côté des icônes</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">Texte sous les icônes</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">Texte seul</sys:String>
 </ResourceDictionary>

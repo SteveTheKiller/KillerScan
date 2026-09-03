@@ -340,4 +340,11 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Workspace_OpenExternal">Ayrı pencerede aç</sys:String>
     <sys:String x:Key="Str_Workspace_Exited">İşlem sona erdi ({0})</sys:String>
     <sys:String x:Key="Str_Workspace_StartFailed">Terminal başlatılamadı: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">Araç çubuğu</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">Metin yok</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">Küçük simgeler</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">Büyük simgeler</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">Simge yanında metin</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">Simge altında metin</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">Yalnızca metin</sys:String>
 </ResourceDictionary>

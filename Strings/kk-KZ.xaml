@@ -382,4 +382,11 @@
     <sys:String x:Key="Str_Workspace_OpenExternal">Бөлек терезеде ашу</sys:String>
     <sys:String x:Key="Str_Workspace_Exited">Процесс аяқталды ({0})</sys:String>
     <sys:String x:Key="Str_Workspace_StartFailed">Терминалды іске қосу мүмкін болмады: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">Құралдар тақтасы</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">Мәтін жоқ</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">Кішкентай белгішелер</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">Үлкен белгішелер</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">Мәтін белгішенің қасында</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">Мәтін белгішенің астында</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">Тек мәтін</sys:String>
 </ResourceDictionary>

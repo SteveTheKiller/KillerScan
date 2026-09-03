@@ -356,4 +356,11 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Workspace_OpenExternal">Apri in una finestra separata</sys:String>
     <sys:String x:Key="Str_Workspace_Exited">Processo terminato ({0})</sys:String>
     <sys:String x:Key="Str_Workspace_StartFailed">Impossibile avviare il terminale: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">Barra strumenti</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">Nessun testo</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">Icone piccole</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">Icone grandi</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">Testo accanto alle icone</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">Testo sotto le icone</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">Solo testo</sys:String>
 </ResourceDictionary>
