@@ -27,8 +27,11 @@ namespace KillerScan.Shell
         {
             internal readonly Grid Root = new();
             internal readonly DockPanel Header = new() { LastChildFill = true };
-            internal readonly StackPanel Strip = new() { Orientation = Orientation.Horizontal };
+            internal readonly System.Windows.Controls.Primitives.UniformGrid Strip = new() { Rows = 1 };
             internal readonly ContentControl Body = new();
+            internal readonly Grid EmptyBackdrop = new();
+            internal readonly Border Frame = new();
+            internal readonly Border HeaderLine = new() { Height = 1, VerticalAlignment = VerticalAlignment.Bottom };
             internal readonly List<WorkspaceTab> Tabs = [];
             internal WorkspaceTab? Selected;
         }
@@ -50,11 +53,14 @@ namespace KillerScan.Shell
             BuildWorkspacePane(_rightWorkspace, 2);
             _workspaceSplitter = new GridSplitter
             {
-                Width = 5, HorizontalAlignment = HorizontalAlignment.Stretch,
+                Width = 7, HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch, ResizeDirection = GridResizeDirection.Columns,
                 ResizeBehavior = GridResizeBehavior.PreviousAndNext, Visibility = Visibility.Collapsed
             };
-            _workspaceSplitter.SetResourceReference(BackgroundProperty, "PaneBorderBrush");
+            _workspaceSplitter.Background = Brushes.Transparent;
+            _workspaceSplitter.Template = (ControlTemplate)System.Windows.Markup.XamlReader.Parse(
+                "<ControlTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' TargetType='GridSplitter'>" +
+                "<Grid Background='Transparent'><Border Width='1' HorizontalAlignment='Center' Background='{DynamicResource PaneBorderBrush}'/></Grid></ControlTemplate>");
             Grid.SetColumn(_workspaceSplitter, 1);
             WorkspaceHost.Children.Add(_workspaceSplitter);
             _rightWorkspace.Root.Visibility = Visibility.Collapsed;
@@ -70,11 +76,12 @@ namespace KillerScan.Shell
             pane.Root.GotKeyboardFocus += (_, _) => ActivatePane(pane);
             var header = pane.Header;
             var chrome = new Grid();
-            chrome.SetResourceReference(BackgroundProperty, "BackgroundBrush");
+            chrome.SetResourceReference(Panel.BackgroundProperty, "BackgroundBrush");
             var grain = new Border { IsHitTestVisible = false };
             grain.SetResourceReference(Border.BackgroundProperty, "GrainTileBrush");
             grain.SetResourceReference(OpacityProperty, "GrainOpacity");
             chrome.Children.Add(grain);
+            chrome.Children.Add(pane.HeaderLine);
             var actions = new StackPanel { Orientation = Orientation.Horizontal };
             var add = WorkspaceButton("+", "Str_Workspace_NewScan", () => ShowWorkspaceMenu(pane, (FrameworkElement)actions.Children[0]));
             actions.Children.Add(add);
@@ -83,13 +90,23 @@ namespace KillerScan.Shell
             header.Children.Add(actions);
             header.Children.Add(new ScrollViewer
             {
-                Content = pane.Strip, HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                Content = pane.Strip, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Disabled
             });
             chrome.Children.Add(header);
             pane.Root.Children.Add(chrome);
-            Grid.SetRow(pane.Body, 1);
-            pane.Root.Children.Add(pane.Body);
+            pane.EmptyBackdrop.SetResourceReference(Panel.BackgroundProperty, "ScanContentPaneBrush");
+            var emptyGrain = new Border { IsHitTestVisible = false };
+            emptyGrain.SetResourceReference(Border.BackgroundProperty, "GrainTileBrush");
+            emptyGrain.SetResourceReference(OpacityProperty, "GrainOpacity");
+            pane.EmptyBackdrop.Children.Add(emptyGrain);
+            var body = new Grid();
+            body.Children.Add(pane.EmptyBackdrop);
+            body.Children.Add(pane.Body);
+            pane.Frame.Child = body;
+            pane.Frame.BorderThickness = new Thickness(1, 0, 1, 1);
+            Grid.SetRow(pane.Frame, 1);
+            pane.Root.Children.Add(pane.Frame);
             Grid.SetColumn(pane.Root, column);
             WorkspaceHost.Children.Add(pane.Root);
         }
@@ -135,6 +152,7 @@ namespace KillerScan.Shell
         private void ActivatePane(WorkspacePane pane)
         {
             _focusedWorkspace = pane;
+            foreach (var workspace in WorkspacePanes()) UpdateWorkspacePaneAppearance(workspace);
             if (pane.Selected?.Content is ScanWorkspace scan) StatusText.Text = scan.Status;
             else StatusText.Text = pane.Selected?.Status ?? string.Empty;
             ScanProgress.Value = ActiveScan?.Progress ?? 0;
@@ -145,32 +163,122 @@ namespace KillerScan.Shell
         private void RenderWorkspaceTabs(WorkspacePane pane)
         {
             pane.Strip.Children.Clear();
+            bool flat = ThemeManager.Current == Theme.SE98;
             foreach (var tab in pane.Tabs)
             {
+                bool active = tab == pane.Selected;
                 var row = new DockPanel { LastChildFill = true };
                 string title = (tab.TitleKey == null ? tab.Title : Loc(tab.TitleKey)) + tab.TitleSuffix;
-                var select = WorkspaceButton(title, "Str_Workspace_Move", () => SelectWorkspaceTab(pane, tab));
-                select.Content = new TextBlock { Text = title, TextTrimming = TextTrimming.CharacterEllipsis, MaxWidth = 220 };
-                select.ToolTip = title;
-                var close = WorkspaceButton("\u00D7", "Str_Workspace_Close", () => CloseWorkspaceTab(pane, tab));
-                close.Padding = new Thickness(4, 3, 4, 3);
+                var label = new TextBlock
+                {
+                    Text = title, TextTrimming = TextTrimming.CharacterEllipsis,
+                    FontFamily = new FontFamily("Consolas"), FontSize = active ? 11.5 : 11,
+                    FontWeight = active ? FontWeights.Bold : FontWeights.Normal,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                label.SetResourceReference(TextBlock.ForegroundProperty, active ? "TextBrush" : "MutedTextBrush");
+                var close = WorkspaceButton("x", "Str_Workspace_Close", () => CloseWorkspaceTab(pane, tab));
+                close.Width = close.Height = 18;
+                close.MinWidth = 0;
+                close.Padding = new Thickness(0);
+                close.Margin = new Thickness(6, 0, 0, 0);
+                close.FocusVisualStyle = null;
+                close.FontFamily = new FontFamily("Consolas");
+                close.FontSize = 11;
+                close.SetResourceReference(ForegroundProperty, "MutedTextBrush");
                 DockPanel.SetDock(close, Dock.Right);
                 row.Children.Add(close);
-                row.Children.Add(select);
-                var tabBorder = new Border { Child = row, Margin = new Thickness(2, 2, 2, 0), BorderThickness = new Thickness(0, 0, 0, 2) };
-                tabBorder.SetResourceReference(Border.CornerRadiusProperty, "ControlCornerRadius");
-                if (tab == pane.Selected)
+                row.Children.Add(label);
+                var face = new Grid();
+                var tabBorder = new Border
                 {
-                    tabBorder.SetResourceReference(Border.BorderBrushProperty, "PrimaryBrush");
-                    tabBorder.SetResourceReference(Border.BackgroundProperty, "OutlineFaceBrush");
-                    select.SetResourceReference(ForegroundProperty, "PrimaryBrush");
+                    Child = face, Tag = tab, MinWidth = 60, Cursor = Cursors.Hand, ToolTip = title,
+                    CornerRadius = flat ? new CornerRadius(0) : new CornerRadius(6, 6, 0, 0),
+                    Margin = active ? new Thickness(0, 3, 0, 0) : flat ? new Thickness(0, 5, 0, 2) : new Thickness(0, 3, 0, 1),
+                    Background = Brushes.Transparent
+                };
+                if (active)
+                {
+                    tabBorder.SetResourceReference(Border.BackgroundProperty, "PaneBrush");
+                    var texture = new Border
+                    {
+                        IsHitTestVisible = false, CornerRadius = tabBorder.CornerRadius,
+                        Margin = new Thickness(-12, -4, -5, -5)
+                    };
+                    texture.SetResourceReference(Border.BackgroundProperty, "GrainTileBrush");
+                    texture.SetResourceReference(OpacityProperty, "GrainOpacity");
+                    face.Children.Add(texture);
                 }
+                face.Children.Add(row);
+                if (flat)
+                {
+                    var light = new Border { IsHitTestVisible = false, Margin = new Thickness(-12, -4, -5, -4), BorderThickness = new Thickness(2, 2, 0, 0) };
+                    light.SetResourceReference(Border.BorderBrushProperty, "BevelLightBrush");
+                    var dark = new Border
+                    {
+                        IsHitTestVisible = false,
+                        Margin = active ? new Thickness(-12, -4, -5, -2) : new Thickness(-12, -4, -5, -4),
+                        BorderThickness = active ? new Thickness(0, 0, 2, 0) : new Thickness(0, 0, 2, 1)
+                    };
+                    dark.SetResourceReference(Border.BorderBrushProperty, "BevelDarkBrush");
+                    face.Children.Add(light);
+                    face.Children.Add(dark);
+                    if (active)
+                    {
+                        var seam = new Border { IsHitTestVisible = false, Width = 2, Height = 2, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Bottom, Margin = new Thickness(0, 0, -5, -4) };
+                        seam.SetResourceReference(Border.BackgroundProperty, "BevelLightBrush");
+                        face.Children.Add(seam);
+                    }
+                    tabBorder.SizeChanged += (_, _) => ClipWorkspaceTab(tabBorder);
+                }
+                tabBorder.MouseLeftButtonDown += (_, e) => { SelectWorkspaceTab(pane, tab); e.Handled = true; };
                 var menu = new ContextMenu();
                 var move = new MenuItem { Header = Loc("Str_Workspace_Move") };
                 move.Click += (_, _) => { SelectWorkspaceTab(pane, tab); MoveWorkspaceTab(); };
-                menu.Items.Add(move); row.ContextMenu = menu;
+                menu.Items.Add(move); tabBorder.ContextMenu = menu;
                 pane.Strip.Children.Add(tabBorder);
             }
+            UpdateWorkspacePaneAppearance(pane);
+        }
+
+        private void UpdateWorkspacePaneAppearance(WorkspacePane pane)
+        {
+            bool flat = ThemeManager.Current == Theme.SE98;
+            bool focused = pane == CurrentPane;
+            string edge = focused && !flat ? "PrimaryBrush" : "PaneBorderBrush";
+            pane.Frame.SetResourceReference(Border.BorderBrushProperty, edge);
+            pane.HeaderLine.SetResourceReference(Border.BackgroundProperty, flat ? "BevelLightBrush" : edge);
+            pane.EmptyBackdrop.Visibility = pane.Selected == null ? Visibility.Visible : Visibility.Collapsed;
+            foreach (var border in pane.Strip.Children.OfType<Border>())
+            {
+                bool active = border.Tag == pane.Selected;
+                border.BorderThickness = flat ? new Thickness(0) : active
+                    ? focused ? new Thickness(1, 3, 1, 0) : new Thickness(0, 3, 0, 0)
+                    : new Thickness(0, 0, 1, 0);
+                border.Padding = flat ? new Thickness(12, 4, 5, 4) : active
+                    ? focused ? new Thickness(11, 1, 4, 5) : new Thickness(12, 1, 5, 5)
+                    : new Thickness(12, 4, 5, 5);
+                border.SetResourceReference(Border.BorderBrushProperty, active ? edge : "PaneBorderBrush");
+            }
+        }
+
+        private static void ClipWorkspaceTab(Border tab)
+        {
+            double w = tab.ActualWidth, h = tab.ActualHeight;
+            if (w <= 0 || h <= 0) return;
+            double cut = Math.Min(3, Math.Min(w / 2, h / 2));
+            var shape = new StreamGeometry();
+            using (var path = shape.Open())
+            {
+                path.BeginFigure(new Point(0, h + 16), true, true);
+                path.LineTo(new Point(0, cut), true, false);
+                path.LineTo(new Point(cut, 0), true, false);
+                path.LineTo(new Point(w - cut, 0), true, false);
+                path.LineTo(new Point(w, cut), true, false);
+                path.LineTo(new Point(w, h + 16), true, false);
+            }
+            shape.Freeze();
+            tab.Clip = shape;
         }
 
         private void SelectWorkspaceTab(WorkspacePane pane, WorkspaceTab tab)
@@ -252,7 +360,7 @@ namespace KillerScan.Shell
                 else RenderWorkspaceTabs(_leftWorkspace);
             }
             WorkspaceHost.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
-            WorkspaceHost.ColumnDefinitions[1].Width = new GridLength(split ? 5 : 0);
+            WorkspaceHost.ColumnDefinitions[1].Width = new GridLength(split ? 7 : 0);
             WorkspaceHost.ColumnDefinitions[2].Width = split ? new GridLength(1, GridUnitType.Star) : new GridLength(0);
             _rightWorkspace.Root.Visibility = split ? Visibility.Visible : Visibility.Collapsed;
             _workspaceSplitter?.SetCurrentValue(VisibilityProperty, split ? Visibility.Visible : Visibility.Collapsed);

@@ -34,7 +34,9 @@ namespace KillerScan.Controls
             bool alt = modifiers.HasFlag(ModifierKeys.Alt);
             bool text = Keyboard.FocusedElement is TextBox;
             Action? action = null;
-            if (e.Key == Key.Escape && IsScanning) action = Stop;
+            if (e.Key == Key.Escape && FilterBox.Visibility == Visibility.Visible) action = CloseFilter;
+            else if (e.Key == Key.Escape && IsScanning) action = Stop;
+            else if (ctrl && shift && !alt && e.Key == Key.F) action = FocusFilter;
             else if (ctrl && !shift && !alt && e.Key == Key.F) action = FocusTargets;
             else if (ctrl && !shift && !alt && e.Key == Key.E) action = () => ExportCsv_Click(this, new RoutedEventArgs());
             else if (ctrl && !shift && !alt && e.Key == Key.R) action = RescanSelected;

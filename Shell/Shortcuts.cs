@@ -35,6 +35,7 @@ namespace KillerScan.Shell
             ("Esc",             "Str_Sc_Cancel"),
             ("Ctrl + R",        "Str_Sc_Rescan"),
             ("Ctrl + F",        "Str_Sc_Subnet"),
+            ("Ctrl + Shift + F", "Str_FilterPlaceholder"),
             ("Ctrl + A",        "Str_Sc_SelectAll"),
             ("Ctrl + E",        "Str_Sc_Export"),
             ("Enter",           "Str_Sc_Browser"),

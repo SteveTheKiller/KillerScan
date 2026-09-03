@@ -2,21 +2,21 @@
 <Grid>
 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
 <Grid x:Name="ScanToolbar">
-<WrapPanel Margin="10,4">
+<WrapPanel Margin="8,2">
 <TextBox x:Name="SubnetInput" Style="{StaticResource DarkTextBox}" Padding="5,3,9,3" FontSize="12" Width="220" MaxWidth="220" VerticalAlignment="Center" Margin="0,2,8,2"/>
-<Button x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}" Style="{StaticResource OutlineButton}" Click="ScanBtn_Click" FontSize="12" Padding="14,5" Margin="0,2,6,2">
+<Button x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}" Style="{StaticResource OutlineButton}" Click="ScanBtn_Click" FontSize="12" Padding="10,3" Margin="0,2,6,2">
 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Btn_Scan}"/><Run Text=" (F5)"/></TextBlock></Button.ToolTip>
 </Button>
-<Button x:Name="DeepScanAllButton" Content="{DynamicResource Str_Btn_DeepScanAll}" Style="{StaticResource OutlineButton}" Click="DeepScanAll_Click" Visibility="Collapsed" FontSize="12" Padding="10,5" Margin="0,2,10,2"/>
-<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,12,2">
+<Button x:Name="DeepScanAllButton" Content="{DynamicResource Str_Btn_DeepScanAll}" Style="{StaticResource OutlineButton}" Click="DeepScanAll_Click" Visibility="Collapsed" FontSize="12" Padding="8,3" Margin="0,2,10,2"/>
+<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,8,2">
 <TextBlock Text="{DynamicResource Str_Lbl_Local}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,0,5,0"/>
 <TextBlock x:Name="LocalIpLabel" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11"/>
 </StackPanel>
-<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,12,2">
+<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,8,2">
 <TextBlock Text="{DynamicResource Str_Lbl_Gateway}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,0,5,0"/>
 <TextBlock x:Name="GatewayLabel" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11"/>
 </StackPanel>
-<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,12,2">
+<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,8,2">
 <TextBlock Text="{DynamicResource Str_Lbl_Dns}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,0,5,0"/>
 <TextBlock x:Name="DnsLabel" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11"/>
 </StackPanel>
@@ -24,65 +24,10 @@
 <TextBlock x:Name="InterfaceIcon" Foreground="{DynamicResource PrimaryBrush}" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="0,0,5,0"/>
 <TextBlock x:Name="InterfaceLabel" Foreground="{DynamicResource TextBrush}" FontSize="11"/>
 </StackPanel>
-</WrapPanel>
-<Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
-</Grid>
-<Border x:Name="DevicesPane"
-                Grid.Row="1" Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
-                BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}" Margin="0" Panel.ZIndex="10"
-                >
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-
-                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="20"
-                        BorderBrush="{DynamicResource PaneBevelDarkBrush}"
-                        BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
-                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="20"
-                        BorderBrush="{DynamicResource PaneBevelLightBrush}"
-                        BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
-                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="20"
-                        Margin="{DynamicResource PaneBevelInnerMargin}"
-                        BorderBrush="{DynamicResource PaneBevelDark2Brush}"
-                        BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
-                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="20"
-                        Margin="{DynamicResource PaneBevelInnerMargin}"
-                        BorderBrush="{DynamicResource PaneBevelLight2Brush}"
-                        BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
-                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="21" VerticalAlignment="Top"
-                        Height="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneTopBrush}"/>
-                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="21" HorizontalAlignment="Left"
-                        Width="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneLeftBrush}"/>
-                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="22" HorizontalAlignment="Right"
-                        Width="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneRightBrush}"/>
-                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="22" VerticalAlignment="Bottom"
-                        Height="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneBottomBrush}"/>
-
-
-                <Border Grid.RowSpan="2" IsHitTestVisible="False" Opacity="0.20" Panel.ZIndex="-1" CornerRadius="{DynamicResource PaneGrainCornerRadius}">
-                    <Border.Background>
-                        <ImageBrush x:Name="GrainBrush" TileMode="Tile"
-                                    ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
-                    </Border.Background>
-                </Border>
-
-                <Grid Grid.Row="0" Margin="12,8,12,8">
-                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock x:Name="PaneTitle" Grid.Column="0" Text="{DynamicResource Str_DiscoveredDevices}"
-                               Foreground="{DynamicResource TextBrush}" FontFamily="Consolas"
-                               FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
-
-                    <Border x:Name="FilterBox" Grid.Column="1" Margin="16,0,0,0" MaxWidth="180" Height="26" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+<Button x:Name="FilterToggleButton" Style="{StaticResource OutlineButton}" FontFamily="Segoe MDL2 Assets" Content="&#xE71C;" Width="26" Height="26" Padding="0" Margin="0,2,6,2" Click="FilterToggle_Click">
+<Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_FilterPlaceholder}"/><Run Text=" (Ctrl+Shift+F)"/></TextBlock></Button.ToolTip>
+</Button>
+                    <Border x:Name="FilterBox" Margin="0,2,6,2" Width="150" MaxWidth="150" Visibility="Collapsed" Height="26" VerticalAlignment="Center" HorizontalAlignment="Stretch"
                             Background="{DynamicResource TextFieldBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}">
                         <Border.Style>
                             <Style TargetType="Border">
@@ -131,8 +76,8 @@
                             </Grid>
                         </Grid>
                     </Border>
-                    <Button x:Name="TopologyOrderButton" Grid.Column="2" Visibility="Collapsed"
-                            HorizontalAlignment="Left" Margin="10,0,0,0" Width="32" Height="26"
+                    <Button x:Name="TopologyOrderButton" Visibility="Collapsed"
+                            HorizontalAlignment="Left" Margin="0,2,6,2" Width="26" Height="26"
                             Padding="0" VerticalAlignment="Center" Cursor="Hand"
                             Background="{DynamicResource TextFieldBrush}"
                             Foreground="{DynamicResource TextBrush}"
@@ -177,15 +122,15 @@
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
-                    <TextBlock Grid.Column="3" x:Name="DeviceCount"
-                               Text="" TextTrimming="CharacterEllipsis" MaxWidth="230"
+                    <TextBlock x:Name="DeviceCount"
+                               Text="" TextTrimming="CharacterEllipsis" MaxWidth="180"
                                Foreground="{DynamicResource MutedTextBrush}"
-                               FontSize="12" VerticalAlignment="Center" Margin="0,0,12,0"/>
-                    <Button Grid.Column="4" x:Name="ExportButton"
+                               FontSize="11" VerticalAlignment="Center" Margin="0,2,8,2"/>
+                    <Button x:Name="ExportButton"
                             Click="ExportButton_Click" IsEnabled="False"
                             ToolTip="{DynamicResource Str_TT_Export}" Cursor="Hand"
                             Background="{DynamicResource ExportButtonBackground}" BorderThickness="0"
-                            Width="32" Height="26" VerticalAlignment="Center">
+                            Width="26" Height="26" VerticalAlignment="Center" Margin="0,2,6,2">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Grid>
@@ -234,10 +179,50 @@
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
-                </Grid>
+
+</WrapPanel>
+<Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+</Grid>
+<Border x:Name="DevicesPane"
+                Grid.Row="1" Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
+                BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}" Margin="0" Panel.ZIndex="10"
+                >
+            <Grid>
+                <Grid.RowDefinitions><RowDefinition Height="*"/></Grid.RowDefinitions>
 
 
-                <DataGrid Grid.Row="1" x:Name="ResultsGrid"
+                <Border Grid.RowSpan="1" IsHitTestVisible="False" Panel.ZIndex="20"
+                        BorderBrush="{DynamicResource PaneBevelDarkBrush}"
+                        BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
+                <Border Grid.RowSpan="1" IsHitTestVisible="False" Panel.ZIndex="20"
+                        BorderBrush="{DynamicResource PaneBevelLightBrush}"
+                        BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
+                <Border Grid.RowSpan="1" IsHitTestVisible="False" Panel.ZIndex="20"
+                        Margin="{DynamicResource PaneBevelInnerMargin}"
+                        BorderBrush="{DynamicResource PaneBevelDark2Brush}"
+                        BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
+                <Border Grid.RowSpan="1" IsHitTestVisible="False" Panel.ZIndex="20"
+                        Margin="{DynamicResource PaneBevelInnerMargin}"
+                        BorderBrush="{DynamicResource PaneBevelLight2Brush}"
+                        BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
+                <Border Grid.RowSpan="1" IsHitTestVisible="False" Panel.ZIndex="21" VerticalAlignment="Top"
+                        Height="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneTopBrush}"/>
+                <Border Grid.RowSpan="1" IsHitTestVisible="False" Panel.ZIndex="21" HorizontalAlignment="Left"
+                        Width="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneLeftBrush}"/>
+                <Border Grid.RowSpan="1" IsHitTestVisible="False" Panel.ZIndex="22" HorizontalAlignment="Right"
+                        Width="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneRightBrush}"/>
+                <Border Grid.RowSpan="1" IsHitTestVisible="False" Panel.ZIndex="22" VerticalAlignment="Bottom"
+                        Height="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneBottomBrush}"/>
+
+
+                <Border Grid.RowSpan="1" IsHitTestVisible="False" Opacity="0.20" Panel.ZIndex="-1" CornerRadius="{DynamicResource PaneGrainCornerRadius}">
+                    <Border.Background>
+                        <ImageBrush x:Name="GrainBrush" TileMode="Tile"
+                                    ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
+                    </Border.Background>
+                </Border>
+
+                <DataGrid Grid.Row="0" x:Name="ResultsGrid"
                           Margin="0"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"
@@ -630,7 +615,7 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <DataGrid Grid.Row="1" x:Name="ServicesGrid" Visibility="Collapsed"
+                <DataGrid Grid.Row="0" x:Name="ServicesGrid" Visibility="Collapsed"
                           AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent"
                           Foreground="{DynamicResource TextBrush}" BorderThickness="0"
                           GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{DynamicResource PaneBorderBrush}"
@@ -650,7 +635,7 @@
                 </DataGrid>
 
 
-                <Grid Grid.Row="1" x:Name="TopologyPane" Visibility="Collapsed"
+                <Grid Grid.Row="0" x:Name="TopologyPane" Visibility="Collapsed"
                       ClipToBounds="True" SizeChanged="TopologyPane_SizeChanged">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                                   VerticalScrollBarVisibility="Auto">

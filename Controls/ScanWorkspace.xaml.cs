@@ -24,6 +24,7 @@ namespace KillerScan.Controls
         private bool _disposed;
         private bool _runDeepAfterScan;
         private readonly TextBlock StatusText = new();
+        private readonly TextBlock PaneTitle = new();
         private readonly ProgressBar ScanProgress = new() { Visibility = Visibility.Collapsed };
         private readonly Button TopologyButton = new();
         private readonly Button ServicesButton = new();
@@ -61,16 +62,7 @@ namespace KillerScan.Controls
             ServicesGrid.ContextMenuOpening += ResultsGrid_ContextMenuOpening;
             SizeChanged += (_, _) =>
             {
-                bool compact = ActualWidth < 720;
-                bool narrow = ActualWidth < 450;
-                PaneTitle.Visibility = compact ? Visibility.Collapsed : Visibility.Visible;
-                FilterBox.Margin = new Thickness(compact ? 0 : 16, 0, 0, 0);
-                Grid.SetRow(DeviceCount, narrow ? 1 : 0);
-                Grid.SetColumn(DeviceCount, narrow ? 0 : 3);
-                Grid.SetColumnSpan(DeviceCount, narrow ? 5 : 1);
-                DeviceCount.Margin = narrow ? new Thickness(0, 5, 0, 0) : new Thickness(8, 0, 12, 0);
-                DeviceCount.MaxWidth = narrow ? Math.Max(0, ActualWidth - 24) : Math.Min(230, ActualWidth - 280);
-                SubnetInput.Width = Math.Max(40, Math.Min(220, ActualWidth - 28));
+                SubnetInput.Width = Math.Max(40, Math.Min(ActualWidth < 1100 ? 180 : 220, ActualWidth - 28));
             };
             SubnetInput.TextChanged += (_, _) => { _active.SubnetText = Targets; StateChanged?.Invoke(this, EventArgs.Empty); };
             SubnetInput.KeyDown += (_, e) => { if (e.Key == Key.Enter) { Scan(); e.Handled = true; } };
@@ -95,7 +87,24 @@ namespace KillerScan.Controls
         public void Stop() { _active.Cts?.Cancel(); _rescanCts?.Cancel(); }
         public void DeepScan() { if (!_disposed) DeepScanAll_Click(this, new RoutedEventArgs()); }
         public void FocusTargets() { SubnetInput.Focus(); SubnetInput.SelectAll(); }
-        public void FocusFilter() { FilterInput.Focus(); FilterInput.SelectAll(); }
+        public void FocusFilter()
+        {
+            FilterBox.Visibility = Visibility.Visible;
+            FilterInput.Focus();
+            FilterInput.SelectAll();
+        }
+        private void FilterToggle_Click(object sender, RoutedEventArgs e)
+        {
+            if (FilterBox.Visibility == Visibility.Visible)
+                CloseFilter();
+            else FocusFilter();
+        }
+        private void CloseFilter()
+        {
+            ClearFilter();
+            FilterBox.Visibility = Visibility.Collapsed;
+            FilterToggleButton.Focus();
+        }
         public void ClearFilter() => FilterInput.Clear();
         public void SetView(string view)
         {

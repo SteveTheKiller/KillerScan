@@ -10,6 +10,11 @@ namespace KillerScan.Controls
         {
             if (_filteredView == null) return;
             string filter = FilterInput.Text.Trim().ToLowerInvariant();
+            FilterToggleButton.SetResourceReference(Control.ForegroundProperty,
+                filter.Length > 0 ? "PrimaryBrush" : "TextBrush");
+            FilterToggleButton.FontWeight = filter.Length > 0
+                ? System.Windows.FontWeights.Bold : System.Windows.FontWeights.Normal;
+            if (filter.Length > 0) FilterBox.Visibility = System.Windows.Visibility.Visible;
             if (string.IsNullOrEmpty(filter))
                 _filteredView.Filter = null;
             else
@@ -46,7 +51,7 @@ namespace KillerScan.Controls
             {
                 tail = string.Format(Loc("Str_Count_Found"), total);
             }
-            DeviceCount.Text = CountLabel(tail);
+            DeviceCount.Text = tail;
         }
     }
 }
