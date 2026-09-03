@@ -290,6 +290,10 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Ostatnia zmiana</sys:String>
     <sys:String x:Key="Str_Watch_Events">Ostatnie zmiany</sys:String>
     <sys:String x:Key="Str_Watch_Copy">Kopiuj wyniki</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">Wyczyść dziennik</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">Kopiuj adres</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">Zeruj statystyki</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">Przestań monitorować ten cel</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Zatrzymano</sys:String>
     <sys:String x:Key="Str_Diag_Title">Diagnostyka urządzenia</sys:String>

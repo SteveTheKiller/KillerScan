@@ -20,6 +20,7 @@ namespace KillerScan.Controls
         private readonly int[] _ports;
         private CancellationTokenSource? _run;
         private readonly ObservableCollection<ResultRow> _rows = [];
+        private readonly ObservableCollection<WatchCard> _cards = [];
         private readonly Queue<string> _events = new();
         private bool _closed;
         private string L(string key) => TryFindResource(key) as string ?? key;
@@ -32,7 +33,19 @@ namespace KillerScan.Controls
             Targets.Text = targets;
             Targets.IsReadOnly = diagnostics;
             TargetLabel.Visibility = Visibility.Collapsed;
-            Events.Visibility = EventsHeading.Visibility = diagnostics ? Visibility.Collapsed : Visibility.Visible;
+            // Diagnostics is a flat list of check and result, so it keeps the table and gives
+            // the whole pane to it. Keep Alive gets cards plus a splittable event log.
+            Results.Visibility = diagnostics ? Visibility.Visible : Visibility.Collapsed;
+            CardHost.Visibility = EventPane.Visibility = EventSplitter.Visibility =
+                diagnostics ? Visibility.Collapsed : Visibility.Visible;
+            if (diagnostics)
+            {
+                SplitterRow.Height = new GridLength(0);
+                EventRow.Height = new GridLength(0);
+                EventRow.MinHeight = 0;
+            }
+            Cards.ItemsSource = _cards;
+            ThemeManager.ThemeChanged += OnThemeChanged;
             Heading.SetResourceReference(TextBlock.TextProperty, diagnostics ? "Str_Diag_Title" : "Str_View_KeepAlive");
             Hint.SetResourceReference(TextBlock.TextProperty, diagnostics ? "Str_Diag_Hint" : "Str_Watch_Hint");
             StartButton.SetResourceReference(ContentProperty, diagnostics ? "Str_Diag_Run" : "Str_Watch_Start");
@@ -101,7 +114,7 @@ namespace KillerScan.Controls
             var run = _run = new CancellationTokenSource();
             StartButton.IsEnabled = Targets.IsEnabled = false;
             StopButton.IsEnabled = true;
-            _rows.Clear(); _events.Clear(); Events.Document.Blocks.Clear(); Status.Text = string.Empty;
+            _rows.Clear(); _cards.Clear(); _events.Clear(); Events.Document.Blocks.Clear(); Status.Text = string.Empty;
             try
             {
                 if (_diagnostics) await DiagnoseAsync(addresses[0], run.Token);
@@ -123,46 +136,105 @@ namespace KillerScan.Controls
             }
         }
 
+        /// <summary>
+        /// One watched target. Held in a list rather than a fixed array so the card context
+        /// menu can drop a target or reset its counters without restarting the whole run.
+        /// </summary>
+        private sealed class WatchTarget(IPAddress address, WatchCard card)
+        {
+            public IPAddress Address { get; } = address;
+            public WatchCard Card { get; } = card;
+            public ConnectionSample Sample { get; set; } = new ConnectionSample(address.ToString());
+        }
+
+        private readonly List<WatchTarget> _targets = [];
+
         private async Task WatchAsync(IPAddress[] addresses, CancellationToken token)
         {
-            var samples = addresses.Select(a => new ConnectionSample(a.ToString())).ToArray();
-            foreach (var sample in samples) _rows.Add(new ResultRow { Target = sample.Address, Result = L("Str_Watch_Waiting") });
-            while (true)
+            _targets.Clear();
+            foreach (var address in addresses)
+            {
+                var card = new WatchCard(address.ToString(), L("Str_Watch_Waiting"));
+                _cards.Add(card);
+                _rows.Add(new ResultRow { Target = address.ToString(), Result = L("Str_Watch_Waiting") });
+                _targets.Add(new WatchTarget(address, card));
+            }
+            while (_targets.Count > 0)
             {
                 token.ThrowIfCancellationRequested();
                 var clock = Stopwatch.StartNew();
-                var replies = await Task.WhenAll(addresses.Select(ConnectionChecks.PingAsync));
+                // Snapshot the list: a context-menu removal during the await would otherwise
+                // leave the reply array and the live list disagreeing about who is who.
+                var polled = _targets.ToArray();
+                var replies = await Task.WhenAll(polled.Select(t => ConnectionChecks.PingAsync(t.Address)));
                 token.ThrowIfCancellationRequested();
                 var now = DateTimeOffset.Now;
-                for (int i = 0; i < samples.Length; i++)
+                for (int i = 0; i < polled.Length; i++)
                 {
-                    var sample = samples[i];
+                    var target = polled[i];
+                    if (!_targets.Contains(target)) continue;
+                    var sample = target.Sample;
                     bool changed = sample.Record(replies[i], now);
-                    string state = L(replies[i].HasValue ? "Str_Watch_Reply" : "Str_Watch_NoReply");
-                    _rows[i] = new ResultRow
-                    {
-                        Target = sample.Address, Result = state, Sent = sample.Sent.ToString(),
-                        Loss = sample.Loss.ToString("0.0") + "%",
-                        Latency = (sample.Latest?.ToString() ?? "?") + " / " + (sample.Received == 0 ? "?" : sample.Average.ToString("0.0")),
-                        Changed = sample.Changed?.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") ?? string.Empty
-                    };
-                    if (changed)
-                    {
-                        _events.Enqueue(now.ToString("yyyy-MM-dd HH:mm:ss zzz") + "  " + string.Format(L("Str_Watch_Event"), sample.Address, state));
-                        while (_events.Count > 200) _events.Dequeue();
-                        var palette = TerminalPalette.For(TerminalSkin.Default);
-                        var line = new Paragraph { Margin = new Thickness(0) };
-                        line.Inlines.Add(new Run(now.ToString("HH:mm:ss") + "  ") { Foreground = new SolidColorBrush(palette.Ansi[6]) });
-                        line.Inlines.Add(new Run(sample.Address + "  ") { Foreground = new SolidColorBrush(palette.Foreground) });
-                        line.Inlines.Add(new Run(state) { Foreground = new SolidColorBrush(palette.Ansi[replies[i].HasValue ? 2 : 1]) });
-                        Events.Document.Blocks.Add(line);
-                        while (Events.Document.Blocks.Count > 200) Events.Document.Blocks.Remove(Events.Document.Blocks.FirstBlock);
-                        Events.ScrollToEnd();
-                    }
+                    bool up = replies[i].HasValue;
+                    string state = L(up ? "Str_Watch_Reply" : "Str_Watch_NoReply");
+                    target.Card.Update(sample, state, up);
+                    // The table is hidden in Keep Alive, but Copy still reads it, so it stays current.
+                    int row = _cards.IndexOf(target.Card);
+                    if (row >= 0 && row < _rows.Count)
+                        _rows[row] = new ResultRow
+                        {
+                            Target = sample.Address, Result = state, Sent = sample.Sent.ToString(),
+                            Loss = sample.Loss.ToString("0.0") + "%",
+                            Latency = (sample.Latest?.ToString() ?? "?") + " / " + (sample.Received == 0 ? "?" : sample.Average.ToString("0.0")),
+                            Changed = sample.Changed?.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") ?? string.Empty
+                        };
+                    if (changed) LogEvent(now, sample.Address, state, up);
                 }
+                if (_targets.Count == 0) break;
                 await Task.Delay(Math.Max(1, 2000 - (int)clock.ElapsedMilliseconds), token);
             }
         }
+
+        private WatchTarget? TargetFor(object sender) =>
+            (sender as FrameworkElement)?.DataContext is WatchCard card
+                ? _targets.FirstOrDefault(t => t.Card == card) : null;
+
+        private void CardCopy_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as FrameworkElement)?.DataContext is not WatchCard card) return;
+            try { Clipboard.SetText(card.Address); }
+            catch (System.Runtime.InteropServices.COMException) { Status.Text = L("Str_Diag_Error"); }
+        }
+
+        /// <summary>Starts this target's counters over without disturbing the others.</summary>
+        private void CardReset_Click(object sender, RoutedEventArgs e)
+        {
+            var target = TargetFor(sender);
+            if (target == null) return;
+            target.Sample = new ConnectionSample(target.Address.ToString());
+            target.Card.Reset(L("Str_Watch_Waiting"));
+        }
+
+        private void CardRemove_Click(object sender, RoutedEventArgs e)
+        {
+            var target = TargetFor(sender);
+            if (target == null) return;
+            int row = _cards.IndexOf(target.Card);
+            _targets.Remove(target);
+            _cards.Remove(target.Card);
+            if (row >= 0 && row < _rows.Count) _rows.RemoveAt(row);
+            var remaining = _targets.Select(t => t.Address.ToString());
+            Targets.Text = string.Join(", ", remaining);
+        }
+
+        private void CardDiagnose_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as FrameworkElement)?.DataContext is WatchCard card)
+                DiagnoseRequested?.Invoke(card.Address);
+        }
+
+        /// <summary>Raised when a card asks for diagnostics, so the shell can open that view.</summary>
+        internal event Action<string>? DiagnoseRequested;
 
         private async Task DiagnoseAsync(IPAddress address, CancellationToken token)
         {
@@ -191,8 +263,38 @@ namespace KillerScan.Controls
             Status.Text = L("Str_Diag_Time") + ": " + DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss zzz");
         }
 
+        /// <summary>
+        /// Appends one state change. Colors come from the terminal palette so red and green
+        /// follow the active theme; everything else stays on the theme's own foreground.
+        /// </summary>
+        private void LogEvent(DateTimeOffset time, string address, string state, bool up)
+        {
+            _events.Enqueue(time.ToString("yyyy-MM-dd HH:mm:ss zzz") + "  " + string.Format(L("Str_Watch_Event"), address, state));
+            while (_events.Count > 200) _events.Dequeue();
+            var palette = TerminalPalette.For(TerminalSkin.Default);
+            var line = new Paragraph { Margin = new Thickness(0) };
+            line.Inlines.Add(new Run(time.ToString("HH:mm:ss") + "  ") { Foreground = new SolidColorBrush(palette.Ansi[8]) });
+            line.Inlines.Add(new Run(address.PadRight(16) + " ") { Foreground = new SolidColorBrush(palette.Foreground) });
+            line.Inlines.Add(new Run(state) { Foreground = new SolidColorBrush(palette.Ansi[up ? 2 : 1]) });
+            Events.Document.Blocks.Add(line);
+            while (Events.Document.Blocks.Count > 200) Events.Document.Blocks.Remove(Events.Document.Blocks.FirstBlock);
+            Events.ScrollToEnd();
+        }
+
+        /// <summary>Repaints the cards after a theme swap. Past log lines keep the colors they were written with.</summary>
+        private void OnThemeChanged()
+        {
+            foreach (var card in _cards) card.RefreshTheme();
+        }
+
+        private void Clear_Click(object sender, RoutedEventArgs e)
+        {
+            _events.Clear();
+            Events.Document.Blocks.Clear();
+        }
+
         private void Stop_Click(object sender, RoutedEventArgs e) { _run?.Cancel(); StopButton.IsEnabled = false; }
-        public void Dispose() { _closed = true; _run?.Cancel(); }
+        public void Dispose() { _closed = true; ThemeManager.ThemeChanged -= OnThemeChanged; _run?.Cancel(); }
         private void Copy_Click(object sender, RoutedEventArgs e)
         {
             string headings = string.Join("\t", Results.Columns.Select(c => (c.Header as TextBlock)?.Text));

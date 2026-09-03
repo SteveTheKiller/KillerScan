@@ -347,6 +347,10 @@
     <sys:String x:Key="Str_Watch_Changed">Соңғы өзгеріс</sys:String>
     <sys:String x:Key="Str_Watch_Events">Соңғы өзгерістер</sys:String>
     <sys:String x:Key="Str_Watch_Copy">Нәтижелерді көшіру</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">Журналды тазалау</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">Мекенжайды көшіру</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">Статистиканы қалпына келтіру</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">Бұл нысананы бақылауды тоқтату</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Тоқтатылды</sys:String>
     <sys:String x:Key="Str_Diag_Title">Құрылғы диагностикасы</sys:String>

@@ -331,6 +331,10 @@
     <sys:String x:Key="Str_Watch_Changed">Последнее изменение</sys:String>
     <sys:String x:Key="Str_Watch_Events">Недавние изменения</sys:String>
     <sys:String x:Key="Str_Watch_Copy">Копировать результаты</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">Очистить журнал</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">Копировать адрес</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">Сбросить статистику</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">Прекратить наблюдение за целью</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Остановлено</sys:String>
     <sys:String x:Key="Str_Diag_Title">Диагностика устройства</sys:String>

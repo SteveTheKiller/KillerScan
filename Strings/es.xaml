@@ -305,6 +305,10 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Último cambio</sys:String>
     <sys:String x:Key="Str_Watch_Events">Cambios recientes</sys:String>
     <sys:String x:Key="Str_Watch_Copy">Copiar resultados</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">Borrar registro</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">Copiar dirección</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">Restablecer estadísticas</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">Dejar de supervisar este destino</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Detenido</sys:String>
     <sys:String x:Key="Str_Diag_Title">Diagnóstico del dispositivo</sys:String>

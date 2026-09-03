@@ -305,6 +305,10 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Son değişiklik</sys:String>
     <sys:String x:Key="Str_Watch_Events">Son değişiklikler</sys:String>
     <sys:String x:Key="Str_Watch_Copy">Sonuçları kopyala</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">Günlüğü temizle</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">Adresi kopyala</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">İstatistikleri sıfırla</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">Bu hedefi izlemeyi durdur</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Durduruldu</sys:String>
     <sys:String x:Key="Str_Diag_Title">Cihaz tanılama</sys:String>

@@ -305,6 +305,10 @@
     <sys:String x:Key="Str_Watch_Changed">সর্বশেষ পরিবর্তন</sys:String>
     <sys:String x:Key="Str_Watch_Events">সাম্প্রতিক পরিবর্তন</sys:String>
     <sys:String x:Key="Str_Watch_Copy">ফলাফল কপি করুন</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">লগ সাফ করুন</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">ঠিকানা কপি করুন</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">পরিসংখ্যান রিসেট করুন</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">দেখা বন্ধ করুন</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">থামানো হয়েছে</sys:String>
     <sys:String x:Key="Str_Diag_Title">ডিভাইস ডায়াগনস্টিকস</sys:String>

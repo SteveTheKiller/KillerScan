@@ -321,6 +321,10 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Ultima modifica</sys:String>
     <sys:String x:Key="Str_Watch_Events">Modifiche recenti</sys:String>
     <sys:String x:Key="Str_Watch_Copy">Copia risultati</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">Cancella registro</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">Copia indirizzo</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">Azzera statistiche</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">Smetti di monitorare questa destinazione</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Interrotto</sys:String>
     <sys:String x:Key="Str_Diag_Title">Diagnostica dispositivo</sys:String>

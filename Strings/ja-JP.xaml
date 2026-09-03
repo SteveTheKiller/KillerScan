@@ -316,6 +316,10 @@
     <sys:String x:Key="Str_Watch_Changed">最終変更</sys:String>
     <sys:String x:Key="Str_Watch_Events">最近の変更</sys:String>
     <sys:String x:Key="Str_Watch_Copy">結果をコピー</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">ログを消去</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">アドレスをコピー</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">統計をリセット</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">この対象の監視を停止</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">停止済み</sys:String>
     <sys:String x:Key="Str_Diag_Title">デバイス診断</sys:String>

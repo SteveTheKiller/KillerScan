@@ -305,6 +305,10 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Dernier changement</sys:String>
     <sys:String x:Key="Str_Watch_Events">Changements récents</sys:String>
     <sys:String x:Key="Str_Watch_Copy">Copier les résultats</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">Effacer le journal</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">Copier l'adresse</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">Réinitialiser les statistiques</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">Ne plus surveiller cette cible</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Arrêté</sys:String>
     <sys:String x:Key="Str_Diag_Title">Diagnostic de l'appareil</sys:String>

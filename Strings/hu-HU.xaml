@@ -321,6 +321,10 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Utolsó változás</sys:String>
     <sys:String x:Key="Str_Watch_Events">Legutóbbi változások</sys:String>
     <sys:String x:Key="Str_Watch_Copy">Eredmények másolása</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">Napló törlése</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">Cím másolása</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">Statisztika nullázása</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">Cél figyelésének leállítása</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Leállítva</sys:String>
     <sys:String x:Key="Str_Diag_Title">Eszközdiagnosztika</sys:String>

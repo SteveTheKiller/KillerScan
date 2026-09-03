@@ -305,6 +305,10 @@
     <sys:String x:Key="Str_Watch_Changed">上次變更</sys:String>
     <sys:String x:Key="Str_Watch_Events">最近變更</sys:String>
     <sys:String x:Key="Str_Watch_Copy">複製結果</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">清除紀錄</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">複製位址</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">重設統計</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">停止監看此目標</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">已停止</sys:String>
     <sys:String x:Key="Str_Diag_Title">裝置診斷</sys:String>

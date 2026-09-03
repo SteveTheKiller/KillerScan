@@ -303,6 +303,10 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Poslední změna</sys:String>
     <sys:String x:Key="Str_Watch_Events">Nedávné změny</sys:String>
     <sys:String x:Key="Str_Watch_Copy">Kopírovat výsledky</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">Vymazat protokol</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">Kopírovat adresu</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">Vynulovat statistiky</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">Přestat sledovat</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Zastaveno</sys:String>
     <sys:String x:Key="Str_Diag_Title">Diagnostika zařízení</sys:String>

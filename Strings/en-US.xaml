@@ -347,6 +347,10 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Last change</sys:String>
     <sys:String x:Key="Str_Watch_Events">Recent changes</sys:String>
     <sys:String x:Key="Str_Watch_Copy">Copy results</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">Clear log</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">Copy address</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">Reset statistics</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">Stop watching this target</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Stopped</sys:String>
     <sys:String x:Key="Str_Diag_Title">Device diagnostics</sys:String>

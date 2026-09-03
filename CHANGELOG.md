@@ -11,7 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Added
 - Permanent views on the right of the scan toolbar preserve their state and offer a right-click menu for icon size and caption placement.
 - Compact toolbar with captioned Export, footer device count and network details, and overflow instead of scrolling. Keep Alive reuses the Scan table styling; terminals follow KillerShell's font and palette and prefer PowerShell 7.
-- Compact connection watch rows track replies, packet loss, latency, and colored event output. Terminals have a colored prompt, and Escape stops device ping. Device diagnostics checks DNS, ping, the local route, and TCP services.
+- Keep Alive shows each target as a status card with a latency sparkline, packet loss, and a right-click menu to copy the address, run diagnostics, reset its counters, or drop it from the run. Its event log sits in its own resizable pane on a flyout surface. Terminals have a colored prompt, and Escape stops device ping. Device diagnostics checks DNS, ping, the local route, and TCP services.
 - The arranged topology can be exported as a full-resolution PNG.
 - Saved scan profiles can load or run remembered targets and optionally follow with Deep Scan All.
 - F8 opens a service-centric view organized by discovered service, port, and device.

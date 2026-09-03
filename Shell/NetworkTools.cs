@@ -18,6 +18,15 @@ namespace KillerScan.Shell
                     .Where(s => !string.IsNullOrWhiteSpace(s)).Distinct();
                 _watchWorkspace = new NetworkToolsWindow(false, string.Join(", ", targets), [], _appScale);
                 _watchWorkspace.MatchScanTable((System.Windows.Controls.DataGrid)_scanWorkspace!.FindName("ResultsGrid"));
+                // A card asking for diagnostics reuses the device entry point when the address
+                // is one we scanned, so its discovered ports are checked too, and falls back
+                // to a bare address otherwise.
+                _watchWorkspace.DiagnoseRequested += address =>
+                {
+                    var known = (_scanWorkspace.FindName("ResultsGrid") as System.Windows.Controls.DataGrid)?
+                        .Items.OfType<Models.NetworkDevice>().FirstOrDefault(d => d.IpAddress == address);
+                    OpenNetworkTool(known ?? new Models.NetworkDevice { IpAddress = address }, true);
+                };
             }
             ShowWorkspaceContent(_watchWorkspace, "watch");
         }

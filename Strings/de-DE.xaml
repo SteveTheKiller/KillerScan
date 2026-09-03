@@ -306,6 +306,10 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Letzte Änderung</sys:String>
     <sys:String x:Key="Str_Watch_Events">Letzte Änderungen</sys:String>
     <sys:String x:Key="Str_Watch_Copy">Ergebnisse kopieren</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">Protokoll leeren</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">Adresse kopieren</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">Statistik zurücksetzen</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">Nicht mehr überwachen</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Gestoppt</sys:String>
     <sys:String x:Key="Str_Diag_Title">Gerätediagnose</sys:String>
