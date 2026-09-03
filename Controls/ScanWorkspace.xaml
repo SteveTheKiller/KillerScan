@@ -25,7 +25,7 @@
 <TextBlock Text="{DynamicResource Str_Lbl_Dns}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,0,5,0"/>
 <TextBlock x:Name="DnsLabel" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11"/>
 </StackPanel>
-<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,0,2">
+<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="4,2,12,2">
 <TextBlock x:Name="InterfaceIcon" Foreground="{DynamicResource PrimaryBrush}" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="0,0,5,0"/>
 <TextBlock x:Name="InterfaceLabel" Foreground="{DynamicResource TextBrush}" FontSize="11"/>
 </StackPanel>
@@ -186,7 +186,6 @@
                     </Button>
 
 </StackPanel>
-<Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 </Grid>
 <Border x:Name="DevicesPane"
                 Grid.Row="1" Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"

@@ -34,12 +34,11 @@ namespace KillerScan.Shell
             var grain = new Border { IsHitTestVisible = false };
             grain.SetResourceReference(Border.BackgroundProperty, "GrainTileBrush");
             grain.SetResourceReference(OpacityProperty, "GrainOpacity");
-            toolbarSurface.Children.Add(new Border { Opacity = 0.20, Child = grain, IsHitTestVisible = false });
             toolbarSurface.Children.Add(_workspaceToolbar);
+            toolbarSurface.Children.Add(grain);
             WorkspaceHost.Children.Add(toolbarSurface);
-            Grid.SetRow(_workspaceBody, 1);
-            WorkspaceHost.Children.Add(_workspaceBody);
-            DevicesPane.SizeChanged += (_, _) => ClipWorkspaceSurface();
+            TerminalLayout.Children.Add(_workspaceBody);
+            TerminalLayout.SizeChanged += (_, _) => ClipWorkspaceSurface();
             NewScan(_startupScanTarget ?? string.Empty);
         }
 
@@ -162,6 +161,11 @@ namespace KillerScan.Shell
 
         private void ClipWorkspaceSurface()
         {
+            if (TryFindResource("RailSeparatorMargin") is Thickness railMargin)
+            {
+                railMargin.Top += WorkspaceHost.RowDefinitions[0].ActualHeight;
+                WorkspaceRailSeparator.Margin = railMargin;
+            }
             double radius = DevicesPane.CornerRadius.BottomLeft;
             if (TerminalLayout.ActualWidth > 0 && TerminalLayout.ActualHeight > 0)
                 TerminalLayout.Clip = new RectangleGeometry(new Rect(0, 0, TerminalLayout.ActualWidth, TerminalLayout.ActualHeight), radius, radius);

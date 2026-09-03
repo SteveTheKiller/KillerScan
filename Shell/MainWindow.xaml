@@ -160,7 +160,7 @@
         </Border>
 
         <!-- The family rail has a single hairline at its content edge. -->
-        <Border Grid.Row="1" Grid.Column="0" BorderBrush="{DynamicResource PaneBorderBrush}"
+        <Border x:Name="WorkspaceRailSeparator" Grid.Row="1" Grid.Column="0" BorderBrush="{DynamicResource PaneBorderBrush}"
                 BorderThickness="0,0,1,0" IsHitTestVisible="False"
                 Margin="{DynamicResource RailSeparatorMargin}"
                 Visibility="{DynamicResource RailSeparatorVisibility}"/>
@@ -297,16 +297,17 @@
         <!-- Named so the shadow can be switched off. Windows 98 had no drop shadows anywhere, and
              PaneShadow is a StaticResource effect that a palette cannot reach - so Theme.cs nulls
              the Effect on 98SE and restores it otherwise. Same approach KillerShell takes. -->
-        <Border x:Name="DevicesPane" Grid.Row="1" Grid.Column="1"
+        <Grid x:Name="WorkspaceHost" Grid.Row="1" Grid.Column="1"
+              Margin="{DynamicResource DevicesPaneMargin}" Panel.ZIndex="10">
+        <Border x:Name="DevicesPane" Grid.Row="1"
                 Background="{DynamicResource ScanContentPaneBrush}"
                 BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="0"
                 CornerRadius="{DynamicResource PanelCornerRadius}"
-                Margin="{DynamicResource DevicesPaneMargin}" Panel.ZIndex="10"
                 Effect="{StaticResource PaneShadow}">
             <Grid x:Name="TerminalLayout" WindowChrome.IsHitTestVisibleInChrome="True">
-                <Grid x:Name="WorkspaceHost"/>
             </Grid>
         </Border>
+        </Grid>
 
         </Grid>
         <!-- end ScaleHost -->
