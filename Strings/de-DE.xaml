@@ -310,6 +310,12 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Adresse kopieren</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Statistik zurücksetzen</sys:String>
     <sys:String x:Key="Str_Watch_Remove">Nicht mehr überwachen</sys:String>
+    <sys:String x:Key="Str_Trace_Run">Route verfolgen</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">Sprung {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">Keine Antwort</sys:String>
+    <sys:String x:Key="Str_Diag_Working">Wird geprüft</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">Erneut prüfen</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">Wählen Sie eine Karte, um Details zu sehen.</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Gestoppt</sys:String>
     <sys:String x:Key="Str_Diag_Title">Gerätediagnose</sys:String>

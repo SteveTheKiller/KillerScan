@@ -32,6 +32,62 @@ namespace KillerScan.Services
             catch (SocketException) { return null; }
         }
 
+        /// <summary>One traceroute hop: who answered, and how long it took.</summary>
+        internal readonly struct Hop(int ttl, IPAddress? address, long? latency, bool arrived)
+        {
+            public int Ttl { get; } = ttl;
+            public IPAddress? Address { get; } = address;
+            public long? Latency { get; } = latency;
+            /// <summary>True once a hop is the destination itself, so the caller stops walking.</summary>
+            public bool Arrived { get; } = arrived;
+        }
+
+        /// <summary>
+        /// Walks the path to <paramref name="address"/> by raising the TTL one hop at a time.
+        /// A router that drops the expiry notice shows as a timeout rather than ending the walk,
+        /// because a single silent hop in the middle is normal and says nothing about the rest.
+        /// </summary>
+        /// <remarks>
+        /// Reports each hop through <paramref name="report"/> as it lands rather than returning a
+        /// list, so the caller can fill a table live. net48 has no IAsyncEnumerable without an
+        /// extra package, and one callback is not worth taking that dependency for.
+        /// </remarks>
+        internal static async Task TraceAsync(IPAddress address, int maxHops, Action<Hop> report,
+            CancellationToken token)
+        {
+            var buffer = new byte[32];
+            for (int ttl = 1; ttl <= maxHops; ttl++)
+            {
+                token.ThrowIfCancellationRequested();
+                using var ping = new Ping();
+                PingReply? reply = null;
+                // Windows reports RoundtripTime 0 on a TTL-expired notice, so every hop but the
+                // last would read 0 ms. Time the exchange here instead and use that throughout.
+                var clock = System.Diagnostics.Stopwatch.StartNew();
+                try
+                {
+                    reply = await ping.SendPingAsync(address, 2000, buffer,
+                        new PingOptions(ttl, true)).ConfigureAwait(false);
+                }
+                catch (PingException) { }
+                catch (SocketException) { }
+                clock.Stop();
+                token.ThrowIfCancellationRequested();
+
+                if (reply == null || (reply.Status != IPStatus.Success && reply.Status != IPStatus.TtlExpired))
+                {
+                    report(new Hop(ttl, null, null, false));
+                    continue;
+                }
+                bool arrived = reply.Status == IPStatus.Success;
+                // Prefer the stack's own figure. It is only ever zero on a TTL-expired notice,
+                // where Windows does not fill it in, and the measured time stands in instead.
+                long latency = reply.RoundtripTime > 0 ? reply.RoundtripTime : clock.ElapsedMilliseconds;
+                report(new Hop(ttl, reply.Address, latency, arrived));
+                if (arrived) return;
+            }
+        }
+
         internal static async Task<bool> TcpAsync(IPAddress address, int port, CancellationToken token)
         {
             using var client = new TcpClient(address.AddressFamily);

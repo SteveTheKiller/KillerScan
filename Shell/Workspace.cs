@@ -44,6 +44,30 @@ namespace KillerScan.Shell
             NewScan(_startupScanTarget ?? string.Empty);
         }
 
+        /// <summary>
+        /// The window has one input bar. Each view registers the controls it needs there, and
+        /// only the active view's are shown, so a tool never carries a second bar of its own.
+        /// </summary>
+        private readonly Dictionary<string, FrameworkElement> _viewToolbars = [];
+
+        private void RegisterViewToolbar(string view, FrameworkElement toolbar)
+        {
+            toolbar.VerticalAlignment = VerticalAlignment.Center;
+            Grid.SetColumn(toolbar, 0);
+            _viewToolbars[view] = toolbar;
+            _workspaceToolbar.Children.Add(toolbar);
+            UpdateViewToolbar();
+        }
+
+        private void UpdateViewToolbar()
+        {
+            // Scan owns the bar for every view built on the scan workspace; the rest fall back
+            // to it too, so switching to a view without its own controls is never a blank bar.
+            string key = _viewToolbars.ContainsKey(_workspaceView) ? _workspaceView : "scan";
+            foreach (var pair in _viewToolbars)
+                pair.Value.Visibility = pair.Key == key ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         private void ShowWorkspaceContent(FrameworkElement content, string view)
         {
             if (!_workspaceBody.Children.Contains(content)) _workspaceBody.Children.Add(content);
@@ -51,6 +75,7 @@ namespace KillerScan.Shell
             _workspaceView = view;
             foreach (FrameworkElement child in _workspaceBody.Children)
                 child.Visibility = child == content ? Visibility.Visible : Visibility.Collapsed;
+            UpdateViewToolbar();
             UpdateWorkspaceNavigation();
             UpdateWorkspaceStatus();
             UpdateWorkspaceRail();
@@ -63,8 +88,7 @@ namespace KillerScan.Shell
                 _scanWorkspace = new ScanWorkspace(target, DemoMode);
                 var scanToolbar = _scanWorkspace.DetachToolbar();
                 scanToolbar.Margin = new Thickness(8, 0, 0, 0);
-                scanToolbar.VerticalAlignment = VerticalAlignment.Center;
-                _workspaceToolbar.Children.Add(scanToolbar);
+                RegisterViewToolbar("scan", scanToolbar);
                 var networkDetails = new StackPanel();
                 foreach (string name in new[] { "LocalIpLabel", "GatewayLabel", "DnsLabel", "InterfaceLabel" })
                 {
@@ -122,8 +146,7 @@ namespace KillerScan.Shell
         {
             StatusText.Text = ActiveScan?.Status ?? (_workspaceView == "watch" ? Loc("Str_View_KeepAlive")
                 : _workspaceView == "history" ? Loc("Str_History_Title")
-                : _workspaceView == "services" ? Loc("Str_Services_Title")
-                : _workspaceView == "diagnostics" ? Loc("Str_Diag_Title") : string.Empty);
+                : _workspaceView == "services" ? Loc("Str_Services_Title") : string.Empty);
             ScanProgress.Value = ActiveScan?.Progress ?? 0;
             ScanProgress.Visibility = ActiveScan?.IsProgressVisible == true ? Visibility.Visible : Visibility.Collapsed;
             if (_workspaceView == "terminal") UpdateTerminalPanelStatus();

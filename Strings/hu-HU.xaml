@@ -325,6 +325,12 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Cím másolása</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Statisztika nullázása</sys:String>
     <sys:String x:Key="Str_Watch_Remove">Cél figyelésének leállítása</sys:String>
+    <sys:String x:Key="Str_Trace_Run">Útvonal követése</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">{0}. ugrás</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">Nincs válasz</sys:String>
+    <sys:String x:Key="Str_Diag_Working">Ellenőrzés</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">Újraellenőrzés</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">Válasszon egy kártyát az ellenőrzések futtatásához.</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Leállítva</sys:String>
     <sys:String x:Key="Str_Diag_Title">Eszközdiagnosztika</sys:String>

@@ -309,6 +309,12 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Adresi kopyala</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">İstatistikleri sıfırla</sys:String>
     <sys:String x:Key="Str_Watch_Remove">Bu hedefi izlemeyi durdur</sys:String>
+    <sys:String x:Key="Str_Trace_Run">Rotayı izle</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">Atlama {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">Yanıt yok</sys:String>
+    <sys:String x:Key="Str_Diag_Working">Denetleniyor</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">Yeniden denetle</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">Denetimleri çalıştırmak için bir kart seçin.</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Durduruldu</sys:String>
     <sys:String x:Key="Str_Diag_Title">Cihaz tanılama</sys:String>

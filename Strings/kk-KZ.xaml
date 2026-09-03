@@ -351,6 +351,12 @@
     <sys:String x:Key="Str_Watch_CopyAddress">Мекенжайды көшіру</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Статистиканы қалпына келтіру</sys:String>
     <sys:String x:Key="Str_Watch_Remove">Бұл нысананы бақылауды тоқтату</sys:String>
+    <sys:String x:Key="Str_Trace_Run">Бағытты бақылау</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">{0}-секіру</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">Жауап жоқ</sys:String>
+    <sys:String x:Key="Str_Diag_Working">Тексерілуде</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">Қайта тексеру</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">Тексерулерді орындау үшін картаны таңдаңыз.</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Тоқтатылды</sys:String>
     <sys:String x:Key="Str_Diag_Title">Құрылғы диагностикасы</sys:String>

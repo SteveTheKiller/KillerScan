@@ -320,6 +320,12 @@
     <sys:String x:Key="Str_Watch_CopyAddress">アドレスをコピー</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">統計をリセット</sys:String>
     <sys:String x:Key="Str_Watch_Remove">この対象の監視を停止</sys:String>
+    <sys:String x:Key="Str_Trace_Run">経路を追跡</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">ホップ {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">応答なし</sys:String>
+    <sys:String x:Key="Str_Diag_Working">確認中</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">再確認</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">カードを選択すると、その対象の検査を実行できます。</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">停止済み</sys:String>
     <sys:String x:Key="Str_Diag_Title">デバイス診断</sys:String>

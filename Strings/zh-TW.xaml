@@ -309,6 +309,12 @@
     <sys:String x:Key="Str_Watch_CopyAddress">複製位址</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">重設統計</sys:String>
     <sys:String x:Key="Str_Watch_Remove">停止監看此目標</sys:String>
+    <sys:String x:Key="Str_Trace_Run">追蹤路由</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">躍點 {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">無回應</sys:String>
+    <sys:String x:Key="Str_Diag_Working">檢查中</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">重新檢查</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">選擇一張卡片以對該目標執行檢查。</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">已停止</sys:String>
     <sys:String x:Key="Str_Diag_Title">裝置診斷</sys:String>

@@ -335,6 +335,12 @@
     <sys:String x:Key="Str_Watch_CopyAddress">Копировать адрес</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Сбросить статистику</sys:String>
     <sys:String x:Key="Str_Watch_Remove">Прекратить наблюдение за целью</sys:String>
+    <sys:String x:Key="Str_Trace_Run">Трассировка маршрута</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">Узел {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">Нет ответа</sys:String>
+    <sys:String x:Key="Str_Diag_Working">Проверка</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">Проверить снова</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">Выберите карточку, чтобы выполнить проверки для этой цели.</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Остановлено</sys:String>
     <sys:String x:Key="Str_Diag_Title">Диагностика устройства</sys:String>

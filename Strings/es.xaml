@@ -309,6 +309,12 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Copiar dirección</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Restablecer estadísticas</sys:String>
     <sys:String x:Key="Str_Watch_Remove">Dejar de supervisar este destino</sys:String>
+    <sys:String x:Key="Str_Trace_Run">Trazar ruta</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">Salto {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">Sin respuesta</sys:String>
+    <sys:String x:Key="Str_Diag_Working">Comprobando</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">Comprobar de nuevo</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">Seleccione una tarjeta para ejecutar comprobaciones en ese destino.</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Detenido</sys:String>
     <sys:String x:Key="Str_Diag_Title">Diagnóstico del dispositivo</sys:String>

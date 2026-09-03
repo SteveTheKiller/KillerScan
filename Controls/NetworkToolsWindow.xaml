@@ -35,13 +35,24 @@
         <!-- One Keep Alive target. Fixed width so the sparkline geometry stays honest and
              the wrap panel makes tidy columns instead of ragged full-width rows. -->
         <DataTemplate x:Key="WatchCardTemplate">
-            <Border Style="{StaticResource Card}" Width="234" Margin="0,0,8,8">
+            <Border Width="234" Margin="0,0,8,8">
+                <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource Card}">
+                        <Style.Triggers>
+                            <!-- The selected card is the one the details pane is reporting on,
+                                 so it takes the accent edge rather than a filled row. -->
+                            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
                 <!-- A ContextMenu inherits DataContext from its placement target, so every
                      item here already carries this card and the handlers can read it back. -->
                 <Border.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="{DynamicResource Str_Watch_CopyAddress}" Click="CardCopy_Click"/>
-                        <MenuItem Header="{DynamicResource Str_Diag_Title}" Click="CardDiagnose_Click"/>
+                        <MenuItem Header="{DynamicResource Str_Diag_Refresh}" Click="CardDiagnose_Click"/>
                         <Separator/>
                         <MenuItem Header="{DynamicResource Str_Watch_ResetStats}" Click="CardReset_Click"/>
                         <MenuItem Header="{DynamicResource Str_Watch_Remove}" Click="CardRemove_Click"/>
@@ -105,8 +116,12 @@
                         <TextBlock x:Name="Hint" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Visibility="Collapsed"/>
                         <TextBlock x:Name="TargetLabel" Text="{DynamicResource Str_Watch_Targets}"
                                    Foreground="{DynamicResource TextBrush}" Visibility="Collapsed" TextWrapping="Wrap"/>
-                        <WrapPanel Margin="8,4">
+                        <!-- Detached into the workspace toolbar at startup, so Keep Alive's input
+                             sits on the one bar at the top of the window instead of the pane
+                             carrying a second one. Heading stays here as the fallback caption. -->
+                        <WrapPanel x:Name="ToolBar" Margin="8,4">
                             <TextBlock x:Name="Heading" FontSize="12" FontWeight="Bold" Margin="0,0,8,0"
+                                       Visibility="Collapsed"
                                        Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
                             <TextBox x:Name="Targets" Style="{StaticResource DarkTextBox}" Padding="5,3,9,3"
                                      FontSize="12" Height="28" Width="280" MaxWidth="360" HorizontalAlignment="Left"
@@ -122,40 +137,92 @@
                         </TextBlock>
                     </StackPanel>
 
-                    <!-- Keep Alive: cards. Diagnostics keeps the table, which suits a flat
-                         list of check and result far better than a card per row does. -->
-                    <ScrollViewer x:Name="CardHost" Grid.Row="1" Margin="8,4,0,0" Visibility="Collapsed"
-                                  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                        <ItemsControl x:Name="Cards" ItemTemplate="{StaticResource WatchCardTemplate}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <!-- Cards on the left, the selected target's checks on the right. Diagnostics
+                         used to be its own full-width view; it lives here now so a target's ping
+                         history and its one-off checks are the same piece of screen. -->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" MinWidth="250"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition x:Name="DetailColumn" Width="330" MinWidth="220"/>
+                        </Grid.ColumnDefinitions>
 
-                    <DataGrid x:Name="Results" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
-                              CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserSortColumns="False"
-                              HeadersVisibility="Column" RowHeaderWidth="0" Margin="0,4,0,8"
-                              Background="Transparent" Foreground="{DynamicResource TextBrush}"
-                              BorderBrush="{DynamicResource CardBorderBrush}" GridLinesVisibility="None"
-                              RowStyle="{StaticResource DarkDataGridRow}" CellStyle="{StaticResource DarkDataGridCell}">
-                        <DataGrid.ColumnHeaderStyle>
-                            <Style TargetType="DataGridColumnHeader">
-                                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-                                <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="DataGridColumnHeader">
-                                    <Border Background="{DynamicResource SurfaceBrush}" Padding="6,8">
-                                        <ContentPresenter/>
-                                    </Border>
-                                </ControlTemplate></Setter.Value></Setter>
-                            </Style>
-                        </DataGrid.ColumnHeaderStyle>
-                    </DataGrid>
+                        <ListBox x:Name="Cards" Grid.Column="0" Margin="8,4,0,0" ItemTemplate="{StaticResource WatchCardTemplate}"
+                                 Background="Transparent" BorderThickness="0" Foreground="{DynamicResource TextBrush}"
+                                 SelectionChanged="Card_SelectionChanged"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <!-- Bare container: the card draws its own surface, and the default
+                                 ListBoxItem chrome would paint a flat selection block over it. -->
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem"><ContentPresenter/></ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+
+                        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                                      Background="Transparent" ResizeBehavior="PreviousAndNext" ResizeDirection="Columns"/>
+
+                        <Grid Grid.Column="2" Margin="0,4,8,8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Margin="8,0,0,2">
+                                <TextBlock FontSize="11" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
+                                    <Run x:Name="DetailHeading" Foreground="{DynamicResource TextBrush}"/><Run Text=" "/><Run
+                                        x:Name="DetailChecked" FontStyle="Italic" Foreground="{DynamicResource MutedTextBrush}"/>
+                                </TextBlock>
+                                <!-- Checks run on selection, so the only control here is a repeat. -->
+                                <Button x:Name="CheckButton" Content="{DynamicResource Str_Diag_Refresh}" IsEnabled="False"
+                                        HorizontalAlignment="Right" Style="{StaticResource LinkButton}"
+                                        Click="RunChecks_Click" FontSize="11"/>
+                            </Grid>
+                            <Border Grid.Row="1" Background="{DynamicResource MenuBackgroundBrush}" BorderThickness="1"
+                                    BorderBrush="{DynamicResource MenuBorderBrush}"
+                                    CornerRadius="{DynamicResource ControlCornerRadius}" Margin="8,0,0,0">
+                                <Grid ClipToBounds="True">
+                                    <TextBlock x:Name="DetailHint" Margin="10,8" TextWrapping="Wrap" FontSize="11"
+                                               Text="{DynamicResource Str_Diag_Pick}"
+                                               Foreground="{DynamicResource MutedTextBrush}"/>
+                                    <DataGrid x:Name="Results" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+                                              CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserSortColumns="False"
+                                              HeadersVisibility="Column" RowHeaderWidth="0" Visibility="Collapsed"
+                                              Background="Transparent" Foreground="{DynamicResource TextBrush}"
+                                              BorderThickness="0" GridLinesVisibility="None"
+                                              RowStyle="{StaticResource DarkDataGridRow}" CellStyle="{StaticResource DarkDataGridCell}">
+                                        <DataGrid.ColumnHeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                                <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="DataGridColumnHeader">
+                                                    <Border Background="{DynamicResource SurfaceBrush}" Padding="6,6">
+                                                        <ContentPresenter/>
+                                                    </Border>
+                                                </ControlTemplate></Setter.Value></Setter>
+                                            </Style>
+                                        </DataGrid.ColumnHeaderStyle>
+                                    </DataGrid>
+                                    <Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}"
+                                            Opacity="{DynamicResource GrainOpacity}"
+                                            CornerRadius="{DynamicResource ControlCornerRadius}"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </Grid>
 
                     <GridSplitter x:Name="EventSplitter" Grid.Row="2" Height="5" HorizontalAlignment="Stretch"
                                   VerticalAlignment="Center" Background="Transparent" ResizeBehavior="PreviousAndNext"
-                                  ResizeDirection="Rows" Visibility="Collapsed"/>
+                                  ResizeDirection="Rows"/>
 
-                    <Grid x:Name="EventPane" Grid.Row="3" Visibility="Collapsed">
+                    <Grid x:Name="EventPane" Grid.Row="3">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
                         </Grid.RowDefinitions>

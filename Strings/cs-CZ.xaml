@@ -307,6 +307,12 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Kopírovat adresu</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Vynulovat statistiky</sys:String>
     <sys:String x:Key="Str_Watch_Remove">Přestat sledovat</sys:String>
+    <sys:String x:Key="Str_Trace_Run">Trasovat cestu</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">Skok {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">Bez odpovědi</sys:String>
+    <sys:String x:Key="Str_Diag_Working">Kontroluje se</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">Zkontrolovat znovu</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">Vyberte kartu a zobrazte podrobnosti.</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Zastaveno</sys:String>
     <sys:String x:Key="Str_Diag_Title">Diagnostika zařízení</sys:String>

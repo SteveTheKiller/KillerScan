@@ -294,6 +294,12 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Kopiuj adres</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Zeruj statystyki</sys:String>
     <sys:String x:Key="Str_Watch_Remove">Przestań monitorować ten cel</sys:String>
+    <sys:String x:Key="Str_Trace_Run">Śledź trasę</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">Przeskok {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">Brak odpowiedzi</sys:String>
+    <sys:String x:Key="Str_Diag_Working">Sprawdzanie</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">Sprawdź ponownie</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">Wybierz kartę, aby uruchomić testy dla tego celu.</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Zatrzymano</sys:String>
     <sys:String x:Key="Str_Diag_Title">Diagnostyka urządzenia</sys:String>

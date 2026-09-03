@@ -351,6 +351,12 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Copy address</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Reset statistics</sys:String>
     <sys:String x:Key="Str_Watch_Remove">Stop watching this target</sys:String>
+    <sys:String x:Key="Str_Trace_Run">Trace route</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">Hop {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">No reply</sys:String>
+    <sys:String x:Key="Str_Diag_Working">Checking</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">Check again</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">Select a card to run checks against that target.</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Stopped</sys:String>
     <sys:String x:Key="Str_Diag_Title">Device diagnostics</sys:String>

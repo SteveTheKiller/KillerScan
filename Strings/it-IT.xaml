@@ -325,6 +325,12 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Copia indirizzo</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Azzera statistiche</sys:String>
     <sys:String x:Key="Str_Watch_Remove">Smetti di monitorare questa destinazione</sys:String>
+    <sys:String x:Key="Str_Trace_Run">Traccia percorso</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">Salto {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">Nessuna risposta</sys:String>
+    <sys:String x:Key="Str_Diag_Working">Controllo in corso</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">Controlla di nuovo</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">Seleziona una scheda per eseguire i controlli su quella destinazione.</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Interrotto</sys:String>
     <sys:String x:Key="Str_Diag_Title">Diagnostica dispositivo</sys:String>

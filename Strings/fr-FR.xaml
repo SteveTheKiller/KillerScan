@@ -309,6 +309,12 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Copier l'adresse</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Réinitialiser les statistiques</sys:String>
     <sys:String x:Key="Str_Watch_Remove">Ne plus surveiller cette cible</sys:String>
+    <sys:String x:Key="Str_Trace_Run">Tracer l'itinéraire</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">Saut {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">Pas de réponse</sys:String>
+    <sys:String x:Key="Str_Diag_Working">Vérification</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">Vérifier à nouveau</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">Sélectionnez une carte pour lancer les vérifications sur cette cible.</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">Arrêté</sys:String>
     <sys:String x:Key="Str_Diag_Title">Diagnostic de l'appareil</sys:String>

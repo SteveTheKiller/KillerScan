@@ -309,6 +309,12 @@
     <sys:String x:Key="Str_Watch_CopyAddress">ঠিকানা কপি করুন</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">পরিসংখ্যান রিসেট করুন</sys:String>
     <sys:String x:Key="Str_Watch_Remove">দেখা বন্ধ করুন</sys:String>
+    <sys:String x:Key="Str_Trace_Run">রুট ট্রেস করুন</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">হপ {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">কোনো উত্তর নেই</sys:String>
+    <sys:String x:Key="Str_Diag_Working">পরীক্ষা করা হচ্ছে</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">আবার পরীক্ষা করুন</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">বিস্তারিত দেখতে একটি কার্ড নির্বাচন করুন।</sys:String>
     <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
     <sys:String x:Key="Str_Watch_Stopped">থামানো হয়েছে</sys:String>
     <sys:String x:Key="Str_Diag_Title">ডিভাইস ডায়াগনস্টিকস</sys:String>

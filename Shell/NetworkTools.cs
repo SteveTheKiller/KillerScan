@@ -6,8 +6,14 @@ namespace KillerScan.Shell
 {
     public partial class MainWindow
     {
+        /// <summary>
+        /// Keep Alive owns both the ping history and the one-off checks. Diagnostics used to be
+        /// a second workspace of its own; it is now the details pane beside the cards, so F3 and
+        /// the device menu land here instead of opening a separate view.
+        /// </summary>
         private NetworkToolsWindow? _watchWorkspace;
-        private NetworkToolsWindow? _diagnosticsWorkspace;
+
+        private static readonly int[] CommonPorts = [22, 80, 443, 445, 3389];
 
         private void Watch_Click(object sender, RoutedEventArgs e)
         {
@@ -16,17 +22,12 @@ namespace KillerScan.Shell
                 var local = LocalNetwork.Detect();
                 var targets = new[] { local?.Gateway, local?.Dns, GetSelectedDevice()?.IpAddress }
                     .Where(s => !string.IsNullOrWhiteSpace(s)).Distinct();
-                _watchWorkspace = new NetworkToolsWindow(false, string.Join(", ", targets), [], _appScale);
+                _watchWorkspace = new NetworkToolsWindow(string.Join(", ", targets), _appScale);
                 _watchWorkspace.MatchScanTable((System.Windows.Controls.DataGrid)_scanWorkspace!.FindName("ResultsGrid"));
-                // A card asking for diagnostics reuses the device entry point when the address
-                // is one we scanned, so its discovered ports are checked too, and falls back
-                // to a bare address otherwise.
-                _watchWorkspace.DiagnoseRequested += address =>
-                {
-                    var known = (_scanWorkspace.FindName("ResultsGrid") as System.Windows.Controls.DataGrid)?
-                        .Items.OfType<Models.NetworkDevice>().FirstOrDefault(d => d.IpAddress == address);
-                    OpenNetworkTool(known ?? new Models.NetworkDevice { IpAddress = address }, true);
-                };
+                _watchWorkspace.DiagnoseRequested += address => ShowDeviceDetails(address);
+                var bar = _watchWorkspace.DetachToolbar();
+                bar.Margin = new Thickness(8, 0, 0, 0);
+                RegisterViewToolbar("watch", bar);
             }
             ShowWorkspaceContent(_watchWorkspace, "watch");
         }
@@ -40,21 +41,20 @@ namespace KillerScan.Shell
 
         private void OpenNetworkTool(Models.NetworkDevice device, bool diagnostics)
         {
-            if (!diagnostics)
-            {
-                Watch_Click(this, new RoutedEventArgs());
-                _watchWorkspace!.IncludeTarget(device.IpAddress);
-                return;
-            }
-            if (_diagnosticsWorkspace != null)
-            {
-                _workspaceBody.Children.Remove(_diagnosticsWorkspace);
-                _diagnosticsWorkspace.Dispose();
-            }
-            _diagnosticsWorkspace = new NetworkToolsWindow(true, device.IpAddress,
-                device.OpenPorts.Concat([22, 80, 443, 445, 3389]), _appScale);
-            _diagnosticsWorkspace.MatchScanTable((System.Windows.Controls.DataGrid)_scanWorkspace!.FindName("ResultsGrid"));
-            ShowWorkspaceContent(_diagnosticsWorkspace, "diagnostics");
+            Watch_Click(this, new RoutedEventArgs());
+            if (diagnostics) _watchWorkspace!.ShowDetails(device.IpAddress, device.OpenPorts.Concat(CommonPorts));
+            else _watchWorkspace!.IncludeTarget(device.IpAddress);
+        }
+
+        /// <summary>
+        /// Points the details pane at an address, carrying the ports a scan already found open
+        /// on it so the checks probe what is really there rather than only the common few.
+        /// </summary>
+        private void ShowDeviceDetails(string address)
+        {
+            var known = (_scanWorkspace?.FindName("ResultsGrid") as System.Windows.Controls.DataGrid)?
+                .Items.OfType<Models.NetworkDevice>().FirstOrDefault(d => d.IpAddress == address);
+            _watchWorkspace?.ShowDetails(address, known?.OpenPorts.Concat(CommonPorts) ?? CommonPorts);
         }
     }
 }
