@@ -26,6 +26,7 @@ namespace KillerScan.Shell
                 _toolbarLabelMode = labels;
             _workspaceNavigation.Margin = new Thickness(8, 2, 8, 2);
             AddViewButton("scan", "Str_View_Scan", "Ctrl+T", () => ShowScanView("devices"));
+            AddViewButton("services", "Str_Services_Title", "F8", () => ServicesButton_Click(this, new RoutedEventArgs()));
             AddViewButton("topology", "Str_View_Topology", "F9", () => ShowScanView("topology"));
             AddViewButton("watch", "Str_View_KeepAlive", "F2", () => Watch_Click(this, new RoutedEventArgs()));
             AddViewButton("terminal", "Str_Workspace_Terminal", "Ctrl+Shift+T", NewTerminalView);
@@ -50,6 +51,7 @@ namespace KillerScan.Shell
             string glyph = view switch
             {
                 "scan" => "\uE8FD",
+                "services" => "\uE950",
                 "topology" => "\uE968",
                 "watch" => "\uE9D9",
                 _ => "\uE756"
@@ -196,6 +198,7 @@ namespace KillerScan.Shell
                 item.InputGestureText = _viewAppearance[button].Key switch
                 {
                     "Str_View_Scan" => "Ctrl+T",
+                    "Str_Services_Title" => "F8",
                     "Str_View_Topology" => "F9",
                     "Str_View_KeepAlive" => "F2",
                     "Str_Workspace_Terminal" => "Ctrl+Shift+T",

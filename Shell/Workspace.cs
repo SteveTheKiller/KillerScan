@@ -95,7 +95,8 @@ namespace KillerScan.Shell
                 {
                     if (ActiveScan != null)
                     {
-                        _workspaceView = ActiveScan.View == "topology" ? "topology" : "scan";
+                        _workspaceView = ActiveScan.View == "topology" ? "topology"
+                            : ActiveScan.View == "services" ? "services" : "scan";
                         UpdateWorkspaceNavigation();
                         UpdateWorkspaceStatus();
                         UpdateWorkspaceRail();
@@ -113,13 +114,15 @@ namespace KillerScan.Shell
         {
             if (_scanWorkspace == null) return;
             _scanWorkspace.SetView(view);
-            ShowWorkspaceContent(_scanWorkspace, view == "topology" ? "topology" : "scan");
+            ShowWorkspaceContent(_scanWorkspace, view == "topology" ? "topology"
+                : view == "services" ? "services" : "scan");
         }
 
         private void UpdateWorkspaceStatus()
         {
             StatusText.Text = ActiveScan?.Status ?? (_workspaceView == "watch" ? Loc("Str_View_KeepAlive")
                 : _workspaceView == "history" ? Loc("Str_History_Title")
+                : _workspaceView == "services" ? Loc("Str_Services_Title")
                 : _workspaceView == "diagnostics" ? Loc("Str_Diag_Title") : string.Empty);
             ScanProgress.Value = ActiveScan?.Progress ?? 0;
             ScanProgress.Visibility = ActiveScan?.IsProgressVisible == true ? Visibility.Visible : Visibility.Collapsed;

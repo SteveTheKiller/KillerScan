@@ -65,18 +65,15 @@ namespace KillerScan.Shell
 
         private NetworkDevice? GetSelectedDevice() => _scanWorkspace?.SelectedDevice;
 
-        private void UpdateWorkspaceRail()
-        {
-            string? view = ActiveScan?.View;
-            ServicesButton.Tag = FixedServicesButton.Tag = view == "services" ? "on" : null;
-        }
+        // Services moved from the icon rail to the workspace toolbar, so the selected view is
+        // lit by UpdateWorkspaceNavigation along with Scan, Topology, Keep Alive, and Terminal.
+        private void UpdateWorkspaceRail() => UpdateWorkspaceNavigation();
 
         private void ServicesButton_Click(object sender, RoutedEventArgs e)
         {
             var scan = _scanWorkspace;
             if (scan == null) return;
             ShowScanView(ActiveScan != null && scan.View == "services" ? "devices" : "services");
-            ServicesButton.Tag = FixedServicesButton.Tag = scan.View == "services" ? "on" : null;
         }
 
         private void TopologyButton_Click(object sender, RoutedEventArgs e)
@@ -84,7 +81,6 @@ namespace KillerScan.Shell
             var scan = _scanWorkspace;
             if (scan == null) return;
             ShowScanView(ActiveScan != null && scan.View == "topology" ? "devices" : "topology");
-            ServicesButton.Tag = FixedServicesButton.Tag = null;
         }
 
         // Portable-mode install button

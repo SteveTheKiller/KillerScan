@@ -14,7 +14,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Keep Alive shows each target as a status card with a latency sparkline, packet loss, and a right-click menu to copy the address, run diagnostics, reset its counters, or drop it from the run. Its event log sits in its own resizable pane on a flyout surface. Terminals have a colored prompt, and Escape stops device ping. Device diagnostics checks DNS, ping, the local route, and TCP services.
 - The arranged topology can be exported as a full-resolution PNG.
 - Saved scan profiles can load or run remembered targets and optionally follow with Deep Scan All.
-- F8 opens a service-centric view organized by discovered service, port, and device.
+- F8 opens a service-centric view organized by discovered service, port, and device, reached from the workspace toolbar beside Scan.
 - Scan history compares added, missing, and changed devices, with alternating rows, a distinct sidebar, and a typewriter heading. Includes trusted-device baselines and unknown-device alerts.
 - Manual device names now persist alongside manual classifications.
 - F1 now switches between the shortcut list and a persistent keyboard-map view.
