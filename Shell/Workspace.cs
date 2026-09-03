@@ -13,7 +13,7 @@ namespace KillerScan.Shell
     {
         private readonly Grid _workspaceBody = new();
         private readonly StackPanel _workspaceNavigation = new() { Orientation = Orientation.Horizontal };
-        private readonly StackPanel _workspaceToolbar = new() { Orientation = Orientation.Horizontal };
+        private readonly Grid _workspaceToolbar = new();
         private readonly Dictionary<string, Button> _viewButtons = new();
         private ScanWorkspace? _scanWorkspace;
         private FrameworkElement? _selectedWorkspace;
@@ -25,19 +25,17 @@ namespace KillerScan.Shell
             WorkspaceHost.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             WorkspaceHost.RowDefinitions.Add(new RowDefinition());
             BuildWorkspaceNavigation();
+            _workspaceToolbar.ColumnDefinitions.Add(new ColumnDefinition());
+            _workspaceToolbar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            Grid.SetColumn(_workspaceNavigation, 1);
             _workspaceToolbar.Children.Add(_workspaceNavigation);
             var toolbarSurface = new Grid();
-            toolbarSurface.SetResourceReference(Panel.BackgroundProperty, "BackgroundBrush");
+            toolbarSurface.SetResourceReference(Panel.BackgroundProperty, "ScanContentPaneBrush");
             var grain = new Border { IsHitTestVisible = false };
             grain.SetResourceReference(Border.BackgroundProperty, "GrainTileBrush");
             grain.SetResourceReference(OpacityProperty, "GrainOpacity");
-            toolbarSurface.Children.Add(grain);
-            toolbarSurface.Children.Add(new ScrollViewer
-            {
-                Content = _workspaceToolbar,
-                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-                VerticalScrollBarVisibility = ScrollBarVisibility.Disabled
-            });
+            toolbarSurface.Children.Add(new Border { Opacity = 0.20, Child = grain, IsHitTestVisible = false });
+            toolbarSurface.Children.Add(_workspaceToolbar);
             WorkspaceHost.Children.Add(toolbarSurface);
             Grid.SetRow(_workspaceBody, 1);
             WorkspaceHost.Children.Add(_workspaceBody);
@@ -62,7 +60,14 @@ namespace KillerScan.Shell
             if (_scanWorkspace == null)
             {
                 _scanWorkspace = new ScanWorkspace(target, DemoMode);
-                _workspaceToolbar.Children.Add(_scanWorkspace.DetachToolbar());
+                _workspaceToolbar.Children.Add(new ScrollViewer
+                {
+                    Content = _scanWorkspace.DetachToolbar(),
+                    Margin = new Thickness(8, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    VerticalScrollBarVisibility = ScrollBarVisibility.Disabled
+                });
                 _scanWorkspace.DeviceAction += (_, e) => WorkspaceDeviceAction(e.Device, e.Action);
                 _scanWorkspace.StateChanged += (_, _) =>
                 {
