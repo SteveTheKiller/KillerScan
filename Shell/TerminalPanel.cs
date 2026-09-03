@@ -10,6 +10,7 @@ namespace KillerScan.Shell
         private TerminalControl? _terminalControl;
         private bool _terminalPanelDisposed;
         private bool _terminalExited;
+        private bool _terminalIsPing;
         private string? _terminalTitle;
         private string? _terminalStatusKey;
         private object? _terminalStatusArgument;
@@ -29,6 +30,7 @@ namespace KillerScan.Shell
                 var terminal = _terminalControl = new TerminalControl();
                 _terminalTitle = title;
                 _terminalExited = false;
+                _terminalIsPing = command?.StartsWith("ping.exe ", StringComparison.OrdinalIgnoreCase) == true;
                 _terminalStatusKey = null;
                 _terminalStatusArgument = null;
                 terminal.GotKeyboardFocus += (_, _) => UpdateTerminalPanelStatus();
@@ -51,11 +53,29 @@ namespace KillerScan.Shell
                 terminal.LayoutTransform = new ScaleTransform(_appScale, _appScale);
                 ShowWorkspaceContent(terminal, "terminal");
                 string shell = ResolveTerminalShell();
-                terminal.Start(command ?? QuoteArgument(shell) + " -NoLogo",
+                terminal.Start(command ?? QuoteArgument(shell) + " -NoLogo -NoExit -EncodedCommand " +
+                    Convert.ToBase64String(System.Text.Encoding.Unicode.GetBytes(TerminalPrompt)),
                     Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
             }
             else ShowWorkspaceContent(_terminalControl, "terminal");
             _terminalControl.Focus();
+        }
+
+        private const string TerminalPrompt = @"
+function global:prompt {
+    $ok = $?
+    $esc = [char]27
+    $color = if ($ok) { '32' } else { '31' }
+    return $esc + '[36m' + $env:USERNAME + '@' + $env:COMPUTERNAME + ' ' +
+        $esc + '[34m' + $executionContext.SessionState.Path.CurrentLocation.ToString() +
+        ' ' + $esc + '[' + $color + 'm' + [char]0x276F + $esc + '[0m '
+}";
+
+        private bool InterruptTerminalPing()
+        {
+            if (_workspaceView != "terminal" || !_terminalIsPing || _terminalExited) return false;
+            _terminalControl?.Send("\u0003");
+            return true;
         }
 
         private static string ResolveTerminalShell()

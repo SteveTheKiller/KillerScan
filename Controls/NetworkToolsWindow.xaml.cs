@@ -6,6 +6,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Documents;
+using KillerScan.Terminal;
 using System.Windows.Input;
 using System.Windows.Media;
 using KillerScan.Services;
@@ -29,12 +31,15 @@ namespace KillerScan.Controls
             _ports = [.. ports.Where(p => p is > 0 and <= 65535).Distinct().Take(64)];
             Targets.Text = targets;
             Targets.IsReadOnly = diagnostics;
-            TargetLabel.Visibility = diagnostics ? Visibility.Collapsed : Visibility.Visible;
+            TargetLabel.Visibility = Visibility.Collapsed;
             Events.Visibility = EventsHeading.Visibility = diagnostics ? Visibility.Collapsed : Visibility.Visible;
             Heading.SetResourceReference(TextBlock.TextProperty, diagnostics ? "Str_Diag_Title" : "Str_View_KeepAlive");
             Hint.SetResourceReference(TextBlock.TextProperty, diagnostics ? "Str_Diag_Hint" : "Str_Watch_Hint");
             StartButton.SetResourceReference(ContentProperty, diagnostics ? "Str_Diag_Run" : "Str_Watch_Start");
-            if (!diagnostics) Status.SetResourceReference(TextBlock.TextProperty, "Str_Watch_Reset");
+            StartButton.SetResourceReference(ToolTipProperty, "Str_Watch_Reset");
+            Heading.SetBinding(ToolTipProperty, new Binding("Text") { Source = Hint });
+            if (Fonts.SystemFontFamilies.Any(f => f.Source == "ProFont IIx Nerd Font"))
+                Events.FontFamily = new FontFamily("ProFont IIx Nerd Font");
             ApplyScale(scale);
             AddColumn(diagnostics ? "Str_Diag_Check" : "Str_Col_Ip", "Target", 150);
             AddColumn("Str_Diag_Result", "Result", diagnostics ? 430 : 95);
@@ -96,7 +101,7 @@ namespace KillerScan.Controls
             var run = _run = new CancellationTokenSource();
             StartButton.IsEnabled = Targets.IsEnabled = false;
             StopButton.IsEnabled = true;
-            _rows.Clear(); _events.Clear(); Events.Clear(); Status.Text = string.Empty;
+            _rows.Clear(); _events.Clear(); Events.Document.Blocks.Clear(); Status.Text = string.Empty;
             try
             {
                 if (_diagnostics) await DiagnoseAsync(addresses[0], run.Token);
@@ -145,9 +150,16 @@ namespace KillerScan.Controls
                     {
                         _events.Enqueue(now.ToString("yyyy-MM-dd HH:mm:ss zzz") + "  " + string.Format(L("Str_Watch_Event"), sample.Address, state));
                         while (_events.Count > 200) _events.Dequeue();
+                        var palette = TerminalPalette.For(TerminalSkin.Default);
+                        var line = new Paragraph { Margin = new Thickness(0) };
+                        line.Inlines.Add(new Run(now.ToString("HH:mm:ss") + "  ") { Foreground = new SolidColorBrush(palette.Ansi[6]) });
+                        line.Inlines.Add(new Run(sample.Address + "  ") { Foreground = new SolidColorBrush(palette.Foreground) });
+                        line.Inlines.Add(new Run(state) { Foreground = new SolidColorBrush(palette.Ansi[replies[i].HasValue ? 2 : 1]) });
+                        Events.Document.Blocks.Add(line);
+                        while (Events.Document.Blocks.Count > 200) Events.Document.Blocks.Remove(Events.Document.Blocks.FirstBlock);
+                        Events.ScrollToEnd();
                     }
                 }
-                Events.Text = string.Join(Environment.NewLine, _events.Reverse());
                 await Task.Delay(Math.Max(1, 2000 - (int)clock.ElapsedMilliseconds), token);
             }
         }
@@ -186,7 +198,7 @@ namespace KillerScan.Controls
             string headings = string.Join("\t", Results.Columns.Select(c => (c.Header as TextBlock)?.Text));
             string rows = string.Join(Environment.NewLine, _rows.Select(r => _diagnostics ? r.Target + "\t" + r.Result :
                 string.Join("\t", r.Target, r.Result, r.Sent, r.Loss, r.Latency, r.Changed)));
-            try { Clipboard.SetText(Heading.Text + Environment.NewLine + Status.Text + Environment.NewLine + headings + Environment.NewLine + rows + Environment.NewLine + Events.Text); }
+            try { Clipboard.SetText(Heading.Text + Environment.NewLine + Status.Text + Environment.NewLine + headings + Environment.NewLine + rows + Environment.NewLine + string.Join(Environment.NewLine, _events)); }
             catch (System.Runtime.InteropServices.COMException) { Status.Text = L("Str_Diag_Error"); }
         }
         private sealed class ResultRow

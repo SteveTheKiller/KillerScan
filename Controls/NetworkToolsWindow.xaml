@@ -7,30 +7,33 @@
         <Grid>
             <Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}"
                     Opacity="{DynamicResource GrainOpacity}" CornerRadius="{DynamicResource PanelCornerRadius}"/>
-            <Grid x:Name="ContentRoot" Margin="14">
+            <Grid x:Name="ContentRoot" Margin="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <DockPanel Margin="0,0,0,14" Background="Transparent">
-                    <TextBlock x:Name="Heading" FontSize="18" FontWeight="Bold"
-                               Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" TextWrapping="Wrap"/>
-                </DockPanel>
                 <ScrollViewer x:Name="BodyHost" Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
-                        <TextBlock x:Name="Hint" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,12"/>
+                        <TextBlock x:Name="Hint" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Visibility="Collapsed"/>
                         <TextBlock x:Name="TargetLabel" Text="{DynamicResource Str_Watch_Targets}"
-                                   Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap"/>
+                                   Foreground="{DynamicResource TextBrush}" Visibility="Collapsed" TextWrapping="Wrap"/>
+                        <WrapPanel Margin="8,4">
+                        <TextBlock x:Name="Heading" FontSize="12" FontWeight="Bold" Margin="0,0,8,0"
+                                   Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
                         <TextBox x:Name="Targets" Style="{StaticResource DarkTextBox}" Padding="5,3,9,3"
-                                 FontSize="12" Height="28" Width="360" MaxWidth="360" HorizontalAlignment="Left"/>
-                        <WrapPanel Margin="0,10,0,10">
-                            <Button x:Name="StartButton" Style="{StaticResource OutlineButton}" Click="Start_Click" Margin="0,0,8,4"/>
-                            <Button x:Name="StopButton" Content="{DynamicResource Str_Watch_Stop}" Style="{StaticResource SurfaceButton}" Click="Stop_Click" IsEnabled="False" Margin="0,0,8,4"/>
-                            <Button Content="{DynamicResource Str_Watch_Copy}" Style="{StaticResource SurfaceButton}" Click="Copy_Click" Margin="0,0,0,4"/>
+                                 FontSize="12" Height="28" Width="280" MaxWidth="360" HorizontalAlignment="Left" ToolTip="{DynamicResource Str_Watch_Targets}" Margin="0,0,6,0"/>
+
+                            <Button x:Name="StartButton" Style="{StaticResource OutlineButton}" Click="Start_Click" FontSize="12" Padding="8,3" Margin="0,0,6,0"/>
+                            <Button x:Name="StopButton" Content="{DynamicResource Str_Watch_Stop}" Style="{StaticResource OutlineButton}" Click="Stop_Click" IsEnabled="False" FontSize="12" Padding="8,3" Margin="0,0,6,0"/>
+                            <Button Content="{DynamicResource Str_Watch_Copy}" Style="{StaticResource OutlineButton}" Click="Copy_Click" FontSize="12" Padding="8,3"/>
                         </WrapPanel>
-                        <TextBlock x:Name="Status" TextWrapping="Wrap" Foreground="{DynamicResource PrimaryBrush}" Margin="0,0,0,8"/>
+                        <TextBlock x:Name="Status" TextWrapping="Wrap" Foreground="{DynamicResource PrimaryBrush}" Margin="8,0">
+                            <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers>
+                                <Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed"/></Trigger>
+                            </Style.Triggers></Style></TextBlock.Style>
+                        </TextBlock>
                         <DataGrid x:Name="Results" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
                                   CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserSortColumns="False"
-                                  HeadersVisibility="Column" RowHeaderWidth="0" MinHeight="160" MaxHeight="330"
+                                  HeadersVisibility="Column" RowHeaderWidth="0" MaxHeight="330"
                                   Background="Transparent" Foreground="{DynamicResource TextBrush}"
                                   BorderBrush="{DynamicResource CardBorderBrush}" GridLinesVisibility="None"
                                   RowStyle="{StaticResource DarkDataGridRow}" CellStyle="{StaticResource DarkDataGridCell}">
@@ -45,9 +48,8 @@
                                 </Style>
                             </DataGrid.ColumnHeaderStyle>
                         </DataGrid>
-                        <TextBlock x:Name="EventsHeading" Text="{DynamicResource Str_Watch_Events}" Foreground="{DynamicResource TextBrush}" Margin="0,14,0,6"/>
-                        <TextBox x:Name="Events" Style="{StaticResource DarkTextBox}" IsReadOnly="True" Height="100"
-                                 TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
+                        <TextBlock x:Name="EventsHeading" Text="{DynamicResource Str_Watch_Events}" Foreground="{DynamicResource TextBrush}" FontSize="11" Margin="8,4,8,0"/>
+                        <RichTextBox x:Name="Events" IsReadOnly="True" Height="180" Background="Transparent" BorderThickness="0" Padding="8,4" FontFamily="Consolas" FontSize="13" VerticalScrollBarVisibility="Auto"><FlowDocument PagePadding="0"/></RichTextBox>
                     </StackPanel>
                 </ScrollViewer>
             </Grid>

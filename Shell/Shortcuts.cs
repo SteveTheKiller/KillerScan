@@ -106,6 +106,7 @@ namespace KillerScan.Shell
             {
                 if (ShortcutsOverlay.Visibility == Visibility.Visible) { HideShortcuts(); e.Handled = true; return; }
                 if (AboutOverlay.Visibility == Visibility.Visible) { AboutClose_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
+                if (InterruptTerminalPing()) { e.Handled = true; return; }
             }
             if (Keyboard.FocusedElement is KillerScan.Terminal.TerminalControl) return;
             if (modifiers == ModifierKeys.None)
