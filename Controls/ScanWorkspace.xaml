@@ -7,7 +7,7 @@
 </Grid.Resources>
 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
 <Grid x:Name="ScanToolbar">
-<WrapPanel Margin="8,2">
+<StackPanel Orientation="Horizontal" Margin="0,2">
 <TextBox x:Name="SubnetInput" Style="{StaticResource DarkTextBox}" Padding="5,3,9,3" FontSize="12" Width="220" MaxWidth="220" VerticalAlignment="Center" Margin="0,2,8,2"/>
 <Button x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}" Style="{StaticResource OutlineButton}" Click="ScanBtn_Click" FontSize="12" Padding="10,3" Margin="0,2,6,2">
 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Btn_Scan}"/><Run Text=" (F5)"/></TextBlock></Button.ToolTip>
@@ -185,7 +185,7 @@
                         </Button.ContextMenu>
                     </Button>
 
-</WrapPanel>
+</StackPanel>
 <Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 </Grid>
 <Border x:Name="DevicesPane"

@@ -12,7 +12,8 @@ namespace KillerScan.Shell
     public partial class MainWindow
     {
         private readonly Grid _workspaceBody = new();
-        private readonly WrapPanel _workspaceNavigation = new();
+        private readonly StackPanel _workspaceNavigation = new() { Orientation = Orientation.Horizontal };
+        private readonly StackPanel _workspaceToolbar = new() { Orientation = Orientation.Horizontal };
         private readonly Dictionary<string, Button> _viewButtons = new();
         private ScanWorkspace? _scanWorkspace;
         private FrameworkElement? _selectedWorkspace;
@@ -24,7 +25,20 @@ namespace KillerScan.Shell
             WorkspaceHost.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             WorkspaceHost.RowDefinitions.Add(new RowDefinition());
             BuildWorkspaceNavigation();
-            WorkspaceHost.Children.Add(_workspaceNavigation);
+            _workspaceToolbar.Children.Add(_workspaceNavigation);
+            var toolbarSurface = new Grid();
+            toolbarSurface.SetResourceReference(Panel.BackgroundProperty, "BackgroundBrush");
+            var grain = new Border { IsHitTestVisible = false };
+            grain.SetResourceReference(Border.BackgroundProperty, "GrainTileBrush");
+            grain.SetResourceReference(OpacityProperty, "GrainOpacity");
+            toolbarSurface.Children.Add(grain);
+            toolbarSurface.Children.Add(new ScrollViewer
+            {
+                Content = _workspaceToolbar,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Disabled
+            });
+            WorkspaceHost.Children.Add(toolbarSurface);
             Grid.SetRow(_workspaceBody, 1);
             WorkspaceHost.Children.Add(_workspaceBody);
             DevicesPane.SizeChanged += (_, _) => ClipWorkspaceSurface();
@@ -48,6 +62,7 @@ namespace KillerScan.Shell
             if (_scanWorkspace == null)
             {
                 _scanWorkspace = new ScanWorkspace(target, DemoMode);
+                _workspaceToolbar.Children.Add(_scanWorkspace.DetachToolbar());
                 _scanWorkspace.DeviceAction += (_, e) => WorkspaceDeviceAction(e.Device, e.Action);
                 _scanWorkspace.StateChanged += (_, _) =>
                 {
@@ -93,7 +108,7 @@ namespace KillerScan.Shell
 
         private void ApplyWorkspaceScale(double scale)
         {
-            _workspaceNavigation.LayoutTransform = new ScaleTransform(scale, scale);
+            _workspaceToolbar.LayoutTransform = new ScaleTransform(scale, scale);
             foreach (var content in _workspaceBody.Children.OfType<FrameworkElement>())
                 if (content is ScanWorkspace scan) scan.ApplyScale(scale);
                 else if (content is NetworkToolsWindow tools) tools.ApplyScale(scale);

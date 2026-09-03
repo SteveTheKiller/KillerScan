@@ -87,6 +87,11 @@ namespace KillerScan.Controls
         public void Stop() { _active.Cts?.Cancel(); _rescanCts?.Cancel(); }
         public void DeepScan() { if (!_disposed) DeepScanAll_Click(this, new RoutedEventArgs()); }
         public void FocusTargets() { SubnetInput.Focus(); SubnetInput.SelectAll(); }
+        internal FrameworkElement DetachToolbar()
+        {
+            ((Panel)ScanToolbar.Parent).Children.Remove(ScanToolbar);
+            return ScanToolbar;
+        }
         public void FocusFilter()
         {
             FilterBox.Visibility = Visibility.Visible;

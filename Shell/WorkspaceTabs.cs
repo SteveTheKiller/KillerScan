@@ -7,7 +7,7 @@ namespace KillerScan.Shell
     {
         private void BuildWorkspaceNavigation()
         {
-            _workspaceNavigation.Margin = new Thickness(8, 6, 8, 6);
+            _workspaceNavigation.Margin = new Thickness(8, 2, 8, 2);
             AddViewButton("scan", "Str_View_Scan", "Ctrl+T", () => ShowScanView("devices"));
             AddViewButton("topology", "Str_View_Topology", "F9", () => ShowScanView("topology"));
             AddViewButton("watch", "Str_View_KeepAlive", "F2", () => Watch_Click(this, new RoutedEventArgs()));
@@ -18,8 +18,8 @@ namespace KillerScan.Shell
         {
             var button = new Button
             {
-                Margin = new Thickness(0, 0, 6, 2), Padding = new Thickness(12, 5, 12, 5),
-                FontSize = 12, MinHeight = 30, Tag = view
+                Margin = new Thickness(0, 2, 6, 2), Padding = new Thickness(10, 3, 10, 3),
+                FontSize = 12, MinHeight = 26, VerticalAlignment = VerticalAlignment.Center, Tag = view
             };
             button.SetResourceReference(ContentControl.ContentProperty, key);
             var tip = new TextBlock();
