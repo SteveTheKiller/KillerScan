@@ -326,4 +326,15 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Diag_Time">Hora de comprobación</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Al iniciar de nuevo se borran los resultados anteriores.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Supervisar dispositivo</sys:String>
+    <sys:String x:Key="Str_Workspace_NewScan">Nuevo escaneo</sys:String>
+    <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Workspace_Split">Dividir paneles</sys:String>
+    <sys:String x:Key="Str_Workspace_Move">Mover al otro panel</sys:String>
+    <sys:String x:Key="Str_Workspace_Close">Cerrar pestaña</sys:String>
+    <sys:String x:Key="Str_Workspace_Next">Pestaña siguiente</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenTab">Abrir en pestaña</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenBeside">Abrir al lado</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenExternal">Abrir en una ventana independiente</sys:String>
+    <sys:String x:Key="Str_Workspace_Exited">El proceso terminó ({0})</sys:String>
+    <sys:String x:Key="Str_Workspace_StartFailed">No se pudo iniciar la terminal: {0}</sys:String>
 </ResourceDictionary>

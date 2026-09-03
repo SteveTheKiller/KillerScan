@@ -15,6 +15,11 @@ namespace KillerScan.Shell
         // (gesture, description resource key). Order is the list order and map tooltip order.
         private static readonly (string Keys, string Desc)[] ShortcutRows =
         [
+            ("Ctrl + T",        "Str_Workspace_NewScan"),
+            ("Ctrl + Shift + T", "Str_Workspace_Terminal"),
+            ("Ctrl + W",        "Str_Workspace_Close"),
+            ("Ctrl + Tab",      "Str_Workspace_Next"),
+            ("Ctrl + Shift + \\", "Str_Workspace_Split"),
             ("F2",              "Str_Watch_Title"),
             ("F3",              "Str_Diag_Title"),
             ("F5",              "Str_Sc_Scan"),
@@ -76,48 +81,47 @@ namespace KillerScan.Shell
         // focus is, including inside the results grid.
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            bool ctrl  = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
-            bool shift = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
-            bool alt   = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
-
-            // Esc closes the overlays first, then falls through to canceling a running scan.
-            // (F12 below toggles About; Esc remains the close for both overlays.)
+            var modifiers = Keyboard.Modifiers;
+            bool ctrl = modifiers.HasFlag(ModifierKeys.Control);
+            bool shift = modifiers.HasFlag(ModifierKeys.Shift);
+            bool alt = modifiers.HasFlag(ModifierKeys.Alt);
+            if (ctrl && !alt)
+            {
+                if (e.Key == Key.T)
+                {
+                    if (shift) NewTerminal(); else NewScan();
+                    e.Handled = true; return;
+                }
+                if (!shift && e.Key == Key.W) { CloseWorkspaceTab(); e.Handled = true; return; }
+                if (!shift && e.Key == Key.Tab) { NextWorkspaceTab(); e.Handled = true; return; }
+                if (shift && e.Key == Key.Oem5) { ToggleWorkspaceSplit(); e.Handled = true; return; }
+            }
             if (e.Key == Key.Escape)
             {
                 if (ShortcutsOverlay.Visibility == Visibility.Visible) { HideShortcuts(); e.Handled = true; return; }
                 if (HistoryOverlay.Visibility == Visibility.Visible) { HideHistory(); e.Handled = true; return; }
                 if (AboutOverlay.Visibility == Visibility.Visible) { AboutClose_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
-                if (_active?.Cts != null) { ScanBtn_Click(this, new RoutedEventArgs()); e.Handled = true; }
-                return;
             }
-
-            if (e.Key == Key.F1) { ToggleShortcuts(); e.Handled = true; return; }
-            if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F2) { Watch_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
-            if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F3) { Diagnose_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
-
-            // Family standard: F12 is always the About card.
-            if (e.Key == Key.F12)
-            {
-                if (AboutOverlay.Visibility == Visibility.Visible) FadeOverlayOut(AboutOverlay);
-                else ShowAboutOverlay();
-                e.Handled = true; return;
-            }
-
-            // Typing in the subnet or filter box must keep its own Ctrl+A / Ctrl+F behavior.
-            bool inTextBox = Keyboard.FocusedElement is TextBox;
-
-            if (ctrl && shift)
+            if (Keyboard.FocusedElement is KillerScan.Terminal.TerminalControl) return;
+            if (modifiers == ModifierKeys.None)
             {
                 switch (e.Key)
                 {
-                    case Key.S:
-                        if (!inTextBox && GetSelectedDevice() != null)
-                        { SshAsDevice_Click(this, new RoutedEventArgs()); e.Handled = true; }
-                        return;
-                    case Key.C:
-                        if (!inTextBox && GetSelectedDevice() != null)
-                        { CopyMac_Click(this, new RoutedEventArgs()); e.Handled = true; }
-                        return;
+                    case Key.F1: ToggleShortcuts(); e.Handled = true; return;
+                    case Key.F2: Watch_Click(this, new RoutedEventArgs()); e.Handled = true; return;
+                    case Key.F3: Diagnose_Click(this, new RoutedEventArgs()); e.Handled = true; return;
+                    case Key.F6: HistoryButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
+                    case Key.F10: ProfilesButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
+                    case Key.F12:
+                        if (AboutOverlay.Visibility == Visibility.Visible) FadeOverlayOut(AboutOverlay);
+                        else ShowAboutOverlay();
+                        e.Handled = true; return;
+                }
+            }
+            if (ctrl && shift && !alt)
+            {
+                switch (e.Key)
+                {
                     case Key.OemPlus: case Key.Add:
                         ApplyAppScale(_appScale + 0.05, persist: true); e.Handled = true; return;
                     case Key.OemMinus: case Key.Subtract:
@@ -125,83 +129,12 @@ namespace KillerScan.Shell
                     case Key.D0: case Key.NumPad0:
                         ApplyAppScale(1.0, persist: true); e.Handled = true; return;
                 }
-                return;
             }
-
-            if (ctrl && alt)
-            {
-                if (e.Key == Key.C && !inTextBox && GetSelectedDevice() != null)
-                { CopyHostname_Click(this, new RoutedEventArgs()); e.Handled = true; }
-                return;
-            }
-
-            if (ctrl)
-            {
-                switch (e.Key)
-                {
-                    case Key.F:
-                        SubnetInput.Focus(); SubnetInput.SelectAll(); e.Handled = true; return;
-                    case Key.E:
-                        if (ExportButton.IsEnabled) { ExportCsv_Click(this, new RoutedEventArgs()); e.Handled = true; }
-                        return;
-                    case Key.R:
-                        if (RescanMenuItem.IsEnabled && ResultsGrid.SelectedItems.Count > 0)
-                        { RescanSelected_Click(this, new RoutedEventArgs()); e.Handled = true; }
-                        return;
-                    case Key.D1: case Key.NumPad1:
-                        ShowTopologyAndSetOrder(TopologyOrder.Role); e.Handled = true; return;
-                    case Key.D2: case Key.NumPad2:
-                        ShowTopologyAndSetOrder(TopologyOrder.Type); e.Handled = true; return;
-                    case Key.D3: case Key.NumPad3:
-                        ShowTopologyAndSetOrder(TopologyOrder.Ip); e.Handled = true; return;
-                    case Key.D4: case Key.NumPad4:
-                        ShowTopologyAndSetOrder(TopologyOrder.Vendor); e.Handled = true; return;
-                    case Key.A:
-                        if (!inTextBox) { ResultsGrid.SelectAll(); e.Handled = true; }
-                        return;
-                    case Key.C:
-                        if (!inTextBox && GetSelectedDevice() != null)
-                        { CopyIp_Click(this, new RoutedEventArgs()); e.Handled = true; }
-                        return;
-                    case Key.P:
-                        if (!inTextBox && GetSelectedDevice() != null)
-                        { PingDevice_Click(this, new RoutedEventArgs()); e.Handled = true; }
-                        return;
-                    case Key.D:
-                        if (!inTextBox && GetSelectedDevice() != null)
-                        { RdpDevice_Click(this, new RoutedEventArgs()); e.Handled = true; }
-                        return;
-                    case Key.S:
-                        if (!inTextBox && GetSelectedDevice() != null)
-                        { SshDevice_Click(this, new RoutedEventArgs()); e.Handled = true; }
-                        return;
-                }
-                return;
-            }
-
-            if (e.Key == Key.F5) { ScanBtn_Click(this, new RoutedEventArgs()); e.Handled = true; }
-            else if (e.Key == Key.F6) { HistoryButton_Click(this, new RoutedEventArgs()); e.Handled = true; }
-            else if (e.Key == Key.F8) { ServicesButton_Click(this, new RoutedEventArgs()); e.Handled = true; }
-            else if (e.Key == Key.F9) { TopologyButton_Click(this, new RoutedEventArgs()); e.Handled = true; }
-            else if (e.Key == Key.F10) { ProfilesButton_Click(this, new RoutedEventArgs()); e.Handled = true; }
-            else if (e.Key == Key.F7)
-            {
-                if (!_showTopology) TopologyButton_Click(this, new RoutedEventArgs());
-                SetTopologyOrder((TopologyOrder)(((int)_topologyOrder + 1) % 4));
-                e.Handled = true;
-            }
-            else if (e.Key == Key.Enter && ResultsGrid.IsKeyboardFocusWithin && GetSelectedDevice() != null)
-            { OpenBrowser_Click(this, new RoutedEventArgs()); e.Handled = true; }
+            ActiveScan?.HandleKey(e);
         }
 
         // Title-bar "?" button (MainWindow.xaml), matching KillerNotes and KillerPDF.
         private void ShortcutHelp_Click(object sender, RoutedEventArgs e) => ToggleShortcuts();
-
-        private void ShowTopologyAndSetOrder(TopologyOrder order)
-        {
-            if (!_showTopology) TopologyButton_Click(this, new RoutedEventArgs());
-            SetTopologyOrder(order);
-        }
 
         private void ToggleShortcuts()
         {
@@ -315,6 +248,8 @@ namespace KillerScan.Shell
             {
                 "Esc" => "Esc",
                 "Enter" => "Enter",
+                "Tab" => "Tab",
+                "\\" => "BSl",
                 _ when key.Length == 1 && char.IsDigit(key[0]) => "D" + key,
                 _ when key.Length == 1 => key.ToUpperInvariant(),
                 _ when key.StartsWith("F", StringComparison.Ordinal) => key,

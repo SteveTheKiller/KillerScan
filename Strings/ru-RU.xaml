@@ -352,4 +352,15 @@
     <sys:String x:Key="Str_Diag_Time">Время проверки</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Повторный запуск удаляет предыдущие результаты.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Наблюдать за устройством</sys:String>
+    <sys:String x:Key="Str_Workspace_NewScan">Новое сканирование</sys:String>
+    <sys:String x:Key="Str_Workspace_Terminal">Терминал</sys:String>
+    <sys:String x:Key="Str_Workspace_Split">Разделить панели</sys:String>
+    <sys:String x:Key="Str_Workspace_Move">Переместить в другую панель</sys:String>
+    <sys:String x:Key="Str_Workspace_Close">Закрыть вкладку</sys:String>
+    <sys:String x:Key="Str_Workspace_Next">Следующая вкладка</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenTab">Открыть во вкладке</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenBeside">Открыть рядом</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenExternal">Открыть в отдельном окне</sys:String>
+    <sys:String x:Key="Str_Workspace_Exited">Процесс завершён ({0})</sys:String>
+    <sys:String x:Key="Str_Workspace_StartFailed">Не удалось запустить терминал: {0}</sys:String>
 </ResourceDictionary>

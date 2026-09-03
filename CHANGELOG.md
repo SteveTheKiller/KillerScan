@@ -4,11 +4,12 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.6.2] - Unreleased
+## [1.7.0] - Unreleased
 
-1.6.2 adds network mapping and improves command-line integration with other applications.
+1.7.0 brings scans, diagnostics, and terminals into a tabbed workspace with optional split panes.
 
 ### Added
+- Independent scan tabs, embedded PowerShell, ping and SSH terminals, and optional split panes keep scans and tools together.
 - Connection watch tracks replies, packet loss, latency, and state changes; device diagnostics checks DNS, ping, the local route, and TCP services.
 - The arranged topology can be exported as a full-resolution PNG.
 - Saved scan profiles can load or run remembered targets and optionally follow with Deep Scan All.

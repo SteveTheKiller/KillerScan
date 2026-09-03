@@ -7,11 +7,9 @@ using System.Windows.Media.Imaging;
 using KillerScan.Controls;
 using KillerScan.Services;
 
-namespace KillerScan.Shell
+namespace KillerScan.Controls
 {
-    // Scanner core, window half: the export menu and the two save dialogs. The documents
-    // themselves are written by Services/ReportExport.cs, which the command line uses as well.
-    public partial class MainWindow
+    public partial class ScanWorkspace
     {
         private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
@@ -29,7 +27,7 @@ namespace KillerScan.Shell
                 Filter = Loc("Str_Filter_Csv") + "|*.csv",
                 FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
             };
-            if (dlg.ShowDialog(this) != true) return;
+            if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
             try
             {
                 File.WriteAllText(dlg.FileName, ReportExport.BuildCsv(ActiveDevices), Encoding.UTF8);
@@ -46,11 +44,9 @@ namespace KillerScan.Shell
                 Filter = Loc("Str_Filter_Html") + "|*.html",
                 FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.html"
             };
-            if (dlg.ShowDialog(this) != true) return;
+            if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
             try
             {
-                // The report opens in whatever theme the app is in; all thirteen palettes ride along, so
-                // the reader can switch inside the file.
                 string html = ReportExport.BuildHtml(
                     ActiveDevices, SubnetInput.Text, ThemeManager.Current.ToString().ToLowerInvariant());
                 File.WriteAllText(dlg.FileName, html, Encoding.UTF8);
@@ -70,7 +66,7 @@ namespace KillerScan.Shell
                 DefaultExt = ".png",
                 AddExtension = true
             };
-            if (dlg.ShowDialog(this) != true) return;
+            if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
             try
             {
                 int width = Math.Max(1, (int)Math.Ceiling(TopologyCanvas.Width));

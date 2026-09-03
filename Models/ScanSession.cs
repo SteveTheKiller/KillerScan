@@ -4,8 +4,7 @@ using KillerScan.Services;
 
 namespace KillerScan.Models
 {
-    // State for the app's single scan surface. One scan accepts several comma-separated targets,
-    // so separate tab sessions would only duplicate the same capability with more chrome.
+    // Each scan tab owns its targets, results, scanner, and cancellation lifetime.
     internal sealed class ScanSession(string subnet)
     {
         public ObservableCollection<NetworkDevice> Devices { get; } = [];

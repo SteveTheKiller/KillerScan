@@ -326,4 +326,15 @@
     <sys:String x:Key="Str_Diag_Time">檢查時間</sys:String>
     <sys:String x:Key="Str_Watch_Reset">重新開始會清除先前的結果。</sys:String>
     <sys:String x:Key="Str_Watch_Add">監控裝置</sys:String>
+    <sys:String x:Key="Str_Workspace_NewScan">新增掃描</sys:String>
+    <sys:String x:Key="Str_Workspace_Terminal">終端機</sys:String>
+    <sys:String x:Key="Str_Workspace_Split">分割窗格</sys:String>
+    <sys:String x:Key="Str_Workspace_Move">移至另一個窗格</sys:String>
+    <sys:String x:Key="Str_Workspace_Close">關閉分頁</sys:String>
+    <sys:String x:Key="Str_Workspace_Next">下一個分頁</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenTab">在分頁中開啟</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenBeside">在旁邊開啟</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenExternal">在獨立視窗中開啟</sys:String>
+    <sys:String x:Key="Str_Workspace_Exited">程序已結束 ({0})</sys:String>
+    <sys:String x:Key="Str_Workspace_StartFailed">無法啟動終端機：{0}</sys:String>
 </ResourceDictionary>

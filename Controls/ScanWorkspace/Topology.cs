@@ -8,12 +8,9 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using KillerScan.Models;
 
-namespace KillerScan.Shell
+namespace KillerScan.Controls
 {
-    // The first topology layer uses only facts the scanner already knows. It shows membership in
-    // the scanned local network, not physical switch ports or measured route hops. Those stronger
-    // evidence types can be added without changing the view's basic node and link vocabulary.
-    public partial class MainWindow
+    public partial class ScanWorkspace
     {
         private const double TopologyNodeWidth = 126;
         private const double TopologyNodeHeight = 40;
@@ -34,13 +31,13 @@ namespace KillerScan.Shell
                 _showServices = false;
                 ServicesGrid.Visibility = Visibility.Collapsed;
                 ServicesButton.Tag = null;
-                FixedServicesButton.Tag = null;
+
             }
             ResultsGrid.Visibility = _showTopology ? Visibility.Collapsed : Visibility.Visible;
             TopologyPane.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;
             TopologyOrderButton.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;
             TopologyButton.Tag = _showTopology ? "on" : null;
-            FixedTopologyButton.Tag = _showTopology ? "on" : null;
+
             PaneTitle.Text = _showTopology ? Loc("Str_Topology_Title") : Loc("Str_DiscoveredDevices");
             if (_showTopology)
             {

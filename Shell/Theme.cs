@@ -33,6 +33,7 @@ namespace KillerScan.Shell
                 ApplyThemeBorder(this);   // retint the DWM frame border to the new palette
                 ApplyFlatChrome();
                 UpdateAccentStrip(animate: true);
+                RefreshWorkspaceLocale();
             }
         }
 
@@ -96,6 +97,7 @@ namespace KillerScan.Shell
                 ThemeManager.ApplyAccent(ThemeManager.Current, accent);
                 UpdateThemeSwatchSelection();   // ring colors follow the accent
                 RingAccentStrip();
+                RefreshWorkspaceLocale();
             }
         }
 
@@ -361,34 +363,8 @@ namespace KillerScan.Shell
 
         /// <summary>Re-applies strings to UI built in code (column headers, status, count, scan button),
         /// so a live language switch updates them. Static {DynamicResource Str_*} XAML updates itself.</summary>
-        private void RelocalizeDynamicUi()
-        {
-            // DataGridColumn.Header DynamicResource does not refresh on a live dictionary swap - re-set it.
-            ColIp?.Header     = Loc("Str_Col_Ip");
-            ColHost?.Header   = Loc("Str_Col_Host");
-            ColMac?.Header    = Loc("Str_Col_Mac");
-            ColVendor?.Header = Loc("Str_Col_Vendor");
-            ColType?.Header   = Loc("Str_Col_Type");
-            ColPorts?.Header  = Loc("Str_Col_Ports");
-            PaneTitle.Text = _showTopology ? Loc("Str_Topology_Title")
-                : _showServices ? Loc("Str_Services_Title")
-                : Loc("Str_DiscoveredDevices");
-            UpdateTopologyOrderUi();
-            UpdateDeepScanButton();
-            if (_showTopology) RefreshTopology();
+        private void RelocalizeDynamicUi() => RefreshWorkspaceLocale();
 
-            if (_active != null)
-            {
-                ScanBtn.Content = Loc(_active.IsScanning ? "Str_Btn_Stop" : "Str_Btn_Scan");
-                RefreshDeviceCount();
-                if (!_active.IsScanning)
-                {
-                    var ready = string.Format(Loc("Str_Status_Ready"), Services.OuiLookup.Count.ToString("N0"));
-                    _active.Status = ready;
-                    StatusText.Text = ready;
-                }
-            }
-        }
 
         // The theme flyout and context menus take mouse capture while open (StaysOpen=False),
         // which otherwise swallows the wheel. If the cursor is over the device table, forward the
@@ -396,7 +372,7 @@ namespace KillerScan.Shell
         private void Menu_ForwardWheelToGrid(object sender, MouseWheelEventArgs e)
         {
             if (e.Handled) return;
-            if (FindName("ResultsGrid") is not DataGrid grid) return;
+            if (ActiveScan?.FindName("ResultsGrid") is not DataGrid grid) return;
 
             var pos = Mouse.GetPosition(grid);
             if (pos.X < 0 || pos.Y < 0 || pos.X > grid.ActualWidth || pos.Y > grid.ActualHeight) return;
@@ -407,30 +383,6 @@ namespace KillerScan.Shell
             else
                 sv.ScrollToVerticalOffset(sv.VerticalOffset - e.Delta);                   // pixel units
             e.Handled = true;
-        }
-
-        // Clips the column-header strip to a shape with rounded top corners and a flat bottom,
-        // so the header reads as the top of a card while its underline stays straight. Re-run on
-        // resize because the strip width tracks the table.
-        private void HeaderStrip_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (sender is not Border b) return;
-            double w = b.ActualWidth, h = b.ActualHeight;
-            if (w <= 0 || h <= 0) { b.Clip = null; return; }
-            double r = Math.Min(6, Math.Min(w / 2, h));
-
-            var geo = new StreamGeometry();
-            using (var ctx = geo.Open())
-            {
-                ctx.BeginFigure(new Point(0, h), true, true);
-                ctx.LineTo(new Point(0, r), true, false);
-                ctx.ArcTo(new Point(r, 0), new Size(r, r), 0, false, SweepDirection.Clockwise, true, false);
-                ctx.LineTo(new Point(w - r, 0), true, false);
-                ctx.ArcTo(new Point(w, r), new Size(r, r), 0, false, SweepDirection.Clockwise, true, false);
-                ctx.LineTo(new Point(w, h), true, false);
-            }
-            geo.Freeze();
-            b.Clip = geo;
         }
 
         private static T? FindDescendant<T>(DependencyObject root) where T : DependencyObject

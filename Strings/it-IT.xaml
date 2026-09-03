@@ -342,4 +342,15 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Diag_Time">Ora del controllo</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Un nuovo avvio cancella i risultati precedenti.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Monitora dispositivo</sys:String>
+    <sys:String x:Key="Str_Workspace_NewScan">Nuova scansione</sys:String>
+    <sys:String x:Key="Str_Workspace_Terminal">Terminale</sys:String>
+    <sys:String x:Key="Str_Workspace_Split">Dividi riquadri</sys:String>
+    <sys:String x:Key="Str_Workspace_Move">Sposta nell'altro riquadro</sys:String>
+    <sys:String x:Key="Str_Workspace_Close">Chiudi scheda</sys:String>
+    <sys:String x:Key="Str_Workspace_Next">Scheda successiva</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenTab">Apri in una scheda</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenBeside">Apri accanto</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenExternal">Apri in una finestra separata</sys:String>
+    <sys:String x:Key="Str_Workspace_Exited">Processo terminato ({0})</sys:String>
+    <sys:String x:Key="Str_Workspace_StartFailed">Impossibile avviare il terminale: {0}</sys:String>
 </ResourceDictionary>

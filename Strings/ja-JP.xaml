@@ -337,4 +337,15 @@
     <sys:String x:Key="Str_Diag_Time">確認日時</sys:String>
     <sys:String x:Key="Str_Watch_Reset">再開すると前回の結果が消去されます。</sys:String>
     <sys:String x:Key="Str_Watch_Add">デバイスを監視</sys:String>
+    <sys:String x:Key="Str_Workspace_NewScan">新しいスキャン</sys:String>
+    <sys:String x:Key="Str_Workspace_Terminal">ターミナル</sys:String>
+    <sys:String x:Key="Str_Workspace_Split">ペインを分割</sys:String>
+    <sys:String x:Key="Str_Workspace_Move">別のペインに移動</sys:String>
+    <sys:String x:Key="Str_Workspace_Close">タブを閉じる</sys:String>
+    <sys:String x:Key="Str_Workspace_Next">次のタブ</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenTab">タブで開く</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenBeside">横に開く</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenExternal">別のウィンドウで開く</sys:String>
+    <sys:String x:Key="Str_Workspace_Exited">プロセスが終了しました ({0})</sys:String>
+    <sys:String x:Key="Str_Workspace_StartFailed">ターミナルを起動できませんでした: {0}</sys:String>
 </ResourceDictionary>

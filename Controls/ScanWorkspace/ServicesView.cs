@@ -1,9 +1,9 @@
 using System.Windows;
 using KillerScan.Models;
 
-namespace KillerScan.Shell
+namespace KillerScan.Controls
 {
-    public partial class MainWindow
+    public partial class ScanWorkspace
     {
         private bool _showServices;
 
@@ -15,19 +15,26 @@ namespace KillerScan.Shell
             ResultsGrid.Visibility = _showServices ? Visibility.Collapsed : Visibility.Visible;
             ServicesGrid.Visibility = _showServices ? Visibility.Visible : Visibility.Collapsed;
             ServicesButton.Tag = _showServices ? "on" : null;
-            FixedServicesButton.Tag = _showServices ? "on" : null;
+
             PaneTitle.Text = _showServices ? Loc("Str_Services_Title") : Loc("Str_DiscoveredDevices");
             if (_showServices) RefreshServices();
         }
 
         private void RefreshServices()
         {
-            ServicesGrid.ItemsSource = ActiveDevices
+            var selected = ServicesGrid.SelectedItems.Cast<ServiceRow>()
+                .Select(row => (row.IpAddress, row.Port)).ToList();
+            var sorts = ServicesGrid.Items.SortDescriptions.ToList();
+            var rows = (_filteredView?.Cast<object>().OfType<NetworkDevice>() ?? ActiveDevices)
                 .SelectMany(device => device.OpenPorts.Select(port => ServiceRow.From(device, port)))
                 .OrderBy(row => row.Service, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(row => row.Port)
                 .ThenBy(row => row.IpSortKey)
                 .ToList();
+            ServicesGrid.ItemsSource = rows;
+            foreach (var sort in sorts) ServicesGrid.Items.SortDescriptions.Add(sort);
+            foreach (var row in rows.Where(row => selected.Contains((row.IpAddress, row.Port))))
+                ServicesGrid.SelectedItems.Add(row);
         }
 
         private sealed class ServiceRow

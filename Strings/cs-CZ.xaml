@@ -324,4 +324,15 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Diag_Time">Čas kontroly</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Opětovné spuštění vymaže předchozí výsledky.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Sledovat zařízení</sys:String>
+    <sys:String x:Key="Str_Workspace_NewScan">Nové skenování</sys:String>
+    <sys:String x:Key="Str_Workspace_Terminal">Terminál</sys:String>
+    <sys:String x:Key="Str_Workspace_Split">Rozdělit panely</sys:String>
+    <sys:String x:Key="Str_Workspace_Move">Přesunout do druhého panelu</sys:String>
+    <sys:String x:Key="Str_Workspace_Close">Zavřít kartu</sys:String>
+    <sys:String x:Key="Str_Workspace_Next">Další karta</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenTab">Otevřít na kartě</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenBeside">Otevřít vedle</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenExternal">Otevřít v samostatném okně</sys:String>
+    <sys:String x:Key="Str_Workspace_Exited">Proces skončil ({0})</sys:String>
+    <sys:String x:Key="Str_Workspace_StartFailed">Terminál se nepodařilo spustit: {0}</sys:String>
 </ResourceDictionary>

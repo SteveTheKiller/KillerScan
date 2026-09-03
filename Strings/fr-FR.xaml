@@ -326,4 +326,15 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Diag_Time">Heure de vérification</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Un nouveau démarrage efface les résultats précédents.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Surveiller l'appareil</sys:String>
+    <sys:String x:Key="Str_Workspace_NewScan">Nouvelle analyse</sys:String>
+    <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Workspace_Split">Diviser les volets</sys:String>
+    <sys:String x:Key="Str_Workspace_Move">Déplacer vers l'autre volet</sys:String>
+    <sys:String x:Key="Str_Workspace_Close">Fermer l'onglet</sys:String>
+    <sys:String x:Key="Str_Workspace_Next">Onglet suivant</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenTab">Ouvrir dans un onglet</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenBeside">Ouvrir à côté</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenExternal">Ouvrir dans une fenêtre séparée</sys:String>
+    <sys:String x:Key="Str_Workspace_Exited">Processus terminé ({0})</sys:String>
+    <sys:String x:Key="Str_Workspace_StartFailed">Impossible de démarrer le terminal : {0}</sys:String>
 </ResourceDictionary>

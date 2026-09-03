@@ -10,29 +10,9 @@ using KillerScan.Services;
 
 namespace KillerScan.Shell
 {
-    // ============================================================
-    // MainWindow - shell composition root.
-    //
-    // The window is intentionally thin: it holds shared fields and wires up the
-    // pieces in the constructor. Everything else lives in focused partials in
-    // this folder, split into a reusable UI shell and the scanner core:
-    //
-    //   UI shell:      WindowChrome.cs, Theme.cs, SystemMenu.cs, AppScale.cs,
-    //                  Shortcuts.cs, About.cs
-    //   Scanner core:  Scanning.cs, NetworkInfo.cs, Filtering.cs, Session.cs,
-    //                  Rescan.cs, DeviceActions.cs, Export.cs, DemoMode.cs
-    //
-    // Everything in Shell/ is window code. The scan engine, the report writers
-    // and the rest of the pure logic live in Services/, the controllers behind
-    // an interface boundary in Features/, the dialogs and the shared animation
-    // helper in Controls/, and the data types in Models/. Nothing in Features/
-    // or Services/ reaches back into this folder.
-    // ============================================================
     public partial class MainWindow : Window
     {
-        // One session backs the one scan surface. A scan itself accepts several targets.
-        private readonly ScanSession _active;
-        private ICollectionView? _filteredView;
+        private static bool DemoMode => DemoData.Enabled;
         private readonly StackPanel _portableBadge = null!;
         private readonly ImageBrush _grainBrush = null!;
         private readonly string? _startupScanTarget;
@@ -61,19 +41,9 @@ namespace KillerScan.Shell
 
             VersionLabel.Text = $"v{AppInfo.Version}";
 
-            PopulateNetworkInfo();                                   // NetworkInfo.cs (sets SubnetInput.Text)
-            if (!string.IsNullOrWhiteSpace(_startupScanTarget))
-                SubnetInput.Text = _startupScanTarget;
-
-            _active = new ScanSession(SubnetInput.Text ?? string.Empty)
-            {
-                Status = string.Format(Loc("Str_Status_Ready"), OuiLookup.Count.ToString("N0"))
-            };
-            WireSession(_active);                                   // Scanning.cs
-            ActivateSession();                                      // Session.cs (binds grid to the session)
+            InitializeWorkspace();
 
             RestoreWindowPlacement();                               // window size/position from previous run
-            RestoreColumnLayout();                                  // column order/widths from previous run
             InitAppScale();                                         // AppScale.cs (restore app-wide size)
 
             ApplyGrainTexture();                                    // WindowChrome.cs
@@ -81,17 +51,43 @@ namespace KillerScan.Shell
 
             Loaded += (_, _) =>
             {
-                if (App.IsPortable())
+                if (App.IsPortable() && !DemoMode)
                     _portableBadge.Visibility = Visibility.Visible;
                 UpdateThemeSwatchSelection();                       // Theme.cs
                 UpdateAccentStrip(animate: false);                  // Theme.cs
                 ApplyFlatChrome();                                  // Theme.cs (98SE drops the shadow)
                 FadeInContent();                                    // WindowChrome.cs
-                if (DemoMode) GenerateDemoScan();                   // DemoMode.cs (--demo: initial roll)
-                else if (_startScanOnLoad)
-                    Dispatcher.BeginInvoke(new Action(() => ScanBtn_Click(this, new RoutedEventArgs())),
+                if (_startScanOnLoad && !DemoMode)
+                    Dispatcher.BeginInvoke(new Action(() => ActiveScan?.Scan()),
                         System.Windows.Threading.DispatcherPriority.ApplicationIdle);
             };
+        }
+
+        private NetworkDevice? GetSelectedDevice() => ActiveScan?.SelectedDevice;
+
+        private void UpdateWorkspaceRail()
+        {
+            string? view = ActiveScan?.View;
+            ServicesButton.Tag = FixedServicesButton.Tag = view == "services" ? "on" : null;
+            TopologyButton.Tag = FixedTopologyButton.Tag = view == "topology" ? "on" : null;
+        }
+
+        private void ServicesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var scan = ActiveScan;
+            if (scan == null) return;
+            scan.SetView(scan.View == "services" ? "devices" : "services");
+            ServicesButton.Tag = FixedServicesButton.Tag = scan.View == "services" ? "on" : null;
+            TopologyButton.Tag = FixedTopologyButton.Tag = null;
+        }
+
+        private void TopologyButton_Click(object sender, RoutedEventArgs e)
+        {
+            var scan = ActiveScan;
+            if (scan == null) return;
+            scan.SetView(scan.View == "topology" ? "devices" : "topology");
+            TopologyButton.Tag = FixedTopologyButton.Tag = scan.View == "topology" ? "on" : null;
+            ServicesButton.Tag = FixedServicesButton.Tag = null;
         }
 
         // Portable-mode install button
@@ -115,70 +111,6 @@ namespace KillerScan.Shell
         private void VersionLabel_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ShowAboutOverlay();
-        }
-
-        // ============================================================
-        // Column layout persistence (Software\KillerScan\Settings, "GridColumns").
-        // Saves each column's display position always, and its width ONLY if the
-        // user resized it (dragging converts the width to pixels). Untouched
-        // columns keep their XAML sizing (Auto / star) so they still adapt to
-        // content. Format: Name:DisplayIndex:Width|... ("-" = width untouched).
-        // ============================================================
-
-        private Dictionary<string, DataGridColumn> ColumnMap() => new()
-        {
-            ["ColIp"]     = ColIp,
-            ["ColHost"]   = ColHost,
-            ["ColMac"]    = ColMac,
-            ["ColVendor"] = ColVendor,
-            ["ColType"]   = ColType,
-            ["ColPorts"]  = ColPorts,
-        };
-
-        private void SaveColumnLayout()
-        {
-            try
-            {
-                var parts = ColumnMap().Select(kv =>
-                {
-                    var c = kv.Value;
-                    string w = c.Width.UnitType == DataGridLengthUnitType.Pixel
-                        ? c.Width.Value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)
-                        : "-";
-                    return $"{kv.Key}:{c.DisplayIndex}:{w}";
-                });
-                App.SetSetting("GridColumns", string.Join("|", parts));
-            }
-            catch { /* best-effort */ }
-        }
-
-        private void RestoreColumnLayout()
-        {
-            string? s = App.GetSetting("GridColumns");
-            if (string.IsNullOrWhiteSpace(s)) return;
-            try
-            {
-                var map = ColumnMap();
-                int count = ResultsGrid.Columns.Count;
-                var order = new List<(DataGridColumn Col, int Idx)>();
-                foreach (string part in s!.Split('|'))
-                {
-                    string[] f = part.Split(':');
-                    if (f.Length != 3 || !map.TryGetValue(f[0], out var col)) continue;
-                    if (int.TryParse(f[1], out int idx) && idx >= 0 && idx < count)
-                        order.Add((col, idx));
-                    if (f[2] != "-" &&
-                        double.TryParse(f[2], System.Globalization.NumberStyles.Float,
-                                        System.Globalization.CultureInfo.InvariantCulture, out double w) &&
-                        w > 0)
-                        col.Width = new DataGridLength(w);
-                }
-                // Apply positions in ascending target order so each assignment
-                // lands the column at its final slot.
-                foreach (var (col, idx) in order.OrderBy(o => o.Idx))
-                    col.DisplayIndex = idx;
-            }
-            catch { /* best-effort */ }
         }
 
         // ============================================================
@@ -241,7 +173,7 @@ namespace KillerScan.Shell
         protected override void OnClosed(EventArgs e)
         {
             SaveWindowPlacement();
-            SaveColumnLayout();
+            DisposeWorkspace();
             base.OnClosed(e);
         }
 

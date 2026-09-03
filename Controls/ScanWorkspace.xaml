@@ -1,0 +1,646 @@
+<UserControl x:Class="KillerScan.Controls.ScanWorkspace" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:cm="clr-namespace:System.ComponentModel;assembly=System" Background="{DynamicResource BackgroundBrush}" UseLayoutRounding="True">
+<Grid>
+<Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+<Grid x:Name="ScanToolbar" Margin="10,6">
+<Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+<Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+<TextBox x:Name="SubnetInput" Style="{StaticResource DarkTextBox}" Padding="5,3,9,3" FontSize="12" MinWidth="100" VerticalAlignment="Center"/>
+<WrapPanel x:Name="ScanActions" Grid.Column="1" Orientation="Horizontal" Margin="8,0,0,0">
+<Button x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}" Style="{StaticResource OutlineButton}" Click="ScanBtn_Click" FontSize="12" Padding="14,5">
+<Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Btn_Scan}"/><Run Text=" (F5)"/></TextBlock></Button.ToolTip>
+</Button>
+<Button x:Name="DeepScanAllButton" Content="{DynamicResource Str_Btn_DeepScanAll}" Style="{StaticResource OutlineButton}" Click="DeepScanAll_Click" Visibility="Collapsed" FontSize="12" Padding="10,5" Margin="6,0,0,0"/>
+</WrapPanel></Grid>
+<Border x:Name="DevicesPane"
+                Grid.Row="1" Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
+                BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}" Margin="0" Panel.ZIndex="10"
+                >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="20"
+                        BorderBrush="{DynamicResource PaneBevelDarkBrush}"
+                        BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="20"
+                        BorderBrush="{DynamicResource PaneBevelLightBrush}"
+                        BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="20"
+                        Margin="{DynamicResource PaneBevelInnerMargin}"
+                        BorderBrush="{DynamicResource PaneBevelDark2Brush}"
+                        BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="20"
+                        Margin="{DynamicResource PaneBevelInnerMargin}"
+                        BorderBrush="{DynamicResource PaneBevelLight2Brush}"
+                        BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="21" VerticalAlignment="Top"
+                        Height="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneTopBrush}"/>
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="21" HorizontalAlignment="Left"
+                        Width="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneLeftBrush}"/>
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="22" HorizontalAlignment="Right"
+                        Width="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneRightBrush}"/>
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Panel.ZIndex="22" VerticalAlignment="Bottom"
+                        Height="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneBottomBrush}"/>
+
+
+                <Border Grid.RowSpan="2" IsHitTestVisible="False" Opacity="0.20" Panel.ZIndex="-1" CornerRadius="{DynamicResource PaneGrainCornerRadius}">
+                    <Border.Background>
+                        <ImageBrush x:Name="GrainBrush" TileMode="Tile"
+                                    ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
+                    </Border.Background>
+                </Border>
+
+                <Grid Grid.Row="0" Margin="12,8,12,8">
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="PaneTitle" Grid.Column="0" Text="{DynamicResource Str_DiscoveredDevices}"
+                               Foreground="{DynamicResource TextBrush}" FontFamily="Consolas"
+                               FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
+
+                    <Border x:Name="FilterBox" Grid.Column="1" Margin="16,0,0,0" MaxWidth="180" Height="26" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                            Background="{DynamicResource TextFieldBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}"/>
+                                <Style.Triggers>
+
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="BorderBrush" Value="{DynamicResource InputHoverBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="&#xE71C;" FontFamily="Segoe MDL2 Assets" FontSize="11"
+                                       Foreground="{DynamicResource DimTextBrush}" Margin="8,0,5,0" VerticalAlignment="Center"/>
+                            <Grid Grid.Column="1">
+                                <TextBlock Text="{DynamicResource Str_FilterPlaceholder}" Foreground="{DynamicResource DimTextBrush}"
+                                           FontSize="12" VerticalAlignment="Center" IsHitTestVisible="False" Margin="0,0,8,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Text, ElementName=FilterInput}" Value=""/>
+                                                        <Condition Binding="{Binding IsKeyboardFocusWithin, ElementName=FilterInput}" Value="False"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </MultiDataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBox x:Name="FilterInput" Background="Transparent" BorderThickness="0"
+                                         Foreground="{DynamicResource TextBrush}" CaretBrush="{DynamicResource TextBrush}"
+                                         SelectionBrush="{DynamicResource PrimaryBrush}" SelectionOpacity="0.35"
+                                         FontSize="12" Padding="0,0,8,0" VerticalContentAlignment="Center"
+                                         TextChanged="FilterInput_TextChanged"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Button x:Name="TopologyOrderButton" Grid.Column="2" Visibility="Collapsed"
+                            HorizontalAlignment="Left" Margin="10,0,0,0" Width="32" Height="26"
+                            Padding="0" VerticalAlignment="Center" Cursor="Hand"
+                            Background="{DynamicResource TextFieldBrush}"
+                            Foreground="{DynamicResource TextBrush}"
+                            BorderBrush="{DynamicResource InputBorderBrush}" BorderThickness="1"
+                            Click="TopologyOrderButton_Click">
+                        <Button.ToolTip>
+                            <TextBlock><Run Text="{DynamicResource Str_TT_TopologyOrder}"/><Run Text=" (F7)"/></TextBlock>
+                        </Button.ToolTip>
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="OrderBorder"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="OrderBorder" Property="Background"
+                                                Value="{DynamicResource OutlineHoverBrush}"/>
+                                        <Setter Property="Foreground"
+                                                Value="{DynamicResource OutlineHoverTextBrush}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <TextBlock Text="&#xE8CB;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Button.ContextMenu>
+                            <ContextMenu PreviewMouseWheel="Menu_ForwardWheelToGrid">
+                                <MenuItem x:Name="TopologyRoleItem" Header="{DynamicResource Str_Topology_Role}"
+                                          Tag="Role" InputGestureText="Ctrl+1" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                <MenuItem x:Name="TopologyTypeItem" Header="{DynamicResource Str_Col_Type}"
+                                          Tag="Type" InputGestureText="Ctrl+2" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                <MenuItem x:Name="TopologyIpItem" Header="{DynamicResource Str_Col_Ip}"
+                                          Tag="Ip" InputGestureText="Ctrl+3" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                <MenuItem x:Name="TopologyVendorItem" Header="{DynamicResource Str_Col_Vendor}"
+                                          Tag="Vendor" InputGestureText="Ctrl+4" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
+                    <TextBlock Grid.Column="3" x:Name="DeviceCount"
+                               Text="" TextTrimming="CharacterEllipsis" MaxWidth="230"
+                               Foreground="{DynamicResource MutedTextBrush}"
+                               FontSize="12" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                    <Button Grid.Column="4" x:Name="ExportButton"
+                            Click="ExportButton_Click" IsEnabled="False"
+                            ToolTip="{DynamicResource Str_TT_Export}" Cursor="Hand"
+                            Background="{DynamicResource ExportButtonBackground}" BorderThickness="0"
+                            Width="32" Height="26" VerticalAlignment="Center">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Border x:Name="bg" Background="{TemplateBinding Background}" CornerRadius="{DynamicResource ControlCornerRadius}"/>
+                                    <Border x:Name="raisedLight" IsHitTestVisible="False"
+                                            BorderBrush="{DynamicResource FrameOuterLightBrush}"
+                                            BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
+                                    <Border x:Name="raisedDark" IsHitTestVisible="False"
+                                            BorderBrush="{DynamicResource FrameOuterDarkBrush}"
+                                            BorderThickness="{DynamicResource FrameOuterDarkThickness}"/>
+                                    <TextBlock x:Name="ico" Text="&#xE896;" FontFamily="Segoe MDL2 Assets"
+                                               FontSize="15" Foreground="{DynamicResource TextBrush}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="bg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                        <Setter TargetName="ico" Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.4"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="raisedLight" Property="BorderBrush" Value="{DynamicResource FrameOuterDarkBrush}"/>
+                                        <Setter TargetName="raisedLight" Property="BorderThickness" Value="{DynamicResource FrameOuterLightThickness}"/>
+                                        <Setter TargetName="raisedDark" Property="BorderBrush" Value="{DynamicResource FrameOuterLightBrush}"/>
+                                        <Setter TargetName="ico" Property="Margin" Value="1,1,0,0"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <Button.ContextMenu>
+                            <ContextMenu Placement="Bottom" HorizontalOffset="0" VerticalOffset="2"
+                                         PreviewMouseWheel="Menu_ForwardWheelToGrid">
+                                <MenuItem Header="{DynamicResource Str_Export_Csv}" InputGestureText="Ctrl+E" Click="ExportCsv_Click">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9F9;"/></MenuItem.Icon>
+                                </MenuItem>
+
+                                <MenuItem Header="{DynamicResource Str_Export_Html}" Click="ExportHtml_Click">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE943;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="ExportTopologyPngItem" Header="{DynamicResource Str_Export_TopologyPng}"
+                                          Click="ExportTopologyPng_Click" Visibility="Collapsed">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xEB9F;"/></MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
+                </Grid>
+
+
+                <DataGrid Grid.Row="1" x:Name="ResultsGrid"
+                          Margin="0"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          Background="Transparent"
+                          Foreground="{DynamicResource TextBrush}"
+                          BorderThickness="0"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="{DynamicResource PaneBorderBrush}"
+                          HeadersVisibility="Column"
+                          CanUserSortColumns="True"
+                          CanUserResizeColumns="True"
+                          VirtualizingPanel.ScrollUnit="Pixel"
+                          SelectionMode="Extended"
+                          ContextMenuOpening="ResultsGrid_ContextMenuOpening"
+                          ColumnHeaderHeight="28"
+                          RowHeight="28"
+                          AlternationCount="2"
+                          RowStyle="{StaticResource DarkDataGridRow}"
+                          CellStyle="{StaticResource DarkDataGridCell}">
+
+
+                    <DataGrid.Template>
+                        <ControlTemplate TargetType="DataGrid">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                                <Grid>
+                                <ScrollViewer x:Name="DG_ScrollViewer" Focusable="false">
+                                    <ScrollViewer.Template>
+                                        <ControlTemplate TargetType="ScrollViewer">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Border Grid.Row="0" Grid.Column="0" SizeChanged="HeaderStrip_SizeChanged">
+                                                    <DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter"
+                                                        Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                                </Border>
+                                                <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
+                                                    Grid.Row="1" Grid.Column="0"
+                                                    CanContentScroll="{TemplateBinding CanContentScroll}"/>
+                                                <ScrollBar x:Name="PART_VerticalScrollBar"
+                                                    Grid.Row="1" Grid.Column="1"
+                                                    Orientation="Vertical"
+                                                    Maximum="{TemplateBinding ScrollableHeight}"
+                                                    ViewportSize="{TemplateBinding ViewportHeight}"
+                                                    Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                    Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                                                <ScrollBar x:Name="PART_HorizontalScrollBar"
+                                                    Grid.Row="2" Grid.Column="0" Orientation="Horizontal"
+                                                    Maximum="{TemplateBinding ScrollableWidth}"
+                                                    ViewportSize="{TemplateBinding ViewportWidth}"
+                                                    Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                    Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </ScrollViewer.Template>
+                                    <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                </ScrollViewer>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </DataGrid.Template>
+
+
+                    <DataGrid.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                         Color="#1a3a25"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"
+                                         Color="#1ea54c"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                                         Color="#1a3a25"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
+                                         Color="#1ea54c"/>
+                    </DataGrid.Resources>
+
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem x:Name="RescanMenuItem" Header="{DynamicResource Str_Ctx_RescanOne}" InputGestureText="Ctrl+R" Click="RescanSelected_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE72C;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
+
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyIp}" InputGestureText="Ctrl+C" Click="CopyIp_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyMac}" InputGestureText="Ctrl+Shift+C" Click="CopyMac_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyHost}" InputGestureText="Ctrl+Alt+C" Click="CopyHostname_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
+                            <MenuItem Header="{DynamicResource Str_Diag_Title}" InputGestureText="F3" Click="Diagnose_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9D9;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Watch_Title}" InputGestureText="F2" Click="Watch_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9D9;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_Ping}" InputGestureText="Ctrl+P" Click="PingDevice_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE704;"/></MenuItem.Icon>
+                            </MenuItem>
+
+                            <MenuItem Header="{DynamicResource Str_Ctx_OpenBrowser}" InputGestureText="Enter" Click="OpenBrowser_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8A7;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_Rdp}" InputGestureText="Ctrl+D" Click="RdpDevice_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE7F4;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_Ssh}" InputGestureText="Ctrl+S" Click="SshDevice_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
+                            </MenuItem>
+
+                            <MenuItem Header="{DynamicResource Str_Ctx_SshAs}" InputGestureText="Ctrl+Shift+S" Click="SshAsDevice_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
+                            <MenuItem Header="{DynamicResource Str_Rename_Title}" Click="RenameDevice_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE70F;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Rename_Clear}" Click="ClearDeviceName_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE894;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="TrustDeviceMenuItem" Header="{DynamicResource Str_Trust_Device}"
+                                      IsCheckable="True" Click="TrustDevice_Click"/>
+                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_SetType}" SubmenuOpened="SetTypeMenu_Opened">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8EC;"/></MenuItem.Icon>
+
+
+                                <MenuItem Header="{DynamicResource Str_Dev_Router}" Click="SetType_Click" Tag="Router">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE965;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_SwitchAP}" Click="SetType_Click" Tag="Switch/AP">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE701;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_Network}" Click="SetType_Click" Tag="Network">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE839;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_Windows}" Click="SetType_Click" Tag="Windows">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE7F4;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_WindowsServer}" Click="SetType_Click" Tag="Windows Server">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE968;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_LinuxSSH}" Click="SetType_Click" Tag="Linux/SSH">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_Server}" Click="SetType_Click" Tag="Server">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xEDA2;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_Printer}" Click="SetType_Click" Tag="Printer">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE749;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_SmartTV}" Click="SetType_Click" Tag="Smart TV">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE7F8;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_AppleTV}" Click="SetType_Click" Tag="Apple TV">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE786;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_MediaStreamer}" Click="SetType_Click" Tag="Media Streamer">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8B2;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_AppleDevice}" Click="SetType_Click" Tag="Apple Device">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE977;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_Mobile}" Click="SetType_Click" Tag="Mobile">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8EA;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_IoT}" Click="SetType_Click" Tag="IoT">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9A9;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_NAS}" Click="SetType_Click" Tag="NAS">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8CE;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_Camera}" Click="SetType_Click" Tag="Camera">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE714;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_Hypervisor}" Click="SetType_Click" Tag="Hypervisor">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE81E;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_HomeAssistant}" Click="SetType_Click" Tag="Home Assistant">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE80F;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_DNSServer}" Click="SetType_Click" Tag="DNS Server">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE12B;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_WebDevice}" Click="SetType_Click" Tag="Web Device">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE774;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="{DynamicResource Str_Dev_Other}" Click="SetType_Click" Tag="Other">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9CE;"/></MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_ClearOverride}" Click="ClearOverride_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE894;"/></MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="{DynamicResource TableHeaderBrush}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
+                            <Setter Property="FontSize" Value="11"/>
+                            <Setter Property="FontWeight" Value="Normal"/>
+                            <Setter Property="Padding" Value="8,0"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource HeaderLineBrush}"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridColumnHeader">
+                                        <Grid>
+
+                                        <Border IsHitTestVisible="False" Panel.ZIndex="2"
+                                                BorderBrush="{DynamicResource BevelLightBrush}"
+                                                BorderThickness="{DynamicResource BevelLightThickness}"/>
+                                        <Border IsHitTestVisible="False" Panel.ZIndex="2"
+                                                BorderBrush="{DynamicResource BevelDarkBrush}"
+                                                BorderThickness="{DynamicResource BevelDarkThickness}"/>
+                                        <Border x:Name="hdrBg"
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                Padding="{TemplateBinding Padding}"
+                                                SnapsToDevicePixels="True">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ContentPresenter Grid.Column="0"
+                                                                  VerticalAlignment="Center"
+                                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                                <TextBlock x:Name="sortGlyph" Grid.Column="1"
+                                                           Text="&#x25B2;" FontSize="8"
+                                                           VerticalAlignment="Center" Margin="6,1,0,0"
+                                                           Foreground="{DynamicResource PrimaryBrush}"
+                                                           Visibility="Collapsed"/>
+                                            </Grid>
+                                        </Border>
+
+                                        <Thumb x:Name="PART_LeftHeaderGripper" HorizontalAlignment="Left"
+                                               Width="8" Margin="-4,0,0,0" Cursor="SizeWE">
+                                            <Thumb.Template>
+                                                <ControlTemplate TargetType="Thumb"><Border Background="Transparent"/></ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                        <Thumb x:Name="PART_RightHeaderGripper" HorizontalAlignment="Right"
+                                               Width="8" Margin="0,0,-4,0" Cursor="SizeWE">
+                                            <Thumb.Template>
+                                                <ControlTemplate TargetType="Thumb"><Border Background="Transparent"/></ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="SortDirection" Value="{x:Static cm:ListSortDirection.Ascending}">
+                                                <Setter TargetName="sortGlyph" Property="Visibility" Value="Visible"/>
+                                                <Setter TargetName="sortGlyph" Property="Text" Value="&#x25B2;"/>
+                                            </Trigger>
+                                            <Trigger Property="SortDirection" Value="{x:Static cm:ListSortDirection.Descending}">
+                                                <Setter TargetName="sortGlyph" Property="Visibility" Value="Visible"/>
+                                                <Setter TargetName="sortGlyph" Property="Text" Value="&#x25BC;"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="hdrBg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="hdrBg" Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn x:Name="ColIp" Header="{DynamicResource Str_Col_Ip}" Binding="{Binding IpAddress}" Width="Auto" MinWidth="92" SortMemberPath="IpSortKey"/>
+                        <DataGridTextColumn x:Name="ColHost" Header="{DynamicResource Str_Col_Host}" Binding="{Binding Hostname}" Width="Auto" MinWidth="142" MaxWidth="220"/>
+                        <DataGridTextColumn x:Name="ColMac" Header="{DynamicResource Str_Col_Mac}" Binding="{Binding MacAddress}" Width="Auto" MinWidth="110"/>
+                        <DataGridTextColumn x:Name="ColVendor" Header="{DynamicResource Str_Col_Vendor}" Binding="{Binding Vendor, Converter={StaticResource VendorLoc}}" Width="2*" MinWidth="150"/>
+                        <DataGridTemplateColumn x:Name="ColType" Header="{DynamicResource Str_Col_Type}" Width="Auto" MinWidth="95" SortMemberPath="DeviceType">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+
+                                    <TextBlock Text="{Binding DeviceType, Converter={StaticResource DeviceTypeLoc}}" FontWeight="Medium">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Router">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeRouter}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Router/DNS">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeRouter}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Windows">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeWindows}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Windows Server">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeWindows}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Printer">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypePrinter}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Switch/AP">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeSwitch}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Hypervisor">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeHypervisor}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="NAS">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeNas}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="IoT">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeIot}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Server">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeServer}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Linux/SSH">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeLinux}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="DNS Server">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeDns}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Home Assistant">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeHa}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Mobile">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeMobile}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Camera">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeCamera}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Apple Device">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeSwitch}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Smart TV">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeSmarttv}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Apple TV">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeSwitch}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DeviceType}" Value="Media Streamer">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TypeMedia}"/>
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn x:Name="ColPorts" Header="{DynamicResource Str_Col_Ports}" Binding="{Binding OpenPortsDisplay}" Width="*" MinWidth="130">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="ToolTipService.InitialShowDelay" Value="300"/>
+                                    <Setter Property="ToolTipService.ShowDuration" Value="60000"/>
+
+                                    <Setter Property="ToolTip">
+                                        <Setter.Value>
+                                            <TextBlock Text="{Binding OpenPortsDisplay}" TextWrapping="Wrap" MaxWidth="360"/>
+                                        </Setter.Value>
+                                    </Setter>
+
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding OpenPortsDisplay}" Value="-">
+                                            <Setter Property="ToolTip" Value="{x:Null}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <DataGrid Grid.Row="1" x:Name="ServicesGrid" Visibility="Collapsed"
+                          AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent"
+                          Foreground="{DynamicResource TextBrush}" BorderThickness="0"
+                          GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{DynamicResource PaneBorderBrush}"
+                          HeadersVisibility="Column" CanUserSortColumns="True" CanUserResizeColumns="True"
+                          SelectionMode="Extended" ColumnHeaderHeight="28" RowHeight="28"
+                          AlternationCount="2" RowStyle="{StaticResource DarkDataGridRow}"
+                          CellStyle="{StaticResource DarkDataGridCell}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{DynamicResource Str_Services_Service}" Binding="{Binding Service}" Width="160"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Ports}" Binding="{Binding Port}" Width="80"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Name}" Binding="{Binding DeviceName}" Width="*"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Ip}" Binding="{Binding IpAddress}" Width="130"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Type}" Binding="{Binding DeviceType}" Width="150"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+
+                <Grid Grid.Row="1" x:Name="TopologyPane" Visibility="Collapsed"
+                      ClipToBounds="True" SizeChanged="TopologyPane_SizeChanged">
+                    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                  VerticalScrollBarVisibility="Auto">
+                        <Canvas x:Name="TopologyCanvas" Background="Transparent"/>
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
+        </Border>
+
+<Grid Grid.Row="2" Margin="8,3"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock x:Name="StatusText" Foreground="{DynamicResource MutedTextBrush}" FontSize="11.5" TextTrimming="CharacterEllipsis"/><ProgressBar x:Name="ScanProgress" Grid.Column="1" Width="110" Height="4" Foreground="{DynamicResource PrimaryBrush}" Visibility="Collapsed"/></Grid>
+</Grid></UserControl>

@@ -4,11 +4,9 @@ using System.Windows;
 using System.Windows.Data;
 using KillerScan.Models;
 
-namespace KillerScan.Shell
+namespace KillerScan.Controls
 {
-    // The app has one scan surface. ActiveDevices and ActiveSubnet keep the scanner partials
-    // independent of the state container without pretending that multiple tabs exist.
-    public partial class MainWindow
+    public partial class ScanWorkspace
     {
         private ObservableCollection<NetworkDevice> ActiveDevices => _active.Devices;
 

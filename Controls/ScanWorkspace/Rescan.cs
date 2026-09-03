@@ -7,13 +7,9 @@ using System.Windows.Controls;
 using KillerScan.Models;
 using KillerScan.Services;
 
-namespace KillerScan.Shell
+namespace KillerScan.Controls
 {
-    // Scanner core: right-click "Rescan" of one or more selected devices. Runs the deep
-    // per-host probe (exhaustive ports + refreshed fingerprints) and swaps each result
-    // back into the grid in place. Disabled during a subnet scan so the two operations do not
-    // fight over the scanner's discovery state.
-    public partial class MainWindow
+    public partial class ScanWorkspace
     {
         private CancellationTokenSource? _rescanCts;
 
@@ -28,7 +24,6 @@ namespace KillerScan.Shell
                 : "Str_Btn_Stop");
         }
 
-        // Set the singular/plural label and enable state just before the menu opens.
         private void ResultsGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             PrepareDeviceContextMenu();
@@ -47,7 +42,7 @@ namespace KillerScan.Shell
 
         private async void RescanSelected_Click(object sender, RoutedEventArgs e)
         {
-            if (_rescanCts != null || _active.Cts != null) return;
+            if (_disposed || _rescanCts != null || _active.Cts != null) return;
 
             var targets = ResultsGrid.SelectedItems
                 .Cast<NetworkDevice>()
@@ -60,6 +55,7 @@ namespace KillerScan.Shell
             _rescanCts = new CancellationTokenSource();
             var ct = _rescanCts.Token;
             UpdateDeepScanButton();
+            StateChanged?.Invoke(this, EventArgs.Empty);
 
             ScanProgress.Value = 0;
             ScanProgress.Visibility = Visibility.Visible;
@@ -78,13 +74,11 @@ namespace KillerScan.Shell
                     {
                         fresh = await scanner.DeepProbeHostAsync(
                             old.IpAddress, ct, flushLocalDnsCache: false);
+                        ct.ThrowIfCancellationRequested();
                     }
                     catch (OperationCanceledException) { throw; }
                     catch { done++; ScanProgress.Value = done * 100.0 / targets.Count; continue; }
 
-                    // Swap the refreshed record into the collection in place. Same IP -> same
-                    // sort slot, so the row updates without duplicating or reordering. (Only
-                    // safe because rescan is blocked while a subnet scan is mutating the list.)
                     int idx = s.Devices.IndexOf(old);
                     if (idx >= 0) s.Devices[idx] = fresh;
 
@@ -93,13 +87,12 @@ namespace KillerScan.Shell
                 }
                 StatusText.Text = string.Format(Loc("Str_St_RescanDone"), targets.Count);
             }
-            catch (OperationCanceledException) { StatusText.Text = Loc("Str_St_ScanCanceled"); }
+            catch (OperationCanceledException) { if (!_disposed) StatusText.Text = Loc("Str_St_ScanCanceled"); }
             finally
             {
+                _rescanCts.Dispose();
                 _rescanCts = null;
-                ScanProgress.Visibility = Visibility.Collapsed;
-                RefreshDeviceCount();
-                UpdateDeepScanButton();
+                FinishRescanUi();
             }
         }
 
@@ -110,7 +103,7 @@ namespace KillerScan.Shell
                 _rescanCts.Cancel();
                 return;
             }
-            if (_active.Cts != null || ActiveDevices.Count == 0) return;
+            if (_disposed || _active.Cts != null || ActiveDevices.Count == 0) return;
 
             var s = _active;
             var scanner = s.Scanner;
@@ -125,6 +118,7 @@ namespace KillerScan.Shell
             ScanProgress.Value = 0;
             ScanProgress.Visibility = Visibility.Visible;
             UpdateDeepScanButton();
+            StateChanged?.Invoke(this, EventArgs.Empty);
             KillerScan.Services.NetworkScanner.FlushLocalDnsCache();
 
             try
@@ -136,6 +130,7 @@ namespace KillerScan.Shell
                     {
                         var fresh = await scanner.DeepProbeHostAsync(
                             old.IpAddress, ct, 128, flushLocalDnsCache: false);
+                        ct.ThrowIfCancellationRequested();
                         int idx = s.Devices.IndexOf(old);
                         if (idx >= 0)
                         {
@@ -149,28 +144,39 @@ namespace KillerScan.Shell
                     {
                         hostGate.Release();
                         done++;
-                        ScanProgress.Value = done * 100.0 / targets.Count;
-                        StatusText.Text = string.Format(
-                            Loc("Str_St_Rescanning"), $"{done}/{targets.Count}");
+                        if (!_disposed)
+                        {
+                            ScanProgress.Value = done * 100.0 / targets.Count;
+                            StatusText.Text = string.Format(
+                                Loc("Str_St_Rescanning"), $"{done}/{targets.Count}");
+                        }
                     }
                 });
 
                 await Task.WhenAll(tasks);
-                StatusText.Text = string.Format(Loc("Str_St_RescanDone"), refreshed);
+                if (!_disposed) StatusText.Text = string.Format(Loc("Str_St_RescanDone"), refreshed);
             }
             catch (OperationCanceledException)
             {
-                StatusText.Text = Loc("Str_St_ScanCanceled");
+                if (!_disposed) StatusText.Text = Loc("Str_St_ScanCanceled");
             }
             finally
             {
                 _rescanCts.Dispose();
                 _rescanCts = null;
-                ScanBtn.IsEnabled = true;
-                ScanProgress.Visibility = Visibility.Collapsed;
-                RefreshDeviceCount();
-                UpdateDeepScanButton();
+                FinishRescanUi();
             }
+        }
+
+        private void FinishRescanUi()
+        {
+            if (_disposed) return;
+            ScanBtn.IsEnabled = true;
+            ScanProgress.Visibility = Visibility.Collapsed;
+            RefreshDeviceCount();
+            UpdateDeepScanButton();
+            _active.Status = StatusText.Text;
+            StateChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

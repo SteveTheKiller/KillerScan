@@ -342,4 +342,15 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Diag_Time">Ellenőrzés ideje</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Az újbóli indítás törli a korábbi eredményeket.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Eszköz figyelése</sys:String>
+    <sys:String x:Key="Str_Workspace_NewScan">Új vizsgálat</sys:String>
+    <sys:String x:Key="Str_Workspace_Terminal">Terminál</sys:String>
+    <sys:String x:Key="Str_Workspace_Split">Panelek felosztása</sys:String>
+    <sys:String x:Key="Str_Workspace_Move">Áthelyezés a másik panelre</sys:String>
+    <sys:String x:Key="Str_Workspace_Close">Lap bezárása</sys:String>
+    <sys:String x:Key="Str_Workspace_Next">Következő lap</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenTab">Megnyitás lapon</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenBeside">Megnyitás mellette</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenExternal">Megnyitás külön ablakban</sys:String>
+    <sys:String x:Key="Str_Workspace_Exited">A folyamat kilépett ({0})</sys:String>
+    <sys:String x:Key="Str_Workspace_StartFailed">Nem sikerült elindítani a terminált: {0}</sys:String>
 </ResourceDictionary>

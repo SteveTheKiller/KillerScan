@@ -1,10 +1,7 @@
-<Window x:Class="KillerScan.Controls.NetworkToolsWindow"
+<UserControl x:Class="KillerScan.Controls.NetworkToolsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Width="820" Height="620" MinWidth="440" MinHeight="360"
-        Title="KillerScan" WindowStyle="None" AllowsTransparency="True"
-        ResizeMode="CanResize" Background="Transparent" ShowInTaskbar="False"
-        WindowStartupLocation="CenterOwner" PreviewKeyDown="Window_KeyDown">
+        Background="Transparent">
     <Border Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
             BorderThickness="1" CornerRadius="{DynamicResource FlyoutCornerRadius}">
         <Grid>
@@ -14,10 +11,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <DockPanel Margin="0,0,0,14" MouseLeftButtonDown="Title_MouseDown" Background="Transparent">
-                    <Button DockPanel.Dock="Right" Content="{DynamicResource AboutCloseGlyph}"
-                            Style="{StaticResource OverlayCloseButton}" Click="Close_Click"
-                            ToolTip="Esc"/>
+                <DockPanel Margin="0,0,0,14" Background="Transparent">
                     <TextBlock x:Name="Heading" FontSize="18" FontWeight="Bold"
                                Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" TextWrapping="Wrap"/>
                 </DockPanel>
@@ -56,10 +50,6 @@
                     </StackPanel>
                 </ScrollViewer>
             </Grid>
-            <Thumb HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="14" Height="14"
-                   Cursor="SizeNWSE" DragDelta="Resize_DragDelta">
-                <Thumb.Template><ControlTemplate><TextBlock Text="&#x25E2;" Foreground="{DynamicResource MutedTextBrush}"/></ControlTemplate></Thumb.Template>
-            </Thumb>
         </Grid>
     </Border>
-</Window>
+</UserControl>

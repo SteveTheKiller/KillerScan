@@ -368,4 +368,15 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Diag_Time">Checked at</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Starting again clears the previous results.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Watch device</sys:String>
+    <sys:String x:Key="Str_Workspace_NewScan">New scan</sys:String>
+    <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Workspace_Split">Split panes</sys:String>
+    <sys:String x:Key="Str_Workspace_Move">Move to other pane</sys:String>
+    <sys:String x:Key="Str_Workspace_Close">Close tab</sys:String>
+    <sys:String x:Key="Str_Workspace_Next">Next tab</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenTab">Open in tab</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenBeside">Open beside</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenExternal">Open in separate window</sys:String>
+    <sys:String x:Key="Str_Workspace_Exited">Process exited ({0})</sys:String>
+    <sys:String x:Key="Str_Workspace_StartFailed">Could not start the terminal: {0}</sys:String>
 </ResourceDictionary>

@@ -12,7 +12,7 @@ using KillerScan.Services;
 
 namespace KillerScan.Controls
 {
-    public partial class NetworkToolsWindow : Window
+    public partial class NetworkToolsWindow : UserControl, IDisposable
     {
         private readonly bool _diagnostics;
         private readonly int[] _ports;
@@ -36,8 +36,6 @@ namespace KillerScan.Controls
             StartButton.SetResourceReference(ContentProperty, diagnostics ? "Str_Diag_Run" : "Str_Watch_Start");
             if (!diagnostics) Status.SetResourceReference(TextBlock.TextProperty, "Str_Watch_Reset");
             ApplyScale(scale);
-            Width = Math.Min(820 * scale, SystemParameters.WorkArea.Width);
-            Height = Math.Min(620 * scale, SystemParameters.WorkArea.Height);
             AddColumn(diagnostics ? "Str_Diag_Check" : "Str_Col_Ip", "Target", 150);
             AddColumn("Str_Diag_Result", "Result", diagnostics ? 430 : 95);
             if (!diagnostics)
@@ -48,7 +46,6 @@ namespace KillerScan.Controls
                 AddColumn("Str_Watch_Changed", "Changed", 170);
             }
             Results.ItemsSource = _rows;
-            Closed += (_, _) => { _closed = true; _run?.Cancel(); };
         }
 
         internal void ApplyScale(double scale) => BodyHost.LayoutTransform = new ScaleTransform(scale, scale);
@@ -161,11 +158,7 @@ namespace KillerScan.Controls
         }
 
         private void Stop_Click(object sender, RoutedEventArgs e) { _run?.Cancel(); StopButton.IsEnabled = false; }
-        private void Close_Click(object sender, RoutedEventArgs e) => Close();
-        private void Window_KeyDown(object sender, KeyEventArgs e) { if (e.Key == Key.Escape) { Close(); e.Handled = true; } }
-        private void Title_MouseDown(object sender, MouseButtonEventArgs e) { if (e.ChangedButton == MouseButton.Left) DragMove(); }
-        private void Resize_DragDelta(object sender, DragDeltaEventArgs e)
-        { Width = Math.Max(MinWidth, Width + e.HorizontalChange); Height = Math.Max(MinHeight, Height + e.VerticalChange); }
+        public void Dispose() { _closed = true; _run?.Cancel(); }
         private void Copy_Click(object sender, RoutedEventArgs e)
         {
             string headings = string.Join("\t", Results.Columns.Select(c => (c.Header as TextBlock)?.Text));

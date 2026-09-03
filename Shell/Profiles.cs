@@ -7,19 +7,19 @@ namespace KillerScan.Shell
 {
     public partial class MainWindow
     {
-        private bool _runDeepAfterScan;
 
         private void ProfilesButton_Click(object sender, RoutedEventArgs e)
         {
             BuildProfilesMenu();
-            ProfilesMenu.PlacementTarget = ProfilesButton;
+            ProfilesMenu.PlacementTarget = sender as FrameworkElement ??
+                (FixedProfilesButton.IsVisible ? FixedProfilesButton : ProfilesButton);
             ProfilesMenu.IsOpen = true;
         }
 
         private void BuildProfilesMenu()
         {
             ProfilesMenu.Items.Clear();
-            var save = new MenuItem { Header = Loc("Str_Profiles_Save") };
+            var save = new MenuItem { Header = Loc("Str_Profiles_Save"), IsEnabled = ActiveScan != null };
             save.Click += SaveProfile_Click;
             ProfilesMenu.Items.Add(save);
             if (ScanProfiles.Items.Count == 0) return;
@@ -51,26 +51,31 @@ namespace KillerScan.Shell
 
         private void SaveProfile_Click(object sender, RoutedEventArgs e)
         {
+            var scan = ActiveScan;
+            if (scan == null) return;
             var dialog = new InputDialog(
-                Loc("Str_Profiles_Save"), SubnetInput.Text,
+                Loc("Str_Profiles_Save"), scan.Targets,
                 Loc("Str_Rename_Label"), string.Empty,
                 Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
             dialog.ShowDialog();
             if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return;
-            ScanProfiles.Save(new ScanProfile { Name = dialog.Value, Target = SubnetInput.Text.Trim() });
+            ScanProfiles.Save(new ScanProfile { Name = dialog.Value, Target = scan.Targets.Trim() });
         }
 
         private void LoadProfile_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuItem { Tag: ScanProfile profile }) SubnetInput.Text = profile.Target;
+            if (sender is not MenuItem { Tag: ScanProfile profile }) return;
+            var scan = ActiveScan;
+            if (scan == null || scan.IsScanning) scan = NewScan(profile.Target);
+            else scan.Targets = profile.Target;
         }
 
         private void RunProfile_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not MenuItem { Tag: ScanProfile profile }) return;
-            SubnetInput.Text = profile.Target;
-            _runDeepAfterScan = profile.DeepScanAfter;
-            ScanBtn_Click(this, new RoutedEventArgs());
+            var scan = ActiveScan;
+            if (scan == null || scan.IsScanning) scan = NewScan(profile.Target);
+            scan.RunProfile(profile);
         }
 
         private void ToggleProfileDeep_Click(object sender, RoutedEventArgs e)

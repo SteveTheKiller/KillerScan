@@ -368,4 +368,15 @@
     <sys:String x:Key="Str_Diag_Time">Тексеру уақыты</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Қайта бастау алдыңғы нәтижелерді өшіреді.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Құрылғыны бақылау</sys:String>
+    <sys:String x:Key="Str_Workspace_NewScan">Жаңа сканерлеу</sys:String>
+    <sys:String x:Key="Str_Workspace_Terminal">Терминал</sys:String>
+    <sys:String x:Key="Str_Workspace_Split">Панельдерді бөлу</sys:String>
+    <sys:String x:Key="Str_Workspace_Move">Басқа панельге жылжыту</sys:String>
+    <sys:String x:Key="Str_Workspace_Close">Қойындыны жабу</sys:String>
+    <sys:String x:Key="Str_Workspace_Next">Келесі қойынды</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenTab">Қойындыда ашу</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenBeside">Жанына ашу</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenExternal">Бөлек терезеде ашу</sys:String>
+    <sys:String x:Key="Str_Workspace_Exited">Процесс аяқталды ({0})</sys:String>
+    <sys:String x:Key="Str_Workspace_StartFailed">Терминалды іске қосу мүмкін болмады: {0}</sys:String>
 </ResourceDictionary>

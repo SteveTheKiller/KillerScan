@@ -17,6 +17,8 @@ Part of [killertools.net](https://killertools.net).
 
 ## Features
 
+- Independent scan tabs preserve targets, results, filters, and view modes. Split the workspace to use any two tabs beside each other, or move a tab between panes without restarting its work.
+- Embedded terminal tabs run PowerShell, ping, and SSH using the system clients. Device actions can open in a tab or beside the scan; separate terminal windows remain available. Closing a terminal tab ends its process.
 - Self-installer: launch the EXE to install to `%LOCALAPPDATA%\Programs\KillerScan\` with Start Menu and optional desktop shortcut, or tick "Install for all users" to install to Program Files for every account on the PC (the only path that asks for admin), or just run it portable with no install. An installed copy is added to PATH, so a new terminal can run it as `KillerScan` from any directory
 - Scan several networks in one pass: the subnet box takes a comma-separated list of CIDR blocks (`192.168.9.0/24, 192.168.10.0/24`), single hosts (`192.168.1.7`), and ranges written in full (`192.168.1.10-192.168.1.50`) or shorthand (`192.168.1.10-50`); spacing is forgiving and overlapping targets are counted once
 - ARP cache + parallel ping sweep for fast discovery; a second ARP pass after the sweep catches phones and devices that block ICMP

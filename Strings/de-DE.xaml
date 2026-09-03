@@ -327,4 +327,15 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Diag_Time">Geprüft um</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Ein erneuter Start löscht die bisherigen Ergebnisse.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Gerät überwachen</sys:String>
+    <sys:String x:Key="Str_Workspace_NewScan">Neuer Scan</sys:String>
+    <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Workspace_Split">Ansicht teilen</sys:String>
+    <sys:String x:Key="Str_Workspace_Move">In anderen Bereich verschieben</sys:String>
+    <sys:String x:Key="Str_Workspace_Close">Tab schließen</sys:String>
+    <sys:String x:Key="Str_Workspace_Next">Nächster Tab</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenTab">In Tab öffnen</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenBeside">Daneben öffnen</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenExternal">In separatem Fenster öffnen</sys:String>
+    <sys:String x:Key="Str_Workspace_Exited">Prozess beendet ({0})</sys:String>
+    <sys:String x:Key="Str_Workspace_StartFailed">Terminal konnte nicht gestartet werden: {0}</sys:String>
 </ResourceDictionary>
