@@ -53,9 +53,9 @@ namespace KillerScan.Controls
         internal void IncludeTarget(string address)
         {
             if (_diagnostics || _run != null) return;
-            var targets = Targets.Text.Split(new[] { ',', ';', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            var targets = Targets.Text.Split([',', ';', ' ', '\t', '\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
             if (!targets.Contains(address))
-                Targets.Text = string.Join(", ", targets.Concat(new[] { address }));
+                Targets.Text = string.Join(", ", targets.Concat([address]));
         }
 
         private void AddColumn(string key, string path, double width)

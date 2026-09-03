@@ -14,7 +14,7 @@ namespace KillerScan.Shell
         private readonly Grid _workspaceBody = new();
         private readonly StackPanel _workspaceNavigation = new() { Orientation = Orientation.Horizontal };
         private readonly Grid _workspaceToolbar = new();
-        private readonly Dictionary<string, Button> _viewButtons = new();
+        private readonly Dictionary<string, Button> _viewButtons = [];
         private ScanWorkspace? _scanWorkspace;
         private FrameworkElement? _selectedWorkspace;
         private string _workspaceView = "scan";
@@ -55,7 +55,7 @@ namespace KillerScan.Shell
             UpdateWorkspaceRail();
         }
 
-        private ScanWorkspace NewScan(string target = "", bool beside = false)
+        private ScanWorkspace NewScan(string target = "")
         {
             if (_scanWorkspace == null)
             {
@@ -130,11 +130,11 @@ namespace KillerScan.Shell
             UpdateWorkspaceStatus();
         }
 
-        private void WorkspaceDeviceAction(NetworkDevice device, string action, bool beside = false)
+        private void WorkspaceDeviceAction(NetworkDevice device, string action)
         {
             if (!IPAddress.TryParse(device.IpAddress, out var address)) return;
             string ip = address.ToString();
-            if (action == "Watch" || action == "Diagnose") { OpenNetworkTool(device, action == "Diagnose", beside); return; }
+            if (action == "Watch" || action == "Diagnose") { OpenNetworkTool(device, action == "Diagnose"); return; }
             if (action == "Browser") { Process.Start(new ProcessStartInfo("http://" + ip) { UseShellExecute = true }); return; }
             if (action == "Rdp") { Process.Start(new ProcessStartInfo("mstsc.exe", "/v:" + ip) { UseShellExecute = true }); return; }
             string command;
@@ -157,7 +157,7 @@ namespace KillerScan.Shell
                 int separator = command.IndexOf(' ');
                 Process.Start(new ProcessStartInfo(command[..separator], command[(separator + 1)..]) { UseShellExecute = true });
             }
-            else NewTerminal(command, (action.StartsWith("Ssh", StringComparison.Ordinal) ? "SSH " : "Ping ") + ip, beside);
+            else NewTerminal(command, (action.StartsWith("Ssh", StringComparison.Ordinal) ? "SSH " : "Ping ") + ip);
         }
 
         private void ClipWorkspaceSurface()

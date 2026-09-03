@@ -25,10 +25,10 @@ namespace KillerScan.Shell
         {
             var device = GetSelectedDevice();
             if (device == null) { StatusText.Text = Loc("Str_Diag_Select"); return; }
-            OpenNetworkTool(device, true, false);
+            OpenNetworkTool(device, true);
         }
 
-        private void OpenNetworkTool(Models.NetworkDevice device, bool diagnostics, bool beside)
+        private void OpenNetworkTool(Models.NetworkDevice device, bool diagnostics)
         {
             if (!diagnostics)
             {

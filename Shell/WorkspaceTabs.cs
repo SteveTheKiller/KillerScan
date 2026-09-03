@@ -9,7 +9,7 @@ namespace KillerScan.Shell
         private enum ToolbarLabelMode { None, Beside, Under, Only }
         private ToolbarIconSize _toolbarIconSize = ToolbarIconSize.Small;
         private ToolbarLabelMode _toolbarLabelMode = ToolbarLabelMode.Under;
-        private readonly Dictionary<Button, (string Glyph, string Key)> _viewAppearance = new();
+        private readonly Dictionary<Button, (string Glyph, string Key)> _viewAppearance = [];
         private readonly ContextMenu _toolbarMenu = new();
 
         private void BuildWorkspaceNavigation()

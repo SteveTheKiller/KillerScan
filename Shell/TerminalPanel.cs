@@ -16,7 +16,7 @@ namespace KillerScan.Shell
 
         private void ToggleTerminalPanel() => NewTerminal();
 
-        private void NewTerminal(string? command = null, string? title = null, bool beside = false)
+        private void NewTerminal(string? command = null, string? title = null)
         {
             if (_terminalPanelDisposed) return;
             if (_terminalControl == null || command != null || _terminalExited)
