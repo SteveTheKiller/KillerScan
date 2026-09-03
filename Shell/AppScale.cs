@@ -56,6 +56,8 @@ namespace KillerScan.Shell
         {
             scale = Math.Round(Math.Max(AppScaleMin, Math.Min(AppScaleMax, scale)), 3);
             _appScale = scale;
+            _watchWindow?.ApplyScale(scale);
+            _diagnosticsWindow?.ApplyScale(scale);
             ScaleHost.LayoutTransform = scale == 1.0
                 ? Transform.Identity
                 : new ScaleTransform(scale, scale);

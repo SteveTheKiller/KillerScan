@@ -15,6 +15,8 @@ namespace KillerScan.Shell
         // (gesture, description resource key). Order is the list order and map tooltip order.
         private static readonly (string Keys, string Desc)[] ShortcutRows =
         [
+            ("F2",              "Str_Watch_Title"),
+            ("F3",              "Str_Diag_Title"),
             ("F5",              "Str_Sc_Scan"),
             ("F6",              "Str_History_Title"),
             ("F9",              "Str_TT_Topology"),
@@ -90,6 +92,8 @@ namespace KillerScan.Shell
             }
 
             if (e.Key == Key.F1) { ToggleShortcuts(); e.Handled = true; return; }
+            if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F2) { Watch_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
+            if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F3) { Diagnose_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
 
             // Family standard: F12 is always the About card.
             if (e.Key == Key.F12)

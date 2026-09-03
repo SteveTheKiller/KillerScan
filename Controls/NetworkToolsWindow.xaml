@@ -1,0 +1,65 @@
+<Window x:Class="KillerScan.Controls.NetworkToolsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="820" Height="620" MinWidth="440" MinHeight="360"
+        Title="KillerScan" WindowStyle="None" AllowsTransparency="True"
+        ResizeMode="CanResize" Background="Transparent" ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner" PreviewKeyDown="Window_KeyDown">
+    <Border Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
+            BorderThickness="1" CornerRadius="{DynamicResource FlyoutCornerRadius}">
+        <Grid>
+            <Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}"
+                    Opacity="{DynamicResource GrainOpacity}" CornerRadius="{DynamicResource FlyoutCornerRadius}"/>
+            <Grid x:Name="ContentRoot" Margin="14">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <DockPanel Margin="0,0,0,14" MouseLeftButtonDown="Title_MouseDown" Background="Transparent">
+                    <Button DockPanel.Dock="Right" Content="{DynamicResource AboutCloseGlyph}"
+                            Style="{StaticResource OverlayCloseButton}" Click="Close_Click"
+                            ToolTip="Esc"/>
+                    <TextBlock x:Name="Heading" FontSize="18" FontWeight="Bold"
+                               Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                </DockPanel>
+                <ScrollViewer x:Name="BodyHost" Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock x:Name="Hint" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,12"/>
+                        <TextBlock x:Name="TargetLabel" Text="{DynamicResource Str_Watch_Targets}"
+                                   Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap"/>
+                        <TextBox x:Name="Targets" Style="{StaticResource DarkTextBox}" Padding="8,6"/>
+                        <WrapPanel Margin="0,10,0,10">
+                            <Button x:Name="StartButton" Style="{StaticResource OutlineButton}" Click="Start_Click" Margin="0,0,8,4"/>
+                            <Button x:Name="StopButton" Content="{DynamicResource Str_Watch_Stop}" Style="{StaticResource SurfaceButton}" Click="Stop_Click" IsEnabled="False" Margin="0,0,8,4"/>
+                            <Button Content="{DynamicResource Str_Watch_Copy}" Style="{StaticResource SurfaceButton}" Click="Copy_Click" Margin="0,0,0,4"/>
+                        </WrapPanel>
+                        <TextBlock x:Name="Status" TextWrapping="Wrap" Foreground="{DynamicResource PrimaryBrush}" Margin="0,0,0,8"/>
+                        <DataGrid x:Name="Results" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+                                  CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserSortColumns="False"
+                                  HeadersVisibility="Column" RowHeaderWidth="0" MinHeight="160" MaxHeight="330"
+                                  Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                                  BorderBrush="{DynamicResource CardBorderBrush}" GridLinesVisibility="None"
+                                  RowStyle="{StaticResource DarkDataGridRow}" CellStyle="{StaticResource DarkDataGridCell}">
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="DataGridColumnHeader">
+                                        <Border Background="{DynamicResource SurfaceBrush}" Padding="6,8">
+                                            <ContentPresenter/>
+                                        </Border>
+                                    </ControlTemplate></Setter.Value></Setter>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                        </DataGrid>
+                        <TextBlock x:Name="EventsHeading" Text="{DynamicResource Str_Watch_Events}" Foreground="{DynamicResource TextBrush}" Margin="0,14,0,6"/>
+                        <TextBox x:Name="Events" Style="{StaticResource DarkTextBox}" IsReadOnly="True" Height="100"
+                                 TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+            <Thumb HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="14" Height="14"
+                   Cursor="SizeNWSE" DragDelta="Resize_DragDelta">
+                <Thumb.Template><ControlTemplate><TextBlock Text="&#x25E2;" Foreground="{DynamicResource MutedTextBrush}"/></ControlTemplate></Thumb.Template>
+            </Thumb>
+        </Grid>
+    </Border>
+</Window>
