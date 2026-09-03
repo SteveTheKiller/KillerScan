@@ -54,6 +54,7 @@ namespace KillerScan.Controls
         {
             Results.ColumnHeaderStyle = reference.ColumnHeaderStyle;
             Results.RowStyle = reference.RowStyle;
+            Results.AlternationCount = reference.AlternationCount;
             Results.CellStyle = reference.CellStyle;
             Results.ColumnHeaderHeight = reference.ColumnHeaderHeight;
             Results.RowHeight = reference.RowHeight;

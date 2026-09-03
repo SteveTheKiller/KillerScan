@@ -24,7 +24,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 - Restored network information, toolbar spacing and grain, rounded content panes, simplified navigation and filtering, unified the footer status, themed service and history tables, and fixed the SSH username dialog crash.
-- Checkable menus now reserve a left indicator gutter so labels and shortcuts remain aligned.
+- Restored alternating table row shading. Checkable menus reserve a left indicator gutter so labels and shortcuts remain aligned.
 - Device detection now distinguishes physical printers from Windows servers that share print queues, including domain controllers.
 - Topology sorting is now icon-only, uses F7 to cycle or Ctrl+1 through Ctrl+4 for direct selection, and keeps connectors attached to moved role boxes.
 - Scans clear the local DNS cache and reject reverse-DNS names that do not resolve back to the same IP address.

@@ -243,7 +243,7 @@
                           ContextMenuOpening="ResultsGrid_ContextMenuOpening"
                           ColumnHeaderHeight="28"
                           RowHeight="28"
-                          AlternationCount="0"
+                          AlternationCount="2"
                           RowStyle="{StaticResource DarkDataGridRow}"
                           CellStyle="{StaticResource DarkDataGridCell}">
 
@@ -579,7 +579,7 @@
                           GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{DynamicResource PaneBorderBrush}"
                           HeadersVisibility="Column" CanUserSortColumns="True" CanUserResizeColumns="True"
                           SelectionMode="Extended" ColumnHeaderHeight="28" RowHeight="28"
-                          AlternationCount="0" RowStyle="{StaticResource DarkDataGridRow}"
+                          AlternationCount="2" RowStyle="{StaticResource DarkDataGridRow}"
                           ColumnHeaderStyle="{StaticResource ThemedDataGridColumnHeader}"
                           Template="{Binding Template, ElementName=ResultsGrid}"
                           CellStyle="{StaticResource DarkDataGridCell}">
