@@ -15,7 +15,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The arranged topology can be exported as a full-resolution PNG.
 - Saved scan profiles can load or run remembered targets and optionally follow with Deep Scan All.
 - F8 opens a service-centric view organized by discovered service, port, and device.
-- Scan history compares added, missing, and changed devices, with trusted-device baselines and unknown-device alerts.
+- Scan history compares added, missing, and changed devices, with alternating rows, a distinct sidebar, and a typewriter heading. Includes trusted-device baselines and unknown-device alerts.
 - Manual device names now persist alongside manual classifications.
 - F1 now switches between the shortcut list and a persistent keyboard-map view.
 - Deep Scan All performs an exhaustive, cancellable rescan of every discovered host.

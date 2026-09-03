@@ -172,6 +172,8 @@ namespace KillerScan.Services
                 newDict["ListPaneBrush"] = newDict["PaneBrush"];
             if (!newDict.Contains("ScanContentPaneBrush"))
                 newDict["ScanContentPaneBrush"] = newDict["ListPaneBrush"];
+            if (!newDict.Contains("SidebarPaneBrush"))
+                newDict["SidebarPaneBrush"] = Brushes.Transparent;
             if (!newDict.Contains("TableRowBrush"))
                 newDict["TableRowBrush"] = Brushes.Transparent;
 
