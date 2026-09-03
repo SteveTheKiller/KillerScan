@@ -30,7 +30,7 @@ namespace KillerScan.Shell
             AddWorkspaceTab(new WorkspaceTab
             {
                 Content = new NetworkToolsWindow(diagnostics, device.IpAddress,
-                    device.OpenPorts.Concat(new[] { 22, 80, 443, 445, 3389 }), _appScale),
+                    device.OpenPorts.Concat([22, 80, 443, 445, 3389]), _appScale),
                 TitleKey = diagnostics ? "Str_Diag_Title" : "Str_Watch_Title",
                 TitleSuffix = ": " + device.IpAddress
             }, beside);

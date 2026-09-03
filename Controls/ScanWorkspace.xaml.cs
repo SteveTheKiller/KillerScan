@@ -10,13 +10,11 @@ using KillerScan.Services;
 
 namespace KillerScan.Controls
 {
-    public sealed class ScanDeviceActionEventArgs : EventArgs
+    public sealed class ScanDeviceActionEventArgs(NetworkDevice device, string action, bool beside) : EventArgs
     {
-        public NetworkDevice Device { get; }
-        public string Action { get; }
-        public bool Beside { get; }
-        public ScanDeviceActionEventArgs(NetworkDevice device, string action, bool beside)
-        { Device = device; Action = action; Beside = beside; }
+        public NetworkDevice Device { get; } = device;
+        public string Action { get; } = action;
+        public bool Beside { get; } = beside;
     }
 
     public partial class ScanWorkspace : UserControl, IDisposable
@@ -25,11 +23,8 @@ namespace KillerScan.Controls
         private ICollectionView? _filteredView;
         private bool _disposed;
         private bool _runDeepAfterScan;
-        private readonly TextBlock LocalIpLabel = new();
-        private readonly TextBlock GatewayLabel = new();
-        private readonly TextBlock DnsLabel = new();
-        private readonly TextBlock InterfaceLabel = new();
-        private readonly TextBlock InterfaceIcon = new();
+        private readonly TextBlock StatusText = new();
+        private readonly ProgressBar ScanProgress = new() { Visibility = Visibility.Collapsed };
         private readonly Button TopologyButton = new();
         private readonly Button ServicesButton = new();
         public event EventHandler<ScanDeviceActionEventArgs>? DeviceAction;
@@ -40,10 +35,15 @@ namespace KillerScan.Controls
         public bool IsScanning => _active.IsScanning || _rescanCts != null;
         public string View => _showTopology ? "topology" : _showServices ? "services" : "devices";
         public string Status => StatusText.Text;
+        public double Progress => ScanProgress.Value;
+        public bool IsProgressVisible => ScanProgress.Visibility == Visibility.Visible;
         public ScanWorkspace(string initialTarget = "", bool demo = false)
         {
             DemoMode = demo;
             InitializeComponent();
+            StatusDescriptor.AddValueChanged(StatusText, NotifyFooterChanged);
+            ProgressDescriptor.AddValueChanged(ScanProgress, NotifyFooterChanged);
+            ProgressVisibilityDescriptor.AddValueChanged(ScanProgress, NotifyFooterChanged);
             PopulateNetworkInfo();
             if (!string.IsNullOrWhiteSpace(initialTarget)) SubnetInput.Text = initialTarget;
             _active = new ScanSession(SubnetInput.Text)
@@ -70,11 +70,7 @@ namespace KillerScan.Controls
                 Grid.SetColumnSpan(DeviceCount, narrow ? 5 : 1);
                 DeviceCount.Margin = narrow ? new Thickness(0, 5, 0, 0) : new Thickness(8, 0, 12, 0);
                 DeviceCount.MaxWidth = narrow ? Math.Max(0, ActualWidth - 24) : Math.Min(230, ActualWidth - 280);
-                Grid.SetRow(ScanActions, narrow ? 1 : 0);
-                Grid.SetColumn(ScanActions, narrow ? 0 : 1);
-                Grid.SetColumnSpan(ScanActions, narrow ? 2 : 1);
-                Grid.SetColumnSpan(SubnetInput, narrow ? 2 : 1);
-                ScanActions.Margin = narrow ? new Thickness(0, 5, 0, 0) : new Thickness(8, 0, 0, 0);
+                SubnetInput.Width = Math.Max(40, Math.Min(220, ActualWidth - 28));
             };
             SubnetInput.TextChanged += (_, _) => { _active.SubnetText = Targets; StateChanged?.Invoke(this, EventArgs.Empty); };
             SubnetInput.KeyDown += (_, e) => { if (e.Key == Key.Enter) { Scan(); e.Handled = true; } };
@@ -85,6 +81,16 @@ namespace KillerScan.Controls
             if (demo) GenerateDemoScan();
         }
         private string Loc(string key) => TryFindResource(key) as string ?? key;
+        private static readonly DependencyPropertyDescriptor StatusDescriptor =
+            DependencyPropertyDescriptor.FromProperty(TextBlock.TextProperty, typeof(TextBlock));
+        private static readonly DependencyPropertyDescriptor ProgressDescriptor =
+            DependencyPropertyDescriptor.FromProperty(ProgressBar.ValueProperty, typeof(ProgressBar));
+        private static readonly DependencyPropertyDescriptor ProgressVisibilityDescriptor =
+            DependencyPropertyDescriptor.FromProperty(VisibilityProperty, typeof(ProgressBar));
+        private void NotifyFooterChanged(object? sender, EventArgs e)
+        {
+            if (!_disposed) StateChanged?.Invoke(this, EventArgs.Empty);
+        }
         public void Scan() { if (!_disposed) ScanBtn_Click(this, new RoutedEventArgs()); }
         public void Stop() { _active.Cts?.Cancel(); _rescanCts?.Cancel(); }
         public void DeepScan() { if (!_disposed) DeepScanAll_Click(this, new RoutedEventArgs()); }
@@ -115,6 +121,9 @@ namespace KillerScan.Controls
         {
             if (_disposed) return;
             _disposed = true;
+            StatusDescriptor.RemoveValueChanged(StatusText, NotifyFooterChanged);
+            ProgressDescriptor.RemoveValueChanged(ScanProgress, NotifyFooterChanged);
+            ProgressVisibilityDescriptor.RemoveValueChanged(ScanProgress, NotifyFooterChanged);
             Stop();
             SaveColumnLayout();
         }

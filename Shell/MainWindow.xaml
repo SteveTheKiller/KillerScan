@@ -524,14 +524,39 @@
                                 </Grid.ColumnDefinitions>
                                 <ListBox x:Name="HistoryList" Grid.Column="0" SelectionChanged="HistoryList_SelectionChanged"
                                          Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
-                                         BorderThickness="1" Padding="4">
+                                         Foreground="{DynamicResource TextBrush}" BorderThickness="1" Padding="4">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="Background" Value="{DynamicResource TableRowBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListBoxItem">
+                                                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
+                                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Margin="6,5">
-                                                <TextBlock Text="{Binding Target}" Foreground="{DynamicResource TextBrush}"
+                                                <TextBlock Text="{Binding Target}"
                                                            FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
                                                 <TextBlock Text="{Binding ScannedAt, StringFormat={}{0:g}}"
-                                                           Foreground="{DynamicResource MutedTextBrush}" FontSize="11"/>
+                                                           FontSize="11"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
@@ -546,7 +571,33 @@
                                     <DataGrid x:Name="HistoryChangesGrid" Grid.Row="1" AutoGenerateColumns="False"
                                               IsReadOnly="True" HeadersVisibility="Column" CanUserAddRows="False"
                                               Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
+                                              Foreground="{DynamicResource TextBrush}"
+                                              ColumnHeaderStyle="{StaticResource ThemedDataGridColumnHeader}"
                                               BorderThickness="1" GridLinesVisibility="None">
+                                        <DataGrid.RowStyle>
+                                            <Style TargetType="DataGridRow" BasedOn="{StaticResource DarkDataGridRow}">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </DataGrid.RowStyle>
+                                        <DataGrid.CellStyle>
+                                            <Style TargetType="DataGridCell" BasedOn="{StaticResource DarkDataGridCell}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                                    </DataTrigger>
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </DataGrid.CellStyle>
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Header="{DynamicResource Str_History_Change}" Binding="{Binding Change}" Width="90"/>
                                             <DataGridTextColumn Header="{DynamicResource Str_Col_Name}" Binding="{Binding Name}" Width="*"/>

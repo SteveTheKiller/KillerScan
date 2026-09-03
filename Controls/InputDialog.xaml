@@ -38,14 +38,15 @@
 
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="{DynamicResource DialogTitleBarHeight}"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!-- Title bar: transparent so the dialog grain + surface show through. Carries the
                      KillerScan wordmark exactly as the main window title bar does. -->
-                <Border Grid.Row="0" Background="{DynamicResource InputDialogTitleBrush}"
+                <Border Grid.Row="0" Height="{DynamicResource DialogTitleBarHeight}"
+                        Background="{DynamicResource InputDialogTitleBrush}"
                         MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                     <Grid>
                         <!-- Wordmark with the same soft dark shadow copy the main title bar uses. -->

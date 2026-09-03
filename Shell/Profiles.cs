@@ -66,7 +66,7 @@ namespace KillerScan.Shell
         {
             if (sender is not MenuItem { Tag: ScanProfile profile }) return;
             var scan = ActiveScan;
-            if (scan == null || scan.IsScanning) scan = NewScan(profile.Target);
+            if (scan == null || scan.IsScanning) NewScan(profile.Target);
             else scan.Targets = profile.Target;
         }
 

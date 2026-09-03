@@ -22,6 +22,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - `/uiscan [targets]` opens the full interface and begins scanning the supplied targets immediately. (#1)
 
 ### Fixed
+- Restored network information, simplified tabs and toolbars, unified active-tab status in the footer, themed service and history tables, and fixed the SSH username dialog crash.
 - Checkable menus now reserve a left indicator gutter so labels and shortcuts remain aligned.
 - Device detection now distinguishes physical printers from Windows servers that share print queues, including domain controllers.
 - Topology sorting is now icon-only, uses F7 to cycle or Ctrl+1 through Ctrl+4 for direct selection, and keeps connectors attached to moved role boxes.

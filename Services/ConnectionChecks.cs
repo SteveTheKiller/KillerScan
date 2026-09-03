@@ -9,14 +9,14 @@ namespace KillerScan.Services
     {
         internal static bool TryTargets(string text, out IPAddress[] addresses)
         {
-            var parts = text.Split(new[] { ',', ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = text.Split([',', ';', '\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
             var parsed = new List<IPAddress>();
             foreach (string part in parts)
             {
                 if (!IPAddress.TryParse(part.Trim(), out var address)) { addresses = []; return false; }
                 if (!parsed.Contains(address)) parsed.Add(address);
             }
-            addresses = parsed.ToArray();
+            addresses = [.. parsed];
             return addresses.Length is > 0 and <= 16;
         }
 

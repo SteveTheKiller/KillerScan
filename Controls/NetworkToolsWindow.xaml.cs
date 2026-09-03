@@ -26,7 +26,7 @@ namespace KillerScan.Controls
         {
             InitializeComponent();
             _diagnostics = diagnostics;
-            _ports = ports.Where(p => p is > 0 and <= 65535).Distinct().Take(64).ToArray();
+            _ports = [.. ports.Where(p => p is > 0 and <= 65535).Distinct().Take(64)];
             Targets.Text = targets;
             Targets.IsReadOnly = diagnostics;
             TargetLabel.Visibility = diagnostics ? Visibility.Collapsed : Visibility.Visible;

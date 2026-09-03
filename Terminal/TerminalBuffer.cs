@@ -591,7 +591,7 @@ namespace KillerScan.Terminal
                     break;
                 case 9:
                     if (data.StartsWith("9;", StringComparison.Ordinal))
-                        SetDir(data.Substring(2).Trim());
+                        SetDir(data[2..].Trim());
                     break;
             }
         }

@@ -29,7 +29,7 @@ namespace KillerScan.Shell
             internal readonly DockPanel Header = new() { LastChildFill = true };
             internal readonly StackPanel Strip = new() { Orientation = Orientation.Horizontal };
             internal readonly ContentControl Body = new();
-            internal readonly List<WorkspaceTab> Tabs = new();
+            internal readonly List<WorkspaceTab> Tabs = [];
             internal WorkspaceTab? Selected;
         }
 
@@ -69,6 +69,12 @@ namespace KillerScan.Shell
             pane.Root.PreviewMouseDown += (_, _) => ActivatePane(pane);
             pane.Root.GotKeyboardFocus += (_, _) => ActivatePane(pane);
             var header = pane.Header;
+            var chrome = new Grid();
+            chrome.SetResourceReference(BackgroundProperty, "BackgroundBrush");
+            var grain = new Border { IsHitTestVisible = false };
+            grain.SetResourceReference(Border.BackgroundProperty, "GrainTileBrush");
+            grain.SetResourceReference(OpacityProperty, "GrainOpacity");
+            chrome.Children.Add(grain);
             var actions = new StackPanel { Orientation = Orientation.Horizontal };
             var add = WorkspaceButton("+", "Str_Workspace_NewScan", () => ShowWorkspaceMenu(pane, (FrameworkElement)actions.Children[0]));
             actions.Children.Add(add);
@@ -80,7 +86,8 @@ namespace KillerScan.Shell
                 Content = pane.Strip, HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Disabled
             });
-            pane.Root.Children.Add(header);
+            chrome.Children.Add(header);
+            pane.Root.Children.Add(chrome);
             Grid.SetRow(pane.Body, 1);
             pane.Root.Children.Add(pane.Body);
             Grid.SetColumn(pane.Root, column);
@@ -90,7 +97,17 @@ namespace KillerScan.Shell
         private Button WorkspaceButton(string text, string tooltip, Action click, bool glyph = false)
         {
             var button = new Button { Content = text, Padding = new Thickness(8, 4, 8, 4), Margin = new Thickness(2), MinWidth = 26, VerticalAlignment = VerticalAlignment.Center };
-            button.SetResourceReference(StyleProperty, "SurfaceButton");
+            button.SetResourceReference(ForegroundProperty, "TextBrush");
+            button.Background = Brushes.Transparent;
+            button.BorderThickness = new Thickness(0);
+            button.Template = (ControlTemplate)System.Windows.Markup.XamlReader.Parse(
+                "<ControlTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml' TargetType='Button'>" +
+                "<Border x:Name='Face' Background='{TemplateBinding Background}' Padding='{TemplateBinding Padding}' CornerRadius='{DynamicResource ControlCornerRadius}'>" +
+                "<ContentPresenter HorizontalAlignment='Center' VerticalAlignment='Center'/></Border>" +
+                "<ControlTemplate.Triggers><Trigger Property='IsMouseOver' Value='True'><Setter TargetName='Face' Property='Background' Value='{DynamicResource OutlineHoverBrush}'/>" +
+                "<Setter Property='Foreground' Value='{DynamicResource OutlineHoverTextBrush}'/></Trigger>" +
+                "<Trigger Property='IsKeyboardFocused' Value='True'><Setter TargetName='Face' Property='Background' Value='{DynamicResource OutlineHoverBrush}'/></Trigger>" +
+                "</ControlTemplate.Triggers></ControlTemplate>");
             button.SetResourceReference(ToolTipProperty, tooltip);
             if (glyph) button.FontFamily = new FontFamily("Segoe MDL2 Assets");
             button.Click += (_, _) => click();
@@ -120,6 +137,8 @@ namespace KillerScan.Shell
             _focusedWorkspace = pane;
             if (pane.Selected?.Content is ScanWorkspace scan) StatusText.Text = scan.Status;
             else StatusText.Text = pane.Selected?.Status ?? string.Empty;
+            ScanProgress.Value = ActiveScan?.Progress ?? 0;
+            ScanProgress.Visibility = ActiveScan?.IsProgressVisible == true ? Visibility.Visible : Visibility.Collapsed;
             UpdateWorkspaceRail();
         }
 
@@ -128,19 +147,29 @@ namespace KillerScan.Shell
             pane.Strip.Children.Clear();
             foreach (var tab in pane.Tabs)
             {
-                var row = new StackPanel { Orientation = Orientation.Horizontal };
+                var row = new DockPanel { LastChildFill = true };
                 string title = (tab.TitleKey == null ? tab.Title : Loc(tab.TitleKey)) + tab.TitleSuffix;
                 var select = WorkspaceButton(title, "Str_Workspace_Move", () => SelectWorkspaceTab(pane, tab));
-                select.MaxWidth = 260;
+                select.Content = new TextBlock { Text = title, TextTrimming = TextTrimming.CharacterEllipsis, MaxWidth = 220 };
                 select.ToolTip = title;
-                if (tab == pane.Selected) select.SetResourceReference(StyleProperty, "OutlineButton");
+                var close = WorkspaceButton("\u00D7", "Str_Workspace_Close", () => CloseWorkspaceTab(pane, tab));
+                close.Padding = new Thickness(4, 3, 4, 3);
+                DockPanel.SetDock(close, Dock.Right);
+                row.Children.Add(close);
                 row.Children.Add(select);
-                row.Children.Add(WorkspaceButton("\u00D7", "Str_Workspace_Close", () => CloseWorkspaceTab(pane, tab)));
+                var tabBorder = new Border { Child = row, Margin = new Thickness(2, 2, 2, 0), BorderThickness = new Thickness(0, 0, 0, 2) };
+                tabBorder.SetResourceReference(Border.CornerRadiusProperty, "ControlCornerRadius");
+                if (tab == pane.Selected)
+                {
+                    tabBorder.SetResourceReference(Border.BorderBrushProperty, "PrimaryBrush");
+                    tabBorder.SetResourceReference(Border.BackgroundProperty, "OutlineFaceBrush");
+                    select.SetResourceReference(ForegroundProperty, "PrimaryBrush");
+                }
                 var menu = new ContextMenu();
                 var move = new MenuItem { Header = Loc("Str_Workspace_Move") };
                 move.Click += (_, _) => { SelectWorkspaceTab(pane, tab); MoveWorkspaceTab(); };
                 menu.Items.Add(move); row.ContextMenu = menu;
-                pane.Strip.Children.Add(row);
+                pane.Strip.Children.Add(tabBorder);
             }
         }
 
@@ -173,10 +202,13 @@ namespace KillerScan.Shell
             scan.DeviceAction += (_, e) => WorkspaceDeviceAction(e.Device, e.Action, e.Beside);
             scan.StateChanged += (_, _) =>
             {
-                tab.Title = scan.Targets;
-                foreach (var pane in WorkspacePanes())
-                    if (pane.Tabs.Contains(tab)) RenderWorkspaceTabs(pane);
-                if (ActiveScan == scan) { StatusText.Text = scan.Status; UpdateWorkspaceRail(); }
+                if (tab.Title != scan.Targets)
+                {
+                    tab.Title = scan.Targets;
+                    foreach (var pane in WorkspacePanes())
+                        if (pane.Tabs.Contains(tab)) RenderWorkspaceTabs(pane);
+                }
+                if (ActiveScan == scan) ActivatePane(CurrentPane);
             };
             scan.ApplyScale(_appScale);
             AddWorkspaceTab(tab, beside);
@@ -223,7 +255,7 @@ namespace KillerScan.Shell
             WorkspaceHost.ColumnDefinitions[1].Width = new GridLength(split ? 5 : 0);
             WorkspaceHost.ColumnDefinitions[2].Width = split ? new GridLength(1, GridUnitType.Star) : new GridLength(0);
             _rightWorkspace.Root.Visibility = split ? Visibility.Visible : Visibility.Collapsed;
-            if (_workspaceSplitter != null) _workspaceSplitter.Visibility = split ? Visibility.Visible : Visibility.Collapsed;
+            _workspaceSplitter?.SetCurrentValue(VisibilityProperty, split ? Visibility.Visible : Visibility.Collapsed);
         }
 
         private void MoveWorkspaceTab()
@@ -249,6 +281,7 @@ namespace KillerScan.Shell
             (tab.Content as IDisposable)?.Dispose();
             if (pane.Selected == null && pane.Tabs.Count > 0) SelectWorkspaceTab(pane, pane.Tabs[Math.Min(index, pane.Tabs.Count - 1)]);
             else RenderWorkspaceTabs(pane);
+            if (CurrentPane == pane) ActivatePane(pane);
             if (_leftWorkspace.Tabs.Count + _rightWorkspace.Tabs.Count == 0) { ActivatePane(_leftWorkspace); NewScan(); }
         }
 
@@ -308,7 +341,7 @@ namespace KillerScan.Shell
             if (action.EndsWith("External", StringComparison.Ordinal))
             {
                 int separator = command.IndexOf(' ');
-                Process.Start(new ProcessStartInfo(command.Substring(0, separator), command.Substring(separator + 1)) { UseShellExecute = true });
+                Process.Start(new ProcessStartInfo(command[..separator], command[(separator + 1)..]) { UseShellExecute = true });
             }
             else NewTerminal(command, (action.StartsWith("Ssh", StringComparison.Ordinal) ? "SSH " : "Ping ") + ip, beside);
         }

@@ -112,6 +112,85 @@
                 </Style.Triggers>
             </Style>
 
+            <Style x:Key="ThemedDataGridColumnHeader" TargetType="DataGridColumnHeader">
+                <Setter Property="Background" Value="{DynamicResource TableHeaderBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
+                <Setter Property="FontSize" Value="11"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="Padding" Value="8,0"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource HeaderLineBrush}"/>
+                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="DataGridColumnHeader">
+                            <Grid>
+
+                            <Border IsHitTestVisible="False" Panel.ZIndex="2"
+                                    BorderBrush="{DynamicResource BevelLightBrush}"
+                                    BorderThickness="{DynamicResource BevelLightThickness}"/>
+                            <Border IsHitTestVisible="False" Panel.ZIndex="2"
+                                    BorderBrush="{DynamicResource BevelDarkBrush}"
+                                    BorderThickness="{DynamicResource BevelDarkThickness}"/>
+                            <Border x:Name="hdrBg"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Padding="{TemplateBinding Padding}"
+                                    SnapsToDevicePixels="True">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ContentPresenter Grid.Column="0"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    <TextBlock x:Name="sortGlyph" Grid.Column="1"
+                                               Text="&#x25B2;" FontSize="8"
+                                               VerticalAlignment="Center" Margin="6,1,0,0"
+                                               Foreground="{DynamicResource PrimaryBrush}"
+                                               Visibility="Collapsed"/>
+                                </Grid>
+                            </Border>
+
+                            <Thumb x:Name="PART_LeftHeaderGripper" HorizontalAlignment="Left"
+                                   Width="8" Margin="-4,0,0,0" Cursor="SizeWE">
+                                <Thumb.Template>
+                                    <ControlTemplate TargetType="Thumb"><Border Background="Transparent"/></ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
+                            <Thumb x:Name="PART_RightHeaderGripper" HorizontalAlignment="Right"
+                                   Width="8" Margin="0,0,-4,0" Cursor="SizeWE">
+                                <Thumb.Template>
+                                    <ControlTemplate TargetType="Thumb"><Border Background="Transparent"/></ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="SortDirection" Value="Ascending">
+                                    <Setter TargetName="sortGlyph" Property="Visibility" Value="Visible"/>
+                                    <Setter TargetName="sortGlyph" Property="Text" Value="&#x25B2;"/>
+                                </Trigger>
+                                <Trigger Property="SortDirection" Value="Descending">
+                                    <Setter TargetName="sortGlyph" Property="Visibility" Value="Visible"/>
+                                    <Setter TargetName="sortGlyph" Property="Text" Value="&#x25BC;"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="hdrBg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="hdrBg" Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <!-- Primary Button Style -->
             <Style x:Key="PrimaryButton" TargetType="Button">
                 <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>

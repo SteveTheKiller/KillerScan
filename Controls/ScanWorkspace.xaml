@@ -1,16 +1,32 @@
 <UserControl x:Class="KillerScan.Controls.ScanWorkspace" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:cm="clr-namespace:System.ComponentModel;assembly=System" Background="{DynamicResource BackgroundBrush}" UseLayoutRounding="True">
 <Grid>
-<Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-<Grid x:Name="ScanToolbar" Margin="10,6">
-<Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-<Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-<TextBox x:Name="SubnetInput" Style="{StaticResource DarkTextBox}" Padding="5,3,9,3" FontSize="12" MinWidth="100" VerticalAlignment="Center"/>
-<WrapPanel x:Name="ScanActions" Grid.Column="1" Orientation="Horizontal" Margin="8,0,0,0">
-<Button x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}" Style="{StaticResource OutlineButton}" Click="ScanBtn_Click" FontSize="12" Padding="14,5">
+<Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+<Grid x:Name="ScanToolbar">
+<WrapPanel Margin="10,4">
+<TextBox x:Name="SubnetInput" Style="{StaticResource DarkTextBox}" Padding="5,3,9,3" FontSize="12" Width="220" MaxWidth="220" VerticalAlignment="Center" Margin="0,2,8,2"/>
+<Button x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}" Style="{StaticResource OutlineButton}" Click="ScanBtn_Click" FontSize="12" Padding="14,5" Margin="0,2,6,2">
 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Btn_Scan}"/><Run Text=" (F5)"/></TextBlock></Button.ToolTip>
 </Button>
-<Button x:Name="DeepScanAllButton" Content="{DynamicResource Str_Btn_DeepScanAll}" Style="{StaticResource OutlineButton}" Click="DeepScanAll_Click" Visibility="Collapsed" FontSize="12" Padding="10,5" Margin="6,0,0,0"/>
-</WrapPanel></Grid>
+<Button x:Name="DeepScanAllButton" Content="{DynamicResource Str_Btn_DeepScanAll}" Style="{StaticResource OutlineButton}" Click="DeepScanAll_Click" Visibility="Collapsed" FontSize="12" Padding="10,5" Margin="0,2,10,2"/>
+<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,12,2">
+<TextBlock Text="{DynamicResource Str_Lbl_Local}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,0,5,0"/>
+<TextBlock x:Name="LocalIpLabel" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11"/>
+</StackPanel>
+<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,12,2">
+<TextBlock Text="{DynamicResource Str_Lbl_Gateway}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,0,5,0"/>
+<TextBlock x:Name="GatewayLabel" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11"/>
+</StackPanel>
+<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,12,2">
+<TextBlock Text="{DynamicResource Str_Lbl_Dns}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,0,5,0"/>
+<TextBlock x:Name="DnsLabel" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11"/>
+</StackPanel>
+<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,0,2">
+<TextBlock x:Name="InterfaceIcon" Foreground="{DynamicResource PrimaryBrush}" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="0,0,5,0"/>
+<TextBlock x:Name="InterfaceLabel" Foreground="{DynamicResource TextBrush}" FontSize="11"/>
+</StackPanel>
+</WrapPanel>
+<Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+</Grid>
 <Border x:Name="DevicesPane"
                 Grid.Row="1" Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
                 BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}" Margin="0" Panel.ZIndex="10"
@@ -238,7 +254,7 @@
                           ContextMenuOpening="ResultsGrid_ContextMenuOpening"
                           ColumnHeaderHeight="28"
                           RowHeight="28"
-                          AlternationCount="2"
+                          AlternationCount="0"
                           RowStyle="{StaticResource DarkDataGridRow}"
                           CellStyle="{StaticResource DarkDataGridCell}">
 
@@ -620,7 +636,9 @@
                           GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{DynamicResource PaneBorderBrush}"
                           HeadersVisibility="Column" CanUserSortColumns="True" CanUserResizeColumns="True"
                           SelectionMode="Extended" ColumnHeaderHeight="28" RowHeight="28"
-                          AlternationCount="2" RowStyle="{StaticResource DarkDataGridRow}"
+                          AlternationCount="0" RowStyle="{StaticResource DarkDataGridRow}"
+                          ColumnHeaderStyle="{StaticResource ThemedDataGridColumnHeader}"
+                          Template="{Binding Template, ElementName=ResultsGrid}"
                           CellStyle="{StaticResource DarkDataGridCell}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{DynamicResource Str_Services_Service}" Binding="{Binding Service}" Width="160"/>
@@ -642,5 +660,4 @@
             </Grid>
         </Border>
 
-<Grid Grid.Row="2" Margin="8,3"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock x:Name="StatusText" Foreground="{DynamicResource MutedTextBrush}" FontSize="11.5" TextTrimming="CharacterEllipsis"/><ProgressBar x:Name="ScanProgress" Grid.Column="1" Width="110" Height="4" Foreground="{DynamicResource PrimaryBrush}" Visibility="Collapsed"/></Grid>
 </Grid></UserControl>
