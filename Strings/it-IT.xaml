@@ -343,6 +343,9 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Un nuovo avvio cancella i risultati precedenti.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Monitora dispositivo</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Nuova scansione</sys:String>
+    <sys:String x:Key="Str_View_Scan">Scansione</sys:String>
+    <sys:String x:Key="Str_View_Topology">Topologia</sys:String>
+    <sys:String x:Key="Str_View_KeepAlive">Monitoraggio connessione</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminale</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Dividi riquadri</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Sposta nell'altro riquadro</sys:String>

@@ -353,6 +353,9 @@
     <sys:String x:Key="Str_Watch_Reset">Повторный запуск удаляет предыдущие результаты.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Наблюдать за устройством</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Новое сканирование</sys:String>
+    <sys:String x:Key="Str_View_Scan">Сканирование</sys:String>
+    <sys:String x:Key="Str_View_Topology">Топология</sys:String>
+    <sys:String x:Key="Str_View_KeepAlive">Наблюдение за соединением</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Терминал</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Разделить панели</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Переместить в другую панель</sys:String>

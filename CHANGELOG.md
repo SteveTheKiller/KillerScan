@@ -6,10 +6,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.7.0] - Unreleased
 
-1.7.0 brings scans, diagnostics, and history into tabs with optional split panes and a slim terminal sidebar.
+1.7.0 brings permanent Scan, Topology, Keep Alive, and Terminal views alongside diagnostics and scan history.
 
 ### Added
-- Independent scan tabs, optional split panes, and a resizable terminal sidebar keep scans and tools together. The terminal slides closed and reopens at its saved width.
+- Permanent view buttons switch between scans, topology, connection monitoring, and a full-width terminal while preserving their state.
 - Connection watch tracks replies, packet loss, latency, and state changes; device diagnostics checks DNS, ping, the local route, and TCP services.
 - The arranged topology can be exported as a full-resolution PNG.
 - Saved scan profiles can load or run remembered targets and optionally follow with Deep Scan All.
@@ -22,7 +22,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - `/uiscan [targets]` opens the full interface and begins scanning the supplied targets immediately. (#1)
 
 ### Fixed
-- Restored network information, consolidated controls with on-demand filtering and family tabs, unified active-tab status in the footer, themed service and history tables, and fixed the SSH username dialog crash.
+- Restored network information, simplified navigation and filtering, unified the footer status, themed service and history tables, and fixed the SSH username dialog crash.
 - Checkable menus now reserve a left indicator gutter so labels and shortcuts remain aligned.
 - Device detection now distinguishes physical printers from Windows servers that share print queues, including domain controllers.
 - Topology sorting is now icon-only, uses F7 to cycle or Ctrl+1 through Ctrl+4 for direct selection, and keeps connectors attached to moved role boxes.

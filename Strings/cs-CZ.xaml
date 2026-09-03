@@ -325,6 +325,9 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Opětovné spuštění vymaže předchozí výsledky.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Sledovat zařízení</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Nové skenování</sys:String>
+    <sys:String x:Key="Str_View_Scan">Skenování</sys:String>
+    <sys:String x:Key="Str_View_Topology">Topologie</sys:String>
+    <sys:String x:Key="Str_View_KeepAlive">Sledování připojení</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminál</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Rozdělit panely</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Přesunout do druhého panelu</sys:String>

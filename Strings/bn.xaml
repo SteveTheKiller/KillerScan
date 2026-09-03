@@ -327,6 +327,9 @@
     <sys:String x:Key="Str_Watch_Reset">আবার শুরু করলে আগের ফলাফল মুছে যাবে।</sys:String>
     <sys:String x:Key="Str_Watch_Add">ডিভাইস পর্যবেক্ষণ করুন</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">নতুন স্ক্যান</sys:String>
+    <sys:String x:Key="Str_View_Scan">স্ক্যান</sys:String>
+    <sys:String x:Key="Str_View_Topology">টপোলজি</sys:String>
+    <sys:String x:Key="Str_View_KeepAlive">সংযোগ পর্যবেক্ষণ</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">টার্মিনাল</sys:String>
     <sys:String x:Key="Str_Workspace_Split">প্যান ভাগ করুন</sys:String>
     <sys:String x:Key="Str_Workspace_Move">অন্য প্যানে সরান</sys:String>

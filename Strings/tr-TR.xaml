@@ -327,6 +327,9 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Yeniden başlatmak önceki sonuçları temizler.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Cihazı izle</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Yeni tarama</sys:String>
+    <sys:String x:Key="Str_View_Scan">Tarama</sys:String>
+    <sys:String x:Key="Str_View_Topology">Topoloji</sys:String>
+    <sys:String x:Key="Str_View_KeepAlive">Bağlantı izleme</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Bölmeleri ayır</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Diğer bölmeye taşı</sys:String>

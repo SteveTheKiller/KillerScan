@@ -327,6 +327,9 @@
     <sys:String x:Key="Str_Watch_Reset">重新開始會清除先前的結果。</sys:String>
     <sys:String x:Key="Str_Watch_Add">監控裝置</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">新增掃描</sys:String>
+    <sys:String x:Key="Str_View_Scan">掃描</sys:String>
+    <sys:String x:Key="Str_View_Topology">拓撲</sys:String>
+    <sys:String x:Key="Str_View_KeepAlive">連線監控</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">終端機</sys:String>
     <sys:String x:Key="Str_Workspace_Split">分割窗格</sys:String>
     <sys:String x:Key="Str_Workspace_Move">移至另一個窗格</sys:String>

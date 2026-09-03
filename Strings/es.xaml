@@ -327,6 +327,9 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Al iniciar de nuevo se borran los resultados anteriores.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Supervisar dispositivo</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Nuevo escaneo</sys:String>
+    <sys:String x:Key="Str_View_Scan">Escaneo</sys:String>
+    <sys:String x:Key="Str_View_Topology">Topología</sys:String>
+    <sys:String x:Key="Str_View_KeepAlive">Supervisión de conexión</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Dividir paneles</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Mover al otro panel</sys:String>

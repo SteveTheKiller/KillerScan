@@ -31,7 +31,7 @@ namespace KillerScan.Controls
             Targets.IsReadOnly = diagnostics;
             TargetLabel.Visibility = diagnostics ? Visibility.Collapsed : Visibility.Visible;
             Events.Visibility = EventsHeading.Visibility = diagnostics ? Visibility.Collapsed : Visibility.Visible;
-            Heading.SetResourceReference(TextBlock.TextProperty, diagnostics ? "Str_Diag_Title" : "Str_Watch_Title");
+            Heading.SetResourceReference(TextBlock.TextProperty, diagnostics ? "Str_Diag_Title" : "Str_View_KeepAlive");
             Hint.SetResourceReference(TextBlock.TextProperty, diagnostics ? "Str_Diag_Hint" : "Str_Watch_Hint");
             StartButton.SetResourceReference(ContentProperty, diagnostics ? "Str_Diag_Run" : "Str_Watch_Start");
             if (!diagnostics) Status.SetResourceReference(TextBlock.TextProperty, "Str_Watch_Reset");
@@ -49,6 +49,14 @@ namespace KillerScan.Controls
         }
 
         internal void ApplyScale(double scale) => BodyHost.LayoutTransform = new ScaleTransform(scale, scale);
+
+        internal void IncludeTarget(string address)
+        {
+            if (_diagnostics || _run != null) return;
+            var targets = Targets.Text.Split(new[] { ',', ';', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            if (!targets.Contains(address))
+                Targets.Text = string.Join(", ", targets.Concat(new[] { address }));
+        }
 
         private void AddColumn(string key, string path, double width)
         {

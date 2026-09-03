@@ -6,16 +6,19 @@ namespace KillerScan.Shell
 {
     public partial class MainWindow
     {
+        private NetworkToolsWindow? _watchWorkspace;
+        private NetworkToolsWindow? _diagnosticsWorkspace;
+
         private void Watch_Click(object sender, RoutedEventArgs e)
         {
-            var local = LocalNetwork.Detect();
-            var targets = new[] { local?.Gateway, local?.Dns, GetSelectedDevice()?.IpAddress }
-                .Where(s => !string.IsNullOrWhiteSpace(s)).Distinct();
-            AddWorkspaceTab(new WorkspaceTab
+            if (_watchWorkspace == null)
             {
-                Content = new NetworkToolsWindow(false, string.Join(", ", targets), [], _appScale),
-                TitleKey = "Str_Watch_Title"
-            }, false);
+                var local = LocalNetwork.Detect();
+                var targets = new[] { local?.Gateway, local?.Dns, GetSelectedDevice()?.IpAddress }
+                    .Where(s => !string.IsNullOrWhiteSpace(s)).Distinct();
+                _watchWorkspace = new NetworkToolsWindow(false, string.Join(", ", targets), [], _appScale);
+            }
+            ShowWorkspaceContent(_watchWorkspace, "watch");
         }
 
         private void Diagnose_Click(object sender, RoutedEventArgs e)
@@ -27,13 +30,20 @@ namespace KillerScan.Shell
 
         private void OpenNetworkTool(Models.NetworkDevice device, bool diagnostics, bool beside)
         {
-            AddWorkspaceTab(new WorkspaceTab
+            if (!diagnostics)
             {
-                Content = new NetworkToolsWindow(diagnostics, device.IpAddress,
-                    device.OpenPorts.Concat([22, 80, 443, 445, 3389]), _appScale),
-                TitleKey = diagnostics ? "Str_Diag_Title" : "Str_Watch_Title",
-                TitleSuffix = ": " + device.IpAddress
-            }, beside);
+                Watch_Click(this, new RoutedEventArgs());
+                _watchWorkspace!.IncludeTarget(device.IpAddress);
+                return;
+            }
+            if (_diagnosticsWorkspace != null)
+            {
+                _workspaceBody.Children.Remove(_diagnosticsWorkspace);
+                _diagnosticsWorkspace.Dispose();
+            }
+            _diagnosticsWorkspace = new NetworkToolsWindow(true, device.IpAddress,
+                device.OpenPorts.Concat([22, 80, 443, 445, 3389]), _appScale);
+            ShowWorkspaceContent(_diagnosticsWorkspace, "diagnostics");
         }
     }
 }

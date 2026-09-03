@@ -63,30 +63,27 @@ namespace KillerScan.Shell
             };
         }
 
-        private NetworkDevice? GetSelectedDevice() => ActiveScan?.SelectedDevice;
+        private NetworkDevice? GetSelectedDevice() => _scanWorkspace?.SelectedDevice;
 
         private void UpdateWorkspaceRail()
         {
             string? view = ActiveScan?.View;
             ServicesButton.Tag = FixedServicesButton.Tag = view == "services" ? "on" : null;
-            TopologyButton.Tag = FixedTopologyButton.Tag = view == "topology" ? "on" : null;
         }
 
         private void ServicesButton_Click(object sender, RoutedEventArgs e)
         {
-            var scan = ActiveScan;
+            var scan = _scanWorkspace;
             if (scan == null) return;
-            scan.SetView(scan.View == "services" ? "devices" : "services");
+            ShowScanView(ActiveScan != null && scan.View == "services" ? "devices" : "services");
             ServicesButton.Tag = FixedServicesButton.Tag = scan.View == "services" ? "on" : null;
-            TopologyButton.Tag = FixedTopologyButton.Tag = null;
         }
 
         private void TopologyButton_Click(object sender, RoutedEventArgs e)
         {
-            var scan = ActiveScan;
+            var scan = _scanWorkspace;
             if (scan == null) return;
-            scan.SetView(scan.View == "topology" ? "devices" : "topology");
-            TopologyButton.Tag = FixedTopologyButton.Tag = scan.View == "topology" ? "on" : null;
+            ShowScanView(ActiveScan != null && scan.View == "topology" ? "devices" : "topology");
             ServicesButton.Tag = FixedServicesButton.Tag = null;
         }
 

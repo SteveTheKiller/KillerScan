@@ -312,6 +312,9 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Ponowne uruchomienie usuwa poprzednie wyniki.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Monitoruj urządzenie</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Nowe skanowanie</sys:String>
+    <sys:String x:Key="Str_View_Scan">Skanowanie</sys:String>
+    <sys:String x:Key="Str_View_Topology">Topologia</sys:String>
+    <sys:String x:Key="Str_View_KeepAlive">Monitorowanie połączenia</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Podziel panele</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Przenieś do drugiego panelu</sys:String>

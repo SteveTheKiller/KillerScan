@@ -15,12 +15,9 @@ namespace KillerScan.Shell
         // (gesture, description resource key). Order is the list order and map tooltip order.
         private static readonly (string Keys, string Desc)[] ShortcutRows =
         [
-            ("Ctrl + T",        "Str_Workspace_NewScan"),
+            ("Ctrl + T",        "Str_View_Scan"),
             ("Ctrl + Shift + T", "Str_Workspace_Terminal"),
-            ("Ctrl + W",        "Str_Workspace_Close"),
-            ("Ctrl + Tab",      "Str_Workspace_Next"),
-            ("Ctrl + Shift + \\", "Str_Workspace_Split"),
-            ("F2",              "Str_Watch_Title"),
+            ("F2",              "Str_View_KeepAlive"),
             ("F3",              "Str_Diag_Title"),
             ("F5",              "Str_Sc_Scan"),
             ("F6",              "Str_History_Title"),
@@ -93,9 +90,6 @@ namespace KillerScan.Shell
                     if (shift) ToggleTerminalPanel(); else NewScan();
                     e.Handled = true; return;
                 }
-                if (!shift && e.Key == Key.W) { if (Keyboard.FocusedElement is KillerScan.Terminal.TerminalControl) ToggleTerminalPanel(); else CloseWorkspaceTab(); e.Handled = true; return; }
-                if (!shift && e.Key == Key.Tab) { NextWorkspaceTab(); e.Handled = true; return; }
-                if (shift && e.Key == Key.Oem5) { ToggleWorkspaceSplit(); e.Handled = true; return; }
             }
             if (e.Key == Key.Escape)
             {
@@ -111,6 +105,8 @@ namespace KillerScan.Shell
                     case Key.F2: Watch_Click(this, new RoutedEventArgs()); e.Handled = true; return;
                     case Key.F3: Diagnose_Click(this, new RoutedEventArgs()); e.Handled = true; return;
                     case Key.F6: HistoryButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
+                    case Key.F8: ServicesButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
+                    case Key.F9: TopologyButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
                     case Key.F10: ProfilesButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
                     case Key.F12:
                         if (AboutOverlay.Visibility == Visibility.Visible) FadeOverlayOut(AboutOverlay);

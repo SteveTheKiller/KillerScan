@@ -256,9 +256,6 @@
         <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom"
                     HorizontalAlignment="Center" Margin="2,0,0,10"
                     Visibility="{DynamicResource ScaledRailVisibility}">
-            <Button Style="{StaticResource RailButton}" Content="&#xE9D9;" FontSize="15" Click="Watch_Click" Margin="0,0,0,10">
-                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Watch_Title}"/><Run Text=" (F2)"/></TextBlock></Button.ToolTip>
-            </Button>
             <Button x:Name="ProfilesButton" Style="{StaticResource RailButton}" Content="&#xE8D5;"
                     FontSize="15" Click="ProfilesButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Profiles_Title}"/><Run Text=" (F10)"/></TextBlock></Button.ToolTip>
@@ -276,13 +273,6 @@
                     Click="ServicesButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip>
                     <TextBlock><Run Text="{DynamicResource Str_Services_Title}"/><Run Text=" (F8)"/></TextBlock>
-                </Button.ToolTip>
-            </Button>
-            <Button x:Name="TopologyButton" Style="{StaticResource RailButton}"
-                    Content="&#xE968;" FontSize="15"
-                    Click="TopologyButton_Click" Margin="0,0,0,10">
-                <Button.ToolTip>
-                    <TextBlock><Run Text="{DynamicResource Str_TT_Topology}"/><Run Text=" (F9)"/></TextBlock>
                 </Button.ToolTip>
             </Button>
             <Button x:Name="ShortcutsButton" Style="{StaticResource RailButton}"
@@ -314,13 +304,7 @@
                 Margin="{DynamicResource DevicesPaneMargin}" Panel.ZIndex="10"
                 Effect="{StaticResource PaneShadow}">
             <Grid x:Name="TerminalLayout" WindowChrome.IsHitTestVisibleInChrome="True">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition x:Name="TerminalColumn" Width="0"/>
-                </Grid.ColumnDefinitions>
                 <Grid x:Name="WorkspaceHost"/>
-                <Grid x:Name="TerminalHost" Grid.Column="2" Visibility="Collapsed" ClipToBounds="True"/>
             </Grid>
         </Border>
 
@@ -333,9 +317,6 @@
         <StackPanel Grid.Row="2" Width="{DynamicResource RailWidth}" VerticalAlignment="Bottom"
                     HorizontalAlignment="Left" Margin="0,0,0,10" Panel.ZIndex="30"
                     Visibility="{DynamicResource FixedRailVisibility}">
-            <Button Style="{StaticResource RailButton}" Content="&#xE9D9;" FontSize="15" Click="Watch_Click" Margin="0,0,0,10">
-                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Watch_Title}"/><Run Text=" (F2)"/></TextBlock></Button.ToolTip>
-            </Button>
             <Button x:Name="FixedProfilesButton" Style="{StaticResource RailButton}" Content="&#xE8D5;"
                     FontSize="15" Click="ProfilesButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Profiles_Title}"/><Run Text=" (F10)"/></TextBlock></Button.ToolTip>
@@ -352,13 +333,6 @@
                     Click="ServicesButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip>
                     <TextBlock><Run Text="{DynamicResource Str_Services_Title}"/><Run Text=" (F8)"/></TextBlock>
-                </Button.ToolTip>
-            </Button>
-            <Button x:Name="FixedTopologyButton" Style="{StaticResource RailButton}"
-                    Content="&#xE968;" FontSize="15"
-                    Click="TopologyButton_Click" Margin="0,0,0,10">
-                <Button.ToolTip>
-                    <TextBlock><Run Text="{DynamicResource Str_TT_Topology}"/><Run Text=" (F9)"/></TextBlock>
                 </Button.ToolTip>
             </Button>
             <Button x:Name="FixedShortcutsButton" Style="{StaticResource RailButton}"

@@ -369,6 +369,9 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Starting again clears the previous results.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Watch device</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">New scan</sys:String>
+    <sys:String x:Key="Str_View_Scan">Scan</sys:String>
+    <sys:String x:Key="Str_View_Topology">Topology</sys:String>
+    <sys:String x:Key="Str_View_KeepAlive">Keep Alive</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Split panes</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Move to other pane</sys:String>

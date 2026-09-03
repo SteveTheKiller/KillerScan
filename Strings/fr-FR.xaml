@@ -327,6 +327,9 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Un nouveau démarrage efface les résultats précédents.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Surveiller l'appareil</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Nouvelle analyse</sys:String>
+    <sys:String x:Key="Str_View_Scan">Analyse</sys:String>
+    <sys:String x:Key="Str_View_Topology">Topologie</sys:String>
+    <sys:String x:Key="Str_View_KeepAlive">Surveillance de connexion</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Diviser les volets</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Déplacer vers l'autre volet</sys:String>
