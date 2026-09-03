@@ -29,12 +29,12 @@ namespace KillerScan.Shell
             _workspaceToolbar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             Grid.SetColumn(_workspaceNavigation, 1);
             _workspaceToolbar.Children.Add(_workspaceNavigation);
-            var toolbarSurface = new Grid();
-            toolbarSurface.SetResourceReference(Panel.BackgroundProperty, "ScanContentPaneBrush");
+            var toolbarSurface = new Grid { UseLayoutRounding = true };
+            toolbarSurface.SetResourceReference(Panel.BackgroundProperty, "BackgroundBrush");
             var grain = new Border { IsHitTestVisible = false };
             grain.SetResourceReference(Border.BackgroundProperty, "GrainTileBrush");
             grain.SetResourceReference(OpacityProperty, "GrainOpacity");
-            toolbarSurface.Children.Add(new Border { Opacity = 0.20, Child = grain, IsHitTestVisible = false });
+            toolbarSurface.Children.Add(grain);
             toolbarSurface.Children.Add(_workspaceToolbar);
             WorkspaceHost.Children.Add(toolbarSurface);
             Grid.SetRow(_workspaceBody, 1);
