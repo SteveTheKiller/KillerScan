@@ -6,10 +6,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.7.0] - Unreleased
 
-1.7.0 brings scans, diagnostics, and terminals into a tabbed workspace with optional split panes.
+1.7.0 brings scans, diagnostics, and history into tabs with optional split panes and a slim terminal sidebar.
 
 ### Added
-- Independent scan tabs, embedded PowerShell, ping and SSH terminals, and optional split panes keep scans and tools together.
+- Independent scan tabs, optional split panes, and a resizable terminal sidebar keep scans and tools together. The terminal slides closed and reopens at its saved width.
 - Connection watch tracks replies, packet loss, latency, and state changes; device diagnostics checks DNS, ping, the local route, and TCP services.
 - The arranged topology can be exported as a full-resolution PNG.
 - Saved scan profiles can load or run remembered targets and optionally follow with Deep Scan All.

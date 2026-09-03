@@ -90,17 +90,16 @@ namespace KillerScan.Shell
             {
                 if (e.Key == Key.T)
                 {
-                    if (shift) NewTerminal(); else NewScan();
+                    if (shift) ToggleTerminalPanel(); else NewScan();
                     e.Handled = true; return;
                 }
-                if (!shift && e.Key == Key.W) { CloseWorkspaceTab(); e.Handled = true; return; }
+                if (!shift && e.Key == Key.W) { if (Keyboard.FocusedElement is KillerScan.Terminal.TerminalControl) ToggleTerminalPanel(); else CloseWorkspaceTab(); e.Handled = true; return; }
                 if (!shift && e.Key == Key.Tab) { NextWorkspaceTab(); e.Handled = true; return; }
                 if (shift && e.Key == Key.Oem5) { ToggleWorkspaceSplit(); e.Handled = true; return; }
             }
             if (e.Key == Key.Escape)
             {
                 if (ShortcutsOverlay.Visibility == Visibility.Visible) { HideShortcuts(); e.Handled = true; return; }
-                if (HistoryOverlay.Visibility == Visibility.Visible) { HideHistory(); e.Handled = true; return; }
                 if (AboutOverlay.Visibility == Visibility.Visible) { AboutClose_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
             }
             if (Keyboard.FocusedElement is KillerScan.Terminal.TerminalControl) return;

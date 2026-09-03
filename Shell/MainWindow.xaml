@@ -309,11 +309,19 @@
              the Effect on 98SE and restores it otherwise. Same approach KillerShell takes. -->
         <Border x:Name="DevicesPane" Grid.Row="1" Grid.Column="1"
                 Background="{DynamicResource ScanContentPaneBrush}"
-                BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1"
+                BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="0"
                 CornerRadius="{DynamicResource PanelCornerRadius}"
                 Margin="{DynamicResource DevicesPaneMargin}" Panel.ZIndex="10"
                 Effect="{StaticResource PaneShadow}">
-            <Grid x:Name="WorkspaceHost" WindowChrome.IsHitTestVisibleInChrome="True"/>
+            <Grid x:Name="TerminalLayout" WindowChrome.IsHitTestVisibleInChrome="True">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition x:Name="TerminalColumn" Width="0"/>
+                </Grid.ColumnDefinitions>
+                <Grid x:Name="WorkspaceHost"/>
+                <Grid x:Name="TerminalHost" Grid.Column="2" Visibility="Collapsed" ClipToBounds="True"/>
+            </Grid>
         </Border>
 
         </Grid>
@@ -488,130 +496,6 @@
             </Canvas>
         </Canvas>
 
-        <Grid x:Name="HistoryOverlay" Grid.RowSpan="4" Panel.ZIndex="9000" Visibility="Collapsed"
-              Margin="{DynamicResource OverlayFrameBleed}"
-              Background="#88000000" MouseLeftButtonDown="HistoryOverlay_Click">
-            <Grid MaxWidth="860" MaxHeight="520" Margin="24"
-                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                  MouseLeftButtonDown="HistoryCard_Click">
-                <Border Background="{DynamicResource OverlayWindowBrush}" CornerRadius="{DynamicResource PanelCornerRadius}" IsHitTestVisible="False">
-                    <Border.Effect>
-                        <DropShadowEffect Color="Black" BlurRadius="26" ShadowDepth="5" Direction="270" Opacity="0.6"/>
-                    </Border.Effect>
-                </Border>
-                <Border Background="{DynamicResource OverlayWindowBrush}" BorderBrush="{DynamicResource AppBorderBrush}"
-                        BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
-                    <Grid>
-                        <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}"
-                                Opacity="{DynamicResource GrainOpacity}" Background="{DynamicResource GrainTileBrush}"/>
-                        <Button Content="{DynamicResource AboutCloseGlyph}" Click="HistoryClose_Click"
-                                Style="{StaticResource OverlayCloseButton}" HorizontalAlignment="Right"
-                                VerticalAlignment="Top" Width="{DynamicResource AboutCloseWidth}"
-                                Height="{DynamicResource AboutCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"
-                                Panel.ZIndex="7"/>
-                        <Grid Margin="28,34,28,24">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="{DynamicResource Str_History_Title}" Foreground="{DynamicResource TextBrush}"
-                                       FontSize="16" FontWeight="SemiBold" Margin="0,0,0,14"/>
-                            <Grid Grid.Row="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="245"/>
-                                    <ColumnDefinition Width="18"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <ListBox x:Name="HistoryList" Grid.Column="0" SelectionChanged="HistoryList_SelectionChanged"
-                                         Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
-                                         Foreground="{DynamicResource TextBrush}" BorderThickness="1" Padding="4">
-                                    <ListBox.ItemContainerStyle>
-                                        <Style TargetType="ListBoxItem">
-                                            <Setter Property="Background" Value="{DynamicResource TableRowBrush}"/>
-                                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="ListBoxItem">
-                                                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
-                                                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="{DynamicResource RowHoverBrush}"/>
-                                                </Trigger>
-                                                <Trigger Property="IsSelected" Value="True">
-                                                    <Setter Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
-                                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ListBox.ItemContainerStyle>
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Margin="6,5">
-                                                <TextBlock Text="{Binding Target}"
-                                                           FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
-                                                <TextBlock Text="{Binding ScannedAt, StringFormat={}{0:g}}"
-                                                           FontSize="11"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                                <Grid Grid.Column="2">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock x:Name="HistorySummary" Foreground="{DynamicResource MutedTextBrush}"
-                                               FontSize="12" Margin="0,0,0,10"/>
-                                    <DataGrid x:Name="HistoryChangesGrid" Grid.Row="1" AutoGenerateColumns="False"
-                                              IsReadOnly="True" HeadersVisibility="Column" CanUserAddRows="False"
-                                              Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
-                                              Foreground="{DynamicResource TextBrush}"
-                                              ColumnHeaderStyle="{StaticResource ThemedDataGridColumnHeader}"
-                                              BorderThickness="1" GridLinesVisibility="None">
-                                        <DataGrid.RowStyle>
-                                            <Style TargetType="DataGridRow" BasedOn="{StaticResource DarkDataGridRow}">
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-                                                    </Trigger>
-                                                    <Trigger Property="IsSelected" Value="True">
-                                                        <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </DataGrid.RowStyle>
-                                        <DataGrid.CellStyle>
-                                            <Style TargetType="DataGridCell" BasedOn="{StaticResource DarkDataGridCell}">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
-                                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-                                                    </DataTrigger>
-                                                    <Trigger Property="IsSelected" Value="True">
-                                                        <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </DataGrid.CellStyle>
-                                        <DataGrid.Columns>
-                                            <DataGridTextColumn Header="{DynamicResource Str_History_Change}" Binding="{Binding Change}" Width="90"/>
-                                            <DataGridTextColumn Header="{DynamicResource Str_Col_Name}" Binding="{Binding Name}" Width="*"/>
-                                            <DataGridTextColumn Header="{DynamicResource Str_Col_Ip}" Binding="{Binding IpAddress}" Width="120"/>
-                                            <DataGridTextColumn Header="{DynamicResource Str_Col_Type}" Binding="{Binding DeviceType}" Width="130"/>
-                                        </DataGrid.Columns>
-                                    </DataGrid>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Border>
-            </Grid>
-        </Grid>
 
         <!-- Keyboard shortcuts overlay (F1 or the title-bar "?"). Same card chrome as the About
              overlay below; the rows are built in Shortcuts.cs so the list has one source of truth. -->
