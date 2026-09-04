@@ -191,6 +191,10 @@ namespace KillerScan.Services
                 newDict["OutlineHoverTextBrush"] = newDict["OnPrimaryBrush"];
             if (!newDict.Contains("OutlinePressedBrush"))
                 newDict["OutlinePressedBrush"] = Brushes.Transparent;
+            // The keyboard map's key caps. Tracks the raised surface unless a theme names its own;
+            // 98SE does, because its caps are white rather than button-face gray.
+            if (!newDict.Contains("KeyCapBrush"))
+                newDict["KeyCapBrush"] = newDict["SurfaceBrush"];
             if (!newDict.Contains("SurfaceHoverBrush"))
                 newDict["SurfaceHoverBrush"] = newDict["RowHoverBrush"];
             // The theme picker's checked row while HOVERED (ring, dot, label). Defaults to the

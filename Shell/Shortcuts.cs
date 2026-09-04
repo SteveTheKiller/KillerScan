@@ -358,7 +358,10 @@ namespace KillerScan.Shell
                 BorderThickness = new Thickness(1),
                 Child = grid
             };
-            key.SetResourceReference(Border.BackgroundProperty, "SurfaceBrush");
+            // KeyCapBrush, not SurfaceBrush directly: the cap tracks SurfaceBrush on every theme
+            // that does not declare it, but 98SE paints its caps white so the map does not read as
+            // a slab of button-face gray. Same key in KillerShell and Killendar.
+            key.SetResourceReference(Border.BackgroundProperty, "KeyCapBrush");
             key.SetResourceReference(Border.BorderBrushProperty, categoryBrush);
 
             if (actions != null)
