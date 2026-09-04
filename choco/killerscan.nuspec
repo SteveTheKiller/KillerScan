@@ -8,7 +8,7 @@
     <title>KillerScan</title>
     <authors>Steve the Killer</authors>
     <projectUrl>https://killerscan.net</projectUrl>
-    <iconUrl>https://raw.githubusercontent.com/SteveTheKiller/KillerScan/main/Resources/ks-icon.ico</iconUrl>
+    <iconUrl>https://cdn.jsdelivr.net/gh/SteveTheKiller/KillerScan@vREPLACE_VERSION/Resources/ks-icon.ico</iconUrl>
     <licenseUrl>https://github.com/SteveTheKiller/KillerScan/blob/main/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectSourceUrl>https://github.com/SteveTheKiller/KillerScan</projectSourceUrl>
