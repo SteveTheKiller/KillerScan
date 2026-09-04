@@ -395,6 +395,7 @@
     <sys:String x:Key="Str_View_Topology">Топология</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Қосылымды бақылау</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Терминал</sys:String>
+    <sys:String x:Key="Str_Workspace_EscStop">Тоқтату үшін Esc</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Панельдерді бөлу</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Басқа панельге жылжыту</sys:String>
     <sys:String x:Key="Str_Workspace_Close">Қойындыны жабу</sys:String>

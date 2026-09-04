@@ -369,6 +369,7 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topológia</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Kapcsolatfigyelés</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminál</sys:String>
+    <sys:String x:Key="Str_Workspace_EscStop">Esc a leallitashoz</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Panelek felosztása</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Áthelyezés a másik panelre</sys:String>
     <sys:String x:Key="Str_Workspace_Close">Lap bezárása</sys:String>

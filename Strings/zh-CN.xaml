@@ -353,6 +353,7 @@
     <sys:String x:Key="Str_View_Topology">拓扑</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">连接监控</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">终端</sys:String>
+    <sys:String x:Key="Str_Workspace_EscStop">按 Esc 停止</sys:String>
     <sys:String x:Key="Str_Workspace_Split">拆分窗格</sys:String>
     <sys:String x:Key="Str_Workspace_Move">移到另一窗格</sys:String>
     <sys:String x:Key="Str_Workspace_Close">关闭标签页</sys:String>

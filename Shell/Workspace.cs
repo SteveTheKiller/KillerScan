@@ -210,7 +210,11 @@ namespace KillerScan.Shell
                 int separator = command.IndexOf(' ');
                 Process.Start(new ProcessStartInfo(command[..separator], command[(separator + 1)..]) { UseShellExecute = true });
             }
-            else NewTerminal(command, (action.StartsWith("Ssh", StringComparison.Ordinal) ? "SSH " : "Ping ") + ip);
+            // Ping runs inside the styled shell, which is what tints the replies. SSH does not:
+            // its command line carries a username the user typed, and that has to reach the
+            // client as an argument rather than as text a shell gets to interpret.
+            else if (action.StartsWith("Ssh", StringComparison.Ordinal)) NewTerminal(command, "SSH " + ip);
+            else NewTerminal(title: "Ping " + ip, shellCommand: PingCommand(ip));
         }
 
         private void ClipWorkspaceSurface()

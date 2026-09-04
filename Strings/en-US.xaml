@@ -395,6 +395,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topology</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Keep Alive</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Workspace_EscStop">Esc to stop</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Split panes</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Move to other pane</sys:String>
     <sys:String x:Key="Str_Workspace_Close">Close tab</sys:String>

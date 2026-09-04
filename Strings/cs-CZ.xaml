@@ -351,6 +351,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologie</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Sledování připojení</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminál</sys:String>
+    <sys:String x:Key="Str_Workspace_EscStop">Esc pro zastaveni</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Rozdělit panely</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Přesunout do druhého panelu</sys:String>
     <sys:String x:Key="Str_Workspace_Close">Zavřít kartu</sys:String>
