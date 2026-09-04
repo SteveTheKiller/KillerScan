@@ -133,6 +133,8 @@
     <sys:String x:Key="Str_Sys_Maximize">Agrandir</sys:String>
     <sys:String x:Key="Str_Sys_Close">Fermer</sys:String>
     <sys:String x:Key="Str_TT_Shortcuts">Raccourcis clavier (F1)</sys:String>
+    <sys:String x:Key="Str_TT_ExpandSidebar">Afficher l'historique des analyses</sys:String>
+    <sys:String x:Key="Str_TT_CollapseSidebar">Masquer l'historique des analyses</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Raccourcis clavier</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Démarrer ou arrêter une analyse</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Annuler l'analyse, ou fermer ceci</sys:String>

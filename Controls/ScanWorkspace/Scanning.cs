@@ -74,6 +74,9 @@ namespace KillerScan.Controls
                 if (completed && _active.Devices.Count > 0)
                 {
                     ScanHistory.Record(_active.ScannedSubnet, _active.Devices);
+                    // Tell the shell so the history sidebar picks up the new entry rather than
+                    // showing a stale list until it is next reopened.
+                    HistoryRecorded?.Invoke(this, EventArgs.Empty);
                     if (!DevicePreferences.HasTrustedDevices)
                     {
                         DevicePreferences.TrustAll(_active.Devices);

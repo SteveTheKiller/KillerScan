@@ -151,6 +151,8 @@
 
     <!-- Keyboard shortcuts overlay (F1) -->
     <sys:String x:Key="Str_TT_Shortcuts">Billentyűparancsok (F1)</sys:String>
+    <sys:String x:Key="Str_TT_ExpandSidebar">Vizsgálati előzmények megjelenítése</sys:String>
+    <sys:String x:Key="Str_TT_CollapseSidebar">Vizsgálati előzmények elrejtése</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Billentyűparancsok</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Indítsa el vagy állítsa le a keresést</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Szakítsa meg a beolvasást, vagy zárja be</sys:String>

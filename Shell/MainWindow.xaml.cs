@@ -42,6 +42,7 @@ namespace KillerScan.Shell
             VersionLabel.Text = $"v{AppInfo.Version}";
 
             InitializeWorkspace();
+            InitSidebar();
 
             RestoreWindowPlacement();                               // window size/position from previous run
             InitAppScale();                                         // AppScale.cs (restore app-wide size)

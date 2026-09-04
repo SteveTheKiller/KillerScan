@@ -151,6 +151,8 @@
 
     <!-- Keyboard shortcuts overlay (F1) -->
     <sys:String x:Key="Str_TT_Shortcuts">Scorciatoie da tastiera (F1)</sys:String>
+    <sys:String x:Key="Str_TT_ExpandSidebar">Mostra cronologia scansioni</sys:String>
+    <sys:String x:Key="Str_TT_CollapseSidebar">Nascondi cronologia scansioni</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Scorciatoie da tastiera</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Avvia o interrompi una scansione</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Annulla la scansione, o chiudi questa finestra</sys:String>

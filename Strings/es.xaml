@@ -133,6 +133,8 @@
     <sys:String x:Key="Str_Sys_Maximize">Maximizar</sys:String>
     <sys:String x:Key="Str_Sys_Close">Cerrar</sys:String>
     <sys:String x:Key="Str_TT_Shortcuts">Atajos de teclado (F1)</sys:String>
+    <sys:String x:Key="Str_TT_ExpandSidebar">Mostrar historial de escaneos</sys:String>
+    <sys:String x:Key="Str_TT_CollapseSidebar">Ocultar historial de escaneos</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Atajos de teclado</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Iniciar o detener un escaneo</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Cancelar el escaneo o cerrar esto</sys:String>

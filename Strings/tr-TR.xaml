@@ -133,6 +133,8 @@
     <sys:String x:Key="Str_Sys_Maximize">Ekranı Kapla</sys:String>
     <sys:String x:Key="Str_Sys_Close">Kapat</sys:String>
     <sys:String x:Key="Str_TT_Shortcuts">Klavye kısayolları (F1)</sys:String>
+    <sys:String x:Key="Str_TT_ExpandSidebar">Tarama geçmişini göster</sys:String>
+    <sys:String x:Key="Str_TT_CollapseSidebar">Tarama geçmişini gizle</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Klavye kısayolları</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Taramayı başlat veya durdur</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Taramayı iptal et veya bunu kapat</sys:String>

@@ -151,6 +151,8 @@
 
     <!-- Keyboard shortcuts overlay (F1) -->
     <sys:String x:Key="Str_TT_Shortcuts">Keyboard shortcuts (F1)</sys:String>
+    <sys:String x:Key="Str_TT_ExpandSidebar">Show scan history</sys:String>
+    <sys:String x:Key="Str_TT_CollapseSidebar">Hide scan history</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Keyboard shortcuts</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Start or stop a scan</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Cancel the scan, or close this</sys:String>

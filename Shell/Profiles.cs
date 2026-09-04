@@ -7,47 +7,29 @@ namespace KillerScan.Shell
 {
     public partial class MainWindow
     {
-
+        /// <summary>
+        /// Profiles share the history sidebar rather than a rail flyout, so both saved lists
+        /// live in the same place and the panel cross-fades between them.
+        /// </summary>
         private void ProfilesButton_Click(object sender, RoutedEventArgs e)
         {
-            BuildProfilesMenu();
-            ProfilesMenu.PlacementTarget = sender as FrameworkElement ??
-                (FixedProfilesButton.IsVisible ? FixedProfilesButton : ProfilesButton);
-            ProfilesMenu.IsOpen = true;
+            ShortcutsOverlay.Visibility = Visibility.Collapsed;
+            AboutOverlay.Visibility = Visibility.Collapsed;
+            ShowSidebarSection("profiles");
         }
 
-        private void BuildProfilesMenu()
+        private void RefreshProfilesList()
         {
-            ProfilesMenu.Items.Clear();
-            var save = new MenuItem { Header = Loc("Str_Profiles_Save"), IsEnabled = ActiveScan != null };
-            save.Click += SaveProfile_Click;
-            ProfilesMenu.Items.Add(save);
-            if (ScanProfiles.Items.Count == 0) return;
-            ProfilesMenu.Items.Add(new Separator());
-
-            foreach (var profile in ScanProfiles.Items.OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase))
-            {
-                var parent = new MenuItem { Header = profile.Name, ToolTip = profile.Target };
-                var run = new MenuItem { Header = Loc("Str_Profiles_Run"), Tag = profile };
-                run.Click += RunProfile_Click;
-                var load = new MenuItem { Header = Loc("Str_Profiles_Load"), Tag = profile };
-                load.Click += LoadProfile_Click;
-                var deep = new MenuItem
-                {
-                    Header = Loc("Str_Profiles_Deep"), Tag = profile,
-                    IsCheckable = true, IsChecked = profile.DeepScanAfter
-                };
-                deep.Click += ToggleProfileDeep_Click;
-                var delete = new MenuItem { Header = Loc("Str_Profiles_Delete"), Tag = profile };
-                delete.Click += DeleteProfile_Click;
-                parent.Items.Add(run);
-                parent.Items.Add(load);
-                parent.Items.Add(deep);
-                parent.Items.Add(new Separator());
-                parent.Items.Add(delete);
-                ProfilesMenu.Items.Add(parent);
-            }
+            var selected = ProfilesList.SelectedItem as ScanProfile;
+            var items = ScanProfiles.Items.OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase).ToList();
+            ProfilesList.ItemsSource = items;
+            if (selected != null && items.Contains(selected)) ProfilesList.SelectedItem = selected;
+            SaveProfileButton.IsEnabled = ActiveScan != null;
         }
+
+        /// <summary>The profile a row's context menu was opened on.</summary>
+        private static ScanProfile? ProfileFor(object sender) =>
+            (sender as FrameworkElement)?.DataContext as ScanProfile;
 
         private void SaveProfile_Click(object sender, RoutedEventArgs e)
         {
@@ -60,34 +42,37 @@ namespace KillerScan.Shell
             dialog.ShowDialog();
             if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return;
             ScanProfiles.Save(new ScanProfile { Name = dialog.Value, Target = scan.Targets.Trim() });
+            RefreshProfilesList();
         }
 
-        private void LoadProfile_Click(object sender, RoutedEventArgs e)
+        private void ProfileLoad_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is not MenuItem { Tag: ScanProfile profile }) return;
+            if (ProfileFor(sender) is not { } profile) return;
             var scan = ActiveScan;
             if (scan == null || scan.IsScanning) NewScan(profile.Target);
             else scan.Targets = profile.Target;
         }
 
-        private void RunProfile_Click(object sender, RoutedEventArgs e)
+        private void ProfileRun_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is not MenuItem { Tag: ScanProfile profile }) return;
+            if (ProfileFor(sender) is not { } profile) return;
             var scan = ActiveScan;
             if (scan == null || scan.IsScanning) scan = NewScan(profile.Target);
             scan.RunProfile(profile);
         }
 
-        private void ToggleProfileDeep_Click(object sender, RoutedEventArgs e)
+        private void ProfileDeep_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is not MenuItem { Tag: ScanProfile profile } item) return;
+            if (sender is not MenuItem item || ProfileFor(sender) is not { } profile) return;
             profile.DeepScanAfter = item.IsChecked;
             ScanProfiles.Update();
         }
 
-        private void DeleteProfile_Click(object sender, RoutedEventArgs e)
+        private void ProfileDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuItem { Tag: ScanProfile profile }) ScanProfiles.Delete(profile);
+            if (ProfileFor(sender) is not { } profile) return;
+            ScanProfiles.Delete(profile);
+            RefreshProfilesList();
         }
     }
 }

@@ -115,6 +115,7 @@ namespace KillerScan.Shell
                 _workspaceNavigation.Children.Insert(0, export);
                 ApplyToolbarAppearance();
                 _scanWorkspace.DeviceAction += (_, e) => WorkspaceDeviceAction(e.Device, e.Action);
+                _scanWorkspace.HistoryRecorded += (_, _) => { if (!_sidebarCollapsed) RefreshHistoryList(); };
                 _scanWorkspace.StateChanged += (_, _) =>
                 {
                     if (ActiveScan != null)

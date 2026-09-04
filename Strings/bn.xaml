@@ -133,6 +133,8 @@
     <sys:String x:Key="Str_Sys_Maximize">বড় করুন</sys:String>
     <sys:String x:Key="Str_Sys_Close">বন্ধ করুন</sys:String>
     <sys:String x:Key="Str_TT_Shortcuts">কীবোর্ড শর্টকাট (F1)</sys:String>
+    <sys:String x:Key="Str_TT_ExpandSidebar">স্ক্যান ইতিহাস দেখান</sys:String>
+    <sys:String x:Key="Str_TT_CollapseSidebar">স্ক্যান ইতিহাস লুকান</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">কীবোর্ড শর্টকাট</sys:String>
     <sys:String x:Key="Str_Sc_Scan">স্ক্যান শুরু বা বন্ধ করুন</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">স্ক্যান বাতিল করুন, বা এটি বন্ধ করুন</sys:String>

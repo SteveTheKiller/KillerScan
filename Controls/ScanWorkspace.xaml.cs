@@ -30,6 +30,9 @@ namespace KillerScan.Controls
         private readonly Button ServicesButton = new();
         public event EventHandler<ScanDeviceActionEventArgs>? DeviceAction;
         public event EventHandler? StateChanged;
+
+        /// <summary>Raised once a finished scan has been written to the history store.</summary>
+        public event EventHandler? HistoryRecorded;
         internal ScanSession Session => _active;
         public NetworkDevice? SelectedDevice => GetSelectedDevice();
         public string Targets { get => SubnetInput.Text; set => SubnetInput.Text = value; }

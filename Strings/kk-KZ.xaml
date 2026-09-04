@@ -151,6 +151,8 @@
 
     <!-- Keyboard shortcuts overlay (F1) -->
     <sys:String x:Key="Str_TT_Shortcuts">Пернелер тіркесімі (F1)</sys:String>
+    <sys:String x:Key="Str_TT_ExpandSidebar">Сканерлеу тарихын көрсету</sys:String>
+    <sys:String x:Key="Str_TT_CollapseSidebar">Сканерлеу тарихын жасыру</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Пернелер тіркесімі</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Сканерлеуді бастау немесе тоқтату</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Сканерлеуді болдырмау немесе осыны жабу</sys:String>

@@ -45,6 +45,9 @@ namespace KillerScan.Shell
             scale = Math.Round(Math.Max(AppScaleMin, Math.Min(AppScaleMax, scale)), 3);
             _appScale = scale;
             ApplyWorkspaceScale(scale);
+            // The sidebar's width is stored in screen pixels so it keeps a constant on-screen
+            // size, which means a zoom change has to recompute its logical width.
+            RefreshSidebarWidth();
             if (persist)
             {
                 App.SetSetting("AppScale", scale.ToString("0.###", CultureInfo.InvariantCulture));

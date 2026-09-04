@@ -143,13 +143,14 @@
                 <RowDefinition Height="*"/>      <!-- 1: devices pane -->
             </Grid.RowDefinitions>
 
+            <!-- Column 0 is the sidebar lane: the history panel with the icon rail on its inner
+                 lip, exactly as KillerNotes lays it out. Collapsed it is the rail's own width,
+                 so the rail sits at the window edge and the app looks as it always has; opening
+                 history widens the column and carries the rail along with it. -->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{DynamicResource RailColumnWidth}"/>
+                <ColumnDefinition x:Name="SidebarCol" Width="{DynamicResource RailColumnWidth}"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-
-
-
 
         <!-- Chrome strip behind the pane, so the side margins carry the grain like the other bars -->
         <Border Grid.Row="1" Grid.ColumnSpan="2" Background="{DynamicResource BackgroundBrush}">
@@ -253,13 +254,176 @@
 
         <!-- Original family rail for every geometrically flat theme. It remains inside the
              accessibility LayoutTransform exactly as before the 98SE work. -->
-        <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom"
-                    HorizontalAlignment="Center" Margin="2,0,0,10"
+        <!-- ==== HISTORY SIDEBAR (column 0, behind the rail) ==============================
+             Clipped so the panel can be frozen at full width and wiped by the column tween
+             rather than reflowing to nothing as it closes. -->
+        <Grid Grid.Row="1" Grid.Column="0" Margin="0,0,24,0" ClipToBounds="True"
+              Visibility="{DynamicResource ScaledRailVisibility}">
+            <Grid x:Name="HistorySidebar" Margin="14,14,0,10" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="SidebarHeading" Grid.Row="0" Text="{DynamicResource Str_History_Title}" Margin="1,0,8,12"
+                           Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource WordmarkFont}"
+                           FontSize="20" TextTrimming="CharacterEllipsis"/>
+                <ListBox x:Name="HistoryList" Grid.Row="1" Background="Transparent" BorderThickness="0"
+                         Margin="0,0,8,0" HorizontalContentAlignment="Stretch"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         SelectionChanged="HistoryList_SelectionChanged">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="9,7"/>
+                            <Setter Property="SnapsToDevicePixels" Value="True"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="bg" Background="Transparent" Margin="0,0,0,3"
+                                                CornerRadius="{DynamicResource ControlCornerRadius}">
+                                            <ContentPresenter Margin="{TemplateBinding Padding}"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="bg" Property="Background" Value="{DynamicResource SelectionBg}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <!-- The target carries the accent: it is the identity of the entry,
+                                     and the timestamp under it is the supporting detail. -->
+                                <TextBlock Text="{Binding Target}" FontSize="14" FontWeight="SemiBold"
+                                           TextTrimming="CharacterEllipsis" Foreground="{DynamicResource PrimaryBrush}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock Text="{Binding ScannedAt, StringFormat={}{0:g}}" FontSize="12" Margin="0,2,0,0"
+                                           Foreground="{DynamicResource MutedTextBrush}" TextTrimming="CharacterEllipsis">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                                    <Setter Property="Opacity" Value="0.78"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <!-- Second section, sharing the row so the two cross-fade in place. -->
+                <ListBox x:Name="ProfilesList" Grid.Row="1" Background="Transparent" BorderThickness="0"
+                         Margin="0,0,8,0" HorizontalContentAlignment="Stretch" Visibility="Collapsed"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ItemContainerStyle="{Binding ItemContainerStyle, ElementName=HistoryList}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <StackPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="{DynamicResource Str_Profiles_Run}" Click="ProfileRun_Click"/>
+                                        <MenuItem Header="{DynamicResource Str_Profiles_Load}" Click="ProfileLoad_Click"/>
+                                        <MenuItem Header="{DynamicResource Str_Profiles_Deep}" IsCheckable="True"
+                                                  IsChecked="{Binding DeepScanAfter, Mode=OneWay}" Click="ProfileDeep_Click"/>
+                                        <Separator/>
+                                        <MenuItem Header="{DynamicResource Str_Profiles_Delete}" Click="ProfileDelete_Click"/>
+                                    </ContextMenu>
+                                </StackPanel.ContextMenu>
+                                <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold"
+                                           TextTrimming="CharacterEllipsis" Foreground="{DynamicResource PrimaryBrush}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock Text="{Binding Target}" FontSize="12" Margin="0,2,0,0"
+                                           Foreground="{DynamicResource MutedTextBrush}" TextTrimming="CharacterEllipsis">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                                    <Setter Property="Opacity" Value="0.78"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <Button x:Name="SaveProfileButton" Grid.Row="2" Content="{DynamicResource Str_Profiles_Save}"
+                        HorizontalAlignment="Left" Margin="9,8,0,0" FontSize="11" Visibility="Collapsed"
+                        Style="{StaticResource LinkButton}" Click="SaveProfile_Click"/>
+            </Grid>
+        </Grid>
+
+        <!-- Drag edge for the sidebar. A Thumb rather than a GridSplitter, because the column
+             next door is the fixed-width rail, matching KillerNotes. -->
+        <Thumb x:Name="SidebarResizeGrip" Grid.Row="1" Grid.Column="0" Panel.ZIndex="50"
+               HorizontalAlignment="Right" Margin="0,0,24,0" Width="5" Cursor="SizeWE"
+               Visibility="Collapsed"
+               DragDelta="SidebarResizeGrip_DragDelta" DragCompleted="SidebarResizeGrip_DragCompleted">
+            <Thumb.Template>
+                <ControlTemplate TargetType="Thumb">
+                    <Border Background="Transparent">
+                        <Rectangle x:Name="hint" Width="1" HorizontalAlignment="Right" Opacity="0"
+                                   Fill="{DynamicResource PaneBorderBrush}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="hint" Property="Opacity" Value="1"/>
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="hint" Property="Opacity" Value="1"/>
+                            <Setter TargetName="hint" Property="Fill" Value="{DynamicResource PrimaryBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Thumb.Template>
+        </Thumb>
+
+        <!-- Chevron: pinned to the top of the rail on its own, per the family rail order. -->
+        <Button x:Name="SidebarToggleBtn" Grid.Row="1" Grid.Column="0" Style="{StaticResource RailButton}"
+                Content="&#xE76C;" FontSize="12" Panel.ZIndex="20"
+                VerticalAlignment="Top" HorizontalAlignment="Right" Margin="2,10,2,0"
+                Click="SidebarToggle_Click" Visibility="{DynamicResource ScaledRailVisibility}"
+                ToolTip="{DynamicResource Str_TT_ExpandSidebar}"/>
+
+        <!-- Right-aligned inside the sidebar lane, so it rides the panel's inner lip and stays
+             put at the window edge while the panel is collapsed. Width is pinned to the rail so
+             the glyphs stay centred on their own strip however wide the lane gets. -->
+        <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Panel.ZIndex="20"
+                    HorizontalAlignment="Right" Width="{DynamicResource RailWidth}" Margin="2,0,0,10"
                     Visibility="{DynamicResource ScaledRailVisibility}">
             <Button x:Name="ProfilesButton" Style="{StaticResource RailButton}" Content="&#xE8D5;"
                     FontSize="15" Click="ProfilesButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Profiles_Title}"/><Run Text=" (F10)"/></TextBlock></Button.ToolTip>
-                <Button.ContextMenu><ContextMenu x:Name="ProfilesMenu" Placement="Right"/></Button.ContextMenu>
             </Button>
             <Button x:Name="HistoryButton" Style="{StaticResource RailButton}"
                     Content="&#xE81C;" FontSize="15"
@@ -308,7 +472,10 @@
         <!-- The family rail is window furniture, not scalable document content. Keeping it
              outside ScaleHost matches KillerShell/KillerNotes and prevents fractional app zoom
              from rasterizing these small glyphs between device pixels. -->
-        <StackPanel Grid.Row="2" Width="{DynamicResource RailWidth}" VerticalAlignment="Bottom"
+        <!-- Left margin tracks the sidebar lane, so this rail stays on the panel's inner lip
+             like the scaled one rather than being stranded at the window edge when history
+             opens. Set from ApplySidebarState, since the lane is animated. -->
+        <StackPanel x:Name="FixedRail" Grid.Row="2" Width="{DynamicResource RailWidth}" VerticalAlignment="Bottom"
                     HorizontalAlignment="Left" Margin="0,0,0,10" Panel.ZIndex="30"
                     Visibility="{DynamicResource FixedRailVisibility}">
             <Button x:Name="FixedProfilesButton" Style="{StaticResource RailButton}" Content="&#xE8D5;"

@@ -31,57 +31,23 @@
         <Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
         <Grid Margin="12">
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-            <TextBlock Text="{DynamicResource Str_History_Title}" Foreground="{DynamicResource TextBrush}"
-                       FontFamily="{DynamicResource WordmarkFont}" FontSize="16" Margin="0,0,0,12"/>
+            <!-- The sidebar carries the title now, so the pane opens straight into the table
+                 and reads like any other scan view. -->
+            <TextBlock Visibility="Collapsed"/>
+            <!-- The entry list moved to the window's history sidebar, so this pane is now just
+                 the selected snapshot's changes and reads like any other scan table. -->
             <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*" MinWidth="130"/>
-                    <ColumnDefinition Width="7"/>
-                    <ColumnDefinition Width="5*" MinWidth="160"/>
-                </Grid.ColumnDefinitions>
-                <Grid Background="{DynamicResource BackgroundBrush}">
-                    <Border Background="{DynamicResource SidebarPaneBrush}" IsHitTestVisible="False"/>
-                    <Border Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
-                <DataGrid x:Name="HistoryList" Style="{StaticResource HistoryGrid}"
-                          HeadersVisibility="None" RowHeight="{x:Static sys:Double.NaN}" CanUserSortColumns="False"
-                          SelectionChanged="HistoryList_SelectionChanged">
+                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                <TextBlock x:Name="HistorySummary" Foreground="{DynamicResource MutedTextBrush}" FontSize="12"
+                           TextWrapping="Wrap" Margin="0,0,0,10"/>
+                <DataGrid x:Name="HistoryChangesGrid" Grid.Row="1" Style="{StaticResource HistoryGrid}">
                     <DataGrid.Columns>
-                        <DataGridTemplateColumn Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Margin="0,5">
-                                        <TextBlock Text="{Binding Target}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock Text="{Binding ScannedAt, StringFormat={}{0:g}}" FontSize="11"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="{DynamicResource Str_History_Change}" Binding="{Binding Change}" Width="90"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Name}" Binding="{Binding Name}" Width="*" MinWidth="80"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Ip}" Binding="{Binding IpAddress}" Width="120"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Type}" Binding="{Binding DeviceType}" Width="130"/>
                     </DataGrid.Columns>
                 </DataGrid>
-                </Grid>
-                <GridSplitter Grid.Column="1" Width="7" HorizontalAlignment="Stretch" Background="Transparent"
-                              ResizeDirection="Columns" ResizeBehavior="PreviousAndNext">
-                    <GridSplitter.Template>
-                        <ControlTemplate TargetType="GridSplitter">
-                            <Grid Background="Transparent">
-                                <Border Width="1" HorizontalAlignment="Center" Background="{DynamicResource PaneBorderBrush}"/>
-                            </Grid>
-                        </ControlTemplate>
-                    </GridSplitter.Template>
-                </GridSplitter>
-                <Grid Grid.Column="2" Margin="8,0,0,0">
-                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                    <TextBlock x:Name="HistorySummary" Foreground="{DynamicResource MutedTextBrush}" FontSize="12"
-                               TextWrapping="Wrap" Margin="0,0,0,10"/>
-                    <DataGrid x:Name="HistoryChangesGrid" Grid.Row="1" Style="{StaticResource HistoryGrid}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="{DynamicResource Str_History_Change}" Binding="{Binding Change}" Width="90"/>
-                            <DataGridTextColumn Header="{DynamicResource Str_Col_Name}" Binding="{Binding Name}" Width="*" MinWidth="80"/>
-                            <DataGridTextColumn Header="{DynamicResource Str_Col_Ip}" Binding="{Binding IpAddress}" Width="120"/>
-                            <DataGridTextColumn Header="{DynamicResource Str_Col_Type}" Binding="{Binding DeviceType}" Width="130"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
             </Grid>
         </Grid>
     </Grid>

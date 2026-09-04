@@ -144,6 +144,8 @@
     <sys:String x:Key="Str_Sys_Maximize">最大化</sys:String>
     <sys:String x:Key="Str_Sys_Close">閉じる</sys:String>
     <sys:String x:Key="Str_TT_Shortcuts">キーボードショートカット (F1)</sys:String>
+    <sys:String x:Key="Str_TT_ExpandSidebar">スキャン履歴を表示</sys:String>
+    <sys:String x:Key="Str_TT_CollapseSidebar">スキャン履歴を隠す</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">キーボードショートカット</sys:String>
     <sys:String x:Key="Str_Sc_Scan">スキャンの開始または停止</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">スキャンの取り消し、またはこれを閉じる</sys:String>

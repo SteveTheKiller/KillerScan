@@ -946,6 +946,39 @@
                 </Style.Triggers>
             </Style>
 
+            <!-- A text action rather than a control: for secondary, housekeeping commands that
+                 sit on a caption row, where a pill would compete with the real buttons. Keeps
+                 the outline color so it still reads as part of the family palette. -->
+            <Style x:Key="LinkButton" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{DynamicResource OutlineTextBrush}"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding" Value="2,0"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                                <TextBlock x:Name="caption" Text="{TemplateBinding Content}"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           FontSize="{TemplateBinding FontSize}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="caption" Property="TextDecorations" Value="Underline"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Opacity" Value="0.7"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.45"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <!-- Card Border Style -->
             <Style x:Key="Card" TargetType="Border">
                 <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>

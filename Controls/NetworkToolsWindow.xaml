@@ -3,35 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Background="Transparent">
     <UserControl.Resources>
-        <!-- Clear log reads as a link, not a control: it is a housekeeping action sitting on a
-             caption row, and a pill there competes with the real buttons up in the tool bar.
-             Keeps the outline red so it still belongs to the family palette. -->
-        <Style x:Key="LinkButton" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{DynamicResource OutlineTextBrush}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="2,0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="Transparent" Padding="{TemplateBinding Padding}">
-                            <TextBlock x:Name="caption" Text="{TemplateBinding Content}"
-                                       Foreground="{TemplateBinding Foreground}"
-                                       FontSize="{TemplateBinding FontSize}"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="caption" Property="TextDecorations" Value="Underline"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Opacity" Value="0.7"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
         <!-- One Keep Alive target. Fixed width so the sparkline geometry stays honest and
              the wrap panel makes tidy columns instead of ragged full-width rows. -->
         <DataTemplate x:Key="WatchCardTemplate">
