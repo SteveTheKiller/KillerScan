@@ -20,7 +20,7 @@
     <!-- Scan bar -->
     <sys:String x:Key="Str_Lbl_Subnet">Alhálózat</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Scan</sys:String>
-    <sys:String x:Key="Str_Btn_DeepScanAll">Minden mélyvizsgálata</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Mély vizsgálat</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Helyi</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Átjáró</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
@@ -53,6 +53,7 @@
     <sys:String x:Key="Str_Export_Csv">Exportálás CSV-ként</sys:String>
     <sys:String x:Key="Str_Export_Html">Exportálás HTML-ként</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Topológia exportálása PNG-ként</sys:String>
+    <sys:String x:Key="Str_Export_ServicesCsv">Szolgáltatások exportálása CSV-be</sys:String>
 
     <!-- Results columns -->
     <sys:String x:Key="Str_Col_Ip">IP-cím</sys:String>
@@ -133,6 +134,7 @@
 
     <!-- Portable footer badge + install dialog -->
     <sys:String x:Key="Str_Portable">HORDOZHATÓ</sys:String>
+    <sys:String x:Key="Str_TT_Portable">Hordozható mód - a KillerScan telepítése</sys:String>
     <sys:String x:Key="Str_InstallBtn">Telepítse a KillerScan programot</sys:String>
     <sys:String x:Key="Str_Install_AllUsers">Telepítés minden felhasználó számára (rendszergazda szükséges)</sys:String>
     <sys:String x:Key="Str_Install_AllUsersNote">Telepítés a Program Filesba minden fiókhoz ezen a számítógépen. A Windows engedélyt fog kérni.</sys:String>
@@ -154,6 +156,14 @@
     <sys:String x:Key="Str_TT_ExpandSidebar">Vizsgálati előzmények megjelenítése</sys:String>
     <sys:String x:Key="Str_TT_CollapseSidebar">Vizsgálati előzmények elrejtése</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Billentyűparancsok</sys:String>
+    <sys:String x:Key="Str_KS_ViewList">LISTA</sys:String>
+    <sys:String x:Key="Str_KS_ViewKeyboard">BILLENTYŰZET</sys:String>
+    <sys:String x:Key="Str_KS_Views">NÉZETEK</sys:String>
+    <sys:String x:Key="Str_KS_Scan">VIZSGÁLAT</sys:String>
+    <sys:String x:Key="Str_KS_Device">ESZKÖZ</sys:String>
+    <sys:String x:Key="Str_KS_Topology">TOPOLÓGIA</sys:String>
+    <sys:String x:Key="Str_KS_Toolbar">ESZKÖZTÁR</sys:String>
+    <sys:String x:Key="Str_KS_App">ALKALMAZÁS</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Indítsa el vagy állítsa le a keresést</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Szakítsa meg a beolvasást, vagy zárja be</sys:String>
     <sys:String x:Key="Str_Sc_Rescan">A kiválasztott gazdagépek mélyreható újrakeresése</sys:String>

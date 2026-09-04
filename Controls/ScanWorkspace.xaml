@@ -181,6 +181,10 @@
                                           Click="ExportTopologyPng_Click" Visibility="Collapsed">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xEB9F;"/></MenuItem.Icon>
                                 </MenuItem>
+                                <MenuItem x:Name="ExportServicesCsvItem" Header="{DynamicResource Str_Export_ServicesCsv}"
+                                          Click="ExportServicesCsv_Click" Visibility="Collapsed">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9F9;"/></MenuItem.Icon>
+                                </MenuItem>
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>

@@ -14,7 +14,7 @@
 
     <sys:String x:Key="Str_Lbl_Subnet">Podsíť</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Skenovat</sys:String>
-    <sys:String x:Key="Str_Btn_DeepScanAll">Hloubkově skenovat vše</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Hloubková kontrola</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Místní</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Brána</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
@@ -45,6 +45,7 @@
     <sys:String x:Key="Str_Export_Csv">Exportovat jako CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Exportovat jako HTML</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Exportovat topologii jako PNG</sys:String>
+    <sys:String x:Key="Str_Export_ServicesCsv">Exportovat služby jako CSV</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">IP adresa</sys:String>
     <sys:String x:Key="Str_Col_Host">Název hostitele</sys:String>
@@ -115,6 +116,7 @@
     <sys:String x:Key="Str_St_NoTarget">Zadejte podsíť, adresu nebo rozsah ke skenování</sys:String>
 
     <sys:String x:Key="Str_Portable">PŘENOSNÁ</sys:String>
+    <sys:String x:Key="Str_TT_Portable">Přenosný režim - nainstalovat KillerScan</sys:String>
     <sys:String x:Key="Str_InstallBtn">Nainstalovat KillerScan</sys:String>
     <sys:String x:Key="Str_Install_AllUsers">Nainstalovat pro všechny uživatele (vyžaduje správce)</sys:String>
     <sys:String x:Key="Str_Install_AllUsersNote">Nainstaluje do složky Program Files pro každý účet v tomto počítači. Windows si vyžádají oprávnění.</sys:String>
@@ -134,6 +136,14 @@
     <sys:String x:Key="Str_TT_ExpandSidebar">Zobrazit historii kontrol</sys:String>
     <sys:String x:Key="Str_TT_CollapseSidebar">Skrýt historii kontrol</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Klávesové zkratky</sys:String>
+    <sys:String x:Key="Str_KS_ViewList">SEZNAM</sys:String>
+    <sys:String x:Key="Str_KS_ViewKeyboard">KLÁVESNICE</sys:String>
+    <sys:String x:Key="Str_KS_Views">ZOBRAZENÍ</sys:String>
+    <sys:String x:Key="Str_KS_Scan">KONTROLA</sys:String>
+    <sys:String x:Key="Str_KS_Device">ZAŘÍZENÍ</sys:String>
+    <sys:String x:Key="Str_KS_Topology">TOPOLOGIE</sys:String>
+    <sys:String x:Key="Str_KS_Toolbar">PANEL NÁSTROJŮ</sys:String>
+    <sys:String x:Key="Str_KS_App">APLIKACE</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Spustit nebo zastavit skenování</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Zrušit skenování nebo zavřít toto okno</sys:String>
     <sys:String x:Key="Str_Sc_Rescan">Hloubkově znovu skenovat vybrané hostitele</sys:String>

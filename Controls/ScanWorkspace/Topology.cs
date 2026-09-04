@@ -35,8 +35,8 @@ namespace KillerScan.Controls
             }
             ResultsGrid.Visibility = _showTopology ? Visibility.Collapsed : Visibility.Visible;
             TopologyPane.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;
-            TopologyOrderButton.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;
             TopologyButton.Tag = _showTopology ? "on" : null;
+            UpdateViewChrome();
 
             PaneTitle.Text = _showTopology ? Loc("Str_Topology_Title") : Loc("Str_DiscoveredDevices");
             if (_showTopology)
@@ -45,6 +45,16 @@ namespace KillerScan.Controls
                 RefreshTopology();
             }
         }
+
+        /// <summary>
+        /// Derives the toolbar chrome that belongs to one view from the current state, rather
+        /// than leaving it as a side effect of whichever toggle happened to run. The arrange
+        /// button used to be shown and hidden inside TopologyButton_Click alone, so any path
+        /// that reached topology without an odd number of trips through that handler left the
+        /// button hidden while the graph was on screen.
+        /// </summary>
+        private void UpdateViewChrome() =>
+            TopologyOrderButton.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;
 
         private void LoadTopologyOrder()
         {

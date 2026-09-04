@@ -946,6 +946,34 @@
                 </Style.Triggers>
             </Style>
 
+            <!-- Caption tab, KillerPDF's SidebarTabBtn: no fill, no underline, no pill. The
+                 active one is shown by foreground alone, set by the caller. -->
+            <Style x:Key="ViewTabButton" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontSize" Value="10"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Padding" Value="2,2,8,2"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <ContentPresenter/>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.35"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <!-- A text action rather than a control: for secondary, housekeeping commands that
                  sit on a caption row, where a pill would compete with the real buttons. Keeps
                  the outline color so it still reads as part of the family palette. -->

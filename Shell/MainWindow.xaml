@@ -552,8 +552,12 @@
                 <StackPanel x:Name="PortableBadge" Grid.ColumnSpan="2" Panel.ZIndex="5"
                             Orientation="Horizontal" HorizontalAlignment="Center"
                             VerticalAlignment="Center" Visibility="Collapsed">
-                    <Button x:Name="InstallBtn" Content="{DynamicResource Str_InstallBtn}"
+                    <!-- Labelled for the state it reports, not the action it offers, matching
+                         KillerPDF: the badge tells you this copy is portable, and the tooltip
+                         says what clicking it does. -->
+                    <Button x:Name="InstallBtn" Content="{DynamicResource Str_Portable}"
                             Click="Install_Click" Style="{StaticResource OutlineButton}"
+                            ToolTip="{DynamicResource Str_TT_Portable}"
                             FontFamily="{DynamicResource ChromeFontFamily}" FontSize="10" Padding="8,1"
                             VerticalAlignment="Center">
                         <Button.Resources>
@@ -680,21 +684,32 @@
                                 <TextBlock x:Name="ShortcutsTitle" Text="Keyboard shortcuts"
                                            Foreground="{DynamicResource TextBrush}"
                                            FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Button x:Name="ShortcutListViewButton" Content="&#xE8FD;" FontFamily="Segoe MDL2 Assets"
-                                            Width="28" Height="24" Margin="0,0,6,0" Click="ShortcutListView_Click"/>
-                                    <Button x:Name="ShortcutMapViewButton" Content="&#xE765;" FontFamily="Segoe MDL2 Assets"
-                                            Width="28" Height="24" Click="ShortcutMapView_Click"/>
+                                <!-- LIST / KEYBOARD, centered, active shown by foreground alone.
+                                     KillerPDF's selector, not a pair of glyph buttons. -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                                            VerticalAlignment="Center">
+                                    <Button x:Name="ShortcutListViewButton" Style="{StaticResource ViewTabButton}"
+                                            Content="{DynamicResource Str_KS_ViewList}"
+                                            Margin="0,0,12,0" Click="ShortcutListView_Click"/>
+                                    <Button x:Name="ShortcutMapViewButton" Style="{StaticResource ViewTabButton}"
+                                            Content="{DynamicResource Str_KS_ViewKeyboard}"
+                                            Click="ShortcutMapView_Click"/>
                                 </StackPanel>
                             </Grid>
                             <ScrollViewer x:Name="ShortcutListHost" Grid.Row="1"
                                           VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                                 <StackPanel>
-                                    <Grid x:Name="ShortcutList">
+                                    <!-- Two authored columns with a fixed gutter, as in KillerPDF.
+                                         Which category lands where is declared in the table, not
+                                         balanced at runtime, so the grouping stays predictable. -->
+                                    <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" MinWidth="112"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="36"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
+                                        <StackPanel x:Name="ShortcutLeftColumn" Grid.Column="0"/>
+                                        <StackPanel x:Name="ShortcutRightColumn" Grid.Column="2"/>
                                     </Grid>
                                     <TextBlock x:Name="ShortcutsHint" Foreground="{DynamicResource MutedTextBrush}"
                                                FontSize="11" TextWrapping="Wrap" Margin="0,14,0,0"/>

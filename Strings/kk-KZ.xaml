@@ -20,7 +20,7 @@
     <!-- Scan bar -->
     <sys:String x:Key="Str_Lbl_Subnet">Ішкі желі</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Сканерлеу</sys:String>
-    <sys:String x:Key="Str_Btn_DeepScanAll">Барлығын терең сканерлеу</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Терең сканерлеу</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Жергілікті</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Шлюз</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
@@ -53,6 +53,7 @@
     <sys:String x:Key="Str_Export_Csv">CSV ретінде экспорттау</sys:String>
     <sys:String x:Key="Str_Export_Html">HTML ретінде экспорттау</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Топологияны PNG ретінде экспорттау</sys:String>
+    <sys:String x:Key="Str_Export_ServicesCsv">Қызметтерді CSV ретінде экспорттау</sys:String>
 
     <!-- Results columns -->
     <sys:String x:Key="Str_Col_Ip">IP мекенжайы</sys:String>
@@ -133,6 +134,7 @@
 
     <!-- Portable footer badge + install dialog -->
     <sys:String x:Key="Str_Portable">ТАСЫМАЛДЫ</sys:String>
+    <sys:String x:Key="Str_TT_Portable">Портативті режим - KillerScan орнату</sys:String>
     <sys:String x:Key="Str_InstallBtn">KillerScan орнату</sys:String>
     <sys:String x:Key="Str_Install_AllUsers">Барлық пайдаланушылар үшін орнату (әкімші құқығы керек)</sys:String>
     <sys:String x:Key="Str_Install_AllUsersNote">Осы компьютердегі барлық тіркелгілер үшін Program Files ішіне орнатады. Windows рұқсат сұрайды.</sys:String>
@@ -154,6 +156,14 @@
     <sys:String x:Key="Str_TT_ExpandSidebar">Сканерлеу тарихын көрсету</sys:String>
     <sys:String x:Key="Str_TT_CollapseSidebar">Сканерлеу тарихын жасыру</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Пернелер тіркесімі</sys:String>
+    <sys:String x:Key="Str_KS_ViewList">ТІЗІМ</sys:String>
+    <sys:String x:Key="Str_KS_ViewKeyboard">ПЕРНЕТАҚТА</sys:String>
+    <sys:String x:Key="Str_KS_Views">КӨРІНІСТЕР</sys:String>
+    <sys:String x:Key="Str_KS_Scan">СКАНЕРЛЕУ</sys:String>
+    <sys:String x:Key="Str_KS_Device">ҚҰРЫЛҒЫ</sys:String>
+    <sys:String x:Key="Str_KS_Topology">ТОПОЛОГИЯ</sys:String>
+    <sys:String x:Key="Str_KS_Toolbar">ҚҰРАЛДАР ТАҚТАСЫ</sys:String>
+    <sys:String x:Key="Str_KS_App">ҚОСЫМША</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Сканерлеуді бастау немесе тоқтату</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Сканерлеуді болдырмау немесе осыны жабу</sys:String>
     <sys:String x:Key="Str_Sc_Rescan">Таңдалған хосттарды терең қайта сканерлеу</sys:String>

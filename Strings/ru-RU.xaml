@@ -20,7 +20,7 @@
     <!-- Scan bar -->
     <sys:String x:Key="Str_Lbl_Subnet">Подсеть</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Сканировать</sys:String>
-    <sys:String x:Key="Str_Btn_DeepScanAll">Глубоко сканировать все</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Глубокое сканирование</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Локальный</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Шлюз</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
@@ -53,6 +53,7 @@
     <sys:String x:Key="Str_Export_Csv">Экспорт в CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Экспорт в HTML</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Экспорт топологии в PNG</sys:String>
+    <sys:String x:Key="Str_Export_ServicesCsv">Экспорт служб в CSV</sys:String>
 
     <!-- Results columns -->
     <sys:String x:Key="Str_Col_Ip">IP-адрес</sys:String>
@@ -133,6 +134,7 @@
 
     <!-- Portable footer badge + install dialog -->
     <sys:String x:Key="Str_Portable">ПОРТАБЕЛЬНЫЙ</sys:String>
+    <sys:String x:Key="Str_TT_Portable">Портативный режим - установить KillerScan</sys:String>
     <sys:String x:Key="Str_InstallBtn">Установить KillerScan</sys:String>
     <sys:String x:Key="Str_Install_AllUsers">Установить для всех пользователей (нужны права администратора)</sys:String>
     <sys:String x:Key="Str_Install_AllUsersNote">Устанавливает в Program Files для всех учетных записей на этом компьютере. Windows запросит разрешение.</sys:String>
@@ -154,6 +156,14 @@
     <sys:String x:Key="Str_TT_ExpandSidebar">Показать историю сканирований</sys:String>
     <sys:String x:Key="Str_TT_CollapseSidebar">Скрыть историю сканирований</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Сочетания клавиш</sys:String>
+    <sys:String x:Key="Str_KS_ViewList">СПИСОК</sys:String>
+    <sys:String x:Key="Str_KS_ViewKeyboard">КЛАВИАТУРА</sys:String>
+    <sys:String x:Key="Str_KS_Views">ВИДЫ</sys:String>
+    <sys:String x:Key="Str_KS_Scan">СКАНИРОВАНИЕ</sys:String>
+    <sys:String x:Key="Str_KS_Device">УСТРОЙСТВО</sys:String>
+    <sys:String x:Key="Str_KS_Topology">ТОПОЛОГИЯ</sys:String>
+    <sys:String x:Key="Str_KS_Toolbar">ПАНЕЛЬ ИНСТРУМЕНТОВ</sys:String>
+    <sys:String x:Key="Str_KS_App">ПРИЛОЖЕНИЕ</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Запустить или остановить сканирование</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Отменить сканирование или закрыть это окно</sys:String>
     <sys:String x:Key="Str_Sc_Rescan">Глубокое пересканирование выбранных хостов</sys:String>

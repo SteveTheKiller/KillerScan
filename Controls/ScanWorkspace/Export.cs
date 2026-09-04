@@ -14,7 +14,11 @@ namespace KillerScan.Controls
         private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
             if (ActiveDevices.Count == 0 || ExportButton.ContextMenu is null) return;
+            // Export follows the view: the graph is only offered while the graph is on screen,
+            // and the service list only while the service view is. CSV and HTML of the device
+            // table stay available throughout, because that is the export people expect.
             ExportTopologyPngItem.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;
+            ExportServicesCsvItem.Visibility = _showServices ? Visibility.Visible : Visibility.Collapsed;
             ExportButton.ContextMenu.PlacementTarget = ExportButton;
             ExportButton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
             ExportButton.ContextMenu.IsOpen = true;
@@ -31,6 +35,33 @@ namespace KillerScan.Controls
             try
             {
                 File.WriteAllText(dlg.FileName, ReportExport.BuildCsv(ActiveDevices), Encoding.UTF8);
+                StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
+            }
+            catch (Exception ex)
+            { MessageBox.Show(string.Format(Loc("Str_Err_Export"), ex.Message), AppInfo.DisplayName, MessageBoxButton.OK, MessageBoxImage.Error); }
+        }
+
+        /// <summary>
+        /// The service view's own export: one row per open port, as the grid shows it, rather
+        /// than one row per device with the ports packed into a single cell.
+        /// </summary>
+        private void ExportServicesCsv_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new FileDialog(FileDialogMode.Save)
+            {
+                Filter = Loc("Str_Filter_Csv") + "|*.csv",
+                FileName = $"KillerScan_Services_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
+            };
+            if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
+            try
+            {
+                // English headers and blanket quoting, matching ReportExport.BuildCsv so both
+                // exports open the same way in a spreadsheet.
+                var text = new StringBuilder();
+                text.AppendLine("Service,Port,Name,IP Address,Type");
+                foreach (var row in ServicesGrid.Items.OfType<ServiceRow>())
+                    text.AppendLine($"\"{row.Service}\",\"{row.Port}\",\"{row.DeviceName}\",\"{row.IpAddress}\",\"{row.DeviceType}\"");
+                File.WriteAllText(dlg.FileName, text.ToString(), Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }
             catch (Exception ex)

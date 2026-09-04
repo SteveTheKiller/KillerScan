@@ -20,7 +20,7 @@
     <!-- Scan bar -->
     <sys:String x:Key="Str_Lbl_Subnet">Sottorete</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Scansiona</sys:String>
-    <sys:String x:Key="Str_Btn_DeepScanAll">Scansione approfondita completa</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Scansione approfondita</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Locale</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Gateway</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
@@ -53,6 +53,7 @@
     <sys:String x:Key="Str_Export_Csv">Esporta come CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Esporta come HTML</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Esporta topologia come PNG</sys:String>
+    <sys:String x:Key="Str_Export_ServicesCsv">Esporta servizi come CSV</sys:String>
 
     <!-- Results columns -->
     <sys:String x:Key="Str_Col_Ip">Indirizzo IP</sys:String>
@@ -133,6 +134,7 @@
 
     <!-- Portable footer badge + install dialog -->
     <sys:String x:Key="Str_Portable">PORTATILE</sys:String>
+    <sys:String x:Key="Str_TT_Portable">Modalità portatile - installa KillerScan</sys:String>
     <sys:String x:Key="Str_InstallBtn">Installa KillerScan</sys:String>
     <sys:String x:Key="Str_Install_AllUsers">Installa per tutti gli utenti (richiede privilegi di amministratore)</sys:String>
     <sys:String x:Key="Str_Install_AllUsersNote">Installa in Program Files per tutti gli account di questo PC. Windows chiederà l'autorizzazione.</sys:String>
@@ -154,6 +156,14 @@
     <sys:String x:Key="Str_TT_ExpandSidebar">Mostra cronologia scansioni</sys:String>
     <sys:String x:Key="Str_TT_CollapseSidebar">Nascondi cronologia scansioni</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Scorciatoie da tastiera</sys:String>
+    <sys:String x:Key="Str_KS_ViewList">ELENCO</sys:String>
+    <sys:String x:Key="Str_KS_ViewKeyboard">TASTIERA</sys:String>
+    <sys:String x:Key="Str_KS_Views">VISTE</sys:String>
+    <sys:String x:Key="Str_KS_Scan">SCANSIONE</sys:String>
+    <sys:String x:Key="Str_KS_Device">DISPOSITIVO</sys:String>
+    <sys:String x:Key="Str_KS_Topology">TOPOLOGIA</sys:String>
+    <sys:String x:Key="Str_KS_Toolbar">BARRA STRUMENTI</sys:String>
+    <sys:String x:Key="Str_KS_App">APPLICAZIONE</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Avvia o interrompi una scansione</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Annulla la scansione, o chiudi questa finestra</sys:String>
     <sys:String x:Key="Str_Sc_Rescan">Scansione approfondita degli host selezionati</sys:String>

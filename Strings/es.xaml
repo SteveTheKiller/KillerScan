@@ -13,7 +13,7 @@
 
     <sys:String x:Key="Str_Lbl_Subnet">Subred</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Escanear</sys:String>
-    <sys:String x:Key="Str_Btn_DeepScanAll">Escanear todo en profundidad</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Escaneo profundo</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Local</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Puerta de enlace</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
@@ -39,6 +39,7 @@
     <sys:String x:Key="Str_Export_Csv">Exportar como CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Exportar como HTML</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Exportar topología como PNG</sys:String>
+    <sys:String x:Key="Str_Export_ServicesCsv">Exportar servicios como CSV</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">Dirección IP</sys:String>
     <sys:String x:Key="Str_Col_Host">Nombre de host</sys:String>
@@ -108,6 +109,7 @@
 
     <!-- Portable footer badge -->
     <sys:String x:Key="Str_Portable">PORTÁTIL</sys:String>
+    <sys:String x:Key="Str_TT_Portable">Modo portátil - instalar KillerScan</sys:String>
     <sys:String x:Key="Str_InstallBtn">Instalar KillerScan</sys:String>
 
     <!-- Added 1.5.4: app size, multi-target scan errors, all-users install, window menu, shortcuts -->
@@ -136,6 +138,14 @@
     <sys:String x:Key="Str_TT_ExpandSidebar">Mostrar historial de escaneos</sys:String>
     <sys:String x:Key="Str_TT_CollapseSidebar">Ocultar historial de escaneos</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Atajos de teclado</sys:String>
+    <sys:String x:Key="Str_KS_ViewList">LISTA</sys:String>
+    <sys:String x:Key="Str_KS_ViewKeyboard">TECLADO</sys:String>
+    <sys:String x:Key="Str_KS_Views">VISTAS</sys:String>
+    <sys:String x:Key="Str_KS_Scan">ESCANEO</sys:String>
+    <sys:String x:Key="Str_KS_Device">DISPOSITIVO</sys:String>
+    <sys:String x:Key="Str_KS_Topology">TOPOLOGÍA</sys:String>
+    <sys:String x:Key="Str_KS_Toolbar">BARRA DE HERRAMIENTAS</sys:String>
+    <sys:String x:Key="Str_KS_App">APLICACIÓN</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Iniciar o detener un escaneo</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Cancelar el escaneo o cerrar esto</sys:String>
     <sys:String x:Key="Str_Sc_Rescan">Reescaneo profundo de los hosts seleccionados</sys:String>

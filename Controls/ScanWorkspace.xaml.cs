@@ -133,6 +133,8 @@ namespace KillerScan.Controls
             bool services = string.Equals(view, "services", StringComparison.OrdinalIgnoreCase);
             if (_showTopology != topology) TopologyButton_Click(this, new RoutedEventArgs());
             if (_showServices != services) ServicesButton_Click(this, new RoutedEventArgs());
+            // Last word on the view's own chrome, so it is right however we arrived here.
+            UpdateViewChrome();
             StateChanged?.Invoke(this, EventArgs.Empty);
         }
         public void Export() => ExportButton_Click(ExportButton, new RoutedEventArgs());

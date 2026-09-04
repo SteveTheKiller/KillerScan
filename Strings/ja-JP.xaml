@@ -19,7 +19,7 @@
     <!-- Scan bar -->
     <sys:String x:Key="Str_Lbl_Subnet">サブネット</sys:String>
     <sys:String x:Key="Str_Btn_Scan">スキャン</sys:String>
-    <sys:String x:Key="Str_Btn_DeepScanAll">すべてを詳細スキャン</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">詳細スキャン</sys:String>
     <sys:String x:Key="Str_Lbl_Local">ローカル</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">ゲートウェイ</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
@@ -52,6 +52,7 @@
     <sys:String x:Key="Str_Export_Csv">CSV としてエクスポート</sys:String>
     <sys:String x:Key="Str_Export_Html">HTML としてエクスポート</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">トポロジを PNG としてエクスポート</sys:String>
+    <sys:String x:Key="Str_Export_ServicesCsv">サービスを CSV でエクスポート</sys:String>
 
     <!-- Results columns -->
     <sys:String x:Key="Str_Col_Ip">IP アドレス</sys:String>
@@ -119,6 +120,7 @@
 
     <!-- Portable footer badge -->
     <sys:String x:Key="Str_Portable">ポータブル</sys:String>
+    <sys:String x:Key="Str_TT_Portable">ポータブルモード - KillerScan をインストール</sys:String>
     <sys:String x:Key="Str_InstallBtn">KillerScan をインストール</sys:String>
 
     <!-- Added 1.5.4: app size, multi-target scan errors, all-users install, window menu, shortcuts -->
@@ -147,6 +149,14 @@
     <sys:String x:Key="Str_TT_ExpandSidebar">スキャン履歴を表示</sys:String>
     <sys:String x:Key="Str_TT_CollapseSidebar">スキャン履歴を隠す</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">キーボードショートカット</sys:String>
+    <sys:String x:Key="Str_KS_ViewList">リスト</sys:String>
+    <sys:String x:Key="Str_KS_ViewKeyboard">キーボード</sys:String>
+    <sys:String x:Key="Str_KS_Views">ビュー</sys:String>
+    <sys:String x:Key="Str_KS_Scan">スキャン</sys:String>
+    <sys:String x:Key="Str_KS_Device">デバイス</sys:String>
+    <sys:String x:Key="Str_KS_Topology">トポロジ</sys:String>
+    <sys:String x:Key="Str_KS_Toolbar">ツールバー</sys:String>
+    <sys:String x:Key="Str_KS_App">アプリ</sys:String>
     <sys:String x:Key="Str_Sc_Scan">スキャンの開始または停止</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">スキャンの取り消し、またはこれを閉じる</sys:String>
     <sys:String x:Key="Str_Sc_Rescan">選択したホストを詳細に再スキャン</sys:String>

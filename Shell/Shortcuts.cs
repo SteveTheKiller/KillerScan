@@ -12,49 +12,71 @@ namespace KillerScan.Shell
     // The shortcut table feeds both views so their gestures and descriptions stay together.
     public partial class MainWindow
     {
-        // (gesture, description resource key). Order is the list order and map tooltip order.
-        private static readonly (string Keys, string Desc)[] ShortcutRows =
+        // (gesture, description resource key, category). Order is the list order within a
+        // category and the map tooltip order. The category drives both the list heading a row
+        // sits under and the color its key takes on the keyboard map.
+        private static readonly (string Keys, string Desc, string Cat)[] ShortcutRows =
         [
-            ("Ctrl + T",        "Str_View_Scan"),
-            ("Ctrl + Shift + T", "Str_Workspace_Terminal"),
-            ("Ctrl + Shift + 1", "Str_Toolbar_SmallIcons"),
-            ("Ctrl + Shift + 2", "Str_Toolbar_LargeIcons"),
-            ("Ctrl + Shift + 3", "Str_Toolbar_TextNone"),
-            ("Ctrl + Shift + 4", "Str_Toolbar_TextBeside"),
-            ("Ctrl + Shift + 5", "Str_Toolbar_TextUnder"),
-            ("Ctrl + Shift + 6", "Str_Toolbar_TextOnly"),
-            ("F2",              "Str_View_KeepAlive"),
-            ("F3",              "Str_Diag_Title"),
-            ("F5",              "Str_Sc_Scan"),
-            ("F6",              "Str_History_Title"),
-            ("F9",              "Str_TT_Topology"),
-            ("F10",             "Str_Profiles_Title"),
-            ("F7",              "Str_Sc_CycleTopologyOrder"),
-            ("F8",              "Str_Services_Title"),
-            ("Ctrl + 1",        "Str_Topology_Role"),
-            ("Ctrl + 2",        "Str_Col_Type"),
-            ("Ctrl + 3",        "Str_Col_Ip"),
-            ("Ctrl + 4",        "Str_Col_Vendor"),
-            ("Esc",             "Str_Sc_Cancel"),
-            ("Ctrl + R",        "Str_Sc_Rescan"),
-            ("Ctrl + F",        "Str_Sc_Subnet"),
-            ("Ctrl + Shift + F", "Str_FilterPlaceholder"),
-            ("Ctrl + A",        "Str_Sc_SelectAll"),
-            ("Ctrl + E",        "Str_Sc_Export"),
-            ("Enter",           "Str_Sc_Browser"),
-            ("Ctrl + P",        "Str_Sc_Ping"),
-            ("Ctrl + D",        "Str_Sc_Rdp"),
-            ("Ctrl + S",        "Str_Sc_Ssh"),
-            ("Ctrl + Shift + S", "Str_Sc_SshAs"),
-            ("Ctrl + C",        "Str_Sc_CopyIp"),
-            ("Ctrl + Shift + C", "Str_Sc_CopyMac"),
-            ("Ctrl + Alt + C",  "Str_Sc_CopyHost"),
-            ("Shift + F10",     "Str_Sc_DeviceMenu"),
-            ("Ctrl + Shift + +", "Str_Sc_AppBigger"),
-            ("Ctrl + Shift + -", "Str_Sc_AppSmaller"),
-            ("Ctrl + Shift + 0", "Str_Sc_AppReset"),
-            ("F1",              "Str_Sc_Help"),
-            ("F12",             "Str_Sc_About"),
+            ("Ctrl + T",        "Str_View_Scan",            "Views"),
+            ("F8",              "Str_Services_Title",       "Views"),
+            ("F9",              "Str_TT_Topology",          "Views"),
+            ("F2",              "Str_View_KeepAlive",       "Views"),
+            ("Ctrl + Shift + T", "Str_Workspace_Terminal",  "Views"),
+            ("F6",              "Str_History_Title",        "Views"),
+            ("F10",             "Str_Profiles_Title",       "Views"),
+
+            ("F5",              "Str_Sc_Scan",              "Scan"),
+            ("Esc",             "Str_Sc_Cancel",            "Scan"),
+            ("Ctrl + R",        "Str_Sc_Rescan",            "Scan"),
+            ("Ctrl + F",        "Str_Sc_Subnet",            "Scan"),
+            ("Ctrl + Shift + F", "Str_FilterPlaceholder",   "Scan"),
+            ("Ctrl + A",        "Str_Sc_SelectAll",         "Scan"),
+            ("Ctrl + E",        "Str_Sc_Export",            "Scan"),
+
+            ("Enter",           "Str_Sc_Browser",           "Device"),
+            ("F3",              "Str_Diag_Title",           "Device"),
+            ("Ctrl + P",        "Str_Sc_Ping",              "Device"),
+            ("Ctrl + D",        "Str_Sc_Rdp",               "Device"),
+            ("Ctrl + S",        "Str_Sc_Ssh",               "Device"),
+            ("Ctrl + Shift + S", "Str_Sc_SshAs",            "Device"),
+            ("Ctrl + C",        "Str_Sc_CopyIp",            "Device"),
+            ("Ctrl + Shift + C", "Str_Sc_CopyMac",          "Device"),
+            ("Ctrl + Alt + C",  "Str_Sc_CopyHost",          "Device"),
+            ("Shift + F10",     "Str_Sc_DeviceMenu",        "Device"),
+
+            ("F7",              "Str_Sc_CycleTopologyOrder", "Topology"),
+            ("Ctrl + 1",        "Str_Topology_Role",        "Topology"),
+            ("Ctrl + 2",        "Str_Col_Type",             "Topology"),
+            ("Ctrl + 3",        "Str_Col_Ip",               "Topology"),
+            ("Ctrl + 4",        "Str_Col_Vendor",           "Topology"),
+
+            ("Ctrl + Shift + 1", "Str_Toolbar_SmallIcons",  "Toolbar"),
+            ("Ctrl + Shift + 2", "Str_Toolbar_LargeIcons",  "Toolbar"),
+            ("Ctrl + Shift + 3", "Str_Toolbar_TextNone",    "Toolbar"),
+            ("Ctrl + Shift + 4", "Str_Toolbar_TextBeside",  "Toolbar"),
+            ("Ctrl + Shift + 5", "Str_Toolbar_TextUnder",   "Toolbar"),
+            ("Ctrl + Shift + 6", "Str_Toolbar_TextOnly",    "Toolbar"),
+
+            ("Ctrl + Shift + +", "Str_Sc_AppBigger",        "App"),
+            ("Ctrl + Shift + -", "Str_Sc_AppSmaller",       "App"),
+            ("Ctrl + Shift + 0", "Str_Sc_AppReset",         "App"),
+            ("F1",              "Str_Sc_Help",              "App"),
+            ("F12",             "Str_Sc_About",             "App"),
+        ];
+
+        /// <summary>
+        /// Heading and column for each category, in the order the sections appear. The split is
+        /// authored rather than balanced at runtime, so a new shortcut cannot silently move a
+        /// whole section across the card.
+        /// </summary>
+        private static readonly (string Cat, string TitleKey, bool Right)[] ShortcutGroups =
+        [
+            ("Views",    "Str_KS_Views",    false),
+            ("Scan",     "Str_KS_Scan",     false),
+            ("Device",   "Str_KS_Device",   false),
+            ("Topology", "Str_KS_Topology", true),
+            ("Toolbar",  "Str_KS_Toolbar",  true),
+            ("App",      "Str_KS_App",      true),
         ];
 
         private static readonly (string Id, string Cap, double Width)[][] KeyboardRows =
@@ -175,49 +197,88 @@ namespace KillerScan.Shell
 
             ShortcutListHost.Visibility = map ? Visibility.Collapsed : Visibility.Visible;
             ShortcutMapHost.Visibility = map ? Visibility.Visible : Visibility.Collapsed;
-            ShortcutListViewButton.Opacity = map ? 0.55 : 1;
-            ShortcutMapViewButton.Opacity = map ? 1 : 0.55;
-            ShortcutCardGrid.MaxWidth = map ? 900 : 420;
+            // Active tab is foreground only, matching KillerPDF.
+            ShortcutListViewButton.SetResourceReference(ForegroundProperty,
+                map ? "MutedTextBrush" : "PrimaryBrush");
+            ShortcutMapViewButton.SetResourceReference(ForegroundProperty,
+                map ? "PrimaryBrush" : "MutedTextBrush");
+            // Two columns need room; the map needs more still.
+            ShortcutCardGrid.MaxWidth = map ? 900 : 760;
             if (map) BuildKeyboardMap(); else BuildShortcutRows();
         }
 
         /// <summary>Fill the list once. Rebuilt on every show so a language switch is picked up.</summary>
         private void BuildShortcutRows()
         {
-            ShortcutList.RowDefinitions.Clear();
-            ShortcutList.Children.Clear();
-
-            for (int i = 0; i < ShortcutRows.Length; i++)
-            {
-                var (keys, descKey) = ShortcutRows[i];
-                ShortcutList.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-
-                var k = new TextBlock
-                {
-                    Text = keys,
-                    FontFamily = new System.Windows.Media.FontFamily("Consolas"),
-                    FontSize = 12,
-                    Margin = new Thickness(0, 3, 16, 3),
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                };
-                k.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryBrush");
-                Grid.SetRow(k, i); Grid.SetColumn(k, 0);
-                ShortcutList.Children.Add(k);
-
-                var d = new TextBlock
-                {
-                    Text = ShortcutDescription(keys, descKey),
-                    FontSize = 12,
-                    Margin = new Thickness(0, 3, 0, 3),
-                    TextWrapping = TextWrapping.Wrap,
-                };
-                d.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
-                Grid.SetRow(d, i); Grid.SetColumn(d, 1);
-                ShortcutList.Children.Add(d);
-            }
-
+            BuildShortcutColumn(ShortcutLeftColumn, right: false);
+            BuildShortcutColumn(ShortcutRightColumn, right: true);
             ShortcutsTitle.Text = Loc("Str_Shortcuts_Title");
             ShortcutsHint.Text = Loc("Str_Sc_Hint");
+        }
+
+        /// <summary>
+        /// One column of category sections. Each column is its own shared-size scope, so the
+        /// gesture column sizes to the widest gesture in that column rather than being dragged
+        /// wide by a long one on the other side.
+        /// </summary>
+        private void BuildShortcutColumn(StackPanel host, bool right)
+        {
+            host.Children.Clear();
+            Grid.SetIsSharedSizeScope(host, true);
+
+            var groups = ShortcutGroups.Where(g => g.Right == right).ToArray();
+            for (int s = 0; s < groups.Length; s++)
+            {
+                var group = groups[s];
+                var header = new TextBlock
+                {
+                    Text = Loc(group.TitleKey),
+                    FontFamily = new FontFamily("Segoe UI"),
+                    FontSize = 11,
+                    FontWeight = FontWeights.SemiBold,
+                    Margin = new Thickness(0, s == 0 ? 0 : 14, 0, 5),
+                };
+                // The category's own color, the same key the keyboard map lights its keys with,
+                // so a section reads as the same color in both views.
+                header.SetResourceReference(TextBlock.ForegroundProperty, "KsCat" + group.Cat);
+                host.Children.Add(header);
+
+                var rows = ShortcutRows.Where(r => r.Cat == group.Cat).ToArray();
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    var (keys, descKey, _) = rows[i];
+                    var row = new Grid { Margin = new Thickness(0, 0, 0, i == rows.Length - 1 ? 0 : 4) };
+                    row.ColumnDefinitions.Add(new ColumnDefinition
+                    { Width = GridLength.Auto, SharedSizeGroup = "KsKeys", MinWidth = 112 });
+                    row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+                    var k = new TextBlock
+                    {
+                        Text = keys,
+                        FontFamily = new FontFamily("Consolas"),
+                        FontSize = 11,
+                        Margin = new Thickness(0, 0, 12, 0),
+                        VerticalAlignment = VerticalAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Right,
+                    };
+                    k.SetResourceReference(TextBlock.ForegroundProperty, "MutedTextBrush");
+                    Grid.SetColumn(k, 0);
+                    row.Children.Add(k);
+
+                    var d = new TextBlock
+                    {
+                        Text = ShortcutDescription(keys, descKey),
+                        FontSize = 11,
+                        TextWrapping = TextWrapping.Wrap,
+                        VerticalAlignment = VerticalAlignment.Center,
+                    };
+                    d.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
+                    Grid.SetColumn(d, 1);
+                    row.Children.Add(d);
+
+                    host.Children.Add(row);
+                }
+            }
         }
 
         private void BuildKeyboardMap()

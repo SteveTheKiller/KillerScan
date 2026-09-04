@@ -13,7 +13,7 @@
 
     <sys:String x:Key="Str_Lbl_Subnet">Sous-réseau</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Scanner</sys:String>
-    <sys:String x:Key="Str_Btn_DeepScanAll">Tout analyser en profondeur</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Analyse approfondie</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Local</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Passerelle</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
@@ -39,6 +39,7 @@
     <sys:String x:Key="Str_Export_Csv">Exporter en CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Exporter en HTML</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Exporter la topologie en PNG</sys:String>
+    <sys:String x:Key="Str_Export_ServicesCsv">Exporter les services en CSV</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">Adresse IP</sys:String>
     <sys:String x:Key="Str_Col_Host">Nom d'hôte</sys:String>
@@ -108,6 +109,7 @@
 
     <!-- Portable footer badge -->
     <sys:String x:Key="Str_Portable">PORTABLE</sys:String>
+    <sys:String x:Key="Str_TT_Portable">Mode portable - installer KillerScan</sys:String>
     <sys:String x:Key="Str_InstallBtn">Installer KillerScan</sys:String>
 
     <!-- Added 1.5.4: app size, multi-target scan errors, all-users install, window menu, shortcuts -->
@@ -136,6 +138,14 @@
     <sys:String x:Key="Str_TT_ExpandSidebar">Afficher l'historique des analyses</sys:String>
     <sys:String x:Key="Str_TT_CollapseSidebar">Masquer l'historique des analyses</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Raccourcis clavier</sys:String>
+    <sys:String x:Key="Str_KS_ViewList">LISTE</sys:String>
+    <sys:String x:Key="Str_KS_ViewKeyboard">CLAVIER</sys:String>
+    <sys:String x:Key="Str_KS_Views">VUES</sys:String>
+    <sys:String x:Key="Str_KS_Scan">ANALYSE</sys:String>
+    <sys:String x:Key="Str_KS_Device">APPAREIL</sys:String>
+    <sys:String x:Key="Str_KS_Topology">TOPOLOGIE</sys:String>
+    <sys:String x:Key="Str_KS_Toolbar">BARRE D'OUTILS</sys:String>
+    <sys:String x:Key="Str_KS_App">APPLICATION</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Démarrer ou arrêter une analyse</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Annuler l'analyse, ou fermer ceci</sys:String>
     <sys:String x:Key="Str_Sc_Rescan">Réanalyser en profondeur les hôtes sélectionnés</sys:String>

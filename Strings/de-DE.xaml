@@ -13,7 +13,7 @@
 
     <sys:String x:Key="Str_Lbl_Subnet">Subnetz</sys:String>
     <sys:String x:Key="Str_Btn_Scan">Scannen</sys:String>
-    <sys:String x:Key="Str_Btn_DeepScanAll">Alle tief scannen</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Tiefen-Scan</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Lokal</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Gateway</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
@@ -39,6 +39,7 @@
     <sys:String x:Key="Str_Export_Csv">Als CSV exportieren</sys:String>
     <sys:String x:Key="Str_Export_Html">Als HTML exportieren</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Topologie als PNG exportieren</sys:String>
+    <sys:String x:Key="Str_Export_ServicesCsv">Dienste als CSV exportieren</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">IP-Adresse</sys:String>
     <sys:String x:Key="Str_Col_Host">Hostname</sys:String>
@@ -108,6 +109,7 @@
 
     <!-- Portable footer badge -->
     <sys:String x:Key="Str_Portable">PORTABEL</sys:String>
+    <sys:String x:Key="Str_TT_Portable">Portabler Modus - KillerScan installieren</sys:String>
     <sys:String x:Key="Str_InstallBtn">KillerScan installieren</sys:String>
 
     <!-- Added 1.5.4: app size, multi-target scan errors, all-users install, window menu, shortcuts -->
@@ -136,6 +138,14 @@
     <sys:String x:Key="Str_TT_ExpandSidebar">Scanverlauf einblenden</sys:String>
     <sys:String x:Key="Str_TT_CollapseSidebar">Scanverlauf ausblenden</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">Tastenkürzel</sys:String>
+    <sys:String x:Key="Str_KS_ViewList">LISTE</sys:String>
+    <sys:String x:Key="Str_KS_ViewKeyboard">TASTATUR</sys:String>
+    <sys:String x:Key="Str_KS_Views">ANSICHTEN</sys:String>
+    <sys:String x:Key="Str_KS_Scan">SCAN</sys:String>
+    <sys:String x:Key="Str_KS_Device">GERÄT</sys:String>
+    <sys:String x:Key="Str_KS_Topology">TOPOLOGIE</sys:String>
+    <sys:String x:Key="Str_KS_Toolbar">SYMBOLLEISTE</sys:String>
+    <sys:String x:Key="Str_KS_App">ANWENDUNG</sys:String>
     <sys:String x:Key="Str_Sc_Scan">Scan starten oder stoppen</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">Scan abbrechen oder dies schließen</sys:String>
     <sys:String x:Key="Str_Sc_Rescan">Ausgewählte Hosts tief erneut scannen</sys:String>

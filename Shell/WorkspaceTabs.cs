@@ -7,9 +7,9 @@ namespace KillerScan.Shell
     {
         private enum ToolbarIconSize { Small, Large }
         private enum ToolbarLabelMode { None, Beside, Under, Only }
-        // Large icons with the caption beside them is the default: the toolbar carries only a
-        // handful of views, so it has the width for it, and it reads without a squint.
-        private ToolbarIconSize _toolbarIconSize = ToolbarIconSize.Large;
+        // Small icons with the caption beside them: the bar also carries the target box, the
+        // scan buttons, filter and arrange, and large icons crowd them out at ordinary widths.
+        private ToolbarIconSize _toolbarIconSize = ToolbarIconSize.Small;
         private ToolbarLabelMode _toolbarLabelMode = ToolbarLabelMode.Beside;
         private readonly Dictionary<Button, (string Glyph, string Key)> _viewAppearance = [];
         private readonly ContextMenu _toolbarMenu = new();

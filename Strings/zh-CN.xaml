@@ -13,7 +13,7 @@
 
     <sys:String x:Key="Str_Lbl_Subnet">子网</sys:String>
     <sys:String x:Key="Str_Btn_Scan">扫描</sys:String>
-    <sys:String x:Key="Str_Btn_DeepScanAll">深度扫描全部</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">深度扫描</sys:String>
     <sys:String x:Key="Str_Lbl_Local">本地</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">网关</sys:String>
     <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
@@ -39,6 +39,7 @@
     <sys:String x:Key="Str_Export_Csv">导出为 CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">导出为 HTML</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">将拓扑导出为 PNG</sys:String>
+    <sys:String x:Key="Str_Export_ServicesCsv">将服务导出为 CSV</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">IP 地址</sys:String>
     <sys:String x:Key="Str_Col_Host">主机名</sys:String>
@@ -108,6 +109,7 @@
 
     <!-- Portable footer badge -->
     <sys:String x:Key="Str_Portable">便携版</sys:String>
+    <sys:String x:Key="Str_TT_Portable">便携模式 - 安装 KillerScan</sys:String>
     <sys:String x:Key="Str_InstallBtn">安装 KillerScan</sys:String>
 
     <!-- Added 1.5.4: app size, multi-target scan errors, all-users install, window menu, shortcuts -->
@@ -136,6 +138,14 @@
     <sys:String x:Key="Str_TT_ExpandSidebar">显示扫描历史</sys:String>
     <sys:String x:Key="Str_TT_CollapseSidebar">隐藏扫描历史</sys:String>
     <sys:String x:Key="Str_Shortcuts_Title">键盘快捷键</sys:String>
+    <sys:String x:Key="Str_KS_ViewList">列表</sys:String>
+    <sys:String x:Key="Str_KS_ViewKeyboard">键盘</sys:String>
+    <sys:String x:Key="Str_KS_Views">视图</sys:String>
+    <sys:String x:Key="Str_KS_Scan">扫描</sys:String>
+    <sys:String x:Key="Str_KS_Device">设备</sys:String>
+    <sys:String x:Key="Str_KS_Topology">拓扑</sys:String>
+    <sys:String x:Key="Str_KS_Toolbar">工具栏</sys:String>
+    <sys:String x:Key="Str_KS_App">应用</sys:String>
     <sys:String x:Key="Str_Sc_Scan">开始或停止扫描</sys:String>
     <sys:String x:Key="Str_Sc_Cancel">取消扫描，或关闭此窗口</sys:String>
     <sys:String x:Key="Str_Sc_Rescan">深度重新扫描所选主机</sys:String>
