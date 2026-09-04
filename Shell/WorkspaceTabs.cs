@@ -190,6 +190,16 @@ namespace KillerScan.Shell
             FitToolbarViews();
         }
 
+        /// <summary>
+        /// Decides whether the view buttons still fit beside the active view's own controls.
+        /// </summary>
+        /// <remarks>
+        /// The view buttons are what gives way, always. The input box and its buttons are what
+        /// the window is FOR in that view, so they keep their full width and the buttons fold
+        /// into the overflow menu around them. The budget is measured from the active toolbar
+        /// rather than assumed, because Scan's bar and Keep Alive's are different widths and a
+        /// fixed allowance left one of them wrapping onto a second row.
+        /// </remarks>
         private void FitToolbarViews()
         {
             if (_workspaceToolbar.ActualWidth <= 0) return;
@@ -199,7 +209,16 @@ namespace KillerScan.Shell
                 button.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
                 width += button.DesiredSize.Width;
             }
-            bool overflow = width > _workspaceToolbar.ActualWidth - 240;
+
+            double needed = 0;
+            string key = _viewToolbars.ContainsKey(_workspaceView) ? _workspaceView : "scan";
+            if (_viewToolbars.TryGetValue(key, out var toolbar))
+            {
+                toolbar.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                needed = toolbar.DesiredSize.Width + toolbar.Margin.Left + toolbar.Margin.Right;
+            }
+
+            bool overflow = width > _workspaceToolbar.ActualWidth - needed;
             _workspaceNavigation.Visibility = overflow ? Visibility.Collapsed : Visibility.Visible;
             _toolbarOverflow.Visibility = overflow ? Visibility.Visible : Visibility.Collapsed;
         }

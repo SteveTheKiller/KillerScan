@@ -153,7 +153,10 @@
                         <!-- Detached into the workspace toolbar at startup, so Keep Alive's input
                              sits on the one bar at the top of the window instead of the pane
                              carrying a second one. Heading stays here as the fallback caption. -->
-                        <WrapPanel x:Name="ToolBar" Margin="8,4">
+                        <!-- StackPanel, not a WrapPanel: on the shared bar a wrap turns a narrow
+                             window into two toolbar rows. The view buttons move into the overflow
+                             button instead (FitToolbarViews), which is what gives way first. -->
+                        <StackPanel x:Name="ToolBar" Orientation="Horizontal" Margin="8,4">
                             <TextBlock x:Name="Heading" FontSize="12" FontWeight="Bold" Margin="0,0,8,0"
                                        Visibility="Collapsed"
                                        Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
@@ -163,7 +166,7 @@
                             <Button x:Name="StartButton" Style="{StaticResource OutlineButton}" Click="Start_Click" FontSize="12" Padding="8,3" Margin="0,0,6,0"/>
                             <Button x:Name="StopButton" Content="{DynamicResource Str_Watch_Stop}" Style="{StaticResource OutlineButton}" Click="Stop_Click" IsEnabled="False" FontSize="12" Padding="8,3" Margin="0,0,6,0"/>
                             <Button Content="{DynamicResource Str_Watch_Copy}" Style="{StaticResource OutlineButton}" Click="Copy_Click" FontSize="12" Padding="8,3"/>
-                        </WrapPanel>
+                        </StackPanel>
                         <TextBlock x:Name="Status" TextWrapping="Wrap" Foreground="{DynamicResource PrimaryBrush}" Margin="8,0,8,4">
                             <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers>
                                 <Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed"/></Trigger>

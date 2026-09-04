@@ -66,6 +66,8 @@ namespace KillerScan.Shell
             string key = _viewToolbars.ContainsKey(_workspaceView) ? _workspaceView : "scan";
             foreach (var pair in _viewToolbars)
                 pair.Value.Visibility = pair.Key == key ? Visibility.Visible : Visibility.Collapsed;
+            // The bars are different widths, so what fits beside them changes with the view.
+            FitToolbarViews();
         }
 
         private void ShowWorkspaceContent(FrameworkElement content, string view)
