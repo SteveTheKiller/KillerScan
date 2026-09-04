@@ -121,6 +121,8 @@ namespace KillerScan.Controls
                 _cards.Add(card);
                 _targets.Add(new WatchTarget(address, card));
             }
+            // The checks are their own sweep alongside the ping loop, not a step inside it.
+            RunAllChecks();
             while (_targets.Count > 0)
             {
                 token.ThrowIfCancellationRequested();
@@ -184,19 +186,19 @@ namespace KillerScan.Controls
         internal event Action<string>? DiagnoseRequested;
 
         // ---- Card details -------------------------------------------------------------
-        // Checks run against whichever card is expanded, cancelled and restarted whenever the
-        // selection moves, and are entirely separate from the watch loop's own cancellation.
+        // Every card shows its checks, so they run for the whole set when a run starts rather
+        // than following the selection. They share one cancellation source, separate from the
+        // watch loop's, so stopping or restarting the run drops the whole sweep at once.
 
-        private void Card_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            _checks?.Cancel();
-            if (Cards.SelectedItem is not WatchCard card) return;
-            // Ask the shell for this target's scan record before probing, so the checks cover
-            // its discovered ports. Guarded on the cache, so the shell calling back into
-            // ShowDetails cannot bounce between the two.
-            if (!_knownPorts.ContainsKey(card.Address)) DiagnoseRequested?.Invoke(card.Address);
-            RunChecks(card);
-        }
+        /// <summary>
+        /// How many targets are inspected at once. Watching one or two devices is the ordinary
+        /// case and runs unthrottled either way; the cap is here for the select-a-dozen case,
+        /// where an unbounded sweep would put a traceroute and a port walk on every one of them
+        /// at the same moment.
+        /// </summary>
+        private const int MaxConcurrentChecks = 4;
+
+        private SemaphoreSlim? _checkSlots;
 
         /// <summary>Expands a target's card, adding it to the run if it is not already watched.</summary>
         internal void ShowDetails(string address, IEnumerable<int> ports)
@@ -211,20 +213,44 @@ namespace KillerScan.Controls
         private void CardDiagnose_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as FrameworkElement)?.DataContext is not WatchCard card) return;
-            Cards.SelectedItem = card;
-            RunChecks(card);
+            RunChecks(card, _checks?.Token ?? CancellationToken.None);
         }
 
-        private async void RunChecks(WatchCard card)
+        /// <summary>
+        /// Inspects every watched card. Restarting cancels whatever the last sweep still had in
+        /// flight, so a stopped run leaves no traceroute walking hops in the background.
+        /// </summary>
+        private async void RunAllChecks()
+        {
+            _checks?.Cancel();
+            _checks?.Dispose();
+            var run = _checks = new CancellationTokenSource();
+            _checkSlots = new SemaphoreSlim(MaxConcurrentChecks, MaxConcurrentChecks);
+            try { await Task.WhenAll(_cards.ToArray().Select(c => RunChecksAsync(c, run.Token))); }
+            catch (OperationCanceledException) { }
+        }
+
+        private async void RunChecks(WatchCard card, CancellationToken token)
+        {
+            try { await RunChecksAsync(card, token); }
+            catch (OperationCanceledException) { }
+        }
+
+        private async Task RunChecksAsync(WatchCard card, CancellationToken token)
         {
             if (!IPAddress.TryParse(card.Address, out var address)) return;
-            _checks?.Cancel();
+            // Ask the shell for this target's scan record before probing, so the checks cover
+            // its discovered ports. Guarded on the cache, so the shell calling back into
+            // ShowDetails cannot bounce between the two.
+            if (!_knownPorts.ContainsKey(card.Address)) DiagnoseRequested?.Invoke(card.Address);
             card.Checks.Clear();
-            var run = _checks = new CancellationTokenSource();
-            try { await InspectAsync(card, address, run.Token); }
+            var slots = _checkSlots;
+            if (slots != null) await slots.WaitAsync(token);
+            try { await InspectAsync(card, address, token); }
             catch (OperationCanceledException) { }
             catch (Exception ex) when (ex is not OutOfMemoryException)
             { if (!_closed) card.Checks.Add(new CheckRow { Check = L("Str_Diag_Error") }); }
+            finally { slots?.Release(); }
         }
 
         /// <summary>

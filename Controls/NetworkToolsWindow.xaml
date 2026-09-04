@@ -61,24 +61,40 @@
                         <Run Text="{DynamicResource Str_Watch_Loss}"/><Run Text=" "/><Run Text="{Binding Loss, Mode=OneWay}"/><Run Text="   "/><Run Text="{DynamicResource Str_Watch_Sent}"/><Run Text=" "/><Run Text="{Binding Sent, Mode=OneWay}"/><Run Text="   "/><Run Text="{Binding Changed, Mode=OneWay}"/>
                     </TextBlock>
 
-                    <!-- Expanded details. Collapsed the card is a glance; selected it grows to
-                         carry this target's own checks and its own log, so several targets can
-                         be compared side by side instead of one at a time in a shared pane. -->
-                    <StackPanel x:Name="Detail" Grid.Row="4" Visibility="Collapsed" Margin="0,8,0,0">
+                    <!-- Details. Every card carries its own checks and its own log so several
+                         targets can be read side by side instead of one at a time in a shared
+                         pane. Watching one or two targets is the common case, so nothing is
+                         hidden behind selection. -->
+                    <StackPanel x:Name="Detail" Grid.Row="4" Margin="0,8,0,0">
                         <Border Height="1" Background="{DynamicResource CardBorderBrush}" Margin="0,0,0,7"/>
-                        <ItemsControl ItemsSource="{Binding Checks}">
+                        <!-- AlternationCount, and the stripe read off the container's index, give
+                             this list the same banding as the scan table. RowAltBrush is the
+                             family's stripe: translucent, so the pane grain still shows. -->
+                        <ItemsControl ItemsSource="{Binding Checks}" AlternationCount="2">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Margin="0,0,0,2">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="88"/><ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Check}" FontSize="11"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   Foreground="{DynamicResource MutedTextBrush}"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding Result}" FontSize="11"
-                                                   TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}"/>
-                                    </Grid>
+                                    <Border Padding="3,2">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Value="1" Binding="{Binding (ItemsControl.AlternationIndex),
+                                                                 RelativeSource={RelativeSource AncestorType=ContentPresenter}}">
+                                                        <Setter Property="Background" Value="{DynamicResource RowAltBrush}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="88"/><ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="{Binding Check}" FontSize="11"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Foreground="{DynamicResource MutedTextBrush}"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Result}" FontSize="11"
+                                                       TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}"/>
+                                        </Grid>
+                                    </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -110,13 +126,6 @@
                     </StackPanel>
                 </Grid>
             </Border>
-            <DataTemplate.Triggers>
-                <!-- Selecting a card is what expands it. Declared after the tree, because a
-                     template trigger can only target a name that already exists. -->
-                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                    <Setter TargetName="Detail" Property="Visibility" Value="Visible"/>
-                </DataTrigger>
-            </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
     <Border Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
@@ -168,7 +177,6 @@
                     <Grid Grid.Row="1">
                         <ListBox x:Name="Cards" Margin="8,4,8,8" ItemTemplate="{StaticResource WatchCardTemplate}"
                                  Background="Transparent" BorderThickness="0" Foreground="{DynamicResource TextBrush}"
-                                 SelectionChanged="Card_SelectionChanged"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <ListBox.ItemsPanel>
