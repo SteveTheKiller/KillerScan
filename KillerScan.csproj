@@ -65,6 +65,14 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\oui.txt" />
   </ItemGroup>
+
+  <!-- KillerScripts and the shell prompt, shipped inside the exe (Modules.cs, PromptScript.cs).
+       EmbeddedResource, not content beside the app: KillerScan is one portable exe, and a copy
+       run off a USB stick on a customer's machine has to bring these with it. -->
+  <ItemGroup>
+    <EmbeddedResource Include="Modules\**\*" />
+    <EmbeddedResource Include="Terminal\KillerPrompt.ps1" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ks-icon.ico" />
     <Resource Include="Resources\ks-icon.png" />
