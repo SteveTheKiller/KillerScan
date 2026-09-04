@@ -31,6 +31,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Restored alternating table row shading. Checkable menus reserve a left indicator gutter so labels and shortcuts remain aligned.
 - Device detection now distinguishes physical printers from Windows servers that share print queues, including domain controllers.
 - The topology sort button no longer disappears after use, and the footer marks a portable copy in place of the old install button.
+- On the 98SE theme the About panel is a white client area with a sunken edge instead of the button-face gray it shared with the card behind it.
+- The bundled vendor database is refreshed to 58,107 entries.
 - Topology sorting is now icon-only, uses F7 to cycle or Ctrl+1 through Ctrl+4 for direct selection, and keeps connectors attached to moved role boxes.
 - Scans clear the local DNS cache and reject reverse-DNS names that do not resolve back to the same IP address.
 - On first launch, the interface follows the Windows display language when it is supported.

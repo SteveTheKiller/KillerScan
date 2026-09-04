@@ -129,6 +129,14 @@
     <SolidColorBrush x:Key="AboutCloseFg" Color="#888888" po:Freeze="True"/>
     <SolidColorBrush x:Key="AboutCloseHoverFg" Color="#e04444" po:Freeze="True"/>
 
+    <!-- About info panel. The fill and its hairline edge track the flyout surface on every
+         ordinary theme; 98SE makes the panel a white client area with a sunken bevel instead,
+         which is the one place the two treatments differ. The bevel borders draw nothing here. -->
+    <SolidColorBrush x:Key="AboutPanelBevelTopBrush"    Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="AboutPanelBevelBottomBrush" Color="#00000000" po:Freeze="True"/>
+    <Thickness x:Key="AboutPanelBevelTopThickness">0</Thickness>
+    <Thickness x:Key="AboutPanelBevelBottomThickness">0</Thickness>
+
     <!-- Shortcut categories, last-resort fallback only. Every theme declares its own set, and
          must: the neon values below are right on a dark card and close to invisible on a pale
          one, so the palette is retuned per theme file rather than computed at runtime. Same

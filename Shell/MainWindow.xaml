@@ -811,11 +811,22 @@
                                      construction). The shadow opacity is the theme token, 0 on
                                      98SE, so this border must stay visible there - it is now the
                                      panel's only fill. -->
-                                <Border x:Name="AboutInfoShadow" Background="{DynamicResource MenuBackgroundBrush}" CornerRadius="{DynamicResource ControlCornerRadius}" IsHitTestVisible="False">
+                                <Border x:Name="AboutInfoShadow" Background="{DynamicResource AboutPanelBrush}" CornerRadius="{DynamicResource ControlCornerRadius}" IsHitTestVisible="False">
                                     <Border.Effect>
                                         <DropShadowEffect Color="Black" BlurRadius="14" ShadowDepth="2" Direction="270" Opacity="{DynamicResource FlyoutShadowOpacity}"/>
                                     </Border.Effect>
                                 </Border>
+                                <!-- The Win98 sunken edge: gray above and left, white below and
+                                     right, which is the inverse of a raised button and what makes
+                                     a white panel read as a client area rather than a card. Both
+                                     borders are transparent at zero thickness on every other
+                                     theme, so they draw nothing there. -->
+                                <Border IsHitTestVisible="False"
+                                        BorderBrush="{DynamicResource AboutPanelBevelTopBrush}"
+                                        BorderThickness="{DynamicResource AboutPanelBevelTopThickness}"/>
+                                <Border IsHitTestVisible="False"
+                                        BorderBrush="{DynamicResource AboutPanelBevelBottomBrush}"
+                                        BorderThickness="{DynamicResource AboutPanelBevelBottomThickness}"/>
                                 <!-- Grain on the info panel too, KillerShell's About verbatim: the
                                      opaque fill lives on the shadow border above, the grain is its
                                      own layer, and the content border below is transparent so both
@@ -824,7 +835,7 @@
                                 <Border IsHitTestVisible="False" CornerRadius="{DynamicResource ControlCornerRadius}"
                                         Opacity="{DynamicResource GrainOpacity}" Background="{DynamicResource GrainTileBrush}"/>
                                 <Border Background="Transparent"
-                                        BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1"
+                                        BorderBrush="{DynamicResource AboutPanelEdgeBrush}" BorderThickness="1"
                                         CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14,12,14,4">
                                     <StackPanel>
                                         <StackPanel Margin="0,0,0,10">
