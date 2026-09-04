@@ -191,21 +191,32 @@ namespace KillerScan.Shell
         }
 
         /// <summary>
-        /// Buttons that did not fit on the bar, in bar order. The overflow menu lists these and
-        /// only these, so a button is in exactly one of the two places.
+        /// Buttons that did not fit on the bar. The overflow menu lists these and only these, so
+        /// a button is in exactly one of the two places.
         /// </summary>
         private readonly List<Button> _overflowedViews = [];
+
+        /// <summary>
+        /// Which button gives way first as the bar tightens, least wanted at the front. This is
+        /// a judgement about the work, not about the layout, so it is written down rather than
+        /// derived from the order the buttons happen to sit in: Export is a step you take once
+        /// at the end, while Scan is the reason the window is open.
+        /// </summary>
+        private static readonly string[] ToolbarDropOrder =
+        [
+            "Str_TT_Export", "Str_Services_Title", "Str_View_Topology",
+            "Str_Workspace_Terminal", "Str_View_KeepAlive", "Str_View_Scan"
+        ];
 
         /// <summary>
         /// Keeps as many view buttons on the bar as the space beside the active view's own
         /// controls allows, and moves the rest into the overflow menu.
         /// </summary>
         /// <remarks>
-        /// The view buttons are what gives way, and they give way one at a time from the left
-        /// end, which is the end furthest from the overflow button. The input box and its
-        /// buttons are what the window is FOR in a view, so they keep their measured width
-        /// rather than being squeezed until they wrap. Scan's bar and Keep Alive's are different
-        /// widths, so the budget is measured from whichever is showing instead of assumed.
+        /// The view buttons are what gives way, one at a time in ToolbarDropOrder. The input box
+        /// and its buttons are what the window is FOR in a view, so they keep their measured
+        /// width rather than being squeezed until they wrap. Scan's bar and Keep Alive's are
+        /// different widths, so the budget is measured from whichever is showing.
         /// </remarks>
         private void FitToolbarViews()
         {
@@ -237,7 +248,11 @@ namespace KillerScan.Shell
                 // budget. Drop buttons from the left until what is left fits beside it.
                 available -= _toolbarOverflow.DesiredSize.Width;
                 _viewButtons.TryGetValue(_workspaceView, out var active);
-                foreach (var button in buttons)
+                var order = buttons
+                    .OrderBy(b => Array.IndexOf(ToolbarDropOrder,
+                        _viewAppearance.TryGetValue(b, out var look) ? look.Key : string.Empty) is var i && i < 0
+                        ? int.MaxValue : i);
+                foreach (var button in order)
                 {
                     if (total <= available) break;
                     // The view you are in keeps its place on the bar however tight it gets:
@@ -257,7 +272,9 @@ namespace KillerScan.Shell
         {
             var menu = new ContextMenu { PlacementTarget = _toolbarOverflow,
                 Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom };
-            foreach (Button button in _overflowedViews)
+            // Bar order, not the order they were dropped: the menu reads as the rest of the same
+            // toolbar rather than as a list of casualties.
+            foreach (var button in _workspaceNavigation.Children.OfType<Button>().Where(_overflowedViews.Contains))
             {
                 var item = new MenuItem { IsEnabled = button.IsEnabled };
                 item.SetResourceReference(HeaderedItemsControl.HeaderProperty, _viewAppearance[button].Key);
