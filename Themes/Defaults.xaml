@@ -129,9 +129,10 @@
     <SolidColorBrush x:Key="AboutCloseFg" Color="#888888" po:Freeze="True"/>
     <SolidColorBrush x:Key="AboutCloseHoverFg" Color="#e04444" po:Freeze="True"/>
 
-    <!-- Shortcut categories. The same neon set KillerPDF uses, so a category reads as the same
-         color across the family. Defined here rather than per theme because the palette is
-         deliberately theme-independent; a theme can still override any one of them. -->
+    <!-- Shortcut categories, last-resort fallback only. Every theme declares its own set, and
+         must: the neon values below are right on a dark card and close to invisible on a pale
+         one, so the palette is retuned per theme file rather than computed at runtime. Same
+         mechanism and the same shared darkened values as KillerShell and Killendar. -->
     <SolidColorBrush x:Key="KsCatViews"    Color="#00fff9" po:Freeze="True"/>
     <SolidColorBrush x:Key="KsCatScan"     Color="#39ff14" po:Freeze="True"/>
     <SolidColorBrush x:Key="KsCatDevice"   Color="#ffd319" po:Freeze="True"/>
