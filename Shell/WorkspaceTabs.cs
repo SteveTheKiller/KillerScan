@@ -191,43 +191,73 @@ namespace KillerScan.Shell
         }
 
         /// <summary>
-        /// Decides whether the view buttons still fit beside the active view's own controls.
+        /// Buttons that did not fit on the bar, in bar order. The overflow menu lists these and
+        /// only these, so a button is in exactly one of the two places.
+        /// </summary>
+        private readonly List<Button> _overflowedViews = [];
+
+        /// <summary>
+        /// Keeps as many view buttons on the bar as the space beside the active view's own
+        /// controls allows, and moves the rest into the overflow menu.
         /// </summary>
         /// <remarks>
-        /// The view buttons are what gives way, always. The input box and its buttons are what
-        /// the window is FOR in that view, so they keep their full width and the buttons fold
-        /// into the overflow menu around them. The budget is measured from the active toolbar
-        /// rather than assumed, because Scan's bar and Keep Alive's are different widths and a
-        /// fixed allowance left one of them wrapping onto a second row.
+        /// The view buttons are what gives way, and they give way one at a time from the left
+        /// end, which is the end furthest from the overflow button. The input box and its
+        /// buttons are what the window is FOR in a view, so they keep their measured width
+        /// rather than being squeezed until they wrap. Scan's bar and Keep Alive's are different
+        /// widths, so the budget is measured from whichever is showing instead of assumed.
         /// </remarks>
         private void FitToolbarViews()
         {
             if (_workspaceToolbar.ActualWidth <= 0) return;
-            double width = _workspaceNavigation.Margin.Left + _workspaceNavigation.Margin.Right;
-            foreach (Button button in _workspaceNavigation.Children)
+
+            var buttons = _workspaceNavigation.Children.OfType<Button>().ToList();
+            foreach (var button in buttons)
             {
+                button.Visibility = Visibility.Visible;
                 button.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-                width += button.DesiredSize.Width;
             }
 
-            double needed = 0;
+            double reserved = _workspaceNavigation.Margin.Left + _workspaceNavigation.Margin.Right;
             string key = _viewToolbars.ContainsKey(_workspaceView) ? _workspaceView : "scan";
             if (_viewToolbars.TryGetValue(key, out var toolbar))
             {
                 toolbar.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-                needed = toolbar.DesiredSize.Width + toolbar.Margin.Left + toolbar.Margin.Right;
+                reserved += toolbar.DesiredSize.Width + toolbar.Margin.Left + toolbar.Margin.Right;
             }
 
-            bool overflow = width > _workspaceToolbar.ActualWidth - needed;
-            _workspaceNavigation.Visibility = overflow ? Visibility.Collapsed : Visibility.Visible;
-            _toolbarOverflow.Visibility = overflow ? Visibility.Visible : Visibility.Collapsed;
+            _toolbarOverflow.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            double available = _workspaceToolbar.ActualWidth - reserved;
+            double total = buttons.Sum(b => b.DesiredSize.Width);
+
+            _overflowedViews.Clear();
+            if (total > available)
+            {
+                // The overflow button is about to appear, so it has to come out of the same
+                // budget. Drop buttons from the left until what is left fits beside it.
+                available -= _toolbarOverflow.DesiredSize.Width;
+                _viewButtons.TryGetValue(_workspaceView, out var active);
+                foreach (var button in buttons)
+                {
+                    if (total <= available) break;
+                    // The view you are in keeps its place on the bar however tight it gets:
+                    // it is the one carrying the selected state, and hiding it would leave
+                    // nothing on screen saying where you are.
+                    if (button == active) continue;
+                    total -= button.DesiredSize.Width;
+                    button.Visibility = Visibility.Collapsed;
+                    _overflowedViews.Add(button);
+                }
+            }
+
+            _toolbarOverflow.Visibility = _overflowedViews.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void OpenToolbarOverflow()
         {
             var menu = new ContextMenu { PlacementTarget = _toolbarOverflow,
                 Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom };
-            foreach (Button button in _workspaceNavigation.Children)
+            foreach (Button button in _overflowedViews)
             {
                 var item = new MenuItem { IsEnabled = button.IsEnabled };
                 item.SetResourceReference(HeaderedItemsControl.HeaderProperty, _viewAppearance[button].Key);
