@@ -23,7 +23,6 @@ namespace KillerScan.Shell
                 var targets = new[] { local?.Gateway, local?.Dns, GetSelectedDevice()?.IpAddress }
                     .Where(s => !string.IsNullOrWhiteSpace(s)).Distinct();
                 _watchWorkspace = new NetworkToolsWindow(string.Join(", ", targets), _appScale);
-                _watchWorkspace.MatchScanTable((System.Windows.Controls.DataGrid)_scanWorkspace!.FindName("ResultsGrid"));
                 _watchWorkspace.DiagnoseRequested += address => ShowDeviceDetails(address);
                 var bar = _watchWorkspace.DetachToolbar();
                 bar.Margin = new Thickness(8, 0, 0, 0);

@@ -16,7 +16,7 @@ namespace KillerScan.Controls
         private const int Window = 40;
 
         /// <summary>Drawing surface for the sparkline, in device independent pixels. Matches the card content width.</summary>
-        private const double SparkWidth = 210;
+        private const double SparkWidth = 240;
         private const double SparkHeight = 26;
 
         /// <summary>Never scale below this, so an idle local link does not look like a spike field.</summary>
@@ -44,6 +44,30 @@ namespace KillerScan.Controls
         }
 
         public string Address { get; }
+
+        /// <summary>
+        /// This target's checks and its own log. Both live on the card rather than in shared
+        /// panes, so everything about one address is in one place and several can be compared
+        /// side by side instead of one at a time.
+        /// </summary>
+        public System.Collections.ObjectModel.ObservableCollection<CheckRow> Checks { get; } = [];
+
+        public System.Collections.ObjectModel.ObservableCollection<CardEvent> Events { get; } = [];
+
+        /// <summary>Log lines kept per card. Short: the card is a glance, not an archive.</summary>
+        private const int EventWindow = 30;
+
+        internal void LogEvent(DateTimeOffset time, string state, bool up)
+        {
+            var palette = TerminalPalette.For(TerminalSkin.Default);
+            Events.Add(new CardEvent
+            {
+                Time = time.ToLocalTime().ToString("HH:mm:ss"),
+                State = state,
+                StateBrush = Frozen(palette.Ansi[up ? 2 : 1])
+            });
+            while (Events.Count > EventWindow) Events.RemoveAt(0);
+        }
 
         public string State { get => _state; private set => Set(ref _state, value); }
         public string Latest { get => _latest; private set => Set(ref _latest, value); }
@@ -83,6 +107,8 @@ namespace KillerScan.Controls
         internal void Reset(string waiting)
         {
             _history.Clear();
+            Events.Clear();
+            Checks.Clear();
             _known = false;
             _up = false;
             State = waiting;

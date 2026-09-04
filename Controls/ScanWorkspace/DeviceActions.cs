@@ -26,7 +26,18 @@ namespace KillerScan.Controls
         private void SshDevice_Click(object sender, RoutedEventArgs e) => RaiseDeviceAction("Ssh");
         private void SshAsDevice_Click(object sender, RoutedEventArgs e) => RaiseDeviceAction("SshAs");
         private void Diagnose_Click(object sender, RoutedEventArgs e) => RaiseDeviceAction("Diagnose");
-        private void Watch_Click(object sender, RoutedEventArgs e) => RaiseDeviceAction("Watch");
+        /// <summary>
+        /// Keep Alive takes the whole selection, not just the focused row: watching a handful
+        /// of devices together is the normal case, and adding them one at a time is busywork.
+        /// The shell adds each as a target, so the order on screen is the order here.
+        /// </summary>
+        private void Watch_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = ResultsGrid.SelectedItems.OfType<NetworkDevice>().ToList();
+            if (selected.Count == 0) { RaiseDeviceAction("Watch"); return; }
+            foreach (var device in selected)
+                DeviceAction?.Invoke(this, new ScanDeviceActionEventArgs(device, "Watch", false));
+        }
 
         private void SetTypeMenu_Opened(object sender, RoutedEventArgs e)
         {
