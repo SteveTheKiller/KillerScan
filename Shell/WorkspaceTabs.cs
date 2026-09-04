@@ -7,8 +7,10 @@ namespace KillerScan.Shell
     {
         private enum ToolbarIconSize { Small, Large }
         private enum ToolbarLabelMode { None, Beside, Under, Only }
-        private ToolbarIconSize _toolbarIconSize = ToolbarIconSize.Small;
-        private ToolbarLabelMode _toolbarLabelMode = ToolbarLabelMode.Under;
+        // Large icons with the caption beside them is the default: the toolbar carries only a
+        // handful of views, so it has the width for it, and it reads without a squint.
+        private ToolbarIconSize _toolbarIconSize = ToolbarIconSize.Large;
+        private ToolbarLabelMode _toolbarLabelMode = ToolbarLabelMode.Beside;
         private readonly Dictionary<Button, (string Glyph, string Key)> _viewAppearance = [];
         private readonly ContextMenu _toolbarMenu = new();
         private readonly Button _toolbarOverflow = new()
@@ -84,12 +86,27 @@ namespace KillerScan.Shell
             _workspaceNavigation.Children.Add(button);
         }
 
+        /// <summary>
+        /// Marks the current view the way KillerPDF marks the selected tool: the caller sets
+        /// the button's Background and Foreground by resource reference, so the pair tracks a
+        /// theme swap, and clears them again for the rest. Clearing rather than assigning a
+        /// transparent value matters, because a local Background would outrank the style's
+        /// hover trigger and the inactive buttons would stop lighting up under the pointer.
+        /// </summary>
         private void UpdateWorkspaceNavigation()
         {
             foreach (var pair in _viewButtons)
             {
-                bool selected = pair.Key == _workspaceView;
-                pair.Value.Tag = selected ? "on" : null;
+                if (pair.Key == _workspaceView)
+                {
+                    pair.Value.SetResourceReference(Control.BackgroundProperty, "SelectionBg");
+                    pair.Value.SetResourceReference(Control.ForegroundProperty, "SelectionFg");
+                }
+                else
+                {
+                    pair.Value.ClearValue(Control.BackgroundProperty);
+                    pair.Value.ClearValue(Control.ForegroundProperty);
+                }
             }
         }
 

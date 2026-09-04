@@ -1015,12 +1015,16 @@
                                 </ContentPresenter>
                             </Border>
                             <ControlTemplate.Triggers>
+                                <!-- KillerPDF's ToolbarButton, key for key. The active view is
+                                     marked by the caller setting Background and Foreground to
+                                     SelectionBg/SelectionFg, not by a trigger here, so the
+                                     highlight is the theme's selection pair rather than the raw
+                                     accent. The hover setter deliberately targets the button
+                                     rather than the template's Border: a local Background set
+                                     for the active view then outranks it, and the current view
+                                     keeps its fill while the pointer is over it. -->
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Background" Value="{DynamicResource RowHoverBrush}"/>
-                                </Trigger>
-                                <Trigger Property="Tag" Value="on">
-                                    <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
-                                    <Setter Property="Foreground" Value="{DynamicResource OnPrimaryBrush}"/>
                                 </Trigger>
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter Property="Opacity" Value="0.4"/>
