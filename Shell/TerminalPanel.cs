@@ -17,10 +17,18 @@ namespace KillerScan.Shell
 
         private void ToggleTerminalPanel() => NewTerminal();
 
-        private void NewTerminal(string? command = null, string? title = null)
+        /// <param name="command">
+        /// An executable and its arguments, launched directly with no shell between. This is
+        /// how anything carrying user input has to arrive.
+        /// </param>
+        /// <param name="shellCommand">
+        /// Text run inside the styled PowerShell session once its prompt is up. Only ever code
+        /// this app composed itself.
+        /// </param>
+        private void NewTerminal(string? command = null, string? title = null, string? shellCommand = null)
         {
             if (_terminalPanelDisposed) return;
-            if (_terminalControl == null || command != null || _terminalExited)
+            if (_terminalControl == null || command != null || shellCommand != null || _terminalExited)
             {
                 if (_terminalControl != null)
                 {
@@ -30,7 +38,7 @@ namespace KillerScan.Shell
                 var terminal = _terminalControl = new TerminalControl();
                 _terminalTitle = title;
                 _terminalExited = false;
-                _terminalIsPing = command?.StartsWith("ping.exe ", StringComparison.OrdinalIgnoreCase) == true;
+                _terminalIsPing = shellCommand?.StartsWith("ping.exe ", StringComparison.OrdinalIgnoreCase) == true;
                 _terminalStatusKey = null;
                 _terminalStatusArgument = null;
                 terminal.GotKeyboardFocus += (_, _) => UpdateTerminalPanelStatus();
@@ -52,24 +60,35 @@ namespace KillerScan.Shell
                 };
                 terminal.LayoutTransform = new ScaleTransform(_appScale, _appScale);
                 ShowWorkspaceContent(terminal, "terminal");
-                string shell = ResolveTerminalShell();
-                terminal.Start(command ?? QuoteArgument(shell) + " -NoLogo -NoExit -EncodedCommand " +
-                    Convert.ToBase64String(System.Text.Encoding.Unicode.GetBytes(TerminalPrompt)),
-                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+                EnsureBundledModules();
+                string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                if (command != null) terminal.Start(command, home);
+                else
+                {
+                    string shell = ResolveTerminalShell();
+                    terminal.Start(QuoteArgument(shell) + " -NoLogo" + PromptArgs(shellCommand), home);
+                }
             }
             else ShowWorkspaceContent(_terminalControl, "terminal");
             _terminalControl.Focus();
+            UpdateTerminalPanelStatus();
         }
 
-        private const string TerminalPrompt = @"
-function global:prompt {
-    $ok = $?
-    $esc = [char]27
-    $color = if ($ok) { '32' } else { '31' }
-    return $esc + '[36m' + $env:USERNAME + '@' + $env:COMPUTERNAME + ' ' +
-        $esc + '[34m' + $executionContext.SessionState.Path.CurrentLocation.ToString() +
-        ' ' + $esc + '[' + $color + 'm' + [char]0x276F + $esc + '[0m '
-}";
+        /// <summary>
+        /// A continuous ping, tinted as it streams. ping.exe emits no color of its own, so the
+        /// lines are matched and wrapped here: a reply green, a loss red, everything else (the
+        /// banner, the blank lines, the summary) left alone. TTL= and the timeout words are what
+        /// the two states have in common across the ping builds we see; an unmatched line simply
+        /// prints as it always did rather than being colored wrongly.
+        ///
+        /// Single quotes throughout: this whole pipeline rides inside the double-quoted -Command
+        /// that also carries the prompt.
+        /// </summary>
+        private static string PingCommand(string ip) =>
+            "ping.exe -t " + ip + " | ForEach-Object { $e = [char]27; " +
+            "if ($_ -match 'TTL=') { $e + '[32m' + $_ + $e + '[0m' } " +
+            "elseif ($_ -match 'timed out|unreachable|transmit failed|General failure') " +
+            "{ $e + '[31m' + $_ + $e + '[0m' } else { $_ } }";
 
         private bool InterruptTerminalPing()
         {
@@ -109,8 +128,12 @@ function global:prompt {
         private void UpdateTerminalPanelStatus()
         {
             if (_workspaceView != "terminal") return;
-            StatusText.Text = _terminalStatusKey == null ? _terminalTitle ?? Loc("Str_Workspace_Terminal")
+            string text = _terminalStatusKey == null ? _terminalTitle ?? Loc("Str_Workspace_Terminal")
                 : string.Format(Loc(_terminalStatusKey), _terminalStatusArgument);
+            // A continuous ping never ends on its own, so the way out belongs on screen while it
+            // runs rather than only in the shortcuts overlay.
+            if (_terminalIsPing && !_terminalExited) text += "   " + Loc("Str_Workspace_EscStop");
+            StatusText.Text = text;
         }
 
         private void DisposeTerminalPanel()
