@@ -285,7 +285,7 @@ namespace KillerScan.Shell
         {
             ShortcutMapRows.Children.Clear();
             var bindings = ShortcutRows
-                .Select(row => (Id: ShortcutKeyId(row.Keys), row.Keys, row.Desc))
+                .Select(row => (Id: ShortcutKeyId(row.Keys), row.Keys, row.Desc, row.Cat))
                 .Where(row => row.Id.Length > 0)
                 .GroupBy(row => row.Id)
                 .ToDictionary(group => group.Key, group => group.ToList());
@@ -326,8 +326,16 @@ namespace KillerScan.Shell
             };
         }
 
-        private Border BuildKeyboardKey(string cap, double width, List<(string Id, string Keys, string Desc)>? actions)
+        /// <summary>
+        /// A keycap, colored by the category of the action bound to it. This is the point of
+        /// the category colors: a key's color says what kind of thing it does before the
+        /// caption is read, and it matches the heading that key sits under in the list.
+        /// A key carrying more than one binding takes the first one's category.
+        /// </summary>
+        private Border BuildKeyboardKey(string cap, double width,
+            List<(string Id, string Keys, string Desc, string Cat)>? actions)
         {
+            string categoryBrush = actions == null ? "CardBorderBrush" : "KsCat" + actions[0].Cat;
             var capText = new TextBlock
             {
                 Text = cap,
@@ -351,7 +359,7 @@ namespace KillerScan.Shell
                 Child = grid
             };
             key.SetResourceReference(Border.BackgroundProperty, "SurfaceBrush");
-            key.SetResourceReference(Border.BorderBrushProperty, actions == null ? "CardBorderBrush" : "PrimaryBrush");
+            key.SetResourceReference(Border.BorderBrushProperty, categoryBrush);
 
             if (actions != null)
             {
@@ -364,14 +372,14 @@ namespace KillerScan.Shell
                     VerticalAlignment = VerticalAlignment.Bottom,
                     Margin = new Thickness(2, 0, 2, 5)
                 };
-                actionText.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryBrush");
+                actionText.SetResourceReference(TextBlock.ForegroundProperty, categoryBrush);
                 var bar = new Rectangle
                 {
                     Height = 3,
                     Margin = new Thickness(3, 0, 3, 0),
                     VerticalAlignment = VerticalAlignment.Bottom
                 };
-                bar.SetResourceReference(Shape.FillProperty, "PrimaryBrush");
+                bar.SetResourceReference(Shape.FillProperty, categoryBrush);
                 grid.Children.Add(actionText);
                 grid.Children.Add(bar);
                 key.ToolTip = string.Join(Environment.NewLine,
