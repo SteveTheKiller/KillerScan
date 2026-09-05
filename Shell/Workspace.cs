@@ -29,12 +29,11 @@ namespace KillerScan.Shell
             _workspaceToolbar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             Grid.SetColumn(_workspaceNavigation, 1);
             _workspaceToolbar.Children.Add(_workspaceNavigation);
-            var toolbarSurface = new Grid { UseLayoutRounding = true };
             // Transparent, not a colour of its own. The window paints the background across its
             // full width, so letting it through keeps one continuous gradient; painting the brush
             // here restarted the ramp inside the content column, and painting a flat tone instead
             // just moved the seam to where the bar met the margins beside the pane.
-            toolbarSurface.Background = Brushes.Transparent;
+            var toolbarSurface = new Grid { UseLayoutRounding = true, Background = Brushes.Transparent };
             // No grain of its own either. The chrome strip behind this whole row already carries
             // one, and it shows through now that the bar is transparent; adding a second here
             // doubled the texture over the toolbar. The strip sits below the controls, so the
@@ -79,8 +78,7 @@ namespace KillerScan.Shell
             _workspaceView = view;
             // The export menu lives on the rail whatever is in front, so it is told which view it
             // is acting for. Anything built on the scan workspace resolves itself.
-            if (_scanWorkspace != null)
-                _scanWorkspace.ExportContext = view is "watch" or "terminal" ? view : "scan";
+            _scanWorkspace?.ExportContext = view is "watch" or "terminal" ? view : "scan";
             foreach (FrameworkElement child in _workspaceBody.Children)
                 child.Visibility = child == content ? Visibility.Visible : Visibility.Collapsed;
             UpdateViewToolbar();
@@ -120,10 +118,11 @@ namespace KillerScan.Shell
                 // The badge appears and disappears with portable mode, and the address changes
                 // width with the network, so the fit is re-run on both rather than once.
                 UpdateScanLight();
-                FooterBar.SizeChanged += (_, _) => FitFooterNetwork();
-                PortableBadge.IsVisibleChanged += (_, _) => FitFooterNetwork();
+                FooterBar.SizeChanged += (_, _) => { FitFooterNetwork(); FitFooterStatus(); };
+                PortableBadge.IsVisibleChanged += (_, _) => { FitFooterNetwork(); FitFooterStatus(); };
                 NetworkFooter.SizeChanged += (_, _) => FitFooterNetwork();
                 FitFooterNetwork();
+                FitFooterStatus();
                 var count = (TextBlock)_scanWorkspace.FindName("DeviceCount");
                 ((Panel)count.Parent).Children.Remove(count);
                 count.Margin = new Thickness(8, 0, 0, 0);
@@ -266,6 +265,38 @@ namespace KillerScan.Shell
         /// <summary>Padding and cell margins the budget above cannot measure directly.</summary>
         private const double FooterNetworkGap = 48;
 
+        /// <summary>
+        /// The same problem on the left of the bar. The status line had a fixed 230px cap so it
+        /// could not slide under the centered badge, which meant it was clipped to an ellipsis on
+        /// a wide window that had room to spare. The cap is measured instead: everything up to the
+        /// badge, or up to the version cell when no badge is showing, less whatever the device
+        /// count needs. A message still too long for that is trimmed, but only then, and the whole
+        /// of it is in the tooltip.
+        /// </summary>
+        private void FitFooterStatus()
+        {
+            if (StatusText == null || FooterBar == null) return;
+            double footer = FooterBar.ActualWidth;
+            if (footer <= 0) return;
+
+            double badge = PortableBadge.Visibility == Visibility.Visible ? PortableBadge.ActualWidth : 0;
+            double right = badge > 0 ? footer / 2 - badge / 2 : footer - VersionCell.ActualWidth;
+
+            double count = 0;
+            if (DeviceCountFooter.Visibility == Visibility.Visible)
+            {
+                DeviceCountFooter.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                count = DeviceCountFooter.DesiredSize.Width;
+            }
+            double budget = right - StatusCellInset - count - FooterStatusGap;
+            StatusText.MaxWidth = budget > 60 ? budget : 60;
+        }
+
+        /// <summary>The status cell's own left inset, which the measurement starts after.</summary>
+        private const double StatusCellInset = 18;
+        /// <summary>Breathing room so the text never touches the badge.</summary>
+        private const double FooterStatusGap = 16;
+
         private void ShowScanView(string view)
         {
             if (_scanWorkspace == null) return;
@@ -291,9 +322,66 @@ namespace KillerScan.Shell
             ScanProgress.Value = ActiveScan?.Progress ?? 0;
             ScanProgress.Visibility = ActiveScan?.IsProgressVisible == true ? Visibility.Visible : Visibility.Collapsed;
             if (_workspaceView == "terminal") UpdateTerminalPanelStatus();
+            // Empty as well as duplicated: before the first scan there is no count to show, and
+            // the cell would otherwise contribute its margin to a bar that has nothing in it.
             if (_scanWorkspace?.FindName("DeviceCount") is TextBlock count)
-                count.Visibility = !string.IsNullOrEmpty(count.Text) && StatusText.Text.Contains(count.Text)
-                    ? Visibility.Collapsed : Visibility.Visible;
+            {
+                bool hide = string.IsNullOrEmpty(count.Text) || StatusText.Text.Contains(count.Text);
+                count.Visibility = hide ? Visibility.Collapsed : Visibility.Visible;
+                DeviceCountFooter.Visibility = hide ? Visibility.Collapsed : Visibility.Visible;
+            }
+            FitFooterStatus();
+        }
+
+        /// <summary>
+        /// The status cell says what happened in one line, which is all it has room for. The
+        /// tooltip is where the rest goes, and what it says depends on the view in front of you:
+        /// an alert about unknown devices names them, a finished scan breaks down what it found,
+        /// and a Keep Alive run keeps reporting while you are somewhere else. Built at hover
+        /// rather than stored, so it is never a description of a state that has since moved on.
+        /// </summary>
+        private void StatusText_ToolTipOpening(object sender, ToolTipEventArgs e)
+        {
+            string tip = BuildStatusTooltip();
+            // No tooltip at all rather than an empty box: there is nothing useful to add before
+            // the first scan, and a blank popup following the cursor is worse than none.
+            if (string.IsNullOrEmpty(tip)) { e.Handled = true; return; }
+            StatusText.ToolTip = tip;
+        }
+
+        private string BuildStatusTooltip()
+        {
+            if (_workspaceView == "watch" && _watchWorkspace != null)
+            {
+                var (total, replying) = _watchWorkspace.WatchState;
+                if (total == 0) return string.Empty;
+                return string.Format(Loc("Str_Tip_Watch"), total, total - replying);
+            }
+            if (_workspaceView == "history")
+                return HistoryList.SelectedItem is ScanHistoryEntry entry
+                    ? string.Format(Loc("Str_Tip_History"), entry.Target,
+                        entry.ScannedAt.ToLocalTime().ToString("g"), entry.Devices.Count)
+                    : string.Empty;
+
+            var devices = _scanWorkspace?.ScannedDevices;
+            if (devices == null || devices.Count == 0) return string.Empty;
+
+            // The alert the status bar raises is a count. This is the part that answers "which?".
+            var unknown = devices.Where(device => !DevicePreferences.IsTrusted(device)).ToList();
+            if (unknown.Count > 0)
+            {
+                const int Listed = 8;
+                var lines = unknown.Take(Listed).Select(device =>
+                    string.IsNullOrWhiteSpace(device.Hostname)
+                        ? $"  {device.IpAddress}  {device.MacAddress}"
+                        : $"  {device.IpAddress}  {device.Hostname}");
+                string body = string.Join("\n", lines);
+                if (unknown.Count > Listed)
+                    body += "\n" + string.Format(Loc("Str_Tip_AndMore"), unknown.Count - Listed);
+                return Loc("Str_Tip_UnknownHead") + "\n" + body + "\n\n" + Loc("Str_Tip_TrustHint");
+            }
+            int withPorts = devices.Count(device => device.OpenPorts.Count > 0);
+            return string.Format(Loc("Str_Tip_Scan"), devices.Count, withPorts);
         }
 
         private void DisposeWorkspace()

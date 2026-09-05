@@ -55,8 +55,8 @@ namespace KillerScan.Shell
             button.SetResourceReference(StyleProperty, "ViewToolbarButton");
             string glyph = view switch
             {
-                "scan" => "\uE8FD",
-                "services" => "\uE950",
+                "scan" => "\uE772",
+                "services" => "\uE8FD",
                 "topology" => "\uE968",
                 "watch" => "\uE9D9",
                 _ => "\uE756"

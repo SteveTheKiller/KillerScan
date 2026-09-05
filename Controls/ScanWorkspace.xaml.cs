@@ -52,6 +52,8 @@ namespace KillerScan.Controls
             : ScanIndicator.Idle;
         public string View => _showTopology ? "topology" : _showServices ? "services" : "devices";
         public string Status => StatusText.Text;
+        /// <summary>The devices from the last scan, for the shell's status tooltip.</summary>
+        internal IReadOnlyList<NetworkDevice> ScannedDevices => _active.Devices;
         public double Progress => ScanProgress.Value;
         public bool IsProgressVisible => ScanProgress.Visibility == Visibility.Visible;
         public ScanWorkspace(string initialTarget = "", bool demo = false)
@@ -67,6 +69,7 @@ namespace KillerScan.Controls
             { Status = string.Format(Loc("Str_Status_Ready"), OuiLookup.Count.ToString("N0")) };
             WireSession(_active);
             ActivateSession();
+            StartVendorNoticeTimer();
             RestoreColumnLayout();
             AddWorkspaceDeviceMenus();
             ServicesGrid.SelectionChanged += (_, _) =>

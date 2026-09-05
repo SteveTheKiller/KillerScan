@@ -40,6 +40,15 @@ namespace KillerScan.Controls
         {
             if (DeviceCount == null) return;
             int total = ActiveDevices?.Count ?? 0;
+            // "0 devices found" before anything has been scanned is not a result, it is the
+            // absence of one, and it reads as a failed scan sitting next to Ready. The cell earns
+            // its place once there is a count to report; a completed scan that genuinely found
+            // nothing still says so, because there the zero is the finding.
+            if (total == 0 && !_scanCompleted)
+            {
+                DeviceCount.Text = string.Empty;
+                return;
+            }
             string flt = FilterInput?.Text.Trim() ?? "";
             string tail;
             if (!string.IsNullOrEmpty(flt) && _filteredView != null)

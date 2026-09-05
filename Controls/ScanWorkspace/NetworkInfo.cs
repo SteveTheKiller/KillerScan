@@ -47,6 +47,33 @@ namespace KillerScan.Controls
             StateChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// The vendor-database line is a boot notice, not a state. It says the offline database
+        /// loaded and how big it is, which is worth seeing once and worth nothing after that, so
+        /// it stands for a few seconds and then falls back to Ready. Anything that happens in the
+        /// meantime, a scan above all, replaces it and cancels the fallback: the timer only ever
+        /// clears the notice it put there itself.
+        /// </summary>
+        private void StartVendorNoticeTimer()
+        {
+            string notice = _active.Status;
+            var timer = new System.Windows.Threading.DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(VendorNoticeSeconds)
+            };
+            timer.Tick += (_, _) =>
+            {
+                timer.Stop();
+                if (_disposed || IsScanning || StatusText.Text != notice) return;
+                _active.Status = Loc("Str_St_Ready");
+                StatusText.Text = _active.Status;
+                StateChanged?.Invoke(this, EventArgs.Empty);
+            };
+            timer.Start();
+        }
+
+        private const int VendorNoticeSeconds = 6;
+
         /// <summary>Wired or wireless glyph for the interface, shared with the footer and demo mode.</summary>
         internal static string InterfaceGlyph(bool wireless) => wireless ? "\uE701" : "\uE839";
 
