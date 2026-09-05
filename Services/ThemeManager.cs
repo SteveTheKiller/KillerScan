@@ -133,6 +133,15 @@ namespace KillerScan.Services
             }
         }
 
+        // Theme brushes are read from many threads' worth of bindings and never mutated, so they
+        // are frozen once here rather than left open for WPF to clone on every lookup.
+        private static SolidColorBrush Frozen(System.Windows.Media.Color color)
+        {
+            var brush = new SolidColorBrush(color);
+            brush.Freeze();
+            return brush;
+        }
+
         private static void LoadDict(Theme theme)
         {
             string name = ThemeFileName(theme);
@@ -157,13 +166,21 @@ namespace KillerScan.Services
 
             // The outer window frame now uses KillerNotes' exact shared five-pixel geometry.
             // Only the recessed client wells remain app-specific continuous ramps.
-            if (theme == Theme.SE98)
-            {
-                newDict["PaneBevelLightThickness"] = new Thickness(0);
-                newDict["PaneBevelDarkThickness"] = new Thickness(0);
-                newDict["PaneBevel2LightThickness"] = new Thickness(0);
-                newDict["PaneBevel2DarkThickness"] = new Thickness(0);
-            }
+            // The flat themes have no sunken edge, so the four bevel layers resolve to nothing at
+            // all rather than relying on an unresolved DynamicResource falling back to the
+            // property default, which works but only by accident.
+            foreach (var key in new[] { "PaneBevelLightThickness", "PaneBevelDarkThickness",
+                                        "PaneBevel2LightThickness", "PaneBevel2DarkThickness" })
+                if (!newDict.Contains(key)) newDict[key] = new Thickness(0);
+            if (!newDict.Contains("PaneBevelInnerMargin")) newDict["PaneBevelInnerMargin"] = new Thickness(0);
+            foreach (var key in new[] { "PaneBevelDarkBrush", "PaneBevelLightBrush",
+                                        "PaneBevelDark2Brush", "PaneBevelLight2Brush" })
+                if (!newDict.Contains(key)) newDict[key] = Brushes.Transparent;
+
+            // 98SE keeps its pane bevels. They used to be zeroed here, which left the content pane
+            // flat: Win32's EDGE_SUNKEN is two tones, #808080 then #000000 down the top and left
+            // and #ffffff then the face color up the bottom and right, and the palette carries all
+            // four. MainWindow draws them as four layers, the same way KillerNotes does.
 
             // These two family surface roles predate most palettes. Keep ordinary themes on
             // their existing pane color, while allowing 98SE's shared contract to provide the
@@ -223,6 +240,21 @@ namespace KillerScan.Services
             // KillerPDF's key.
             if (!newDict.Contains("RadioHoverFgBrush"))
                 newDict["RadioHoverFgBrush"] = newDict["PrimaryBrush"];
+            // Keep Alive's per-card event log. Tracks the flyout surface unless a theme names its
+            // own; 98SE does, because a scrolling list there is a white client area, not menu gray.
+            if (!newDict.Contains("WatchLogBrush"))
+                newDict["WatchLogBrush"] = newDict["MenuBackgroundBrush"];
+            // Up / down / waiting on a Keep Alive card. The terminal palette already carries a red
+            // and green tuned per theme, so those are the default. They are completed here rather
+            // than left absent because the merged dictionary is only ever written to: a key that
+            // exists on one theme and not the next would otherwise survive the switch.
+            var watch = Terminal.TerminalPalette.AnsiFor(theme);
+            if (!newDict.Contains("WatchUpBrush"))
+                newDict["WatchUpBrush"] = Frozen(watch[2]);
+            if (!newDict.Contains("WatchDownBrush"))
+                newDict["WatchDownBrush"] = Frozen(watch[1]);
+            if (!newDict.Contains("WatchIdleBrush"))
+                newDict["WatchIdleBrush"] = Frozen(watch[8]);
             var merged  = Application.Current.Resources.MergedDictionaries;
 
             // In-place per-key update: fires a targeted change notification for each key

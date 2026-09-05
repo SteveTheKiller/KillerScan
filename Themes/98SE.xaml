@@ -82,7 +82,9 @@
     <GridLength x:Key="RailColumnWidth">20</GridLength>
     <sys:Double x:Key="RailWidth">20</sys:Double>
     <Thickness x:Key="RailSeparatorMargin">0</Thickness>
-    <Thickness x:Key="DevicesPaneMargin">0</Thickness>
+    <!-- 2px on the right so the content pane stops where the footer cell does. FooterCellMargin
+         is 0,2,2,2 here, so the footer's right edge was 2px fatter than the pane's. -->
+    <Thickness x:Key="DevicesPaneMargin">0,0,2,0</Thickness>
     <!-- RootGrid is inset from the five-pixel sizing frame. Full-window modal dimmers extend
          back across that inset so the frame dims with the rest of the app. -->
     <Thickness x:Key="OverlayFrameBleed">-5,-4,-5,-5</Thickness>
@@ -138,6 +140,11 @@
     <!-- Topology hover is the Win98 navy selection, so the label turns white with it, exactly as
          a selected item does in the shell. -->
     <SolidColorBrush x:Key="TopologyNodeHoverTextBrush" Color="#FFFFFF" po:Freeze="True"/>
+
+    <!-- A checked radio row that is also hovered takes this, and the default aliases it to
+         PrimaryBrush. Here that is the same navy as the hover fill, so the selected language read
+         as navy on navy. White, as Mourning and Sepulchre already do for the same reason. -->
+    <SolidColorBrush x:Key="RadioHoverFgBrush" Color="#FFFFFF" po:Freeze="True"/>
 
     <!-- Terminal: a DOS box, not a themed pane. Black ground, light gray text, and a light gray
          block cursor, with the VGA sixteen supplied in code (TerminalPalette.AnsiVga). -->
@@ -311,7 +318,9 @@
 
     <Thickness x:Key="WindowFrameMargin" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">2</Thickness>
 
-    <Thickness x:Key="WindowFramePadding" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">5,4,5,5</Thickness>
+    <!-- Even on all four sides. The top was a pixel thinner than the other three, so the gray
+         frame around the window did not read as one continuous border. -->
+    <Thickness x:Key="WindowFramePadding" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">5</Thickness>
 
     <Thickness x:Key="TitleBarBleed" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">-1,0,-1,0</Thickness>
 
@@ -514,6 +523,10 @@
 
     <SolidColorBrush x:Key="SearchFieldBrush" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
+    <SolidColorBrush x:Key="WatchUpBrush" Color="#007000" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <SolidColorBrush x:Key="WatchDownBrush" Color="#AA0000" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <SolidColorBrush x:Key="WatchIdleBrush" Color="#808080" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <SolidColorBrush x:Key="WatchLogBrush" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="ListPaneBrush" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
     <sys:Double x:Key="EdgeFadeOpacity" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">0</sys:Double>
