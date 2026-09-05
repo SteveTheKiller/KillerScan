@@ -24,12 +24,19 @@
 - MAC vendor lookup across the full IEEE registries (MA-L, MA-M, MA-S) with randomized-MAC detection; vendor database refreshable in-app
 - Weighted-score classifier identifies routers, hypervisors, Windows and Linux boxes, printers, NAS, cameras, IoT, mobile, and more
 - Right-click to copy IP/MAC/hostname, launch RDP/SSH/browser, or override a device type; SSH asks which account to use and remembers it per device
-- CSV export and a themeable, sortable HTML report
-- Headless command line for scripts and RMM: /scan with targets, /export to CSV or HTML, /quick, /quiet, and real exit codes
+- Permanent Scan, Topology, Keep Alive and Terminal views, each keeping its own state
+- Topology (F9) infers how the network fits together, with movable multi-select device boxes, four arrangement modes, and full-resolution PNG export
+- Keep Alive (F2) watches any number of devices at once as status cards with latency sparklines, packet loss, per-device checks and event logs
+- Embedded terminals run PowerShell 7, ping and SSH with KillerShell's prompt and the KillerScripts module carried inside the EXE
+- Deep Scan rescans every discovered host exhaustively; scan profiles (F10) remember targets and can follow with Deep Scan
+- Scan history (F6) compares runs for added, missing and changed devices, with trusted-device baselines and unknown-device alerts
+- A service-centric view (F8) organizes results by service, port and device
+- Export follows the view: devices as CSV or HTML, topology as PNG, services as CSV
+- Headless command line for scripts and RMM: /scan, /probe, /network, offline /vendor, /export to CSV, JSON or HTML, filters, sorting, limits, timeouts, and real exit codes
 - Scan several networks in one pass: comma-separated CIDR blocks, single hosts, and ranges
-- Scan multiple subnets together, thirteen themes, localized in fifteen languages
-- Keyboard shortcuts (F1 for the list) and an app-wide size control from 70% to 250%
-- Single Windows EXE under 3 MB, no runtime install; installs per-user or for all users, or runs portable
+- Thirteen themes, localized in fifteen languages
+- Keyboard shortcuts on F1, with a shortcut list and a color-coded keyboard map, plus an app-wide size control from 70% to 250%
+- One self-contained Windows EXE, no runtime install; installs per-user or for all users, or runs portable
 - GPLv3, local-only, no account, no telemetry
     </description>
     <releaseNotes>https://github.com/SteveTheKiller/KillerScan/releases/tag/vREPLACE_VERSION</releaseNotes>
