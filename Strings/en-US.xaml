@@ -134,6 +134,7 @@
     <sys:String x:Key="Str_St_Probing">Probing {0} alive hosts...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Resolving {0} hosts...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Scan complete - {0} devices found</sys:String>
+    <sys:String x:Key="Str_St_Ready">Ready</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Scan canceled</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Deep scanning {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Rescan complete - {0} host(s) refreshed</sys:String>
@@ -171,9 +172,10 @@
     <sys:String x:Key="Str_Shortcuts_Title">Keyboard shortcuts</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LIST</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">KEYBOARD</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Full guide &amp; how-to online</sys:String>
     <sys:String x:Key="Str_KS_Views">VIEWS</sys:String>
-    <sys:String x:Key="Str_KS_Scan">SCAN</sys:String>
-    <sys:String x:Key="Str_KS_Device">DEVICE</sys:String>
+    <sys:String x:Key="Str_KS_Scan">SCANNING</sys:String>
+    <sys:String x:Key="Str_KS_Device">DEVICES</sys:String>
     <sys:String x:Key="Str_KS_Topology">TOPOLOGY</sys:String>
     <sys:String x:Key="Str_KS_Toolbar">TOOLBAR</sys:String>
     <sys:String x:Key="Str_KS_App">APP</sys:String>
@@ -198,6 +200,7 @@
     <sys:String x:Key="Str_Sc_Help">Show this list</sys:String>
     <sys:String x:Key="Str_Sc_About">Open the About window</sys:String>
     <sys:String x:Key="Str_Sc_Hint">The app size also follows the mouse wheel over the wordmark.</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">Hold Ctrl / Shift / Alt to preview a layer</sys:String>
 
     <!-- ==== DIALOGS, UPDATES AND ERRORS ==== -->
     <sys:String x:Key="Str_About_Title">About KillerScan</sys:String>
@@ -408,6 +411,11 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topology</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Keep Alive</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_Copy">Copy</sys:String>
+    <sys:String x:Key="Str_Term_Paste">Paste</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">Select all</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">Copy All</sys:String>
+    <sys:String x:Key="Str_Term_Clear">Clear</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc to stop</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Split panes</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Move to other pane</sys:String>

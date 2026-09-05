@@ -115,6 +115,7 @@
     <sys:String x:Key="Str_St_Probing">Sondeando {0} hosts activos...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Resolviendo {0} hosts...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Escaneo completado - {0} dispositivos encontrados</sys:String>
+    <sys:String x:Key="Str_St_Ready">Listo</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Escaneo cancelado</sys:String>
     <sys:String x:Key="Str_St_Exported">Exportado a {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Anulación establecida: {0} = {1}</sys:String>
@@ -153,9 +154,11 @@
     <sys:String x:Key="Str_Shortcuts_Title">Atajos de teclado</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LISTA</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">TECLADO</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Guía completa y tutoriales en línea</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">Mantenga Ctrl / Shift / Alt para ver una capa</sys:String>
     <sys:String x:Key="Str_KS_Views">VISTAS</sys:String>
     <sys:String x:Key="Str_KS_Scan">ESCANEO</sys:String>
-    <sys:String x:Key="Str_KS_Device">DISPOSITIVO</sys:String>
+    <sys:String x:Key="Str_KS_Device">DISPOSITIVOS</sys:String>
     <sys:String x:Key="Str_KS_Topology">TOPOLOGÍA</sys:String>
     <sys:String x:Key="Str_KS_Toolbar">BARRA DE HERRAMIENTAS</sys:String>
     <sys:String x:Key="Str_KS_App">APLICACIÓN</sys:String>
@@ -366,6 +369,11 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topología</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Supervisión de conexión</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_Copy">Copiar</sys:String>
+    <sys:String x:Key="Str_Term_Paste">Pegar</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">Seleccionar todo</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">Copiar todo</sys:String>
+    <sys:String x:Key="Str_Term_Clear">Limpiar</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc para detener</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Dividir paneles</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Mover al otro panel</sys:String>

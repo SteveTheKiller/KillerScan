@@ -115,6 +115,7 @@
     <sys:String x:Key="Str_St_Probing">{0} etkin ana bilgisayar yoklanıyor...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">{0} ana bilgisayar çözümleniyor...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Tarama tamamlandı - {0} cihaz bulundu</sys:String>
+    <sys:String x:Key="Str_St_Ready">Hazır</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Tarama iptal edildi</sys:String>
     <sys:String x:Key="Str_St_Exported">{0} konumuna aktarıldı</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Geçersiz kılma ayarlandı: {0} = {1}</sys:String>
@@ -153,9 +154,11 @@
     <sys:String x:Key="Str_Shortcuts_Title">Klavye kısayolları</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LİSTE</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">KLAVYE</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Tam kılavuz ve çevrimiçi rehber</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">Bir katmanı görmek için Ctrl / Shift / Alt tuşunu basılı tutun</sys:String>
     <sys:String x:Key="Str_KS_Views">GÖRÜNÜMLER</sys:String>
     <sys:String x:Key="Str_KS_Scan">TARAMA</sys:String>
-    <sys:String x:Key="Str_KS_Device">AYGIT</sys:String>
+    <sys:String x:Key="Str_KS_Device">CİHAZLAR</sys:String>
     <sys:String x:Key="Str_KS_Topology">TOPOLOJİ</sys:String>
     <sys:String x:Key="Str_KS_Toolbar">ARAÇ ÇUBUĞU</sys:String>
     <sys:String x:Key="Str_KS_App">UYGULAMA</sys:String>
@@ -366,6 +369,11 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topoloji</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Bağlantı izleme</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_Copy">Kopyala</sys:String>
+    <sys:String x:Key="Str_Term_Paste">Yapıştır</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">Tümünü seç</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">Tümünü kopyala</sys:String>
+    <sys:String x:Key="Str_Term_Clear">Temizle</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Durdurmak icin Esc</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Bölmeleri ayır</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Diğer bölmeye taşı</sys:String>

@@ -115,6 +115,7 @@
     <sys:String x:Key="Str_St_Probing">Sondage de {0} hôtes actifs...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Résolution de {0} hôtes...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Analyse terminée - {0} appareils trouvés</sys:String>
+    <sys:String x:Key="Str_St_Ready">Prêt</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Analyse annulée</sys:String>
     <sys:String x:Key="Str_St_Exported">Exporté vers {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Remplacement défini : {0} = {1}</sys:String>
@@ -153,9 +154,11 @@
     <sys:String x:Key="Str_Shortcuts_Title">Raccourcis clavier</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LISTE</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">CLAVIER</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Guide complet et tutoriels en ligne</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">Maintenez Ctrl / Shift / Alt pour afficher une couche</sys:String>
     <sys:String x:Key="Str_KS_Views">VUES</sys:String>
     <sys:String x:Key="Str_KS_Scan">ANALYSE</sys:String>
-    <sys:String x:Key="Str_KS_Device">APPAREIL</sys:String>
+    <sys:String x:Key="Str_KS_Device">APPAREILS</sys:String>
     <sys:String x:Key="Str_KS_Topology">TOPOLOGIE</sys:String>
     <sys:String x:Key="Str_KS_Toolbar">BARRE D'OUTILS</sys:String>
     <sys:String x:Key="Str_KS_App">APPLICATION</sys:String>
@@ -366,6 +369,11 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologie</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Surveillance de connexion</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_Copy">Copier</sys:String>
+    <sys:String x:Key="Str_Term_Paste">Coller</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">Tout sélectionner</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">Tout copier</sys:String>
+    <sys:String x:Key="Str_Term_Clear">Effacer</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc pour arreter</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Diviser les volets</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Déplacer vers l'autre volet</sys:String>

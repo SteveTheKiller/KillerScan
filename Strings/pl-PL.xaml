@@ -90,6 +90,7 @@
     <sys:String x:Key="Str_St_Probing">Sprawdzanie {0} aktywnych hostów...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Rozpoznawanie {0} hostów...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Skanowanie zakończone - znaleziono urządzeń: {0}</sys:String>
+    <sys:String x:Key="Str_St_Ready">Gotowe</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Skanowanie anulowane</sys:String>
     <sys:String x:Key="Str_St_Exported">Wyeksportowano do {0}</sys:String>
     <sys:String x:Key="Str_InstallBtn">Zainstaluj KillerScan</sys:String>
@@ -138,9 +139,11 @@
     <sys:String x:Key="Str_Shortcuts_Title">Skróty klawiaturowe</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LISTA</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">KLAWIATURA</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Pełny przewodnik &amp; poradniki online</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">Przytrzymaj Ctrl / Shift / Alt, aby zobaczyć warstwę</sys:String>
     <sys:String x:Key="Str_KS_Views">WIDOKI</sys:String>
     <sys:String x:Key="Str_KS_Scan">SKANOWANIE</sys:String>
-    <sys:String x:Key="Str_KS_Device">URZĄDZENIE</sys:String>
+    <sys:String x:Key="Str_KS_Device">URZĄDZENIA</sys:String>
     <sys:String x:Key="Str_KS_Topology">TOPOLOGIA</sys:String>
     <sys:String x:Key="Str_KS_Toolbar">PASEK NARZĘDZI</sys:String>
     <sys:String x:Key="Str_KS_App">APLIKACJA</sys:String>
@@ -351,6 +354,11 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologia</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Monitorowanie połączenia</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_Copy">Kopiuj</sys:String>
+    <sys:String x:Key="Str_Term_Paste">Wklej</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">Zaznacz wszystko</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">Kopiuj wszystko</sys:String>
+    <sys:String x:Key="Str_Term_Clear">Wyczyść</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc aby zatrzymac</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Podziel panele</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Przenieś do drugiego panelu</sys:String>

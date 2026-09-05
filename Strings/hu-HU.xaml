@@ -134,6 +134,7 @@
     <sys:String x:Key="Str_St_Probing">{0} élő gazdagép vizsgálata...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">{0} gazdagép feloldása...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">A vizsgálat befejeződött - {0} eszköz található</sys:String>
+    <sys:String x:Key="Str_St_Ready">Kész</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Szkennelés megszakítva</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Mély vizsgálat {0}...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Újrakeresés kész - {0} gazdagép frissítve</sys:String>
@@ -171,9 +172,11 @@
     <sys:String x:Key="Str_Shortcuts_Title">Billentyűparancsok</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LISTA</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">BILLENTYŰZET</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Teljes útmutató és leírás online</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">Tartsa lenyomva a Ctrl / Shift / Alt billentyűt egy réteg megtekintéséhez</sys:String>
     <sys:String x:Key="Str_KS_Views">NÉZETEK</sys:String>
     <sys:String x:Key="Str_KS_Scan">VIZSGÁLAT</sys:String>
-    <sys:String x:Key="Str_KS_Device">ESZKÖZ</sys:String>
+    <sys:String x:Key="Str_KS_Device">ESZKÖZÖK</sys:String>
     <sys:String x:Key="Str_KS_Topology">TOPOLÓGIA</sys:String>
     <sys:String x:Key="Str_KS_Toolbar">ESZKÖZTÁR</sys:String>
     <sys:String x:Key="Str_KS_App">ALKALMAZÁS</sys:String>
@@ -382,6 +385,11 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topológia</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Kapcsolatfigyelés</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminál</sys:String>
+    <sys:String x:Key="Str_Term_Copy">Másolás</sys:String>
+    <sys:String x:Key="Str_Term_Paste">Beillesztés</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">Összes kijelölése</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">Összes másolása</sys:String>
+    <sys:String x:Key="Str_Term_Clear">Törlés</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc a leallitashoz</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Panelek felosztása</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Áthelyezés a másik panelre</sys:String>

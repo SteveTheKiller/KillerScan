@@ -134,6 +134,7 @@
     <sys:String x:Key="Str_St_Probing">Проверка {0} активных хостов...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Определение имен {0} хостов...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Сканирование завершено - найдено устройств: {0}</sys:String>
+    <sys:String x:Key="Str_St_Ready">Готово</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Сканирование отменено</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Глубокое сканирование {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Пересканирование завершено - обновлено хостов: {0}</sys:String>
@@ -171,9 +172,11 @@
     <sys:String x:Key="Str_Shortcuts_Title">Сочетания клавиш</sys:String>
     <sys:String x:Key="Str_KS_ViewList">СПИСОК</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">КЛАВИАТУРА</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Полное руководство &amp; инструкция по работе в Интернете</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">Удерживайте Ctrl / Shift / Alt, чтобы увидеть слой</sys:String>
     <sys:String x:Key="Str_KS_Views">ВИДЫ</sys:String>
     <sys:String x:Key="Str_KS_Scan">СКАНИРОВАНИЕ</sys:String>
-    <sys:String x:Key="Str_KS_Device">УСТРОЙСТВО</sys:String>
+    <sys:String x:Key="Str_KS_Device">УСТРОЙСТВА</sys:String>
     <sys:String x:Key="Str_KS_Topology">ТОПОЛОГИЯ</sys:String>
     <sys:String x:Key="Str_KS_Toolbar">ПАНЕЛЬ ИНСТРУМЕНТОВ</sys:String>
     <sys:String x:Key="Str_KS_App">ПРИЛОЖЕНИЕ</sys:String>
@@ -392,6 +395,11 @@
     <sys:String x:Key="Str_View_Topology">Топология</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Наблюдение за соединением</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Терминал</sys:String>
+    <sys:String x:Key="Str_Term_Copy">Копировать</sys:String>
+    <sys:String x:Key="Str_Term_Paste">Вставить</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">Выделить все</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">Копировать все</sys:String>
+    <sys:String x:Key="Str_Term_Clear">Очистить</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc для остановки</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Разделить панели</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Переместить в другую панель</sys:String>

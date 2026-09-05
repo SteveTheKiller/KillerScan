@@ -134,6 +134,7 @@
     <sys:String x:Key="Str_St_Probing">{0} белсенді хост тексерілуде...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">{0} хост анықталуда...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Сканерлеу аяқталды - {0} құрылғы табылды</sys:String>
+    <sys:String x:Key="Str_St_Ready">Дайын</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Сканерлеу болдырылмады</sys:String>
     <sys:String x:Key="Str_St_Rescanning">{0} терең сканерленуде...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Қайта сканерлеу аяқталды - {0} хост жаңартылды</sys:String>
@@ -171,9 +172,11 @@
     <sys:String x:Key="Str_Shortcuts_Title">Пернелер тіркесімі</sys:String>
     <sys:String x:Key="Str_KS_ViewList">ТІЗІМ</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">ПЕРНЕТАҚТА</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Толық нұсқаулық пен онлайн көмек</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">Қабатты көру үшін Ctrl / Shift / Alt басып тұрыңыз</sys:String>
     <sys:String x:Key="Str_KS_Views">КӨРІНІСТЕР</sys:String>
     <sys:String x:Key="Str_KS_Scan">СКАНЕРЛЕУ</sys:String>
-    <sys:String x:Key="Str_KS_Device">ҚҰРЫЛҒЫ</sys:String>
+    <sys:String x:Key="Str_KS_Device">ҚҰРЫЛҒЫЛАР</sys:String>
     <sys:String x:Key="Str_KS_Topology">ТОПОЛОГИЯ</sys:String>
     <sys:String x:Key="Str_KS_Toolbar">ҚҰРАЛДАР ТАҚТАСЫ</sys:String>
     <sys:String x:Key="Str_KS_App">ҚОСЫМША</sys:String>
@@ -408,6 +411,11 @@
     <sys:String x:Key="Str_View_Topology">Топология</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Қосылымды бақылау</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Терминал</sys:String>
+    <sys:String x:Key="Str_Term_Copy">Көшіру</sys:String>
+    <sys:String x:Key="Str_Term_Paste">Қою</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">Барлығын таңдау</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">Барлығын көшіру</sys:String>
+    <sys:String x:Key="Str_Term_Clear">Тазарту</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Тоқтату үшін Esc</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Панельдерді бөлу</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Басқа панельге жылжыту</sys:String>

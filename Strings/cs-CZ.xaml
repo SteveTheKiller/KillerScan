@@ -117,6 +117,7 @@
     <sys:String x:Key="Str_St_Probing">Sondování {0} dostupných hostitelů...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Překlad {0} hostitelů...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Skenování dokončeno - nalezeno {0} zařízení</sys:String>
+    <sys:String x:Key="Str_St_Ready">Připraveno</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Skenování zrušeno</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Hloubkové skenování {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Opakované skenování dokončeno - obnoveno {0} hostitelů</sys:String>
@@ -151,8 +152,10 @@
     <sys:String x:Key="Str_Shortcuts_Title">Klávesové zkratky</sys:String>
     <sys:String x:Key="Str_KS_ViewList">SEZNAM</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">KLÁVESNICE</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Kompletní příručka &amp; návody online</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">Podržte Ctrl / Shift / Alt pro náhled vrstvy</sys:String>
     <sys:String x:Key="Str_KS_Views">ZOBRAZENÍ</sys:String>
-    <sys:String x:Key="Str_KS_Scan">KONTROLA</sys:String>
+    <sys:String x:Key="Str_KS_Scan">SKENOVÁNÍ</sys:String>
     <sys:String x:Key="Str_KS_Device">ZAŘÍZENÍ</sys:String>
     <sys:String x:Key="Str_KS_Topology">TOPOLOGIE</sys:String>
     <sys:String x:Key="Str_KS_Toolbar">PANEL NÁSTROJŮ</sys:String>
@@ -364,6 +367,11 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologie</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Sledování připojení</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminál</sys:String>
+    <sys:String x:Key="Str_Term_Copy">Kopírovat</sys:String>
+    <sys:String x:Key="Str_Term_Paste">Vložit</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">Vybrat vše</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">Kopírovat vše</sys:String>
+    <sys:String x:Key="Str_Term_Clear">Vymazat</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc pro zastaveni</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Rozdělit panely</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Přesunout do druhého panelu</sys:String>

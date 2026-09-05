@@ -115,6 +115,7 @@
     <sys:String x:Key="Str_St_Probing">正在探測 {0} 個線上主機...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">正在解析 {0} 個主機...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">掃描完成 - 找到 {0} 台裝置</sys:String>
+    <sys:String x:Key="Str_St_Ready">就緒</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">掃描已取消</sys:String>
     <sys:String x:Key="Str_St_Exported">已匯出至 {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">已設定覆寫：{0} = {1}</sys:String>
@@ -153,6 +154,8 @@
     <sys:String x:Key="Str_Shortcuts_Title">鍵盤快速鍵</sys:String>
     <sys:String x:Key="Str_KS_ViewList">清單</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">鍵盤</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">完整指南與線上教學</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">按住 Ctrl / Shift / Alt 預覽層</sys:String>
     <sys:String x:Key="Str_KS_Views">檢視</sys:String>
     <sys:String x:Key="Str_KS_Scan">掃描</sys:String>
     <sys:String x:Key="Str_KS_Device">裝置</sys:String>
@@ -366,6 +369,11 @@
     <sys:String x:Key="Str_View_Topology">拓撲</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">連線監控</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">終端機</sys:String>
+    <sys:String x:Key="Str_Term_Copy">複製</sys:String>
+    <sys:String x:Key="Str_Term_Paste">貼上</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">全選</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">複製全部</sys:String>
+    <sys:String x:Key="Str_Term_Clear">清除</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">按 Esc 停止</sys:String>
     <sys:String x:Key="Str_Workspace_Split">分割窗格</sys:String>
     <sys:String x:Key="Str_Workspace_Move">移至另一個窗格</sys:String>

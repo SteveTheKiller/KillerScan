@@ -126,6 +126,7 @@
     <sys:String x:Key="Str_St_Probing">{0} 台のアクティブなホストを調査中...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">{0} 台のホストを解決中...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">スキャン完了 - {0} 台のデバイスを検出</sys:String>
+    <sys:String x:Key="Str_St_Ready">準備完了</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">スキャンをキャンセルしました</sys:String>
     <sys:String x:Key="Str_St_Exported">{0} にエクスポートしました</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">上書きを設定: {0} = {1}</sys:String>
@@ -164,6 +165,8 @@
     <sys:String x:Key="Str_Shortcuts_Title">キーボードショートカット</sys:String>
     <sys:String x:Key="Str_KS_ViewList">リスト</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">キーボード</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">完全ガイド &amp; 使い方 (オンライン)</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">Ctrl / Shift / Alt を押すとレイヤーを表示</sys:String>
     <sys:String x:Key="Str_KS_Views">ビュー</sys:String>
     <sys:String x:Key="Str_KS_Scan">スキャン</sys:String>
     <sys:String x:Key="Str_KS_Device">デバイス</sys:String>
@@ -377,6 +380,11 @@
     <sys:String x:Key="Str_View_Topology">トポロジ</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">接続監視</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">ターミナル</sys:String>
+    <sys:String x:Key="Str_Term_Copy">コピー</sys:String>
+    <sys:String x:Key="Str_Term_Paste">貼り付け</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">すべて選択</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">すべてコピー</sys:String>
+    <sys:String x:Key="Str_Term_Clear">クリア</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc で停止</sys:String>
     <sys:String x:Key="Str_Workspace_Split">ペインを分割</sys:String>
     <sys:String x:Key="Str_Workspace_Move">別のペインに移動</sys:String>

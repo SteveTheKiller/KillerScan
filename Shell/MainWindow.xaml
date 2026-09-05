@@ -438,17 +438,18 @@
                     HorizontalAlignment="Right" Width="{DynamicResource RailWidth}" Margin="2,0,0,10"
                     Visibility="{DynamicResource ScaledRailVisibility}">
             <Button x:Name="SpeedTestButton" Style="{StaticResource RailButton}" Content="&#xE9D2;"
-                    FontSize="15" Click="SpeedTestButton_Click" Margin="0,0,0,10"
-                    ToolTip="{DynamicResource Str_TT_SpeedTest}"/>
+                    FontSize="15" Click="SpeedTestButton_Click" Margin="0,0,0,10">
+                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_TT_SpeedTest}"/><Run Text=" (F4)"/></TextBlock></Button.ToolTip>
+            </Button>
             <Button x:Name="ProfilesButton" Style="{StaticResource RailButton}" Content="&#xE8B7;"
                     FontSize="15" Click="ProfilesButton_Click" Margin="0,0,0,10">
-                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Profiles_Title}"/><Run Text=" (F10)"/></TextBlock></Button.ToolTip>
+                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Profiles_Title}"/><Run Text=" (Ctrl+Shift+P)"/></TextBlock></Button.ToolTip>
             </Button>
             <Button x:Name="HistoryButton" Style="{StaticResource RailButton}"
                     Content="&#xE81C;" FontSize="15"
                     Click="HistoryButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip>
-                    <TextBlock><Run Text="{DynamicResource Str_History_Title}"/><Run Text=" (F6)"/></TextBlock>
+                    <TextBlock><Run Text="{DynamicResource Str_History_Title}"/><Run Text=" (Ctrl+H)"/></TextBlock>
                 </Button.ToolTip>
             </Button>
             <Button x:Name="ShortcutsButton" Style="{StaticResource RailButton}"
@@ -483,6 +484,25 @@
             <Grid x:Name="TerminalLayout" WindowChrome.IsHitTestVisibleInChrome="True">
             </Grid>
         </Border>
+        <!-- The sunken edge around the content pane, drawn as four layers over it rather than as
+             one border, because Win32's EDGE_SUNKEN is two tones on each side: #808080 then
+             #000000 down the top and left, #ffffff then the face gray up the bottom and right. A
+             single two-pixel gray has the right width and the wrong depth. Every thickness here is
+             zero on the flat themes, so those draw nothing at all. Ported from KillerNotes. -->
+        <Border Grid.Row="1" Panel.ZIndex="11" IsHitTestVisible="False"
+                BorderBrush="{DynamicResource PaneBevelDarkBrush}"
+                BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
+        <Border Grid.Row="1" Panel.ZIndex="11" IsHitTestVisible="False"
+                BorderBrush="{DynamicResource PaneBevelLightBrush}"
+                BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
+        <Border Grid.Row="1" Panel.ZIndex="11" IsHitTestVisible="False"
+                Margin="{DynamicResource PaneBevelInnerMargin}"
+                BorderBrush="{DynamicResource PaneBevelDark2Brush}"
+                BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
+        <Border Grid.Row="1" Panel.ZIndex="11" IsHitTestVisible="False"
+                Margin="{DynamicResource PaneBevelInnerMargin}"
+                BorderBrush="{DynamicResource PaneBevelLight2Brush}"
+                BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
         </Grid>
 
         </Grid>
@@ -499,13 +519,13 @@
                     Visibility="{DynamicResource FixedRailVisibility}">
             <Button x:Name="FixedProfilesButton" Style="{StaticResource RailButton}" Content="&#xE8B7;"
                     FontSize="15" Click="ProfilesButton_Click" Margin="0,0,0,10">
-                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Profiles_Title}"/><Run Text=" (F10)"/></TextBlock></Button.ToolTip>
+                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Profiles_Title}"/><Run Text=" (Ctrl+Shift+P)"/></TextBlock></Button.ToolTip>
             </Button>
             <Button x:Name="FixedHistoryButton" Style="{StaticResource RailButton}"
                     Content="&#xE81C;" FontSize="15"
                     Click="HistoryButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip>
-                    <TextBlock><Run Text="{DynamicResource Str_History_Title}"/><Run Text=" (F6)"/></TextBlock>
+                    <TextBlock><Run Text="{DynamicResource Str_History_Title}"/><Run Text=" (Ctrl+H)"/></TextBlock>
                 </Button.ToolTip>
             </Button>
             <Button x:Name="FixedShortcutsButton" Style="{StaticResource RailButton}"
@@ -559,10 +579,12 @@
                     <Border IsHitTestVisible="False"
                             BorderBrush="{DynamicResource FooterBevelLightBrush}"
                             BorderThickness="{DynamicResource FooterCellDarkThickness}"/>
-                    <!-- Nudged right of the corner light so the two do not read as one control.
-                         On the cell's own padding rather than the shared FooterCellPadding token,
-                         which the version cell across the bar uses as well. -->
-                    <StackPanel Orientation="Horizontal" Margin="8,0,0,0">
+                    <!-- Clears the corner light, which ends 15px from the window edge. The flat
+                         themes also have 16px of footer padding in front of this, but 98SE has
+                         none, so a smaller margin here put the status text under the light. On the
+                         cell's own content rather than the shared FooterCellPadding token, which
+                         the version cell across the bar uses as well. -->
+                    <StackPanel Orientation="Horizontal" Margin="18,0,0,0">
                     <TextBlock x:Name="StatusText" Text="Ready" MaxWidth="230" TextTrimming="CharacterEllipsis"
                                Margin="{DynamicResource FooterCellPadding}" HorizontalAlignment="Left"
                                Foreground="{DynamicResource MutedTextBrush}" FontFamily="Consolas"
@@ -611,12 +633,13 @@
                                        Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,5,0" VerticalAlignment="Center"/>
                             <TextBlock x:Name="NetworkFooter" FontSize="10" FontFamily="Consolas"
                                        Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center"/>
-                            <!-- Adapter and link speed. Trimmed, hidden when you fold the cell up,
-                                 and dropped automatically when the bar would otherwise run under
-                                 the centered portable badge. -->
-                            <TextBlock x:Name="NetworkFooterDetail" FontSize="10" FontFamily="Consolas"
-                                       TextTrimming="CharacterEllipsis" Foreground="{DynamicResource DimTextBrush}"
-                                       VerticalAlignment="Center"/>
+                            <!-- Adapter and link speed, each whole or not at all. No trimming: an
+                                 ellipsis mid-adapter reads as damage rather than as a fit, so the
+                                 speed goes first when the bar tightens and the adapter follows. -->
+                            <TextBlock x:Name="NetworkFooterAdapter" FontSize="10" FontFamily="Consolas"
+                                       Foreground="{DynamicResource DimTextBrush}" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="NetworkFooterSpeed" FontSize="10" FontFamily="Consolas"
+                                       Foreground="{DynamicResource DimTextBrush}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
                     <ProgressBar x:Name="ScanProgress"
@@ -729,6 +752,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0" Margin="0,0,0,14">
                                 <TextBlock x:Name="ShortcutsTitle" Text="Keyboard shortcuts"
@@ -770,6 +794,13 @@
                                      HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <StackPanel x:Name="ShortcutMapRows"/>
                             </Viewbox>
+                            <!-- Sits outside both hosts so it stays put when the list and the map
+                                 swap places, and points at the same page the site navigation does. -->
+                            <TextBlock Grid.Row="2" HorizontalAlignment="Right" Margin="0,14,0,0"
+                                       FontFamily="Consolas" FontSize="11">
+                                <Hyperlink Click="OnlineHelp_Click" Foreground="{DynamicResource PrimaryBrush}"
+                                           ToolTip="https://killerscan.net/help.html"><Run Text="{DynamicResource Str_KS_OnlineHelp}"/></Hyperlink>
+                            </TextBlock>
                         </Grid>
                     </Grid>
                 </Border>

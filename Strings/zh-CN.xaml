@@ -115,6 +115,7 @@
     <sys:String x:Key="Str_St_Probing">正在探测 {0} 个在线主机...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">正在解析 {0} 个主机...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">扫描完成 - 找到 {0} 台设备</sys:String>
+    <sys:String x:Key="Str_St_Ready">就绪</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">扫描已取消</sys:String>
     <sys:String x:Key="Str_St_Exported">已导出到 {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">已设置覆盖：{0} = {1}</sys:String>
@@ -153,6 +154,8 @@
     <sys:String x:Key="Str_Shortcuts_Title">键盘快捷键</sys:String>
     <sys:String x:Key="Str_KS_ViewList">列表</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">键盘</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">完整指南和在线教程</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">按住 Ctrl / Shift / Alt 预览层</sys:String>
     <sys:String x:Key="Str_KS_Views">视图</sys:String>
     <sys:String x:Key="Str_KS_Scan">扫描</sys:String>
     <sys:String x:Key="Str_KS_Device">设备</sys:String>
@@ -366,6 +369,11 @@
     <sys:String x:Key="Str_View_Topology">拓扑</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">连接监控</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">终端</sys:String>
+    <sys:String x:Key="Str_Term_Copy">复制</sys:String>
+    <sys:String x:Key="Str_Term_Paste">粘贴</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">全选</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">复制全部</sys:String>
+    <sys:String x:Key="Str_Term_Clear">清屏</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">按 Esc 停止</sys:String>
     <sys:String x:Key="Str_Workspace_Split">拆分窗格</sys:String>
     <sys:String x:Key="Str_Workspace_Move">移到另一窗格</sys:String>

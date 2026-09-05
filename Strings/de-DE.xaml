@@ -115,6 +115,7 @@
     <sys:String x:Key="Str_St_Probing">Prüfe {0} aktive Hosts...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Löse {0} Hosts auf...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Scan abgeschlossen - {0} Geräte gefunden</sys:String>
+    <sys:String x:Key="Str_St_Ready">Bereit</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Scan abgebrochen</sys:String>
     <sys:String x:Key="Str_St_Exported">Exportiert nach {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Überschreibung gesetzt: {0} = {1}</sys:String>
@@ -153,9 +154,11 @@
     <sys:String x:Key="Str_Shortcuts_Title">Tastenkürzel</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LISTE</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">TASTATUR</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Vollständige Anleitung &amp; Tutorials online</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">Ctrl / Shift / Alt halten, um eine Ebene anzuzeigen</sys:String>
     <sys:String x:Key="Str_KS_Views">ANSICHTEN</sys:String>
-    <sys:String x:Key="Str_KS_Scan">SCAN</sys:String>
-    <sys:String x:Key="Str_KS_Device">GERÄT</sys:String>
+    <sys:String x:Key="Str_KS_Scan">SCANNEN</sys:String>
+    <sys:String x:Key="Str_KS_Device">GERÄTE</sys:String>
     <sys:String x:Key="Str_KS_Topology">TOPOLOGIE</sys:String>
     <sys:String x:Key="Str_KS_Toolbar">SYMBOLLEISTE</sys:String>
     <sys:String x:Key="Str_KS_App">ANWENDUNG</sys:String>
@@ -367,6 +370,11 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologie</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Verbindungsüberwachung</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_Copy">Kopieren</sys:String>
+    <sys:String x:Key="Str_Term_Paste">Einfügen</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">Alles auswählen</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">Alles kopieren</sys:String>
+    <sys:String x:Key="Str_Term_Clear">Leeren</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc zum Beenden</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Ansicht teilen</sys:String>
     <sys:String x:Key="Str_Workspace_Move">In anderen Bereich verschieben</sys:String>
