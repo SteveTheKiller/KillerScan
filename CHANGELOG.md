@@ -11,12 +11,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Added
 - Permanent Devices, Services, Topology, Keep Alive and Terminal views on the right of the toolbar. Each keeps its own state, a right-click menu sets icon size and caption placement, and buttons that do not fit overflow into a menu rather than squeezing the input bar.
 - An embedded terminal running PowerShell, ping and SSH, preferring PowerShell 7. It uses KillerShell's font, palette and prompt, the prompt unpacks to a file you can edit and keeps your version across upgrades, and the KillerScripts module travels inside the exe so it is there on a machine you cannot install anything on. Device ping is colored by result and says that Escape stops it.
-- Keep Alive (F2) watches any number of selected devices at once, each as a status card with a latency sparkline, packet loss, its own checks on banded rows and its own event log. Right-click a card to copy the address, rerun its checks, reset its counters or drop it from the run.
+- Keep Alive (F9) watches any number of selected devices at once, each as a status card with a latency sparkline, packet loss, its own checks on banded rows and its own event log. Right-click a card to copy the address, rerun its checks, reset its counters or drop it from the run.
 - Device diagnostics (F3) checks reverse and forward DNS, ICMP, the local route, common and previously seen TCP ports, and traceroute.
-- Topology (F9) draws an inferred view of the network with movable, multi-select device boxes and four arrangements, cycled with F7 or picked with Ctrl+1 through Ctrl+4. The arranged view exports as a full-resolution PNG. (#3)
-- A service-centric view (F8) organized by discovered service, port and device.
-- Scan history (F6) compares each scan against the previous run of the same target for added, missing and changed devices, and adds trusted-device baselines with unknown-device alerts.
-- Scan profiles (F10) load or run remembered targets and can follow with Deep Scan. History and profiles share a sliding sidebar that opens from the icon rail and resizes by dragging.
+- Topology (F8) draws an inferred view of the network with movable, multi-select device boxes and four arrangements, cycled with Ctrl+G or picked with Ctrl+1 through Ctrl+4. The arranged view exports as a full-resolution PNG. (#3)
+- A service-centric view (F7) organized by discovered service, port and device.
+- Scan history (Ctrl+H) compares each scan against the previous run of the same target for added, missing and changed devices, and adds trusted-device baselines with unknown-device alerts.
+- Scan profiles (Ctrl+Shift+P) load or run remembered targets and can follow with Deep Scan. History and profiles share a sliding sidebar that opens from the icon rail and resizes by dragging.
 - Deep Scan performs an exhaustive, cancellable rescan of every discovered host.
 - A speed test on the icon rail, which runs in the terminal. It uses the Ookla CLI when it is installed, offers to download it if it is not, and otherwise falls back to a built-in HTTP throughput test that installs nothing.
 - The footer shows the active adapter and its link speed beside the address, with a wired or wireless glyph.
