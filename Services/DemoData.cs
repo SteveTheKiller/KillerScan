@@ -114,9 +114,11 @@ namespace KillerScan.Services
         }
 
         /// <summary>
-        /// Two earlier scans of the same target so the history comparison has something to say:
-        /// the older one is the fabricated network as it was, the newer one has a device gone, a
-        /// device added, and one that picked up a port and a new address.
+        /// A week of earlier scans, so the history list looks like a list rather than a pair and
+        /// the comparison has something to say. Most entries are the fabricated network at
+        /// different points: a device leaves, one arrives, one picks up a port and a new address.
+        /// Two entries are other targets, which is what makes the "previous scan of the same
+        /// target" rule visible rather than merely described.
         /// </summary>
         internal static List<ScanHistoryEntry> History(DemoScan scan)
         {
@@ -125,9 +127,15 @@ namespace KillerScan.Services
 
             var baseline = scan.Devices.Select(Historical).ToList();
 
-            // Yesterday: one device that has since left, and no sign of the newest arrival.
-            var older = baseline.Take(baseline.Count - 1).Select(Copy).ToList();
-            older.Add(new HistoricalDevice
+            void Add(double hoursAgo, string target, IEnumerable<HistoricalDevice> devices) =>
+                entries.Add(new ScanHistoryEntry
+                {
+                    ScannedAt = DateTimeOffset.Now.AddHours(-hoursAgo),
+                    Target    = target,
+                    Devices   = [.. devices.OrderBy(d => d.IpAddress)]
+                });
+
+            var strayIot = new HistoricalDevice
             {
                 Identity   = "mac:5C:CF:7F:1A:2B:3C",
                 IpAddress  = $"{scan.Network}.207",
@@ -136,13 +144,33 @@ namespace KillerScan.Services
                 Vendor     = "Espressif Inc.",
                 DeviceType = "IoT",
                 OpenPorts  = [80]
-            });
-            entries.Add(new ScanHistoryEntry
-            {
-                ScannedAt = DateTimeOffset.Now.AddDays(-1).AddHours(-2),
-                Target    = scan.Subnet,
-                Devices   = [.. older.OrderBy(d => d.IpAddress)]
-            });
+            };
+
+            // Six days back: a smaller network, before the last two devices were installed.
+            var earliest = baseline.Take(Math.Max(3, baseline.Count - 3)).Select(Copy).ToList();
+            Add(150, scan.Subnet, earliest);
+
+            // Five days back: the same, plus the IoT board that has since been unplugged.
+            var withIot = earliest.Select(Copy).ToList();
+            withIot.Add(Copy(strayIot));
+            Add(126, scan.Subnet, withIot);
+
+            // A different target, so the list is not one subnet repeated.
+            Add(101, "10.20.0.0/24", earliest.Take(3).Select(Copy));
+
+            // Three days back: everything except the newest arrival, IoT board still present.
+            var older = baseline.Take(baseline.Count - 1).Select(Copy).ToList();
+            older.Add(Copy(strayIot));
+            Add(74, scan.Subnet, older);
+
+            // Two days back: unchanged, which is the run that reports no differences at all.
+            Add(50, scan.Subnet, older.Select(Copy));
+
+            // A single host, the shape a quick check leaves behind.
+            Add(28, $"{scan.Network}.1", baseline.Take(1).Select(Copy));
+
+            // Yesterday: the IoT board is gone and the newest device has not arrived yet.
+            Add(26, scan.Subnet, baseline.Take(baseline.Count - 1).Select(Copy));
 
             // This morning: same network, but one host moved and opened a port.
             var recent = baseline.Select(Copy).ToList();
@@ -151,12 +179,7 @@ namespace KillerScan.Services
                 recent[2].IpAddress = $"{scan.Network}.{200 + (recent[2].IpAddress.Length % 20)}";
                 recent[2].OpenPorts = [.. recent[2].OpenPorts.Concat([8080]).Distinct().OrderBy(p => p)];
             }
-            entries.Add(new ScanHistoryEntry
-            {
-                ScannedAt = DateTimeOffset.Now.AddHours(-3),
-                Target    = scan.Subnet,
-                Devices   = [.. recent.OrderBy(d => d.IpAddress)]
-            });
+            Add(3, scan.Subnet, recent);
             return entries;
         }
 
@@ -196,11 +219,14 @@ namespace KillerScan.Services
         /// </summary>
         internal static string TerminalTranscript(DemoScan scan)
         {
+            // The real prompt prints the working directory and no product name, so the demo
+            // transcript does the same. It used to say "KillerShell", which is where that prompt
+            // came from but not what it shows.
             const string esc = "\u001b";
-            string green = esc + "[32m", cyan = esc + "[36m", grey = esc + "[90m", off = esc + "[0m";
+            string green = esc + "[32m", cyan = esc + "[36m", off = esc + "[0m";
             var lines = new List<string>
             {
-                $"{cyan}KillerShell{off} {grey}~{off}",
+                $"{cyan}~{off}",
                 $"{green}>{off} killerscan /network",
                 "",
                 $"  Interface   {scan.InterfaceLabelText}",
@@ -209,14 +235,14 @@ namespace KillerScan.Services
                 $"  Gateway     {scan.Gateway}",
                 $"  DNS         {scan.Gateway}",
                 "",
-                $"{cyan}KillerShell{off} {grey}~{off}",
+                $"{cyan}~{off}",
                 $"{green}>{off} ping {scan.Gateway}",
                 "",
                 $"{green}Reply from {scan.Gateway}: bytes=32 time=1ms TTL=64{off}",
                 $"{green}Reply from {scan.Gateway}: bytes=32 time=1ms TTL=64{off}",
                 $"{green}Reply from {scan.Gateway}: bytes=32 time=2ms TTL=64{off}",
                 "",
-                $"{cyan}KillerShell{off} {grey}~{off}",
+                $"{cyan}~{off}",
                 $"{green}>{off} ",
             };
             return string.Join("\r\n", lines);

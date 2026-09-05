@@ -20,7 +20,12 @@ namespace KillerScan.Controls
             LocalIpLabel.Text   = demo.LocalIp;
             InterfaceLabel.Text = demo.InterfaceLabelText;
             InterfaceIcon.Text  = InterfaceGlyph(demo.Wireless);
-            FooterNetLabel.Text = string.Join("  ·  ", demo.LocalIp, demo.AdapterName, demo.LinkSpeedText);
+            // Split the same way the real detect does. Setting the whole line here left the real
+            // adapter sitting in the detail label beside the fabricated one, so the footer listed
+            // two network cards.
+            FooterNetLabel.Text   = demo.LocalIp;
+            FooterNetAdapter.Text = Segment(demo.AdapterName);
+            FooterNetSpeed.Text   = Segment(demo.LinkSpeedText);
 
             _active.Devices.Clear();
             foreach (var d in demo.Devices) _active.Devices.Add(d);
