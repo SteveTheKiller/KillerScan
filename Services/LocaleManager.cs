@@ -52,11 +52,19 @@ namespace KillerScan.Services
         }
 
         /// <summary>Switch locale, persist the choice, and hot-swap the string ResourceDictionary.</summary>
+        /// <summary>
+        /// Fired after the string dictionary has been swapped. Anything bound with DynamicResource
+        /// follows the swap on its own; this is for text that was resolved once in code and stored,
+        /// which otherwise keeps the language it was created in.
+        /// </summary>
+        public static event Action? LocaleChanged;
+
         public static void Apply(Locale locale)
         {
             _current = locale;
             App.SetSetting("Locale", locale.ToString());
             ApplyInternal(locale);
+            LocaleChanged?.Invoke();
         }
 
         private static void ApplyInternal(Locale locale)

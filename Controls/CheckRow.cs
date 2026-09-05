@@ -34,5 +34,7 @@ namespace KillerScan.Controls
         public string Time { get; init; } = string.Empty;
         public string State { get; init; } = string.Empty;
         public Brush StateBrush { get; init; } = Brushes.Gray;
+        /// <summary>Which state this line recorded, so it can be re-worded in another language.</summary>
+        public bool Up { get; init; }
     }
 }

@@ -64,6 +64,7 @@ namespace KillerScan.Controls
             {
                 Time = time.ToLocalTime().ToString("HH:mm:ss"),
                 State = state,
+                Up = up,
                 StateBrush = Frozen(palette.Ansi[up ? 2 : 1])
             });
             while (Events.Count > EventWindow) Events.RemoveAt(0);
@@ -132,6 +133,25 @@ namespace KillerScan.Controls
             Color color = !_known ? palette.Ansi[8] : palette.Ansi[_up ? 2 : 1];
             StateBrush = Frozen(color);
             SparkBrush = Frozen(_known && !_up ? palette.Ansi[1] : palette.Ansi[6]);
+        }
+
+        /// <summary>
+        /// Re-labels the card after a language change. The card knows whether it is up, down or
+        /// still waiting, so the caller supplies the three words and the right one is chosen here.
+        /// Counters, history and the graph are untouched: only the words change.
+        /// </summary>
+        internal void Relabel(string reply, string noReply, string waiting)
+        {
+            State = !_known ? waiting : _up ? reply : noReply;
+
+            // The log lines are immutable, so they are rebuilt rather than edited. Rebuilding also
+            // gives the list something to notice: editing a property on them would not.
+            var rewritten = Events
+                .Select(e => new CardEvent { Time = e.Time, Up = e.Up, StateBrush = e.StateBrush,
+                                             State = e.Up ? reply : noReply })
+                .ToList();
+            Events.Clear();
+            foreach (var entry in rewritten) Events.Add(entry);
         }
 
         private static Brush Frozen(Color color)
