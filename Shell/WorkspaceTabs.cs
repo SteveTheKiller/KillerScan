@@ -27,7 +27,7 @@ namespace KillerScan.Shell
             if (Enum.TryParse(App.GetSetting("ToolbarLabels"), out ToolbarLabelMode labels) && Enum.IsDefined(typeof(ToolbarLabelMode), labels))
                 _toolbarLabelMode = labels;
             _workspaceNavigation.Margin = new Thickness(8, 2, 8, 2);
-            AddViewButton("scan", "Str_View_Scan", "Ctrl+T", () => ShowScanView("devices"));
+            AddViewButton("scan", "Str_View_Devices", "Ctrl+T", () => ShowScanView("devices"));
             AddViewButton("services", "Str_Services_Title", "F8", () => ServicesButton_Click(this, new RoutedEventArgs()));
             AddViewButton("topology", "Str_View_Topology", "F9", () => ShowScanView("topology"));
             AddViewButton("watch", "Str_View_KeepAlive", "F2", () => Watch_Click(this, new RoutedEventArgs()));
@@ -39,6 +39,9 @@ namespace KillerScan.Shell
             _toolbarOverflow.SetResourceReference(StyleProperty, "ViewToolbarButton");
             _toolbarOverflow.SetResourceReference(ToolTipProperty, "Str_Toolbar_Header");
             _toolbarOverflow.Click += (_, _) => OpenToolbarOverflow();
+            // Last in the strip rather than a sibling layered over it: as its own child of the
+            // toolbar grid it shared a column with these buttons and simply painted on top of them.
+            _workspaceNavigation.Children.Add(_toolbarOverflow);
             _workspaceToolbar.SizeChanged += (_, _) => FitToolbarViews();
         }
 
@@ -101,11 +104,14 @@ namespace KillerScan.Shell
                 {
                     pair.Value.SetResourceReference(Control.BackgroundProperty, "SelectionBg");
                     pair.Value.SetResourceReference(Control.ForegroundProperty, "SelectionFg");
+                    // Read by the template, which gives a selected view its own shadow strength.
+                    pair.Value.Tag = "selected";
                 }
                 else
                 {
                     pair.Value.ClearValue(Control.BackgroundProperty);
                     pair.Value.ClearValue(Control.ForegroundProperty);
+                    pair.Value.ClearValue(FrameworkElement.TagProperty);
                 }
             }
         }
@@ -199,13 +205,13 @@ namespace KillerScan.Shell
         /// <summary>
         /// Which button gives way first as the bar tightens, least wanted at the front. This is
         /// a judgement about the work, not about the layout, so it is written down rather than
-        /// derived from the order the buttons happen to sit in: Export is a step you take once
-        /// at the end, while Scan is the reason the window is open.
+        /// derived from the order the buttons happen to sit in: Services is the narrowest reading
+        /// of a scan you already have, while Devices is the reason the window is open.
         /// </summary>
         private static readonly string[] ToolbarDropOrder =
         [
-            "Str_TT_Export", "Str_Services_Title", "Str_View_Topology",
-            "Str_Workspace_Terminal", "Str_View_KeepAlive", "Str_View_Scan"
+            "Str_Services_Title", "Str_View_Topology",
+            "Str_Workspace_Terminal", "Str_View_KeepAlive", "Str_View_Devices"
         ];
 
         /// <summary>
@@ -222,7 +228,10 @@ namespace KillerScan.Shell
         {
             if (_workspaceToolbar.ActualWidth <= 0) return;
 
-            var buttons = _workspaceNavigation.Children.OfType<Button>().ToList();
+            // The overflow button lives in this strip too, so it has to be kept out of the list of
+            // things that can be pushed into the overflow.
+            var buttons = _workspaceNavigation.Children.OfType<Button>()
+                .Where(b => b != _toolbarOverflow).ToList();
             foreach (var button in buttons)
             {
                 button.Visibility = Visibility.Visible;
@@ -280,7 +289,7 @@ namespace KillerScan.Shell
                 item.SetResourceReference(HeaderedItemsControl.HeaderProperty, _viewAppearance[button].Key);
                 item.InputGestureText = _viewAppearance[button].Key switch
                 {
-                    "Str_View_Scan" => "Ctrl+T",
+                    "Str_View_Devices" => "Ctrl+T",
                     "Str_Services_Title" => "F8",
                     "Str_View_Topology" => "F9",
                     "Str_View_KeepAlive" => "F2",

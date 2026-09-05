@@ -29,15 +29,16 @@ namespace KillerScan.Shell
             _workspaceToolbar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             Grid.SetColumn(_workspaceNavigation, 1);
             _workspaceToolbar.Children.Add(_workspaceNavigation);
-            Grid.SetColumn(_toolbarOverflow, 1);
-            _workspaceToolbar.Children.Add(_toolbarOverflow);
             var toolbarSurface = new Grid { UseLayoutRounding = true };
             toolbarSurface.SetResourceReference(Panel.BackgroundProperty, "BackgroundBrush");
             var grain = new Border { IsHitTestVisible = false };
             grain.SetResourceReference(Border.BackgroundProperty, "GrainTileBrush");
             grain.SetResourceReference(OpacityProperty, "GrainOpacity");
-            toolbarSurface.Children.Add(_workspaceToolbar);
+            // Grain first, so it textures the bar itself and the controls sit ON it. Added after
+            // the toolbar it was painting over every control in the bar, which is why the subnet
+            // box looked like textured background rather than a field you can type in.
             toolbarSurface.Children.Add(grain);
+            toolbarSurface.Children.Add(_workspaceToolbar);
             WorkspaceHost.Children.Add(toolbarSurface);
             TerminalLayout.Children.Add(_workspaceBody);
             TerminalLayout.SizeChanged += (_, _) => ClipWorkspaceSurface();
@@ -75,6 +76,10 @@ namespace KillerScan.Shell
             if (!_workspaceBody.Children.Contains(content)) _workspaceBody.Children.Add(content);
             _selectedWorkspace = content;
             _workspaceView = view;
+            // The export menu lives on the rail whatever is in front, so it is told which view it
+            // is acting for. Anything built on the scan workspace resolves itself.
+            if (_scanWorkspace != null)
+                _scanWorkspace.ExportContext = view is "watch" or "terminal" ? view : "scan";
             foreach (FrameworkElement child in _workspaceBody.Children)
                 child.Visibility = child == content ? Visibility.Visible : Visibility.Collapsed;
             UpdateViewToolbar();
@@ -100,24 +105,59 @@ namespace KillerScan.Shell
                     networkDetails.Children.Add(group);
                 }
                 NetworkFooter.ToolTip = networkDetails;
+                // Address, adapter and link speed, with the wired or wireless glyph beside them.
+                // Both follow the workspace's own labels, so a network change updates the footer
+                // without the shell having to detect anything itself.
                 NetworkFooter.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("Text")
-                    { Source = _scanWorkspace.FindName("LocalIpLabel") });
+                    { Source = _scanWorkspace.FindName("FooterNetLabel") });
+                NetworkFooterDetail.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("Text")
+                    { Source = _scanWorkspace.FindName("FooterNetDetail") });
+                NetworkFooterIcon.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("Text")
+                    { Source = _scanWorkspace.FindName("InterfaceIcon") });
+                // The badge appears and disappears with portable mode, and the address changes
+                // width with the network, so the fit is re-run on both rather than once.
+                UpdateScanLight();
+                FooterBar.SizeChanged += (_, _) => FitFooterNetwork();
+                PortableBadge.IsVisibleChanged += (_, _) => FitFooterNetwork();
+                NetworkFooter.SizeChanged += (_, _) => FitFooterNetwork();
+                FitFooterNetwork();
                 var count = (TextBlock)_scanWorkspace.FindName("DeviceCount");
                 ((Panel)count.Parent).Children.Remove(count);
                 count.Margin = new Thickness(8, 0, 0, 0);
                 count.FontSize = 10;
                 DeviceCountFooter.Children.Add(count);
+                // Export lives on the rail with the other app actions rather than on the view bar.
+                // It is one step at the end of a scan, and the bar belongs to the views and to the
+                // target box. Same button, same flyout, so the export code is untouched.
                 var export = (Button)_scanWorkspace.FindName("ExportButton");
                 ((Panel)export.Parent).Children.Remove(export);
                 export.ClearValue(Control.TemplateProperty);
                 export.ClearValue(Control.BackgroundProperty);
-                export.Margin = new Thickness(0, 0, 2, 0);
-                export.SetResourceReference(StyleProperty, "ViewToolbarButton");
-                _viewAppearance.Add(export, ("\uE896", "Str_TT_Export"));
-                _workspaceNavigation.Children.Insert(0, export);
+                export.ClearValue(FrameworkElement.WidthProperty);
+                export.ClearValue(FrameworkElement.HeightProperty);
+                export.ClearValue(FrameworkElement.VerticalAlignmentProperty);
+                export.Margin = new Thickness(0, 0, 0, 10);
+                export.FontSize = 15;
+                export.Content = "\uE896";
+                export.SetResourceReference(StyleProperty, "RailButton");
+                var exportTip = new TextBlock();
+                var exportCaption = new System.Windows.Documents.Run();
+                exportCaption.SetResourceReference(System.Windows.Documents.Run.TextProperty, "Str_TT_Export");
+                exportTip.Inlines.Add(exportCaption);
+                exportTip.Inlines.Add(" (Ctrl+E)");
+                export.ToolTip = exportTip;
+                export.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, "Str_TT_Export");
+                RailButtons.Children.Insert(0, export);
                 ApplyToolbarAppearance();
                 _scanWorkspace.DeviceAction += (_, e) => WorkspaceDeviceAction(e.Device, e.Action);
-                _scanWorkspace.HistoryRecorded += (_, _) => { if (!_sidebarCollapsed) RefreshHistoryList(); };
+                _scanWorkspace.ShellExportRequested += ShellExport;
+                _scanWorkspace.HistoryRecorded += (_, _) =>
+                {
+                    if (!_sidebarCollapsed) RefreshHistoryList();
+                    // A re-rolled demo network invalidates whatever Keep Alive was watching, so it
+                    // follows the new addresses rather than sitting on a network that is gone.
+                    if (DemoData.Enabled) _watchWorkspace?.RestartWith(DemoWatchTargets());
+                };
                 _scanWorkspace.StateChanged += (_, _) =>
                 {
                     if (ActiveScan != null)
@@ -128,6 +168,9 @@ namespace KillerScan.Shell
                         UpdateWorkspaceStatus();
                         UpdateWorkspaceRail();
                     }
+                    // Outside the guard: a scan carries on while you sit in Keep Alive or a
+                    // terminal, and the light is the one thing on screen still reporting it.
+                    UpdateScanLight();
                 };
                 _scanWorkspace.ApplyScale(_appScale);
             }
@@ -136,6 +179,85 @@ namespace KillerScan.Shell
             ShowScanView("devices");
             return _scanWorkspace;
         }
+
+        /// <summary>
+        /// Whether the footer is showing the adapter and link speed. Clicking the cell toggles it,
+        /// and the choice is remembered; a bar too narrow to hold it folds it away regardless.
+        /// </summary>
+        private bool _footerNetExpanded = App.GetSetting("FooterNetworkDetail") != "0";
+
+        /// <summary>
+        /// The footer light. Amber is the resting state and also what an interrupted scan leaves
+        /// behind, on the grounds that a half-finished scan and no scan at all tell you the same
+        /// thing about the list on screen. A view with no scan behind it, Keep Alive or a terminal,
+        /// leaves the light on whatever the scan workspace last reported.
+        /// </summary>
+        private void UpdateScanLight()
+        {
+            if (ScanLight == null) return;
+            var state = _scanWorkspace?.Indicator ?? Controls.ScanIndicator.Idle;
+            (string fill, string key) = state switch
+            {
+                Controls.ScanIndicator.Scanning => ("#D0453A", "Str_Light_Scanning"),
+                Controls.ScanIndicator.Deep     => ("#2F7FD0", "Str_Light_Deep"),
+                Controls.ScanIndicator.Complete => ("#3FA95F", "Str_Light_Done"),
+                _                               => ("#E0A317", "Str_Light_Idle"),
+            };
+            ScanLight.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(fill));
+            ScanLight.SetResourceReference(ToolTipProperty, key);
+        }
+
+        private void NetworkFooter_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            _footerNetExpanded = !_footerNetExpanded;
+            App.SetSetting("FooterNetworkDetail", _footerNetExpanded ? "1" : "0");
+            FitFooterNetwork();
+        }
+
+        /// <summary>
+        /// Keeps the network cell clear of the portable badge. The badge is centered on the whole
+        /// footer rather than on the space left over, so a wide right cell runs underneath it. The
+        /// adapter and speed are the part that can go: the address stays whatever happens.
+        /// </summary>
+        private void FitFooterNetwork()
+        {
+            if (NetworkFooterDetail == null) return;
+
+            if (!_footerNetExpanded)
+            {
+                NetworkFooterDetail.Visibility = Visibility.Collapsed;
+                NetworkFooterDetail.MaxWidth = double.PositiveInfinity;
+                return;
+            }
+
+            double footer = FooterBar.ActualWidth;
+            if (footer <= 0) return;
+
+            // Half the bar, less half the badge, is where the right cell has to stop. With no
+            // badge showing the only limit is the bar itself.
+            double badge = PortableBadge.Visibility == Visibility.Visible ? PortableBadge.ActualWidth : 0;
+            double budget = footer / 2 - badge / 2 - FooterNetworkGap
+                          - VersionLabel.ActualWidth - NetworkFooter.ActualWidth - NetworkFooterIcon.ActualWidth;
+
+            // Below the threshold there is not enough room for the ellipsis to say anything
+            // useful, so the detail goes entirely rather than reading as "Int...".
+            if (budget < FooterDetailMinimum)
+            {
+                NetworkFooterDetail.Visibility = Visibility.Collapsed;
+                NetworkFooterDetail.MaxWidth = double.PositiveInfinity;
+            }
+            else
+            {
+                NetworkFooterDetail.Visibility = Visibility.Visible;
+                NetworkFooterDetail.MaxWidth = budget;
+            }
+        }
+
+        /// <summary>Padding and cell margins the budget above cannot measure directly.</summary>
+        private const double FooterNetworkGap = 48;
+
+        /// <summary>Narrower than this and the adapter and speed are dropped rather than trimmed.</summary>
+        private const double FooterDetailMinimum = 70;
 
         private void ShowScanView(string view)
         {

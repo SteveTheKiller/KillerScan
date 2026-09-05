@@ -17,7 +17,7 @@ namespace KillerScan.Shell
         // sits under and the color its key takes on the keyboard map.
         private static readonly (string Keys, string Desc, string Cat)[] ShortcutRows =
         [
-            ("Ctrl + T",        "Str_View_Scan",            "Views"),
+            ("Ctrl + T",        "Str_View_Devices",            "Views"),
             ("F8",              "Str_Services_Title",       "Views"),
             ("F9",              "Str_TT_Topology",          "Views"),
             ("F2",              "Str_View_KeepAlive",       "Views"),
@@ -229,10 +229,10 @@ namespace KillerScan.Shell
             var groups = ShortcutGroups.Where(g => g.Right == right).ToArray();
             for (int s = 0; s < groups.Length; s++)
             {
-                var group = groups[s];
+                var (cat, titleKey, _) = groups[s];
                 var header = new TextBlock
                 {
-                    Text = Loc(group.TitleKey),
+                    Text = Loc(titleKey),
                     FontFamily = new FontFamily("Segoe UI"),
                     FontSize = 11,
                     FontWeight = FontWeights.SemiBold,
@@ -240,10 +240,10 @@ namespace KillerScan.Shell
                 };
                 // The category's own color, the same key the keyboard map lights its keys with,
                 // so a section reads as the same color in both views.
-                header.SetResourceReference(TextBlock.ForegroundProperty, "KsCat" + group.Cat);
+                header.SetResourceReference(TextBlock.ForegroundProperty, "KsCat" + cat);
                 host.Children.Add(header);
 
-                var rows = ShortcutRows.Where(r => r.Cat == group.Cat).ToArray();
+                var rows = ShortcutRows.Where(r => r.Cat == cat).ToArray();
                 for (int i = 0; i < rows.Length; i++)
                 {
                     var (keys, descKey, _) = rows[i];

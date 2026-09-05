@@ -263,6 +263,13 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <!-- The panel's own surface. Transparent on the flat themes, which paint nothing
+                     here and let the window through, and the white well on 98SE, where a panel
+                     with no surface of its own is just an empty gray strip. -->
+                <Border Grid.RowSpan="3" Margin="-6,-6,2,-4" Panel.ZIndex="-1"
+                        Background="{DynamicResource SidebarPaneBrush}"
+                        BorderBrush="{DynamicResource PaneBorderBrush}"
+                        BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
                 <TextBlock x:Name="SidebarHeading" Grid.Row="0" Text="{DynamicResource Str_History_Title}" Margin="1,0,8,12"
                            Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource WordmarkFont}"
                            FontSize="20" TextTrimming="CharacterEllipsis"/>
@@ -300,9 +307,14 @@
                                 <!-- The target carries the accent: it is the identity of the entry,
                                      and the timestamp under it is the supporting detail. -->
                                 <TextBlock Text="{Binding Target}" FontSize="14" FontWeight="SemiBold"
-                                           TextTrimming="CharacterEllipsis" Foreground="{DynamicResource PrimaryBrush}">
+                                           TextTrimming="CharacterEllipsis">
                                     <TextBlock.Style>
+                                        <!-- Resting colour is a Setter, not an attribute on the
+                                             element. A local value outranks a style trigger, so as
+                                             an attribute it pinned the accent on and the selected
+                                             row was accent text on the accent fill. -->
                                         <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
                                                     <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
@@ -312,9 +324,10 @@
                                     </TextBlock.Style>
                                 </TextBlock>
                                 <TextBlock Text="{Binding ScannedAt, StringFormat={}{0:g}}" FontSize="12" Margin="0,2,0,0"
-                                           Foreground="{DynamicResource MutedTextBrush}" TextTrimming="CharacterEllipsis">
+                                           TextTrimming="CharacterEllipsis">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
                                                     <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
@@ -348,9 +361,11 @@
                                     </ContextMenu>
                                 </StackPanel.ContextMenu>
                                 <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold"
-                                           TextTrimming="CharacterEllipsis" Foreground="{DynamicResource PrimaryBrush}">
+                                           TextTrimming="CharacterEllipsis">
                                     <TextBlock.Style>
+                                        <!-- Setter, not an attribute: see the history list above. -->
                                         <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
                                                     <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
@@ -360,9 +375,10 @@
                                     </TextBlock.Style>
                                 </TextBlock>
                                 <TextBlock Text="{Binding Target}" FontSize="12" Margin="0,2,0,0"
-                                           Foreground="{DynamicResource MutedTextBrush}" TextTrimming="CharacterEllipsis">
+                                           TextTrimming="CharacterEllipsis">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
                                                     <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
@@ -418,10 +434,13 @@
         <!-- Right-aligned inside the sidebar lane, so it rides the panel's inner lip and stays
              put at the window edge while the panel is collapsed. Width is pinned to the rail so
              the glyphs stay centred on their own strip however wide the lane gets. -->
-        <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Panel.ZIndex="20"
+        <StackPanel x:Name="RailButtons" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Panel.ZIndex="20"
                     HorizontalAlignment="Right" Width="{DynamicResource RailWidth}" Margin="2,0,0,10"
                     Visibility="{DynamicResource ScaledRailVisibility}">
-            <Button x:Name="ProfilesButton" Style="{StaticResource RailButton}" Content="&#xE8D5;"
+            <Button x:Name="SpeedTestButton" Style="{StaticResource RailButton}" Content="&#xE9D2;"
+                    FontSize="15" Click="SpeedTestButton_Click" Margin="0,0,0,10"
+                    ToolTip="{DynamicResource Str_TT_SpeedTest}"/>
+            <Button x:Name="ProfilesButton" Style="{StaticResource RailButton}" Content="&#xE8B7;"
                     FontSize="15" Click="ProfilesButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Profiles_Title}"/><Run Text=" (F10)"/></TextBlock></Button.ToolTip>
             </Button>
@@ -478,7 +497,7 @@
         <StackPanel x:Name="FixedRail" Grid.Row="2" Width="{DynamicResource RailWidth}" VerticalAlignment="Bottom"
                     HorizontalAlignment="Left" Margin="0,0,0,10" Panel.ZIndex="30"
                     Visibility="{DynamicResource FixedRailVisibility}">
-            <Button x:Name="FixedProfilesButton" Style="{StaticResource RailButton}" Content="&#xE8D5;"
+            <Button x:Name="FixedProfilesButton" Style="{StaticResource RailButton}" Content="&#xE8B7;"
                     FontSize="15" Click="ProfilesButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Profiles_Title}"/><Run Text=" (F10)"/></TextBlock></Button.ToolTip>
             </Button>
@@ -510,7 +529,8 @@
         <!-- ZIndex -1 so the content pane's shadow lands on the footer rather than being painted
              over by it. The footer is pushed down rather than the content row raised, which would
              also put it above the overlays declared later. -->
-        <Border Grid.Row="3" Panel.ZIndex="-1" Background="{DynamicResource BackgroundBrush}">
+        <Border x:Name="FooterBar" Grid.Row="3" Panel.ZIndex="-1" Background="{DynamicResource BackgroundBrush}">
+          <Grid>
             <!-- FooterPadding: 16,0 on the flat themes (one continuous strip); 0 on 98SE, where
                  the strip breaks into sunken cells that run to the edges. -->
             <Grid Margin="{DynamicResource FooterPadding}">
@@ -539,7 +559,10 @@
                     <Border IsHitTestVisible="False"
                             BorderBrush="{DynamicResource FooterBevelLightBrush}"
                             BorderThickness="{DynamicResource FooterCellDarkThickness}"/>
-                    <StackPanel Orientation="Horizontal">
+                    <!-- Nudged right of the corner light so the two do not read as one control.
+                         On the cell's own padding rather than the shared FooterCellPadding token,
+                         which the version cell across the bar uses as well. -->
+                    <StackPanel Orientation="Horizontal" Margin="8,0,0,0">
                     <TextBlock x:Name="StatusText" Text="Ready" MaxWidth="230" TextTrimming="CharacterEllipsis"
                                Margin="{DynamicResource FooterCellPadding}" HorizontalAlignment="Left"
                                Foreground="{DynamicResource MutedTextBrush}" FontFamily="Consolas"
@@ -576,8 +599,26 @@
                             BorderThickness="{DynamicResource FooterCellDarkThickness}"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
                             Margin="{DynamicResource FooterCellPadding}">
-                    <TextBlock x:Name="NetworkFooter" FontSize="10" FontFamily="Consolas"
-                               Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                    <!-- Click anywhere on the address or the adapter to show or hide the detail.
+                         Transparent background rather than none, so the whole strip is hit-testable
+                         and not just the glyphs themselves. -->
+                    <Border x:Name="NetworkFooterGroup" Background="Transparent" Cursor="Hand"
+                            Margin="0,0,12,0" VerticalAlignment="Center"
+                            MouseLeftButtonUp="NetworkFooter_Click"
+                            ToolTip="{DynamicResource Str_TT_FooterNetwork}">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock x:Name="NetworkFooterIcon" FontSize="10" FontFamily="Segoe MDL2 Assets"
+                                       Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="NetworkFooter" FontSize="10" FontFamily="Consolas"
+                                       Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center"/>
+                            <!-- Adapter and link speed. Trimmed, hidden when you fold the cell up,
+                                 and dropped automatically when the bar would otherwise run under
+                                 the centered portable badge. -->
+                            <TextBlock x:Name="NetworkFooterDetail" FontSize="10" FontFamily="Consolas"
+                                       TextTrimming="CharacterEllipsis" Foreground="{DynamicResource DimTextBrush}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
                     <ProgressBar x:Name="ScanProgress"
                                  Width="80" Height="4" VerticalAlignment="Center"
                                  Foreground="{DynamicResource PrimaryBrush}"
@@ -601,6 +642,15 @@
                 </StackPanel>
                 </Grid>
             </Grid>
+            <!-- Scan state, in the corner itself rather than inside the status recess: amber for
+                 nothing scanned or a scan stopped short, red while scanning, blue during a deep
+                 pass, green when a scan finished. Outside the padded grid so it sits at the
+                 window's own edge, and fixed colors rather than theme tokens, because a traffic
+                 light means the same thing in all thirteen themes. -->
+            <Border x:Name="ScanLight" Width="9" Height="9" CornerRadius="5" Panel.ZIndex="60"
+                    HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0"
+                    Background="#E0A317" BorderThickness="1" BorderBrush="#40000000"/>
+          </Grid>
         </Border>
 
         <!-- Bottom-right resize grip. Modern themes use the family six dots; 98SE switches to

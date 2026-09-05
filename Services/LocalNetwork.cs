@@ -15,6 +15,15 @@ namespace KillerScan.Services
         /// <summary>"Wi-Fi", "Ethernet", or the raw interface type for anything else.</summary>
         internal string InterfaceLabel = "";
         internal bool Wireless;
+        /// <summary>The adapter's hardware description, e.g. "Realtek PCIe GbE Family Controller".</summary>
+        internal string AdapterName = "";
+        /// <summary>Current link speed in bits per second, or 0 when Windows does not report one.</summary>
+        internal long LinkSpeed;
+
+        /// <summary>Link speed for display, e.g. "1 Gbps" or "300 Mbps". Empty when unknown.</summary>
+        internal string LinkSpeedText => LinkSpeed <= 0 ? ""
+            : LinkSpeed >= 1000000000 ? $"{LinkSpeed / 1000000000d:0.##} Gbps"
+            : $"{LinkSpeed / 1000000d:0.##} Mbps";
     }
 
     /// <summary>
@@ -75,6 +84,10 @@ namespace KillerScan.Services
                         Subnet   = $"{new IPAddress(netBytes)}/{prefix}",
                         LocalIp  = ip.ToString(),
                         Wireless = wireless,
+                        // Description is the hardware name Windows shows in Network Connections;
+                        // Name is whatever the adapter has been renamed to locally.
+                        AdapterName = iface.Description ?? "",
+                        LinkSpeed   = SafeSpeed(iface),
                         InterfaceLabel = iface.NetworkInterfaceType switch
                         {
                             NetworkInterfaceType.Wireless80211 => "Wi-Fi",
@@ -105,6 +118,16 @@ namespace KillerScan.Services
             }
             catch { }
             return null;
+        }
+
+        /// <summary>
+        /// Speed throws on some virtual and Wi-Fi adapters rather than returning a value, and a
+        /// missing link speed is not a reason to lose the rest of the network information.
+        /// </summary>
+        private static long SafeSpeed(NetworkInterface iface)
+        {
+            try { return iface.Speed; }
+            catch { return 0; }
         }
     }
 }

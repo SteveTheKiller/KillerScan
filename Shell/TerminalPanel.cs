@@ -25,6 +25,10 @@ namespace KillerScan.Shell
         /// Text run inside the styled PowerShell session once its prompt is up. Only ever code
         /// this app composed itself.
         /// </param>
+        /// <summary>The scripted session for demo mode, built from the network on screen.</summary>
+        private static string DemoTerminalTranscript() =>
+            Services.DemoData.Current is { } scan ? Services.DemoData.TerminalTranscript(scan) : string.Empty;
+
         private void NewTerminal(string? command = null, string? title = null, string? shellCommand = null)
         {
             if (_terminalPanelDisposed) return;
@@ -60,6 +64,15 @@ namespace KillerScan.Shell
                 };
                 terminal.LayoutTransform = new ScaleTransform(_appScale, _appScale);
                 ShowWorkspaceContent(terminal, "terminal");
+                // Demo mode paints a scripted session instead of starting a shell, so a screenshot
+                // never carries the real machine's name, paths, or history.
+                if (Services.DemoData.Enabled)
+                {
+                    terminal.ShowScript(DemoTerminalTranscript());
+                    _terminalControl.Focus();
+                    UpdateTerminalPanelStatus();
+                    return;
+                }
                 EnsureBundledModules();
                 string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 if (command != null) terminal.Start(command, home);

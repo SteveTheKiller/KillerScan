@@ -20,15 +20,34 @@ namespace KillerScan.Shell
             if (_watchWorkspace == null)
             {
                 var local = LocalNetwork.Detect();
-                var targets = new[] { local?.Gateway, local?.Dns, GetSelectedDevice()?.IpAddress }
-                    .Where(s => !string.IsNullOrWhiteSpace(s)).Distinct();
-                _watchWorkspace = new NetworkToolsWindow(string.Join(", ", targets), _appScale);
+                var targets = DemoData.Enabled
+                    ? DemoWatchTargets()
+                    : string.Join(", ", new[] { local?.Gateway, local?.Dns, GetSelectedDevice()?.IpAddress }
+                        .Where(s => !string.IsNullOrWhiteSpace(s)).Distinct());
+                _watchWorkspace = new NetworkToolsWindow(targets, _appScale);
                 _watchWorkspace.DiagnoseRequested += address => ShowDeviceDetails(address);
                 var bar = _watchWorkspace.DetachToolbar();
                 bar.Margin = new Thickness(8, 0, 0, 0);
                 RegisterViewToolbar("watch", bar);
             }
             ShowWorkspaceContent(_watchWorkspace, "watch");
+            // Demo mode watches straight away rather than waiting for Start, so the view is never
+            // an empty pane in a screenshot.
+            if (DemoData.Enabled) _watchWorkspace.RestartWith(DemoWatchTargets());
+        }
+
+        /// <summary>
+        /// Four addresses from the fabricated network: its gateway and three of its devices. The
+        /// mix of answering and silent hosts is decided by the addresses themselves, so a re-rolled
+        /// scan produces a different combination of healthy and dead cards.
+        /// </summary>
+        private static string DemoWatchTargets()
+        {
+            if (DemoData.Current is not { } demo) return string.Empty;
+            var targets = new[] { demo.Gateway }
+                .Concat(demo.Devices.Select(d => d.IpAddress).Where(ip => ip != demo.Gateway).Take(3))
+                .Distinct();
+            return string.Join(", ", targets);
         }
 
         private void Diagnose_Click(object sender, RoutedEventArgs e)

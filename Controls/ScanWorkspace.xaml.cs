@@ -37,6 +37,19 @@ namespace KillerScan.Controls
         public NetworkDevice? SelectedDevice => GetSelectedDevice();
         public string Targets { get => SubnetInput.Text; set => SubnetInput.Text = value; }
         public bool IsScanning => _active.IsScanning || _rescanCts != null;
+
+        /// <summary>Set when a scan runs to completion, cleared when one starts or is stopped.</summary>
+        private bool _scanCompleted;
+
+        /// <summary>
+        /// What the status light shows. Deep scanning outranks scanning, because a deep pass runs
+        /// after a normal one and is the thing actually happening.
+        /// </summary>
+        public ScanIndicator Indicator =>
+            _rescanCts != null ? ScanIndicator.Deep
+            : _active.IsScanning ? ScanIndicator.Scanning
+            : _scanCompleted ? ScanIndicator.Complete
+            : ScanIndicator.Idle;
         public string View => _showTopology ? "topology" : _showServices ? "services" : "devices";
         public string Status => StatusText.Text;
         public double Progress => ScanProgress.Value;
