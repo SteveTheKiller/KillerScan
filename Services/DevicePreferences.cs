@@ -16,6 +16,9 @@ namespace KillerScan.Services
 
         public static void Load()
         {
+            // Demo mode starts from nothing and stays in memory, so the fabricated network cannot
+            // trust, rename, or otherwise disturb the real devices on the machine it runs on.
+            if (DemoData.Enabled) { _data = new DevicePreferenceData(); return; }
             try
             {
                 if (!File.Exists(FilePath)) return;
@@ -64,6 +67,7 @@ namespace KillerScan.Services
 
         private static void Save()
         {
+            if (DemoData.Enabled) return;
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);

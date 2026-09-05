@@ -22,6 +22,9 @@ namespace KillerScan.Services
 
         public static void Load()
         {
+            // Demo mode keeps its profiles in memory: a screenshot build must not add fabricated
+            // profiles to whatever the person running it has saved.
+            if (DemoData.Enabled) { _items = [.. DemoData.Profiles()]; return; }
             try
             {
                 if (!File.Exists(FilePath)) return;
@@ -47,6 +50,7 @@ namespace KillerScan.Services
 
         private static void Persist()
         {
+            if (DemoData.Enabled) return;
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);

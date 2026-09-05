@@ -160,7 +160,7 @@
                             <TextBlock x:Name="Heading" FontSize="12" FontWeight="Bold" Margin="0,0,8,0"
                                        Visibility="Collapsed"
                                        Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
-                            <TextBox x:Name="Targets" Style="{StaticResource DarkTextBox}" Padding="5,3,9,3"
+                            <TextBox x:Name="Targets" KeyDown="Targets_KeyDown" Style="{StaticResource DarkTextBox}" Padding="5,3,9,3"
                                      FontSize="12" Height="28" Width="280" MaxWidth="360" HorizontalAlignment="Left"
                                      ToolTip="{DynamicResource Str_Watch_Targets}" Margin="0,0,6,0"/>
                             <Button x:Name="StartButton" Style="{StaticResource OutlineButton}" Click="Start_Click" FontSize="12" Padding="8,3" Margin="0,0,6,0"/>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using KillerScan.Models;
 
 namespace KillerScan.Services
@@ -13,6 +14,14 @@ namespace KillerScan.Services
         internal string Gateway => $"{Network}.1";
         internal string LocalIp = "";
         internal bool   Wireless;
+        /// <summary>"Wi-Fi" or "Ethernet", matching what a real detect would report.</summary>
+        internal string InterfaceLabelText => Wireless ? "Wi-Fi" : "Ethernet";
+        /// <summary>The adapter the fabricated network pretends to be attached to.</summary>
+        internal string AdapterName => Wireless
+            ? "Intel(R) Wi-Fi 6E AX211 160MHz"
+            : "Intel(R) Ethernet Connection I219-LM";
+        /// <summary>Link speed for the footer, matching the adapter above.</summary>
+        internal string LinkSpeedText => Wireless ? "1.2 Gbps" : "1 Gbps";
         internal List<NetworkDevice> Devices = [];
     }
 
@@ -29,6 +38,12 @@ namespace KillerScan.Services
     {
         /// <summary>Set once from the launch arguments; read by the window and the About card.</summary>
         internal static bool Enabled;
+
+        /// <summary>
+        /// The network the demo is currently showing. Every view reads from the same roll, so the
+        /// terminal transcript and the device table agree with each other.
+        /// </summary>
+        internal static DemoScan? Current;
 
         private static readonly string[] Subnets =
             ["10.0.0", "10.10.10", "172.16.4", "192.168.0", "192.168.1", "192.168.50"];
@@ -94,7 +109,117 @@ namespace KillerScan.Services
                 do { host = rng.Next(2, 255); } while (!used.Add(host));
                 scan.Devices.Add(MakeDevice(net, host, Pool[rng.Next(Pool.Length)], rng));
             }
+            Current = scan;
             return scan;
+        }
+
+        /// <summary>
+        /// Two earlier scans of the same target so the history comparison has something to say:
+        /// the older one is the fabricated network as it was, the newer one has a device gone, a
+        /// device added, and one that picked up a port and a new address.
+        /// </summary>
+        internal static List<ScanHistoryEntry> History(DemoScan scan)
+        {
+            var entries = new List<ScanHistoryEntry>();
+            if (scan.Devices.Count < 4) return entries;
+
+            var baseline = scan.Devices.Select(Historical).ToList();
+
+            // Yesterday: one device that has since left, and no sign of the newest arrival.
+            var older = baseline.Take(baseline.Count - 1).Select(Copy).ToList();
+            older.Add(new HistoricalDevice
+            {
+                Identity   = "mac:5C:CF:7F:1A:2B:3C",
+                IpAddress  = $"{scan.Network}.207",
+                Hostname   = "esp-workshop.lan",
+                MacAddress = "5C:CF:7F:1A:2B:3C",
+                Vendor     = "Espressif Inc.",
+                DeviceType = "IoT",
+                OpenPorts  = [80]
+            });
+            entries.Add(new ScanHistoryEntry
+            {
+                ScannedAt = DateTimeOffset.Now.AddDays(-1).AddHours(-2),
+                Target    = scan.Subnet,
+                Devices   = [.. older.OrderBy(d => d.IpAddress)]
+            });
+
+            // This morning: same network, but one host moved and opened a port.
+            var recent = baseline.Select(Copy).ToList();
+            if (recent.Count > 2)
+            {
+                recent[2].IpAddress = $"{scan.Network}.{200 + (recent[2].IpAddress.Length % 20)}";
+                recent[2].OpenPorts = [.. recent[2].OpenPorts.Concat([8080]).Distinct().OrderBy(p => p)];
+            }
+            entries.Add(new ScanHistoryEntry
+            {
+                ScannedAt = DateTimeOffset.Now.AddHours(-3),
+                Target    = scan.Subnet,
+                Devices   = [.. recent.OrderBy(d => d.IpAddress)]
+            });
+            return entries;
+        }
+
+        private static HistoricalDevice Historical(NetworkDevice device) => new()
+        {
+            Identity   = DeviceIdentity.For(device),
+            IpAddress  = device.IpAddress,
+            Hostname   = device.Hostname,
+            MacAddress = device.MacAddress,
+            Vendor     = device.Vendor,
+            DeviceType = device.DeviceType,
+            OpenPorts  = [.. device.OpenPorts]
+        };
+
+        private static HistoricalDevice Copy(HistoricalDevice device) => new()
+        {
+            Identity   = device.Identity,
+            IpAddress  = device.IpAddress,
+            Hostname   = device.Hostname,
+            MacAddress = device.MacAddress,
+            Vendor     = device.Vendor,
+            DeviceType = device.DeviceType,
+            OpenPorts  = [.. device.OpenPorts]
+        };
+
+        /// <summary>Saved profiles for the sidebar, invented like everything else here.</summary>
+        internal static List<ScanProfile> Profiles() =>
+        [
+            new() { Name = "Head office",   Target = "10.10.10.0/24",                    DeepScanAfter = true  },
+            new() { Name = "Warehouse APs", Target = "172.16.4.0/24",                    DeepScanAfter = false },
+            new() { Name = "Server VLAN",   Target = "192.168.50.10-192.168.50.60",      DeepScanAfter = true  },
+        ];
+
+        /// <summary>
+        /// A scripted terminal session for screenshots. Nothing runs: these are the lines the
+        /// terminal is fed, so a demo capture never shows the real machine's name or paths.
+        /// </summary>
+        internal static string TerminalTranscript(DemoScan scan)
+        {
+            const string esc = "\u001b";
+            string green = esc + "[32m", cyan = esc + "[36m", grey = esc + "[90m", off = esc + "[0m";
+            var lines = new List<string>
+            {
+                $"{cyan}KillerShell{off} {grey}~{off}",
+                $"{green}>{off} killerscan /network",
+                "",
+                $"  Interface   {scan.InterfaceLabelText}",
+                $"  Address     {scan.LocalIp}",
+                $"  Subnet      {scan.Subnet}",
+                $"  Gateway     {scan.Gateway}",
+                $"  DNS         {scan.Gateway}",
+                "",
+                $"{cyan}KillerShell{off} {grey}~{off}",
+                $"{green}>{off} ping {scan.Gateway}",
+                "",
+                $"{green}Reply from {scan.Gateway}: bytes=32 time=1ms TTL=64{off}",
+                $"{green}Reply from {scan.Gateway}: bytes=32 time=1ms TTL=64{off}",
+                $"{green}Reply from {scan.Gateway}: bytes=32 time=2ms TTL=64{off}",
+                "",
+                $"{cyan}KillerShell{off} {grey}~{off}",
+                $"{green}>{off} ",
+            };
+            return string.Join("\r\n", lines);
         }
 
         private static NetworkDevice MakeDevice(

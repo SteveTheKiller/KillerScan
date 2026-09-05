@@ -52,6 +52,9 @@ namespace KillerScan.Services
 
         public static void Load()
         {
+            // Demo mode never reads or writes the real history. It is a screenshot build running
+            // on somebody's actual machine, so the fabricated network must not touch their file.
+            if (DemoData.Enabled) { _entries = []; return; }
             try
             {
                 if (!File.Exists(FilePath)) return;
@@ -62,6 +65,13 @@ namespace KillerScan.Services
             {
                 _entries = [];
             }
+        }
+
+        /// <summary>Demo mode only: seeds fabricated history without going near the real file.</summary>
+        internal static void SeedDemo(IEnumerable<ScanHistoryEntry> entries)
+        {
+            if (!DemoData.Enabled) return;
+            _entries = [.. entries];
         }
 
         public static ScanComparison Record(string target, IEnumerable<NetworkDevice> devices)
@@ -116,6 +126,7 @@ namespace KillerScan.Services
 
         private static void Save()
         {
+            if (DemoData.Enabled) return;
             try
             {
                 string directory = Path.GetDirectoryName(FilePath)!;
