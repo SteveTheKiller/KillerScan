@@ -108,6 +108,20 @@
 <nav class="outline">
 <a href="#stack" class="on" data-i18n="tk_164">Tech stack</a>
 <a href="#install" data-i18n="tk_165">Install &amp; data</a>
+<a href="#views" data-i18n="tk_views_nav">The four views</a>
+<a href="#keepalive" data-i18n="tk_ka_nav">Keep Alive</a>
+<a href="#checks" class="sub" data-i18n="tk_ka_checks_title">Per-device checks</a>
+<a href="#topology" data-i18n="tk_topo_nav">Topology</a>
+<a href="#arrangements" class="sub" data-i18n="tk_topo_modes_title">The four arrangements</a>
+<a href="#topology-png" class="sub" data-i18n="tk_topo_png_title">Exporting the picture</a>
+<a href="#terminal" data-i18n="tk_term_nav">Terminal</a>
+<a href="#prompt" class="sub" data-i18n="tk_term_prompt_title">The prompt and your edits</a>
+<a href="#terminal-commands" class="sub" data-i18n="tk_cmd_title">Commands in the terminal</a>
+<a href="#services" data-i18n="tk_svc_nav">Services view</a>
+<a href="#history" data-i18n="tk_hist_nav">Scan history</a>
+<a href="#trusted" class="sub" data-i18n="tk_trust_title">Trusted devices</a>
+<a href="#profiles" data-i18n="tk_prof_nav">Scan profiles</a>
+<a href="#export" data-i18n="tk_exp_nav">Export</a>
 <a href="#command-line" data-i18n="tk_cli_nav">Command line</a>
 <a href="#commands-options" class="sub" data-i18n="tk_cli_commands">Commands and options</a>
 <a href="#target-formats" class="sub" data-i18n="tk_cli_target_title">Target formats</a>
@@ -128,6 +142,7 @@
 <a href="#signals" class="sub" data-i18n="tk_85">Weighted signals</a>
 <a href="#fallbacks" class="sub" data-i18n="tk_98">When nothing scores</a>
 <a href="#deepscan" data-i18n="tk_172">Deep rescan</a>
+<a href="#deepscanall" class="sub" data-i18n="tk_deep_all_title">Deep Scan All</a>
 <a href="#privacy" data-i18n="tk_170">Privacy &amp; footprint</a>
 <a href="#glossary" data-i18n="tk_171">Glossary</a>
 </nav>
@@ -158,6 +173,111 @@
 <div class="tech-sec" id="install">
 <h2 data-i18n="tk_19">Install &amp; data</h2>
 <p data-i18n="tk_20">KillerScan is a single .exe. Put it anywhere and run it as is, or use the built-in installer. By default it installs just for you: the app is copied into your user folder, with a Start Menu shortcut and a normal Windows uninstall entry registered for your account alone, needing no admin rights, no .NET runtime, and nothing else installed. Tick <b>Install for all users</b> in that prompt and it goes to Program Files for every account on the PC instead, which is the one case where Windows asks for permission. Installation also adds KillerScan to PATH, so a newly opened terminal can run <code>killerscan</code> from any folder. When you run it from outside its installed location, a <b>PORTABLE</b> badge and an <b>Install KillerScan...</b> button appear in the status bar.</p>
+</div>
+
+<div class="tech-sec" id="views">
+<h2 data-i18n="tk_views_title">The four views</h2>
+<p data-i18n="tk_views_intro">The buttons on the right of the toolbar are permanent views rather than windows that come and go. Each one keeps its own state while you work in the others, so moving from a scan to a topology picture and back does not throw anything away. Right-click the view buttons to change their icon size or move their captions. When the window is too narrow for all of them, the view buttons overflow into a menu instead of the input bar being squeezed.</p>
+<table class="spec-table"><tr><th data-i18n="tk_views_col_view">View</th><th data-i18n="tk_views_col_for">What it is for</th></tr>
+<tr><td data-i18n="tk_views_scan">Devices</td><td data-i18n="tk_views_scan_d">The results table: every device found, with its address, name, hardware ID, maker, type, and open ports.</td></tr>
+<tr><td data-i18n="tk_views_topo">Topology</td><td data-i18n="tk_views_topo_d">The same devices drawn as a picture of the network, arranged four different ways and exportable as an image.</td></tr>
+<tr><td data-i18n="tk_views_ka">Keep Alive</td><td data-i18n="tk_views_ka_d">A continuous watch on up to sixteen addresses, each with its own latency graph, checks, and event log.</td></tr>
+<tr><td data-i18n="tk_views_term">Terminal</td><td data-i18n="tk_views_term_d">A real terminal running PowerShell, ping, or SSH inside the app, using the Windows console engine.</td></tr>
+</table>
+<p data-i18n="tk_views_sidebar">Scan history and scan profiles are not views. They share a sidebar that slides out from the icon rail on the left, resizes by dragging its edge, and cross-fades between the two sections.</p>
+</div>
+
+<div class="tech-sec" id="keepalive">
+<h2 data-i18n="tk_ka_title">Keep Alive</h2>
+<p data-i18n="tk_ka_intro">Keep Alive answers the question you ask on every intermittent fault: is this thing actually dropping, and when? It watches up to <b>sixteen</b> addresses at once. Open it with <b>F2</b> and the target box is already filled in with your gateway, your DNS server, and whatever device you had selected, so the common case needs no typing. Select several devices in the results table first and choose Keep Alive, and all of them are watched together. Targets are separated by commas, semicolons, or new lines, and duplicates are dropped.</p>
+<p data-i18n="tk_ka_loop">Every target is pinged in parallel on a fixed <b>two second</b> cadence, and the loop subtracts the time the pings themselves took so the interval stays honest rather than drifting. Each ping is given <b>1.2 seconds</b> to answer before it counts as a miss.</p>
+<p data-i18n="tk_ka_card">Each target gets its own card showing a status dot and the latest round-trip time, the state in words, a latency graph, and a line with packet loss, the number of pings sent, and the time of the last change of state. The graph keeps the last <b>forty</b> samples, which at a two second cadence is a little over a minute of history. A missed reply is drawn at the top of the graph rather than left as a gap, so an outage reads as a spike you can see at a glance. The vertical scale never drops below 20 ms, which stops a healthy local link from looking like a field of spikes. Average latency counts only the pings that came back, and loss is the plain percentage of pings that did not.</p>
+<p data-i18n="tk_ka_events">Below that, each card carries its own event log, capped at thirty lines. It records only transitions, not every ping, so the log is a short list of when the device went down and when it came back, in green and red, rather than a wall of identical successes.</p>
+<p data-i18n="tk_ka_menu">Right-click a card to copy its address, run its checks again, reset its counters without disturbing the other targets, or drop it from the run, which also rewrites the target box to match. Stopping a run leaves the results on screen; starting again clears them. The toolbar Copy button walks every card in order and copies the whole run, counters, checks, and event log included, as tab separated text that pastes cleanly into a ticket.</p>
+
+<h3 id="checks" data-i18n="tk_ka_checks_title">Per-device checks</h3>
+<p data-i18n="tk_ka_checks_intro">Every card also carries its own set of checks, and they run for the whole set as soon as a run starts, four cards at a time. You can rerun them for one card from its right-click menu. The same checks are what <b>F3</b> runs against a single selected device. They are:</p>
+<table class="spec-table"><tr><th data-i18n="tk_ka_checks_col_check">Check</th><th data-i18n="tk_ka_checks_col_what">What it does</th></tr>
+<tr><td data-i18n="tk_ka_check_route">Route</td><td data-i18n="tk_ka_check_route_d">Asks Windows which interface and next hop it would actually use to reach the address, and reports "on-link" when the device is on your own segment. This reads the local routing table rather than sending anything.</td></tr>
+<tr><td data-i18n="tk_ka_check_rdns">Reverse DNS</td><td data-i18n="tk_ka_check_rdns_d">Looks up the name attached to the address, with a 1.5 second limit.</td></tr>
+<tr><td data-i18n="tk_ka_check_fdns">Forward DNS</td><td data-i18n="tk_ka_check_fdns_d">Takes that name straight back to DNS and checks whether it resolves to the address you started from, reported as Match or Mismatch. A mismatch is the usual sign of stale records.</td></tr>
+<tr><td data-i18n="tk_ka_check_icmp">ICMP</td><td data-i18n="tk_ka_check_icmp_d">One ping, reported as a time or as no reply. A missing reply does not mean the device is off.</td></tr>
+<tr><td data-i18n="tk_ka_check_ports">Ports</td><td data-i18n="tk_ka_check_ports_d">Tries SSH, HTTP, HTTPS, SMB, and RDP, plus any ports already discovered for that device by a scan, up to sixty-four in total, each with a 1.5 second limit. They are tried one at a time on purpose, so a diagnostic never looks like a port scan to the device or to whatever is watching the network.</td></tr>
+<tr><td data-i18n="tk_ka_check_trace">Trace</td><td data-i18n="tk_ka_check_trace_d">A traceroute of up to thirty hops, two seconds a hop, appended live as each hop answers. A hop that does not answer is reported as a timeout instead of ending the trace.</td></tr>
+</table>
+<p data-i18n="tk_ka_checks_note">The groups run at the same time rather than one after another, so a slow DNS server does not hold up the port checks. A timestamp is added when they all finish.</p>
+</div>
+
+<div class="tech-sec" id="topology">
+<h2 data-i18n="tk_topo_title">Topology</h2>
+<p data-i18n="tk_topo_intro"><b>F9</b> draws the scan as a picture. It is worth being straight about what that picture is: KillerScan does not interrogate your switches, so it is not a cable map. Nothing here depends on CDP, LLDP, or a managed switch admitting anything. It takes what the scan already knows, works out which device is your gateway, which is you, and which is your DNS server, and draws every other device as a spoke off the local network in the middle. Where the DNS server is the gateway, it is drawn once rather than twice.</p>
+<p data-i18n="tk_topo_boxes">Every device is a box you can pick up and move. Click to select, Ctrl+click to add to the selection, and drag any selected box to move the whole selection together. Boxes are held inside the canvas, and the dashed connector to the middle is redrawn as you drag rather than after you let go, so it stays attached. Selection is shared with the results table, so a box you select in the picture is the row that is selected when you switch back. Right-click a box for the same device menu the table gives you. Typing in the toolbar filter filters the picture too, so you can draw only the printers, or only one vendor.</p>
+<p data-i18n="tk_topo_positions">Positions you set are remembered by address for as long as the app is open, so changing the filter or refreshing the view does not shuffle your layout back. Starting a new scan or switching arrangement clears them, because both make the old positions meaningless.</p>
+
+<h3 id="arrangements" data-i18n="tk_topo_modes_title">The four arrangements</h3>
+<p data-i18n="tk_topo_modes_intro">Cycle them with <b>F7</b> or pick one directly with <b>Ctrl+1</b> through <b>Ctrl+4</b>. Your choice is remembered between runs. The button is icon-only and stays where it is once used.</p>
+<table class="spec-table"><tr><th data-i18n="tk_topo_modes_col">Arrangement</th><th data-i18n="tk_topo_modes_col2">How it groups</th></tr>
+<tr><td data-i18n="tk_topo_role">Role</td><td data-i18n="tk_topo_role_d">The default. Five bands in order of how much they matter on a strange network: network gear first, then servers, hypervisors and NAS, then workstations and phones, then printers, cameras, IoT and media devices, then everything else. Inside a band, devices sit by type and then by address.</td></tr>
+<tr><td data-i18n="tk_topo_type">Type</td><td data-i18n="tk_topo_type_d">One group per device type, alphabetically, then by address.</td></tr>
+<tr><td data-i18n="tk_topo_ip">IP</td><td data-i18n="tk_topo_ip_d">No grouping at all. A plain grid in address order, which is the fastest way to spot a gap or a device sitting somewhere it should not be.</td></tr>
+<tr><td data-i18n="tk_topo_vendor">Vendor</td><td data-i18n="tk_topo_vendor_d">One group per maker, alphabetically, with devices whose maker could not be resolved collected at the end.</td></tr>
+</table>
+<p data-i18n="tk_topo_columns">The number of columns follows the width of the window, so the picture reflows instead of scrolling sideways, and each new group starts on its own row with a small gap in front of it.</p>
+
+<h3 id="topology-png" data-i18n="tk_topo_png_title">Exporting the picture</h3>
+<p data-i18n="tk_topo_png_body">Export while topology is showing and you get the arranged picture as a PNG. It is rendered from the canvas itself rather than from what happens to be on screen, so devices scrolled out of view are in the file, at full size, with the arrangement and the positions you set. The background is the current theme's content surface, so the image matches the app you exported it from instead of arriving on a white sheet.</p>
+</div>
+
+<div class="tech-sec" id="terminal">
+<h2 data-i18n="tk_term_title">Terminal</h2>
+<p data-i18n="tk_term_intro">The Terminal view is a real terminal, not a box that shows the output of a command after it finishes. It is built on the Windows pseudoconsole, the same mechanism Windows Terminal uses, so full-screen programs, colors, and interactive prompts behave the way they do anywhere else. The escape sequences are parsed by hand and the text is drawn directly rather than through a text box, which is what keeps a busy screen smooth.</p>
+<p data-i18n="tk_term_detail">It keeps five thousand lines of scrollback, resizes the running program properly when you resize the pane rather than just reflowing what is already there, and reads output as UTF-8. Select with the mouse, and copy and paste with Ctrl+Shift+C and Ctrl+Shift+V, Ctrl+V, Shift+Insert, or the middle button. Ctrl+plus, Ctrl+minus and Ctrl+0 change the font size, as does Ctrl and the wheel. If ProFont IIx Nerd Font is installed it is used, otherwise it falls back through Cascadia, Consolas, Lucida Console, and Courier New.</p>
+<p data-i18n="tk_term_shell">For a shell it prefers <b>PowerShell 7</b>, looking for <code>pwsh.exe</code> on your PATH first and then in the usual Program Files locations, and falls back to Windows PowerShell 5.1 when 7 is not installed. Device actions open here too: ping runs a continuous ping with replies in green and timeouts, unreachable and failure lines in red, and <b>Escape</b> stops it, which the status line tells you at the time. SSH runs the Windows SSH client with the username you gave for that device, passed as an argument rather than through a shell, so nothing you typed is ever interpreted as a command. Closing a terminal ends its process, and a program that exits on its own reports its exit code rather than leaving a dead pane.</p>
+
+<h3 id="prompt" data-i18n="tk_term_prompt_title">The prompt and your edits</h3>
+<p data-i18n="tk_term_prompt_body">The terminal uses KillerShell's prompt, and it is a file you own rather than something baked into the app. On first use it is unpacked to <code>%LOCALAPPDATA%\KillerScan\prompt\</code>. Two files land there: <code>KillerPrompt.default.ps1</code>, which is rewritten whenever the app changes so it always matches the version you are running, and <code>KillerPrompt.ps1</code>, which is written only if it is not already there. That second one is yours. Edit it however you like and an upgrade will never touch it; compare it against the refreshed default file when you want to pick up a change. Both are written with a byte order mark, because Windows PowerShell 5.1 reads a file without one in the system codepage and mangles the box drawing characters. Set <code>KS_PROMPT=0</code> in the environment to skip the whole thing.</p>
+<p data-i18n="tk_term_modules">The <b>KillerScripts</b> PowerShell module travels inside the executable, which is the point: it is there on a locked-down machine where you cannot install anything. It is unpacked per version to <code>%LOCALAPPDATA%\KillerScan\Modules\</code> the first time you open a terminal, written to a temporary name and moved into place with a marker file written last so a half-finished unpack is never used. The module path is appended rather than prepended, so a copy you installed properly from the gallery still wins.</p>
+<h3 id="terminal-commands" data-i18n="tk_cmd_title">Commands in the terminal</h3>
+<p data-i18n="tk_cmd_intro">The terminal carries a small KillerScan module of its own, unpacked from inside the exe like the rest. It gives you four short commands, and the point of them is not that they are shorter than the command line: they hand back <b>objects</b> rather than text. A scan you run this way can be filtered, sorted, counted and piped like anything else in PowerShell, without a single line of parsing.</p>
+<table class="spec-table"><tr><th data-i18n="tk_cmd_col_cmd">Command</th><th data-i18n="tk_cmd_col_what">What it gives you</th></tr>
+<tr><td><code>scan</code></td><td data-i18n="tk_cmd_scan">One object per device, with <code>Ip</code>, <code>Hostname</code>, <code>Mac</code>, <code>Vendor</code>, <code>Type</code> and <code>Ports</code>, plus the fingerprint fields behind them. Takes targets in the same forms the subnet box does, and scans the active network when you give it none. <code>-Quick</code> for discovery only, <code>-Timeout</code> in seconds.</td></tr>
+<tr><td><code>probe</code></td><td data-i18n="tk_cmd_probe">The same object for one host, examined in depth.</td></tr>
+<tr><td><code>vendor</code></td><td data-i18n="tk_cmd_vendor">The maker of a MAC address, read offline from the database inside the app. Accepts addresses from the pipeline, and gives back nothing at all rather than the word "Unknown" when there is no match.</td></tr>
+<tr><td><code>netinfo</code></td><td data-i18n="tk_cmd_netinfo">The active network as an object: <code>Interface</code>, <code>Address</code>, <code>Subnet</code>, <code>Gateway</code> and <code>Dns</code>. A field Windows could not report is empty rather than a dash.</td></tr>
+</table>
+<div class="cli-demo" aria-label="KillerScan terminal command examples"><span class="prompt">&gt;</span> scan <span class="arg">| ? Type -eq 'Printer' | ft Ip, Hostname, Vendor</span>
+<span class="prompt">&gt;</span> scan <span class="arg">192.168.8.0/24 -Quick | measure</span>
+<span class="prompt">&gt;</span> scan <span class="arg">| ? { $_.Ports -contains 3389 }</span>
+<span class="prompt">&gt;</span> scan <span class="arg">| sort Vendor | export-csv site.csv -NoTypeInformation</span>
+<span class="prompt">&gt;</span> scan <span class="arg">(netinfo).Subnet</span>
+<span class="prompt">&gt;</span> probe <span class="arg">192.168.8.20 | fl *</span></div>
+<p data-i18n="tk_cmd_note">Each command is the app doing the work: the module shells out to the same command line an installed copy puts on PATH, and reads its JSON. It knows where to find a portable copy too, so the commands work from a folder you just dropped the exe into. The names are deliberately short because they live in this terminal rather than in your own PowerShell profile, where <code>scan</code> would be a rude thing to claim.</p>
+</div>
+
+<div class="tech-sec" id="services">
+<h2 data-i18n="tk_svc_title">Services view</h2>
+<p data-i18n="tk_svc_body"><b>F8</b> turns the results inside out. Instead of one row per device listing its ports, you get one row per open port: the service, the port number, and the device it belongs to, with its name, address and type. It answers the question the device table makes you work for, which is "what is running SSH on this network", or "who is serving HTTP that should not be". Thirty-three well-known ports are named, and anything else is listed by its number rather than guessed at. Sort by any column, and your sort survives a rescan. The list follows the toolbar filter, so it shows the same devices the table would. Ctrl+A selects everything while the view is active, and Export offers the service list as its own CSV.</p>
+</div>
+
+<div class="tech-sec" id="history">
+<h2 data-i18n="tk_hist_title">Scan history</h2>
+<p data-i18n="tk_hist_body">Every completed scan is recorded, and <b>F6</b> opens the list, newest first. Pick an entry and KillerScan compares it against the previous scan <b>of the same target</b>, so comparing a subnet against an unrelated one is not something you can do by accident. The comparison is shown as one flat table of added, missing, and changed devices, in that order, with a one-line summary of the three counts. The first scan of a target says so plainly rather than reporting every device as new.</p>
+<p data-i18n="tk_hist_identity">Devices are matched between scans by <b>hardware ID</b> where one is known, and only by address where it is not. That is what makes the comparison worth reading: a device that picked up a new address from DHCP is reported as changed rather than as one device disappearing and another appearing. A device counts as changed when its address, name, maker, type, or set of open ports is different from last time. A newly opened port on a device that was there yesterday is the interesting case, and it shows up here.</p>
+<p data-i18n="tk_hist_storage">History is kept in <code>%LocalAppData%\KillerScan\history.json</code> as plain readable JSON, with the last <b>fifty</b> scans retained. Each entry holds the time, the target, and the devices with their names, hardware IDs, makers, types, and open ports.</p>
+
+<h3 id="trusted" data-i18n="tk_trust_title">Trusted devices</h3>
+<p data-i18n="tk_trust_body">The first full scan that finds anything, on a machine that has never trusted a device, becomes your <b>baseline</b>: everything found is marked trusted and the status bar tells you how many. There is no setup step to forget. From then on, every scan counts the devices that are not trusted, and the status bar reports how many unknown devices turned up. Toggle trust for any device from its right-click menu. Trust is stored against the same hardware ID used by history, in <code>%LocalAppData%\KillerScan\devices.json</code>, alongside the names you have given devices by hand, so renaming a device does not affect whether it is trusted and reconnecting it on a different address does not make it a stranger.</p>
+</div>
+
+<div class="tech-sec" id="profiles">
+<h2 data-i18n="tk_prof_title">Scan profiles</h2>
+<p data-i18n="tk_prof_body"><b>F10</b> opens saved profiles. A profile is deliberately small: a name, the targets, and whether to follow the scan with Deep Scan. Save the current target under a name, and saving again with the same name replaces it. <b>Load</b> puts the target in place without scanning, for when you want to change something first. <b>Run</b> starts it immediately. If the profile is set to deep scan, the exhaustive pass follows automatically as soon as the normal scan finishes, so a site you visit regularly is one keystroke rather than a sequence. Profiles live in <code>%LocalAppData%\KillerScan\profiles.json</code>.</p>
+</div>
+
+<div class="tech-sec" id="export">
+<h2 data-i18n="tk_exp_title">Export</h2>
+<p data-i18n="tk_exp_body">Export follows the view you are in. The device list is always available as CSV or as the HTML report. In Topology you also get the arranged picture as a PNG, and in Services you also get the service list as its own CSV. Files are named with the date and time, so exporting the same network twice in an afternoon does not overwrite the morning's evidence.</p>
+<p data-i18n="tk_exp_html">The HTML report is one self-contained file. It carries the whole device table with every column sortable by clicking its heading, addresses sorted as numbers rather than as text, device types colored the way they are in the app, and a theme and accent picker with the same thirteen themes, remembered in the browser for the next time that report is opened. It needs nothing from the network to render.</p>
 </div>
 
 <div class="tech-sec" id="command-line">
@@ -216,7 +336,7 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
 
 <div class="tech-sec" id="keyboard">
 <h2 data-i18n="tk_183">Keyboard &amp; app size</h2>
-<p data-i18n="tk_184">KillerScan is small enough that it does not need a drawn keyboard map, so it keeps to a plain list, and the shortcuts work wherever the focus happens to be, including inside the results table. Press <b>F1</b> at any time to see the same list inside the app. Ctrl+F, Ctrl+A and Ctrl+C keep their usual meaning while you are typing in the subnet or filter box.</p>
+<p data-i18n="tk_184">Press <b>F1</b> at any time for the shortcuts, and <b>F1</b> again to switch between the two ways of reading them. The list groups them into two columns under colored category headings; the keyboard map draws a keyboard and paints each key in the color of the category it belongs to, which is the faster way to find out what a key does when you already have your hands on it. The shortcuts work wherever the focus happens to be, including inside the results table. Ctrl+F, Ctrl+A and Ctrl+C keep their usual meaning while you are typing in the subnet or filter box.</p>
 <table class="spec-table"><tr><th data-i18n="tk_185">Shortcut</th><th data-i18n="tk_186">What it does</th></tr>
 <tr><td>F5</td><td data-i18n="tk_187">Start or stop a scan</td></tr>
 <tr><td>Esc</td><td data-i18n="tk_188">Close an open overlay, or cancel a running scan</td></tr>
@@ -224,6 +344,14 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
 <tr><td>Ctrl + F</td><td data-i18n="tk_190">Jump to the subnet box</td></tr>
 <tr><td>Ctrl + A</td><td data-i18n="tk_191">Select every device</td></tr>
 <tr><td>Ctrl + E</td><td data-i18n="tk_192">Export the results</td></tr>
+<tr><td>F2</td><td data-i18n="tk_ks_f2">Watch the selected devices in Keep Alive</td></tr>
+<tr><td>F3</td><td data-i18n="tk_ks_f3">Run the checks against the selected device</td></tr>
+<tr><td>F6</td><td data-i18n="tk_ks_f6">Open scan history</td></tr>
+<tr><td>F7</td><td data-i18n="tk_ks_f7">Cycle the topology arrangement</td></tr>
+<tr><td>Ctrl + 1 ... Ctrl + 4</td><td data-i18n="tk_ks_ctrl14">Pick a topology arrangement directly</td></tr>
+<tr><td>F8</td><td data-i18n="tk_ks_f8">Show the services view</td></tr>
+<tr><td>F9</td><td data-i18n="tk_ks_f9">Show the topology view</td></tr>
+<tr><td>F10</td><td data-i18n="tk_ks_f10">Open scan profiles</td></tr>
 <tr><td>Enter</td><td data-i18n="tk_198">Open the selected device in a browser</td></tr>
 <tr><td>Ctrl + P</td><td data-i18n="tk_199">Ping the selected device</td></tr>
 <tr><td>Ctrl + D</td><td data-i18n="tk_200">Open Remote Desktop to the selected device</td></tr>
@@ -236,7 +364,7 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
 <tr><td>Ctrl + Shift + +</td><td data-i18n="tk_193">Make the app bigger</td></tr>
 <tr><td>Ctrl + Shift + -</td><td data-i18n="tk_194">Make the app smaller</td></tr>
 <tr><td>Ctrl + Shift + 0</td><td data-i18n="tk_195">Reset the app size</td></tr>
-<tr><td>F1</td><td data-i18n="tk_196">Show the shortcut list</td></tr>
+<tr><td>F1</td><td data-i18n="tk_196">Show the shortcut list, then the keyboard map</td></tr>
 <tr><td>F12</td><td data-i18n="tk_207">Open the About window</td></tr>
 </table>
 <p data-i18n="tk_197">Those last three set an app-wide size rather than zooming the results table on its own. Everything between the title bar and the status bar grows or shrinks together, and the text is laid out again at the new size instead of being stretched, so it stays sharp. The size is remembered between runs. You can also do it with the mouse: hover over the KillerScan wordmark in the title bar and roll the wheel, which moves in finer steps of two percent. Either way the range is 70% to 250%.</p>
@@ -465,6 +593,10 @@ some ports open, none telling  -> Other</div>
 <li data-i18n="tk_180">Re-scores the device type from the refreshed clues and updates that device's row in place.</li>
 </ul>
 <p data-i18n="tk_181">Because it favors thoroughness over speed, a deep rescan takes a few seconds per host, so it is meant for spot-checking specific devices rather than re-running the whole network.</p>
+
+<h3 id="deepscanall" data-i18n="tk_deep_all_title">Deep Scan All</h3>
+<p data-i18n="tk_deep_all_body">The <b>Deep Scan</b> button beside Scan runs that same thorough probe against every device the scan found, which is the pass worth leaving running while you do something else. It works through eight hosts at a time, and probes fewer ports simultaneously per host than a single right-click rescan does, so a whole network's worth of deep probing does not swamp the machine you are standing at or the network you are a guest on. The local DNS cache is cleared once before it starts rather than for every host.</p>
+<p data-i18n="tk_deep_all_cancel">The button becomes Stop while it runs, and stopping is immediate: the hosts already refreshed keep their new results, the rest keep the ones they had. Nothing is cleared first and no device is ever dropped because its probe failed, so an interrupted deep pass leaves you with more than you started with rather than less. That is also why a device that stops answering partway through keeps its earlier result instead of going blank.</p>
 </div>
 
 <div class="tech-sec" id="privacy">

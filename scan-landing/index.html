@@ -191,7 +191,9 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <li>mDNS (Bonjour) and SSDP (UPnP) discovery</li>
 <li>IEEE OUI vendor ID - MA-L, MA-M and MA-S</li>
 <li>Weighted classifier: routers, NAS, printers, cameras, IoT, phones and more</li>
-<li>Export results to CSV or HTML</li>
+<li>Topology, Keep Alive and an embedded terminal beside the device list</li>
+<li>Scan history with trusted-device baselines and unknown-device alerts</li>
+<li>Export results to CSV, HTML or the arranged topology as a PNG</li>
 <li>Headless command line for scripts, scheduled tasks and RMM</li>
 <li>Thirteen themes with live accent colors and remembered appearance settings</li>
 </ul></div>
@@ -207,6 +209,12 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <div class="feature-card"><h3 data-i18n="f_mdns_t">mDNS &amp; SSDP</h3><p data-i18n="f_mdns_d">A network-wide multicast pass runs alongside the sweep.<br>Bonjour service types and UPnP SERVER strings reveal Chromecasts, printers, Sonos, AirPlay, HomeKit, Roku, Plex and Synology boxes.</p></div>
 <div class="feature-card"><h3 data-i18n="f_vendor_t">Vendor identification</h3><p data-i18n="f_vendor_d">Longest-prefix MAC OUI lookup across the full IEEE registries - MA-L, MA-M and MA-S - with brand overrides for blocks IEEE hides as "Private", and a clear label for randomized privacy MACs.</p></div>
 <div class="feature-card"><h3 data-i18n="f_gateway_t">Gateway &amp; DNS aware</h3><p data-i18n="f_gateway_d">The gateway is labeled Router, DNS Server, or Router/DNS - and only Router/DNS when the gateway really is your configured DNS, so a dedicated DNS server is never mislabeled.</p></div>
+<div class="feature-card"><h3 data-i18n="f_topology_t">Network topology</h3><p data-i18n="f_topology_d">F9 draws the scan as a picture: every device a box you can pick up and move, grouped by role, type, address or vendor, with the arrangement cycled from the keyboard. It is inferred from what the scan found rather than read from your switches, and the arranged view exports as a full-resolution PNG.</p></div>
+<div class="feature-card"><h3 data-i18n="f_keepalive_t">Keep Alive</h3><p data-i18n="f_keepalive_d">Watch up to sixteen devices at once, each as a card with a latency graph, packet loss, and its own event log of exactly when it dropped and came back. Every card carries its own checks: route, forward and reverse DNS, ping, ports and traceroute. Copy the lot straight into a ticket.</p></div>
+<div class="feature-card"><h3 data-i18n="f_terminal_t">Terminal built in</h3><p data-i18n="f_terminal_d">A real terminal inside the app, running PowerShell 7 where it exists, with KillerShell's prompt and a KillerScan module that turns a scan into objects you can filter and pipe. Device actions open here: ping in color, SSH with the account you gave for that device.</p></div>
+<div class="feature-card"><h3 data-i18n="f_history_t">History &amp; trusted devices</h3><p data-i18n="f_history_d">Every scan is remembered and compared against the last run of the same target: what appeared, what went missing, what changed address or opened a port. The first scan sets a trusted baseline, and anything unfamiliar after that is called out in the status bar.</p></div>
+<div class="feature-card"><h3 data-i18n="f_services_t">Services view</h3><p data-i18n="f_services_d">F8 turns the results inside out: one row per open port rather than per device, so "what is running SSH here" is a glance instead of a hunt. Sortable, filterable, and exportable as its own CSV.</p></div>
+<div class="feature-card"><h3 data-i18n="f_profiles_t">Profiles &amp; deep scan</h3><p data-i18n="f_profiles_d">Save the sites you visit often and run them again in one keystroke, optionally following with Deep Scan, an exhaustive pass over every host found. There is a speed test on the rail too, for when the question is the line rather than the LAN.</p></div>
 <div class="feature-card"><h3 data-i18n="f_actions_t">Quick actions</h3><p data-i18n="f_actions_d">Right-click any device to copy its IP, MAC or hostname, or jump straight to it.<br>Open its web UI, or launch RDP or SSH directly, and set a manual device type that sticks.</p></div>
 <div class="feature-card cli-feature"><h3 data-i18n="f_cli_t">Command line ready</h3><p data-i18n="f_cli_d">Scan several networks, deep-probe one host, inspect the active network, or resolve a MAC vendor offline. Filter and sort the results, select ports and device types, set limits and timeouts, show progress, and emit table, CSV, JSON or themed HTML output with dependable automation exit codes. <a href="technical.html#command-line">See every command.</a></p></div>
 <div class="feature-card"><h3 data-i18n="f_export_t">Export</h3><p data-i18n="f_export_d">Export the full device list to CSV, or to a self-contained HTML report that stays fully re-sortable by any column and re-themeable with the same thirteen themes and accent colors as the app. Right-click any device to copy its IP, MAC or hostname, or jump straight to it.</p></div>
@@ -255,17 +263,16 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
   // these are alt/title/aria-label text rather than DOM nodes, so applyLang cannot reach them and
   // the kscan-languagechange event re-applies them instead.
   var descriptionsEn = [
-    'Device context menu with type overrides and remote actions',
-    'Keyboard shortcuts in the 98SE theme',
-    'KillerScan About card over scanned results',
-    'Theme picker in the Mourning theme',
-    'Device scan localized in Traditional Chinese',
-    'Device scan and language picker localized in Russian',
-    'Theme picker in the Blood theme',
-    'Device context menu in the Sepulchre theme',
-    'Device scan and language picker localized in Czech',
-    'Standalone HTML export of scan results',
-    'Headless command-line scan with color-coded results in a terminal'
+    'The device list with the theme picker open, in the Dark theme',
+    'The device menu, with diagnostics, remote actions and type overrides, in the Ectoplasm theme',
+    'Topology and the device menu in the 98SE theme, localized in Hungarian',
+    'Network topology beside the scan history sidebar, with the export menu offering transparent PNG, JPG and HTML',
+    'Keep Alive watching four devices, with latency graphs, packet loss and per-device checks',
+    'The built-in terminal beside the scan profiles sidebar, in the Greed theme',
+    'The keyboard shortcut list in the 98SE theme',
+    'The About card over the services view, in the Blood theme',
+    'Headless command-line scan with color-coded results in a terminal',
+    'Standalone HTML export of scan results, sortable and re-themeable in the browser'
   ];
   var MAX = descriptionsEn.length;
 

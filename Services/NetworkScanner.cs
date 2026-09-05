@@ -339,7 +339,7 @@ namespace KillerScan.Services
                     var trimmed = line.Trim();
                     if (string.IsNullOrEmpty(trimmed)) continue;
 
-                    // Parse lines like: 192.168.8.1     94-83-c4-a4-78-82     dynamic
+                    // Parse lines like: 192.168.1.1     00-00-5e-00-53-01     dynamic
                     var parts = trimmed.Split([' '], StringSplitOptions.RemoveEmptyEntries);
                     if (parts.Length >= 2)
                     {

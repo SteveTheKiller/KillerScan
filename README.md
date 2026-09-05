@@ -17,8 +17,14 @@ Part of [killertools.net](https://killertools.net).
 
 ## Features
 
-- Independent scan tabs preserve targets, results, filters, and view modes. Split the workspace to use any two tabs beside each other, or move a tab between panes without restarting its work.
-- Embedded terminal tabs run PowerShell, ping, and SSH using the system clients. Device actions can open in a tab or beside the scan; separate terminal windows remain available. Closing a terminal tab ends its process.
+- Permanent Scan, Topology, Keep Alive and Terminal views sit on the right of the scan toolbar. Each keeps its own state, and a right-click menu sets icon size and caption placement.
+- Embedded terminals run PowerShell, ping, and SSH using the system clients, preferring PowerShell 7 where it is installed. They use KillerShell's font, palette and prompt, and the prompt unpacks to a file you can edit and keeps your version across upgrades. The KillerScripts module travels inside the EXE, so it is there on a machine you cannot install anything on. Closing a terminal ends its process.
+- Keep Alive (F2) watches any number of selected devices at once, each as a status card with a latency sparkline, packet loss, its own checks on banded rows, and its own event log. Right-click a card to copy the address, run diagnostics, reset its counters, or drop it from the run. Checks start for the whole set as soon as a run begins.
+- Topology (F9) infers how the network fits together and draws devices as movable, multi-selectable boxes in four arrangement modes, cycled with F7 or picked directly with Ctrl+1 through Ctrl+4. Connectors stay attached to boxes you move, and the arranged view exports as a full-resolution PNG.
+- Deep Scan runs an exhaustive, cancellable rescan of every discovered host to improve hostnames, services and classifications.
+- Scan history (F6) compares each scan against the last for added, missing and changed devices, and supports trusted-device baselines with alerts for unknown devices. Scan profiles (F10) remember targets you can load or run, optionally following with Deep Scan. Both share a sliding sidebar that opens from the icon rail and resizes by dragging.
+- A service-centric view (F8) organizes results by discovered service, port and device.
+- Manual device names and classifications both persist across restarts and rescans.
 - Self-installer: launch the EXE to install to `%LOCALAPPDATA%\Programs\KillerScan\` with Start Menu and optional desktop shortcut, or tick "Install for all users" to install to Program Files for every account on the PC (the only path that asks for admin), or just run it portable with no install. An installed copy is added to PATH, so a new terminal can run it as `KillerScan` from any directory
 - Scan several networks in one pass: the subnet box takes a comma-separated list of CIDR blocks (`192.168.9.0/24, 192.168.10.0/24`), single hosts (`192.168.1.7`), and ranges written in full (`192.168.1.10-192.168.1.50`) or shorthand (`192.168.1.10-50`); spacing is forgiving and overlapping targets are counted once
 - ARP cache + parallel ping sweep for fast discovery; a second ARP pass after the sweep catches phones and devices that block ICMP
@@ -27,11 +33,10 @@ Part of [killertools.net](https://killertools.net).
 - MAC vendor identification across the full IEEE registries (MA-L, MA-M, MA-S) with longest-prefix matching, brand overrides for "Private" blocks, and a clear label for randomized privacy MACs; the vendor database is refreshable from within the app (About screen)
 - Weighted-score classifier identifies hypervisors, Windows boxes, Linux servers, printers, NAS, network gear, cameras, IoT, mobile, Home Assistant and more; gateway/DNS aware (Router, DNS Server, or Router/DNS - Pi-hole safe)
 - Right-click to copy IP/MAC/hostname, launch RDP/SSH/browser, or override a device type. SSH does not assume your Windows account name: it asks which user to sign in as the first time you reach a device, remembers the answer against that device's MAC, and offers "SSH as..." for connecting as somebody else
-- CSV and HTML export
-- Connection watch (F2) checks up to 16 IP addresses every two seconds, with reply loss, latest and average latency, and timestamped state changes. Start with the detected gateway, DNS server, and selected device, or enter your own targets. Stop preserves the results; starting again resets them. Closing the watch stops its checks.
-- Device diagnostics (F3 or the device menu) checks reverse and forward DNS, ICMP replies, the local route, and common or previously discovered TCP ports. Both tools can copy their results for ticket notes. A missing ping reply does not mean the device is offline.
+- Export follows the active view: devices as CSV or HTML anywhere, the arranged topology as a PNG in Topology, and the service list as a CSV in Services
+- Device diagnostics (F3 or the device menu) checks reverse and forward DNS, ICMP replies, the local route, and common or previously discovered TCP ports. Results can be copied for ticket notes. A missing ping reply does not mean the device is offline.
 - Headless command line for scripts and RMM work: scan one or several targets, deep-probe one host, inspect the active network, or look up a MAC vendor. Filter by text, type, vendor, or ports; sort and limit results; set progress and timeout behavior; and emit table, CSV, JSON, or themed HTML to the console or a file. No window opens, it runs while the app is open, and it returns distinct exit codes for success, failure, bad usage, and empty results
-- Keyboard shortcuts (F1 for the list): F5 scan/stop, Esc cancel, Ctrl+R deep rescan the selection, Ctrl+F subnet box, Ctrl+A select all, Ctrl+E export, single-key device actions (ping, RDP, SSH, browser, copy IP/MAC/hostname), F12 About
+- Keyboard shortcuts, on F1, which switches between a grouped shortcut list in two colored columns and a persistent keyboard map that paints each key in its category color: F5 scan/stop, Esc cancel, Ctrl+R deep rescan the selection, Ctrl+F subnet box, Ctrl+A select all, Ctrl+E export, F2 Keep Alive, F3 diagnostics, F6 history, F7 topology arrangement, F8 services, F9 topology, F10 profiles, F12 About, and single-key device actions (ping, RDP, SSH, browser, copy IP/MAC/hostname)
 - App-wide size control from 70% to 250%, on Ctrl+Shift+plus/minus/0 or the mouse wheel over the title-bar wordmark; text reflows at the new size and the setting is remembered
 - Thirteen themes, of which Dark, Light, Black and 98SE each take one of six accent colors for 33 looks in all, including a full Windows 98 treatment; theme, accent, language, and app size are remembered; localized in 15 languages (English, Spanish, Traditional and Simplified Chinese, German, French, Turkish, Bengali, Japanese, Czech, Kazakh, Polish, Hungarian, Italian, Russian)
 
@@ -39,8 +44,12 @@ Part of [killertools.net](https://killertools.net).
 
 <table>
 <tr>
-<td width="50%"><img src="docs/main-window.png" alt="KillerScan showing a completed network scan"><br><sub>A completed scan with IP addresses, hostnames, MAC vendors, device classifications and open ports together in one sortable view.</sub></td>
-<td width="50%"><img src="docs/device-actions.png" alt="KillerScan device actions and type override menu"><br><sub>Right-click a device to rescan it, copy its details, ping it, open its web interface, launch RDP or SSH, or correct its remembered device type.</sub></td>
+<td width="50%"><img src="docs/main-window.png" alt="KillerScan showing a completed network scan with the theme picker open"><br><sub>A completed scan with IP addresses, hostnames, MAC vendors, device classifications and open ports in one sortable view, with the theme picker open.</sub></td>
+<td width="50%"><img src="docs/topology.png" alt="KillerScan network topology with the export menu open"><br><sub>Topology draws the same devices as a picture you can rearrange, and exports the arranged view as a full-resolution PNG.</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/keep-alive.png" alt="KillerScan Keep Alive watching four devices"><br><sub>Keep Alive watches devices continuously: a latency graph, packet loss, per-device checks and an event log of exactly when each one dropped and came back.</sub></td>
+<td width="50%"><img src="docs/terminal.png" alt="KillerScan terminal beside the scan profiles sidebar"><br><sub>A real terminal inside the app, running PowerShell with KillerShell's prompt, beside the saved scan profiles that can load or run a remembered target.</sub></td>
 </tr>
 </table>
 
