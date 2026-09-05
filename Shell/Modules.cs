@@ -18,7 +18,7 @@ namespace KillerScan.Shell
 {
     public partial class MainWindow
     {
-        private static readonly string[] BundledModules = ["KillerScripts"];
+        private static readonly string[] BundledModules = ["KillerScripts", "KillerScan"];
 
         private static bool _modulesReady;
 
@@ -43,6 +43,12 @@ namespace KillerScan.Shell
             {
                 string root = ModulesRoot();
                 foreach (var name in BundledModules) Unpack(name, root);
+
+                // The KillerScan module shells out to the command line, and a portable copy is
+                // not on PATH. Publishing our own path means scan and probe work from a folder
+                // the user just dropped the exe into.
+                Environment.SetEnvironmentVariable("KS_EXE",
+                    System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName ?? "");
 
                 string current = Environment.GetEnvironmentVariable("PSModulePath") ?? string.Empty;
                 if (current.IndexOf(root, StringComparison.OrdinalIgnoreCase) >= 0) return;

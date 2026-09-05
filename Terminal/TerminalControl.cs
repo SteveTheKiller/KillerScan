@@ -230,6 +230,39 @@ namespace KillerScan.Terminal
             if (_buf.Version != _drawnVersion) InvalidateVisual();
         }
 
+        /// <summary>
+        /// Demo mode only. Renders scripted text as though a shell had printed it: no process is
+        /// started, so a screenshot build shows the fabricated session rather than the machine it
+        /// is running on. Typing goes nowhere, because there is nothing on the other end.
+        /// </summary>
+        public void ShowScript(string text)
+        {
+            if (_closed || _pty != null || string.IsNullOrEmpty(text)) return;
+            ApplySize();
+            _parser.Feed(Encoding.UTF8.GetBytes(text), Encoding.UTF8.GetByteCount(text));
+            InvalidateVisual();
+        }
+
+        /// <summary>
+        /// The whole session as plain text: scrollback and screen, colours and attributes dropped,
+        /// trailing blank columns trimmed off each line. What you would have got by selecting it
+        /// all and copying, without needing the session to still be running.
+        /// </summary>
+        public string GetText()
+        {
+            var text = new StringBuilder();
+            var line = new StringBuilder();
+            for (int i = 0; i < _buf.TotalLines; i++)
+            {
+                line.Clear();
+                foreach (var cell in _buf.LineAt(i))
+                    line.Append(cell.Ch == 0 ? ' ' : char.ConvertFromUtf32(cell.Ch));
+                text.AppendLine(line.ToString().TrimEnd());
+            }
+            // A terminal is mostly empty space below the cursor; keep the transcript, drop the rest.
+            return text.ToString().TrimEnd() + Environment.NewLine;
+        }
+
         public void Send(string s)
         {
             if (_pty == null || _pty.HasExited || string.IsNullOrEmpty(s)) return;
