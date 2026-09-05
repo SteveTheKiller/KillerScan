@@ -102,7 +102,7 @@
                         <!-- The log grows with the card up to a point, then scrolls. -->
                         <TextBlock Text="{DynamicResource Str_Watch_Events}" FontSize="10" Margin="0,8,0,3"
                                    Foreground="{DynamicResource MutedTextBrush}"/>
-                        <Border Background="{DynamicResource MenuBackgroundBrush}" BorderThickness="1"
+                        <Border Background="{DynamicResource WatchLogBrush}" BorderThickness="1"
                                 BorderBrush="{DynamicResource MenuBorderBrush}"
                                 CornerRadius="{DynamicResource SmallCornerRadius}">
                             <Grid ClipToBounds="True">
@@ -178,7 +178,11 @@
                          target's checks and log; diagnostics used to be a separate view, then a
                          shared side pane, and is now simply part of the card it describes. -->
                     <Grid Grid.Row="1">
-                        <ListBox x:Name="Cards" Margin="8,4,8,8" ItemTemplate="{StaticResource WatchCardTemplate}"
+                        <!-- No right margin, so the scrollbar sits against the pane edge like the
+                             results grid's does. The cards keep their gap through Padding, which
+                             the template applies to the scrolling content and not to the bar. -->
+                        <ListBox x:Name="Cards" Margin="8,4,0,8" Padding="0,0,8,0"
+                                 ItemTemplate="{StaticResource WatchCardTemplate}"
                                  Background="Transparent" BorderThickness="0" Foreground="{DynamicResource TextBrush}"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                  ScrollViewer.VerticalScrollBarVisibility="Auto">

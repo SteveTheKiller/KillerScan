@@ -65,7 +65,7 @@ namespace KillerScan.Controls
                 Time = time.ToLocalTime().ToString("HH:mm:ss"),
                 State = state,
                 Up = up,
-                StateBrush = Frozen(palette.Ansi[up ? 2 : 1])
+                StateBrush = StateColor(up ? "WatchUpBrush" : "WatchDownBrush", palette.Ansi[up ? 2 : 1])
             });
             while (Events.Count > EventWindow) Events.RemoveAt(0);
         }
@@ -130,8 +130,9 @@ namespace KillerScan.Controls
         internal void RefreshTheme()
         {
             var palette = TerminalPalette.For(TerminalSkin.Default);
+            string key = !_known ? "WatchIdleBrush" : _up ? "WatchUpBrush" : "WatchDownBrush";
             Color color = !_known ? palette.Ansi[8] : palette.Ansi[_up ? 2 : 1];
-            StateBrush = Frozen(color);
+            StateBrush = StateColor(key, color);
             SparkBrush = Frozen(_known && !_up ? palette.Ansi[1] : palette.Ansi[6]);
         }
 
@@ -152,6 +153,19 @@ namespace KillerScan.Controls
                 .ToList();
             Events.Clear();
             foreach (var entry in rewritten) Events.Add(entry);
+        }
+
+        /// <summary>
+        /// The up / down / waiting color for the current theme. The terminal palette carries a
+        /// tuned red and green for all thirteen flat themes, so it stays the source for those.
+        /// A theme that names its own brush wins: 98SE does, because the VGA green it would
+        /// otherwise inherit is too light to read on that theme's white log surface.
+        /// </summary>
+        private static Brush StateColor(string key, Color fallback)
+        {
+            if (System.Windows.Application.Current?.TryFindResource(key) is SolidColorBrush b)
+                return b;
+            return Frozen(fallback);
         }
 
         private static Brush Frozen(Color color)
