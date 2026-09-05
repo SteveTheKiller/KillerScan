@@ -12,7 +12,7 @@ namespace KillerScan.Shell
         /// honest about being indicative rather than an official speedtest.net result.
         /// </summary>
         private void SpeedTestButton_Click(object sender, System.Windows.RoutedEventArgs e) =>
-            NewTerminal(title: "Speed test", shellCommand: SpeedTestCommand());
+            NewTerminal(title: Loc("Str_TT_SpeedTest"), shellCommand: SpeedTestCommand());
 
         /// <summary>
         /// Single quotes throughout, because this rides inside the double-quoted -Command that

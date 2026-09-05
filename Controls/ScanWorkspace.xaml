@@ -33,7 +33,8 @@
      rest of the network information. Address and detail are separate because the footer sheds the
      detail first when the bar runs out of room. -->
 <TextBlock x:Name="FooterNetLabel" Visibility="Collapsed"/>
-<TextBlock x:Name="FooterNetDetail" Visibility="Collapsed"/>
+<TextBlock x:Name="FooterNetAdapter" Visibility="Collapsed"/>
+<TextBlock x:Name="FooterNetSpeed" Visibility="Collapsed"/>
 <Button x:Name="FilterToggleButton" Style="{StaticResource OutlineButton}" FontFamily="Segoe MDL2 Assets" Content="&#xE71C;" Width="26" Height="26" Padding="0" Margin="0,2,6,2" Click="FilterToggle_Click">
 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_FilterPlaceholder}"/><Run Text=" (Ctrl+Shift+F)"/></TextBlock></Button.ToolTip>
 </Button>
@@ -94,7 +95,7 @@
                             BorderBrush="{DynamicResource InputBorderBrush}" BorderThickness="1"
                             Click="TopologyOrderButton_Click">
                         <Button.ToolTip>
-                            <TextBlock><Run Text="{DynamicResource Str_TT_TopologyOrder}"/><Run Text=" (F7)"/></TextBlock>
+                            <TextBlock><Run Text="{DynamicResource Str_TT_TopologyOrder}"/><Run Text=" (Ctrl+G)"/></TextBlock>
                         </Button.ToolTip>
                         <Button.Template>
                             <ControlTemplate TargetType="Button">

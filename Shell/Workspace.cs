@@ -30,14 +30,15 @@ namespace KillerScan.Shell
             Grid.SetColumn(_workspaceNavigation, 1);
             _workspaceToolbar.Children.Add(_workspaceNavigation);
             var toolbarSurface = new Grid { UseLayoutRounding = true };
-            toolbarSurface.SetResourceReference(Panel.BackgroundProperty, "BackgroundBrush");
-            var grain = new Border { IsHitTestVisible = false };
-            grain.SetResourceReference(Border.BackgroundProperty, "GrainTileBrush");
-            grain.SetResourceReference(OpacityProperty, "GrainOpacity");
-            // Grain first, so it textures the bar itself and the controls sit ON it. Added after
-            // the toolbar it was painting over every control in the bar, which is why the subnet
-            // box looked like textured background rather than a field you can type in.
-            toolbarSurface.Children.Add(grain);
+            // Transparent, not a colour of its own. The window paints the background across its
+            // full width, so letting it through keeps one continuous gradient; painting the brush
+            // here restarted the ramp inside the content column, and painting a flat tone instead
+            // just moved the seam to where the bar met the margins beside the pane.
+            toolbarSurface.Background = Brushes.Transparent;
+            // No grain of its own either. The chrome strip behind this whole row already carries
+            // one, and it shows through now that the bar is transparent; adding a second here
+            // doubled the texture over the toolbar. The strip sits below the controls, so the
+            // subnet box still reads as a field rather than as textured background.
             toolbarSurface.Children.Add(_workspaceToolbar);
             WorkspaceHost.Children.Add(toolbarSurface);
             TerminalLayout.Children.Add(_workspaceBody);
@@ -110,8 +111,10 @@ namespace KillerScan.Shell
                 // without the shell having to detect anything itself.
                 NetworkFooter.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("Text")
                     { Source = _scanWorkspace.FindName("FooterNetLabel") });
-                NetworkFooterDetail.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("Text")
-                    { Source = _scanWorkspace.FindName("FooterNetDetail") });
+                NetworkFooterAdapter.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("Text")
+                    { Source = _scanWorkspace.FindName("FooterNetAdapter") });
+                NetworkFooterSpeed.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("Text")
+                    { Source = _scanWorkspace.FindName("FooterNetSpeed") });
                 NetworkFooterIcon.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding("Text")
                     { Source = _scanWorkspace.FindName("InterfaceIcon") });
                 // The badge appears and disappears with portable mode, and the address changes
@@ -151,6 +154,10 @@ namespace KillerScan.Shell
                 ApplyToolbarAppearance();
                 _scanWorkspace.DeviceAction += (_, e) => WorkspaceDeviceAction(e.Device, e.Action);
                 _scanWorkspace.ShellExportRequested += ShellExport;
+                // Everything bound with DynamicResource follows a language change on its own. The
+                // status line and the device count do not: they are composed in code and stored,
+                // so they are re-stated here from the state the workspace is in.
+                LocaleManager.LocaleChanged += OnShellLocaleChanged;
                 _scanWorkspace.HistoryRecorded += (_, _) =>
                 {
                     if (!_sidebarCollapsed) RefreshHistoryList();
@@ -221,12 +228,12 @@ namespace KillerScan.Shell
         /// </summary>
         private void FitFooterNetwork()
         {
-            if (NetworkFooterDetail == null) return;
+            if (NetworkFooterAdapter == null || NetworkFooterSpeed == null) return;
 
             if (!_footerNetExpanded)
             {
-                NetworkFooterDetail.Visibility = Visibility.Collapsed;
-                NetworkFooterDetail.MaxWidth = double.PositiveInfinity;
+                NetworkFooterAdapter.Visibility = Visibility.Collapsed;
+                NetworkFooterSpeed.Visibility = Visibility.Collapsed;
                 return;
             }
 
@@ -239,25 +246,25 @@ namespace KillerScan.Shell
             double budget = footer / 2 - badge / 2 - FooterNetworkGap
                           - VersionLabel.ActualWidth - NetworkFooter.ActualWidth - NetworkFooterIcon.ActualWidth;
 
-            // Below the threshold there is not enough room for the ellipsis to say anything
-            // useful, so the detail goes entirely rather than reading as "Int...".
-            if (budget < FooterDetailMinimum)
-            {
-                NetworkFooterDetail.Visibility = Visibility.Collapsed;
-                NetworkFooterDetail.MaxWidth = double.PositiveInfinity;
-            }
-            else
-            {
-                NetworkFooterDetail.Visibility = Visibility.Visible;
-                NetworkFooterDetail.MaxWidth = budget;
-            }
+            // Measured at their natural width, because each one is shown whole or not at all.
+            var free = new Size(double.PositiveInfinity, double.PositiveInfinity);
+            NetworkFooterAdapter.Measure(free);
+            NetworkFooterSpeed.Measure(free);
+            double adapter = NetworkFooterAdapter.DesiredSize.Width;
+            double speed = NetworkFooterSpeed.DesiredSize.Width;
+
+            // The speed is the first to go: it is the least useful of the three and the shortest,
+            // so dropping it usually buys enough room to keep the adapter name intact. Trimming
+            // either one to an ellipsis looks like damage rather than a fit.
+            bool showAdapter = adapter > 0 && budget >= adapter;
+            bool showSpeed = showAdapter && speed > 0 && budget >= adapter + speed;
+
+            NetworkFooterAdapter.Visibility = showAdapter ? Visibility.Visible : Visibility.Collapsed;
+            NetworkFooterSpeed.Visibility = showSpeed ? Visibility.Visible : Visibility.Collapsed;
         }
 
         /// <summary>Padding and cell margins the budget above cannot measure directly.</summary>
         private const double FooterNetworkGap = 48;
-
-        /// <summary>Narrower than this and the adapter and speed are dropped rather than trimmed.</summary>
-        private const double FooterDetailMinimum = 70;
 
         private void ShowScanView(string view)
         {
@@ -267,11 +274,20 @@ namespace KillerScan.Shell
                 : view == "services" ? "services" : "scan");
         }
 
+        private void OnShellLocaleChanged()
+        {
+            _scanWorkspace?.RefreshLocalizedText();
+            UpdateWorkspaceStatus();
+            UpdateScanLight();
+        }
+
         private void UpdateWorkspaceStatus()
         {
+            // Str_St_Ready rather than nothing: before the first scan the cell would otherwise be
+            // empty in every language except English, where the XAML's design-time "Ready" showed.
             StatusText.Text = ActiveScan?.Status ?? (_workspaceView == "watch" ? Loc("Str_View_KeepAlive")
                 : _workspaceView == "history" ? Loc("Str_History_Title")
-                : _workspaceView == "services" ? Loc("Str_Services_Title") : string.Empty);
+                : _workspaceView == "services" ? Loc("Str_Services_Title") : Loc("Str_St_Ready"));
             ScanProgress.Value = ActiveScan?.Progress ?? 0;
             ScanProgress.Visibility = ActiveScan?.IsProgressVisible == true ? Visibility.Visible : Visibility.Collapsed;
             if (_workspaceView == "terminal") UpdateTerminalPanelStatus();
