@@ -37,6 +37,9 @@
     <sys:String x:Key="Str_History_Changed">পরিবর্তিত</sys:String>
     <sys:String x:Key="Str_History_FirstScan">এই লক্ষ্যটির প্রথম স্ক্যান। সব ডিভাইস নতুন।</sys:String>
     <sys:String x:Key="Str_History_Summary">{0} যোগ হয়েছে, {1} অনুপস্থিত, {2} পরিবর্তিত</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">পরিবর্তন</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">সব ডিভাইস</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">এই স্ক্যানে {0}টি ডিভাইস</sys:String>
     <sys:String x:Key="Str_TT_Topology">নেটওয়ার্ক টপোলজি দেখান বা লুকান</sys:String>
     <sys:String x:Key="Str_Topology_Network">স্থানীয় নেটওয়ার্ক</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">অনুমান করা সংযোগ</sys:String>
@@ -308,8 +311,15 @@
     <sys:String x:Key="Str_Rename_Save">সংরক্ষণ</sys:String>
     <sys:String x:Key="Str_Rename_Clear">ম্যানুয়াল নাম মুছুন</sys:String>
     <sys:String x:Key="Str_Trust_Device">বিশ্বস্ত ডিভাইস</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">সবুজ: বিশ্বস্ত ডিভাইস। অ্যাম্বার: আপনার বিশ্বস্ত তালিকায় নেই।</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">{0}টি ডিভাইস দিয়ে বিশ্বস্ত ভিত্তি তৈরি হয়েছে।</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">সতর্কতা: {0}টি অজানা ডিভাইস পাওয়া গেছে।</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">আপনার বিশ্বস্ত তালিকায় নেই:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">এবং আরও {0}টি</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">কোনো ডিভাইস বিশ্বস্ত করতে সেটিতে ডান-ক্লিক করুন।</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0}টি ডিভাইস, {1}টিতে খোলা পোর্ট আছে</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">{0}টি লক্ষ্য পর্যবেক্ষণে, {1}টি সাড়া দিচ্ছে না</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0}, {1} সময়ে, {2}টি ডিভাইস রেকর্ড করা হয়েছে</sys:String>
     <sys:String x:Key="Str_Services_Title">সেবাসমূহ</sys:String>
     <sys:String x:Key="Str_Services_Service">সেবা</sys:String>
     <sys:String x:Key="Str_Profiles_Title">স্ক্যান প্রোফাইল</sys:String>

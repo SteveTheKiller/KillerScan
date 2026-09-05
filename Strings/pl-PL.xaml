@@ -36,6 +36,9 @@
     <sys:String x:Key="Str_History_Changed">Zmieniono</sys:String>
     <sys:String x:Key="Str_History_FirstScan">Pierwszy skan tego celu. Wszystkie urządzenia są nowe.</sys:String>
     <sys:String x:Key="Str_History_Summary">{0} dodano, {1} brak, {2} zmieniono</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">ZMIANY</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">WSZYSTKIE URZĄDZENIA</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">{0} urządzeń w tym skanowaniu</sys:String>
     <sys:String x:Key="Str_TT_Topology">Przełącz topologię sieci</sys:String>
     <sys:String x:Key="Str_Topology_Network">Sieć lokalna</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Połączenie wywnioskowane</sys:String>
@@ -293,8 +296,15 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Rename_Save">Zapisz</sys:String>
     <sys:String x:Key="Str_Rename_Clear">Wyczyść nazwę ręczną</sys:String>
     <sys:String x:Key="Str_Trust_Device">Zaufane urządzenie</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">Zielony: zaufane urządzenie. Bursztynowy: brak na liście zaufanych urządzeń.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Utworzono zaufaną bazę z {0} urządzeniami.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alert: znaleziono {0} nieznanych urządzeń.</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">Brak na liście zaufanych urządzeń:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">i {0} więcej</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">Kliknij urządzenie prawym przyciskiem, aby oznaczyć je jako zaufane.</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0} urządzeń, {1} z otwartymi portami</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">Monitorowane cele: {0}, bez odpowiedzi: {1}</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} o {1}, zapisano urządzeń: {2}</sys:String>
     <sys:String x:Key="Str_Services_Title">Usługi</sys:String>
     <sys:String x:Key="Str_Services_Service">Usługa</sys:String>
     <sys:String x:Key="Str_Profiles_Title">Profile skanowania</sys:String>

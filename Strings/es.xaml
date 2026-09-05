@@ -37,6 +37,9 @@
     <sys:String x:Key="Str_History_Changed">Modificado</sys:String>
     <sys:String x:Key="Str_History_FirstScan">Primer análisis de este destino. Todos los dispositivos son nuevos.</sys:String>
     <sys:String x:Key="Str_History_Summary">{0} añadidos, {1} ausentes, {2} modificados</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">CAMBIOS</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">TODOS LOS DISPOSITIVOS</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">{0} dispositivos en este escaneo</sys:String>
     <sys:String x:Key="Str_TT_Topology">Alternar topología de red</sys:String>
     <sys:String x:Key="Str_Topology_Network">Red local</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Conexión inferida</sys:String>
@@ -308,8 +311,15 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Rename_Save">Guardar</sys:String>
     <sys:String x:Key="Str_Rename_Clear">Borrar nombre manual</sys:String>
     <sys:String x:Key="Str_Trust_Device">Dispositivo de confianza</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">Verde: dispositivo de confianza. Ámbar: no está en su lista de confianza.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Base de confianza creada con {0} dispositivos.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alerta: se encontraron {0} dispositivos desconocidos.</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">No están en su lista de confianza:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">y {0} más</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">Haga clic derecho en un dispositivo para marcarlo como de confianza.</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0} dispositivos, {1} con puertos abiertos</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">{0} objetivos vigilados, {1} sin respuesta</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} a las {1}, {2} dispositivos registrados</sys:String>
     <sys:String x:Key="Str_Services_Title">Servicios</sys:String>
     <sys:String x:Key="Str_Services_Service">Servicio</sys:String>
     <sys:String x:Key="Str_Profiles_Title">Perfiles de análisis</sys:String>

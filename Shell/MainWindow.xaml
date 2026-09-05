@@ -585,10 +585,17 @@
                          cell's own content rather than the shared FooterCellPadding token, which
                          the version cell across the bar uses as well. -->
                     <StackPanel Orientation="Horizontal" Margin="18,0,0,0">
-                    <TextBlock x:Name="StatusText" Text="Ready" MaxWidth="230" TextTrimming="CharacterEllipsis"
+                    <!-- ToolTip is set to a placeholder so ToolTipOpening fires at all; the
+                         handler replaces it with something written for the current view, or
+                         cancels when there is nothing worth saying. ShowDuration is long
+                         because the unknown-device list is read, not glanced at. -->
+                    <!-- No fixed MaxWidth: FitFooterStatus measures the room up to the badge. -->
+                    <TextBlock x:Name="StatusText" Text="Ready" TextTrimming="CharacterEllipsis"
                                Margin="{DynamicResource FooterCellPadding}" HorizontalAlignment="Left"
                                Foreground="{DynamicResource MutedTextBrush}" FontFamily="Consolas"
-                               FontSize="11.5" VerticalAlignment="Center"/>
+                               FontSize="11.5" VerticalAlignment="Center"
+                               ToolTip=" " ToolTipOpening="StatusText_ToolTipOpening"
+                               ToolTipService.ShowDuration="30000" ToolTipService.InitialShowDelay="400"/>
                     <StackPanel x:Name="DeviceCountFooter" Orientation="Horizontal" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
@@ -612,7 +619,7 @@
                 </StackPanel>
                 <!-- Version/progress cluster in its own sunken cell (crossed, like the status
                      cell). -->
-                <Grid Grid.Column="1" HorizontalAlignment="Right" Margin="{DynamicResource FooterCellMargin}">
+                <Grid x:Name="VersionCell" Grid.Column="1" HorizontalAlignment="Right" Margin="{DynamicResource FooterCellMargin}">
                     <Border IsHitTestVisible="False"
                             BorderBrush="{DynamicResource FooterBevelDarkBrush}"
                             BorderThickness="{DynamicResource FooterCellLightThickness}"/>

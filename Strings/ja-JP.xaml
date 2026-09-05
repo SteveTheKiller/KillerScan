@@ -50,6 +50,9 @@
     <sys:String x:Key="Str_History_Changed">変更済み</sys:String>
     <sys:String x:Key="Str_History_FirstScan">この対象の最初のスキャンです。すべてのデバイスが新規です。</sys:String>
     <sys:String x:Key="Str_History_Summary">追加 {0}、不明 {1}、変更 {2}</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">変更</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">すべてのデバイス</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">このスキャンのデバイス数: {0}</sys:String>
     <sys:String x:Key="Str_TT_Topology">ネットワーク トポロジの表示を切り替えます</sys:String>
     <sys:String x:Key="Str_Topology_Network">ローカル ネットワーク</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">推定された接続</sys:String>
@@ -319,8 +322,15 @@
     <sys:String x:Key="Str_Rename_Save">保存</sys:String>
     <sys:String x:Key="Str_Rename_Clear">手動名を消去</sys:String>
     <sys:String x:Key="Str_Trust_Device">信頼済みデバイス</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">緑: 信頼済みデバイス。琥珀色: 信頼済みリストにありません。</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">{0} 台のデバイスで信頼済み基準を作成しました。</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">警告: 不明なデバイスが {0} 台見つかりました。</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">信頼済みリストにありません:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">ほか {0} 台</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">デバイスを右クリックすると信頼済みにできます。</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0} 台のデバイス、うち {1} 台に開いているポートあり</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">{0} 件を監視中、{1} 件が応答なし</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} / {1}、{2} 台を記録</sys:String>
     <sys:String x:Key="Str_Services_Title">サービス</sys:String>
     <sys:String x:Key="Str_Services_Service">サービス</sys:String>
     <sys:String x:Key="Str_Profiles_Title">スキャンプロファイル</sys:String>

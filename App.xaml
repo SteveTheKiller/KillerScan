@@ -35,6 +35,7 @@
                  that persists, colors, filters or exports goes through it (DeviceTypeConverter). -->
             <controls:DeviceTypeConverter x:Key="DeviceTypeLoc"/>
             <controls:VendorConverter x:Key="VendorLoc"/>
+            <controls:TrustMarkConverter x:Key="TrustMark"/>
 
             <!-- Typewriter wordmark font (bundled in Fonts/). -->
             <FontFamily x:Key="WordmarkFont">/KillerScan;component/Fonts/#Typewriter - a602 (dead postman 2004)</FontFamily>

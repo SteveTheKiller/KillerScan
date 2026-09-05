@@ -37,6 +37,9 @@
     <sys:String x:Key="Str_History_Changed">Geändert</sys:String>
     <sys:String x:Key="Str_History_FirstScan">Erster Scan dieses Ziels. Alle Geräte sind neu.</sys:String>
     <sys:String x:Key="Str_History_Summary">{0} hinzugefügt, {1} fehlen, {2} geändert</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">ÄNDERUNGEN</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">ALLE GERÄTE</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">{0} Geräte in diesem Scan</sys:String>
     <sys:String x:Key="Str_TT_Topology">Netzwerktopologie umschalten</sys:String>
     <sys:String x:Key="Str_Topology_Network">Lokales Netzwerk</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Abgeleitete Verbindung</sys:String>
@@ -309,8 +312,15 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Rename_Save">Speichern</sys:String>
     <sys:String x:Key="Str_Rename_Clear">Manuellen Namen löschen</sys:String>
     <sys:String x:Key="Str_Trust_Device">Vertrauenswürdiges Gerät</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">Grün: vertrautes Gerät. Bernstein: nicht in Ihrer Liste vertrauter Geräte.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Vertrauensbasis mit {0} Geräten erstellt.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Warnung: {0} unbekannte Geräte gefunden.</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">Nicht in Ihrer Liste vertrauter Geräte:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">und {0} weitere</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">Rechtsklick auf ein Gerät, um es als vertraut zu markieren.</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0} Geräte, {1} mit offenen Ports</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">{0} Ziele überwacht, {1} ohne Antwort</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} um {1}, {2} Geräte erfasst</sys:String>
     <sys:String x:Key="Str_Services_Title">Dienste</sys:String>
     <sys:String x:Key="Str_Services_Service">Dienst</sys:String>
     <sys:String x:Key="Str_Profiles_Title">Scanprofile</sys:String>

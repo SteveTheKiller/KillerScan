@@ -51,6 +51,9 @@
     <sys:String x:Key="Str_History_Changed">Changed</sys:String>
     <sys:String x:Key="Str_History_FirstScan">First scan of this target. All devices are new.</sys:String>
     <sys:String x:Key="Str_History_Summary">{0} added, {1} missing, {2} changed</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">CHANGES</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">ALL DEVICES</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">{0} devices in this scan</sys:String>
     <sys:String x:Key="Str_TT_Topology">Toggle network topology</sys:String>
     <sys:String x:Key="Str_Topology_Network">Local network</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Inferred connection</sys:String>
@@ -350,8 +353,15 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Rename_Save">Save</sys:String>
     <sys:String x:Key="Str_Rename_Clear">Clear manual name</sys:String>
     <sys:String x:Key="Str_Trust_Device">Trusted device</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">Green: trusted device. Amber: not in your trusted list.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Trusted baseline created with {0} devices.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alert: {0} unknown devices found.</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">Not in your trusted list:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">and {0} more</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">Right-click a device to set it trusted.</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0} devices, {1} with open ports</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">Watching {0} targets, {1} not replying</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} at {1}, {2} devices recorded</sys:String>
     <sys:String x:Key="Str_Services_Title">Services</sys:String>
     <sys:String x:Key="Str_Services_Service">Service</sys:String>
     <sys:String x:Key="Str_Profiles_Title">Scan profiles</sys:String>

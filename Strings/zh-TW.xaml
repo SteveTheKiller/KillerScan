@@ -37,6 +37,9 @@
     <sys:String x:Key="Str_History_Changed">已變更</sys:String>
     <sys:String x:Key="Str_History_FirstScan">這是此目標的首次掃描。所有裝置均為新增。</sys:String>
     <sys:String x:Key="Str_History_Summary">新增 {0}，缺少 {1}，變更 {2}</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">變更</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">所有裝置</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">本次掃描共 {0} 台裝置</sys:String>
     <sys:String x:Key="Str_TT_Topology">切換網路拓撲</sys:String>
     <sys:String x:Key="Str_Topology_Network">本機網路</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">推斷的連線</sys:String>
@@ -308,8 +311,15 @@
     <sys:String x:Key="Str_Rename_Save">儲存</sys:String>
     <sys:String x:Key="Str_Rename_Clear">清除手動名稱</sys:String>
     <sys:String x:Key="Str_Trust_Device">信任的裝置</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">綠色：受信任裝置。琥珀色：不在受信任裝置清單中。</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">已使用 {0} 台裝置建立信任基準。</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">警示: 發現 {0} 台未知裝置。</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">不在受信任裝置清單中:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">另有 {0} 台</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">在裝置上按右鍵可將其設為受信任。</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0} 台裝置，其中 {1} 台有開放連接埠</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">正在監看 {0} 個目標，{1} 個無回應</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} 於 {1}，已記錄 {2} 台裝置</sys:String>
     <sys:String x:Key="Str_Services_Title">服務</sys:String>
     <sys:String x:Key="Str_Services_Service">服務</sys:String>
     <sys:String x:Key="Str_Profiles_Title">掃描設定檔</sys:String>

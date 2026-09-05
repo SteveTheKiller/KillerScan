@@ -51,6 +51,9 @@
     <sys:String x:Key="Str_History_Changed">Изменено</sys:String>
     <sys:String x:Key="Str_History_FirstScan">Первое сканирование этой цели. Все устройства новые.</sys:String>
     <sys:String x:Key="Str_History_Summary">Добавлено: {0}, отсутствует: {1}, изменено: {2}</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">ИЗМЕНЕНИЯ</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">ВСЕ УСТРОЙСТВА</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">Устройств в этом сканировании: {0}</sys:String>
     <sys:String x:Key="Str_TT_Topology">Показать или скрыть топологию сети</sys:String>
     <sys:String x:Key="Str_Topology_Network">Локальная сеть</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Предполагаемое соединение</sys:String>
@@ -334,8 +337,15 @@
     <sys:String x:Key="Str_Rename_Save">Сохранить</sys:String>
     <sys:String x:Key="Str_Rename_Clear">Удалить заданное имя</sys:String>
     <sys:String x:Key="Str_Trust_Device">Доверенное устройство</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">Зелёный: доверенное устройство. Янтарный: нет в списке доверенных устройств.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Доверенная база создана с {0} устройствами.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Внимание: обнаружено {0} неизвестных устройств.</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">Нет в списке доверенных устройств:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">и ещё {0}</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">Щёлкните устройство правой кнопкой, чтобы сделать его доверенным.</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">Устройств: {0}, с открытыми портами: {1}</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">Отслеживается целей: {0}, не отвечают: {1}</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} в {1}, записано устройств: {2}</sys:String>
     <sys:String x:Key="Str_Services_Title">Службы</sys:String>
     <sys:String x:Key="Str_Services_Service">Служба</sys:String>
     <sys:String x:Key="Str_Profiles_Title">Профили сканирования</sys:String>

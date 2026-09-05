@@ -51,6 +51,9 @@
     <sys:String x:Key="Str_History_Changed">Módosítva</sys:String>
     <sys:String x:Key="Str_History_FirstScan">A cél első vizsgálata. Minden eszköz új.</sys:String>
     <sys:String x:Key="Str_History_Summary">{0} hozzáadva, {1} hiányzik, {2} módosítva</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">VÁLTOZÁSOK</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">MINDEN ESZKÖZ</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">{0} eszköz ebben a vizsgálatban</sys:String>
     <sys:String x:Key="Str_TT_Topology">Hálózati topológia megjelenítése</sys:String>
     <sys:String x:Key="Str_Topology_Network">Helyi hálózat</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Kikövetkeztetett kapcsolat</sys:String>
@@ -324,8 +327,15 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Rename_Save">Mentés</sys:String>
     <sys:String x:Key="Str_Rename_Clear">Kézi név törlése</sys:String>
     <sys:String x:Key="Str_Trust_Device">Megbízható eszköz</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">Zöld: megbízható eszköz. Borostyán: nincs a megbízható eszközök listáján.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Megbízható alap létrehozva {0} eszközzel.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Riasztás: {0} ismeretlen eszköz található.</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">Nincs a megbízható eszközök listáján:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">és további {0}</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">Kattintson jobb gombbal egy eszközre a megbízhatóvá tételhez.</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0} eszköz, ebből {1} nyitott porttal</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">{0} cél figyelése, {1} nem válaszol</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} ekkor: {1}, {2} eszköz rögzítve</sys:String>
     <sys:String x:Key="Str_Services_Title">Szolgáltatások</sys:String>
     <sys:String x:Key="Str_Services_Service">Szolgáltatás</sys:String>
     <sys:String x:Key="Str_Profiles_Title">Vizsgálati profilok</sys:String>

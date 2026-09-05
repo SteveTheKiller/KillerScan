@@ -37,6 +37,9 @@
     <sys:String x:Key="Str_History_Changed">Modifié</sys:String>
     <sys:String x:Key="Str_History_FirstScan">Première analyse de cette cible. Tous les appareils sont nouveaux.</sys:String>
     <sys:String x:Key="Str_History_Summary">{0} ajoutés, {1} absents, {2} modifiés</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">CHANGEMENTS</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">TOUS LES APPAREILS</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">{0} appareils dans ce scan</sys:String>
     <sys:String x:Key="Str_TT_Topology">Afficher ou masquer la topologie du réseau</sys:String>
     <sys:String x:Key="Str_Topology_Network">Réseau local</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Connexion déduite</sys:String>
@@ -308,8 +311,15 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Rename_Save">Enregistrer</sys:String>
     <sys:String x:Key="Str_Rename_Clear">Effacer le nom manuel</sys:String>
     <sys:String x:Key="Str_Trust_Device">Appareil approuvé</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">Vert : appareil de confiance. Ambre : absent de votre liste de confiance.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Base approuvée créée avec {0} appareils.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alerte : {0} appareils inconnus détectés.</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">Absents de votre liste d'appareils de confiance :</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">et {0} de plus</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">Clic droit sur un appareil pour le marquer comme fiable.</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0} appareils, {1} avec des ports ouverts</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">{0} cibles surveillées, {1} sans réponse</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} à {1}, {2} appareils enregistrés</sys:String>
     <sys:String x:Key="Str_Services_Title">Services</sys:String>
     <sys:String x:Key="Str_Services_Service">Service</sys:String>
     <sys:String x:Key="Str_Profiles_Title">Profils d’analyse</sys:String>

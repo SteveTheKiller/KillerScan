@@ -43,6 +43,9 @@
     <sys:String x:Key="Str_History_Changed">Změněno</sys:String>
     <sys:String x:Key="Str_History_FirstScan">První sken tohoto cíle. Všechna zařízení jsou nová.</sys:String>
     <sys:String x:Key="Str_History_Summary">{0} přidáno, {1} chybí, {2} změněno</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">ZMĚNY</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">VŠECHNA ZAŘÍZENÍ</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">{0} zařízení v tomto skenu</sys:String>
     <sys:String x:Key="Str_TT_Topology">Přepnout topologii sítě</sys:String>
     <sys:String x:Key="Str_Topology_Network">Místní síť</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Odvozené připojení</sys:String>
@@ -306,8 +309,15 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Rename_Save">Uložit</sys:String>
     <sys:String x:Key="Str_Rename_Clear">Vymazat ruční název</sys:String>
     <sys:String x:Key="Str_Trust_Device">Důvěryhodné zařízení</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">Zelená: důvěryhodné zařízení. Jantarová: není v seznamu důvěryhodných zařízení.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Důvěryhodný základ vytvořen s {0} zařízeními.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Upozornění: nalezeno {0} neznámých zařízení.</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">Nejsou v seznamu důvěryhodných zařízení:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">a dalších {0}</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">Klepnutím pravým tlačítkem na zařízení jej označíte jako důvěryhodné.</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0} zařízení, {1} s otevřenými porty</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">Sledované cíle: {0}, bez odpovědi: {1}</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} v {1}, zaznamenáno zařízení: {2}</sys:String>
     <sys:String x:Key="Str_Services_Title">Služby</sys:String>
     <sys:String x:Key="Str_Services_Service">Služba</sys:String>
     <sys:String x:Key="Str_Profiles_Title">Profily skenování</sys:String>

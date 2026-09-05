@@ -37,6 +37,9 @@
     <sys:String x:Key="Str_History_Changed">已更改</sys:String>
     <sys:String x:Key="Str_History_FirstScan">这是该目标的首次扫描。所有设备均为新增。</sys:String>
     <sys:String x:Key="Str_History_Summary">新增 {0}，缺失 {1}，更改 {2}</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">变化</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">所有设备</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">本次扫描共 {0} 台设备</sys:String>
     <sys:String x:Key="Str_TT_Topology">切换网络拓扑</sys:String>
     <sys:String x:Key="Str_Topology_Network">本地网络</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">推断的连接</sys:String>
@@ -308,8 +311,15 @@
     <sys:String x:Key="Str_Rename_Save">保存</sys:String>
     <sys:String x:Key="Str_Rename_Clear">清除手动名称</sys:String>
     <sys:String x:Key="Str_Trust_Device">可信设备</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">绿色：受信任设备。琥珀色：不在受信任设备列表中。</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">已使用 {0} 台设备创建可信基线。</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">警报: 发现 {0} 台未知设备。</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">不在受信任设备列表中:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">另有 {0} 台</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">右键单击设备可将其设为受信任。</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0} 台设备，其中 {1} 台有开放端口</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">正在监视 {0} 个目标，{1} 个无响应</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} 于 {1}，已记录 {2} 台设备</sys:String>
     <sys:String x:Key="Str_Services_Title">服务</sys:String>
     <sys:String x:Key="Str_Services_Service">服务</sys:String>
     <sys:String x:Key="Str_Profiles_Title">扫描配置</sys:String>

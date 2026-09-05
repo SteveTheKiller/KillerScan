@@ -24,6 +24,60 @@ namespace KillerScan.Shell
             HwndSource.FromHwnd(hwnd)?.AddHook(WndProc);
             SyncWindowCorners();
             ApplyThemeBorder(this);
+            ApplyWindowIcon(hwnd);
+        }
+
+        // ---- Taskbar icon (WindowStyle=None needs WM_SETICON) ----
+        //
+        // A window with no caption has nowhere to draw an icon, and WPF therefore never hands one
+        // to the shell: Window.Icon is honored for the caption and the Alt+Tab list, but the
+        // taskbar button falls back to a generic placeholder. KillerPDF does not hit this because
+        // it uses SingleBorderWindow. So the icon is set on the HWND by hand, both sizes, from the
+        // same .ico the Icon property names.
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern IntPtr LoadImage(IntPtr instance, string name, uint type,
+                                               int cx, int cy, uint load);
+
+        // SendMessage is already declared further down for the caption-drag hand-off.
+
+        [DllImport("user32.dll")]
+        private static extern int GetSystemMetrics(int index);
+
+        private const int WM_SETICON = 0x0080;
+        private const int ICON_SMALL = 0;
+        private const int ICON_BIG = 1;
+        private const uint IMAGE_ICON = 1;
+        private const uint LR_LOADFROMFILE = 0x00000010;
+        private const int SM_CXSMICON = 49, SM_CYSMICON = 50, SM_CXICON = 11, SM_CYICON = 12;
+
+        /// <summary>
+        /// Gives the taskbar button and Alt+Tab an icon. The .ico is a WPF resource inside the
+        /// exe rather than a file, so it is written to a temp file once and loaded from there:
+        /// LoadImage picks the frame nearest each requested size, which is what keeps the small
+        /// icon crisp instead of a downscaled 256.
+        /// </summary>
+        private void ApplyWindowIcon(IntPtr hwnd)
+        {
+            if (hwnd == IntPtr.Zero) return;
+            try
+            {
+                var stream = Application.GetResourceStream(
+                    new Uri("pack://application:,,,/Resources/ks-icon.ico"))?.Stream;
+                if (stream == null) return;
+                string path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "KillerScan.taskbar.ico");
+                using (stream)
+                using (var file = System.IO.File.Create(path))
+                    stream.CopyTo(file);
+
+                IntPtr small = LoadImage(IntPtr.Zero, path, IMAGE_ICON,
+                    GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_LOADFROMFILE);
+                IntPtr big = LoadImage(IntPtr.Zero, path, IMAGE_ICON,
+                    GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), LR_LOADFROMFILE);
+                if (small != IntPtr.Zero) SendMessage(hwnd, WM_SETICON, (IntPtr)ICON_SMALL, small);
+                if (big != IntPtr.Zero) SendMessage(hwnd, WM_SETICON, (IntPtr)ICON_BIG, big);
+            }
+            catch { }
         }
 
         // ---- Windows 11 rounded corners (DWMWA_WINDOW_CORNER_PREFERENCE = 33) ----

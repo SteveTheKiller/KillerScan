@@ -51,6 +51,9 @@
     <sys:String x:Key="Str_History_Changed">Modificato</sys:String>
     <sys:String x:Key="Str_History_FirstScan">Prima scansione di questa destinazione. Tutti i dispositivi sono nuovi.</sys:String>
     <sys:String x:Key="Str_History_Summary">{0} aggiunti, {1} assenti, {2} modificati</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">MODIFICHE</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">TUTTI I DISPOSITIVI</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">{0} dispositivi in questa scansione</sys:String>
     <sys:String x:Key="Str_TT_Topology">Mostra o nascondi la topologia di rete</sys:String>
     <sys:String x:Key="Str_Topology_Network">Rete locale</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Connessione dedotta</sys:String>
@@ -324,8 +327,15 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Rename_Save">Salva</sys:String>
     <sys:String x:Key="Str_Rename_Clear">Cancella nome manuale</sys:String>
     <sys:String x:Key="Str_Trust_Device">Dispositivo attendibile</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">Verde: dispositivo attendibile. Ambra: non presente nell'elenco dei dispositivi attendibili.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Base attendibile creata con {0} dispositivi.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Avviso: trovati {0} dispositivi sconosciuti.</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">Non presenti nell'elenco dei dispositivi attendibili:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">e altri {0}</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">Fai clic con il tasto destro su un dispositivo per renderlo attendibile.</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0} dispositivi, {1} con porte aperte</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">{0} destinazioni monitorate, {1} senza risposta</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} alle {1}, {2} dispositivi registrati</sys:String>
     <sys:String x:Key="Str_Services_Title">Servizi</sys:String>
     <sys:String x:Key="Str_Services_Service">Servizio</sys:String>
     <sys:String x:Key="Str_Profiles_Title">Profili di scansione</sys:String>

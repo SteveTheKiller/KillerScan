@@ -51,6 +51,9 @@
     <sys:String x:Key="Str_History_Changed">Өзгертілді</sys:String>
     <sys:String x:Key="Str_History_FirstScan">Бұл нысанның алғашқы сканерлеуі. Барлық құрылғы жаңа.</sys:String>
     <sys:String x:Key="Str_History_Summary">{0} қосылды, {1} жоқ, {2} өзгертілді</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">ӨЗГЕРІСТЕР</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">БАРЛЫҚ ҚҰРЫЛҒЫ</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">Бұл сканерлеуде {0} құрылғы</sys:String>
     <sys:String x:Key="Str_TT_Topology">Желі топологиясын көрсету немесе жасыру</sys:String>
     <sys:String x:Key="Str_Topology_Network">Жергілікті желі</sys:String>
     <sys:String x:Key="Str_Topology_Inferred">Болжалды байланыс</sys:String>
@@ -350,8 +353,15 @@
     <sys:String x:Key="Str_Rename_Save">Сақтау</sys:String>
     <sys:String x:Key="Str_Rename_Clear">Қолмен берілген атауды тазалау</sys:String>
     <sys:String x:Key="Str_Trust_Device">Сенімді құрылғы</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">Жасыл: сенімді құрылғы. Янтарь: сенімді құрылғылар тізімінде жоқ.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">{0} құрылғымен сенімді негіз жасалды.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Ескерту: {0} белгісіз құрылғы табылды.</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">Сенімді құрылғылар тізімінде жоқ:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">және тағы {0}</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">Құрылғыны сенімді ету үшін оны тінтуірдің оң жақ түймесімен басыңыз.</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0} құрылғы, {1} ашық порты бар</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">{0} нысана бақыланады, {1} жауап бермейді</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0}, {1} кезінде, {2} құрылғы жазылды</sys:String>
     <sys:String x:Key="Str_Services_Title">Қызметтер</sys:String>
     <sys:String x:Key="Str_Services_Service">Қызмет</sys:String>
     <sys:String x:Key="Str_Profiles_Title">Сканерлеу профильдері</sys:String>
