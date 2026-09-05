@@ -9,6 +9,14 @@ namespace KillerScan.Models
         public string MacAddress { get; set; } = string.Empty;
         public string Vendor { get; set; } = string.Empty;
         public string DeviceType { get; set; } = "Unknown";
+
+        /// <summary>
+        /// The type as it appears on screen. Sorting the Type column reads this rather than the
+        /// English key behind it, so the order the grid shows is alphabetical in the language the
+        /// reader is actually looking at. Resolved on each read, not cached, because a locale
+        /// change rewrites every one of these without touching the devices themselves.
+        /// </summary>
+        public string DeviceTypeDisplay => Controls.DeviceTypeConverter.Display(DeviceType);
         public List<int> OpenPorts { get; set; } = [];
 
         // -- Active fingerprint fields (populated by scanner) --

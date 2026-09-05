@@ -56,7 +56,14 @@ namespace KillerScan.Controls
             public int Port { get; init; }
             public string DeviceName { get; init; } = string.Empty;
             public string IpAddress { get; init; } = string.Empty;
+            /// <summary>
+            /// The raw type, named to match <see cref="NetworkDevice.DeviceType"/> so both grids
+            /// can share one cell template: the color triggers match on these English keys, and
+            /// the template does its own localization on the way to the screen.
+            /// </summary>
             public string DeviceType { get; init; } = string.Empty;
+            /// <summary>The localized type, for the CSV export, which writes what you can read.</summary>
+            public string DeviceTypeDisplay { get; init; } = string.Empty;
             public uint IpSortKey { get; init; }
 
             public static ServiceRow From(NetworkDevice device, int port) => new()
@@ -65,7 +72,8 @@ namespace KillerScan.Controls
                 Port = port,
                 DeviceName = string.IsNullOrWhiteSpace(device.Hostname) ? device.MacAddress : device.Hostname,
                 IpAddress = device.IpAddress,
-                DeviceType = Controls.DeviceTypeConverter.Display(device.DeviceType),
+                DeviceType = device.DeviceType,
+                DeviceTypeDisplay = Controls.DeviceTypeConverter.Display(device.DeviceType),
                 IpSortKey = device.IpSortKey
             };
         }

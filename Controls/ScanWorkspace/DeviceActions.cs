@@ -106,6 +106,11 @@ namespace KillerScan.Controls
             var d = GetSelectedDevice(); if (d == null) return;
             DevicePreferences.SetTrusted(d, !DevicePreferences.IsTrusted(d));
             TrustDeviceMenuItem.IsChecked = DevicePreferences.IsTrusted(d);
+            // Trust is not a property of the device, so nothing notifies the row that its gutter
+            // marker has changed color. Re-reading the items is what re-runs the converter; the
+            // selection is restored afterwards because refreshing the view drops it.
+            ResultsGrid.Items.Refresh();
+            ResultsGrid.SelectedItem = d;
         }
     }
 }

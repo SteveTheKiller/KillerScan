@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace KillerScan.Controls
 {
@@ -72,6 +73,36 @@ namespace KillerScan.Controls
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             => Display(value as string);
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => Binding.DoNothing;
+    }
+
+    /// <summary>
+    /// The trust marker in the gutter at the left of each device row: green for a device in your
+    /// trusted list, amber for one that is not. Same two colors the status bar's scan light uses,
+    /// deliberately, so the bar and the rows are saying the same thing in the same language.
+    ///
+    /// Bound to the device itself rather than to a property, because trust lives in
+    /// <see cref="Services.DevicePreferences"/> keyed by hardware identity, not on the model. That
+    /// makes it a read of external state, so a row only picks up a change when the grid refreshes
+    /// its items; toggling trust does exactly that.
+    /// </summary>
+    public sealed class TrustMarkConverter : IValueConverter
+    {
+        private static readonly Brush Trusted = Frozen("#3FA95F");
+        private static readonly Brush Unknown = Frozen("#E0A317");
+
+        private static Brush Frozen(string hex)
+        {
+            var brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex));
+            brush.Freeze();
+            return brush;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => value is Models.NetworkDevice device && Services.DevicePreferences.IsTrusted(device)
+                ? Trusted : Unknown;
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => Binding.DoNothing;

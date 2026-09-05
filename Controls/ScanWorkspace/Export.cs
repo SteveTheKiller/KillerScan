@@ -47,7 +47,7 @@ namespace KillerScan.Controls
                 ? (_showTopology ? "topology" : _showServices ? "services" : "devices")
                 : _exportContext;
 
-            Visibility When(bool shown) => shown ? Visibility.Visible : Visibility.Collapsed;
+            static Visibility When(bool shown) => shown ? Visibility.Visible : Visibility.Collapsed;
             bool table = context is "devices" or "services";
 
             ExportCsvItem.Visibility          = When(table);
@@ -104,7 +104,7 @@ namespace KillerScan.Controls
                 var text = new StringBuilder();
                 text.AppendLine("Service,Port,Name,IP Address,Type");
                 foreach (var row in ServicesGrid.Items.OfType<ServiceRow>())
-                    text.AppendLine($"\"{row.Service}\",\"{row.Port}\",\"{row.DeviceName}\",\"{row.IpAddress}\",\"{row.DeviceType}\"");
+                    text.AppendLine($"\"{row.Service}\",\"{row.Port}\",\"{row.DeviceName}\",\"{row.IpAddress}\",\"{row.DeviceTypeDisplay}\"");
                 File.WriteAllText(dlg.FileName, text.ToString(), Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }
