@@ -1,9 +1,7 @@
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using KillerScan.Controls;
 
 namespace KillerScan.Shell
@@ -17,13 +15,14 @@ namespace KillerScan.Shell
         // sits under and the color its key takes on the keyboard map.
         private static readonly (string Keys, string Desc, string Cat)[] ShortcutRows =
         [
-            ("Ctrl + T",        "Str_View_Devices",            "Views"),
-            ("F8",              "Str_Services_Title",       "Views"),
-            ("F9",              "Str_TT_Topology",          "Views"),
-            ("F2",              "Str_View_KeepAlive",       "Views"),
-            ("Ctrl + Shift + T", "Str_Workspace_Terminal",  "Views"),
-            ("F6",              "Str_History_Title",        "Views"),
-            ("F10",             "Str_Profiles_Title",       "Views"),
+            ("F6",              "Str_View_Devices",         "Views"),
+            ("F7",              "Str_Services_Title",       "Views"),
+            ("F8",              "Str_TT_Topology",          "Views"),
+            ("F9",              "Str_View_KeepAlive",       "Views"),
+            ("F10",             "Str_Workspace_Terminal",   "Views"),
+            ("Ctrl + H",        "Str_History_Title",        "Views"),
+            ("Ctrl + Shift + P", "Str_Profiles_Title",      "Views"),
+            ("F4",              "Str_TT_SpeedTest",         "Views"),
 
             ("F5",              "Str_Sc_Scan",              "Scan"),
             ("Esc",             "Str_Sc_Cancel",            "Scan"),
@@ -44,7 +43,7 @@ namespace KillerScan.Shell
             ("Ctrl + Alt + C",  "Str_Sc_CopyHost",          "Device"),
             ("Shift + F10",     "Str_Sc_DeviceMenu",        "Device"),
 
-            ("F7",              "Str_Sc_CycleTopologyOrder", "Topology"),
+            ("Ctrl + G",              "Str_Sc_CycleTopologyOrder", "Topology"),
             ("Ctrl + 1",        "Str_Topology_Role",        "Topology"),
             ("Ctrl + 2",        "Str_Col_Type",             "Topology"),
             ("Ctrl + 3",        "Str_Col_Ip",               "Topology"),
@@ -73,34 +72,15 @@ namespace KillerScan.Shell
         [
             ("Views",    "Str_KS_Views",    false),
             ("Scan",     "Str_KS_Scan",     false),
-            ("Device",   "Str_KS_Device",   false),
-            ("Topology", "Str_KS_Topology", true),
+            ("Topology", "Str_KS_Topology", false),
+            ("Device",   "Str_KS_Device",   true),
             ("Toolbar",  "Str_KS_Toolbar",  true),
             ("App",      "Str_KS_App",      true),
         ];
 
-        private static readonly (string Id, string Cap, double Width)[][] KeyboardRows =
-        [
-            [("Esc", "Esc", 1), ("", "", .8), ("F1", "F1", 1), ("F2", "F2", 1), ("F3", "F3", 1),
-             ("F4", "F4", 1), ("", "", .6), ("F5", "F5", 1), ("F6", "F6", 1), ("F7", "F7", 1),
-             ("F8", "F8", 1), ("", "", .6), ("F9", "F9", 1), ("F10", "F10", 1), ("F11", "F11", 1), ("F12", "F12", 1)],
-            [("Grave", "`", 1), ("D1", "1", 1), ("D2", "2", 1), ("D3", "3", 1), ("D4", "4", 1),
-             ("D5", "5", 1), ("D6", "6", 1), ("D7", "7", 1), ("D8", "8", 1), ("D9", "9", 1),
-             ("D0", "0", 1), ("Minus", "-", 1), ("Equals", "=", 1), ("Back", "Back", 2)],
-            [("Tab", "Tab", 1.5), ("Q", "Q", 1), ("W", "W", 1), ("E", "E", 1), ("R", "R", 1),
-             ("T", "T", 1), ("Y", "Y", 1), ("U", "U", 1), ("I", "I", 1), ("O", "O", 1),
-             ("P", "P", 1), ("LBr", "[", 1), ("RBr", "]", 1), ("BSl", "\\", 1.5)],
-            [("Caps", "Caps", 1.8), ("A", "A", 1), ("S", "S", 1), ("D", "D", 1), ("F", "F", 1),
-             ("G", "G", 1), ("H", "H", 1), ("J", "J", 1), ("K", "K", 1), ("L", "L", 1),
-             ("Semi", ";", 1), ("Quote", "'", 1), ("Enter", "Enter", 2.2)],
-            [("Shift", "Shift", 2.3), ("Z", "Z", 1), ("X", "X", 1), ("C", "C", 1), ("V", "V", 1),
-             ("B", "B", 1), ("N", "N", 1), ("M", "M", 1), ("Comma", ",", 1), ("Period", ".", 1),
-             ("Slash", "/", 1), ("RShift", "Shift", 2.7)],
-            [("Ctrl", "Ctrl", 1.5), ("Win", "Win", 1.2), ("Alt", "Alt", 1.5), ("Space", "", 6.8),
-             ("RAlt", "Alt", 1.5), ("Menu", "Menu", 1), ("RCtrl", "Ctrl", 1.5)]
-        ];
+        // The physical keyboard, layer bindings and board-building code now live in
+        // KeyboardMap.cs alongside the rest of the layered map.
 
-        private const double KeyboardUnit = 42;
         private bool _shortcutMapView;
 
         // Wired from MainWindow.xaml (PreviewKeyDown on the window) so the keys work wherever
@@ -136,22 +116,37 @@ namespace KillerScan.Shell
                 switch (e.Key)
                 {
                     case Key.F1: ToggleShortcuts(); e.Handled = true; return;
-                    case Key.F2: Watch_Click(this, new RoutedEventArgs()); e.Handled = true; return;
                     case Key.F3: Diagnose_Click(this, new RoutedEventArgs()); e.Handled = true; return;
-                    case Key.F6: HistoryButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
-                    case Key.F8: ServicesButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
-                    case Key.F9: TopologyButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
-                    case Key.F10: ProfilesButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
+                    case Key.F4: SpeedTestButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
+                    // F6 to F10 in the order the view buttons sit on the toolbar.
+                    case Key.F6: ShowScanView("devices"); e.Handled = true; return;
+                    case Key.F7: ServicesButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
+                    case Key.F8: TopologyButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
+                    case Key.F9: Watch_Click(this, new RoutedEventArgs()); e.Handled = true; return;
+                    case Key.F10: NewTerminal(); e.Handled = true; return;
                     case Key.F12:
                         if (AboutOverlay.Visibility == Visibility.Visible) FadeOverlayOut(AboutOverlay);
                         else ShowAboutOverlay();
                         e.Handled = true; return;
                 }
             }
+            if (ctrl && !shift && !alt)
+            {
+                switch (e.Key)
+                {
+                    // Ctrl+H rather than an F key: history is a panel you open beside your work,
+                    // like the profiles list, not a view you switch to. Terminals never see this,
+                    // because a focused terminal returns above and keeps its own ^H.
+                    case Key.H: HistoryButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
+                }
+            }
             if (ctrl && shift && !alt)
             {
                 switch (e.Key)
                 {
+                    // Profiles gave up F10 to the Terminal view. It sits with history
+                    // instead: both are panels beside your work rather than views.
+                    case Key.P: ProfilesButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
                     case Key.OemPlus: case Key.Add:
                         ApplyAppScale(_appScale + 0.05, persist: true); e.Handled = true; return;
                     case Key.OemMinus: case Key.Subtract:
@@ -281,115 +276,7 @@ namespace KillerScan.Shell
             }
         }
 
-        private void BuildKeyboardMap()
-        {
-            ShortcutMapRows.Children.Clear();
-            var bindings = ShortcutRows
-                .Select(row => (Id: ShortcutKeyId(row.Keys), row.Keys, row.Desc, row.Cat))
-                .Where(row => row.Id.Length > 0)
-                .GroupBy(row => row.Id)
-                .ToDictionary(group => group.Key, group => group.ToList());
-
-            foreach (var row in KeyboardRows)
-            {
-                var panel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 4) };
-                foreach (var (id, cap, width) in row)
-                {
-                    if (id.Length == 0)
-                    {
-                        panel.Children.Add(new Border { Width = KeyboardUnit * width });
-                        continue;
-                    }
-                    bindings.TryGetValue(id, out var actions);
-                    panel.Children.Add(BuildKeyboardKey(cap, width, actions));
-                }
-                ShortcutMapRows.Children.Add(panel);
-            }
-            ShortcutsTitle.Text = Loc("Str_Shortcuts_Title");
-        }
-
-        private static string ShortcutKeyId(string keys)
-        {
-            if (keys.EndsWith(" +", StringComparison.Ordinal)) return "Equals";
-            if (keys.EndsWith(" -", StringComparison.Ordinal)) return "Minus";
-            string key = keys[(keys.LastIndexOf('+') + 1)..].Trim();
-            return key switch
-            {
-                "Esc" => "Esc",
-                "Enter" => "Enter",
-                "Tab" => "Tab",
-                "\\" => "BSl",
-                _ when key.Length == 1 && char.IsDigit(key[0]) => "D" + key,
-                _ when key.Length == 1 => key.ToUpperInvariant(),
-                _ when key.StartsWith("F", StringComparison.Ordinal) => key,
-                _ => ""
-            };
-        }
-
-        /// <summary>
-        /// A keycap, colored by the category of the action bound to it. This is the point of
-        /// the category colors: a key's color says what kind of thing it does before the
-        /// caption is read, and it matches the heading that key sits under in the list.
-        /// A key carrying more than one binding takes the first one's category.
-        /// </summary>
-        private Border BuildKeyboardKey(string cap, double width,
-            List<(string Id, string Keys, string Desc, string Cat)>? actions)
-        {
-            string categoryBrush = actions == null ? "CardBorderBrush" : "KsCat" + actions[0].Cat;
-            var capText = new TextBlock
-            {
-                Text = cap,
-                FontFamily = new FontFamily("Consolas"),
-                FontSize = 10,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Top,
-                Margin = new Thickness(0, 4, 0, 0)
-            };
-            capText.SetResourceReference(TextBlock.ForegroundProperty, actions == null ? "DimTextBrush" : "TextBrush");
-
-            var grid = new Grid();
-            grid.Children.Add(capText);
-            var key = new Border
-            {
-                Width = KeyboardUnit * width - 4,
-                Height = 40,
-                Margin = new Thickness(0, 0, 4, 0),
-                CornerRadius = new CornerRadius(3),
-                BorderThickness = new Thickness(1),
-                Child = grid
-            };
-            // KeyCapBrush, not SurfaceBrush directly: the cap tracks SurfaceBrush on every theme
-            // that does not declare it, but 98SE paints its caps white so the map does not read as
-            // a slab of button-face gray. Same key in KillerShell and Killendar.
-            key.SetResourceReference(Border.BackgroundProperty, "KeyCapBrush");
-            key.SetResourceReference(Border.BorderBrushProperty, categoryBrush);
-
-            if (actions != null)
-            {
-                var actionText = new TextBlock
-                {
-                    Text = ShortcutDescription(actions[0].Keys, actions[0].Desc),
-                    FontSize = 7.5,
-                    TextTrimming = TextTrimming.CharacterEllipsis,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Bottom,
-                    Margin = new Thickness(2, 0, 2, 5)
-                };
-                actionText.SetResourceReference(TextBlock.ForegroundProperty, categoryBrush);
-                var bar = new Rectangle
-                {
-                    Height = 3,
-                    Margin = new Thickness(3, 0, 3, 0),
-                    VerticalAlignment = VerticalAlignment.Bottom
-                };
-                bar.SetResourceReference(Shape.FillProperty, categoryBrush);
-                grid.Children.Add(actionText);
-                grid.Children.Add(bar);
-                key.ToolTip = string.Join(Environment.NewLine,
-                    actions.Select(action => $"{action.Keys}  {ShortcutDescription(action.Keys, action.Desc)}"));
-            }
-            return key;
-        }
+        // BuildKeyboardMap and the keycap builder now live in KeyboardMap.cs.
 
         private string ShortcutDescription(string keys, string descriptionKey)
         {
@@ -397,6 +284,17 @@ namespace KillerScan.Shell
                 keys.Length == 8 && keys[^1] is >= '1' and <= '4')
                 return $"{Loc("Str_TT_TopologyOrder")} {Loc(descriptionKey)}";
             return Loc(descriptionKey);
+        }
+
+        // Opens the online help / how-to page in the user's default browser.
+        private void OnlineHelp_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(
+                    new System.Diagnostics.ProcessStartInfo("https://killerscan.net/help.html") { UseShellExecute = true });
+            }
+            catch { }
         }
     }
 }

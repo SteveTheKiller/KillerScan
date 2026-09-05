@@ -40,6 +40,9 @@ namespace KillerScan.Controls
             else if (ctrl && !shift && !alt && e.Key == Key.F) action = FocusTargets;
             else if (ctrl && !shift && !alt && e.Key == Key.E) action = () => ExportCsv_Click(this, new RoutedEventArgs());
             else if (ctrl && !shift && !alt && e.Key == Key.R) action = RescanSelected;
+            // Ctrl+G, not an F key: arranging the topology is a thing you do repeatedly while
+            // looking at it, so it sits with the other Ctrl chords rather than up on the F row.
+            else if (ctrl && !shift && !alt && e.Key == Key.G) action = CycleTopologyOrder;
             else if (ctrl && !shift && !alt && e.Key >= Key.D1 && e.Key <= Key.D4) action = () => ShowTopologyOrder(e.Key - Key.D1);
             else if (ctrl && !shift && !alt && e.Key >= Key.NumPad1 && e.Key <= Key.NumPad4) action = () => ShowTopologyOrder(e.Key - Key.NumPad1);
             else if (ctrl && !text)
@@ -58,7 +61,6 @@ namespace KillerScan.Controls
             else if (modifiers == ModifierKeys.None)
             {
                 if (e.Key == Key.F5) action = Scan;
-                else if (e.Key == Key.F7) action = CycleTopologyOrder;
                 else if (e.Key == Key.F8) action = () => SetView(_showServices ? "devices" : "services");
                 else if (e.Key == Key.F9) action = () => SetView(_showTopology ? "devices" : "topology");
                 else if (e.Key == Key.Enter && !text && SelectedDevice != null) action = () => RaiseDeviceAction("Browser");
