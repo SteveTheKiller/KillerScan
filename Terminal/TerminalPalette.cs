@@ -69,8 +69,22 @@ namespace KillerScan.Terminal
             C(0x2678CC), C(0x9640C8), C(0x168C8C), C(0x1A1A1A),
         ];
 
+        /// <summary>
+        /// The IBM VGA text palette, unmodified: the sixteen colors a DOS box actually had, with
+        /// 3 as brown rather than yellow and 7 as light gray rather than white. 98SE uses these
+        /// instead of a tinted family ramp, because the point of that theme is the real thing.
+        /// </summary>
+        private static readonly Color[] AnsiVga =
+        [
+            C(0x000000), C(0xAA0000), C(0x00AA00), C(0xAA5500),
+            C(0x0000AA), C(0xAA00AA), C(0x00AAAA), C(0xAAAAAA),
+            C(0x555555), C(0xFF5555), C(0x55FF55), C(0xFFFF55),
+            C(0x5555FF), C(0xFF55FF), C(0x55FFFF), C(0xFFFFFF),
+        ];
+
         private static Color[] AnsiFor(Services.Theme theme) => theme switch
         {
+            Services.Theme.SE98     => AnsiVga,
             Services.Theme.Black    => AnsiBlack,
             Services.Theme.Blood    => AnsiBlood,
             Services.Theme.Cyanotic => AnsiCyanotic,
