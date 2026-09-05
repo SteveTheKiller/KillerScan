@@ -13,6 +13,12 @@
     <sys:String x:Key="Str_TT_Language">Lingua</sys:String>
     <sys:String x:Key="Str_TT_AppSize">Scorri la rotellina sul logotipo per ridimensionare l'applicazione</sys:String>
     <sys:String x:Key="Str_TT_Theme">Tema</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">Test di velocità</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">Mostra o nascondi la scheda e la velocità del collegamento</sys:String>
+    <sys:String x:Key="Str_Light_Idle">Nessuna scansione ancora</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">Scansione in corso</sys:String>
+    <sys:String x:Key="Str_Light_Deep">Deep Scan in corso</sys:String>
+    <sys:String x:Key="Str_Light_Done">Scansione completata</sys:String>
     <sys:String x:Key="Str_TT_Export">Esporta</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">TEMA</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">ACCENTO</sys:String>
@@ -53,6 +59,13 @@
     <sys:String x:Key="Str_Export_Csv">Esporta come CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Esporta come HTML</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Esporta topologia come PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">Esporta come PNG trasparente</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">Esporta in JPG</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">Esporta in HTML</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">Esporta le schede come PNG</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">Esporta la sessione in TXT</sys:String>
+    <sys:String x:Key="Str_Filter_Text">File di testo</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">Immagine JPEG</sys:String>
     <sys:String x:Key="Str_Export_ServicesCsv">Esporta servizi come CSV</sys:String>
 
     <!-- Results columns -->
@@ -365,7 +378,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Un nuovo avvio cancella i risultati precedenti.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Monitora dispositivo</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Nuova scansione</sys:String>
-    <sys:String x:Key="Str_View_Scan">Scansione</sys:String>
+    <sys:String x:Key="Str_View_Devices">Dispositivi</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologia</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Monitoraggio connessione</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminale</sys:String>

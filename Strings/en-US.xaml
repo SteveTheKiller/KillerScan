@@ -13,6 +13,12 @@
     <sys:String x:Key="Str_TT_Language">Language</sys:String>
     <sys:String x:Key="Str_TT_AppSize">Scroll over the wordmark to resize the app</sys:String>
     <sys:String x:Key="Str_TT_Theme">Theme</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">Speed test</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">Show or hide the adapter and link speed</sys:String>
+    <sys:String x:Key="Str_Light_Idle">Nothing scanned yet</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">Scanning</sys:String>
+    <sys:String x:Key="Str_Light_Deep">Deep scan running</sys:String>
+    <sys:String x:Key="Str_Light_Done">Scan complete</sys:String>
     <sys:String x:Key="Str_TT_Export">Export</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">THEME</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">ACCENT</sys:String>
@@ -53,6 +59,13 @@
     <sys:String x:Key="Str_Export_Csv">Export as CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Export as HTML</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Export topology as PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">Export as Transparent PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">Export to JPG</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">Export to HTML</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">Export cards as PNG</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">Export session to TXT</sys:String>
+    <sys:String x:Key="Str_Filter_Text">Text File</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">JPEG Image</sys:String>
     <sys:String x:Key="Str_Export_ServicesCsv">Export services as CSV</sys:String>
 
     <!-- Results columns -->
@@ -391,7 +404,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Starting again clears the previous results.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Watch device</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">New scan</sys:String>
-    <sys:String x:Key="Str_View_Scan">Scan</sys:String>
+    <sys:String x:Key="Str_View_Devices">Devices</sys:String>
     <sys:String x:Key="Str_View_Topology">Topology</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Keep Alive</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>

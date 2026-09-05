@@ -12,6 +12,12 @@
     <sys:String x:Key="Str_Subtitle">ネットワークスキャナー</sys:String>
     <sys:String x:Key="Str_TT_Language">言語</sys:String>
     <sys:String x:Key="Str_TT_Theme">テーマ</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">速度テスト</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">アダプターとリンク速度の表示を切り替え</sys:String>
+    <sys:String x:Key="Str_Light_Idle">まだスキャンしていません</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">スキャン中</sys:String>
+    <sys:String x:Key="Str_Light_Deep">Deep Scan 実行中</sys:String>
+    <sys:String x:Key="Str_Light_Done">スキャン完了</sys:String>
     <sys:String x:Key="Str_TT_Export">エクスポート</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">テーマ</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">アクセント</sys:String>
@@ -52,6 +58,13 @@
     <sys:String x:Key="Str_Export_Csv">CSV としてエクスポート</sys:String>
     <sys:String x:Key="Str_Export_Html">HTML としてエクスポート</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">トポロジを PNG としてエクスポート</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">透過 PNG としてエクスポート</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">JPG にエクスポート</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">HTML にエクスポート</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">カードを PNG にエクスポート</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">セッションを TXT にエクスポート</sys:String>
+    <sys:String x:Key="Str_Filter_Text">テキスト ファイル</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">JPEG 画像</sys:String>
     <sys:String x:Key="Str_Export_ServicesCsv">サービスを CSV でエクスポート</sys:String>
 
     <!-- Results columns -->
@@ -360,7 +373,7 @@
     <sys:String x:Key="Str_Watch_Reset">再開すると前回の結果が消去されます。</sys:String>
     <sys:String x:Key="Str_Watch_Add">デバイスを監視</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">新しいスキャン</sys:String>
-    <sys:String x:Key="Str_View_Scan">スキャン</sys:String>
+    <sys:String x:Key="Str_View_Devices">デバイス</sys:String>
     <sys:String x:Key="Str_View_Topology">トポロジ</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">接続監視</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">ターミナル</sys:String>

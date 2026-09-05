@@ -7,6 +7,12 @@
     <sys:String x:Key="Str_Subtitle">网络扫描器</sys:String>
     <sys:String x:Key="Str_TT_Language">语言</sys:String>
     <sys:String x:Key="Str_TT_Theme">主题</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">网速测试</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">显示或隐藏网卡和链路速度</sys:String>
+    <sys:String x:Key="Str_Light_Idle">尚未扫描</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">正在扫描</sys:String>
+    <sys:String x:Key="Str_Light_Deep">正在执行 Deep Scan</sys:String>
+    <sys:String x:Key="Str_Light_Done">扫描完成</sys:String>
     <sys:String x:Key="Str_TT_Export">导出</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">主题</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">强调色</sys:String>
@@ -39,6 +45,13 @@
     <sys:String x:Key="Str_Export_Csv">导出为 CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">导出为 HTML</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">将拓扑导出为 PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">导出为透明 PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">导出为 JPG</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">导出为 HTML</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">将卡片导出为 PNG</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">将会话导出为 TXT</sys:String>
+    <sys:String x:Key="Str_Filter_Text">文本文件</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">JPEG 图像</sys:String>
     <sys:String x:Key="Str_Export_ServicesCsv">将服务导出为 CSV</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">IP 地址</sys:String>
@@ -349,7 +362,7 @@
     <sys:String x:Key="Str_Watch_Reset">重新开始会清除之前的结果。</sys:String>
     <sys:String x:Key="Str_Watch_Add">监控设备</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">新建扫描</sys:String>
-    <sys:String x:Key="Str_View_Scan">扫描</sys:String>
+    <sys:String x:Key="Str_View_Devices">设备</sys:String>
     <sys:String x:Key="Str_View_Topology">拓扑</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">连接监控</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">终端</sys:String>

@@ -5,6 +5,12 @@
     <sys:String x:Key="Str_TT_Language">Język</sys:String>
     <sys:String x:Key="Str_TT_AppSize">Przewiń nad logo, aby zmienić rozmiar aplikacji</sys:String>
     <sys:String x:Key="Str_TT_Theme">Motyw</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">Test prędkości</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">Pokaż lub ukryj kartę sieciową i szybkość łącza</sys:String>
+    <sys:String x:Key="Str_Light_Idle">Nic jeszcze nie przeskanowano</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">Skanowanie</sys:String>
+    <sys:String x:Key="Str_Light_Deep">Trwa Deep Scan</sys:String>
+    <sys:String x:Key="Str_Light_Done">Skanowanie zakończone</sys:String>
     <sys:String x:Key="Str_TT_Export">Eksportuj</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">MOTYW</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">AKCENT</sys:String>
@@ -38,6 +44,13 @@
     <sys:String x:Key="Str_Export_Csv">Eksportuj jako CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Eksportuj jako HTML</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Eksportuj topologię jako PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">Eksportuj jako przezroczysty PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">Eksportuj do JPG</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">Eksportuj do HTML</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">Eksportuj karty jako PNG</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">Eksportuj sesję do TXT</sys:String>
+    <sys:String x:Key="Str_Filter_Text">Plik tekstowy</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">Obraz JPEG</sys:String>
     <sys:String x:Key="Str_Export_ServicesCsv">Eksportuj usługi jako CSV</sys:String>
     <sys:String x:Key="Str_Col_Ip">Adres IP</sys:String>
     <sys:String x:Key="Str_Col_Host">Nazwa hosta</sys:String>
@@ -334,7 +347,7 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Ponowne uruchomienie usuwa poprzednie wyniki.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Monitoruj urządzenie</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Nowe skanowanie</sys:String>
-    <sys:String x:Key="Str_View_Scan">Skanowanie</sys:String>
+    <sys:String x:Key="Str_View_Devices">Urządzenia</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologia</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Monitorowanie połączenia</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>

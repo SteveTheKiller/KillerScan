@@ -13,6 +13,12 @@
     <sys:String x:Key="Str_TT_Language">Язык</sys:String>
     <sys:String x:Key="Str_TT_AppSize">Прокрутите колесо мыши над логотипом, чтобы изменить размер приложения</sys:String>
     <sys:String x:Key="Str_TT_Theme">Тема</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">Тест скорости</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">Показать или скрыть адаптер и скорость соединения</sys:String>
+    <sys:String x:Key="Str_Light_Idle">Сканирование еще не выполнялось</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">Сканирование</sys:String>
+    <sys:String x:Key="Str_Light_Deep">Выполняется Deep Scan</sys:String>
+    <sys:String x:Key="Str_Light_Done">Сканирование завершено</sys:String>
     <sys:String x:Key="Str_TT_Export">Экспорт</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">ТЕМА</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">АКЦЕНТ</sys:String>
@@ -53,6 +59,13 @@
     <sys:String x:Key="Str_Export_Csv">Экспорт в CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Экспорт в HTML</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Экспорт топологии в PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">Экспорт в прозрачный PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">Экспорт в JPG</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">Экспорт в HTML</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">Экспорт карточек в PNG</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">Экспорт сеанса в TXT</sys:String>
+    <sys:String x:Key="Str_Filter_Text">Текстовый файл</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">Изображение JPEG</sys:String>
     <sys:String x:Key="Str_Export_ServicesCsv">Экспорт служб в CSV</sys:String>
 
     <!-- Results columns -->
@@ -375,7 +388,7 @@
     <sys:String x:Key="Str_Watch_Reset">Повторный запуск удаляет предыдущие результаты.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Наблюдать за устройством</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Новое сканирование</sys:String>
-    <sys:String x:Key="Str_View_Scan">Сканирование</sys:String>
+    <sys:String x:Key="Str_View_Devices">Устройства</sys:String>
     <sys:String x:Key="Str_View_Topology">Топология</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Наблюдение за соединением</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Терминал</sys:String>

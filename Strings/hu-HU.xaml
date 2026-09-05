@@ -13,6 +13,12 @@
     <sys:String x:Key="Str_TT_Language">Nyelv</sys:String>
     <sys:String x:Key="Str_TT_AppSize">Az alkalmazás átméretezéséhez görgessen a szójel fölé</sys:String>
     <sys:String x:Key="Str_TT_Theme">téma</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">Sebességteszt</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">Adapter és kapcsolati sebesség megjelenítése vagy elrejtése</sys:String>
+    <sys:String x:Key="Str_Light_Idle">Még nincs vizsgálat</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">Vizsgálat folyamatban</sys:String>
+    <sys:String x:Key="Str_Light_Deep">Deep Scan folyamatban</sys:String>
+    <sys:String x:Key="Str_Light_Done">A vizsgálat kész</sys:String>
     <sys:String x:Key="Str_TT_Export">Exportálás</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">TÉMA</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">AKCENT</sys:String>
@@ -53,6 +59,13 @@
     <sys:String x:Key="Str_Export_Csv">Exportálás CSV-ként</sys:String>
     <sys:String x:Key="Str_Export_Html">Exportálás HTML-ként</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Topológia exportálása PNG-ként</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">Exportálás átlátszó PNG-ként</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">Exportálás JPG-be</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">Exportálás HTML-be</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">Kártyák exportálása PNG-ként</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">Munkamenet exportálása TXT-be</sys:String>
+    <sys:String x:Key="Str_Filter_Text">Szövegfájl</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">JPEG kép</sys:String>
     <sys:String x:Key="Str_Export_ServicesCsv">Szolgáltatások exportálása CSV-be</sys:String>
 
     <!-- Results columns -->
@@ -365,7 +378,7 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Az újbóli indítás törli a korábbi eredményeket.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Eszköz figyelése</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Új vizsgálat</sys:String>
-    <sys:String x:Key="Str_View_Scan">Vizsgálat</sys:String>
+    <sys:String x:Key="Str_View_Devices">Eszközök</sys:String>
     <sys:String x:Key="Str_View_Topology">Topológia</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Kapcsolatfigyelés</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminál</sys:String>

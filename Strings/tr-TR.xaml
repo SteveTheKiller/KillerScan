@@ -7,6 +7,12 @@
     <sys:String x:Key="Str_Subtitle">Ağ Tarayıcı</sys:String>
     <sys:String x:Key="Str_TT_Language">Dil</sys:String>
     <sys:String x:Key="Str_TT_Theme">Tema</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">Hız testi</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">Bağdaştırıcıyı ve bağlantı hızını göster veya gizle</sys:String>
+    <sys:String x:Key="Str_Light_Idle">Henüz tarama yapılmadı</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">Taranıyor</sys:String>
+    <sys:String x:Key="Str_Light_Deep">Deep Scan çalışıyor</sys:String>
+    <sys:String x:Key="Str_Light_Done">Tarama tamamlandı</sys:String>
     <sys:String x:Key="Str_TT_Export">Dışa aktar</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">TEMA</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">VURGU</sys:String>
@@ -39,6 +45,13 @@
     <sys:String x:Key="Str_Export_Csv">CSV olarak dışa aktar</sys:String>
     <sys:String x:Key="Str_Export_Html">HTML olarak dışa aktar</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Topolojiyi PNG olarak dışa aktar</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">Saydam PNG olarak dışa aktar</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">JPG olarak dışa aktar</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">HTML olarak dışa aktar</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">Kartları PNG olarak dışa aktar</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">Oturumu TXT olarak dışa aktar</sys:String>
+    <sys:String x:Key="Str_Filter_Text">Metin dosyası</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">JPEG görüntüsü</sys:String>
     <sys:String x:Key="Str_Export_ServicesCsv">Hizmetleri CSV olarak dışa aktar</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">IP Adresi</sys:String>
@@ -349,7 +362,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Yeniden başlatmak önceki sonuçları temizler.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Cihazı izle</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Yeni tarama</sys:String>
-    <sys:String x:Key="Str_View_Scan">Tarama</sys:String>
+    <sys:String x:Key="Str_View_Devices">Cihazlar</sys:String>
     <sys:String x:Key="Str_View_Topology">Topoloji</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Bağlantı izleme</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>

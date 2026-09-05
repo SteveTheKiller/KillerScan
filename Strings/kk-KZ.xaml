@@ -13,6 +13,12 @@
     <sys:String x:Key="Str_TT_Language">Тіл</sys:String>
     <sys:String x:Key="Str_TT_AppSize">Қолданба өлшемін өзгерту үшін логотиптің үстінде айналдырыңыз</sys:String>
     <sys:String x:Key="Str_TT_Theme">Тақырып</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">Жылдамдық сынағы</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">Адаптер мен байланыс жылдамдығын көрсету немесе жасыру</sys:String>
+    <sys:String x:Key="Str_Light_Idle">Әзірге ештеңе сканерленбеді</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">Сканерлеу жүріп жатыр</sys:String>
+    <sys:String x:Key="Str_Light_Deep">Deep Scan орындалуда</sys:String>
+    <sys:String x:Key="Str_Light_Done">Сканерлеу аяқталды</sys:String>
     <sys:String x:Key="Str_TT_Export">Экспорттау</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">ТАҚЫРЫП</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">АКЦЕНТ</sys:String>
@@ -53,6 +59,13 @@
     <sys:String x:Key="Str_Export_Csv">CSV ретінде экспорттау</sys:String>
     <sys:String x:Key="Str_Export_Html">HTML ретінде экспорттау</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Топологияны PNG ретінде экспорттау</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">Мөлдір PNG ретінде экспорттау</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">JPG форматына экспорттау</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">HTML форматына экспорттау</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">Карталарды PNG ретінде экспорттау</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">Сеансты TXT форматына экспорттау</sys:String>
+    <sys:String x:Key="Str_Filter_Text">Мәтіндік файл</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">JPEG суреті</sys:String>
     <sys:String x:Key="Str_Export_ServicesCsv">Қызметтерді CSV ретінде экспорттау</sys:String>
 
     <!-- Results columns -->
@@ -391,7 +404,7 @@
     <sys:String x:Key="Str_Watch_Reset">Қайта бастау алдыңғы нәтижелерді өшіреді.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Құрылғыны бақылау</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Жаңа сканерлеу</sys:String>
-    <sys:String x:Key="Str_View_Scan">Сканерлеу</sys:String>
+    <sys:String x:Key="Str_View_Devices">Құрылғылар</sys:String>
     <sys:String x:Key="Str_View_Topology">Топология</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Қосылымды бақылау</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Терминал</sys:String>

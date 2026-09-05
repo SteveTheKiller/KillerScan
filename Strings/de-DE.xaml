@@ -7,6 +7,12 @@
     <sys:String x:Key="Str_Subtitle">Netzwerkscanner</sys:String>
     <sys:String x:Key="Str_TT_Language">Sprache</sys:String>
     <sys:String x:Key="Str_TT_Theme">Design</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">Geschwindigkeitstest</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">Adapter und Verbindungsgeschwindigkeit ein- oder ausblenden</sys:String>
+    <sys:String x:Key="Str_Light_Idle">Noch nichts gescannt</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">Scan läuft</sys:String>
+    <sys:String x:Key="Str_Light_Deep">Deep Scan läuft</sys:String>
+    <sys:String x:Key="Str_Light_Done">Scan abgeschlossen</sys:String>
     <sys:String x:Key="Str_TT_Export">Exportieren</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">DESIGN</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">AKZENT</sys:String>
@@ -39,6 +45,13 @@
     <sys:String x:Key="Str_Export_Csv">Als CSV exportieren</sys:String>
     <sys:String x:Key="Str_Export_Html">Als HTML exportieren</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Topologie als PNG exportieren</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">Als transparentes PNG exportieren</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">Als JPG exportieren</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">Als HTML exportieren</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">Karten als PNG exportieren</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">Sitzung als TXT exportieren</sys:String>
+    <sys:String x:Key="Str_Filter_Text">Textdatei</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">JPEG-Bild</sys:String>
     <sys:String x:Key="Str_Export_ServicesCsv">Dienste als CSV exportieren</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">IP-Adresse</sys:String>
@@ -350,7 +363,7 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Ein erneuter Start löscht die bisherigen Ergebnisse.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Gerät überwachen</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Neuer Scan</sys:String>
-    <sys:String x:Key="Str_View_Scan">Scan</sys:String>
+    <sys:String x:Key="Str_View_Devices">Geräte</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologie</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Verbindungsüberwachung</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>

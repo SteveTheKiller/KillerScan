@@ -7,6 +7,12 @@
     <sys:String x:Key="Str_Subtitle">網路掃描器</sys:String>
     <sys:String x:Key="Str_TT_Language">語言</sys:String>
     <sys:String x:Key="Str_TT_Theme">主題</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">網速測試</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">顯示或隱藏網路卡與連線速度</sys:String>
+    <sys:String x:Key="Str_Light_Idle">尚未掃描</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">正在掃描</sys:String>
+    <sys:String x:Key="Str_Light_Deep">正在執行 Deep Scan</sys:String>
+    <sys:String x:Key="Str_Light_Done">掃描完成</sys:String>
     <sys:String x:Key="Str_TT_Export">匯出</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">主題</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">強調色</sys:String>
@@ -39,6 +45,13 @@
     <sys:String x:Key="Str_Export_Csv">匯出為 CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">匯出為 HTML</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">將拓撲匯出為 PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">匯出為透明 PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">匯出為 JPG</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">匯出為 HTML</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">將卡片匯出為 PNG</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">將工作階段匯出為 TXT</sys:String>
+    <sys:String x:Key="Str_Filter_Text">文字檔</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">JPEG 影像</sys:String>
     <sys:String x:Key="Str_Export_ServicesCsv">將服務匯出為 CSV</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">IP 位址</sys:String>
@@ -349,7 +362,7 @@
     <sys:String x:Key="Str_Watch_Reset">重新開始會清除先前的結果。</sys:String>
     <sys:String x:Key="Str_Watch_Add">監控裝置</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">新增掃描</sys:String>
-    <sys:String x:Key="Str_View_Scan">掃描</sys:String>
+    <sys:String x:Key="Str_View_Devices">裝置</sys:String>
     <sys:String x:Key="Str_View_Topology">拓撲</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">連線監控</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">終端機</sys:String>

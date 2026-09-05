@@ -7,6 +7,12 @@
     <sys:String x:Key="Str_Subtitle">নেটওয়ার্ক স্ক্যানার</sys:String>
     <sys:String x:Key="Str_TT_Language">ভাষা</sys:String>
     <sys:String x:Key="Str_TT_Theme">থিম</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">স্পিড টেস্ট</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">অ্যাডাপ্টার ও লিঙ্ক গতি দেখান বা লুকান</sys:String>
+    <sys:String x:Key="Str_Light_Idle">এখনও কিছু স্ক্যান করা হয়নি</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">স্ক্যান চলছে</sys:String>
+    <sys:String x:Key="Str_Light_Deep">ডিপ স্ক্যান চলছে</sys:String>
+    <sys:String x:Key="Str_Light_Done">স্ক্যান সম্পূর্ণ</sys:String>
     <sys:String x:Key="Str_TT_Export">এক্সপোর্ট</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">থিম</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">অ্যাকসেন্ট</sys:String>
@@ -39,6 +45,13 @@
     <sys:String x:Key="Str_Export_Csv">CSV হিসেবে এক্সপোর্ট</sys:String>
     <sys:String x:Key="Str_Export_Html">HTML হিসেবে এক্সপোর্ট</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">PNG হিসেবে টপোলজি এক্সপোর্ট করুন</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">স্বচ্ছ PNG হিসেবে এক্সপোর্ট</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">JPG-তে এক্সপোর্ট</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">HTML-এ এক্সপোর্ট</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">কার্ড PNG হিসেবে এক্সপোর্ট</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">সেশন TXT-এ এক্সপোর্ট</sys:String>
+    <sys:String x:Key="Str_Filter_Text">টেক্সট ফাইল</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">JPEG ছবি</sys:String>
     <sys:String x:Key="Str_Export_ServicesCsv">পরিষেবা CSV হিসেবে রপ্তানি করুন</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">IP ঠিকানা</sys:String>
@@ -349,7 +362,7 @@
     <sys:String x:Key="Str_Watch_Reset">আবার শুরু করলে আগের ফলাফল মুছে যাবে।</sys:String>
     <sys:String x:Key="Str_Watch_Add">ডিভাইস পর্যবেক্ষণ করুন</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">নতুন স্ক্যান</sys:String>
-    <sys:String x:Key="Str_View_Scan">স্ক্যান</sys:String>
+    <sys:String x:Key="Str_View_Devices">ডিভাইস</sys:String>
     <sys:String x:Key="Str_View_Topology">টপোলজি</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">সংযোগ পর্যবেক্ষণ</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">টার্মিনাল</sys:String>

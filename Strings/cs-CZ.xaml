@@ -8,6 +8,12 @@
     <sys:String x:Key="Str_TT_Language">Jazyk</sys:String>
     <sys:String x:Key="Str_TT_AppSize">Kolečkem myši nad logem změníte velikost aplikace</sys:String>
     <sys:String x:Key="Str_TT_Theme">Vzhled</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">Test rychlosti</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">Zobrazit nebo skrýt adaptér a rychlost linky</sys:String>
+    <sys:String x:Key="Str_Light_Idle">Zatím nic neskenováno</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">Skenování</sys:String>
+    <sys:String x:Key="Str_Light_Deep">Probíhá hloubkové skenování</sys:String>
+    <sys:String x:Key="Str_Light_Done">Skenování dokončeno</sys:String>
     <sys:String x:Key="Str_TT_Export">Exportovat</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">VZHLED</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">AKCENT</sys:String>
@@ -45,6 +51,13 @@
     <sys:String x:Key="Str_Export_Csv">Exportovat jako CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Exportovat jako HTML</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Exportovat topologii jako PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">Exportovat jako průhledné PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">Exportovat do JPG</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">Exportovat do HTML</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">Exportovat karty jako PNG</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">Exportovat relaci do TXT</sys:String>
+    <sys:String x:Key="Str_Filter_Text">Textový soubor</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">Obrázek JPEG</sys:String>
     <sys:String x:Key="Str_Export_ServicesCsv">Exportovat služby jako CSV</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">IP adresa</sys:String>
@@ -347,7 +360,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Opětovné spuštění vymaže předchozí výsledky.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Sledovat zařízení</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Nové skenování</sys:String>
-    <sys:String x:Key="Str_View_Scan">Skenování</sys:String>
+    <sys:String x:Key="Str_View_Devices">Zařízení</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologie</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Sledování připojení</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminál</sys:String>

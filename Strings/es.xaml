@@ -7,6 +7,12 @@
     <sys:String x:Key="Str_Subtitle">Escáner de red</sys:String>
     <sys:String x:Key="Str_TT_Language">Idioma</sys:String>
     <sys:String x:Key="Str_TT_Theme">Tema</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">Prueba de velocidad</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">Mostrar u ocultar el adaptador y la velocidad de enlace</sys:String>
+    <sys:String x:Key="Str_Light_Idle">Todavía no se ha escaneado nada</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">Escaneando</sys:String>
+    <sys:String x:Key="Str_Light_Deep">Deep Scan en curso</sys:String>
+    <sys:String x:Key="Str_Light_Done">Escaneo completado</sys:String>
     <sys:String x:Key="Str_TT_Export">Exportar</sys:String>
     <sys:String x:Key="Str_Lbl_Theme">TEMA</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">ACENTO</sys:String>
@@ -39,6 +45,13 @@
     <sys:String x:Key="Str_Export_Csv">Exportar como CSV</sys:String>
     <sys:String x:Key="Str_Export_Html">Exportar como HTML</sys:String>
     <sys:String x:Key="Str_Export_TopologyPng">Exportar topología como PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">Exportar como PNG transparente</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">Exportar a JPG</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">Exportar a HTML</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">Exportar tarjetas como PNG</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">Exportar la sesión a TXT</sys:String>
+    <sys:String x:Key="Str_Filter_Text">Archivo de texto</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">Imagen JPEG</sys:String>
     <sys:String x:Key="Str_Export_ServicesCsv">Exportar servicios como CSV</sys:String>
 
     <sys:String x:Key="Str_Col_Ip">Dirección IP</sys:String>
@@ -349,7 +362,7 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Watch_Reset">Al iniciar de nuevo se borran los resultados anteriores.</sys:String>
     <sys:String x:Key="Str_Watch_Add">Supervisar dispositivo</sys:String>
     <sys:String x:Key="Str_Workspace_NewScan">Nuevo escaneo</sys:String>
-    <sys:String x:Key="Str_View_Scan">Escaneo</sys:String>
+    <sys:String x:Key="Str_View_Devices">Dispositivos</sys:String>
     <sys:String x:Key="Str_View_Topology">Topología</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Supervisión de conexión</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
