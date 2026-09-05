@@ -6,39 +6,44 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.7.0] - Unreleased
 
-1.7.0 brings permanent Scan, Topology, Keep Alive, and Terminal views alongside diagnostics and scan history.
+1.7.0 brings permanent Devices, Services, Topology, Keep Alive and Terminal views, alongside scan history, trusted-device baselines, scan profiles and an embedded terminal.
 
 ### Added
-- Permanent views on the right of the scan toolbar preserve their state and offer a right-click menu for icon size and caption placement.
-- Compact toolbar with captioned Export, footer device count and network details, and overflow instead of scrolling. Keep Alive reuses the Scan table styling; terminals follow KillerShell's font and palette and prefer PowerShell 7.
-- Keep Alive shows each target as a status card with a latency sparkline, packet loss, and a right-click menu to copy the address, run diagnostics, reset its counters, or drop it from the run. Every card carries its own checks, on banded rows, and its own event log, and the checks run for the whole set as soon as a run starts. Device diagnostics checks DNS, ping, the local route, and TCP services.
-- Terminals use KillerShell's prompt, which unpacks to a file you can edit and keeps your version across upgrades, and carry the KillerScripts module so it is there on a machine you cannot install anything on. Device ping is colored by result and reports that Escape stops it.
-- The arranged topology can be exported as a full-resolution PNG.
-- Saved scan profiles can load or run remembered targets and optionally follow with Deep Scan.
-- Scan history and scan profiles share a sliding sidebar that opens from the icon rail, resizes by dragging, and cross-fades between the two sections.
-- Selecting several devices and choosing Keep Alive watches all of them at once.
-- Export follows the active view: devices as CSV or HTML anywhere, the arranged topology as a PNG in Topology, and the service list as a CSV in Services.
-- F8 opens a service-centric view organized by discovered service, port, and device, reached from the workspace toolbar beside Scan.
-- Scan history compares added, missing, and changed devices, with alternating rows, a distinct sidebar, and a typewriter heading. Includes trusted-device baselines and unknown-device alerts.
-- Manual device names now persist alongside manual classifications.
-- F1 now switches between the shortcut list and a persistent keyboard-map view. The list is grouped into two columns under colored category headings, and the map paints each key in its category color.
+- Permanent Devices, Services, Topology, Keep Alive and Terminal views on the right of the toolbar. Each keeps its own state, a right-click menu sets icon size and caption placement, and buttons that do not fit overflow into a menu rather than squeezing the input bar.
+- An embedded terminal running PowerShell, ping and SSH, preferring PowerShell 7. It uses KillerShell's font, palette and prompt, the prompt unpacks to a file you can edit and keeps your version across upgrades, and the KillerScripts module travels inside the exe so it is there on a machine you cannot install anything on. Device ping is colored by result and says that Escape stops it.
+- Keep Alive (F2) watches any number of selected devices at once, each as a status card with a latency sparkline, packet loss, its own checks on banded rows and its own event log. Right-click a card to copy the address, rerun its checks, reset its counters or drop it from the run.
+- Device diagnostics (F3) checks reverse and forward DNS, ICMP, the local route, common and previously seen TCP ports, and traceroute.
+- Topology (F9) draws an inferred view of the network with movable, multi-select device boxes and four arrangements, cycled with F7 or picked with Ctrl+1 through Ctrl+4. The arranged view exports as a full-resolution PNG. (#3)
+- A service-centric view (F8) organized by discovered service, port and device.
+- Scan history (F6) compares each scan against the previous run of the same target for added, missing and changed devices, and adds trusted-device baselines with unknown-device alerts.
+- Scan profiles (F10) load or run remembered targets and can follow with Deep Scan. History and profiles share a sliding sidebar that opens from the icon rail and resizes by dragging.
 - Deep Scan performs an exhaustive, cancellable rescan of every discovered host.
-- F9 opens an inferred topology view with movable, multi-select device boxes and four arrangement modes. (#3)
+- A speed test on the icon rail, which runs in the terminal. It uses the Ookla CLI when it is installed, offers to download it if it is not, and otherwise falls back to a built-in HTTP throughput test that installs nothing.
+- The footer shows the active adapter and its link speed beside the address, with a wired or wireless glyph.
+- Export follows the active view: devices as CSV or HTML anywhere, the arranged topology as a PNG in Topology, and the service list as a CSV in Services.
+- Manual device names now persist alongside manual classifications.
+- F1 switches between the shortcut list and a keyboard map. The list is grouped into two columns under colored category headings, and the map paints each key in its category color.
+- On first launch the interface follows the Windows display language when it is supported.
 - `/uiscan [targets]` opens the full interface and begins scanning the supplied targets immediately. (#1)
 
-### Fixed
-- Restored network information, toolbar spacing and grain, rounded content panes, simplified navigation and filtering, unified the footer status, themed service and history tables, and fixed the SSH username dialog crash.
-- Restored alternating table row shading. Checkable menus reserve a left indicator gutter so labels and shortcuts remain aligned.
-- Device detection now distinguishes physical printers from Windows servers that share print queues, including domain controllers.
-- The topology sort button no longer disappears after use, and the footer marks a portable copy in place of the old install button.
+### Changed
+- The scan view is now called Devices, so it reads as the counterpart to Services. Scan remains the name of the button that starts a scan.
+- Export moved from the toolbar to the icon rail, with the same flyout and the same Ctrl+E.
+- Demo mode now fills every view, including topology, history, trusted devices, profiles and a scripted terminal session, and keeps all of it in memory so it never touches your real history, device or profile files.
+- CSV and HTML exports use the family file picker, including complete filename tooltips.
+- Checkable menus reserve a left indicator gutter so labels and shortcuts stay aligned.
+- The footer marks a portable copy in place of the old install button.
 - On the 98SE theme the About panel is a white client area with a sunken edge instead of the button-face gray it shared with the card behind it.
 - The bundled vendor database is refreshed to 58,107 entries.
-- Topology sorting is now icon-only, uses F7 to cycle or Ctrl+1 through Ctrl+4 for direct selection, and keeps connectors attached to moved role boxes.
+
+### Fixed
+- Device detection now distinguishes physical printers from Windows servers that share print queues, including domain controllers.
 - Scans clear the local DNS cache and reject reverse-DNS names that do not resolve back to the same IP address.
-- On first launch, the interface follows the Windows display language when it is supported.
-- CSV and HTML exports now use the family file picker, including complete filename tooltips.
 - Command-line output now reaches applications that launch KillerScan with redirected streams but no parent console.
-- On the Sepulchre and Mourning themes the selected theme picker row no longer loses its ring, dot and label while hovered; they turn white.
+- On the Sepulchre and Mourning themes the selected theme picker row no longer loses its ring, dot and label while hovered.
+- On 98SE, hovered table text was a pale tint of the accent on a light gray row. It is now a dark tone of the accent in all six accents.
+- Selected items were nearly invisible on Malaise and Sepulchre, whose selection color sat within 1.3:1 of the surface behind it, and unreadable on Black with the orange accent, which selected with the full accent color instead of a dark tone of it.
+- Text fields matched the surface around them on Black, Blood, Cyanotic and Greed, so the subnet box did not read as a field.
 
 ## [1.6.1] - 2026-08-29
 
