@@ -33,6 +33,7 @@ namespace KillerScan.Controls
             TargetLabel.Visibility = Visibility.Collapsed;
             Cards.ItemsSource = _cards;
             ThemeManager.ThemeChanged += OnThemeChanged;
+            LocaleManager.LocaleChanged += OnLocaleChanged;
             Heading.SetResourceReference(TextBlock.TextProperty, "Str_View_KeepAlive");
             Hint.SetResourceReference(TextBlock.TextProperty, "Str_Watch_Hint");
             StartButton.SetResourceReference(ContentProperty, "Str_Watch_Start");
@@ -73,6 +74,17 @@ namespace KillerScan.Controls
             _knownPorts.TryGetValue(address, out var ports) && ports.Length > 0
                 ? [.. ports.Concat(CommonPorts).Distinct().Take(64)] : CommonPorts;
 
+        /// <summary>
+        /// Enter in the target box starts the run, the way it does in the subnet box. Ignored
+        /// while a run is going, since the box is disabled then and Stop is the only action.
+        /// </summary>
+        private void Targets_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key != System.Windows.Input.Key.Return || !StartButton.IsEnabled) return;
+            e.Handled = true;
+            Start_Click(StartButton, new RoutedEventArgs());
+        }
+
         private async void Start_Click(object sender, RoutedEventArgs e)
         {
             if (_run != null) return;
@@ -112,6 +124,41 @@ namespace KillerScan.Controls
 
         private readonly List<WatchTarget> _targets = [];
 
+        /// <summary>
+        /// Demo mode only: put these targets in the box and start watching them straight away, so
+        /// the view has cards in it the moment it opens and after every re-rolled scan. A run
+        /// already going is stopped first, because the addresses it is watching no longer exist.
+        /// </summary>
+        internal void RestartWith(string targets)
+        {
+            if (_closed || string.IsNullOrWhiteSpace(targets)) return;
+            _run?.Cancel();
+            Targets.Text = targets;
+            // The cancelled run clears _run in its own finally, which has not happened yet, so the
+            // restart is queued behind it rather than being dropped by the guard in Start_Click.
+            Dispatcher.BeginInvoke(new Action(() => Start_Click(StartButton, new RoutedEventArgs())),
+                System.Windows.Threading.DispatcherPriority.Background);
+        }
+
+        private readonly Random _demoRng = new();
+
+        /// <summary>
+        /// A plausible reply for demo mode. The fabricated addresses answer to nothing, so a real
+        /// ping would fill every card with timeouts. Latency wanders around a per-address baseline
+        /// and drops a packet now and then, which is what makes the graph and the event log worth
+        /// looking at in a screenshot.
+        /// </summary>
+        private long? DemoReply(IPAddress address)
+        {
+            int host = address.GetAddressBytes()[3];
+            // One target in three is a device that is not answering, so a demo screenshot shows
+            // both states: the healthy cards and the red one with its loss climbing.
+            if (host % 3 == 2) return _demoRng.Next(100) < 12 ? _demoRng.Next(180, 400) : null;
+            int baseline = 1 + (host % 12);
+            if (_demoRng.Next(100) < 4) return null;
+            return baseline + _demoRng.Next(0, 5);
+        }
+
         private async Task WatchAsync(IPAddress[] addresses, CancellationToken token)
         {
             _targets.Clear();
@@ -130,7 +177,9 @@ namespace KillerScan.Controls
                 // Snapshot the list: a context-menu removal during the await would otherwise
                 // leave the reply array and the live list disagreeing about who is who.
                 var polled = _targets.ToArray();
-                var replies = await Task.WhenAll(polled.Select(t => ConnectionChecks.PingAsync(t.Address)));
+                var replies = DemoData.Enabled
+                    ? await Task.WhenAll(polled.Select(t => Task.FromResult(DemoReply(t.Address))))
+                    : await Task.WhenAll(polled.Select(t => ConnectionChecks.PingAsync(t.Address)));
                 token.ThrowIfCancellationRequested();
                 var now = DateTimeOffset.Now;
                 for (int i = 0; i < polled.Length; i++)
@@ -150,7 +199,7 @@ namespace KillerScan.Controls
         }
 
         private WatchTarget? TargetFor(object sender) =>
-            (sender as FrameworkElement)?.DataContext is WatchCard card
+            sender is FrameworkElement element && element.DataContext is WatchCard card
                 ? _targets.FirstOrDefault(t => t.Card == card) : null;
 
         private void CardCopy_Click(object sender, RoutedEventArgs e)
@@ -272,6 +321,16 @@ namespace KillerScan.Controls
             int[] ports = PortsFor(address.ToString());
             var portRows = ports.Select(p => Row("TCP " + p)).ToArray();
 
+            // Demo mode answers its own checks. The fabricated addresses belong to nobody, so a
+            // real sweep would spend half a minute per card on a thirty-hop trace to nowhere and
+            // fill every row with failures, which is neither quick nor worth photographing.
+            if (DemoData.Enabled)
+            {
+                FillDemoChecks(address, routeRow, reverseRow, forwardRow, icmpRow, ports, portRows);
+                card.Checks.Add(new CheckRow { Check = L("Str_Diag_Time"), Result = DateTime.Now.ToString("h:mm:ss tt") });
+                return;
+            }
+
             // The route comes from the local table, so it is already known.
             var route = ConnectionChecks.Route(address);
             routeRow.Result = route.HasValue
@@ -339,11 +398,69 @@ namespace KillerScan.Controls
             foreach (var card in _cards) card.RefreshTheme();
         }
 
-        private void Stop_Click(object sender, RoutedEventArgs e) { _run?.Cancel(); StopButton.IsEnabled = false; }
+        /// <summary>
+        /// Re-words the cards after a language change. The state line and the event log are
+        /// re-labelled from what each card already knows, and the checks are run again because
+        /// their names and results were resolved when they were written and cannot be translated
+        /// after the fact. Counters and the latency graph carry on untouched.
+        /// </summary>
+        private void OnLocaleChanged()
+        {
+            if (_closed) return;
+            string reply = L("Str_Watch_Reply"), noReply = L("Str_Watch_NoReply"), waiting = L("Str_Watch_Waiting");
+            foreach (var card in _cards) card.Relabel(reply, noReply, waiting);
+            if (Status.Text.Length > 0 && _run == null) Status.Text = L("Str_Watch_Stopped");
+            if (_targets.Count > 0) RunAllChecks();
+        }
+
+        /// <summary>
+        /// The fabricated answers for demo mode, consistent with the card's own ping behaviour: a
+        /// target that is answering resolves, replies and has its ports open, and one that is not
+        /// fails the same way a real dead host does. Ports come from the demo device's own record,
+        /// so the checks agree with what the Devices table shows for that address.
+        /// </summary>
+        private void FillDemoChecks(IPAddress address, CheckRow route, CheckRow reverse, CheckRow forward,
+                                    CheckRow icmp, int[] ports, CheckRow[] portRows)
+        {
+            var demo = DemoData.Current;
+            string text = address.ToString();
+            var device = demo?.Devices.FirstOrDefault(d => d.IpAddress == text);
+            bool alive = DemoReply(address).HasValue;
+
+            route.Result = string.Format(L("Str_Diag_RouteValue"), "Ethernet", L("Str_Diag_OnLink"));
+
+            if (alive && !string.IsNullOrWhiteSpace(device?.Hostname))
+            {
+                reverse.Result = device!.Hostname;
+                forward.Result = L("Str_Diag_Match");
+            }
+            else
+            {
+                reverse.Result = L("Str_Diag_Unavailable");
+                forward.Result = L("Str_Diag_Unavailable");
+            }
+
+            icmp.Result = alive ? DemoReply(address) + " ms" : L("Str_Watch_NoReply");
+
+            var open = device?.OpenPorts ?? [];
+            for (int i = 0; i < portRows.Length; i++)
+                portRows[i].Result = L(alive && open.Contains(ports[i]) ? "Str_Diag_Open" : "Str_Diag_Failed");
+        }
+
+        private void Stop_Click(object sender, RoutedEventArgs e)
+        {
+            // Both, not just the ping loop. The checks sweep carries a thirty-hop traceroute at two
+            // seconds a hop, so cancelling only the pings left the cards filling in for another
+            // half minute per target after Stop said it had stopped.
+            _run?.Cancel();
+            _checks?.Cancel();
+            StopButton.IsEnabled = false;
+        }
         public void Dispose()
         {
             _closed = true;
             ThemeManager.ThemeChanged -= OnThemeChanged;
+            LocaleManager.LocaleChanged -= OnLocaleChanged;
             _run?.Cancel();
             _checks?.Cancel();
         }
@@ -352,6 +469,65 @@ namespace KillerScan.Controls
         /// Walks the cards, so a paste into a ticket carries every target's counters, its
         /// checks, and its log, in the order they are on screen.
         /// </summary>
+        /// <summary>
+        /// The run as CSV: one row per card, then its checks and its log lines indented under it,
+        /// so a spreadsheet keeps the shape the cards have on screen.
+        /// </summary>
+        internal string BuildCsv()
+        {
+            static string Cell(string? value) =>
+                value is null ? "" : "\"" + value.Replace("\"", "\"\"") + "\"";
+
+            var csv = new System.Text.StringBuilder();
+            csv.AppendLine(string.Join(",", Cell(L("Str_Watch_Targets")), Cell(L("Str_Diag_Result")),
+                Cell(L("Str_Watch_Latency")), Cell(L("Str_Watch_Loss")), Cell(L("Str_Watch_Sent"))));
+            foreach (var card in _cards)
+            {
+                csv.AppendLine(string.Join(",", Cell(card.Address), Cell(card.State),
+                    Cell(card.Latest + " / " + card.Average), Cell(card.Loss), Cell(card.Sent)));
+                foreach (var check in card.Checks)
+                    csv.AppendLine(string.Join(",", Cell(card.Address), Cell(check.Check), Cell(check.Result), "", ""));
+                foreach (var entry in card.Events)
+                    csv.AppendLine(string.Join(",", Cell(card.Address), Cell(entry.Time), Cell(entry.State), "", ""));
+            }
+            return csv.ToString();
+        }
+
+        /// <summary>The same run as a self-contained page, one section per card.</summary>
+        internal string BuildHtml()
+        {
+            static string Esc(string? value) => (value ?? string.Empty)
+                .Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+
+            var html = new System.Text.StringBuilder();
+            html.Append("<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>")
+                .Append(Esc(L("Str_View_KeepAlive"))).Append("</title>\n<style>\n")
+                .Append("  body { font-family: Segoe UI, system-ui, sans-serif; background: #1c1c1c; color: #e0e0e0; margin: 24px; }\n")
+                .Append("  h2 { font-family: Consolas, monospace; margin: 28px 0 6px; }\n")
+                .Append("  table { border-collapse: collapse; margin-bottom: 8px; }\n")
+                .Append("  td { padding: 3px 14px 3px 0; font-size: 13px; vertical-align: top; }\n")
+                .Append("  td:first-child { color: #9a9a9a; }\n")
+                .Append("</style>\n</head>\n<body>\n<h1>").Append(Esc(L("Str_View_KeepAlive"))).Append("</h1>\n");
+
+            foreach (var card in _cards)
+            {
+                html.Append("<h2>").Append(Esc(card.Address)).Append(" &mdash; ").Append(Esc(card.State)).Append("</h2>\n<table>\n");
+                html.Append("<tr><td>").Append(Esc(L("Str_Watch_Latency"))).Append("</td><td>")
+                    .Append(Esc(card.Latest + " / " + card.Average)).Append("</td></tr>\n");
+                html.Append("<tr><td>").Append(Esc(L("Str_Watch_Loss"))).Append("</td><td>").Append(Esc(card.Loss)).Append("</td></tr>\n");
+                html.Append("<tr><td>").Append(Esc(L("Str_Watch_Sent"))).Append("</td><td>").Append(Esc(card.Sent)).Append("</td></tr>\n");
+                foreach (var check in card.Checks)
+                    html.Append("<tr><td>").Append(Esc(check.Check)).Append("</td><td>").Append(Esc(check.Result)).Append("</td></tr>\n");
+                foreach (var entry in card.Events)
+                    html.Append("<tr><td>").Append(Esc(entry.Time)).Append("</td><td>").Append(Esc(entry.State)).Append("</td></tr>\n");
+                html.Append("</table>\n");
+            }
+            return html.Append("</body>\n</html>\n").ToString();
+        }
+
+        /// <summary>The cards themselves, for an image export.</summary>
+        internal FrameworkElement CardsVisual => Cards;
+
         private void Copy_Click(object sender, RoutedEventArgs e)
         {
             var text = new System.Text.StringBuilder();

@@ -29,6 +29,11 @@
 <TextBlock x:Name="InterfaceIcon" Foreground="{DynamicResource PrimaryBrush}" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="0,0,5,0"/>
 <TextBlock x:Name="InterfaceLabel" Foreground="{DynamicResource TextBrush}" FontSize="11"/>
 </StackPanel>
+<!-- Never shown here. The footer binds to these, so the network line is composed once beside the
+     rest of the network information. Address and detail are separate because the footer sheds the
+     detail first when the bar runs out of room. -->
+<TextBlock x:Name="FooterNetLabel" Visibility="Collapsed"/>
+<TextBlock x:Name="FooterNetDetail" Visibility="Collapsed"/>
 <Button x:Name="FilterToggleButton" Style="{StaticResource OutlineButton}" FontFamily="Segoe MDL2 Assets" Content="&#xE71C;" Width="26" Height="26" Padding="0" Margin="0,2,6,2" Click="FilterToggle_Click">
 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_FilterPlaceholder}"/><Run Text=" (Ctrl+Shift+F)"/></TextBlock></Button.ToolTip>
 </Button>
@@ -170,16 +175,49 @@
                         <Button.ContextMenu>
                             <ContextMenu Placement="Bottom" HorizontalOffset="0" VerticalOffset="2"
                                          PreviewMouseWheel="Menu_ForwardWheelToGrid">
-                                <MenuItem Header="{DynamicResource Str_Export_Csv}" InputGestureText="Ctrl+E" Click="ExportCsv_Click">
+                                <MenuItem x:Name="ExportCsvItem" Header="{DynamicResource Str_Export_Csv}"
+                                          InputGestureText="Ctrl+E" Click="ExportCsv_Click">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9F9;"/></MenuItem.Icon>
                                 </MenuItem>
 
-                                <MenuItem Header="{DynamicResource Str_Export_Html}" Click="ExportHtml_Click">
+                                <MenuItem x:Name="ExportHtmlItem" Header="{DynamicResource Str_Export_Html}" Click="ExportHtml_Click">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE943;"/></MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem x:Name="ExportTopologyPngItem" Header="{DynamicResource Str_Export_TopologyPng}"
-                                          Click="ExportTopologyPng_Click" Visibility="Collapsed">
+                                <!-- Keep Alive: the run as a table, as a page, or as a picture of
+                                     the cards. The shell owns that control, so these are requests
+                                     rather than handlers. -->
+                                <MenuItem x:Name="ExportWatchCsvItem" Header="{DynamicResource Str_Export_Csv}"
+                                          Click="ExportWatchCsv_Click" Visibility="Collapsed">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9F9;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="ExportWatchHtmlItem" Header="{DynamicResource Str_Export_Html}"
+                                          Click="ExportWatchHtml_Click" Visibility="Collapsed">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE943;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="ExportWatchPngItem" Header="{DynamicResource Str_Export_WatchPng}"
+                                          Click="ExportWatchPng_Click" Visibility="Collapsed">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xEB9F;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="ExportTerminalTextItem" Header="{DynamicResource Str_Export_TerminalTxt}"
+                                          Click="ExportTerminalText_Click" Visibility="Collapsed">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8A5;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <!-- Topology only, and flat rather than a submenu: these are simply
+                                     the other things you can export while looking at the picture.
+                                     A transparent PNG to drop onto someone else's document, a JPEG
+                                     flattened onto the theme's own surface and grain, and an HTML
+                                     page carrying real SVG. -->
+                                <MenuItem x:Name="ExportTopologyPngItem" Header="{DynamicResource Str_Export_SnapPngAlpha}"
+                                          Click="ExportSnapshotPngAlpha_Click" Visibility="Collapsed">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE91B;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="ExportTopologyJpegItem" Header="{DynamicResource Str_Export_SnapJpeg}"
+                                          Click="ExportSnapshotJpeg_Click" Visibility="Collapsed">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xEB9F;"/></MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="ExportTopologySvgItem" Header="{DynamicResource Str_Export_SnapSvg}"
+                                          Click="ExportSnapshotSvg_Click" Visibility="Collapsed">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE943;"/></MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem x:Name="ExportServicesCsvItem" Header="{DynamicResource Str_Export_ServicesCsv}"
                                           Click="ExportServicesCsv_Click" Visibility="Collapsed">

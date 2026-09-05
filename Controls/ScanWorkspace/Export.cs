@@ -11,16 +11,60 @@ namespace KillerScan.Controls
 {
     public partial class ScanWorkspace
     {
+        private string _exportContext = "scan";
+
+        /// <summary>
+        /// Which view the export button is acting for. "scan" means one of this control's own
+        /// views and is resolved to devices, services or topology when the menu opens; the shell
+        /// sets "watch" or "terminal" when one of its own views is in front.
+        /// </summary>
+        public string ExportContext
+        {
+            get => _exportContext;
+            set => _exportContext = string.IsNullOrWhiteSpace(value) ? "scan" : value;
+        }
+
+        /// <summary>Raised for the exports the shell owns: the Keep Alive run and the terminal.</summary>
+        public event EventHandler<string>? ShellExportRequested;
+
+        private void ExportWatchCsv_Click(object sender, RoutedEventArgs e) => ShellExportRequested?.Invoke(this, "watch-csv");
+        private void ExportWatchHtml_Click(object sender, RoutedEventArgs e) => ShellExportRequested?.Invoke(this, "watch-html");
+        private void ExportWatchPng_Click(object sender, RoutedEventArgs e) => ShellExportRequested?.Invoke(this, "watch-png");
+        private void ExportTerminalText_Click(object sender, RoutedEventArgs e) => ShellExportRequested?.Invoke(this, "terminal-txt");
+
         private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ActiveDevices.Count == 0 || ExportButton.ContextMenu is null) return;
-            // Export follows the view: the graph is only offered while the graph is on screen,
-            // and the service list only while the service view is. CSV and HTML of the device
-            // table stay available throughout, because that is the export people expect.
-            ExportTopologyPngItem.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;
+            if (ExportButton.ContextMenu is null) return;
+            // Keep Alive and the terminal have something to export with no scan behind them, so the
+            // empty-results guard applies only to the views built on the device list.
+            if (ActiveDevices.Count == 0 && _exportContext is "scan") return;
+
+            // Only what the view in front of you can actually produce. Topology has no table to
+            // write, so CSV and the device report are hidden there rather than exporting the list
+            // behind the picture; Keep Alive and the terminal export themselves through the shell,
+            // which is what owns those controls.
+            string context = _exportContext == "scan"
+                ? (_showTopology ? "topology" : _showServices ? "services" : "devices")
+                : _exportContext;
+
+            Visibility When(bool shown) => shown ? Visibility.Visible : Visibility.Collapsed;
+            bool table = context is "devices" or "services";
+
+            ExportCsvItem.Visibility          = When(table);
+            ExportHtmlItem.Visibility         = When(table);
+            ExportServicesCsvItem.Visibility  = When(context == "services");
+            ExportTopologyPngItem.Visibility  = When(context == "topology");
+            ExportTopologyJpegItem.Visibility = When(context == "topology");
+            ExportTopologySvgItem.Visibility  = When(context == "topology");
+            ExportWatchCsvItem.Visibility     = When(context == "watch");
+            ExportWatchHtmlItem.Visibility    = When(context == "watch");
+            ExportWatchPngItem.Visibility     = When(context == "watch");
+            ExportTerminalTextItem.Visibility = When(context == "terminal");
             ExportServicesCsvItem.Visibility = _showServices ? Visibility.Visible : Visibility.Collapsed;
+            // The button now sits on the rail down the left, so the flyout opens beside it rather
+            // than below it, anchored to the button itself.
             ExportButton.ContextMenu.PlacementTarget = ExportButton;
-            ExportButton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+            ExportButton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
             ExportButton.ContextMenu.IsOpen = true;
         }
 
@@ -87,46 +131,5 @@ namespace KillerScan.Controls
             { MessageBox.Show(string.Format(Loc("Str_Err_Export"), ex.Message), AppInfo.DisplayName, MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
-        private void ExportTopologyPng_Click(object sender, RoutedEventArgs e)
-        {
-            if (!_showTopology || TopologyCanvas.Width <= 0 || TopologyCanvas.Height <= 0) return;
-            var dlg = new FileDialog(FileDialogMode.Save)
-            {
-                Filter = Loc("Str_Filter_Png") + "|*.png",
-                FileName = $"KillerScan_Topology_{DateTime.Now:yyyyMMdd_HHmmss}.png",
-                DefaultExt = ".png",
-                AddExtension = true
-            };
-            if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
-            try
-            {
-                int width = Math.Max(1, (int)Math.Ceiling(TopologyCanvas.Width));
-                int height = Math.Max(1, (int)Math.Ceiling(TopologyCanvas.Height));
-                var drawing = new DrawingVisual();
-                using (DrawingContext dc = drawing.RenderOpen())
-                {
-                    var background = TryFindResource("ScanContentPaneBrush") as Brush ?? Brushes.Black;
-                    dc.DrawRectangle(background, null, new Rect(0, 0, width, height));
-                    dc.DrawRectangle(new VisualBrush(TopologyCanvas)
-                    {
-                        Stretch = Stretch.None,
-                        AlignmentX = AlignmentX.Left,
-                        AlignmentY = AlignmentY.Top
-                    }, null, new Rect(0, 0, width, height));
-                }
-                var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
-                bitmap.Render(drawing);
-                var encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                using var stream = File.Create(dlg.FileName);
-                encoder.Save(stream);
-                StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(string.Format(Loc("Str_Err_Export"), ex.Message),
-                    AppInfo.DisplayName, MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
     }
 }
