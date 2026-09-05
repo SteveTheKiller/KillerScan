@@ -4,7 +4,7 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.7.0] - Unreleased
+## [1.7.0] - 2026-09-05
 
 1.7.0 brings permanent Devices, Services, Topology, Keep Alive and Terminal views, alongside scan history, trusted-device baselines, scan profiles and an embedded terminal.
 
@@ -15,7 +15,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Device diagnostics (F3) checks reverse and forward DNS, ICMP, the local route, common and previously seen TCP ports, and traceroute.
 - Topology (F8) draws an inferred view of the network with movable, multi-select device boxes and four arrangements, cycled with Ctrl+G or picked with Ctrl+1 through Ctrl+4. The arranged view exports as a full-resolution PNG. (#3)
 - A service-centric view (F7) organized by discovered service, port and device.
-- Scan history (Ctrl+H) compares each scan against the previous run of the same target for added, missing and changed devices, and adds trusted-device baselines with unknown-device alerts.
+- Scan history (Ctrl+H) compares each scan against the previous run of the same target for added, missing and changed devices, and adds trusted-device baselines with unknown-device alerts. A selected entry reads either way: the comparison, or the full device list as it was recorded, with the choice remembered.
 - Scan profiles (Ctrl+Shift+P) load or run remembered targets and can follow with Deep Scan. History and profiles share a sliding sidebar that opens from the icon rail and resizes by dragging.
 - Deep Scan performs an exhaustive, cancellable rescan of every discovered host.
 - A speed test on the icon rail, which runs in the terminal. It uses the Ookla CLI when it is installed, offers to download it if it is not, and otherwise falls back to a built-in HTTP throughput test that installs nothing.
@@ -23,6 +23,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Export follows the active view: devices as CSV or HTML anywhere, the arranged topology as a PNG in Topology, and the service list as a CSV in Services.
 - Manual device names now persist alongside manual classifications.
 - F1 switches between the shortcut list and a keyboard map. The list is grouped into two columns under colored category headings, and the map paints each key in its category color.
+- A trust marker in the gutter beside each address: green for a device in your trusted list, amber for one that is not, using the same two colors as the status light.
+- Hovering the status bar explains the current state. On the unknown-device alert it names the devices, in Keep Alive it reports the run, in scan history it identifies the selected entry.
+- The shortcuts overlay links to the online help page.
 - On first launch the interface follows the Windows display language when it is supported.
 - `/uiscan [targets]` opens the full interface and begins scanning the supplied targets immediately. (#1)
 
@@ -34,14 +37,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Checkable menus reserve a left indicator gutter so labels and shortcuts stay aligned.
 - The footer marks a portable copy in place of the old install button.
 - On the 98SE theme the About panel is a white client area with a sunken edge instead of the button-face gray it shared with the card behind it.
+- The Services view colors its Type column the way the device list does, from the same shared definition.
+- The Type column sorts by the name shown on screen rather than the English value behind it, so the order is alphabetical in the language being read.
+- The vendor database notice clears itself after a few seconds instead of standing in the status bar for the session, and the device count appears only once there is a count to report.
 - The bundled vendor database is refreshed to 58,107 entries.
 
 ### Fixed
+- The taskbar button had no icon. A window with no caption never hands one to the shell, so it is now set on the window directly.
+- The status line was capped at a fixed width and trimmed to an ellipsis on a window with room to spare. It now measures the space up to the portable badge.
 - Device detection now distinguishes physical printers from Windows servers that share print queues, including domain controllers.
 - Scans clear the local DNS cache and reject reverse-DNS names that do not resolve back to the same IP address.
 - Command-line output now reaches applications that launch KillerScan with redirected streams but no parent console.
 - On the Sepulchre and Mourning themes the selected theme picker row no longer loses its ring, dot and label while hovered.
 - On 98SE, hovered table text was a pale tint of the accent on a light gray row. It is now a dark tone of the accent in all six accents.
+- On 98SE the Keep Alive event log used the menu gray behind it and a VGA green too light to read there. It is now a white client area with a darker green.
 - Selected items were nearly invisible on Malaise and Sepulchre, whose selection color sat within 1.3:1 of the surface behind it, and unreadable on Black with the orange accent, which selected with the full accent color instead of a dark tone of it.
 - Text fields matched the surface around them on Black, Blood, Cyanotic and Greed, so the subnet box did not read as a field.
 

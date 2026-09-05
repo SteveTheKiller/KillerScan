@@ -17,12 +17,12 @@ Part of [killertools.net](https://killertools.net).
 
 ## Features
 
-- Permanent Scan, Topology, Keep Alive and Terminal views sit on the right of the scan toolbar. Each keeps its own state, and a right-click menu sets icon size and caption placement.
+- Permanent Devices, Services, Topology, Keep Alive and Terminal views sit on the right of the toolbar. Each keeps its own state, a right-click menu sets icon size and caption placement, and buttons that do not fit overflow into a menu rather than squeezing the input bar.
 - Embedded terminals run PowerShell, ping, and SSH using the system clients, preferring PowerShell 7 where it is installed. They use KillerShell's font, palette and prompt, and the prompt unpacks to a file you can edit and keeps your version across upgrades. The KillerScripts module travels inside the EXE, so it is there on a machine you cannot install anything on. Closing a terminal ends its process.
 - Keep Alive (F9) watches any number of selected devices at once, each as a status card with a latency sparkline, packet loss, its own checks on banded rows, and its own event log. Right-click a card to copy the address, run diagnostics, reset its counters, or drop it from the run. Checks start for the whole set as soon as a run begins.
-- Topology (F8) infers how the network fits together and draws devices as movable, multi-selectable boxes in four arrangement modes, cycled with Ctrl+G or picked directly with Ctrl+1 through Ctrl+4. Connectors stay attached to boxes you move, and the arranged view exports as a full-resolution PNG.
+- Topology (F8) infers how the network fits together and draws devices as movable, multi-selectable boxes in four arrangement modes, cycled with Ctrl+G or picked directly with Ctrl+1 through Ctrl+4. Connectors stay attached to boxes you move, and the arranged view exports at full resolution as a picture or as editable SVG.
 - Deep Scan runs an exhaustive, cancellable rescan of every discovered host to improve hostnames, services and classifications.
-- Scan history (Ctrl+H) compares each scan against the last for added, missing and changed devices, and supports trusted-device baselines with alerts for unknown devices. Scan profiles (Ctrl+Shift+P) remember targets you can load or run, optionally following with Deep Scan. Both share a sliding sidebar that opens from the icon rail and resizes by dragging.
+- Scan history (Ctrl+H) compares each scan against the last run of the same target for added, missing and changed devices, or shows the saved run in full, and supports trusted-device baselines with alerts for unknown devices. A marker beside each address says whether the device is trusted. Scan profiles (Ctrl+Shift+P) remember targets you can load or run, optionally following with Deep Scan. Both share a sliding sidebar that opens from the icon rail and resizes by dragging.
 - A service-centric view (F7) organizes results by discovered service, port and device.
 - Manual device names and classifications both persist across restarts and rescans.
 - Self-installer: launch the EXE to install to `%LOCALAPPDATA%\Programs\KillerScan\` with Start Menu and optional desktop shortcut, or tick "Install for all users" to install to Program Files for every account on the PC (the only path that asks for admin), or just run it portable with no install. An installed copy is added to PATH, so a new terminal can run it as `KillerScan` from any directory
@@ -33,7 +33,8 @@ Part of [killertools.net](https://killertools.net).
 - MAC vendor identification across the full IEEE registries (MA-L, MA-M, MA-S) with longest-prefix matching, brand overrides for "Private" blocks, and a clear label for randomized privacy MACs; the vendor database is refreshable from within the app (About screen)
 - Weighted-score classifier identifies hypervisors, Windows boxes, Linux servers, printers, NAS, network gear, cameras, IoT, mobile, Home Assistant and more; gateway/DNS aware (Router, DNS Server, or Router/DNS - Pi-hole safe)
 - Right-click to copy IP/MAC/hostname, launch RDP/SSH/browser, or override a device type. SSH does not assume your Windows account name: it asks which user to sign in as the first time you reach a device, remembers the answer against that device's MAC, and offers "SSH as..." for connecting as somebody else
-- Export follows the active view: devices as CSV or HTML anywhere, the arranged topology as a PNG in Topology, and the service list as a CSV in Services
+- Export follows the active view: devices as CSV or HTML, the service list as its own CSV in Services, the arranged topology as a transparent PNG, a flattened JPG or an HTML page carrying real SVG, the Keep Alive run as CSV, a page or a picture, and the terminal session as text
+- A speed test (F4 or the icon rail) runs in the terminal, using the Ookla CLI when it is installed, offering to download it when it is not, and otherwise falling back to a built-in HTTP throughput test that installs nothing
 - Device diagnostics (F3 or the device menu) checks reverse and forward DNS, ICMP replies, the local route, and common or previously discovered TCP ports. Results can be copied for ticket notes. A missing ping reply does not mean the device is offline.
 - Headless command line for scripts and RMM work: scan one or several targets, deep-probe one host, inspect the active network, or look up a MAC vendor. Filter by text, type, vendor, or ports; sort and limit results; set progress and timeout behavior; and emit table, CSV, JSON, or themed HTML to the console or a file. No window opens, it runs while the app is open, and it returns distinct exit codes for success, failure, bad usage, and empty results
 - Keyboard shortcuts, on F1, which switches between a grouped shortcut list in two colored columns and a persistent keyboard map that paints each key in its category color: F5 scan/stop, Esc cancel, Ctrl+R deep rescan the selection, Ctrl+F subnet box, Ctrl+A select all, Ctrl+E export, F6 Devices, F7 Services, F8 Topology, F9 Keep Alive, F10 Terminal, F3 diagnostics, F4 speed test, Ctrl+H history, Ctrl+Shift+P profiles, Ctrl+G topology arrangement, F12 About, and single-key device actions (ping, RDP, SSH, browser, copy IP/MAC/hostname)
@@ -62,7 +63,7 @@ Part of [killertools.net](https://killertools.net).
 ## Download
 
 - Prebuilt binary: <https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe>
-- Source (GPL3 corresponding source for this release): <https://github.com/SteveTheKiller/KillerScan/releases/download/v1.6.1/KillerScan-1.6.1-src.zip>
+- Source (GPL3 corresponding source for this release): <https://github.com/SteveTheKiller/KillerScan/releases/download/v1.7.0/KillerScan-1.7.0-src.zip>
 
 Or install from a package manager:
 
@@ -96,7 +97,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 The classifier accumulates points from every signal (open ports, OUI vendor, hostname keywords, HTTP title, SSH banner, TLS subject, SNMP description, NetBIOS name, TTL, mDNS service types, SSDP SERVER string) and picks the highest-scoring type above a threshold. This replaces brittle first-match port rules and avoids false positives like "my coworker's laptop is a hypervisor because port 2179 is open."
 
-See `Services/NetworkScanner.cs` -> `ClassifyDevice` for the scoring table. For a full technical breakdown of how KillerScan works end to end - the scan pipeline, vendor resolution, and the classifier - see <https://killerscan.net/technical.html>.
+See `Services/NetworkScanner.cs` -> `ClassifyDevice` for the scoring table. For a full technical breakdown of how KillerScan works end to end - the scan pipeline, vendor resolution, and the classifier - see <https://killerscan.net/technical.html>. For how to drive each view, every tool and every shortcut, see <https://killerscan.net/help.html>.
 
 ## License
 

@@ -304,7 +304,7 @@ $readmeNew  = Edit-SiteFact $readmeRaw '/releases/download/v[0-9]+\.[0-9]+\.[0-9
 # Validate every footer even during DryRun. That makes DryRun a real markup compatibility
 # check without writing to the working tree.
 $footerUpdates = @{}
-foreach ($page in 'index.html', 'about.html', 'technical.html') {
+foreach ($page in 'index.html', 'about.html', 'technical.html', 'help.html') {
     $p   = Join-Path $siteDir $page
     $raw = if ($page -eq 'index.html') { $indexNew } else { [System.IO.File]::ReadAllText($p) }
     $footerUpdates[$p] = Edit-SiteFact $raw '(id="verEgg"[^>]*>)v[0-9]+\.[0-9]+\.[0-9]+' ('${1}' + "v$Version") "the verEgg footer version in $page"
@@ -318,7 +318,7 @@ if ($DryRun) {
     Write-Host "  released : $releaseDate"
     Write-Host "  size     : $exeMB exe"
     Write-Host "  sha256   : $hashLower"
-    Write-Host "  verEgg   : v$Version on index, about, technical"
+    Write-Host "  verEgg   : v$Version on index, about, technical, help"
     Write-Host "  README   : source zip link -> $Tag$(if ($readmeNew -eq $readmeRaw) { ' (already current)' })"
     Write-Host "DryRun: working tree left untouched." -ForegroundColor Yellow
 } else {
@@ -365,7 +365,7 @@ function Test-CountClaim {
     }
 }
 
-$siteFiles = @('index.html', 'about.html', 'technical.html', 'ks-i18n.js') |
+$siteFiles = @('index.html', 'about.html', 'technical.html', 'help.html', 'ks-i18n.js') |
              ForEach-Object { Join-Path $siteDir $_ }
 $docFiles = @($readmePath) + $siteFiles
 

@@ -254,6 +254,7 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_hist_title">Scan history</span><span class="kbd">Ctrl+H</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
 <p data-i18n="tk_hist_body">Every completed scan is recorded, and <b>Ctrl+H</b> opens the list, newest first. Pick an entry and KillerScan compares it against the previous scan <b>of the same target</b>, so comparing a subnet against an unrelated one is not something you can do by accident.</p>
 <p data-i18n="tk_hist_body_p2">The comparison is shown as one flat table of added, missing, and changed devices, in that order, with a one-line summary of the three counts. The first scan of a target says so plainly rather than reporting every device as new.</p>
+<p data-i18n="tk_hist_views">Two readings of the same entry sit behind a selector on the right. <b>Changes</b> is the comparison. <b>All devices</b> is the snapshot itself, every device as it was recorded, which is the one you want when nothing moved and the comparison is therefore empty. The choice is remembered.</p>
 <p data-i18n="tk_hist_identity">Devices are matched between scans by <b>hardware ID</b> where one is known, and only by address where it is not. That is what makes the comparison worth reading: a device that picked up a new address from DHCP is reported as changed rather than as one device disappearing and another appearing.</p>
 <p data-i18n="tk_hist_identity_p2">A device counts as changed when its address, name, maker, type, or set of open ports is different from last time. A newly opened port on a device that was there yesterday is the interesting case, and it shows up here.</p>
 <p data-i18n="tk_hist_storage">History is kept in <code>%LocalAppData%\KillerScan\history.json</code> as plain readable JSON, with the last <b>fifty</b> scans retained. Each entry holds the time, the target, and the devices with their names, hardware IDs, makers, types, and open ports.</p>
@@ -551,7 +552,7 @@ window.addEventListener('resize', fit);
 </div>
 <footer class="statusbar">
 <span class="left"><a href="https://github.com/SteveTheKiller/KillerScan" target="_blank" rel="noopener">Source on GitHub</a> &middot; GPLv3 &middot; Part of <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
-<span class="right"><span id="verEgg" title="click me">v1.6.1</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
+<span class="right"><span id="verEgg" title="click me">v1.7.0</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 <div class="egg-toast" id="eggToast"></div>

@@ -15,7 +15,7 @@
     <!-- Shown in the About card beside the version so a user can tell how old their build
          is. Keep the prior release date while development is Unreleased. Set the new date
          immediately before release so it matches the dated CHANGELOG section. -->
-    <ReleaseDate>2026-08-29</ReleaseDate>
+    <ReleaseDate>2026-09-05</ReleaseDate>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 

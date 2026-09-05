@@ -24,14 +24,15 @@
 - MAC vendor lookup across the full IEEE registries (MA-L, MA-M, MA-S) with randomized-MAC detection; vendor database refreshable in-app
 - Weighted-score classifier identifies routers, hypervisors, Windows and Linux boxes, printers, NAS, cameras, IoT, mobile, and more
 - Right-click to copy IP/MAC/hostname, launch RDP/SSH/browser, or override a device type; SSH asks which account to use and remembers it per device
-- Permanent Scan, Topology, Keep Alive and Terminal views, each keeping its own state
-- Topology (F9) infers how the network fits together, with movable multi-select device boxes, four arrangement modes, and full-resolution PNG export
-- Keep Alive (F2) watches any number of devices at once as status cards with latency sparklines, packet loss, per-device checks and event logs
+- Permanent Devices, Services, Topology, Keep Alive and Terminal views, each keeping its own state
+- Topology (F8) infers how the network fits together, with movable multi-select device boxes, four arrangement modes, and full-resolution image or SVG export
+- Keep Alive (F9) watches any number of devices at once as status cards with latency sparklines, packet loss, per-device checks and event logs
 - Embedded terminals run PowerShell 7, ping and SSH with KillerShell's prompt and the KillerScripts module carried inside the EXE
-- Deep Scan rescans every discovered host exhaustively; scan profiles (F10) remember targets and can follow with Deep Scan
-- Scan history (F6) compares runs for added, missing and changed devices, with trusted-device baselines and unknown-device alerts
-- A service-centric view (F8) organizes results by service, port and device
-- Export follows the view: devices as CSV or HTML, topology as PNG, services as CSV
+- A speed test (F4) runs in the terminal, using the Ookla CLI when installed and a built-in HTTP test when it is not
+- Deep Scan rescans every discovered host exhaustively; scan profiles (Ctrl+Shift+P) remember targets and can follow with Deep Scan
+- Scan history (Ctrl+H) compares runs for added, missing and changed devices, or shows a saved run in full, with trusted-device baselines and unknown-device alerts
+- A service-centric view (F7) organizes results by service, port and device
+- Export follows the view: devices as CSV or HTML, services as CSV, topology as PNG, JPG or SVG, the Keep Alive run as CSV or a page, and the terminal session as text
 - Headless command line for scripts and RMM: /scan, /probe, /network, offline /vendor, /export to CSV, JSON or HTML, filters, sorting, limits, timeouts, and real exit codes
 - Scan several networks in one pass: comma-separated CIDR blocks, single hosts, and ranges
 - Thirteen themes, localized in fifteen languages
