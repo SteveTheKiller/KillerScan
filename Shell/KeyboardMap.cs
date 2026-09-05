@@ -19,8 +19,8 @@ namespace KillerScan.Shell
 
         private KbLayer _kbLayer = KbLayer.Base;
         private bool _kbHooked;
-        private readonly Dictionary<string, (Border Cap, TextBlock Act, Rectangle Bar)> _kbKeys = new();
-        private readonly Dictionary<KbLayer, Button> _kbLayerBtns = new();
+        private readonly Dictionary<string, (Border Cap, TextBlock Act, Rectangle Bar)> _kbKeys = [];
+        private readonly Dictionary<KbLayer, Button> _kbLayerBtns = [];
 
         private static readonly (KbLayer Layer, string Caption)[] KbLayerTabs =
         [
@@ -77,13 +77,13 @@ namespace KillerScan.Shell
         {
             var map = new Dictionary<KbLayer, Dictionary<string, List<(string, string, string)>>>
             {
-                [KbLayer.Base] = new(), [KbLayer.Ctrl] = new(), [KbLayer.CtrlShift] = new(), [KbLayer.Alt] = new(),
+                [KbLayer.Base] = [], [KbLayer.Ctrl] = [], [KbLayer.CtrlShift] = [], [KbLayer.Alt] = [],
             };
-            foreach (var row in ShortcutRows)
+            foreach (var (keys, desc, cat) in ShortcutRows)
             {
-                if (!TryParseGesture(row.Keys, out var layer, out var id)) continue;
+                if (!TryParseGesture(keys, out var layer, out var id)) continue;
                 if (!map[layer].TryGetValue(id, out var list)) map[layer][id] = list = [];
-                list.Add((row.Keys, row.Desc, row.Cat));
+                list.Add((keys, desc, cat));
             }
             return map;
         }
