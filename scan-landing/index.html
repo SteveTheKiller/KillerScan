@@ -104,6 +104,7 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <a class="tb-dl" href="https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe"><svg viewBox="0 0 24 24"><path d="M11 4h2v7h3l-4 5-4-5h3V4zM5 18h14v2H5z"/></svg><span data-i18n="nav_dl">Download</span></a>
 <span class="tb-spacer"></span>
 <nav class="tb-nav">
+<a href="help.html" data-i18n="nav_help">Help</a>
 <a href="technical.html" data-i18n="nav_tech">Technical</a>
 <a href="about.html" data-i18n="nav_about">About</a>
 </nav>
@@ -183,8 +184,8 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 </div>
 </div>
 <div class="hero-blurbs">
-<div class="blurb"><h3 data-i18n="b3_t">By a field tech, for field techs</h3><p data-i18n="b3_d">KillerScan was built on the bench while working at a large MSP, to answer the question every tech asks on a strange network: what is actually here?</p><p data-i18n="b3_d2">Through constant and ongoing experience (trial and error) the discovery and classification algorithms are still being perfected.</p><p data-i18n="b3_d3">The <a href="https://github.com/SteveTheKiller/KillerScan/issues" target="_blank" rel="noopener">GitHub issues</a> page is open to anyone.</p><br><p data-i18n="b3_d4">Read the story behind it on the <a href="about.html">About</a> page.</p></div>
-<div class="blurb"><h3 data-i18n="b2_t">Built from scratch</h3><p data-i18n="b2_d">KillerScan is written in C# and WPF on .NET Framework 4.8, so it runs as one self-contained native .exe with no runtime to install. The full IEEE OUI database (~58,000 entries) is embedded, and mDNS and SSDP discovery are done with raw sockets; There is no bundled scanner engine.<br><br>The <a href="technical.html">Technical</a> page has the full breakdown of how it decides what each device is.</p></div>
+<div class="blurb"><h3 data-i18n="b3_t">What it is for</h3><p data-i18n="b3_d2"><b>Walking into a site you have never seen.</b> Scan the subnet and you have the router, the switches, the hypervisors, the NAS, the printers and the cameras before anyone hands you documentation.</p><br><p data-i18n="b3_d5"><b>Chasing an intermittent drop.</b> Put the gateway and the device in Keep Alive, watch which one actually loses packets, and paste the result straight into the ticket.</p><br><p data-i18n="b3_d6"><b>Asked what changed.</b> Scan history compares this run against the last one of the same target and names what appeared, what went missing and what opened a port.</p><br><p data-i18n="b3_d3">It runs from a USB stick on a machine you are not allowed to install anything on, and nothing it finds leaves that machine. Bug reports and requests go on the <a href="https://github.com/SteveTheKiller/KillerScan/issues" target="_blank" rel="noopener">GitHub issues</a> page.</p><br><p data-i18n="b3_d4">Read the story behind it on the <a href="about.html">About</a> page.</p></div>
+<div class="blurb"><h3 data-i18n="b2_t">Built from scratch</h3><p data-i18n="b2_d">KillerScan is written in C# and WPF on .NET Framework 4.8, so it runs as one self-contained native .exe with no runtime to install. Costura packs every dependency into that single file.<br><br>The full IEEE OUI database (~58,000 entries) is embedded and read with longest-prefix matching, so vendor lookups never touch the internet.<br><br>Discovery is an async ARP and ICMP sweep, roughly 200 probes in flight at once, with a TCP connect fallback for hosts that ignore ping.<br><br>mDNS and SSDP run on raw UDP multicast sockets, with the packets built and parsed by hand. There is no scanner engine behind any of it.<br><br>The <a href="technical.html">Technical</a> page has the full breakdown of how it decides what each device is.</p></div>
 <div class="blurb"><h3 data-i18n="b1_t">Fully featured</h3><ul class="blurb-list" data-i18n="b1_d">
 <li>ARP cache plus a parallel ping sweep, then a second ARP read to catch ICMP-blockers</li>
 <li>TCP fingerprinting across 30+ service ports</li>
@@ -193,7 +194,8 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <li>Weighted classifier: routers, NAS, printers, cameras, IoT, phones and more</li>
 <li>Topology, Keep Alive and an embedded terminal beside the device list</li>
 <li>Scan history with trusted-device baselines and unknown-device alerts</li>
-<li>Export results to CSV, HTML or the arranged topology as a PNG</li>
+<li>Export follows the view: CSV, HTML, or the topology as PNG, JPG or SVG</li>
+<li>Speed test, device diagnostics and traceroute without leaving the app</li>
 <li>Headless command line for scripts, scheduled tasks and RMM</li>
 <li>Thirteen themes with live accent colors and remembered appearance settings</li>
 </ul></div>
@@ -251,8 +253,8 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 </div>
 <div class="egg-toast" id="eggToast"></div>
 
-<script src="ks-i18n.js?v=4"></script>
-<script src="ks.js?v=9"></script>
+<script src="ks-i18n.js?v=5"></script>
+<script src="ks.js?v=10"></script>
 <script src="feature-carousel.js?v=2"></script>
 <script>
 (function () {
@@ -263,12 +265,12 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
   // these are alt/title/aria-label text rather than DOM nodes, so applyLang cannot reach them and
   // the kscan-languagechange event re-applies them instead.
   var descriptionsEn = [
-    'The device list with the theme picker open, in the Dark theme',
+    'The device list with the scan history sidebar and the theme picker open, in the Dark theme',
     'The device menu, with diagnostics, remote actions and type overrides, in the Ectoplasm theme',
     'Topology and the device menu in the 98SE theme, localized in Hungarian',
     'Network topology beside the scan history sidebar, with the export menu offering transparent PNG, JPG and HTML',
     'Keep Alive watching four devices, with latency graphs, packet loss and per-device checks',
-    'The built-in terminal beside the scan profiles sidebar, in the Greed theme',
+    'The built-in terminal and its right-click menu, localized in Japanese',
     'The keyboard shortcut list in the 98SE theme',
     'The About card over the services view, in the Blood theme',
     'Headless command-line scan with color-coded results in a terminal',

@@ -51,6 +51,7 @@
 <a class="tb-dl" href="https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe"><svg viewBox="0 0 24 24"><path d="M11 4h2v7h3l-4 5-4-5h3V4zM5 18h14v2H5z"/></svg><span data-i18n="nav_dl">Download</span></a>
 <span class="tb-spacer"></span>
 <nav class="tb-nav">
+<a href="help.html" data-i18n="nav_help">Help</a>
 <a href="technical.html" class="on" data-i18n="nav_tech">Technical</a>
 <a href="about.html" data-i18n="nav_about">About</a>
 </nav>
@@ -108,25 +109,6 @@
 <nav class="outline">
 <a href="#stack" class="on" data-i18n="tk_164">Tech stack</a>
 <a href="#install" data-i18n="tk_165">Install &amp; data</a>
-<a href="#views" data-i18n="tk_views_nav">The four views</a>
-<a href="#keepalive" data-i18n="tk_ka_nav">Keep Alive</a>
-<a href="#checks" class="sub" data-i18n="tk_ka_checks_title">Per-device checks</a>
-<a href="#topology" data-i18n="tk_topo_nav">Topology</a>
-<a href="#arrangements" class="sub" data-i18n="tk_topo_modes_title">The four arrangements</a>
-<a href="#topology-png" class="sub" data-i18n="tk_topo_png_title">Exporting the picture</a>
-<a href="#terminal" data-i18n="tk_term_nav">Terminal</a>
-<a href="#prompt" class="sub" data-i18n="tk_term_prompt_title">The prompt and your edits</a>
-<a href="#terminal-commands" class="sub" data-i18n="tk_cmd_title">Commands in the terminal</a>
-<a href="#services" data-i18n="tk_svc_nav">Services view</a>
-<a href="#history" data-i18n="tk_hist_nav">Scan history</a>
-<a href="#trusted" class="sub" data-i18n="tk_trust_title">Trusted devices</a>
-<a href="#profiles" data-i18n="tk_prof_nav">Scan profiles</a>
-<a href="#export" data-i18n="tk_exp_nav">Export</a>
-<a href="#command-line" data-i18n="tk_cli_nav">Command line</a>
-<a href="#commands-options" class="sub" data-i18n="tk_cli_commands">Commands and options</a>
-<a href="#target-formats" class="sub" data-i18n="tk_cli_target_title">Target formats</a>
-<a href="#automation-output" class="sub" data-i18n="tk_cli_automation_title">Automation and output</a>
-<a href="#keyboard" data-i18n="tk_182">Keyboard &amp; app size</a>
 <a href="#pipeline" data-i18n="tk_166">The scan pipeline</a>
 <a href="#phase0" class="sub" data-i18n="tk_23">Phase 0: building the address list</a>
 <a href="#phase1" class="sub" data-i18n="tk_25">Phase 1: discovery (who is out there?)</a>
@@ -159,7 +141,8 @@
 
 <div class="tech-sec" id="stack">
 <h2 data-i18n="tk_3">Tech stack</h2>
-<p data-i18n="tk_4">KillerScan is a native Windows app. There is no Electron, no browser engine, no runtime to install, and no separate scanner program running behind the scenes. Everything listed below ships inside a single .exe that runs on its own:</p>
+<p data-i18n="tk_4">KillerScan is a native Windows app. There is no Electron, no browser engine, no runtime to install, and no separate scanner program running behind the scenes.</p>
+<p data-i18n="tk_4_p2">Everything listed below ships inside a single .exe that runs on its own:</p>
 <table class="spec-table"><tr><th data-i18n="tk_5">Component</th><th data-i18n="tk_6">Detail</th></tr>
 <tr><td data-i18n="tk_7">UI</td><td data-i18n="tk_8">WPF on .NET Framework 4.8 (net48), x64, custom window chrome</td></tr>
 <tr><td data-i18n="tk_9">Host discovery</td><td data-i18n="tk_10">ARP cache parse + <code>SendARP</code> P/Invoke (iphlpapi.dll), async parallel ICMP ping sweep with a <code>TcpClient</code> connect fallback for hosts that block ping</td></tr>
@@ -172,210 +155,20 @@
 
 <div class="tech-sec" id="install">
 <h2 data-i18n="tk_19">Install &amp; data</h2>
-<p data-i18n="tk_20">KillerScan is a single .exe. Put it anywhere and run it as is, or use the built-in installer. By default it installs just for you: the app is copied into your user folder, with a Start Menu shortcut and a normal Windows uninstall entry registered for your account alone, needing no admin rights, no .NET runtime, and nothing else installed. Tick <b>Install for all users</b> in that prompt and it goes to Program Files for every account on the PC instead, which is the one case where Windows asks for permission. Installation also adds KillerScan to PATH, so a newly opened terminal can run <code>killerscan</code> from any folder. When you run it from outside its installed location, a <b>PORTABLE</b> badge and an <b>Install KillerScan...</b> button appear in the status bar.</p>
-</div>
-
-<div class="tech-sec" id="views">
-<h2 data-i18n="tk_views_title">The four views</h2>
-<p data-i18n="tk_views_intro">The buttons on the right of the toolbar are permanent views rather than windows that come and go. Each one keeps its own state while you work in the others, so moving from a scan to a topology picture and back does not throw anything away. Right-click the view buttons to change their icon size or move their captions. When the window is too narrow for all of them, the view buttons overflow into a menu instead of the input bar being squeezed.</p>
-<table class="spec-table"><tr><th data-i18n="tk_views_col_view">View</th><th data-i18n="tk_views_col_for">What it is for</th></tr>
-<tr><td data-i18n="tk_views_scan">Devices</td><td data-i18n="tk_views_scan_d">The results table: every device found, with its address, name, hardware ID, maker, type, and open ports.</td></tr>
-<tr><td data-i18n="tk_views_topo">Topology</td><td data-i18n="tk_views_topo_d">The same devices drawn as a picture of the network, arranged four different ways and exportable as an image.</td></tr>
-<tr><td data-i18n="tk_views_ka">Keep Alive</td><td data-i18n="tk_views_ka_d">A continuous watch on up to sixteen addresses, each with its own latency graph, checks, and event log.</td></tr>
-<tr><td data-i18n="tk_views_term">Terminal</td><td data-i18n="tk_views_term_d">A real terminal running PowerShell, ping, or SSH inside the app, using the Windows console engine.</td></tr>
-</table>
-<p data-i18n="tk_views_sidebar">Scan history and scan profiles are not views. They share a sidebar that slides out from the icon rail on the left, resizes by dragging its edge, and cross-fades between the two sections.</p>
-</div>
-
-<div class="tech-sec" id="keepalive">
-<h2 data-i18n="tk_ka_title">Keep Alive</h2>
-<p data-i18n="tk_ka_intro">Keep Alive answers the question you ask on every intermittent fault: is this thing actually dropping, and when? It watches up to <b>sixteen</b> addresses at once. Open it with <b>F2</b> and the target box is already filled in with your gateway, your DNS server, and whatever device you had selected, so the common case needs no typing. Select several devices in the results table first and choose Keep Alive, and all of them are watched together. Targets are separated by commas, semicolons, or new lines, and duplicates are dropped.</p>
-<p data-i18n="tk_ka_loop">Every target is pinged in parallel on a fixed <b>two second</b> cadence, and the loop subtracts the time the pings themselves took so the interval stays honest rather than drifting. Each ping is given <b>1.2 seconds</b> to answer before it counts as a miss.</p>
-<p data-i18n="tk_ka_card">Each target gets its own card showing a status dot and the latest round-trip time, the state in words, a latency graph, and a line with packet loss, the number of pings sent, and the time of the last change of state. The graph keeps the last <b>forty</b> samples, which at a two second cadence is a little over a minute of history. A missed reply is drawn at the top of the graph rather than left as a gap, so an outage reads as a spike you can see at a glance. The vertical scale never drops below 20 ms, which stops a healthy local link from looking like a field of spikes. Average latency counts only the pings that came back, and loss is the plain percentage of pings that did not.</p>
-<p data-i18n="tk_ka_events">Below that, each card carries its own event log, capped at thirty lines. It records only transitions, not every ping, so the log is a short list of when the device went down and when it came back, in green and red, rather than a wall of identical successes.</p>
-<p data-i18n="tk_ka_menu">Right-click a card to copy its address, run its checks again, reset its counters without disturbing the other targets, or drop it from the run, which also rewrites the target box to match. Stopping a run leaves the results on screen; starting again clears them. The toolbar Copy button walks every card in order and copies the whole run, counters, checks, and event log included, as tab separated text that pastes cleanly into a ticket.</p>
-
-<h3 id="checks" data-i18n="tk_ka_checks_title">Per-device checks</h3>
-<p data-i18n="tk_ka_checks_intro">Every card also carries its own set of checks, and they run for the whole set as soon as a run starts, four cards at a time. You can rerun them for one card from its right-click menu. The same checks are what <b>F3</b> runs against a single selected device. They are:</p>
-<table class="spec-table"><tr><th data-i18n="tk_ka_checks_col_check">Check</th><th data-i18n="tk_ka_checks_col_what">What it does</th></tr>
-<tr><td data-i18n="tk_ka_check_route">Route</td><td data-i18n="tk_ka_check_route_d">Asks Windows which interface and next hop it would actually use to reach the address, and reports "on-link" when the device is on your own segment. This reads the local routing table rather than sending anything.</td></tr>
-<tr><td data-i18n="tk_ka_check_rdns">Reverse DNS</td><td data-i18n="tk_ka_check_rdns_d">Looks up the name attached to the address, with a 1.5 second limit.</td></tr>
-<tr><td data-i18n="tk_ka_check_fdns">Forward DNS</td><td data-i18n="tk_ka_check_fdns_d">Takes that name straight back to DNS and checks whether it resolves to the address you started from, reported as Match or Mismatch. A mismatch is the usual sign of stale records.</td></tr>
-<tr><td data-i18n="tk_ka_check_icmp">ICMP</td><td data-i18n="tk_ka_check_icmp_d">One ping, reported as a time or as no reply. A missing reply does not mean the device is off.</td></tr>
-<tr><td data-i18n="tk_ka_check_ports">Ports</td><td data-i18n="tk_ka_check_ports_d">Tries SSH, HTTP, HTTPS, SMB, and RDP, plus any ports already discovered for that device by a scan, up to sixty-four in total, each with a 1.5 second limit. They are tried one at a time on purpose, so a diagnostic never looks like a port scan to the device or to whatever is watching the network.</td></tr>
-<tr><td data-i18n="tk_ka_check_trace">Trace</td><td data-i18n="tk_ka_check_trace_d">A traceroute of up to thirty hops, two seconds a hop, appended live as each hop answers. A hop that does not answer is reported as a timeout instead of ending the trace.</td></tr>
-</table>
-<p data-i18n="tk_ka_checks_note">The groups run at the same time rather than one after another, so a slow DNS server does not hold up the port checks. A timestamp is added when they all finish.</p>
-</div>
-
-<div class="tech-sec" id="topology">
-<h2 data-i18n="tk_topo_title">Topology</h2>
-<p data-i18n="tk_topo_intro"><b>F9</b> draws the scan as a picture. It is worth being straight about what that picture is: KillerScan does not interrogate your switches, so it is not a cable map. Nothing here depends on CDP, LLDP, or a managed switch admitting anything. It takes what the scan already knows, works out which device is your gateway, which is you, and which is your DNS server, and draws every other device as a spoke off the local network in the middle. Where the DNS server is the gateway, it is drawn once rather than twice.</p>
-<p data-i18n="tk_topo_boxes">Every device is a box you can pick up and move. Click to select, Ctrl+click to add to the selection, and drag any selected box to move the whole selection together. Boxes are held inside the canvas, and the dashed connector to the middle is redrawn as you drag rather than after you let go, so it stays attached. Selection is shared with the results table, so a box you select in the picture is the row that is selected when you switch back. Right-click a box for the same device menu the table gives you. Typing in the toolbar filter filters the picture too, so you can draw only the printers, or only one vendor.</p>
-<p data-i18n="tk_topo_positions">Positions you set are remembered by address for as long as the app is open, so changing the filter or refreshing the view does not shuffle your layout back. Starting a new scan or switching arrangement clears them, because both make the old positions meaningless.</p>
-
-<h3 id="arrangements" data-i18n="tk_topo_modes_title">The four arrangements</h3>
-<p data-i18n="tk_topo_modes_intro">Cycle them with <b>F7</b> or pick one directly with <b>Ctrl+1</b> through <b>Ctrl+4</b>. Your choice is remembered between runs. The button is icon-only and stays where it is once used.</p>
-<table class="spec-table"><tr><th data-i18n="tk_topo_modes_col">Arrangement</th><th data-i18n="tk_topo_modes_col2">How it groups</th></tr>
-<tr><td data-i18n="tk_topo_role">Role</td><td data-i18n="tk_topo_role_d">The default. Five bands in order of how much they matter on a strange network: network gear first, then servers, hypervisors and NAS, then workstations and phones, then printers, cameras, IoT and media devices, then everything else. Inside a band, devices sit by type and then by address.</td></tr>
-<tr><td data-i18n="tk_topo_type">Type</td><td data-i18n="tk_topo_type_d">One group per device type, alphabetically, then by address.</td></tr>
-<tr><td data-i18n="tk_topo_ip">IP</td><td data-i18n="tk_topo_ip_d">No grouping at all. A plain grid in address order, which is the fastest way to spot a gap or a device sitting somewhere it should not be.</td></tr>
-<tr><td data-i18n="tk_topo_vendor">Vendor</td><td data-i18n="tk_topo_vendor_d">One group per maker, alphabetically, with devices whose maker could not be resolved collected at the end.</td></tr>
-</table>
-<p data-i18n="tk_topo_columns">The number of columns follows the width of the window, so the picture reflows instead of scrolling sideways, and each new group starts on its own row with a small gap in front of it.</p>
-
-<h3 id="topology-png" data-i18n="tk_topo_png_title">Exporting the picture</h3>
-<p data-i18n="tk_topo_png_body">Export while topology is showing and you get the arranged picture as a PNG. It is rendered from the canvas itself rather than from what happens to be on screen, so devices scrolled out of view are in the file, at full size, with the arrangement and the positions you set. The background is the current theme's content surface, so the image matches the app you exported it from instead of arriving on a white sheet.</p>
-</div>
-
-<div class="tech-sec" id="terminal">
-<h2 data-i18n="tk_term_title">Terminal</h2>
-<p data-i18n="tk_term_intro">The Terminal view is a real terminal, not a box that shows the output of a command after it finishes. It is built on the Windows pseudoconsole, the same mechanism Windows Terminal uses, so full-screen programs, colors, and interactive prompts behave the way they do anywhere else. The escape sequences are parsed by hand and the text is drawn directly rather than through a text box, which is what keeps a busy screen smooth.</p>
-<p data-i18n="tk_term_detail">It keeps five thousand lines of scrollback, resizes the running program properly when you resize the pane rather than just reflowing what is already there, and reads output as UTF-8. Select with the mouse, and copy and paste with Ctrl+Shift+C and Ctrl+Shift+V, Ctrl+V, Shift+Insert, or the middle button. Ctrl+plus, Ctrl+minus and Ctrl+0 change the font size, as does Ctrl and the wheel. If ProFont IIx Nerd Font is installed it is used, otherwise it falls back through Cascadia, Consolas, Lucida Console, and Courier New.</p>
-<p data-i18n="tk_term_shell">For a shell it prefers <b>PowerShell 7</b>, looking for <code>pwsh.exe</code> on your PATH first and then in the usual Program Files locations, and falls back to Windows PowerShell 5.1 when 7 is not installed. Device actions open here too: ping runs a continuous ping with replies in green and timeouts, unreachable and failure lines in red, and <b>Escape</b> stops it, which the status line tells you at the time. SSH runs the Windows SSH client with the username you gave for that device, passed as an argument rather than through a shell, so nothing you typed is ever interpreted as a command. Closing a terminal ends its process, and a program that exits on its own reports its exit code rather than leaving a dead pane.</p>
-
-<h3 id="prompt" data-i18n="tk_term_prompt_title">The prompt and your edits</h3>
-<p data-i18n="tk_term_prompt_body">The terminal uses KillerShell's prompt, and it is a file you own rather than something baked into the app. On first use it is unpacked to <code>%LOCALAPPDATA%\KillerScan\prompt\</code>. Two files land there: <code>KillerPrompt.default.ps1</code>, which is rewritten whenever the app changes so it always matches the version you are running, and <code>KillerPrompt.ps1</code>, which is written only if it is not already there. That second one is yours. Edit it however you like and an upgrade will never touch it; compare it against the refreshed default file when you want to pick up a change. Both are written with a byte order mark, because Windows PowerShell 5.1 reads a file without one in the system codepage and mangles the box drawing characters. Set <code>KS_PROMPT=0</code> in the environment to skip the whole thing.</p>
-<p data-i18n="tk_term_modules">The <b>KillerScripts</b> PowerShell module travels inside the executable, which is the point: it is there on a locked-down machine where you cannot install anything. It is unpacked per version to <code>%LOCALAPPDATA%\KillerScan\Modules\</code> the first time you open a terminal, written to a temporary name and moved into place with a marker file written last so a half-finished unpack is never used. The module path is appended rather than prepended, so a copy you installed properly from the gallery still wins.</p>
-<h3 id="terminal-commands" data-i18n="tk_cmd_title">Commands in the terminal</h3>
-<p data-i18n="tk_cmd_intro">The terminal carries a small KillerScan module of its own, unpacked from inside the exe like the rest. It gives you four short commands, and the point of them is not that they are shorter than the command line: they hand back <b>objects</b> rather than text. A scan you run this way can be filtered, sorted, counted and piped like anything else in PowerShell, without a single line of parsing.</p>
-<table class="spec-table"><tr><th data-i18n="tk_cmd_col_cmd">Command</th><th data-i18n="tk_cmd_col_what">What it gives you</th></tr>
-<tr><td><code>scan</code></td><td data-i18n="tk_cmd_scan">One object per device, with <code>Ip</code>, <code>Hostname</code>, <code>Mac</code>, <code>Vendor</code>, <code>Type</code> and <code>Ports</code>, plus the fingerprint fields behind them. Takes targets in the same forms the subnet box does, and scans the active network when you give it none. <code>-Quick</code> for discovery only, <code>-Timeout</code> in seconds.</td></tr>
-<tr><td><code>probe</code></td><td data-i18n="tk_cmd_probe">The same object for one host, examined in depth.</td></tr>
-<tr><td><code>vendor</code></td><td data-i18n="tk_cmd_vendor">The maker of a MAC address, read offline from the database inside the app. Accepts addresses from the pipeline, and gives back nothing at all rather than the word "Unknown" when there is no match.</td></tr>
-<tr><td><code>netinfo</code></td><td data-i18n="tk_cmd_netinfo">The active network as an object: <code>Interface</code>, <code>Address</code>, <code>Subnet</code>, <code>Gateway</code> and <code>Dns</code>. A field Windows could not report is empty rather than a dash.</td></tr>
-</table>
-<div class="cli-demo" aria-label="KillerScan terminal command examples"><span class="prompt">&gt;</span> scan <span class="arg">| ? Type -eq 'Printer' | ft Ip, Hostname, Vendor</span>
-<span class="prompt">&gt;</span> scan <span class="arg">192.168.8.0/24 -Quick | measure</span>
-<span class="prompt">&gt;</span> scan <span class="arg">| ? { $_.Ports -contains 3389 }</span>
-<span class="prompt">&gt;</span> scan <span class="arg">| sort Vendor | export-csv site.csv -NoTypeInformation</span>
-<span class="prompt">&gt;</span> scan <span class="arg">(netinfo).Subnet</span>
-<span class="prompt">&gt;</span> probe <span class="arg">192.168.8.20 | fl *</span></div>
-<p data-i18n="tk_cmd_note">Each command is the app doing the work: the module shells out to the same command line an installed copy puts on PATH, and reads its JSON. It knows where to find a portable copy too, so the commands work from a folder you just dropped the exe into. The names are deliberately short because they live in this terminal rather than in your own PowerShell profile, where <code>scan</code> would be a rude thing to claim.</p>
-</div>
-
-<div class="tech-sec" id="services">
-<h2 data-i18n="tk_svc_title">Services view</h2>
-<p data-i18n="tk_svc_body"><b>F8</b> turns the results inside out. Instead of one row per device listing its ports, you get one row per open port: the service, the port number, and the device it belongs to, with its name, address and type. It answers the question the device table makes you work for, which is "what is running SSH on this network", or "who is serving HTTP that should not be". Thirty-three well-known ports are named, and anything else is listed by its number rather than guessed at. Sort by any column, and your sort survives a rescan. The list follows the toolbar filter, so it shows the same devices the table would. Ctrl+A selects everything while the view is active, and Export offers the service list as its own CSV.</p>
-</div>
-
-<div class="tech-sec" id="history">
-<h2 data-i18n="tk_hist_title">Scan history</h2>
-<p data-i18n="tk_hist_body">Every completed scan is recorded, and <b>F6</b> opens the list, newest first. Pick an entry and KillerScan compares it against the previous scan <b>of the same target</b>, so comparing a subnet against an unrelated one is not something you can do by accident. The comparison is shown as one flat table of added, missing, and changed devices, in that order, with a one-line summary of the three counts. The first scan of a target says so plainly rather than reporting every device as new.</p>
-<p data-i18n="tk_hist_identity">Devices are matched between scans by <b>hardware ID</b> where one is known, and only by address where it is not. That is what makes the comparison worth reading: a device that picked up a new address from DHCP is reported as changed rather than as one device disappearing and another appearing. A device counts as changed when its address, name, maker, type, or set of open ports is different from last time. A newly opened port on a device that was there yesterday is the interesting case, and it shows up here.</p>
-<p data-i18n="tk_hist_storage">History is kept in <code>%LocalAppData%\KillerScan\history.json</code> as plain readable JSON, with the last <b>fifty</b> scans retained. Each entry holds the time, the target, and the devices with their names, hardware IDs, makers, types, and open ports.</p>
-
-<h3 id="trusted" data-i18n="tk_trust_title">Trusted devices</h3>
-<p data-i18n="tk_trust_body">The first full scan that finds anything, on a machine that has never trusted a device, becomes your <b>baseline</b>: everything found is marked trusted and the status bar tells you how many. There is no setup step to forget. From then on, every scan counts the devices that are not trusted, and the status bar reports how many unknown devices turned up. Toggle trust for any device from its right-click menu. Trust is stored against the same hardware ID used by history, in <code>%LocalAppData%\KillerScan\devices.json</code>, alongside the names you have given devices by hand, so renaming a device does not affect whether it is trusted and reconnecting it on a different address does not make it a stranger.</p>
-</div>
-
-<div class="tech-sec" id="profiles">
-<h2 data-i18n="tk_prof_title">Scan profiles</h2>
-<p data-i18n="tk_prof_body"><b>F10</b> opens saved profiles. A profile is deliberately small: a name, the targets, and whether to follow the scan with Deep Scan. Save the current target under a name, and saving again with the same name replaces it. <b>Load</b> puts the target in place without scanning, for when you want to change something first. <b>Run</b> starts it immediately. If the profile is set to deep scan, the exhaustive pass follows automatically as soon as the normal scan finishes, so a site you visit regularly is one keystroke rather than a sequence. Profiles live in <code>%LocalAppData%\KillerScan\profiles.json</code>.</p>
-</div>
-
-<div class="tech-sec" id="export">
-<h2 data-i18n="tk_exp_title">Export</h2>
-<p data-i18n="tk_exp_body">Export follows the view you are in. The device list is always available as CSV or as the HTML report. In Topology you also get the arranged picture as a PNG, and in Services you also get the service list as its own CSV. Files are named with the date and time, so exporting the same network twice in an afternoon does not overwrite the morning's evidence.</p>
-<p data-i18n="tk_exp_html">The HTML report is one self-contained file. It carries the whole device table with every column sortable by clicking its heading, addresses sorted as numbers rather than as text, device types colored the way they are in the app, and a theme and accent picker with the same thirteen themes, remembered in the browser for the next time that report is opened. It needs nothing from the network to render.</p>
-</div>
-
-<div class="tech-sec" id="command-line">
-<h2 data-i18n="tk_cli_title">Command line</h2>
-<p data-i18n="tk_cli_intro">The same scanner that powers the window can run headless from Command Prompt, PowerShell, scripts, scheduled tasks, and RMM tools. Install KillerScan, open a new terminal, and call it by name. Windows commands are case-insensitive, so <code>killerscan</code> and <code>KillerScan</code> are the same command. Running it without any flags opens the normal app.</p>
-<p data-i18n="tk_ssh_security"><b>SSH usernames and authentication.</b> When you launch SSH from a device's right-click menu, KillerScan asks for the username the first time and remembers only that username against the device's MAC address. It never asks for, sees, or stores passwords or private keys. The normal Windows SSH client handles the connection and all authentication.</p>
-<div class="cli-demo" aria-label="KillerScan command examples"><span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan 192.168.8.0/24</span>
-<span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan 192.168.8.10-50 /quick</span>
-<span class="prompt">C:\&gt;</span> killerscan <span class="arg">/probe 192.168.8.20 /json /timeout 30</span>
-<span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan /ports 22,443 /sort vendor /export report.html</span>
-<span class="prompt">C:\&gt;</span> killerscan <span class="arg">/help</span></div>
-
-<h3 id="commands-options" data-i18n="tk_cli_commands">Commands and options</h3>
-<table class="spec-table cli-table"><tr><th data-i18n="tk_cli_syntax">Syntax</th><th data-i18n="tk_cli_action">What it does</th></tr>
-<tr><td><code>killerscan</code></td><td data-i18n="tk_cli_gui">Open the normal KillerScan window.</td></tr>
-<tr><td><code>killerscan /scan</code></td><td data-i18n="tk_cli_local">Detect and scan the active local IPv4 subnet.</td></tr>
-<tr><td><code>killerscan /scan &lt;targets&gt;</code></td><td data-i18n="tk_cli_targets">Scan one or more explicit IPv4 targets.</td></tr>
-<tr><td><code>killerscan /probe &lt;IPv4&gt;</code></td><td data-i18n="tk_cli_probe">Deep-probe one host, scanning ports 1-1024 plus KillerScan's extended service list and collecting every available fingerprint.</td></tr>
-<tr><td><code>killerscan /network</code></td><td data-i18n="tk_cli_network">Print the detected interface, local address, subnet, gateway and DNS server without scanning.</td></tr>
-<tr><td><code>killerscan /vendor &lt;MAC&gt;</code></td><td data-i18n="tk_cli_vendorcmd">Resolve a MAC address against the embedded offline IEEE OUI database.</td></tr>
-<tr><td><code>/quick</code></td><td data-i18n="tk_cli_quick">Run discovery, hostname, MAC, vendor, and lightweight device classification without the full port and fingerprint probe.</td></tr>
-<tr><td><code>/progress</code>, <code>/timeout N</code></td><td data-i18n="tk_cli_progress">Report status every five percent or cancel after a deadline.</td></tr>
-<tr><td><code>/filter text</code>, <code>/type text</code>, <code>/vendor-filter text</code>, <code>/ports p,p</code></td><td data-i18n="tk_cli_filters">Keep only matching devices. The general filter searches displayed values and every collected fingerprint.</td></tr>
-<tr><td><code>/sort field</code>, <code>/descending</code>, <code>/limit N</code></td><td data-i18n="tk_cli_sorting">Order by IP, hostname, MAC, vendor, type or open-port count, reverse it if wanted, then cap the result count.</td></tr>
-<tr><td><code>/format kind</code></td><td data-i18n="tk_cli_format">Select table, CSV, JSON or interactive HTML. The shorthand flags <code>/table</code>, <code>/csv</code>, <code>/json</code> and <code>/html</code> do the same.</td></tr>
-<tr><td><code>/export &lt;path&gt;</code></td><td data-i18n="tk_cli_export">Write the output to a file. The .csv, .json, .html or .htm extension selects its format unless /format overrides it.</td></tr>
-<tr><td><code>/no-header</code>, <code>/theme name</code></td><td data-i18n="tk_cli_headers">Drop table/CSV headings, or select any of the thirteen app themes for HTML output.</td></tr>
-<tr><td><code>/fail-empty</code></td><td data-i18n="tk_cli_failempty">Return exit code 3 when filtering leaves no devices, making empty automation results explicit.</td></tr>
-<tr><td><code>/quiet</code></td><td data-i18n="tk_cli_quiet">Suppress normal progress and results. Intended for unattended use with /export and an exit-code check.</td></tr>
-<tr><td><code>/help</code>, <code>-h</code>, <code>/?</code></td><td data-i18n="tk_cli_help">Print the complete built-in command reference.</td></tr>
-<tr><td><code>/version</code>, <code>-v</code></td><td data-i18n="tk_cli_version">Print the installed version.</td></tr>
-</table>
-
-<h3 id="target-formats" data-i18n="tk_cli_target_title">Target formats</h3>
-<p data-i18n="tk_cli_target_body">Targets use exactly the same syntax as the subnet box: CIDR blocks such as <code>192.168.8.0/24</code>, a single host, a full address range, or a range with only the final octet on the right. Supply several targets separated by commas or as separate arguments. Overlaps are removed and the combined safety ceiling is 65,536 addresses.</p>
-<div class="codeblock">killerscan <span class="arg">/scan 192.168.8.0/24</span>
-killerscan <span class="arg">/scan 192.168.8.25</span>
-killerscan <span class="arg">/scan 192.168.8.10-192.168.8.50</span>
-killerscan <span class="arg">/scan 192.168.8.10-50</span>
-killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
-
-<h3 id="automation-output" data-i18n="tk_cli_automation_title">Automation and output</h3>
-<p data-i18n="tk_cli_automation_body">KillerScan sends the result table to standard output and progress or errors to standard error, so redirecting the table does not mix in status messages. Ctrl+C cancels a running scan. Because KillerScan is also a graphical Windows app, Command Prompt may return its prompt before the headless process finishes; scripts that need the result must explicitly wait:</p>
-<div class="codeblock"><span class="cm">REM Command Prompt: wait, then read %ERRORLEVEL%</span>
-<span class="prompt">start /wait ""</span> killerscan <span class="arg">/scan 192.168.8.0/24 /export hosts.csv</span>
-
-<span class="cm"># PowerShell: wait for completion</span>
-<span class="prompt">Start-Process -Wait</span> killerscan <span class="arg">-ArgumentList '/scan 192.168.8.0/24 /export hosts.csv'</span></div>
-<table class="spec-table exit-table"><tr><th data-i18n="tk_cli_exit">Exit code</th><th data-i18n="tk_cli_meaning">Meaning</th></tr>
-<tr><td><code>0</code></td><td data-i18n="tk_cli_exit0">The scan and any requested export completed successfully.</td></tr>
-<tr><td><code>1</code></td><td data-i18n="tk_cli_exit1">The scan or export failed, or the scan was canceled.</td></tr>
-<tr><td><code>2</code></td><td data-i18n="tk_cli_exit2">A required value or scan target was missing or invalid.</td></tr>
-<tr><td><code>3</code></td><td data-i18n="tk_cli_exit3">No device matched, or an offline vendor lookup found no registration, when the command requested that distinction.</td></tr>
-</table>
-</div>
-
-<div class="tech-sec" id="keyboard">
-<h2 data-i18n="tk_183">Keyboard &amp; app size</h2>
-<p data-i18n="tk_184">Press <b>F1</b> at any time for the shortcuts, and <b>F1</b> again to switch between the two ways of reading them. The list groups them into two columns under colored category headings; the keyboard map draws a keyboard and paints each key in the color of the category it belongs to, which is the faster way to find out what a key does when you already have your hands on it. The shortcuts work wherever the focus happens to be, including inside the results table. Ctrl+F, Ctrl+A and Ctrl+C keep their usual meaning while you are typing in the subnet or filter box.</p>
-<table class="spec-table"><tr><th data-i18n="tk_185">Shortcut</th><th data-i18n="tk_186">What it does</th></tr>
-<tr><td>F5</td><td data-i18n="tk_187">Start or stop a scan</td></tr>
-<tr><td>Esc</td><td data-i18n="tk_188">Close an open overlay, or cancel a running scan</td></tr>
-<tr><td>Ctrl + R</td><td data-i18n="tk_189">Deep rescan the selected hosts</td></tr>
-<tr><td>Ctrl + F</td><td data-i18n="tk_190">Jump to the subnet box</td></tr>
-<tr><td>Ctrl + A</td><td data-i18n="tk_191">Select every device</td></tr>
-<tr><td>Ctrl + E</td><td data-i18n="tk_192">Export the results</td></tr>
-<tr><td>F2</td><td data-i18n="tk_ks_f2">Watch the selected devices in Keep Alive</td></tr>
-<tr><td>F3</td><td data-i18n="tk_ks_f3">Run the checks against the selected device</td></tr>
-<tr><td>F6</td><td data-i18n="tk_ks_f6">Open scan history</td></tr>
-<tr><td>F7</td><td data-i18n="tk_ks_f7">Cycle the topology arrangement</td></tr>
-<tr><td>Ctrl + 1 ... Ctrl + 4</td><td data-i18n="tk_ks_ctrl14">Pick a topology arrangement directly</td></tr>
-<tr><td>F8</td><td data-i18n="tk_ks_f8">Show the services view</td></tr>
-<tr><td>F9</td><td data-i18n="tk_ks_f9">Show the topology view</td></tr>
-<tr><td>F10</td><td data-i18n="tk_ks_f10">Open scan profiles</td></tr>
-<tr><td>Enter</td><td data-i18n="tk_198">Open the selected device in a browser</td></tr>
-<tr><td>Ctrl + P</td><td data-i18n="tk_199">Ping the selected device</td></tr>
-<tr><td>Ctrl + D</td><td data-i18n="tk_200">Open Remote Desktop to the selected device</td></tr>
-<tr><td>Ctrl + S</td><td data-i18n="tk_201">Connect to the selected device over SSH</td></tr>
-<tr><td>Ctrl + Shift + S</td><td data-i18n="tk_202">Choose an SSH account and connect</td></tr>
-<tr><td>Ctrl + C</td><td data-i18n="tk_203">Copy the selected IP address</td></tr>
-<tr><td>Ctrl + Shift + C</td><td data-i18n="tk_204">Copy the selected MAC address</td></tr>
-<tr><td>Ctrl + Alt + C</td><td data-i18n="tk_205">Copy the selected hostname</td></tr>
-<tr><td>Shift + F10</td><td data-i18n="tk_206">Open every action for the selected device</td></tr>
-<tr><td>Ctrl + Shift + +</td><td data-i18n="tk_193">Make the app bigger</td></tr>
-<tr><td>Ctrl + Shift + -</td><td data-i18n="tk_194">Make the app smaller</td></tr>
-<tr><td>Ctrl + Shift + 0</td><td data-i18n="tk_195">Reset the app size</td></tr>
-<tr><td>F1</td><td data-i18n="tk_196">Show the shortcut list, then the keyboard map</td></tr>
-<tr><td>F12</td><td data-i18n="tk_207">Open the About window</td></tr>
-</table>
-<p data-i18n="tk_197">Those last three set an app-wide size rather than zooming the results table on its own. Everything between the title bar and the status bar grows or shrinks together, and the text is laid out again at the new size instead of being stretched, so it stays sharp. The size is remembered between runs. You can also do it with the mouse: hover over the KillerScan wordmark in the title bar and roll the wheel, which moves in finer steps of two percent. Either way the range is 70% to 250%.</p>
+<p data-i18n="tk_20">KillerScan is a single .exe. Put it anywhere and run it as is, or use the built-in installer.</p>
+<p data-i18n="tk_20_p2">By default it installs just for you: the app is copied into your user folder, with a Start Menu shortcut and a normal Windows uninstall entry registered for your account alone, needing no admin rights, no .NET runtime, and nothing else installed. Tick <b>Install for all users</b> in that prompt and it goes to Program Files for every account on the PC instead, which is the one case where Windows asks for permission.</p>
+<p data-i18n="tk_20_p3">Installation also adds KillerScan to PATH, so a newly opened terminal can run <code>killerscan</code> from any folder. When you run it from outside its installed location, a <b>PORTABLE</b> badge and an <b>Install KillerScan...</b> button appear in the status bar.</p>
 </div>
 
 <div class="tech-sec" id="pipeline">
 <h2 data-i18n="tk_21">The scan pipeline</h2>
-<p data-i18n="tk_22">A scan runs in two stages. First KillerScan finds every device that is switched on and connected. Then it takes a closer look at each of those devices at the same time. Doing it in that order means the slow, detailed work only happens for addresses that actually replied, which keeps the whole scan fast.</p>
+<p data-i18n="tk_22">A scan runs in two stages. First KillerScan finds every device that is switched on and connected.</p>
+<p data-i18n="tk_22_p2">Then it takes a closer look at each of those devices at the same time. Doing it in that order means the slow, detailed work only happens for addresses that actually replied, which keeps the whole scan fast.</p>
 
 <h3 id="phase0" data-i18n="tk_23">Phase 0: building the address list</h3>
-<p data-i18n="tk_24">You give KillerScan the addresses to check, and it accepts more than one at a time: a subnet in the usual shorthand like <code>192.168.8.0/24</code> (that "/24" simply means the block of 256 addresses on your local network), a single address like <code>192.168.8.10</code>, a full range like <code>192.168.8.10-192.168.8.50</code>, or the short form of that same range, <code>192.168.8.10-50</code>. Separate as many of those as you like with commas; stray spaces around them are ignored rather than treated as a mistake. KillerScan turns the lot into one list of addresses worth testing, dropping duplicates where the entries overlap, and tells you rather than trying it if the total comes to more than 65,536 addresses. It also reads three things from your active network connection: your own address, your router's address (the gateway), and the DNS server you are set to use. Those are passed to the classifier so the router can be labeled correctly later on.</p>
+<p data-i18n="tk_24">You give KillerScan the addresses to check, and it accepts more than one at a time: a subnet in the usual shorthand like <code>192.168.8.0/24</code> (that "/24" simply means the block of 256 addresses on your local network), a single address like <code>192.168.8.10</code>, a full range like <code>192.168.8.10-192.168.8.50</code>, or the short form of that same range, <code>192.168.8.10-50</code>. Separate as many of those as you like with commas; stray spaces around them are ignored rather than treated as a mistake.</p>
+<p data-i18n="tk_24_p2">KillerScan turns the lot into one list of addresses worth testing, dropping duplicates where the entries overlap, and tells you rather than trying it if the total comes to more than 65,536 addresses. It also reads three things from your active network connection: your own address, your router's address (the gateway), and the DNS server you are set to use.</p>
+<p data-i18n="tk_24_p3">Those are passed to the classifier so the router can be labeled correctly later on.</p>
 
 <h3 id="phase1" data-i18n="tk_25">Phase 1: discovery (who is out there?)</h3>
 <p data-i18n="tk_26">Three things happen at roughly the same time:</p>
@@ -384,9 +177,12 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
 <li data-i18n="tk_28"><b>Ping sweep.</b> KillerScan pings every address on the list at once, where a ping is just the "are you there?" message that the <code>ping</code> command sends. It keeps around 200 going at a time and gives each one half a second to answer, so a typical home network finishes in a couple of seconds. Any address that stays quiet then gets a second chance: KillerScan quietly tries to open a connection on a few common ports (file sharing, remote desktop, web, SSH), and if any of them answers, the device still counts as present. That picks up machines set to ignore pings, and devices reached across a VPN, where the hardware-level ARP trick below cannot see them at all.</li>
 <li data-i18n="tk_29"><b>A second ARP read.</b> Many devices ignore pings but still respond at the lower hardware level, including a lot of phones, tablets, and smart-home gadgets. The pings quietly prompt Windows to record those devices in its table, so reading it again right after the sweep catches devices the ping alone would have missed. A direct hardware request fills in anything still missing.</li>
 </ul>
-<p data-i18n="tk_30">At the same time, KillerScan sends out two broadcast questions that many devices answer automatically. The first is <b>mDNS</b> (also called Bonjour), which Apple devices, printers, and Chromecasts use to announce themselves on a network. The second is <b>SSDP</b> (part of UPnP), used by smart TVs, media players, and similar gear. KillerScan listens a short, fixed time for each (about a second and a half) and matches every reply back to the device that sent it. Because the listening windows are short, this finishes about when the ping sweep does and the scan stays quick.</p>
+<p data-i18n="tk_30">At the same time, KillerScan sends out two broadcast questions that many devices answer automatically. The first is <b>mDNS</b> (also called Bonjour), which Apple devices, printers, and Chromecasts use to announce themselves on a network.</p>
+<p data-i18n="tk_30_p2">The second is <b>SSDP</b> (part of UPnP), used by smart TVs, media players, and similar gear. KillerScan listens a short, fixed time for each (about a second and a half) and matches every reply back to the device that sent it.</p>
+<p data-i18n="tk_30_p3">Because the listening windows are short, this finishes about when the ping sweep does and the scan stays quick.</p>
 
-<p data-i18n="tk_31">Once the live devices are known, KillerScan looks up each one's <b>MAC address</b>, the hardware ID it uses to name the maker. There is a catch on routed networks: a MAC address only travels within your local network segment, so for a device reached through a router or a VPN, Windows hands back the address of the tunnel or gateway instead of the device's own. Left unchecked, every device on the far side of a VPN would share one address and all be mislabeled as the same maker (a Fortinet SSL VPN connection is a common example). KillerScan spots this by discarding any MAC that turns up for several different addresses at once, treating those devices as having no reliable hardware ID and identifying them from their ports and services instead.</p>
+<p data-i18n="tk_31">Once the live devices are known, KillerScan looks up each one's <b>MAC address</b>, the hardware ID it uses to name the maker. There is a catch on routed networks: a MAC address only travels within your local network segment, so for a device reached through a router or a VPN, Windows hands back the address of the tunnel or gateway instead of the device's own.</p>
+<p data-i18n="tk_31_p2">Left unchecked, every device on the far side of a VPN would share one address and all be mislabeled as the same maker (a Fortinet SSL VPN connection is a common example). KillerScan spots this by discarding any MAC that turns up for several different addresses at once, treating those devices as having no reliable hardware ID and identifying them from their ports and services instead.</p>
 
 <figure class="diagram">
 <svg viewBox="0 0 740 470" xmlns="http://www.w3.org/2000/svg">
@@ -516,7 +312,8 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
 
 <div class="tech-sec" id="vendor">
 <h2 data-i18n="tk_60">Vendor resolution</h2>
-<p data-i18n="tk_61">Every network device has a MAC address, a hardware ID built in by its maker. The first half of that ID is assigned to a specific manufacturer, so it is the strongest clue to who built the device. A plain lookup is not always enough on its own, so KillerScan works through a fixed set of rules and uses the first one that matches:</p>
+<p data-i18n="tk_61">Every network device has a MAC address, a hardware ID built in by its maker. The first half of that ID is assigned to a specific manufacturer, so it is the strongest clue to who built the device.</p>
+<p data-i18n="tk_61_p2">A plain lookup is not always enough on its own, so KillerScan works through a fixed set of rules and uses the first one that matches:</p>
 <div class="codeblock">resolveVendor(mac):
   1. brand override?    first 24 bits in a hand-maintained table  -> that brand
   2. randomized MAC?    "locally administered" bit set            -> "(Randomized)"
@@ -524,10 +321,12 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
   4. otherwise          -> blank</div>
 
 <h3 id="brand" data-i18n="tk_62">1. Brand overrides</h3>
-<p data-i18n="tk_63">Some makers register their address ranges with the IEEE (the body that hands them out) as <b>"Private"</b>, or leave them unnamed, so an ordinary lookup returns nothing useful. KillerScan keeps a small table, maintained by hand, that maps those ranges to the real brand. Several Govee ranges are handled this way, for example, so the device shows the right name even when the official record will not.</p>
+<p data-i18n="tk_63">Some makers register their address ranges with the IEEE (the body that hands them out) as <b>"Private"</b>, or leave them unnamed, so an ordinary lookup returns nothing useful. KillerScan keeps a small table, maintained by hand, that maps those ranges to the real brand.</p>
+<p data-i18n="tk_63_p2">Several Govee ranges are handled this way, for example, so the device shows the right name even when the official record will not.</p>
 
 <h3 id="random" data-i18n="tk_64">2. Randomized MACs</h3>
-<p data-i18n="tk_65">Modern phones regularly invent a fake Wi-Fi address to protect your privacy (Apple calls this "Private Wi-Fi Address"; Android does much the same). These made-up addresses carry a marker showing they were <i>not</i> handed out by a real manufacturer. Rather than guess a brand from an address that only matches by coincidence, KillerScan simply labels the device <b>(Randomized)</b>, which is the honest answer: the real maker is hidden.</p>
+<p data-i18n="tk_65">Modern phones regularly invent a fake Wi-Fi address to protect your privacy (Apple calls this "Private Wi-Fi Address"; Android does much the same). These made-up addresses carry a marker showing they were <i>not</i> handed out by a real manufacturer.</p>
+<p data-i18n="tk_65_p2">Rather than guess a brand from an address that only matches by coincidence, KillerScan simply labels the device <b>(Randomized)</b>, which is the honest answer: the real maker is hidden.</p>
 
 <h3 id="oui" data-i18n="tk_66">3. Most-specific match first</h3>
 <p data-i18n="tk_67">The IEEE hands out address ranges in three sizes, and a small manufacturer can be given a slice of a larger range, sharing its opening digits with the bigger company that owns the parent range. To avoid crediting the wrong one, KillerScan always checks the <b>smallest, most specific range first</b>:</p>
@@ -540,12 +339,14 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
 
 <h3 id="database" data-i18n="tk_78">The database itself</h3>
 <p data-i18n="tk_79">The full IEEE manufacturer list, roughly 58,000 entries across all three registries (MA-L, MA-M, and MA-S), ships inside the .exe, so manufacturer names appear instantly and without any internet connection.</p>
-<p data-i18n="tk_80">You can update it to the latest data from inside the app. The <b>About</b> screen shows how many entries you have and when they were last refreshed, with a one-click update that downloads the newest list. The update is built so it can never leave you worse off: if a download is blocked or incomplete, a safety check refuses to replace your list with a smaller one, so an update can never wipe out or shrink what you already have.</p>
+<p data-i18n="tk_80">You can update it to the latest data from inside the app. The <b>About</b> screen shows how many entries you have and when they were last refreshed, with a one-click update that downloads the newest list.</p>
+<p data-i18n="tk_80_p2">The update is built so it can never leave you worse off: if a download is blocked or incomplete, a safety check refuses to replace your list with a smaller one, so an update can never wipe out or shrink what you already have.</p>
 </div>
 
 <div class="tech-sec" id="classify">
 <h2 data-i18n="tk_81">Device classification</h2>
-<p data-i18n="tk_82">Working out what a device is uses a <b>points system</b> rather than a single rule. Every clue (its name, its maker, its open ports, the banners its services return, and the mDNS and SSDP details) adds points to the device types it fits, and the type with the highest score wins, as long as it clears a minimum. A few clues are so reliable that KillerScan acts on them straight away, before any scoring. The order is:</p>
+<p data-i18n="tk_82">Working out what a device is uses a <b>points system</b> rather than a single rule. Every clue (its name, its maker, its open ports, the banners its services return, and the mDNS and SSDP details) adds points to the device types it fits, and the type with the highest score wins, as long as it clears a minimum.</p>
+<p data-i18n="tk_82_p2">A few clues are so reliable that KillerScan acts on them straight away, before any scoring. The order is:</p>
 <div class="codeblock">classify(device):
   1. manual override        user set a type by hand        -> that type
   2. gateway / DNS          is this the gateway?           -> Router | DNS Server | Router/DNS
@@ -555,7 +356,8 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
   5. fallbacks              when nothing scored high enough</div>
 
 <h3 id="gateway" data-i18n="tk_83">Gateway, DNS, and three honest labels</h3>
-<p data-i18n="tk_84">The device sitting at the gateway address is your router. Routers often pass along DNS traffic (port 53), which used to make them look like the DNS server even when they were not. KillerScan only calls the gateway <b>Router/DNS</b> when it really is the DNS server your computer is set to use. If DNS is handled by a separate machine, the gateway stays labeled <b>Router</b> and that machine is labeled <b>DNS Server</b>. That gives three honest labels instead of one wrong guess.</p>
+<p data-i18n="tk_84">The device sitting at the gateway address is your router. Routers often pass along DNS traffic (port 53), which used to make them look like the DNS server even when they were not.</p>
+<p data-i18n="tk_84_p2">KillerScan only calls the gateway <b>Router/DNS</b> when it really is the DNS server your computer is set to use. If DNS is handled by a separate machine, the gateway stays labeled <b>Router</b> and that machine is labeled <b>DNS Server</b>. That gives three honest labels instead of one wrong guess.</p>
 
 <h3 id="signals" data-i18n="tk_85">Weighted signals</h3>
 <p data-i18n="tk_86">The more specific a clue, the more points it is worth. Here is a rough guide:</p>
@@ -565,7 +367,8 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
 <tr><td data-i18n="tk_93">4-7 (supporting)</td><td data-i18n="tk_94">a printer port open; TTL in the Windows range with SMB; port 554 (camera); generic DNS + HTTP together</td></tr>
 <tr><td data-i18n="tk_95">1-3 (tie breaker)</td><td data-i18n="tk_96">a single web port open, suggesting "probably a web device"</td></tr>
 </table>
-<p data-i18n="tk_97">Some clues deliberately ignore the maker. Port 62078 (used to sync iPhones) counts toward iPhone no matter what the address says, so an iPhone hiding behind a randomized address is still spotted. Networking gear that gives no sign of being a specific router or switch is labeled <b>Switch/AP</b>.</p>
+<p data-i18n="tk_97">Some clues deliberately ignore the maker. Port 62078 (used to sync iPhones) counts toward iPhone no matter what the address says, so an iPhone hiding behind a randomized address is still spotted.</p>
+<p data-i18n="tk_97_p2">Networking gear that gives no sign of being a specific router or switch is labeled <b>Switch/AP</b>.</p>
 
 <h3 id="fallbacks" data-i18n="tk_98">When nothing scores</h3>
 <p data-i18n="tk_99">A device that is idle or locked down may answer at the hardware level and nothing else. Rather than give up, KillerScan makes its best honest guess, working down this list:</p>
@@ -583,7 +386,8 @@ some ports open, none telling  -> Other</div>
 
 <div class="tech-sec" id="deepscan">
 <h2 data-i18n="tk_173">Deep rescan: one host, in depth</h2>
-<p data-i18n="tk_174">The normal scan is tuned to sweep a whole network quickly, so it checks each device with a short list of common ports and only gives each one a brief moment to answer. When you want everything about one machine instead, select it in the results (hold Shift or Ctrl to pick several) and right-click to choose Rescan. That runs a much more thorough probe against just the hosts you picked, and drops the refreshed result straight back into its row.</p>
+<p data-i18n="tk_174">The normal scan is tuned to sweep a whole network quickly, so it checks each device with a short list of common ports and only gives each one a brief moment to answer. When you want everything about one machine instead, select it in the results (hold Shift or Ctrl to pick several) and right-click to choose Rescan.</p>
+<p data-i18n="tk_174_p2">That runs a much more thorough probe against just the hosts you picked, and drops the refreshed result straight back into its row.</p>
 <p data-i18n="tk_175">On a deep rescan, KillerScan:</p>
 <ul class="blurb-list">
 <li data-i18n="tk_176">Checks every well-known port from 1 to 1024, plus its curated list of higher service ports, rather than the short common-port list the sweep uses, so a service listening somewhere unusual is not missed.</li>
@@ -595,14 +399,18 @@ some ports open, none telling  -> Other</div>
 <p data-i18n="tk_181">Because it favors thoroughness over speed, a deep rescan takes a few seconds per host, so it is meant for spot-checking specific devices rather than re-running the whole network.</p>
 
 <h3 id="deepscanall" data-i18n="tk_deep_all_title">Deep Scan All</h3>
-<p data-i18n="tk_deep_all_body">The <b>Deep Scan</b> button beside Scan runs that same thorough probe against every device the scan found, which is the pass worth leaving running while you do something else. It works through eight hosts at a time, and probes fewer ports simultaneously per host than a single right-click rescan does, so a whole network's worth of deep probing does not swamp the machine you are standing at or the network you are a guest on. The local DNS cache is cleared once before it starts rather than for every host.</p>
-<p data-i18n="tk_deep_all_cancel">The button becomes Stop while it runs, and stopping is immediate: the hosts already refreshed keep their new results, the rest keep the ones they had. Nothing is cleared first and no device is ever dropped because its probe failed, so an interrupted deep pass leaves you with more than you started with rather than less. That is also why a device that stops answering partway through keeps its earlier result instead of going blank.</p>
+<p data-i18n="tk_deep_all_body">The <b>Deep Scan</b> button beside Scan runs that same thorough probe against every device the scan found, which is the pass worth leaving running while you do something else. It works through eight hosts at a time, and probes fewer ports simultaneously per host than a single right-click rescan does, so a whole network's worth of deep probing does not swamp the machine you are standing at or the network you are a guest on.</p>
+<p data-i18n="tk_deep_all_body_p2">The local DNS cache is cleared once before it starts rather than for every host.</p>
+<p data-i18n="tk_deep_all_cancel">The button becomes Stop while it runs, and stopping is immediate: the hosts already refreshed keep their new results, the rest keep the ones they had. Nothing is cleared first and no device is ever dropped because its probe failed, so an interrupted deep pass leaves you with more than you started with rather than less.</p>
+<p data-i18n="tk_deep_all_cancel_p2">That is also why a device that stops answering partway through keeps its earlier result instead of going blank.</p>
 </div>
 
 <div class="tech-sec" id="privacy">
 <h2 data-i18n="tk_101">Privacy &amp; footprint</h2>
-<p data-i18n="tk_102">Everything happens on your own machine. There is no account, no background agent, no cloud lookup, and no usage tracking. The vendor database is built into the app, so even manufacturer names are looked up offline. Nothing about your network ever leaves your computer.</p>
-<p data-i18n="tk_103">The one thing you may notice the first time you scan is a <b>Windows Firewall prompt</b>. That is the mDNS and SSDP discovery asking to listen for replies, which it has to do in order to hear Chromecasts, printers, and similar devices. Allow it on private networks and you will not be asked again. Deny it and those two discovery methods simply find nothing, while the rest of the scan carries on as normal.</p>
+<p data-i18n="tk_102">Everything happens on your own machine. There is no account, no background agent, no cloud lookup, and no usage tracking.</p>
+<p data-i18n="tk_102_p2">The vendor database is built into the app, so even manufacturer names are looked up offline. Nothing about your network ever leaves your computer.</p>
+<p data-i18n="tk_103">The one thing you may notice the first time you scan is a <b>Windows Firewall prompt</b>. That is the mDNS and SSDP discovery asking to listen for replies, which it has to do in order to hear Chromecasts, printers, and similar devices.</p>
+<p data-i18n="tk_103_p2">Allow it on private networks and you will not be asked again. Deny it and those two discovery methods simply find nothing, while the rest of the scan carries on as normal.</p>
 </div>
 
 <div class="tech-sec" id="glossary">
@@ -650,8 +458,8 @@ some ports open, none telling  -> Other</div>
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 <div class="dlightbox" id="diagram-lightbox" hidden><div class="dlb-inner"></div></div>
-<script src="ks-i18n.js?v=4"></script>
-<script src="ks.js?v=9"></script>
+<script src="ks-i18n.js?v=5"></script>
+<script src="ks.js?v=10"></script>
 <script>
 // COLLAPSIBLE OUTLINE. The page has eleven sections and thirteen subsections, and listing
 // all twenty-four flat made the sidebar a wall you had to read to navigate.
