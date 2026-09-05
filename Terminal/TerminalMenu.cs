@@ -40,7 +40,7 @@ namespace KillerScan.Terminal
             // so both are settled as the menu opens rather than left permanently enabled.
             menu.Opened += (_, _) =>
             {
-                if (_copyItem != null) _copyItem.IsEnabled = _hasSelection;
+                _copyItem?.IsEnabled = _hasSelection;
             };
             ContextMenu = menu;
         }
