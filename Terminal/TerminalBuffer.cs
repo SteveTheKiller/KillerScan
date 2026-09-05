@@ -277,6 +277,18 @@ namespace KillerScan.Terminal
             _pendingWrap = false;
         }
 
+        /// <summary>
+        /// Clears the screen and the scrollback, leaving the cursor at the top and every other
+        /// mode alone. What `cls` gives you, without resetting the terminal underneath it.
+        /// </summary>
+        internal void ClearAll()
+        {
+            _screen = New(Cols, Rows);
+            _scrollback.Clear();
+            CursorRow = CursorCol = 0;
+            Version++;
+        }
+
         private void FullReset()
         {
             _screen = New(Cols, Rows);

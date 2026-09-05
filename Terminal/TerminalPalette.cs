@@ -82,7 +82,7 @@ namespace KillerScan.Terminal
             C(0x5555FF), C(0xFF55FF), C(0x55FFFF), C(0xFFFFFF),
         ];
 
-        private static Color[] AnsiFor(Services.Theme theme) => theme switch
+        internal static Color[] AnsiFor(Services.Theme theme) => theme switch
         {
             Services.Theme.SE98     => AnsiVga,
             Services.Theme.Black    => AnsiBlack,

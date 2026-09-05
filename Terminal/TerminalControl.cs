@@ -58,6 +58,7 @@ namespace KillerScan.Terminal
             ClipToBounds = true;
 
             TextOptions.SetTextFormattingMode(this, TextFormattingMode.Ideal);
+            BuildContextMenu();
 
             _buf.Respond += Send;
 
@@ -694,6 +695,9 @@ namespace KillerScan.Terminal
                     case Key.D0: case Key.NumPad0:        SetFontSize(13); return true;
 
                     case Key.V: Paste(); return true;
+                    // Deliberately no Ctrl+A here. It belongs to the program on the other end as
+                    // ^A: beginning-of-line in readline, and screen's command prefix. The terminal
+                    // takes the Ctrl+Shift chords instead, as Windows Terminal does.
                 }
             }
 
