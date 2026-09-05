@@ -132,7 +132,12 @@
                                         <RowDefinition Height="*"/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-                                    <Border Grid.Row="0" Grid.Column="0" Style="{DynamicResource ScanGridHeaderStrip}">
+                                    <!-- Spans the scrollbar column as well. Pinned to column 0 it
+                                         stopped short of the scrollbar, leaving a notch of pane
+                                         colour above it; the presenter still lays its headers out
+                                         on the real column widths, so only the strip gets wider. -->
+                                    <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                                            Style="{DynamicResource ScanGridHeaderStrip}">
                                         <DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter"
                                             Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
                                     </Border>
@@ -811,6 +816,7 @@
                                     <ContentPresenter x:Name="ico" Grid.Column="0" ContentSource="Icon"
                                                       TextElement.FontFamily="Segoe MDL2 Assets"
                                                       TextElement.FontSize="12"
+                                                      TextElement.Foreground="{DynamicResource MutedTextBrush}"
                                                       VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                     <TextBlock x:Name="check" Grid.Column="0" Text="&#xE73E;"
                                                FontFamily="Segoe MDL2 Assets" FontSize="11"
@@ -870,6 +876,10 @@
                                     <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
                                     <Setter TargetName="Gesture" Property="Foreground" Value="{DynamicResource SelectionFg}"/>
                                     <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                    <!-- Icon and tick move with the label. On 98SE the highlight is
+                                         solid navy and both were left dark against it. -->
+                                    <Setter TargetName="ico" Property="TextElement.Foreground" Value="{DynamicResource SelectionFg}"/>
+                                    <Setter TargetName="check" Property="Foreground" Value="{DynamicResource SelectionFg}"/>
                                 </Trigger>
                                 <!-- Collapse the shortcut column when there is no gesture, so items
                                      without one do not reserve its 24px margin as phantom padding. -->
@@ -933,17 +943,13 @@
             <Style x:Key="MenuIcon" TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
                 <Setter Property="FontSize" Value="12"/>
-                <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
                 <Setter Property="HorizontalAlignment" Value="Center"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
-                <Style.Triggers>
-                    <!-- MenuIcon has its own local foreground, so the MenuItem template's
-                         highlighted foreground cannot reach it through inheritance. Follow the
-                         selected label explicitly (black on Ectoplasm's yellow selection). -->
-                    <DataTrigger Binding="{Binding IsHighlighted, RelativeSource={RelativeSource AncestorType=MenuItem}}" Value="True">
-                        <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
-                    </DataTrigger>
-                </Style.Triggers>
+                <!-- No Foreground here on purpose. The colour is inherited from the icon gutter in
+                     the MenuItem template, which is what lets the highlighted state change it: a
+                     style setter here would outrank that, and the ancestor-bound trigger this
+                     style used before never resolved through MenuItem.Icon, so the glyph kept its
+                     resting colour and went black-on-navy under the 98SE highlight. -->
             </Style>
 
             <!-- Caption tab, KillerPDF's SidebarTabBtn: no fill, no underline, no pill. The
@@ -1035,7 +1041,7 @@
                             <Border Background="{TemplateBinding Background}"
                                     CornerRadius="{DynamicResource ControlCornerRadius}"
                                     Padding="{TemplateBinding Padding}">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ContentPresenter x:Name="content" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <ContentPresenter.Effect>
                                         <DropShadowEffect Color="Black" BlurRadius="4" ShadowDepth="2"
                                                           Direction="270" Opacity="{DynamicResource IconShadowOpacity}"/>
@@ -1053,6 +1059,13 @@
                                      keeps its fill while the pointer is over it. -->
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                </Trigger>
+                                <!-- No shadow on the active view, in any theme. The selected button
+                                     already carries a solid fill and its own foreground; a black
+                                     shadow on top of that reads as a smudge rather than as depth,
+                                     worst on the light accents but wrong everywhere. -->
+                                <Trigger Property="Tag" Value="selected">
+                                    <Setter TargetName="content" Property="Effect" Value="{x:Null}"/>
                                 </Trigger>
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter Property="Opacity" Value="0.4"/>

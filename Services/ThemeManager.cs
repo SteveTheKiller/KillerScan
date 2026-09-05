@@ -172,6 +172,21 @@ namespace KillerScan.Services
                 newDict["ListPaneBrush"] = newDict["PaneBrush"];
             if (!newDict.Contains("ScanContentPaneBrush"))
                 newDict["ScanContentPaneBrush"] = newDict["ListPaneBrush"];
+            // Topology nodes default to the menu surface, which is what they used before they had
+            // keys of their own. A theme that needs the node to separate from its pane overrides
+            // these two without dragging every menu along with it.
+            if (!newDict.Contains("TopologyNodeBrush"))
+                newDict["TopologyNodeBrush"] = newDict["MenuBackgroundBrush"];
+            if (!newDict.Contains("TopologyNodeBorderBrush"))
+                newDict["TopologyNodeBorderBrush"] = newDict["MenuBorderBrush"];
+            if (!newDict.Contains("TopologyNodeHoverBrush"))
+                newDict["TopologyNodeHoverBrush"] = newDict["MenuHoverBrush"];
+            if (!newDict.Contains("TopologyNodeTextBrush"))
+                newDict["TopologyNodeTextBrush"] = newDict["MenuTextBrush"];
+            // Hover text defaults to the resting text, so a theme with a subtle hover fill keeps
+            // its current look and only the themes that hover with a solid color override it.
+            if (!newDict.Contains("TopologyNodeHoverTextBrush"))
+                newDict["TopologyNodeHoverTextBrush"] = newDict["TopologyNodeTextBrush"];
             if (!newDict.Contains("SidebarPaneBrush"))
                 newDict["SidebarPaneBrush"] = Brushes.Transparent;
             if (!newDict.Contains("TableRowBrush"))

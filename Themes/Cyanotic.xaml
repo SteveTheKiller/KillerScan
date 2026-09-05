@@ -9,7 +9,7 @@
     <!-- App-specific geometry only - see Dark.xaml. -->
     <CornerRadius x:Key="PaneGrainCornerRadius">5</CornerRadius>
     <CornerRadius x:Key="TabCornerRadius">5,5,0,0</CornerRadius>
-    <SolidColorBrush x:Key="TextFieldBrush" Color="#00263a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TextFieldBrush" Color="#01344e" po:Freeze="True"/>
 
     <!-- CYANOTIC, aligned to the family 2026-08-11: the accent is the BONE, and the signature
          blue stays in HeaderLineBrush for the wordmark. KillerScan had the two the other way

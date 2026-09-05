@@ -9,7 +9,7 @@
     <!-- App-specific geometry only - see Dark.xaml. -->
     <CornerRadius x:Key="PaneGrainCornerRadius">5</CornerRadius>
     <CornerRadius x:Key="TabCornerRadius">5,5,0,0</CornerRadius>
-    <SolidColorBrush x:Key="TextFieldBrush" Color="#2c1012" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TextFieldBrush" Color="#3a171a" po:Freeze="True"/>
 
     <!-- BLOOD, aligned to the family 2026-08-11.
 

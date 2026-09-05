@@ -135,11 +135,21 @@
     <SolidColorBrush x:Key="ChromeTextBrush" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="DimTextBrush" Color="#606060" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
-    <!-- Grid rows. Hover is a pale version of the active accent, giving the gray table a clear
-         pointer affordance while leaving the saturated accent for keyboard/current selection. -->
+    <!-- Topology hover is the Win98 navy selection, so the label turns white with it, exactly as
+         a selected item does in the shell. -->
+    <SolidColorBrush x:Key="TopologyNodeHoverTextBrush" Color="#FFFFFF" po:Freeze="True"/>
+
+    <!-- Terminal: a DOS box, not a themed pane. Black ground, light gray text, and a light gray
+         block cursor, with the VGA sixteen supplied in code (TerminalPalette.AnsiVga). -->
+    <SolidColorBrush x:Key="TerminalBackgroundBrush" Color="#000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TerminalForegroundBrush" Color="#AAAAAA" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TerminalAccentBrush" Color="#AAAAAA" po:Freeze="True"/>
+
+    <!-- Grid rows. The hovered row is light gray, so hovered text is a dark version of the active
+         accent, leaving the saturated accent itself for keyboard/current selection. -->
     <SolidColorBrush x:Key="RowAltBrush" Color="#d9ead9" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 <SolidColorBrush x:Key="RowHoverBrush" Color="#c0c0c0" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
-    <SolidColorBrush x:Key="TableHoverTextBrush" Color="#a8e0b0" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <SolidColorBrush x:Key="TableHoverTextBrush" Color="#1c5527" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="RowSelectedBrush" Color="#004f00" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="SelectionBg" Color="#004f00" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="SelectionFg" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />

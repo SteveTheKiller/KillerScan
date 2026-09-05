@@ -53,8 +53,11 @@
     <SolidColorBrush x:Key="RowAltBrush" Color="#18ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 <SolidColorBrush x:Key="RowHoverBrush" Color="#4faaa8" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#4faaa8" po:Freeze="True"/>
-<SolidColorBrush x:Key="SelectionBg" Color="#2d595d" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
-<SolidColorBrush x:Key="SelectionFg" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+<!-- Selection carries the accent with dark text, as Malaise and Mourning do. The old #2d595d was
+     within 1.3:1 of the #454039 surface and of the background gradient's teal end, so a selected
+     view button read as unselected. -->
+<SolidColorBrush x:Key="SelectionBg" Color="#4faaa8" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+<SolidColorBrush x:Key="SelectionFg" Color="#1e2424" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
     <!-- Inputs / menus / scrollbar -->
     <SolidColorBrush x:Key="InputBorderBrush" Color="#4d3d2b" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />

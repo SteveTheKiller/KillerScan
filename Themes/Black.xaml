@@ -9,7 +9,7 @@
     <!-- App-specific geometry only - see Dark.xaml. -->
     <CornerRadius x:Key="PaneGrainCornerRadius">5</CornerRadius>
     <CornerRadius x:Key="TabCornerRadius">5,5,0,0</CornerRadius>
-    <SolidColorBrush x:Key="TextFieldBrush" Color="#000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TextFieldBrush" Color="#141414" po:Freeze="True"/>
     <SolidColorBrush x:Key="PrimaryBrush" Color="#00ff66" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="PrimaryHoverBrush" Color="#00ff66" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#00ff66" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
@@ -40,9 +40,14 @@
     <SolidColorBrush x:Key="SelectionBg" Color="#003314" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="SelectionFg" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
-    <SolidColorBrush x:Key="InputBorderBrush" Color="#1c1c1c" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <SolidColorBrush x:Key="InputBorderBrush" Color="#2e2e2e" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#121212" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="MenuBorderBrush" Color="#1c1c1c" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <!-- Topology on Black: the node goes properly black rather than the #121212 menu surface,
+         which was within a hair of the #0a0a0a pane behind it, and the outline does the work of
+         separating it. Menus keep their own quieter border above. -->
+    <SolidColorBrush x:Key="TopologyNodeBrush" Color="#000000" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <SolidColorBrush x:Key="TopologyNodeBorderBrush" Color="#3d3d3d" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="MenuTextBrush"       Color="#cccccc" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuHoverBrush" Color="#333333" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#003322" po:Freeze="True"/>

@@ -309,7 +309,7 @@ namespace KillerScan.Controls
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 Margin = new Thickness(6, 2, 6, 0)
             };
-            titleBlock.SetResourceReference(TextBlock.ForegroundProperty, "MenuTextBrush");
+            titleBlock.SetResourceReference(TextBlock.ForegroundProperty, "TopologyNodeTextBrush");
 
             var detailBlock = new TextBlock
             {
@@ -319,7 +319,7 @@ namespace KillerScan.Controls
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 Margin = new Thickness(6, 0, 6, 2)
             };
-            detailBlock.SetResourceReference(TextBlock.ForegroundProperty, "MenuTextBrush");
+            detailBlock.SetResourceReference(TextBlock.ForegroundProperty, "TopologyNodeTextBrush");
             detailBlock.Opacity = 0.78;
 
             var stack = new StackPanel();
@@ -336,8 +336,12 @@ namespace KillerScan.Controls
                 Child = stack,
                 Tag = device
             };
-            border.SetResourceReference(Border.BackgroundProperty, "MenuBackgroundBrush");
-            border.SetResourceReference(Border.BorderBrushProperty, "MenuBorderBrush");
+            // Topology nodes have their own two keys rather than borrowing the menu surface. A
+            // node has to separate from the pane behind it, which a menu never has to do, and on
+            // the near-black themes those two needs pull in opposite directions. Themes that do
+            // not set them fall back to the menu brushes, so nothing else moves.
+            border.SetResourceReference(Border.BackgroundProperty, "TopologyNodeBrush");
+            border.SetResourceReference(Border.BorderBrushProperty, "TopologyNodeBorderBrush");
             if (device != null)
             {
                 border.Cursor = Cursors.Hand;
@@ -453,19 +457,31 @@ namespace KillerScan.Controls
             bool selected = border.Tag is NetworkDevice device && ResultsGrid.SelectedItems.Contains(device);
             border.BorderThickness = new Thickness(selected ? 2 : 1);
             border.SetResourceReference(Border.BorderBrushProperty,
-                selected ? "PrimaryBrush" : "MenuBorderBrush");
+                selected ? "PrimaryBrush" : "TopologyNodeBorderBrush");
         }
 
         private static void TopologyNode_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (sender is Border border)
-                border.SetResourceReference(Border.BackgroundProperty, "MenuHoverBrush");
+            if (sender is not Border border) return;
+            border.SetResourceReference(Border.BackgroundProperty, "TopologyNodeHoverBrush");
+            // The hover fill is a solid accent on some themes, navy on 98SE, so the label has to
+            // move with it. Themes that hover with a subtle tint set the same brush for both and
+            // nothing appears to change.
+            SetNodeText(border, "TopologyNodeHoverTextBrush");
         }
 
         private static void TopologyNode_MouseLeave(object sender, MouseEventArgs e)
         {
-            if (sender is Border border)
-                border.SetResourceReference(Border.BackgroundProperty, "MenuBackgroundBrush");
+            if (sender is not Border border) return;
+            border.SetResourceReference(Border.BackgroundProperty, "TopologyNodeBrush");
+            SetNodeText(border, "TopologyNodeTextBrush");
+        }
+
+        private static void SetNodeText(Border border, string key)
+        {
+            if (border.Child is not StackPanel stack) return;
+            foreach (var block in stack.Children.OfType<TextBlock>())
+                block.SetResourceReference(TextBlock.ForegroundProperty, key);
         }
 
         private static string DeviceBrush(string type) => type switch

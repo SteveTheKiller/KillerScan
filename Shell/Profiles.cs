@@ -20,10 +20,12 @@ namespace KillerScan.Shell
 
         private void RefreshProfilesList()
         {
-            var selected = ProfilesList.SelectedItem as ScanProfile;
+            // Read the selection before the source is replaced, which clears it, then put it back
+            // only if that profile is still in the list.
+            object? previous = ProfilesList.SelectedItem;
             var items = ScanProfiles.Items.OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase).ToList();
             ProfilesList.ItemsSource = items;
-            if (selected != null && items.Contains(selected)) ProfilesList.SelectedItem = selected;
+            if (previous is ScanProfile selected && items.Contains(selected)) ProfilesList.SelectedItem = selected;
             SaveProfileButton.IsEnabled = ActiveScan != null;
         }
 

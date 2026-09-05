@@ -14,5 +14,7 @@
     <SolidColorBrush x:Key="SelectionBg"         Color="#4b286d" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#4b286d" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowAltBrush"         Color="#e4d8ed" po:Freeze="True"/>
-    <SolidColorBrush x:Key="TableHoverTextBrush" Color="#d3a7ed" po:Freeze="True"/>
+    <!-- Hovered row text. 98SE hovers a light gray row, so this is a dark accent tint rather than
+         the pale one the dark families use. -->
+    <SolidColorBrush x:Key="TableHoverTextBrush" Color="#4b1d6b" po:Freeze="True"/>
 </ResourceDictionary>

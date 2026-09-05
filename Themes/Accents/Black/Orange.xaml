@@ -9,7 +9,10 @@
     <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#FF910A" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#FF910A" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#332208" po:Freeze="True"/>
-    <SolidColorBrush x:Key="SelectionBg"         Color="#FF910A" po:Freeze="True"/>
+    <!-- The other Black accents select with a very dark tone of themselves and white text. This
+         one carried the full accent, so a selected row was a solid orange block with orange text
+         on it and nothing readable. -->
+    <SolidColorBrush x:Key="SelectionBg"         Color="#3A2000" po:Freeze="True"/>
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#332208" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#88FF910A" po:Freeze="True"/>
 </ResourceDictionary>
