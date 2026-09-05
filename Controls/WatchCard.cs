@@ -45,6 +45,9 @@ namespace KillerScan.Controls
 
         public string Address { get; }
 
+        /// <summary>Whether the last poll got a reply. Read by the shell's status tooltip.</summary>
+        internal bool IsReplying => _known && _up;
+
         /// <summary>
         /// This target's checks and its own log. Both live on the card rather than in shared
         /// panes, so everything about one address is in one place and several can be compared

@@ -528,6 +528,11 @@ namespace KillerScan.Controls
         /// <summary>The cards themselves, for an image export.</summary>
         internal FrameworkElement CardsVisual => Cards;
 
+        /// <summary>Targets watched, and how many of them are currently answering. For the
+        /// shell's status tooltip, which reports the run while you are looking at another view.</summary>
+        internal (int Total, int Replying) WatchState =>
+            (_cards.Count, _cards.Count(card => card.IsReplying));
+
         private void Copy_Click(object sender, RoutedEventArgs e)
         {
             var text = new System.Text.StringBuilder();
