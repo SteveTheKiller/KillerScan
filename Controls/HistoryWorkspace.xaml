@@ -38,14 +38,40 @@
                  the selected snapshot's changes and reads like any other scan table. -->
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                <TextBlock x:Name="HistorySummary" Foreground="{DynamicResource MutedTextBrush}" FontSize="12"
-                           TextWrapping="Wrap" Margin="0,0,0,10"/>
+                <!-- Summary on the left, the two readings on the right. A comparison answers
+                     "what moved", but a run where nothing moved leaves an empty table that says
+                     nothing about what was actually on the network, so the snapshot itself is
+                     reachable from the same place. The selector matches the shortcuts overlay. -->
+                <Grid Margin="0,0,0,10">
+                    <TextBlock x:Name="HistorySummary" Foreground="{DynamicResource MutedTextBrush}" FontSize="12"
+                               TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,150,0"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Button x:Name="HistoryChangesViewButton" Style="{StaticResource ViewTabButton}"
+                                Content="{DynamicResource Str_History_ViewChanges}"
+                                Margin="0,0,12,0" Click="HistoryChangesView_Click"/>
+                        <Button x:Name="HistoryAllViewButton" Style="{StaticResource ViewTabButton}"
+                                Content="{DynamicResource Str_History_ViewAll}"
+                                Click="HistoryAllView_Click"/>
+                    </StackPanel>
+                </Grid>
                 <DataGrid x:Name="HistoryChangesGrid" Grid.Row="1" Style="{StaticResource HistoryGrid}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{DynamicResource Str_History_Change}" Binding="{Binding Change}" Width="90"/>
                         <DataGridTextColumn Header="{DynamicResource Str_Col_Name}" Binding="{Binding Name}" Width="*" MinWidth="80"/>
                         <DataGridTextColumn Header="{DynamicResource Str_Col_Ip}" Binding="{Binding IpAddress}" Width="120"/>
                         <DataGridTextColumn Header="{DynamicResource Str_Col_Type}" Binding="{Binding DeviceType}" Width="130"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <!-- The snapshot as it was recorded. Same columns as the device list, minus the
+                     ones history does not keep, so a saved run reads like the scan that made it. -->
+                <DataGrid x:Name="HistoryAllGrid" Grid.Row="1" Visibility="Collapsed" Style="{StaticResource HistoryGrid}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Ip}" Binding="{Binding IpAddress}" Width="120"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Name}" Binding="{Binding Name}" Width="*" MinWidth="80"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Mac}" Binding="{Binding MacAddress}" Width="140"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Vendor}" Binding="{Binding Vendor}" Width="*" MinWidth="90"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Type}" Binding="{Binding DeviceType}" Width="130"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_Ports}" Binding="{Binding Ports}" Width="130"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
