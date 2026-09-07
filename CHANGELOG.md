@@ -4,6 +4,11 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] - Unreleased
+
+### Fixed
+- Selected device rows now use their theme's established selection colors.
+
 ## [1.7.0] - 2026-09-05
 
 1.7.0 brings permanent Devices, Services, Topology, Keep Alive and Terminal views, alongside scan history, trusted-device baselines, scan profiles and an embedded terminal.

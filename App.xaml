@@ -83,7 +83,7 @@
                         <Setter Property="Foreground" Value="{DynamicResource TableHoverTextBrush}"/>
                     </Trigger>
                     <Trigger Property="IsSelected" Value="True">
-                        <Setter Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
+                        <Setter Property="Background" Value="{DynamicResource SelectionBg}"/>
                         <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
                     </Trigger>
                 </Style.Triggers>
