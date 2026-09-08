@@ -60,6 +60,14 @@ namespace KillerScan.Services
                 if (!File.Exists(FilePath)) return;
                 _entries = JsonSerializer.Deserialize<List<ScanHistoryEntry>>(
                     File.ReadAllText(FilePath)) ?? [];
+                _entries.RemoveAll(entry => entry == null);
+                foreach (var entry in _entries)
+                {
+                    entry.Target ??= string.Empty;
+                    entry.Devices ??= [];
+                    entry.Devices.RemoveAll(device => device == null || string.IsNullOrWhiteSpace(device.Identity));
+                    foreach (var device in entry.Devices) device.OpenPorts ??= [];
+                }
             }
             catch
             {
@@ -97,8 +105,10 @@ namespace KillerScan.Services
             if (previous == null)
                 return new ScanComparison(current, null, current.Devices, [], []);
 
-            var before = previous.Devices.ToDictionary(device => device.Identity, StringComparer.OrdinalIgnoreCase);
-            var after = current.Devices.ToDictionary(device => device.Identity, StringComparer.OrdinalIgnoreCase);
+            var before = previous.Devices.GroupBy(device => device.Identity, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(group => group.Key, group => group.Last(), StringComparer.OrdinalIgnoreCase);
+            var after = current.Devices.GroupBy(device => device.Identity, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(group => group.Key, group => group.Last(), StringComparer.OrdinalIgnoreCase);
             var added = after.Where(pair => !before.ContainsKey(pair.Key)).Select(pair => pair.Value).ToList();
             var removed = before.Where(pair => !after.ContainsKey(pair.Key)).Select(pair => pair.Value).ToList();
             var changed = after.Where(pair => before.TryGetValue(pair.Key, out var old) && HasChanged(old, pair.Value))

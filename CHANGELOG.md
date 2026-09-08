@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ## [1.7.1] - Unreleased
 
 ### Fixed
+- Prevented duplicate device identities and malformed saved profiles or history from breaking history views.
 - Prevented clipboard contention from crashing MAC address, IP address, and hostname copying.
 - Made installs and updates replace executables safely, report failures accurately, and support silent uninstall.
 - Selected device rows now use their theme's established selection colors.

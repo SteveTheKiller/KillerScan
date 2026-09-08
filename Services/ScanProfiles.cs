@@ -29,6 +29,12 @@ namespace KillerScan.Services
             {
                 if (!File.Exists(FilePath)) return;
                 _items = JsonSerializer.Deserialize<List<ScanProfile>>(File.ReadAllText(FilePath)) ?? [];
+                _items.RemoveAll(item => item == null);
+                foreach (var item in _items)
+                {
+                    item.Name ??= string.Empty;
+                    item.Target ??= string.Empty;
+                }
             }
             catch { _items = []; }
         }
