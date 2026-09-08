@@ -291,9 +291,9 @@ $siteDir     = Join-Path (Get-Location).Path 'scan-landing'
 
 $indexPath = Join-Path $siteDir 'index.html'
 $indexRaw  = [System.IO.File]::ReadAllText($indexPath)
-$indexNew  = Edit-SiteFact $indexRaw '(<span class="k">version</span>&nbsp;<span class="v">)KillerScan v[0-9]+\.[0-9]+\.[0-9]+' ('${1}' + "KillerScan v$Version") 'the hero version'
-$indexNew  = Edit-SiteFact $indexNew '(<span class="k">released</span>&nbsp;<span class="v">)[0-9]{4}-[0-9]{2}-[0-9]{2}' ('${1}' + $releaseDate) 'the hero released date'
-$indexNew  = Edit-SiteFact $indexNew '(<span class="k">size</span>&nbsp;<span class="v">)[^<]*' ('${1}' + $exeMB + ' exe') 'the hero size row'
+$indexNew  = Edit-SiteFact $indexRaw '(<span class="k"[^>]*>version</span>&nbsp;<span class="v">)KillerScan v[0-9]+\.[0-9]+\.[0-9]+' ('${1}' + "KillerScan v$Version") 'the hero version'
+$indexNew  = Edit-SiteFact $indexNew '(<span class="k"[^>]*>released</span>&nbsp;<span class="v">)[0-9]{4}-[0-9]{2}-[0-9]{2}' ('${1}' + $releaseDate) 'the hero released date'
+$indexNew  = Edit-SiteFact $indexNew '(<span class="k"[^>]*>size</span>&nbsp;<span class="v">)[^<]*' ('${1}' + $exeMB + ' exe') 'the hero size row'
 $indexNew  = Edit-SiteFact $indexNew '(<span class="v hash">)[0-9A-Fa-f]{32}<br>[0-9A-Fa-f]{32}' ('${1}' + $hashLower.Substring(0, 32) + '<br>' + $hashLower.Substring(32, 32)) 'the hero sha256 block'
 
 # README: the GPL3 corresponding-source link must point at THIS release's zip.
