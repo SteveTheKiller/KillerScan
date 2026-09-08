@@ -95,7 +95,10 @@ namespace KillerScan.Terminal
                 if (!CreateProcess(null, cmd, IntPtr.Zero, IntPtr.Zero, false,
                         EXTENDED_STARTUPINFO_PRESENT, IntPtr.Zero, workingDir,
                         ref si, out var pi))
-                    throw new Win32Exception(Marshal.GetLastWin32Error(), "CreateProcess");
+                {
+                    int error = Marshal.GetLastWin32Error();
+                    throw new Win32Exception(error, $"CreateProcess ({error}): {new Win32Exception(error).Message}");
+                }
 
                 _process = pi.hProcess;
                 _thread  = pi.hThread;

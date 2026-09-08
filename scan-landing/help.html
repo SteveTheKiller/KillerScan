@@ -259,7 +259,7 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 </div></div></div>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_speed_title">Speed test</span><span class="kbd">F4</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
 <p data-i18n="tk_speed_body"><b>F4</b>, or the rail icon, runs a speed test in the Terminal. If the official Ookla CLI is already on your PATH it is used as is.</p>
-<p data-i18n="tk_speed_body_p2">If it is not, KillerScan says what it would download and where from, and waits for an answer: the CLI is a separate binary under its own license, so it is never fetched quietly. Decline and the built-in test runs instead, which installs nothing and needs no extra binary.</p>
+<p data-i18n="tk_speed_body_p2">If the CLI is not installed, KillerScan automatically runs its built-in HTTP test. The speed test does not download or install additional executables.</p>
 <p data-i18n="tk_speed_detail">With the Ookla CLI, the output is read as structured events rather than scraped from its console, so the server, ISP, latency, jitter, download, upload, packet loss and result link are printed in KillerScan's own colors, and the CLI's occasional startup noise is simply not shown. The built-in fallback measures latency to a public resolver, then download and upload against Cloudflare's speed endpoints, and labels itself as indicative rather than an official speedtest.net result, because that is what it is.</p>
 </div></div></div>
 <h2 class="help-cat" id="history" data-i18n="tk_hist_nav">Scan history</h2>
@@ -605,7 +605,7 @@ window.addEventListener('resize', fit);
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 <div class="egg-toast" id="eggToast"></div>
-<script src="ks-i18n.js?v=7"></script>
+<script src="ks-i18n.js?v=8"></script>
 <script src="ks.js?v=11"></script>
 <script>
 (function(){

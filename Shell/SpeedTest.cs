@@ -5,11 +5,8 @@ namespace KillerScan.Shell
         /// <summary>
         /// Opens the terminal and runs a speed test in it.
         ///
-        /// The official Ookla CLI gives the number people recognize, but it is a separate binary
-        /// under its own license, so it is never fetched silently: if it is not already on PATH the
-        /// script says what it would download and from where, and waits for an answer. Decline and
-        /// the built-in HTTP throughput test runs instead, which needs nothing installed and is
-        /// honest about being indicative rather than an official speedtest.net result.
+        /// Uses an installed Ookla CLI, or the built-in HTTP throughput test when it is absent.
+        /// This command never downloads or installs executable code.
         /// </summary>
         private void SpeedTestButton_Click(object sender, System.Windows.RoutedEventArgs e) =>
             NewTerminal(title: Loc("Str_TT_SpeedTest"), shellCommand: SpeedTestCommand());
@@ -31,25 +28,6 @@ namespace KillerScan.Shell
             "$exe = $null; " +
             "$found = Get-Command speedtest.exe -ErrorAction SilentlyContinue; " +
             "if ($found) { $exe = $found.Source } " +
-            "else { " +
-              "Write-Host " + SpeedText("Str_Speed_NotInstalled") + "; " +
-              "Write-Host " + SpeedText("Str_Speed_Offer") + "; " +
-              "Write-Host ''; " +
-              "$answer = Read-Host " + SpeedText("Str_Speed_Prompt") + "; " +
-              "if ($answer -match '^(y|yes)$') { " +
-                "try { " +
-                  "$zip = Join-Path $env:TEMP 'ookla-speedtest.zip'; " +
-                  "$dir = Join-Path $env:TEMP 'ookla-speedtest'; " +
-                  "Write-Host " + SpeedText("Str_Upd_Downloading") + "; " +
-                  "Invoke-WebRequest -UseBasicParsing -Uri 'https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-win64.zip' -OutFile $zip; " +
-                  "Expand-Archive -Path $zip -DestinationPath $dir -Force; " +
-                  "$candidate = Join-Path $dir 'speedtest.exe'; " +
-                  "if (Test-Path $candidate) { $exe = $candidate } " +
-                "} catch { " +
-                  "Write-Host ($e + '[31m' + " + SpeedText("Str_Speed_DownloadFailed") + " + $_.Exception.Message + $e + '[0m'); " +
-                "} " +
-              "} " +
-            "} " +
             "if ($exe) { " +
               // jsonl rather than the CLI's own output: one JSON object per line, so the numbers
               // are rendered here in the app's colors, the progress line is ours, and Ookla's
