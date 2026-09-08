@@ -60,6 +60,8 @@ namespace KillerScan
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            // Startup prompts can close before the main window exists.
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
             // Force CPU (software) rendering. WPF composites through the GPU by default, and
             // console-session screen scrapers (ScreenConnect, LiveConnect, VNC, TeamViewer) can't
@@ -86,7 +88,13 @@ namespace KillerScan
                 (string.Equals(e.Args[0], "/uninstall", StringComparison.OrdinalIgnoreCase) ||
                  string.Equals(e.Args[0], "/uninstall-silent", StringComparison.OrdinalIgnoreCase)))
             {
-                Uninstall(string.Equals(e.Args[0], "/uninstall-silent", StringComparison.OrdinalIgnoreCase));
+                bool silent = string.Equals(e.Args[0], "/uninstall-silent", StringComparison.OrdinalIgnoreCase);
+                if (!silent)
+                {
+                    Services.ThemeManager.InitializeInstaller();
+                    Services.LocaleManager.Initialize();
+                }
+                Uninstall(silent);
                 Shutdown();
                 return;
             }
@@ -124,14 +132,17 @@ namespace KillerScan
                 string.Equals(a, "--demo", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(a, "/demo",  StringComparison.OrdinalIgnoreCase));
 
-            OfferInstallConflictRepair();
-
-            // Restore the saved theme + locale before the window is built (no first-paint flash).
-            Services.ThemeManager.Initialize();
+            // Standalone startup prompts use the installer palette.
+            Services.ThemeManager.InitializeInstaller();
             Services.LocaleManager.Initialize();
 
+            OfferInstallConflictRepair();
+
+            // Restore the saved theme before building the main window.
+            Services.ThemeManager.Initialize();
             ShutdownMode = ShutdownMode.OnLastWindowClose;
-            new Shell.MainWindow(uiScanTarget, startUiScan).Show();
+            MainWindow = new Shell.MainWindow(uiScanTarget, startUiScan);
+            MainWindow.Show();
         }
 
         // ============================================================
@@ -155,12 +166,7 @@ namespace KillerScan
         /// <summary>True when a machine-wide copy is already present on disk.</summary>
         internal static bool MachineInstallExists() => File.Exists(MachineInstallExe);
 
-        /// <summary>Resource lookup WITH AN ENGLISH FALLBACK, for the install and uninstall
-        /// prompts. Unlike the rest of the app these can run before LocaleManager.Initialize -
-        /// /uninstall and /remove-machine-conflict handle their argument and exit long before a
-        /// window exists - and at that point there is no dictionary to read. The fallback keeps
-        /// those paths saying something rather than rendering a raw Str_ key, and once the app has
-        /// started normally the translation is found and used.</summary>
+        /// <summary>Localized install messages, with a fallback for headless error output.</summary>
         private static string L(string key, string fallback) =>
             Current?.TryFindResource(key) as string ?? fallback;
 
@@ -182,9 +188,11 @@ namespace KillerScan
             string body = runningMachine
                 ? L("Str_Conflict_RemoveUser", "KillerScan is installed twice. Remove the other per-user copy now?\n\nYour settings will not be removed.")
                 : L("Str_Conflict_RemoveMachine", "KillerScan is installed twice. Remove the other all-users copy now?\n\nYour settings will not be removed.");
-            if (MessageBox.Show(body,
-                $"{AppName} {L("Str_Conflict_Title", "installation conflict")}",
-                MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
+            var confirm = new Controls.ConfirmDialog(
+                L("Str_Conflict_Title", "installation conflict"), body,
+                L("Str_Uninstall_Title", "Uninstall"), L("Str_Btn_Cancel", "Cancel"));
+            confirm.ShowDialog();
+            if (!confirm.Confirmed) return;
 
             if (runningMachine) RemovePerUserInstall();
             else
@@ -535,8 +543,9 @@ namespace KillerScan
             }
             catch (Exception ex)
             {
-                MessageBox.Show(string.Format(L("Str_Uninstall_NoAdmin", "Uninstall could not request administrator access:\n{0}"), ex.Message),
-                    AppName, MessageBoxButton.OK, MessageBoxImage.Error);
+                string message = string.Format(L("Str_Uninstall_NoAdmin", "Uninstall could not request administrator access:\n{0}"), ex.Message);
+                if (silent) Console.Error.WriteLine(message);
+                else Controls.ConfirmDialog.ShowNotice(message);
             }
             return true;
         }

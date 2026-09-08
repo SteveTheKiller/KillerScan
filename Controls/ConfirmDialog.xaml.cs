@@ -27,6 +27,14 @@ namespace KillerScan.Controls
             }
 
             Loaded += (_, _) => Anim.FadeIn(RootBorder);
+            SourceInitialized += (_, _) =>
+            {
+                if (Owner == null)
+                {
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                    ShowInTaskbar = true;
+                }
+            };
         }
 
         // Configurable variant for reusing the themed dialog beyond the install prompt
@@ -43,10 +51,18 @@ namespace KillerScan.Controls
             DetailText.Visibility = string.IsNullOrEmpty(detail) ? Visibility.Collapsed : Visibility.Visible;
             OkButton.Content = confirmText;
             CancelButton.Content = cancelText;
+            CancelButton.Visibility = string.IsNullOrEmpty(cancelText) ? Visibility.Collapsed : Visibility.Visible;
             // The all-users choice belongs to the install prompt only, not to reused dialogs
             // like the self-update confirmation.
             AllUsersCheck.Visibility = Visibility.Collapsed;
             AllUsersNote.Visibility = Visibility.Collapsed;
+        }
+
+        internal static void ShowNotice(string message, Window? owner = null)
+        {
+            var dialog = new ConfirmDialog(message, string.Empty, Loc("Str_Sys_Close"), string.Empty);
+            if (owner != null) dialog.Owner = owner;
+            dialog.ShowDialog();
         }
 
         // Ticking the box changes where the app lands, so the heading follows. The note under it

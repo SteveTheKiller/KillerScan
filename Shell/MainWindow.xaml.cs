@@ -104,8 +104,7 @@ namespace KillerScan.Shell
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, string.Format(Loc("Str_Install_Failed"), ex.Message),
-                    AppInfo.DisplayName, MessageBoxButton.OK, MessageBoxImage.Error);
+                ConfirmDialog.ShowNotice(string.Format(Loc("Str_Install_Failed"), ex.Message), this);
             }
         }
 

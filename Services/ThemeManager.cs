@@ -104,6 +104,9 @@ namespace KillerScan.Services
             LoadDict(_current);
         }
 
+        /// <summary>Load the standalone installer palette without changing saved preferences.</summary>
+        internal static void InitializeInstaller() => LoadDict(Theme.Black, Accent.Orange);
+
         /// <summary>Change theme, persist the choice, and repaint.</summary>
         public static void Apply(Theme theme)
         {
@@ -142,7 +145,7 @@ namespace KillerScan.Services
             return brush;
         }
 
-        private static void LoadDict(Theme theme)
+        private static void LoadDict(Theme theme, Accent? accentOverride = null)
         {
             string name = ThemeFileName(theme);
 
@@ -275,7 +278,7 @@ namespace KillerScan.Services
             // Accent overlay: Dark/Light/Black recolor their accent-family keys on top of
             // the base green. Green is the base itself, so it needs no overlay (re-applying
             // the base above already restored green). Overlays live in Accents/<Family>/.
-            var accent = AccentFor(theme);
+            var accent = accentOverride ?? AccentFor(theme);
             if (HasAccents(theme) && accent != Accent.Green)
             {
                 string family = theme == Theme.Light ? "Light"

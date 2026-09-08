@@ -20,6 +20,8 @@ Reviewed installation, replacement, update download and checksum handling, unins
 
 ## Verification
 
+Standalone install and uninstall dialogs use the default black/orange palette, while prompts inside the running app follow its active theme. Install failure, duplicate-install repair, and uninstall elevation failure now use the shared themed dialog. Four default-palette layouts were rendered and inspected; startup cancellation and single-button notices were checked in an external WPF harness.
+
 Debug and Release builds passed with zero warnings and errors. All 15 locale dictionaries passed key and placeholder coverage. Dependency vulnerability scanning reported no known vulnerable packages from the configured sources.
 
 An external .NET Framework harness invoked the built application's actual methods. It used disposable files, a process-local redirected registry, and a loopback HTTP server:

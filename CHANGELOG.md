@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 1.7.1 fixes installation and update failures, clipboard crashes, and reliability issues found during the maintenance audit.
 
 ### Fixed
+- Themed install and uninstall prompts, with black/orange defaults for standalone dialogs.
 - Made installs and updates replace executables safely, report failures accurately, and support silent uninstall.
 - Made Chocolatey run the installer and silent uninstaller instead of leaving a separate portable copy.
 - Prevented clipboard contention from crashing MAC address, IP address, and hostname copying.
