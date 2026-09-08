@@ -325,7 +325,7 @@ namespace KillerScan.Services.SpeedTest
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
             timeout.CancelAfter(options.RequestTimeout);
             using var request = Request(options, HttpMethod.Get, "__down", bytes);
-            using var requestCancellation = timeout.Token.Register(request.Dispose);
+            using var requestCancellation = timeout.Token.Register(() => DisposeCanceled(request));
             try
             {
                 using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token).ConfigureAwait(false);
@@ -333,7 +333,7 @@ namespace KillerScan.Services.SpeedTest
                 if (response.Content.Headers.ContentLength.HasValue && response.Content.Headers.ContentLength.Value != bytes)
                     throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "The download payload length did not match the request.");
                 using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                using var streamCancellation = timeout.Token.Register(stream.Dispose);
+                using var streamCancellation = timeout.Token.Register(() => DisposeCanceled(stream));
                 int received = 0;
                 while (received < bytes)
                 {
@@ -355,14 +355,15 @@ namespace KillerScan.Services.SpeedTest
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
             timeout.CancelAfter(options.RequestTimeout);
             using var request = Request(options, HttpMethod.Post, "__up", bytes);
-            request.Content = new PayloadContent(bytes, buffer, timeout.Token);
-            using var requestCancellation = timeout.Token.Register(request.Dispose);
+            var payload = new PayloadContent(bytes, buffer, timeout.Token);
+            request.Content = payload;
+            using var requestCancellation = timeout.Token.Register(() => DisposeCanceled(request));
             try
             {
                 using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token).ConfigureAwait(false);
                 ValidateResponse(response);
                 using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                using var streamCancellation = timeout.Token.Register(stream.Dispose);
+                using var streamCancellation = timeout.Token.Register(() => DisposeCanceled(stream));
                 var reply = new byte[1025];
                 int length = 0;
                 while (length < reply.Length)
@@ -373,22 +374,50 @@ namespace KillerScan.Services.SpeedTest
                 }
                 if (length == reply.Length)
                     throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "The upload acknowledgment was too large.");
+                ValidateUploadAcknowledgment(options.Endpoint, response, Encoding.UTF8.GetString(reply, 0, length), payload.BytesSerialized, bytes);
+                timeout.Token.ThrowIfCancellationRequested();
+                count(payload.BytesSerialized);
+            }
+            catch (Exception ex) { throw RequestFailure(ex, token, timeout.Token); }
+        }
+
+        private static void ValidateUploadAcknowledgment(Uri endpoint, HttpResponseMessage response,
+            string body, int serializedBytes, int expectedBytes)
+        {
+            if (serializedBytes != expectedBytes)
+                throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "The upload did not serialize the complete payload.");
+
+            // Cloudflare's public speed-test API acknowledges uploads with an empty 200
+            // response and server timing. Other endpoints must provide the exact byte count.
+            bool cloudflare = endpoint.Scheme == Uri.UriSchemeHttps && endpoint.Port == 443 &&
+                endpoint.Host.Equals("speed.cloudflare.com", StringComparison.OrdinalIgnoreCase) && endpoint.AbsolutePath == "/" &&
+                string.IsNullOrEmpty(endpoint.Query) && string.IsNullOrEmpty(endpoint.Fragment) && string.IsNullOrEmpty(endpoint.UserInfo);
+            if (cloudflare)
+            {
+                bool timing = response.Headers.TryGetValues("Server-Timing", out var values) && values.Any(value =>
+                    value.Split(',').Any(metric => metric.Trim().StartsWith("cfSpeedWorker;", StringComparison.Ordinal) &&
+                        metric.Split(';').Any(part => part.Trim().StartsWith("dur=", StringComparison.Ordinal) &&
+                            double.TryParse(part.Trim().Substring(4), System.Globalization.NumberStyles.Float,
+                                System.Globalization.CultureInfo.InvariantCulture, out double duration) && duration >= 0 &&
+                            !double.IsInfinity(duration) && !double.IsNaN(duration))));
+                if (body.Length != 0 || !timing || response.Content.Headers.ContentType?.MediaType != "text/plain")
+                    throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "Cloudflare returned an unexpected upload acknowledgment.");
+            }
+            else
+            {
                 try
                 {
-                    using var json = JsonDocument.Parse(Encoding.UTF8.GetString(reply, 0, length));
+                    using var json = JsonDocument.Parse(body);
                     if (json.RootElement.ValueKind != JsonValueKind.Object ||
                         !json.RootElement.TryGetProperty("bytes", out var value) || value.ValueKind != JsonValueKind.Number ||
-                        !value.TryGetInt64(out long acknowledged) || acknowledged != bytes)
+                        !value.TryGetInt64(out long acknowledged) || acknowledged != expectedBytes)
                         throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "The endpoint did not acknowledge the exact upload size.");
                 }
                 catch (JsonException ex)
                 {
                     throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "The endpoint returned an invalid upload acknowledgment.", ex);
                 }
-                timeout.Token.ThrowIfCancellationRequested();
-                count(bytes);
             }
-            catch (Exception ex) { throw RequestFailure(ex, token, timeout.Token); }
         }
 
         private static async Task<double> LatencyAsync(HttpClient client, SpeedTestOptions options, CancellationToken token)
@@ -396,7 +425,7 @@ namespace KillerScan.Services.SpeedTest
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
             timeout.CancelAfter(options.RequestTimeout);
             using var request = Request(options, HttpMethod.Get, "__down", 0);
-            using var requestCancellation = timeout.Token.Register(request.Dispose);
+            using var requestCancellation = timeout.Token.Register(() => DisposeCanceled(request));
             var clock = Stopwatch.StartNew();
             try
             {
@@ -405,7 +434,7 @@ namespace KillerScan.Services.SpeedTest
                 if (response.Content.Headers.ContentLength.HasValue && response.Content.Headers.ContentLength.Value != 0)
                     throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "The latency response must have an empty body.");
                 using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                using var streamCancellation = timeout.Token.Register(stream.Dispose);
+                using var streamCancellation = timeout.Token.Register(() => DisposeCanceled(stream));
                 if (await stream.ReadAsync(new byte[1], 0, 1, timeout.Token).ConfigureAwait(false) != 0)
                     throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "The latency response must have an empty body.");
                 timeout.Token.ThrowIfCancellationRequested();
@@ -419,6 +448,8 @@ namespace KillerScan.Services.SpeedTest
             private readonly int _length;
             private readonly byte[] _buffer;
             private readonly CancellationToken _token;
+            private int _serialized;
+            public int BytesSerialized => Volatile.Read(ref _serialized);
             public PayloadContent(int length, byte[] buffer, CancellationToken token)
             {
                 _length = length; _buffer = buffer; _token = token;
@@ -428,15 +459,26 @@ namespace KillerScan.Services.SpeedTest
             protected override bool TryComputeLength(out long length) { length = _length; return true; }
             protected override async Task SerializeToStreamAsync(Stream stream, TransportContext context)
             {
-                using var cancellation = _token.Register(stream.Dispose);
+                using var cancellation = _token.Register(() => DisposeCanceled(stream));
                 for (int sent = 0; sent < _length;)
                 {
                     _token.ThrowIfCancellationRequested();
                     int size = Math.Min(_buffer.Length, _length - sent);
                     await stream.WriteAsync(_buffer, 0, size, _token).ConfigureAwait(false);
+                    Interlocked.Add(ref _serialized, size);
                     sent += size;
                 }
             }
+        }
+
+        private static void DisposeCanceled(IDisposable resource)
+        {
+            // Framework HTTP upload streams can throw while closing an incomplete request.
+            // Cancellation still aborts the transfer, but the timer callback must not throw.
+            try { resource.Dispose(); }
+            catch (IOException) { }
+            catch (WebException) { }
+            catch (ObjectDisposedException) { }
         }
 
         private static Exception RequestFailure(Exception error, CancellationToken parent, CancellationToken timeout)

@@ -152,7 +152,7 @@ Step "Testing the native speed-test engine and endpoint"
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) { Fail 'Node.js 22 or newer is required to test the speed-test endpoint' }
 dotnet build tests\SpeedTest.Tests\SpeedTest.Tests.csproj -c Release -v:minimal
 if ($LASTEXITCODE -ne 0) { Fail 'Speed-test test build failed' }
-& .\tests\SpeedTest.Tests\bin\Release\net48\SpeedTest.Tests.exe --worker
+& .\tests\SpeedTest.Tests\bin\Release\net48\SpeedTest.Tests.exe --worker --internet
 if ($LASTEXITCODE -ne 0) { Fail 'Speed-test regression tests failed' }
 node --test server/speedtest/worker.test.mjs
 if ($LASTEXITCODE -ne 0) { Fail 'Speed-test endpoint tests failed' }

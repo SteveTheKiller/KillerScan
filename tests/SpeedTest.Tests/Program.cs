@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -22,14 +23,15 @@ using KillerScan.Services.SpeedTest;
 internal static class Program
 {
     private static int _passed;
+    private static SpeedTestResult? _internetResult;
 
     private static async Task<int> Main(string[] args)
     {
         try
         {
-            Require(args.All(value => value == "--worker"), "Usage: SpeedTest.Tests.exe [--worker]");
-            await Run("WPF speed-test view constructs and renders without a visible window", View);
+            Require(args.All(value => value == "--worker" || value == "--internet"), "Usage: SpeedTest.Tests.exe [--worker] [--internet]");
             await Run("Metric units, median, jitter and unavailable values", Metrics);
+            await Run("Cloudflare upload response is accepted only for the exact official endpoint", CloudflareAcknowledgment);
             await Run("HTTPS configuration required without contacting a remote host", InvalidEndpoint);
             await Run("Real transfers, exact acknowledgments and per-direction byte budgets", Budget);
             await Run("Sustained timed download with loaded latency and cancellation of pending reads", Duration);
@@ -43,8 +45,12 @@ internal static class Program
             await Run("No measured download bytes is a failure, not completion", () => Reject(Mode.NoPayload, SpeedTestFailureKind.TransferFailed));
             await Run("Unacknowledged uploads cannot produce a speed result", () => Reject(Mode.NoAck, SpeedTestFailureKind.TransferFailed));
             await Run("User cancellation stops active transfers promptly", Cancel);
+            await Run("Incomplete upload stream disposal cannot escape cancellation", CancelDisposal);
             if (args.Contains("--worker"))
                 await Run("Compiled engine exchanges exact payloads with the real Worker", Worker);
+            if (args.Contains("--internet"))
+                await Run("Live default Cloudflare endpoint completes native measurements", Internet);
+            await Run("WPF speed-test view constructs and renders without a visible window", View);
             Console.WriteLine("PASS: " + _passed + " speed-test regression checks.");
             return 0;
         }
@@ -65,6 +71,49 @@ internal static class Program
     private static void Require(bool condition, string message)
     {
         if (!condition) throw new InvalidOperationException(message);
+    }
+
+    private static Task CloudflareAcknowledgment()
+    {
+        Require(new SpeedTestOptions().Endpoint.AbsoluteUri == "https://speed.cloudflare.com/", "Default endpoint requires no setup");
+        var validate = typeof(SpeedTestEngine).GetMethod("ValidateUploadAcknowledgment", BindingFlags.NonPublic | BindingFlags.Static)!;
+        using var response = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("", Encoding.UTF8, "text/plain") };
+        response.Headers.TryAddWithoutValidation("Server-Timing", "cfSpeedEdge;dur=22, cfSpeedWorker;dur=13");
+        void Check(string uri, string body, int serialized, bool valid)
+        {
+            try
+            {
+                validate.Invoke(null, new object[] { new Uri(uri), response, body, serialized, 2048 });
+                Require(valid, "Unexpected Cloudflare acknowledgment accepted: " + uri);
+            }
+            catch (TargetInvocationException ex) when (ex.InnerException is SpeedTestException failure)
+            { Require(!valid && failure.Kind == SpeedTestFailureKind.InvalidResponse, "Cloudflare response validation"); }
+        }
+        Check("https://speed.cloudflare.com/", "", 2048, true);
+        Check("https://speed.cloudflare.com/", "", 1024, false);
+        Check("https://speed.cloudflare.com/", "unexpected", 2048, false);
+        Check("https://speed.cloudflare.com.example/", "", 2048, false);
+        Check("https://speed.cloudflare.com/other/", "", 2048, false);
+        Check("http://speed.cloudflare.com/", "", 2048, false);
+        Check("https://speed.cloudflare.com:8443/", "", 2048, false);
+        response.Headers.Remove("Server-Timing");
+        Check("https://speed.cloudflare.com/", "", 2048, false);
+        return Task.CompletedTask;
+    }
+
+    private static async Task Internet()
+    {
+        var options = new SpeedTestOptions { ByteBudgetPerPhase = 128L * 1024 * 1024 };
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(40));
+        var result = await new SpeedTestEngine().RunAsync(options, null, deadline.Token);
+        _internetResult = result;
+        Require(result.Download.Mbps > 0 && result.Upload.Mbps > 0 && result.IdleLatencySamples.Count >= 5, "Live default endpoint measurements available");
+        Console.WriteLine(string.Format(CultureInfo.InvariantCulture,
+            "LIVE download={0:F2}Mbps upload={1:F2}Mbps idle={2:F2}ms jitter={3:F2}ms downloadElapsed={4:F3}s uploadElapsed={5:F3}s downloadFullDuration={6} uploadFullDuration={7} downloadLoaded={8:F2}ms uploadLoaded={9:F2}ms total={10:F2}s",
+            result.Download.Mbps, result.Upload.Mbps, result.IdleLatencyMs, result.JitterMs,
+            result.Download.Elapsed.TotalSeconds, result.Upload.Elapsed.TotalSeconds,
+            result.Download.CompletedDuration, result.Upload.CompletedDuration,
+            result.Download.LoadedLatencyMs, result.Upload.LoadedLatencyMs, result.Elapsed.TotalSeconds));
     }
 
     private static async Task Worker()
@@ -173,10 +222,25 @@ internal static class Program
                 Require(app.TryFindResource("TextBrush") is Brush && app.TryFindResource("PrimaryBrush") is Brush,
                     "Text and accent theme brushes resolve");
                 using var view = new KillerScan.Controls.SpeedTestView();
-                view.Measure(new Size(900, 700));
-                view.Arrange(new Rect(0, 0, 900, 700));
+                view.Measure(new Size(900, 500));
+                view.Arrange(new Rect(0, 0, 900, 500));
                 view.UpdateLayout();
-                var bitmap = new RenderTargetBitmap(900, 700, 96, 96, PixelFormats.Pbgra32);
+                Require(view.FindName("ContentPanel") is FrameworkElement panel && panel.DesiredSize.Height <= 320,
+                    "Compact speed-test content stays within 320 pixels");
+                Require(!Descendants(view).Any(element => element is ScrollViewer || element is TextBox),
+                    "Speed-test view has no server input or scrolling surface");
+                if (_internetResult != null)
+                {
+                    typeof(KillerScan.Controls.SpeedTestView).GetField("_result", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(view, _internetResult);
+                    typeof(KillerScan.Controls.SpeedTestView).GetMethod("ShowResult", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(view, new object[] { _internetResult });
+                    var completion = typeof(KillerScan.Controls.SpeedTestView).GetMethod("CompletionKey", BindingFlags.Static | BindingFlags.NonPublic)!
+                        .Invoke(null, new object[] { _internetResult });
+                    typeof(KillerScan.Controls.SpeedTestView).GetMethod("SetStatus", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(view, new[] { completion });
+                    ((Button)view.FindName("CopyButton")).Visibility = Visibility.Visible;
+                    ((ProgressBar)view.FindName("TestProgress")).Value = 100;
+                    view.UpdateLayout();
+                }
+                var bitmap = new RenderTargetBitmap(900, 500, 96, 96, PixelFormats.Pbgra32);
                 bitmap.Render(view);
                 var imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SpeedTestView.png");
                 var encoder = new PngBitmapEncoder();
@@ -198,6 +262,42 @@ internal static class Program
         thread.Join();
         if (failure != null) throw new InvalidOperationException("Offscreen view construction failed.", failure);
         return Task.CompletedTask;
+    }
+
+    private static IEnumerable<DependencyObject> Descendants(DependencyObject parent)
+    {
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+            yield return child;
+            foreach (var descendant in Descendants(child)) yield return descendant;
+        }
+    }
+
+    private sealed class IncompleteUploadStream : MemoryStream
+    {
+        public bool DisposeAttempted;
+        private readonly TaskCompletionSource<bool> _write = new TaskCompletionSource<bool>();
+        public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken token) => _write.Task;
+        protected override void Dispose(bool disposing)
+        {
+            DisposeAttempted = true;
+            _write.TrySetCanceled();
+            throw new WebException("The request was canceled.", new IOException("Cannot close stream until all bytes are written."));
+        }
+    }
+
+    private static async Task CancelDisposal()
+    {
+        using var cancel = new CancellationTokenSource();
+        var contentType = typeof(SpeedTestEngine).GetNestedType("PayloadContent", BindingFlags.NonPublic)!;
+        using var content = (HttpContent)Activator.CreateInstance(contentType, 2048, new byte[2048], cancel.Token)!;
+        var stream = new IncompleteUploadStream();
+        var transfer = content.CopyToAsync(stream);
+        cancel.Cancel();
+        Require(stream.DisposeAttempted, "Cancellation closes the active upload stream");
+        try { await transfer; throw new InvalidOperationException("Canceled upload continued"); }
+        catch (OperationCanceledException) { }
     }
 
     private static Task Metrics()

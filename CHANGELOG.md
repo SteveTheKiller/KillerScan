@@ -9,7 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 1.7.2 replaces the terminal speed test with a native engine and test view.
 
 ### Added
-- Sustained download and upload tests, latency under load, jitter, live graphs, cancellation, and result copying using a compatible HTTPS server.
+- One-click speed tests with download, upload, and latency results, cancellation, and copying in a compact view.
 - A Cloudflare test endpoint implementation and automated transfer, failure, and server tests.
 
 ### Fixed

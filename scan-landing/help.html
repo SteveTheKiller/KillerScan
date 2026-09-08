@@ -258,9 +258,9 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <p data-i18n="tk_cmd_note_p2">The names are deliberately short because they live in this terminal rather than in your own PowerShell profile, where <code>scan</code> would be a rude thing to claim.</p>
 </div></div></div>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_speed_title">Speed test</span><span class="kbd">F4</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
-<p data-i18n="tk_speed_body"><b>F4</b> or the rail icon opens the native speed-test view. Enter the HTTPS URL of a compatible test server, then choose Start test. No public test server is configured by default.</p>
-<p data-i18n="tk_speed_body_p2">The test measures idle HTTP latency and jitter, then download and upload throughput with latency under load. Each transfer has a two-second warmup and an eight-second measurement using up to four connections. The total transfer cap is 1 GiB; reaching it shortens the measurement.</p>
-<p data-i18n="tk_speed_detail">Watch the live graphs, stop a test at any time, or copy its results. Measurements describe the route to the selected server and that server's capacity, not a guarantee of your internet connection's maximum speed. No PowerShell, Ookla CLI or extra executable is used.</p>
+<p data-i18n="tk_speed_body"><b>F4</b> or the rail icon opens the speed test. Choose Start test to test your connection using Cloudflare automatically.</p>
+<p data-i18n="tk_speed_body_p2">The view shows download speed, upload speed and latency. No server setup is needed.</p>
+<p data-i18n="tk_speed_detail">Choose Stop test or press Esc to cancel. Copy results copies the numbers for sharing.</p>
 </div></div></div>
 <h2 class="help-cat" id="history" data-i18n="tk_hist_nav">Scan history</h2>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_hist_title">Scan history</span><span class="kbd">Ctrl+H</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
@@ -605,7 +605,7 @@ window.addEventListener('resize', fit);
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 <div class="egg-toast" id="eggToast"></div>
-<script src="ks-i18n.js?v=9"></script>
+<script src="ks-i18n.js?v=10"></script>
 <script src="ks.js?v=11"></script>
 <script>
 (function(){

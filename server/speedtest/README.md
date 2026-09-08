@@ -1,6 +1,6 @@
 # KillerScan speed-test endpoint
 
-Dependency-free Cloudflare Worker for the native KillerScan HTTP speed test. This directory is a local implementation, not a deployed service. The proposed hostname is `speed.killerscan.net`; the configuration has no active route, workers.dev address, or preview URL. The app endpoint remains unset until the service is provisioned and verified.
+Optional Cloudflare Worker for hosting KillerScan speed tests. This directory is a local implementation, not a deployed service. The proposed hostname is `speed.killerscan.net`; the configuration has no active route, workers.dev address, or preview URL. The app already uses Cloudflare's public speed-test service automatically, so this Worker is not required to run a test.
 
 ## Protocol
 

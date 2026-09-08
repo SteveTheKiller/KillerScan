@@ -6,7 +6,7 @@ namespace KillerScan.Services.SpeedTest
 {
     public sealed class SpeedTestOptions
     {
-        public Uri Endpoint { get; set; } = null!;
+        public Uri Endpoint { get; set; } = new Uri("https://speed.cloudflare.com/");
         public TimeSpan PhaseDuration { get; set; } = TimeSpan.FromSeconds(8);
         public TimeSpan WarmupDuration { get; set; } = TimeSpan.FromSeconds(2);
         public int MaximumStreams { get; set; } = 4;
