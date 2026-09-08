@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ## [1.7.1] - Unreleased
 
 ### Fixed
+- Limited HTTP fingerprint response sizes to prevent excessive memory use.
 - Preserved quotes, commas, and newlines in device and service CSV exports.
 - Kept browser, RDP, SSH, and website launch failures from crashing the app.
 - Prevented duplicate device identities and malformed saved profiles or history from breaking history views.

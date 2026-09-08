@@ -968,7 +968,11 @@ namespace KillerScan.Services
                 AllowAutoRedirect = true,
                 MaxAutomaticRedirections = 2,
             };
-            using var client = new HttpClient(handler) { Timeout = TimeSpan.FromMilliseconds(deep ? 1000 : 1500) };
+            using var client = new HttpClient(handler)
+            {
+                Timeout = TimeSpan.FromMilliseconds(deep ? 1000 : 1500),
+                MaxResponseContentBufferSize = 256 * 1024
+            };
             client.DefaultRequestHeaders.UserAgent.ParseAdd("KillerScan/1.3");
 
             foreach (var (port, https) in candidates)
