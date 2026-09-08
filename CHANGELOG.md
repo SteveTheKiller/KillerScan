@@ -20,6 +20,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Selected device rows now use their theme's established selection colors.
 
 ### Changed
+- Updated the website's feature descriptions, help instructions, and keyboard shortcut reference.
 - Refreshed the bundled MAC vendor database from Wireshark to 58,195 entries.
 
 ## [1.7.0] - 2026-09-05

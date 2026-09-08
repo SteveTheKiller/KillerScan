@@ -120,7 +120,8 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <aside class="sidebar">
 <div class="sb-tabs"><span class="on" data-i18n="nav_help">Help</span></div>
 <nav class="outline">
-<a href="#views" class="on" data-i18n="tk_views_nav">The four views</a>
+<a href="#getting-started" class="on" data-i18n="help_start">Getting started</a>
+<a href="#views" data-i18n="tk_views_nav">The five views</a>
 <a href="#keepalive" data-i18n="tk_ka_nav">Keep Alive</a>
 <a href="#topology" data-i18n="tk_topo_nav">Topology</a>
 <a href="#terminal" data-i18n="tk_term_nav">Terminal</a>
@@ -141,12 +142,23 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <p class="legend" data-i18n="hp_3">Rows show their keyboard shortcut on the right. Click a row to open it. For how the scanning itself works, see the <a href="technical.html">Technical</a> page.</p>
 </section>
 
-<h2 class="help-cat" id="views" data-i18n="tk_views_nav">The four views</h2>
-<div class="acc-item"><button class="acc-head"><span data-i18n="tk_views_title">The four views</span><span class="kbd">F6-F10</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
+<h2 class="help-cat" id="getting-started" data-i18n="help_start">Getting started</h2>
+<div class="acc-item"><button class="acc-head"><span data-i18n="help_scan_title">Run your first scan</span><span class="kbd">F5</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
+<p data-i18n="help_scan_steps">Run KillerScan, review the detected subnet in the target box, then click Scan or press F5. Enter in the target box also starts or stops a scan. Use Deep Scan after discovery for more port and fingerprint checks, or select devices and press Ctrl+R.</p>
+<p data-i18n="help_scan_targets">Targets accept IPv4 addresses, CIDR subnets and ranges, such as <code>192.168.1.10</code>, <code>192.168.1.0/24</code> or <code>192.168.1.10-50</code>. Separate targets with commas, semicolons or new lines. The combined limit is 65,536 addresses before deduplication. Hostnames and IPv6 are not accepted as scan targets.</p>
+<p data-i18n="help_filter">Ctrl+Shift+F opens the results filter. Ctrl+F returns to targets. Click a column heading to sort. Device types are estimates; a device's right-click menu lets you set its type, name or trust state. Sleeping devices, firewalls and isolated networks can hide hosts or their MAC addresses.</p>
+</div></div></div>
+<div class="acc-item"><button class="acc-head"><span data-i18n="help_install_title">Installation and vendor updates</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
+<p data-i18n="help_install">Run portable or click Install. Per-user installation is the default; all-users installation requires administrator permission. Windows must provide .NET Framework 4.8. Remove an installed copy through Windows Installed apps. Standalone setup dialogs use black/orange; dialogs inside the app follow its active theme.</p>
+<p data-i18n="help_vendor">Open About with F12 to check for app updates or refresh the vendor database. Vendor lookups work offline; refreshing the database requires internet access. The app uses the larger of its bundled and locally refreshed lists.</p>
+</div></div></div>
+<h2 class="help-cat" id="views" data-i18n="tk_views_nav">The five views</h2>
+<div class="acc-item"><button class="acc-head"><span data-i18n="tk_views_title">The five views</span><span class="kbd">F6-F10</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
 <p data-i18n="tk_views_intro">The buttons on the right of the toolbar are permanent views rather than windows that come and go. Each one keeps its own state while you work in the others, so moving from a scan to a topology picture and back does not throw anything away.</p>
 <p data-i18n="tk_views_intro_p2">Right-click the view buttons to change their icon size or move their captions. When the window is too narrow for all of them, the view buttons overflow into a menu instead of the input bar being squeezed.</p>
 <table class="spec-table"><tr><th data-i18n="tk_views_col_view">View</th><th data-i18n="tk_views_col_for">What it is for</th></tr>
 <tr><td data-i18n="tk_views_scan">Devices</td><td data-i18n="tk_views_scan_d">The results table: every device found, with its address, name, hardware ID, maker, type, and open ports.</td></tr>
+<tr><td data-i18n="tk_svc_title">Services view</td><td data-i18n="f_services_d">F7 shows one row per open port rather than per device. Find which devices offer a service, sort or filter the list, and export it as CSV.</td></tr>
 <tr><td data-i18n="tk_views_topo">Topology</td><td data-i18n="tk_views_topo_d">The same devices drawn as a picture of the network, arranged four different ways and exportable as an image.</td></tr>
 <tr><td data-i18n="tk_views_ka">Keep Alive</td><td data-i18n="tk_views_ka_d">A continuous watch on up to sixteen addresses, each with its own latency graph, checks, and event log.</td></tr>
 <tr><td data-i18n="tk_views_term">Terminal</td><td data-i18n="tk_views_term_d">A real terminal running PowerShell, ping, or SSH inside the app, using the Windows console engine.</td></tr>
@@ -155,15 +167,15 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 </div></div></div>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_svc_title">Services view</span><span class="kbd">F7</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
 <p data-i18n="tk_svc_body"><b>F7</b> turns the results inside out. Instead of one row per device listing its ports, you get one row per open port: the service, the port number, and the device it belongs to, with its name, address and type.</p>
-<p data-i18n="tk_svc_body_p2">It answers the question the device table makes you work for, which is "what is running SSH on this network", or "who is serving HTTP that should not be". Thirty-three well-known ports are named, and anything else is listed by its number rather than guessed at.</p>
+<p data-i18n="tk_svc_body_p2">The list names common services and shows other ports by number. Use it to find every device offering SSH, HTTP, or another service.</p>
 <p data-i18n="tk_svc_body_p3">Sort by any column, and your sort survives a rescan. The list follows the toolbar filter, so it shows the same devices the table would.</p>
 <p data-i18n="tk_svc_body_p4">Ctrl+A selects everything while the view is active, and Export offers the service list as its own CSV.</p>
 </div></div></div>
 <h2 class="help-cat" id="keepalive" data-i18n="tk_ka_nav">Keep Alive</h2>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_ka_title">Keep Alive</span><span class="kbd">F9</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
 <p data-i18n="tk_ka_intro">Keep Alive answers the question you ask on every intermittent fault: is this thing actually dropping, and when? It watches up to <b>sixteen</b> addresses at once.</p>
-<p data-i18n="tk_ka_intro_p2">Open it with <b>F9</b> and the target box is already filled in with your gateway, your DNS server, and whatever device you had selected, so the common case needs no typing. Select several devices in the results table first and choose Keep Alive, and all of them are watched together.</p>
-<p data-i18n="tk_ka_intro_p3">Targets are separated by commas, semicolons, or new lines, and duplicates are dropped.</p>
+<p data-i18n="tk_ka_intro_p2">Press <b>F9</b> to open Keep Alive. On first use, it fills the target box with your gateway, DNS server and selected device. Add targets as needed, then press <b>Start</b> or <b>Enter</b>. Opening the view does not start monitoring.</p>
+<p data-i18n="tk_ka_intro_p3">Enter up to sixteen IP addresses separated by commas, semicolons or new lines. Duplicate addresses are removed; hostnames and CIDR ranges are not accepted here.</p>
 <p data-i18n="tk_ka_loop">Every target is pinged in parallel on a fixed <b>two second</b> cadence, and the loop subtracts the time the pings themselves took so the interval stays honest rather than drifting. Each ping is given <b>1.2 seconds</b> to answer before it counts as a miss.</p>
 <p data-i18n="tk_ka_card">Each target gets its own card showing a status dot and the latest round-trip time, the state in words, a latency graph, and a line with packet loss, the number of pings sent, and the time of the last change of state. The graph keeps the last <b>forty</b> samples, which at a two second cadence is a little over a minute of history.</p>
 <p data-i18n="tk_ka_card_p2">A missed reply is drawn at the top of the graph rather than left as a gap, so an outage reads as a spike you can see at a glance. The vertical scale never drops below 20 ms, which stops a healthy local link from looking like a field of spikes.</p>
@@ -174,7 +186,7 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 </div></div></div>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_ka_checks_title">Per-device checks</span><span class="kbd">F3</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
 <p data-i18n="tk_ka_checks_intro">Every card also carries its own set of checks, and they run for the whole set as soon as a run starts, four cards at a time. You can rerun them for one card from its right-click menu.</p>
-<p data-i18n="tk_ka_checks_intro_p2">The same checks are what <b>F3</b> runs against a single selected device. They are:</p>
+<p data-i18n="tk_ka_checks_intro_p2"><b>F3</b> opens Keep Alive for the selected device. If monitoring is stopped, press Start to create its card and run checks. For an existing card, use its right-click menu to rerun checks.</p>
 <table class="spec-table"><tr><th data-i18n="tk_ka_checks_col_check">Check</th><th data-i18n="tk_ka_checks_col_what">What it does</th></tr>
 <tr><td data-i18n="tk_ka_check_route">Route</td><td data-i18n="tk_ka_check_route_d">Asks Windows which interface and next hop it would actually use to reach the address, and reports "on-link" when the device is on your own segment. This reads the local routing table rather than sending anything.</td></tr>
 <tr><td data-i18n="tk_ka_check_rdns">Reverse DNS</td><td data-i18n="tk_ka_check_rdns_d">Looks up the name attached to the address, with a 1.5 second limit.</td></tr>
@@ -206,8 +218,8 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <p data-i18n="tk_topo_columns">The number of columns follows the width of the window, so the picture reflows instead of scrolling sideways, and each new group starts on its own row with a small gap in front of it.</p>
 </div></div></div>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_topo_png_title">Exporting the picture</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
-<p data-i18n="tk_topo_png_body">Export while topology is showing and you get the arranged picture as a PNG. It is rendered from the canvas itself rather than from what happens to be on screen, so devices scrolled out of view are in the file, at full size, with the arrangement and the positions you set.</p>
-<p data-i18n="tk_topo_png_body_p2">The background is the current theme's content surface, so the image matches the app you exported it from instead of arriving on a white sheet.</p>
+<p data-i18n="tk_topo_png_body">In Topology, use the rail's Export button to choose transparent PNG, themed JPG, or an HTML page containing SVG. Each export includes the full arrangement, including devices outside the visible area.</p>
+<p data-i18n="tk_topo_png_body_p2">PNG keeps a transparent background. JPG uses the current theme's surface and grain. The HTML export contains scalable shapes and text.</p>
 </div></div></div>
 <h2 class="help-cat" id="terminal" data-i18n="tk_term_nav">Terminal</h2>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_term_title">Terminal</span><span class="kbd">F10</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
@@ -225,7 +237,7 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <p data-i18n="tk_term_modules">The <b>KillerScripts</b> PowerShell module travels inside the executable, which is the point: it is there on a locked-down machine where you cannot install anything. It is unpacked per version to <code>%LOCALAPPDATA%\KillerScan\Modules\</code> the first time you open a terminal, written to a temporary name and moved into place with a marker file written last so a half-finished unpack is never used.</p>
 <p data-i18n="tk_term_modules_p2">The module path is appended rather than prepended, so a copy you installed properly from the gallery still wins.</p>
 <p data-i18n="tk_term_menu">Right-click for the things a terminal is expected to offer: copy, paste, select all, copy the whole session including scrollback, clear, and the speed test. Copy is offered only when there is a selection.</p>
-<p data-i18n="tk_term_menu_p2">Clear empties the screen and the scrollback without sending anything to the program on the other end, because a full-screen program would redraw over it and a shell mid-command should not receive stray input. The terminal keeps only the Ctrl+Shift chords for itself, so Ctrl+A, Ctrl+C and the rest reach the program you are talking to, which is what lets readline and screen work normally.</p>
+<p data-i18n="tk_term_menu_p2">Clear removes the screen and scrollback without sending input to the program. Ctrl+C copies selected text; with no selection, it reaches the running program. Ctrl+V pastes. Most other keys go to the program while the terminal has focus.</p>
 </div></div></div>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_cmd_title">Commands in the terminal</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
 <p data-i18n="tk_cmd_intro">The terminal carries a small KillerScan module of its own, unpacked from inside the exe like the rest. It gives you four short commands, and the point of them is not that they are shorter than the command line: they hand back <b>objects</b> rather than text.</p>
@@ -252,7 +264,7 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 </div></div></div>
 <h2 class="help-cat" id="history" data-i18n="tk_hist_nav">Scan history</h2>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_hist_title">Scan history</span><span class="kbd">Ctrl+H</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
-<p data-i18n="tk_hist_body">Every completed scan is recorded, and <b>Ctrl+H</b> opens the list, newest first. Pick an entry and KillerScan compares it against the previous scan <b>of the same target</b>, so comparing a subnet against an unrelated one is not something you can do by accident.</p>
+<p data-i18n="tk_hist_body">Completed GUI scans with at least one device are recorded. <b>Ctrl+H</b> opens history, newest first. Select an entry to compare it with the previous recorded scan <b>of the same target</b>.</p>
 <p data-i18n="tk_hist_body_p2">The comparison is shown as one flat table of added, missing, and changed devices, in that order, with a one-line summary of the three counts. The first scan of a target says so plainly rather than reporting every device as new.</p>
 <p data-i18n="tk_hist_views">Two readings of the same entry sit behind a selector on the right. <b>Changes</b> is the comparison. <b>All devices</b> is the snapshot itself, every device as it was recorded, which is the one you want when nothing moved and the comparison is therefore empty. The choice is remembered.</p>
 <p data-i18n="tk_hist_identity">Devices are matched between scans by <b>hardware ID</b> where one is known, and only by address where it is not. That is what makes the comparison worth reading: a device that picked up a new address from DHCP is reported as changed rather than as one device disappearing and another appearing.</p>
@@ -267,10 +279,11 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_prof_title">Scan profiles</span><span class="kbd">Ctrl+Shift+P</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
 <p data-i18n="tk_prof_body"><b>Ctrl+Shift+P</b> opens saved profiles. A profile is deliberately small: a name, the targets, and whether to follow the scan with Deep Scan.</p>
 <p data-i18n="tk_prof_body_p2">Save the current target under a name, and saving again with the same name replaces it. <b>Load</b> puts the target in place without scanning, for when you want to change something first.</p>
-<p data-i18n="tk_prof_body_p3"><b>Run</b> starts it immediately. If the profile is set to deep scan, the exhaustive pass follows automatically as soon as the normal scan finishes, so a site you visit regularly is one keystroke rather than a sequence. Profiles live in <code>%LocalAppData%\KillerScan\profiles.json</code>.</p>
+<p data-i18n="tk_prof_body_p3"><b>Run</b> starts the profile immediately. Its optional Deep Scan follows the normal scan, checking ports 1-1024 plus additional service ports. Profiles are stored in <code>%LocalAppData%\KillerScan\profiles.json</code>.</p>
 </div></div></div>
 <h2 class="help-cat" id="export" data-i18n="tk_exp_nav">Export</h2>
-<div class="acc-item"><button class="acc-head"><span data-i18n="tk_exp_title">Export</span><span class="kbd">Ctrl+E</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
+<div class="acc-item"><button class="acc-head"><span data-i18n="tk_exp_title">Export</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
+<p data-i18n="tk_exp_shortcut">Use the rail Export button for the formats below. Ctrl+E directly saves device CSV in Devices, Services or Topology; it does not open this menu. In the terminal, Ctrl+E goes to the running program.</p>
 <p data-i18n="tk_exp_body">Export offers only what the view in front of you can actually produce, so the menu changes as you move between views. In Devices and Services it writes the device list as CSV or as the HTML report, with the service list as its own CSV while Services is showing.</p>
 <p data-i18n="tk_exp_body_p2">In Topology it drops those entirely, because there is no table on screen to write, and offers the picture instead: a transparent PNG to drop onto someone else's document, a JPG flattened onto the theme's own surface and grain for the places that refuse transparency, and an HTML page carrying real SVG, which stays sharp at any size and can be edited afterwards. In Keep Alive it writes the run as CSV or as a page, or the cards themselves as a picture.</p>
 <p data-i18n="tk_exp_body_p3">In the Terminal it writes the session to a text file, scrollback included. Files are named with the date and time, so exporting the same network twice in an afternoon does not overwrite the morning's evidence.</p>
@@ -286,7 +299,7 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_cli_title">Command line</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
 <p data-i18n="tk_cli_intro">The same scanner that powers the window can run headless from Command Prompt, PowerShell, scripts, scheduled tasks, and RMM tools. Install KillerScan, open a new terminal, and call it by name.</p>
 <p data-i18n="tk_cli_intro_p2">Windows commands are case-insensitive, so <code>killerscan</code> and <code>KillerScan</code> are the same command. Running it without any flags opens the normal app.</p>
-<p data-i18n="tk_ssh_security"><b>SSH usernames and authentication.</b> When you launch SSH from a device's right-click menu, KillerScan asks for the username the first time and remembers only that username against the device's MAC address. It never asks for, sees, or stores passwords or private keys.</p>
+<p data-i18n="tk_ssh_security"><b>SSH usernames and authentication.</b> KillerScan remembers the username you choose for a device. The Windows SSH client handles authentication in the terminal; KillerScan does not store passwords or private keys.</p>
 <p data-i18n="tk_ssh_security_p2">The normal Windows SSH client handles the connection and all authentication.</p>
 <div class="cli-demo" aria-label="KillerScan command examples"><span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan 192.168.8.0/24</span>
 <span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan 192.168.8.10-50 /quick</span>
@@ -297,6 +310,8 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_cli_commands">Commands and options</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
 <table class="spec-table cli-table"><tr><th data-i18n="tk_cli_syntax">Syntax</th><th data-i18n="tk_cli_action">What it does</th></tr>
 <tr><td><code>killerscan</code></td><td data-i18n="tk_cli_gui">Open the normal KillerScan window.</td></tr>
+<tr><td><code>killerscan /uiscan [targets]</code></td><td data-i18n="help_cli_uiscan">Open the app and start a scan of the supplied targets, or the detected local subnet when omitted.</td></tr>
+<tr><td><code>killerscan /scan /demo</code></td><td data-i18n="help_cli_demo">Use fabricated results for examples or screenshots without scanning a network.</td></tr>
 <tr><td><code>killerscan /scan</code></td><td data-i18n="tk_cli_local">Detect and scan the active local IPv4 subnet.</td></tr>
 <tr><td><code>killerscan /scan &lt;targets&gt;</code></td><td data-i18n="tk_cli_targets">Scan one or more explicit IPv4 targets.</td></tr>
 <tr><td><code>killerscan /probe &lt;IPv4&gt;</code></td><td data-i18n="tk_cli_probe">Deep-probe one host, scanning ports 1-1024 plus KillerScan's extended service list and collecting every available fingerprint.</td></tr>
@@ -341,7 +356,7 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
 </div></div></div>
 
 <h2 class="help-cat" id="shortcuts" data-i18n="tk_182">Keyboard shortcuts</h2>
-<!-- Interactive keyboard map: the same binding table as the in-app keyboard view. -->
+<!-- Interactive map of application shortcuts; terminal bindings are listed separately. -->
 <style>
 .kbmap { --kc-scan:#ff2975; --kc-view:#f222ff; --kc-device:#00fff9; --kc-tools:#ffd319; --kc-edit:#ff901f; --kc-search:#00b3ff; --kc-file:#39ff14; margin: 0 0 30px; }
 html[data-theme="light"] .kbmap { --kc-scan:#d1105a; --kc-view:#a316b5; --kc-device:#009e99; --kc-tools:#a67c00; --kc-edit:#cc6a00; --kc-search:#0077b3; --kc-file:#128c07; }
@@ -372,7 +387,7 @@ html[data-theme="light"] .kbmap { --kc-scan:#d1105a; --kc-view:#a316b5; --kc-dev
 <button data-kblayer="ctrl">CTRL</button>
 <button data-kblayer="ctrlshift">CTRL+SHIFT</button>
 <button data-kblayer="shift">SHIFT</button>
-<button data-kblayer="alt">ALT</button>
+<button data-kblayer="ctrlalt">CTRL+ALT</button>
 <span class="kbmap-hint" data-i18n="hp_kb_hint">Hold Ctrl, Shift or Alt to preview that layer - hover a lit key for its action</span>
 </div>
 <div class="kbmap-scroll"><div class="kbmap-board" id="kbmapBoard"></div></div>
@@ -381,34 +396,49 @@ html[data-theme="light"] .kbmap { --kc-scan:#d1105a; --kc-view:#a316b5; --kc-dev
 <script>
 (function(){
 var KBL = {
-base: { F1:['file','Show the shortcut list, then the keyboard map'], F3:['tools','Run the checks against the selected device'],
+base: { F1:['file','Open or close the shortcut overlay'], F3:['tools','Show the selected device in Keep Alive'],
   F4:['tools','Run a speed test in the terminal'], F5:['scan','Start or stop a scan'],
   F6:['view','Show the devices view'], F7:['view','Show the services view'], F8:['view','Show the topology view'],
-  F9:['view','Watch the selected devices in Keep Alive'], F10:['view','Open a terminal'], F12:['file','Open the About window'],
-  Esc:['edit','Close an open overlay, or cancel a running scan'], Enter:['device','Open the selected device in a browser'] },
-ctrl: { A:['edit','Select every device'], C:['device','Copy the selected IP address'], D:['device','Open Remote Desktop to the selected device'],
-  E:['file','Export the results'], F:['search','Jump to the subnet box'], G:['view','Cycle the topology arrangement'],
+  F9:['view','Open Keep Alive'], F10:['view','Open a terminal'], F12:['file','Open the About window'],
+  Esc:['edit','Close an overlay or filter, stop terminal ping, or cancel scanning'], Enter:['device','Open the selected device in a browser'] },
+ctrl: { T:['view','Return to the existing Devices view'], A:['edit','Select every device'], C:['device','Copy the selected IP address'], D:['device','Open Remote Desktop to the selected device'],
+  E:['file','Save the device list as CSV'], F:['search','Jump to the subnet box'], G:['view','Cycle the topology arrangement'],
   H:['view','Open scan history'], P:['device','Ping the selected device'], R:['scan','Deep rescan the selected hosts'],
   S:['device','Connect to the selected device over SSH'],
-  D1:['view','Pick a topology arrangement directly'], D2:['view','Pick a topology arrangement directly'],
-  D3:['view','Pick a topology arrangement directly'], D4:['view','Pick a topology arrangement directly'] },
-ctrlshift: { C:['device','Copy the selected MAC address'], P:['view','Open scan profiles'], S:['device','Choose an SSH account and connect'],
+  D1:['view','Arrange topology by Role, Type, IP, or Vendor'], D2:['view','Arrange topology by Role, Type, IP, or Vendor'],
+  D3:['view','Arrange topology by Role, Type, IP, or Vendor'], D4:['view','Arrange topology by Role, Type, IP, or Vendor'] },
+ctrlshift: { F:['search','Show or focus the results filter'], T:['view','Show the terminal, starting one if needed'],
+  D1:['tools','Small toolbar icons'],
+  D2:['tools','Large toolbar icons'],
+  D3:['tools','Hide toolbar captions'],
+  D4:['tools','Toolbar captions beside icons'],
+  D5:['tools','Toolbar captions below icons'],
+  D6:['tools','Text-only toolbar buttons'], C:['device','Copy the selected MAC address'], P:['view','Open scan profiles'], S:['device','Choose an SSH account and connect'],
   Equals:['view','Make the app bigger'], Minus:['view','Make the app smaller'], D0:['view','Reset the app size'] },
 shift: { F10:['device','Open every action for the selected device'] },
-alt: { C:['device','Copy the selected hostname'] } };
+ctrlalt: { C:['device','Copy the selected hostname'] } };
 var CATNAME = { scan:['SCANNING','tk_kb_cat_scan'], view:['VIEWS','tk_kb_cat_views'], device:['DEVICE','tk_kb_cat_device'],
   tools:['TOOLBAR','tk_kb_cat_toolbar'], edit:['EDITING','tk_kb_cat_edit'], search:['SEARCH','tk_kb_cat_search'], file:['APP','tk_kb_cat_app'] };
 var KBT = {
-  'Show the shortcut list, then the keyboard map':'tk_196', 'Run the checks against the selected device':'tk_ks_f3',
+  'Show or focus the results filter':'help_filter_key',
+  'Return to the existing Devices view':'help_devices_key',
+  'Show the terminal, starting one if needed':'help_terminal_key',
+  'Small toolbar icons':'help_toolbar_small',
+  'Large toolbar icons':'help_toolbar_large',
+  'Hide toolbar captions':'help_toolbar_none',
+  'Toolbar captions beside icons':'help_toolbar_beside',
+  'Toolbar captions below icons':'help_toolbar_under',
+  'Text-only toolbar buttons':'help_toolbar_text',
+  'Open or close the shortcut overlay':'tk_196', 'Show the selected device in Keep Alive':'tk_ks_f3',
   'Run a speed test in the terminal':'tk_ks_f4', 'Start or stop a scan':'tk_187',
   'Show the devices view':'tk_ks_devices', 'Show the services view':'tk_ks_f8', 'Show the topology view':'tk_ks_f9',
-  'Watch the selected devices in Keep Alive':'tk_ks_f2', 'Open a terminal':'tk_ks_terminal',
-  'Open the About window':'tk_207', 'Close an open overlay, or cancel a running scan':'tk_188',
+  'Open Keep Alive':'tk_ks_f2', 'Open a terminal':'tk_ks_terminal',
+  'Open the About window':'tk_207', 'Close an overlay or filter, stop terminal ping, or cancel scanning':'tk_188',
   'Open the selected device in a browser':'tk_198', 'Select every device':'tk_191',
   'Copy the selected IP address':'tk_203', 'Open Remote Desktop to the selected device':'tk_200',
-  'Export the results':'tk_192', 'Jump to the subnet box':'tk_190', 'Cycle the topology arrangement':'tk_ks_f7',
+  'Save the device list as CSV':'tk_192', 'Jump to the subnet box':'tk_190', 'Cycle the topology arrangement':'tk_ks_f7',
   'Open scan history':'tk_ks_f6', 'Ping the selected device':'tk_199', 'Deep rescan the selected hosts':'tk_189',
-  'Connect to the selected device over SSH':'tk_201', 'Pick a topology arrangement directly':'tk_ks_ctrl14',
+  'Connect to the selected device over SSH':'tk_201', 'Arrange topology by Role, Type, IP, or Vendor':'tk_ks_ctrl14',
   'Copy the selected MAC address':'tk_204', 'Open scan profiles':'tk_ks_f10',
   'Choose an SSH account and connect':'tk_202', 'Make the app bigger':'tk_193', 'Make the app smaller':'tk_194',
   'Reset the app size':'tk_195', 'Open every action for the selected device':'tk_206',
@@ -429,7 +459,7 @@ var KBROWS = [
 [['Caps','Caps',1.8],['A','A',1],['S','S',1],['D','D',1],['F','F',1],['G','G',1],['H','H',1],['J','J',1],['K','K',1],['L','L',1],['Semi',';',1],['Quote','\'',1],['Enter','Enter',2.2]],
 [['Shift','Shift',2.3],['Z','Z',1],['X','X',1],['C','C',1],['V','V',1],['B','B',1],['N','N',1],['M','M',1],['Comma',',',1],['Period','.',1],['Slash','/',1],['RShift','Shift',2.7],['',1.6],['Up','↑',1]],
 [['Ctrl','Ctrl',1.5],['Win','Win',1.2],['Alt','Alt',1.5],['Space','',6.8],['RAlt','Alt',1.5],['Menu','☰',1],['RCtrl','Ctrl',1.5],['',0.6],['Left','←',1],['Down','↓',1],['Right','→',1]]];
-var MODS = { base:[], ctrl:['Ctrl','RCtrl'], ctrlshift:['Ctrl','RCtrl','Shift','RShift'], shift:['Shift','RShift'], alt:['Alt','RAlt'] };
+var MODS = { base:[], ctrl:['Ctrl','RCtrl'], ctrlshift:['Ctrl','RCtrl','Shift','RShift'], shift:['Shift','RShift'], ctrlalt:['Ctrl','RCtrl','Alt','RAlt'] };
 var U = 46, board = document.getElementById('kbmapBoard'), detail = document.getElementById('kbmapDetail');
 var layer = 'base', keys = {}, hover = null;
 function startMarquee(h){   // a cut-off caption scrolls, marquee-style
@@ -487,7 +517,7 @@ document.querySelectorAll('.kbmap-layers button').forEach(function(b){
   b.addEventListener('click', function(){ layer = b.getAttribute('data-kblayer'); paint(); });
 });
 function sync(e){
-  var l = e.ctrlKey && e.shiftKey ? 'ctrlshift' : e.ctrlKey ? 'ctrl' : e.altKey ? 'alt' : e.shiftKey ? 'shift' : 'base';
+  var l = e.ctrlKey && e.shiftKey ? 'ctrlshift' : e.ctrlKey && e.altKey ? 'ctrlalt' : e.ctrlKey ? 'ctrl' : e.shiftKey ? 'shift' : 'base';
   if (l !== layer) { layer = l; paint(); }
 }
 window.addEventListener('keydown', sync);
@@ -506,25 +536,34 @@ window.addEventListener('resize', fit);
 })();
 </script>
 
-<p data-i18n="tk_kb_layers">The map has four layers: the keys on their own, then Ctrl, Ctrl+Shift and Alt. Click a layer to see what every key does with that modifier held, or simply hold the real Ctrl, Shift or Alt and the map follows your hand.</p>
+<p data-i18n="tk_kb_layers">Choose Base, Ctrl, Ctrl+Shift, Shift, or Ctrl+Alt to preview a layer, or hold those modifiers on your keyboard. Terminal-specific shortcuts are listed separately below.</p>
 <p data-i18n="tk_kb_layers_p2">A key with nothing bound in the layer you are looking at is dimmed, so what is available reads at a glance rather than needing to be searched for.</p>
-<p data-i18n="tk_184">Press <b>F1</b> at any time for the shortcuts, and <b>F1</b> again to switch between the two ways of reading them. The list groups them into two columns under colored category headings; the keyboard map draws a keyboard and paints each key in the color of the category it belongs to, which is the faster way to find out what a key does when you already have your hands on it.</p>
-<p data-i18n="tk_184_p2">The shortcuts work wherever the focus happens to be, including inside the results table. Ctrl+F, Ctrl+A and Ctrl+C keep their usual meaning while you are typing in the subnet or filter box.</p>
+<p data-i18n="tk_184">Press <b>F1</b> to open or close the shortcut overlay. Use its List and Keyboard map buttons to choose a view; the app remembers that choice.</p>
+<p data-i18n="tk_184_p2">Shortcuts depend on focus. In scan views, Ctrl+F focuses targets and Ctrl+Shift+F focuses the filter. Text boxes keep normal selection and copy behavior. A focused terminal receives most keys itself; click outside it before using the app's F-key shortcuts.</p>
 <table class="spec-table"><tr><th data-i18n="tk_185">Shortcut</th><th data-i18n="tk_186">What it does</th></tr>
+<tr><td>Ctrl + Shift + F</td><td data-i18n="help_filter_key">Show or focus the results filter</td></tr>
+<tr><td>Ctrl + T</td><td data-i18n="help_devices_key">Return to the existing Devices view</td></tr>
+<tr><td>Ctrl + Shift + T</td><td data-i18n="help_terminal_key">Show the terminal, starting one if needed</td></tr>
+<tr><td>Ctrl + Shift + 1</td><td data-i18n="help_toolbar_small">Small toolbar icons</td></tr>
+<tr><td>Ctrl + Shift + 2</td><td data-i18n="help_toolbar_large">Large toolbar icons</td></tr>
+<tr><td>Ctrl + Shift + 3</td><td data-i18n="help_toolbar_none">Hide toolbar captions</td></tr>
+<tr><td>Ctrl + Shift + 4</td><td data-i18n="help_toolbar_beside">Toolbar captions beside icons</td></tr>
+<tr><td>Ctrl + Shift + 5</td><td data-i18n="help_toolbar_under">Toolbar captions below icons</td></tr>
+<tr><td>Ctrl + Shift + 6</td><td data-i18n="help_toolbar_text">Text-only toolbar buttons</td></tr>
 <tr><td>F5</td><td data-i18n="tk_187">Start or stop a scan</td></tr>
-<tr><td>Esc</td><td data-i18n="tk_188">Close an open overlay, or cancel a running scan</td></tr>
+<tr><td>Esc</td><td data-i18n="tk_188">Close an overlay or filter, stop terminal ping, or cancel scanning</td></tr>
 <tr><td>Ctrl + R</td><td data-i18n="tk_189">Deep rescan the selected hosts</td></tr>
 <tr><td>Ctrl + F</td><td data-i18n="tk_190">Jump to the subnet box</td></tr>
 <tr><td>Ctrl + A</td><td data-i18n="tk_191">Select every device</td></tr>
-<tr><td>Ctrl + E</td><td data-i18n="tk_192">Export the results</td></tr>
+<tr><td>Ctrl + E</td><td data-i18n="tk_192">Save the device list as CSV</td></tr>
 <tr><td>F6</td><td data-i18n="tk_ks_devices">Show the devices view</td></tr>
 <tr><td>F10</td><td data-i18n="tk_ks_terminal">Open a terminal</td></tr>
-<tr><td>F9</td><td data-i18n="tk_ks_f2">Watch the selected devices in Keep Alive</td></tr>
-<tr><td>F3</td><td data-i18n="tk_ks_f3">Run the checks against the selected device</td></tr>
+<tr><td>F9</td><td data-i18n="tk_ks_f2">Open Keep Alive</td></tr>
+<tr><td>F3</td><td data-i18n="tk_ks_f3">Show the selected device in Keep Alive</td></tr>
 <tr><td>F4</td><td data-i18n="tk_ks_f4">Run a speed test in the terminal</td></tr>
 <tr><td>Ctrl + H</td><td data-i18n="tk_ks_f6">Open scan history</td></tr>
 <tr><td>Ctrl + G</td><td data-i18n="tk_ks_f7">Cycle the topology arrangement</td></tr>
-<tr><td>Ctrl + 1 ... Ctrl + 4</td><td data-i18n="tk_ks_ctrl14">Pick a topology arrangement directly</td></tr>
+<tr><td>Ctrl + 1 ... Ctrl + 4</td><td data-i18n="tk_ks_ctrl14">Arrange topology by Role, Type, IP, or Vendor</td></tr>
 <tr><td>F7</td><td data-i18n="tk_ks_f8">Show the services view</td></tr>
 <tr><td>F8</td><td data-i18n="tk_ks_f9">Show the topology view</td></tr>
 <tr><td>Ctrl + Shift + P</td><td data-i18n="tk_ks_f10">Open scan profiles</td></tr>
@@ -540,10 +579,20 @@ window.addEventListener('resize', fit);
 <tr><td>Ctrl + Shift + +</td><td data-i18n="tk_193">Make the app bigger</td></tr>
 <tr><td>Ctrl + Shift + -</td><td data-i18n="tk_194">Make the app smaller</td></tr>
 <tr><td>Ctrl + Shift + 0</td><td data-i18n="tk_195">Reset the app size</td></tr>
-<tr><td>F1</td><td data-i18n="tk_196">Show the shortcut list, then the keyboard map</td></tr>
+<tr><td>F1</td><td data-i18n="tk_196">Open or close the shortcut overlay</td></tr>
 <tr><td>F12</td><td data-i18n="tk_207">Open the About window</td></tr>
 </table>
-<p data-i18n="tk_197">Those last three set an app-wide size rather than zooming the results table on its own. Everything between the title bar and the status bar grows or shrinks together, and the text is laid out again at the new size instead of being stretched, so it stays sharp.</p>
+<h3 data-i18n="help_terminal_keys">When the terminal has focus</h3>
+<table class="spec-table">
+<tr><td>Ctrl + Shift + C</td><td data-i18n="help_term_copy">Copy selected terminal text</td></tr>
+<tr><td>Ctrl + Shift + V / Ctrl + V / Shift + Insert</td><td data-i18n="help_term_paste">Paste into the terminal</td></tr>
+<tr><td>Ctrl + Shift + A</td><td data-i18n="help_term_select">Select all terminal text</td></tr>
+<tr><td>Ctrl + Shift + Up / Down</td><td data-i18n="help_term_line">Scroll terminal output one line</td></tr>
+<tr><td>Ctrl + Shift + PageUp / PageDown</td><td data-i18n="help_term_page">Scroll terminal output one page</td></tr>
+<tr><td>Ctrl + Shift + Home / End</td><td data-i18n="help_term_ends">Jump to oldest output or the live bottom</td></tr>
+<tr><td>Ctrl + + / Ctrl + - / Ctrl + 0</td><td data-i18n="help_term_size">Increase, decrease or reset terminal font size</td></tr>
+</table>
+<p data-i18n="tk_197">Ctrl+Shift+plus, Ctrl+Shift+minus and Ctrl+Shift+0 change or reset the whole app's size. Without Shift, the terminal's font shortcuts affect only terminal text.</p>
 <p data-i18n="tk_197_p2">The size is remembered between runs. You can also do it with the mouse: hover over the KillerScan wordmark in the title bar and roll the wheel, which moves in finer steps of two percent. Either way the range is 70% to 250%.</p>
 
 </div>
@@ -556,7 +605,7 @@ window.addEventListener('resize', fit);
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 <div class="egg-toast" id="eggToast"></div>
-<script src="ks-i18n.js?v=5"></script>
+<script src="ks-i18n.js?v=6"></script>
 <script src="ks.js?v=10"></script>
 <script>
 (function(){
