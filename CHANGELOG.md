@@ -8,7 +8,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 - Prevented clipboard contention from crashing MAC address, IP address, and hostname copying.
-- Reported installation errors instead of cancellation, stopped relaunching after failed installs, and verified update copies before relaunching.
+- Made installs and updates replace executables safely, report failures accurately, and support silent uninstall.
 - Selected device rows now use their theme's established selection colors.
 
 ## [1.7.0] - 2026-09-05

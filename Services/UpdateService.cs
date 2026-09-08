@@ -144,14 +144,18 @@ namespace KillerScan.Services
                 ? $"start \"\" explorer.exe \"{curExe}\""
                 : $"start \"\" \"{curExe}\"";
 
+            string staged = curExe + "." + Guid.NewGuid().ToString("N") + ".new";
+
             File.WriteAllText(bat,
                 "@echo off\r\n" +
                 ":wait\r\n" +
                 $"tasklist /fi \"PID eq {pid}\" 2>nul | find \"{pid}\" >nul\r\n" +
                 "if not errorlevel 1 ( ping -n 2 127.0.0.1 >nul & goto wait )\r\n" +
-                $"copy /y \"{newExe}\" \"{curExe}\" >nul 2>&1\r\n" +
+                $"copy /b /y \"{newExe}\" \"{staged}\" >nul 2>&1\r\n" +
                 "if errorlevel 1 goto failed\r\n" +
-                $"fc /b \"{newExe}\" \"{curExe}\" >nul 2>&1\r\n" +
+                $"fc /b \"{newExe}\" \"{staged}\" >nul 2>&1\r\n" +
+                "if errorlevel 1 goto failed\r\n" +
+                $"move /y \"{staged}\" \"{curExe}\" >nul 2>&1\r\n" +
                 "if errorlevel 1 goto failed\r\n" +
                 regLines +
                 relaunch + "\r\n" +
@@ -161,6 +165,7 @@ namespace KillerScan.Services
                 // page so the failure is visible and fixable by hand.
                 $"start \"\" \"{ReleasesUrl}\"\r\n" +
                 ":cleanup\r\n" +
+                $"del \"{staged}\" >nul 2>&1\r\n" +
                 $"del \"{newExe}\" >nul 2>&1\r\n" +
                 "del \"%~f0\" >nul 2>&1\r\n");
 

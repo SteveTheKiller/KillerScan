@@ -83,9 +83,10 @@ namespace KillerScan
 
             // Handle uninstall flag (called by Add/Remove Programs)
             if (e.Args.Length > 0 &&
-                string.Equals(e.Args[0], "/uninstall", StringComparison.OrdinalIgnoreCase))
+                (string.Equals(e.Args[0], "/uninstall", StringComparison.OrdinalIgnoreCase) ||
+                 string.Equals(e.Args[0], "/uninstall-silent", StringComparison.OrdinalIgnoreCase)))
             {
-                Uninstall();
+                Uninstall(string.Equals(e.Args[0], "/uninstall-silent", StringComparison.OrdinalIgnoreCase));
                 Shutdown();
                 return;
             }
@@ -355,7 +356,7 @@ namespace KillerScan
 
                 Directory.CreateDirectory(installDir);
                 string src = Process.GetCurrentProcess().MainModule!.FileName;
-                File.Copy(src, installExe, overwrite: true);
+                Services.ExecutableDeployment.Install(src, installExe);
                 AddToPath(installDir, EnvironmentVariableTarget.Machine);
 
                 Directory.CreateDirectory(startMenuDir);
@@ -379,7 +380,7 @@ namespace KillerScan
                     key.SetValue("InstallLocation",      installDir);
                     key.SetValue("DisplayIcon",          $"{installExe},0");
                     key.SetValue("UninstallString",      $"\"{installExe}\" /uninstall");
-                    key.SetValue("QuietUninstallString", $"\"{installExe}\" /uninstall");
+                    key.SetValue("QuietUninstallString", $"\"{installExe}\" /uninstall-silent");
                     key.SetValue("NoModify",             1);
                     key.SetValue("NoRepair",             1);
                 }
@@ -398,7 +399,7 @@ namespace KillerScan
             {
                 Directory.CreateDirectory(InstallDir);
                 string src = Process.GetCurrentProcess().MainModule!.FileName;
-                File.Copy(src, InstallExe, overwrite: true);
+                Services.ExecutableDeployment.Install(src, InstallExe);
                 AddToPath(InstallDir, EnvironmentVariableTarget.User);
 
                 Directory.CreateDirectory(StartMenuDir);
@@ -424,7 +425,7 @@ namespace KillerScan
                     key.SetValue("InstallLocation",      InstallDir);
                     key.SetValue("DisplayIcon",          $"{InstallExe},0");
                     key.SetValue("UninstallString",      $"\"{InstallExe}\" /uninstall");
-                    key.SetValue("QuietUninstallString", $"\"{InstallExe}\" /uninstall");
+                    key.SetValue("QuietUninstallString", $"\"{InstallExe}\" /uninstall-silent");
                     key.SetValue("NoModify",             1);
                     key.SetValue("NoRepair",             1);
                 }
@@ -511,7 +512,7 @@ namespace KillerScan
         // Uninstall
         // ============================================================
 
-        private static bool RelaunchMachineUninstallElevatedIfNeeded(bool machine)
+        private static bool RelaunchMachineUninstallElevatedIfNeeded(bool machine, bool silent)
         {
             if (!machine) return false;
             try
@@ -522,7 +523,7 @@ namespace KillerScan
                     return false;
 
                 Process.Start(new ProcessStartInfo(
-                    Process.GetCurrentProcess().MainModule!.FileName, "/uninstall")
+                    Process.GetCurrentProcess().MainModule!.FileName, silent ? "/uninstall-silent" : "/uninstall")
                 {
                     UseShellExecute = true,
                     Verb = "runas",
@@ -540,19 +541,22 @@ namespace KillerScan
             return true;
         }
 
-        private static void Uninstall()
+        private static void Uninstall(bool silent)
         {
             string currentExe = Process.GetCurrentProcess().MainModule!.FileName;
             bool machineInstall = string.Equals(currentExe, MachineInstallExe, StringComparison.OrdinalIgnoreCase);
-            if (RelaunchMachineUninstallElevatedIfNeeded(machineInstall)) return;
+            if (RelaunchMachineUninstallElevatedIfNeeded(machineInstall, silent)) return;
 
-            var confirm = new Controls.ConfirmDialog(
-                L("Str_Uninstall_Confirm", "Uninstall KillerScan from this computer?"),
-                string.Empty,
-                L("Str_Uninstall_Title", "Uninstall"),
-                L("Str_Btn_Cancel", "Cancel"));
-            confirm.ShowDialog();
-            if (!confirm.Confirmed) return;
+            if (!silent)
+            {
+                var confirm = new Controls.ConfirmDialog(
+                    L("Str_Uninstall_Confirm", "Uninstall KillerScan from this computer?"),
+                    string.Empty,
+                    L("Str_Uninstall_Title", "Uninstall"),
+                    L("Str_Btn_Cancel", "Cancel"));
+                confirm.ShowDialog();
+                if (!confirm.Confirmed) return;
+            }
 
             RemoveFromPath(machineInstall ? MachineInstallDir : InstallDir,
                 machineInstall ? EnvironmentVariableTarget.Machine : EnvironmentVariableTarget.User);
@@ -574,7 +578,7 @@ namespace KillerScan
             SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
 
             // Self-delete: deferred via cmd batch so the EXE can exit first
-            string bat = Path.Combine(Path.GetTempPath(), "killerscan_uninstall.bat");
+            string bat = Path.Combine(Path.GetTempPath(), $"killerscan_uninstall_{Guid.NewGuid():N}.bat");
             File.WriteAllText(bat,
                 "@echo off\r\n" +
                 "ping -n 3 127.0.0.1 >nul\r\n" +
