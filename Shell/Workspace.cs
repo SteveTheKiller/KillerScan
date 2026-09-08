@@ -413,6 +413,13 @@ namespace KillerScan.Shell
 
         private void WorkspaceDeviceAction(NetworkDevice device, string action)
         {
+            try { RunWorkspaceDeviceAction(device, action); }
+            catch (System.ComponentModel.Win32Exception ex) { StatusText.Text = ex.Message; }
+            catch (InvalidOperationException ex) { StatusText.Text = ex.Message; }
+        }
+
+        private void RunWorkspaceDeviceAction(NetworkDevice device, string action)
+        {
             if (!IPAddress.TryParse(device.IpAddress, out var address)) return;
             string ip = address.ToString();
             if (action == "Watch" || action == "Diagnose") { OpenNetworkTool(device, action == "Diagnose"); return; }

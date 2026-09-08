@@ -350,14 +350,14 @@ namespace KillerScan.Shell
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            Services.WebLink.Open(e.Uri.AbsoluteUri);
             e.Handled = true;
         }
 
         // Titlebar wordmark opens the website (same rule as KillerPDF/KillerFind).
         private void Wordmark_Click(object sender, MouseButtonEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://scan.killertools.net") { UseShellExecute = true });
+            Services.WebLink.Open("https://scan.killertools.net");
             e.Handled = true;
         }
 
