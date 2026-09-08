@@ -151,6 +151,8 @@ namespace KillerScan.Services
                 "if not errorlevel 1 ( ping -n 2 127.0.0.1 >nul & goto wait )\r\n" +
                 $"copy /y \"{newExe}\" \"{curExe}\" >nul 2>&1\r\n" +
                 "if errorlevel 1 goto failed\r\n" +
+                $"fc /b \"{newExe}\" \"{curExe}\" >nul 2>&1\r\n" +
+                "if errorlevel 1 goto failed\r\n" +
                 regLines +
                 relaunch + "\r\n" +
                 "goto cleanup\r\n" +

@@ -250,9 +250,12 @@ namespace KillerScan
                 };
                 using var p = Process.Start(psi);
                 p?.WaitForExit();
-                return p is not null && p.ExitCode == 0 && File.Exists(MachineInstallExe);
+                if (p is null) throw new System.ComponentModel.Win32Exception(1067);
+                if (p.ExitCode != 0) throw new System.ComponentModel.Win32Exception(p.ExitCode);
+                if (!File.Exists(MachineInstallExe)) throw new FileNotFoundException(null, MachineInstallExe);
+                return true;
             }
-            catch
+            catch (System.ComponentModel.Win32Exception ex) when (ex.NativeErrorCode == 1223)
             {
                 // Declining the UAC prompt throws Win32Exception 1223 (ERROR_CANCELLED).
                 return false;
@@ -384,7 +387,8 @@ namespace KillerScan
             catch (Exception ex)
             {
                 Console.Error.WriteLine($"Silent install failed: {ex.Message}");
-                Environment.Exit(1);
+                int error = Marshal.GetHRForException(ex) & 0xffff;
+                Environment.Exit(error == 0 ? 1 : error);
             }
         }
 
@@ -427,8 +431,7 @@ namespace KillerScan
             }
             catch (Exception ex)
             {
-                MessageBox.Show(string.Format(L("Str_Install_Failed", "Installation failed:\n{0}"), ex.Message), AppName,
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                throw new IOException(ex.Message, ex);
             }
         }
 

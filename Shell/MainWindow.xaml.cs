@@ -93,12 +93,20 @@ namespace KillerScan.Shell
 
             // An all-users install can still be refused at the UAC prompt; only hide the badge
             // once the install actually happened, otherwise the app keeps running as portable.
-            if (!App.InstallAndRelaunch(wantDesktop: true, allUsers: dlg.AllUsers))
+            try
             {
-                StatusText.Text = Loc("Str_St_InstallCanceled");
-                return;
+                if (!App.InstallAndRelaunch(wantDesktop: true, allUsers: dlg.AllUsers))
+                {
+                    StatusText.Text = Loc("Str_St_InstallCanceled");
+                    return;
+                }
+                _portableBadge.Visibility = Visibility.Collapsed;
             }
-            _portableBadge.Visibility = Visibility.Collapsed;
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, string.Format(Loc("Str_Install_Failed"), ex.Message),
+                    AppInfo.DisplayName, MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         // Footer version number -> About overlay (About.cs).
