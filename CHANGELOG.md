@@ -19,6 +19,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Preserved quotes, commas, and newlines in device and service CSV exports.
 - Selected device rows now use their theme's established selection colors.
 
+### Changed
+- Refreshed the bundled MAC vendor database from Wireshark to 58,195 entries.
+
 ## [1.7.0] - 2026-09-05
 
 1.7.0 brings permanent Devices, Services, Topology, Keep Alive and Terminal views, alongside scan history, trusted-device baselines, scan profiles and an embedded terminal.
