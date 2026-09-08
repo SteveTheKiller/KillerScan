@@ -104,7 +104,8 @@ namespace KillerScan.Controls
                 var text = new StringBuilder();
                 text.AppendLine("Service,Port,Name,IP Address,Type");
                 foreach (var row in ServicesGrid.Items.OfType<ServiceRow>())
-                    text.AppendLine($"\"{row.Service}\",\"{row.Port}\",\"{row.DeviceName}\",\"{row.IpAddress}\",\"{row.DeviceTypeDisplay}\"");
+                    text.AppendLine(string.Join(",", ReportExport.CsvField(row.Service), ReportExport.CsvField(row.Port.ToString()),
+                        ReportExport.CsvField(row.DeviceName), ReportExport.CsvField(row.IpAddress), ReportExport.CsvField(row.DeviceTypeDisplay)));
                 File.WriteAllText(dlg.FileName, text.ToString(), Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }

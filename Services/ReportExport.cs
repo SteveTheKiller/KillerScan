@@ -37,12 +37,15 @@ namespace KillerScan.Services
         private static string Ljs(string key, string fallback) =>
             L(key, fallback).Replace("\\", "\\\\").Replace("'", "\\'");
 
+        internal static string CsvField(string? value) => "\"" + (value ?? string.Empty).Replace("\"", "\"\"") + "\"";
+
         internal static string BuildCsv(IEnumerable<NetworkDevice> devices)
         {
             var sb = new StringBuilder();
             sb.AppendLine("IP Address,Hostname,MAC Address,Vendor,Type,Open Ports");
             foreach (var d in devices.OrderBy(d => d.IpSortKey))
-                sb.AppendLine($"\"{d.IpAddress}\",\"{d.Hostname}\",\"{d.MacAddress}\",\"{d.Vendor}\",\"{d.DeviceType}\",\"{d.OpenPortsDisplay}\"");
+                sb.AppendLine(string.Join(",", CsvField(d.IpAddress), CsvField(d.Hostname),
+                    CsvField(d.MacAddress), CsvField(d.Vendor), CsvField(d.DeviceType), CsvField(d.OpenPortsDisplay)));
             return sb.ToString();
         }
 
