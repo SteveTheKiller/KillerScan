@@ -214,8 +214,8 @@ namespace KillerScan
         /// Installs KillerScan, then relaunches from the installed location.
         /// For an all-users install the app re-runs itself elevated with /silent - the same
         /// machine-wide path winget and choco already use - so UAC only appears when the user
-        /// actually ticked the box. Returns false if that elevation was declined or failed,
-        /// leaving the app running as it was.
+        /// actually ticked the box. Returns false if elevation was declined; other failures
+        /// propagate to the installation error dialog without shutting down the app.
         /// </summary>
         internal static bool InstallAndRelaunch(bool wantDesktop, bool allUsers)
         {

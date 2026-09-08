@@ -11,3 +11,7 @@ $packageArgs = @{
 }
 
 Get-ChocolateyWebFile @packageArgs
+
+$installer = Start-Process -FilePath $packageArgs.fileFullPath -ArgumentList '/silent' -Wait -PassThru -WindowStyle Hidden
+if ($installer.ExitCode -ne 0) { throw "KillerScan installation failed with exit code $($installer.ExitCode)." }
+New-Item -ItemType File -Path ($packageArgs.fileFullPath + '.ignore') -Force | Out-Null

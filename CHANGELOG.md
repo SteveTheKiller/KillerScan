@@ -6,13 +6,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.7.1] - Unreleased
 
+1.7.1 fixes installation and update failures, clipboard crashes, and reliability issues found during the maintenance audit.
+
 ### Fixed
+- Made installs and updates replace executables safely, report failures accurately, and support silent uninstall.
+- Made Chocolatey run the installer and silent uninstaller instead of leaving a separate portable copy.
+- Prevented clipboard contention from crashing MAC address, IP address, and hostname copying.
+- Prevented duplicate device identities and malformed saved profiles or history from breaking history views.
+- Kept browser, RDP, SSH, and website launch failures from crashing the app.
 - Limited HTTP fingerprint response sizes to prevent excessive memory use.
 - Preserved quotes, commas, and newlines in device and service CSV exports.
-- Kept browser, RDP, SSH, and website launch failures from crashing the app.
-- Prevented duplicate device identities and malformed saved profiles or history from breaking history views.
-- Prevented clipboard contention from crashing MAC address, IP address, and hostname copying.
-- Made installs and updates replace executables safely, report failures accurately, and support silent uninstall.
 - Selected device rows now use their theme's established selection colors.
 
 ## [1.7.0] - 2026-09-05
