@@ -7,15 +7,11 @@ using System.Windows.Shapes;
 
 namespace KillerScan.Shell
 {
-    // Layered keyboard-map overlay, ported from KillerNotes' Shell/KeyboardMap.cs so the two
-    // apps behave the same way. KillerScan has no per-binding table like KillerNotes' KsTable
-    // though - ShortcutRows carries one flat gesture string per row - so the layer and physical
-    // key id for each row are parsed here from that gesture string instead of being authored
-    // per-row. A gesture whose modifiers do not land on one of the four layers (Shift-only,
-    // Ctrl+Alt, ...) simply has no home on the map; it still shows in the list view untouched.
+    // The list and keyboard map share ShortcutRows. Parse each gesture into its modifier
+    // layer and physical key so both views show the same bindings.
     public partial class MainWindow
     {
-        private enum KbLayer { Base, Ctrl, CtrlShift, Alt }
+        private enum KbLayer { Base, Ctrl, CtrlShift, Shift, CtrlAlt }
 
         private KbLayer _kbLayer = KbLayer.Base;
         private bool _kbHooked;
@@ -24,18 +20,18 @@ namespace KillerScan.Shell
 
         private static readonly (KbLayer Layer, string Caption)[] KbLayerTabs =
         [
-            (KbLayer.Base, "BASE"), (KbLayer.Ctrl, "CTRL"), (KbLayer.CtrlShift, "CTRL+SHIFT"), (KbLayer.Alt, "ALT"),
+            (KbLayer.Base, "BASE"), (KbLayer.Ctrl, "CTRL"), (KbLayer.CtrlShift, "CTRL+SHIFT"),
+            (KbLayer.Shift, "SHIFT"), (KbLayer.CtrlAlt, "CTRL+ALT"),
         ];
 
-        // Modifier keycaps that light up to show which layer is active - the same set
-        // KillerNotes lights. Both Alt caps light for the Alt layer even though only the left
-        // one is a real Alt on international layouts (AltGr reports as Ctrl+Alt on Windows).
+        // Light both physical modifier keys for the active layer.
         private static readonly Dictionary<KbLayer, string[]> KbLayerMods = new()
         {
             [KbLayer.Base] = [],
             [KbLayer.Ctrl] = ["Ctrl", "RCtrl"],
             [KbLayer.CtrlShift] = ["Ctrl", "RCtrl", "Shift", "RShift"],
-            [KbLayer.Alt] = ["Alt", "RAlt"],
+            [KbLayer.Shift] = ["Shift", "RShift"],
+            [KbLayer.CtrlAlt] = ["Ctrl", "RCtrl", "Alt", "RAlt"],
         };
 
         // The physical keyboard, moved here from Shortcuts.cs since nothing else in that file
@@ -77,7 +73,8 @@ namespace KillerScan.Shell
         {
             var map = new Dictionary<KbLayer, Dictionary<string, List<(string, string, string)>>>
             {
-                [KbLayer.Base] = [], [KbLayer.Ctrl] = [], [KbLayer.CtrlShift] = [], [KbLayer.Alt] = [],
+                [KbLayer.Base] = [], [KbLayer.Ctrl] = [], [KbLayer.CtrlShift] = [],
+                [KbLayer.Shift] = [], [KbLayer.CtrlAlt] = [],
             };
             foreach (var (keys, desc, cat) in ShortcutRows)
             {
@@ -89,8 +86,7 @@ namespace KillerScan.Shell
         }
 
         // Splits a gesture like "Ctrl + Shift + C" into the layer its modifiers select and the
-        // physical key id KeyboardRows uses for the trailing token. False for a modifier
-        // combination that is not one of the four layers (Shift alone, Ctrl+Alt together, ...).
+        // physical key id KeyboardRows uses for the trailing token.
         private static bool TryParseGesture(string gesture, out KbLayer layer, out string id)
         {
             layer = KbLayer.Base;
@@ -121,9 +117,10 @@ namespace KillerScan.Shell
             }
             if (ctrl && shift && !alt) layer = KbLayer.CtrlShift;
             else if (ctrl && !shift && !alt) layer = KbLayer.Ctrl;
-            else if (alt && !ctrl && !shift) layer = KbLayer.Alt;
+            else if (shift && !ctrl && !alt) layer = KbLayer.Shift;
+            else if (ctrl && alt && !shift) layer = KbLayer.CtrlAlt;
             else if (!ctrl && !shift && !alt) layer = KbLayer.Base;
-            else return false;   // Shift-only, Ctrl+Alt together, etc: no layer owns this gesture
+            else return false;
             id = KeyIdFor(keyToken);
             return id.Length > 0;
         }
@@ -159,12 +156,13 @@ namespace KillerScan.Shell
                 PreviewKeyUp += (_, _) => KbSyncLayerFromModifiers();
             }
 
-            var tabRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
+            var tabRow = new WrapPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
             foreach (var (layer, caption) in KbLayerTabs)
             {
                 var b = new Button
                 {
-                    Content = caption, FontFamily = new FontFamily("Consolas"), FontSize = 11,
+                    Content = layer == KbLayer.Base ? Loc("Str_KS_Base") : caption,
+                    FontFamily = new FontFamily("Consolas"), FontSize = 11,
                     Padding = new Thickness(10, 4, 10, 4), Margin = new Thickness(0, 0, 8, 0),
                 };
                 // The family's own outline button rather than WPF's default chrome, which would
@@ -309,11 +307,10 @@ namespace KillerScan.Shell
         {
             if (ShortcutMapHost.Visibility != Visibility.Visible) return;
             var m = Keyboard.Modifiers;
-            // Ctrl first, so AltGr (which Windows reports as Ctrl+Alt) previews the Ctrl layer
-            // rather than the Alt one - matching which layer its keystrokes can actually reach.
             var layer = m.HasFlag(ModifierKeys.Control) && m.HasFlag(ModifierKeys.Shift) ? KbLayer.CtrlShift
+                      : m.HasFlag(ModifierKeys.Control) && m.HasFlag(ModifierKeys.Alt) ? KbLayer.CtrlAlt
                       : m.HasFlag(ModifierKeys.Control) ? KbLayer.Ctrl
-                      : m.HasFlag(ModifierKeys.Alt) ? KbLayer.Alt
+                      : m.HasFlag(ModifierKeys.Shift) ? KbLayer.Shift
                       : KbLayer.Base;
             if (layer != _kbLayer) SetKbLayer(layer);
         }

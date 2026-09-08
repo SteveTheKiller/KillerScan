@@ -49,7 +49,7 @@ namespace KillerScan.Features.About
             // non-ASCII bytes to the source.
             _host.Alias         = (char)0x201C + AppInfo.AkaName + (char)0x201D;
             _host.AliasVisible  = signedByPublisher;
-            _host.Thumbprint    = thumb;
+            _host.Thumbprint    = thumb == "(none)" ? _host.Loc("Str_Diag_Unavailable") : thumb;
             _host.Sha256        = _host.Loc("Str_About_Computing");
             _host.UpdateVisible = false;
 
@@ -62,7 +62,8 @@ namespace KillerScan.Features.About
             Task.Run(() =>
             {
                 var hash = CodeSignature.ExeSha256();
-                _host.Window.Dispatcher.BeginInvoke((Action)(() => _host.Sha256 = hash));
+                _host.Window.Dispatcher.BeginInvoke((Action)(() => _host.Sha256 =
+                    hash == "(unavailable)" ? _host.Loc("Str_Diag_Unavailable") : hash));
             });
 
             CheckForUpdate();

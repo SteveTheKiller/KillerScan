@@ -187,7 +187,7 @@
     <sys:String x:Key="Str_Sc_Rescan">Deep rescan the selected hosts</sys:String>
     <sys:String x:Key="Str_Sc_Subnet">Jump to the subnet box</sys:String>
     <sys:String x:Key="Str_Sc_SelectAll">Select every device</sys:String>
-    <sys:String x:Key="Str_Sc_Export">Export results</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Save devices as CSV</sys:String>
     <sys:String x:Key="Str_Sc_Browser">Open the selected device in a browser</sys:String>
     <sys:String x:Key="Str_Sc_Ping">Ping the selected device</sys:String>
     <sys:String x:Key="Str_Sc_Rdp">Open Remote Desktop to the selected device</sys:String>
@@ -200,7 +200,14 @@
     <sys:String x:Key="Str_Sc_AppBigger">Make the app bigger</sys:String>
     <sys:String x:Key="Str_Sc_AppSmaller">Make the app smaller</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">Reset the app size</sys:String>
-    <sys:String x:Key="Str_Sc_Help">Show this list</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Show or hide keyboard shortcuts</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">Show Devices</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">Show Terminal</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">Show selected device in Keep Alive</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">Cut</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">Copy</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">Paste</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">Select all</sys:String>
     <sys:String x:Key="Str_Sc_About">Open the About window</sys:String>
     <sys:String x:Key="Str_Sc_Hint">The app size also follows the mouse wheel over the wordmark.</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">Hold Ctrl / Shift / Alt to preview a layer</sys:String>
@@ -444,4 +451,19 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Toolbar_TextUnder">Text under icons</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Text only</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">Could not copy to the clipboard. Try again.</sys:String>
+    <sys:String x:Key="Str_KS_Base">Base</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerScan speed test</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">The Ookla speedtest CLI is not installed.</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">KillerScan can download it from install.speedtest.net (about 4 MB), or run its own HTTP throughput test instead, which installs nothing.</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">Download the Ookla CLI? (y/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">The download failed: </sys:String>
+    <sys:String x:Key="Str_Speed_Server">Server</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">ISP</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">Latency</sys:String>
+    <sys:String x:Key="Str_Speed_Download">Download</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">Upload</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">jitter</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">Running the built-in HTTP throughput test. These figures are indicative, not an official speedtest.net result.</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">no reply</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">The test could not finish: </sys:String>
 </ResourceDictionary>

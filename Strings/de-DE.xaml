@@ -170,11 +170,18 @@
     <sys:String x:Key="Str_Sc_Rescan">Ausgewählte Hosts tief erneut scannen</sys:String>
     <sys:String x:Key="Str_Sc_Subnet">Zum Subnetz-Feld springen</sys:String>
     <sys:String x:Key="Str_Sc_SelectAll">Alle Geräte auswählen</sys:String>
-    <sys:String x:Key="Str_Sc_Export">Ergebnisse exportieren</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Geräte als CSV speichern</sys:String>
     <sys:String x:Key="Str_Sc_AppBigger">App vergrößern</sys:String>
     <sys:String x:Key="Str_Sc_AppSmaller">App verkleinern</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">App-Größe zurücksetzen</sys:String>
-    <sys:String x:Key="Str_Sc_Help">Diese Liste anzeigen</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Tastenkürzel ein- oder ausblenden</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">Geräte anzeigen</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">Terminal anzeigen</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">Ausgewähltes Gerät in Keep Alive anzeigen</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">Ausschneiden</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">Kopieren</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">Einfügen</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">Alles auswählen</sys:String>
     <sys:String x:Key="Str_Sc_About">Das Info-Fenster öffnen</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Die App-Größe folgt auch dem Mausrad über dem Schriftzug.</sys:String>
 
@@ -403,4 +410,19 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Toolbar_TextUnder">Text unter Symbol</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Nur Text</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">Kopieren in die Zwischenablage nicht möglich. Versuchen Sie es erneut.</sys:String>
+    <sys:String x:Key="Str_KS_Base">Basis</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerScan-Geschwindigkeitstest</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">Die Ookla-speedtest-CLI ist nicht installiert.</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">KillerScan kann sie von install.speedtest.net herunterladen (etwa 4 MB) oder stattdessen den eigenen HTTP-Durchsatztest ohne Installation ausführen.</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">Ookla-CLI herunterladen? (y/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">Download fehlgeschlagen: </sys:String>
+    <sys:String x:Key="Str_Speed_Server">Server</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">Internetanbieter</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">Latenz</sys:String>
+    <sys:String x:Key="Str_Speed_Download">Download</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">Upload</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">Jitter</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">Der integrierte HTTP-Durchsatztest läuft. Die Werte dienen zur Orientierung und sind kein offizielles speedtest.net-Ergebnis.</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">keine Antwort</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Der Test konnte nicht abgeschlossen werden: </sys:String>
 </ResourceDictionary>

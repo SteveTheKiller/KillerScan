@@ -188,7 +188,7 @@
     <sys:String x:Key="Str_Sc_Rescan">A kiválasztott gazdagépek mélyreható újrakeresése</sys:String>
     <sys:String x:Key="Str_Sc_Subnet">Ugrás az alhálózati mezőre</sys:String>
     <sys:String x:Key="Str_Sc_SelectAll">Válassza ki az összes eszközt</sys:String>
-    <sys:String x:Key="Str_Sc_Export">Eredmények exportálása</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Eszközök mentése CSV-ként</sys:String>
     <sys:String x:Key="Str_Sc_Browser">Nyissa meg a kiválasztott eszközt egy böngészőben</sys:String>
     <sys:String x:Key="Str_Sc_Ping">Pingelje a kiválasztott eszközt</sys:String>
     <sys:String x:Key="Str_Sc_Rdp">Nyissa meg a Távoli asztalt a kiválasztott eszközön</sys:String>
@@ -201,7 +201,14 @@
     <sys:String x:Key="Str_Sc_AppBigger">Tedd nagyobbá az alkalmazást</sys:String>
     <sys:String x:Key="Str_Sc_AppSmaller">Csökkentse az alkalmazást</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">Állítsa vissza az alkalmazás méretét</sys:String>
-    <sys:String x:Key="Str_Sc_Help">Mutasd ezt a listát</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Billentyűparancsok megjelenítése vagy elrejtése</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">Eszközök megjelenítése</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">Terminál megjelenítése</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">Kijelölt eszköz megjelenítése a Keep Alive nézetben</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">Kivágás</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">Másolás</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">Beillesztés</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">Összes kijelölése</sys:String>
     <sys:String x:Key="Str_Sc_About">Nyissa meg a névjegy ablakát</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Az alkalmazás mérete is követi az egér görgőjét a szójel felett.</sys:String>
 
@@ -418,4 +425,19 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Toolbar_TextUnder">Szöveg az ikonok alatt</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Csak szöveg</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">Nem sikerült a vágólapra másolni. Próbálja újra.</sys:String>
+    <sys:String x:Key="Str_KS_Base">Alap</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerScan sebességteszt</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">Az Ookla speedtest parancssori eszköz nincs telepítve.</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">A KillerScan letöltheti az install.speedtest.net oldalról (kb. 4 MB), vagy futtathatja saját HTTP-átviteli tesztjét, amely semmit sem telepít.</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">Letölti az Ookla CLI-t? (y/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">A letöltés sikertelen: </sys:String>
+    <sys:String x:Key="Str_Speed_Server">Szerver</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">Szolgáltató</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">Késleltetés</sys:String>
+    <sys:String x:Key="Str_Speed_Download">Letöltés</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">Feltöltés</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">ingadozás</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">A beépített HTTP-átviteli teszt fut. Az értékek tájékoztató jellegűek, nem hivatalos speedtest.net-eredmények.</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">nincs válasz</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">A teszt nem fejeződött be: </sys:String>
 </ResourceDictionary>

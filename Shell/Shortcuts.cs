@@ -20,6 +20,8 @@ namespace KillerScan.Shell
             ("F8",              "Str_TT_Topology",          "Views"),
             ("F9",              "Str_View_KeepAlive",       "Views"),
             ("F10",             "Str_Workspace_Terminal",   "Views"),
+            ("Ctrl + T",        "Str_Sc_Devices",          "Views"),
+            ("Ctrl + Shift + T", "Str_Sc_Terminal",        "Views"),
             ("Ctrl + H",        "Str_History_Title",        "Views"),
             ("Ctrl + Shift + P", "Str_Profiles_Title",      "Views"),
             ("F4",              "Str_TT_SpeedTest",         "Views"),
@@ -33,7 +35,7 @@ namespace KillerScan.Shell
             ("Ctrl + E",        "Str_Sc_Export",            "Scan"),
 
             ("Enter",           "Str_Sc_Browser",           "Device"),
-            ("F3",              "Str_Diag_Title",           "Device"),
+            ("F3",              "Str_Sc_Diagnostics",       "Device"),
             ("Ctrl + P",        "Str_Sc_Ping",              "Device"),
             ("Ctrl + D",        "Str_Sc_Rdp",               "Device"),
             ("Ctrl + S",        "Str_Sc_Ssh",               "Device"),

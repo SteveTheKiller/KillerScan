@@ -188,7 +188,7 @@
     <sys:String x:Key="Str_Sc_Rescan">Глубокое пересканирование выбранных хостов</sys:String>
     <sys:String x:Key="Str_Sc_Subnet">Перейти к полю подсети</sys:String>
     <sys:String x:Key="Str_Sc_SelectAll">Выбрать все устройства</sys:String>
-    <sys:String x:Key="Str_Sc_Export">Экспортировать результаты</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Сохранить устройства в CSV</sys:String>
     <sys:String x:Key="Str_Sc_Browser">Открыть выбранное устройство в браузере</sys:String>
     <sys:String x:Key="Str_Sc_Ping">Выполнить ping выбранного устройства</sys:String>
     <sys:String x:Key="Str_Sc_Rdp">Открыть удаленный рабочий стол к выбранному устройству</sys:String>
@@ -201,7 +201,14 @@
     <sys:String x:Key="Str_Sc_AppBigger">Увеличить приложение</sys:String>
     <sys:String x:Key="Str_Sc_AppSmaller">Уменьшить приложение</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">Сбросить размер приложения</sys:String>
-    <sys:String x:Key="Str_Sc_Help">Показать этот список</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Показать или скрыть сочетания клавиш</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">Показать устройства</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">Показать терминал</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">Показать выбранное устройство в Keep Alive</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">Вырезать</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">Копировать</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">Вставить</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">Выделить все</sys:String>
     <sys:String x:Key="Str_Sc_About">Открыть окно «О программе»</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Размер приложения также меняется колесом мыши над логотипом.</sys:String>
 
@@ -428,4 +435,19 @@
     <sys:String x:Key="Str_Toolbar_TextUnder">Текст под иконками</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Только текст</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">Не удалось скопировать в буфер обмена. Повторите попытку.</sys:String>
+    <sys:String x:Key="Str_KS_Base">Основной</sys:String>
+    <sys:String x:Key="Str_Speed_Title">Тест скорости KillerScan</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">Консольная утилита Ookla speedtest не установлена.</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">KillerScan может скачать её с install.speedtest.net (около 4 МБ) или выполнить собственный тест пропускной способности HTTP, который ничего не устанавливает.</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">Скачать утилиту Ookla CLI? (y/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">Не удалось скачать: </sys:String>
+    <sys:String x:Key="Str_Speed_Server">Сервер</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">Провайдер</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">Задержка</sys:String>
+    <sys:String x:Key="Str_Speed_Download">Загрузка</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">Отдача</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">джиттер</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">Выполняется встроенный тест пропускной способности HTTP. Значения ориентировочные и не являются официальным результатом speedtest.net.</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">нет ответа</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Не удалось завершить тест: </sys:String>
 </ResourceDictionary>

@@ -27,11 +27,11 @@ namespace KillerScan.Shell
             if (Enum.TryParse(App.GetSetting("ToolbarLabels"), out ToolbarLabelMode labels) && Enum.IsDefined(typeof(ToolbarLabelMode), labels))
                 _toolbarLabelMode = labels;
             _workspaceNavigation.Margin = new Thickness(8, 2, 8, 2);
-            AddViewButton("scan", "Str_View_Devices", "F6", () => ShowScanView("devices"));
+            AddViewButton("scan", "Str_View_Devices", "F6 / Ctrl+T", () => ShowScanView("devices"));
             AddViewButton("services", "Str_Services_Title", "F7", () => ServicesButton_Click(this, new RoutedEventArgs()));
             AddViewButton("topology", "Str_View_Topology", "F8", () => ShowScanView("topology"));
             AddViewButton("watch", "Str_View_KeepAlive", "F9", () => Watch_Click(this, new RoutedEventArgs()));
-            AddViewButton("terminal", "Str_Workspace_Terminal", "F10", NewTerminalView);
+            AddViewButton("terminal", "Str_Workspace_Terminal", "F10 / Ctrl+Shift+T", NewTerminalView);
             _workspaceToolbar.ContextMenu = _toolbarMenu;
             _workspaceToolbar.Background = System.Windows.Media.Brushes.Transparent;
             BuildToolbarMenu();
@@ -289,11 +289,11 @@ namespace KillerScan.Shell
                 item.SetResourceReference(HeaderedItemsControl.HeaderProperty, _viewAppearance[button].Key);
                 item.InputGestureText = _viewAppearance[button].Key switch
                 {
-                    "Str_View_Devices" => "F6",
+                    "Str_View_Devices" => "F6 / Ctrl+T",
                     "Str_Services_Title" => "F7",
                     "Str_View_Topology" => "F8",
                     "Str_View_KeepAlive" => "F9",
-                    "Str_Workspace_Terminal" => "F10",
+                    "Str_Workspace_Terminal" => "F10 / Ctrl+Shift+T",
                     _ => "Ctrl+E"
                 };
                 item.ToolTip = button.ToolTip;

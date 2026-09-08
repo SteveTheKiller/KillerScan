@@ -4,11 +4,12 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.7.1] - Unreleased
+## [1.7.1] - 2026-09-08
 
 1.7.1 fixes installation and update failures, clipboard crashes, and reliability issues found during the maintenance audit.
 
 ### Fixed
+- Completed shortcut references and translations throughout the app and website.
 - Themed install and uninstall prompts, with black/orange defaults for standalone dialogs.
 - Made installs and updates replace executables safely, report failures accurately, and support silent uninstall.
 - Made Chocolatey run the installer and silent uninstaller instead of leaving a separate portable copy.

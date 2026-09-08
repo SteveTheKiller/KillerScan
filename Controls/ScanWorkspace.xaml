@@ -400,10 +400,10 @@
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
                             </MenuItem>
                             <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
-                            <MenuItem Header="{DynamicResource Str_Diag_Title}" InputGestureText="F3" Click="Diagnose_Click">
+                            <MenuItem Header="{DynamicResource Str_Sc_Diagnostics}" InputGestureText="F3" Click="Diagnose_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9D9;"/></MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_View_KeepAlive}" InputGestureText="F2" Click="Watch_Click">
+                            <MenuItem Header="{DynamicResource Str_View_KeepAlive}" InputGestureText="F9" Click="Watch_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9D9;"/></MenuItem.Icon>
                             </MenuItem>
                             <MenuItem Header="{DynamicResource Str_Ctx_Ping}" InputGestureText="Ctrl+P" Click="PingDevice_Click">

@@ -188,7 +188,7 @@
     <sys:String x:Key="Str_Sc_Rescan">Таңдалған хосттарды терең қайта сканерлеу</sys:String>
     <sys:String x:Key="Str_Sc_Subnet">Ішкі желі өрісіне өту</sys:String>
     <sys:String x:Key="Str_Sc_SelectAll">Барлық құрылғыны таңдау</sys:String>
-    <sys:String x:Key="Str_Sc_Export">Нәтижелерді экспорттау</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Құрылғыларды CSV ретінде сақтау</sys:String>
     <sys:String x:Key="Str_Sc_Browser">Таңдалған құрылғыны браузерде ашу</sys:String>
     <sys:String x:Key="Str_Sc_Ping">Таңдалған құрылғыға Ping жіберу</sys:String>
     <sys:String x:Key="Str_Sc_Rdp">Таңдалған құрылғыға қашықтағы жұмыс үстелін ашу</sys:String>
@@ -201,7 +201,14 @@
     <sys:String x:Key="Str_Sc_AppBigger">Қолданбаны үлкейту</sys:String>
     <sys:String x:Key="Str_Sc_AppSmaller">Қолданбаны кішірейту</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">Қолданба өлшемін қалпына келтіру</sys:String>
-    <sys:String x:Key="Str_Sc_Help">Осы тізімді көрсету</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Перне тіркесімдерін көрсету немесе жасыру</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">Құрылғыларды көрсету</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">Терминалды көрсету</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">Таңдалған құрылғыны Keep Alive ішінде көрсету</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">Қиып алу</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">Көшіру</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">Қою</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">Барлығын таңдау</sys:String>
     <sys:String x:Key="Str_Sc_About">Қолданба туралы терезесін ашу</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Қолданба өлшемі логотиптің үстінде тінтуір дөңгелегімен де өзгереді.</sys:String>
 
@@ -444,4 +451,19 @@
     <sys:String x:Key="Str_Toolbar_TextUnder">Мәтін белгішенің астында</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Тек мәтін</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">Алмасу буферіне көшірілмеді. Қайталап көріңіз.</sys:String>
+    <sys:String x:Key="Str_KS_Base">Негізгі</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerScan жылдамдық сынағы</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">Ookla speedtest CLI орнатылмаған.</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">KillerScan оны install.speedtest.net сайтынан жүктей алады (шамамен 4 МБ) немесе ештеңе орнатпайтын өз HTTP өткізу қабілеті сынағын орындай алады.</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">Ookla CLI жүктелсін бе? (y/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">Жүктеу сәтсіз аяқталды: </sys:String>
+    <sys:String x:Key="Str_Speed_Server">Сервер</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">Провайдер</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">Кідіріс</sys:String>
+    <sys:String x:Key="Str_Speed_Download">Жүктеп алу</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">Жүктеп жіберу</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">кідіріс ауытқуы</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">Кірістірілген HTTP өткізу қабілеті сынағы орындалуда. Бұл сандар бағдарлық, speedtest.net ресми нәтижесі емес.</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">жауап жоқ</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Сынақты аяқтау мүмкін болмады: </sys:String>
 </ResourceDictionary>

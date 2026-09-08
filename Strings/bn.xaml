@@ -170,11 +170,18 @@
     <sys:String x:Key="Str_Sc_Rescan">নির্বাচিত হোস্ট গভীরভাবে পুনরায় স্ক্যান করুন</sys:String>
     <sys:String x:Key="Str_Sc_Subnet">সাবনেট বাক্সে যান</sys:String>
     <sys:String x:Key="Str_Sc_SelectAll">সব ডিভাইস নির্বাচন করুন</sys:String>
-    <sys:String x:Key="Str_Sc_Export">ফলাফল এক্সপোর্ট করুন</sys:String>
+    <sys:String x:Key="Str_Sc_Export">ডিভাইস CSV হিসেবে সংরক্ষণ করুন</sys:String>
     <sys:String x:Key="Str_Sc_AppBigger">অ্যাপ বড় করুন</sys:String>
     <sys:String x:Key="Str_Sc_AppSmaller">অ্যাপ ছোট করুন</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">অ্যাপের আকার রিসেট করুন</sys:String>
-    <sys:String x:Key="Str_Sc_Help">এই তালিকা দেখান</sys:String>
+    <sys:String x:Key="Str_Sc_Help">কীবোর্ড শর্টকাট দেখান বা লুকান</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">ডিভাইস দেখান</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">টার্মিনাল দেখান</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">নির্বাচিত ডিভাইস Keep Alive-এ দেখান</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">কাট</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">কপি</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">পেস্ট</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">সব নির্বাচন</sys:String>
     <sys:String x:Key="Str_Sc_About">সম্পর্কে উইন্ডোটি খুলুন</sys:String>
     <sys:String x:Key="Str_Sc_Hint">লোগোর উপর মাউস হুইল ঘোরালেও অ্যাপের আকার বদলায়।</sys:String>
 
@@ -402,4 +409,19 @@
     <sys:String x:Key="Str_Toolbar_TextUnder">আইকনের নিচে লেখা</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">শুধু লেখা</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">ক্লিপবোর্ডে কপি করা যায়নি। আবার চেষ্টা করুন।</sys:String>
+    <sys:String x:Key="Str_KS_Base">মূল</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerScan স্পিড টেস্ট</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">Ookla speedtest CLI ইনস্টল করা নেই।</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">KillerScan এটি install.speedtest.net থেকে নামাতে পারে (প্রায় 4 MB), অথবা নিজের HTTP গতি পরীক্ষা চালাতে পারে, যাতে কিছু ইনস্টল হয় না।</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">Ookla CLI নামাবেন? (y/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">ডাউনলোড ব্যর্থ হয়েছে: </sys:String>
+    <sys:String x:Key="Str_Speed_Server">সার্ভার</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">ইন্টারনেট সেবাদাতা</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">বিলম্ব</sys:String>
+    <sys:String x:Key="Str_Speed_Download">ডাউনলোড</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">আপলোড</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">বিলম্বের ওঠানামা</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">অন্তর্ভুক্ত HTTP গতি পরীক্ষা চলছে। এই সংখ্যাগুলো আনুমানিক, speedtest.net-এর আনুষ্ঠানিক ফল নয়।</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">সাড়া নেই</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">পরীক্ষা শেষ করা যায়নি: </sys:String>
 </ResourceDictionary>

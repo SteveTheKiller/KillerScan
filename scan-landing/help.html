@@ -6,12 +6,12 @@
 <link rel="preload" href="brand/KillerScan.ttf" as="font" type="font/ttf" crossorigin>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="darkreader-lock">
-<title>KillerScan - Help &amp; How-To</title>
+<title data-i18n="page_help_title">KillerScan: Help &amp; How-To</title>
 <link rel="canonical" href="https://killerscan.net/help.html">
-<meta name="description" content="How to use KillerScan: every view, tool, workflow and keyboard shortcut explained.">
+<meta name="description" data-i18n-content="page_help_description" content="How to use KillerScan: every view, tool, workflow and keyboard shortcut explained.">
 <link rel="icon" type="image/x-icon" href="brand/ks-icon.ico">
 <script defer src="https://koya.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
-<link rel="stylesheet" href="ks.css?v=22">
+<link rel="stylesheet" href="ks.css?v=23">
 <style>
 .content-inner { max-width: 880px; margin: 0 auto; padding: 0 28px 56px; }
 .help-hero { text-align: center; padding: 44px 16px 6px; }
@@ -100,15 +100,15 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <button class="lang-item" data-lang="bn">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
 <button class="lang-item" data-lang="cs">&#268;e&#353;tina</button>
 <button class="lang-item" data-lang="de">Deutsch</button>
-<button class="lang-item" data-lang="es">Espanol</button>
-<button class="lang-item" data-lang="fr">Francais</button>
+<button class="lang-item" data-lang="es">Español</button>
+<button class="lang-item" data-lang="fr">Français</button>
 <button class="lang-item" data-lang="ja">&#26085;&#26412;&#35486;</button>
 <button class="lang-item" data-lang="kk">&#1178;&#1072;&#1079;&#1072;&#1179;&#1096;&#1072;</button>
 <button class="lang-item" data-lang="pl">Polski</button>
 <button class="lang-item" data-lang="hu">Magyar</button>
 <button class="lang-item" data-lang="it">Italiano</button>
 <button class="lang-item" data-lang="ru">&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</button>
-<button class="lang-item" data-lang="tr">Turkce</button>
+<button class="lang-item" data-lang="tr">Türkçe</button>
 <button class="lang-item" data-lang="zh-cn">&#20013;&#25991; (&#31616;&#20307;)</button>
 <button class="lang-item" data-lang="zh">&#20013;&#25991; (&#32321;&#39636;)</button>
 </div>
@@ -342,10 +342,10 @@ killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_cli_automation_title">Automation and output</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
 <p data-i18n="tk_cli_automation_body">KillerScan sends the result table to standard output and progress or errors to standard error, so redirecting the table does not mix in status messages. Ctrl+C cancels a running scan.</p>
 <p data-i18n="tk_cli_automation_body_p2">Because KillerScan is also a graphical Windows app, Command Prompt may return its prompt before the headless process finishes; scripts that need the result must explicitly wait:</p>
-<div class="codeblock"><span class="cm">REM Command Prompt: wait, then read %ERRORLEVEL%</span>
+<div class="codeblock"><span class="cm" data-i18n="ui_cmd_wait">REM Command Prompt: wait, then read %ERRORLEVEL%</span>
 <span class="prompt">start /wait ""</span> killerscan <span class="arg">/scan 192.168.8.0/24 /export hosts.csv</span>
 
-<span class="cm"># PowerShell: wait for completion</span>
+<span class="cm" data-i18n="ui_ps_wait"># PowerShell: wait for completion</span>
 <span class="prompt">Start-Process -Wait</span> killerscan <span class="arg">-ArgumentList '/scan 192.168.8.0/24 /export hosts.csv'</span></div>
 <table class="spec-table exit-table"><tr><th data-i18n="tk_cli_exit">Exit code</th><th data-i18n="tk_cli_meaning">Meaning</th></tr>
 <tr><td><code>0</code></td><td data-i18n="tk_cli_exit0">The scan and any requested export completed successfully.</td></tr>
@@ -383,7 +383,7 @@ html[data-theme="light"] .kbmap { --kc-scan:#d1105a; --kc-view:#a316b5; --kc-dev
 </style>
 <div class="kbmap">
 <div class="kbmap-layers">
-<button data-kblayer="base" class="on">BASE</button>
+<button data-kblayer="base" class="on" data-i18n="ui_base">BASE</button>
 <button data-kblayer="ctrl">CTRL</button>
 <button data-kblayer="ctrlshift">CTRL+SHIFT</button>
 <button data-kblayer="shift">SHIFT</button>
@@ -600,13 +600,13 @@ window.addEventListener('resize', fit);
 </div>
 </div>
 <footer class="statusbar">
-<span class="left"><a href="https://github.com/SteveTheKiller/KillerScan" target="_blank" rel="noopener">Source on GitHub</a> &middot; GPLv3 &middot; Part of <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
+<span class="left"><a href="https://github.com/SteveTheKiller/KillerScan" target="_blank" rel="noopener" data-i18n="footer_src">Source on GitHub</a> &middot; GPLv3 &middot; <span data-i18n="ui_part_of">Part of</span> <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
 <span class="right"><span id="verEgg" title="click me">v1.7.0</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 <div class="egg-toast" id="eggToast"></div>
-<script src="ks-i18n.js?v=6"></script>
-<script src="ks.js?v=10"></script>
+<script src="ks-i18n.js?v=7"></script>
+<script src="ks.js?v=11"></script>
 <script>
 (function(){
   var items=[].slice.call(document.querySelectorAll('.acc-item'));

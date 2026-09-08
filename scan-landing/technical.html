@@ -6,12 +6,12 @@
 <link rel="preload" href="brand/KillerScan.ttf" as="font" type="font/ttf" crossorigin>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="darkreader-lock">
-<title>KillerScan - Technical</title>
+<title data-i18n="page_technical_title">KillerScan: Technical</title>
 <link rel="canonical" href="https://killerscan.net/technical.html">
-<meta name="description" content="How KillerScan works under the hood: how it scans your network, works out who made each device, and figures out what every device is.">
+<meta data-i18n-content="page_technical_description" name="description" content="How KillerScan works under the hood: how it scans your network, works out who made each device, and figures out what every device is.">
 <link rel="icon" type="image/x-icon" href="brand/ks-icon.ico">
 <script defer src="https://koya.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
-<link rel="stylesheet" href="ks.css?v=22">
+<link rel="stylesheet" href="ks.css?v=23">
 <style>
 .page-hero { text-align: center; padding: 44px 16px 8px; }
 .page-hero .wm-logo { height: clamp(46px, 8vw, 76px); width: auto; margin: 0 auto 8px; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.55)); }
@@ -88,15 +88,15 @@
 <button class="lang-item" data-lang="bn">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
 <button class="lang-item" data-lang="cs">&#268;e&#353;tina</button>
 <button class="lang-item" data-lang="de">Deutsch</button>
-<button class="lang-item" data-lang="es">Espanol</button>
-<button class="lang-item" data-lang="fr">Francais</button>
+<button class="lang-item" data-lang="es">Español</button>
+<button class="lang-item" data-lang="fr">Français</button>
 <button class="lang-item" data-lang="ja">&#26085;&#26412;&#35486;</button>
 <button class="lang-item" data-lang="kk">&#1178;&#1072;&#1079;&#1072;&#1179;&#1096;&#1072;</button>
 <button class="lang-item" data-lang="pl">Polski</button>
 <button class="lang-item" data-lang="hu">Magyar</button>
 <button class="lang-item" data-lang="it">Italiano</button>
 <button class="lang-item" data-lang="ru">&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</button>
-<button class="lang-item" data-lang="tr">Turkce</button>
+<button class="lang-item" data-lang="tr">Türkçe</button>
 <button class="lang-item" data-lang="zh-cn">&#20013;&#25991; (&#31616;&#20307;)</button>
 <button class="lang-item" data-lang="zh">&#20013;&#25991; (&#32321;&#39636;)</button>
 </div>
@@ -191,42 +191,42 @@
 <marker id="ksp1m" markerWidth="8" markerHeight="8" refX="5" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z" fill="var(--muted)"/></marker>
 </defs>
 <rect x="230" y="20" width="280" height="46" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
-<text x="370" y="39" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700">Address list</text>
-<text x="370" y="55" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-family="Consolas, monospace">e.g. 192.168.8.0/24</text>
+<text x="370" y="39" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700" data-i18n="tech_diagram_1" data-i18n-max-width="264">Address list</text>
+<text x="370" y="55" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-family="Consolas, monospace" data-i18n="tech_diagram_2" data-i18n-max-width="264">e.g. 192.168.8.0/24</text>
 <rect x="230" y="86" width="280" height="46" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
-<text x="370" y="105" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700">Read the ARP cache</text>
-<text x="370" y="121" text-anchor="middle" fill="var(--muted)" font-size="10.5">devices Windows already knows</text>
+<text x="370" y="105" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700" data-i18n="tech_diagram_3" data-i18n-max-width="264">Read the ARP cache</text>
+<text x="370" y="121" text-anchor="middle" fill="var(--muted)" font-size="10.5" data-i18n="tech_diagram_4" data-i18n-max-width="264">devices Windows already knows</text>
 <rect x="230" y="152" width="280" height="50" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
-<text x="370" y="172" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700">Ping sweep</text>
-<text x="370" y="188" text-anchor="middle" fill="var(--muted)" font-size="10.5">200 at a time, half a second each</text>
+<text x="370" y="172" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700" data-i18n="tech_diagram_5" data-i18n-max-width="264">Ping sweep</text>
+<text x="370" y="188" text-anchor="middle" fill="var(--muted)" font-size="10.5" data-i18n="tech_diagram_6" data-i18n-max-width="264">200 at a time, half a second each</text>
 <rect x="230" y="258" width="280" height="46" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
-<text x="370" y="277" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700">Second ARP read</text>
-<text x="370" y="293" text-anchor="middle" fill="var(--muted)" font-size="10.5">catches devices that ignore ping</text>
+<text x="370" y="277" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700" data-i18n="tech_diagram_7" data-i18n-max-width="264">Second ARP read</text>
+<text x="370" y="293" text-anchor="middle" fill="var(--muted)" font-size="10.5" data-i18n="tech_diagram_8" data-i18n-max-width="264">catches devices that ignore ping</text>
 <rect x="230" y="324" width="280" height="58" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
-<text x="370" y="343" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700">Resolve each device's MAC</text>
-<text x="370" y="359" text-anchor="middle" fill="var(--muted)" font-size="10.5">discard a MAC shared by many addresses</text>
-<text x="370" y="373" text-anchor="middle" fill="var(--muted)" font-size="10.5">(a router or VPN next-hop, not the device)</text>
+<text x="370" y="343" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700" data-i18n="tech_diagram_9" data-i18n-max-width="264">Resolve each device's MAC</text>
+<text x="370" y="359" text-anchor="middle" fill="var(--muted)" font-size="10.5" data-i18n="tech_diagram_10" data-i18n-max-width="264">discard a MAC shared by many addresses</text>
+<text x="370" y="373" text-anchor="middle" fill="var(--muted)" font-size="10.5" data-i18n="tech_diagram_11" data-i18n-max-width="264">(a router or VPN next-hop, not the device)</text>
 <rect x="230" y="400" width="280" height="46" rx="8" fill="var(--modal)" stroke="var(--accent)"/>
-<text x="370" y="419" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700">Alive device list</text>
-<text x="370" y="435" text-anchor="middle" fill="var(--muted)" font-size="10.5">handed to Phase 2</text>
+<text x="370" y="419" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700" data-i18n="tech_diagram_12" data-i18n-max-width="264">Alive device list</text>
+<text x="370" y="435" text-anchor="middle" fill="var(--muted)" font-size="10.5" data-i18n="tech_diagram_13" data-i18n-max-width="264">handed to Phase 2</text>
 <line x1="370" y1="66" x2="370" y2="84" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ksp1a)"/>
 <line x1="370" y1="132" x2="370" y2="150" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ksp1a)"/>
 <line x1="370" y1="202" x2="370" y2="256" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ksp1a)"/>
 <line x1="370" y1="304" x2="370" y2="322" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ksp1a)"/>
 <line x1="370" y1="382" x2="370" y2="398" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ksp1a)"/>
 <rect x="540" y="152" width="176" height="50" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
-<text x="628" y="172" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="700">Silent? TCP knock</text>
+<text x="628" y="172" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="700" data-i18n="tech_diagram_14" data-i18n-max-width="160">Silent? TCP knock</text>
 <text x="628" y="188" text-anchor="middle" fill="var(--muted)" font-size="10" font-family="Consolas, monospace">445 / 3389 / 80 / 443 / 22</text>
 <line x1="510" y1="177" x2="536" y2="177" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ksp1m)"/>
-<text x="524" y="170" text-anchor="middle" fill="var(--muted)" font-size="9">no reply</text>
+<text x="524" y="170" text-anchor="middle" fill="var(--muted)" font-size="9" data-i18n="tech_diagram_15" data-i18n-max-width="60">no reply</text>
 <path d="M628 202 C628 244 572 281 513 281" fill="none" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ksp1m)"/>
-<text x="612" y="250" text-anchor="middle" fill="var(--muted)" font-size="9">answered = alive</text>
+<text x="612" y="250" text-anchor="middle" fill="var(--muted)" font-size="9" data-i18n="tech_diagram_16" data-i18n-max-width="130">answered = alive</text>
 <rect x="24" y="256" width="182" height="60" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
 <text x="115" y="278" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="700">mDNS + SSDP</text>
-<text x="115" y="294" text-anchor="middle" fill="var(--muted)" font-size="10">broadcast, about 1.5s</text>
-<text x="115" y="308" text-anchor="middle" fill="var(--muted)" font-size="10">names &amp; services</text>
+<text x="115" y="294" text-anchor="middle" fill="var(--muted)" font-size="10" data-i18n="tech_diagram_17" data-i18n-max-width="168">broadcast, about 1.5s</text>
+<text x="115" y="308" text-anchor="middle" fill="var(--muted)" font-size="10" data-i18n="tech_diagram_18" data-i18n-max-width="168">names &amp; services</text>
 <path d="M230 177 C150 177 115 205 115 254" fill="none" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ksp1m)"/>
-<text x="152" y="205" text-anchor="middle" fill="var(--muted)" font-size="9">at the same time</text>
+<text x="152" y="205" text-anchor="middle" fill="var(--muted)" font-size="9" data-i18n="tech_diagram_19" data-i18n-max-width="140">at the same time</text>
 <path d="M115 316 C115 376 156 423 227 423" fill="none" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ksp1m)"/>
 </svg>
 <figcaption data-i18n="tk_32">Phase 1 works out which addresses are alive. A silent host gets a second chance through a quick TCP connection, so firewalled machines and devices reached over a VPN are still found. mDNS and SSDP run at the same time to collect names and services, and any MAC that turns up for many addresses (a router or VPN next-hop rather than a real device) is thrown out instead of trusted.</figcaption>
@@ -249,39 +249,39 @@
 <marker id="ksp2m" markerWidth="8" markerHeight="8" refX="5" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z" fill="var(--muted)"/></marker>
 </defs>
 <rect x="285" y="18" width="170" height="46" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
-<text x="370" y="40" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700">One alive device</text>
-<text x="370" y="55" text-anchor="middle" fill="var(--muted)" font-size="10">all devices examined at once</text>
+<text x="370" y="40" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700" data-i18n="tech_diagram_20" data-i18n-max-width="158">One alive device</text>
+<text x="370" y="55" text-anchor="middle" fill="var(--muted)" font-size="10" data-i18n="tech_diagram_21" data-i18n-max-width="158">all devices examined at once</text>
 <rect x="40" y="100" width="190" height="50" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
-<text x="135" y="120" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Check open ports</text>
-<text x="135" y="136" text-anchor="middle" fill="var(--muted)" font-size="10">short list, a fifth of a second each</text>
+<text x="135" y="120" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700" data-i18n="tech_diagram_22" data-i18n-max-width="176">Check open ports</text>
+<text x="135" y="136" text-anchor="middle" fill="var(--muted)" font-size="10" data-i18n="tech_diagram_23" data-i18n-max-width="176">short list, a fifth of a second each</text>
 <rect x="275" y="100" width="190" height="60" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
-<text x="370" y="124" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Find its name</text>
-<text x="370" y="140" text-anchor="middle" fill="var(--muted)" font-size="10">DNS, then mDNS,</text>
-<text x="370" y="153" text-anchor="middle" fill="var(--muted)" font-size="10">then NetBIOS</text>
+<text x="370" y="124" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700" data-i18n="tech_diagram_24" data-i18n-max-width="264">Find its name</text>
+<text x="370" y="140" text-anchor="middle" fill="var(--muted)" font-size="10" data-i18n="tech_diagram_25" data-i18n-max-width="264">DNS, then mDNS,</text>
+<text x="370" y="153" text-anchor="middle" fill="var(--muted)" font-size="10" data-i18n="tech_diagram_26" data-i18n-max-width="264">then NetBIOS</text>
 <rect x="510" y="100" width="190" height="50" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
-<text x="605" y="120" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Look up the maker</text>
-<text x="605" y="136" text-anchor="middle" fill="var(--muted)" font-size="10">from the MAC address</text>
+<text x="605" y="120" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700" data-i18n="tech_diagram_27" data-i18n-max-width="176">Look up the maker</text>
+<text x="605" y="136" text-anchor="middle" fill="var(--muted)" font-size="10" data-i18n="tech_diagram_28" data-i18n-max-width="176">from the MAC address</text>
 <line x1="370" y1="64" x2="150" y2="97" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ksp2a)"/>
 <line x1="370" y1="64" x2="370" y2="97" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ksp2a)"/>
 <line x1="370" y1="64" x2="590" y2="97" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ksp2a)"/>
 <rect x="40" y="196" width="250" height="76" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
-<text x="165" y="216" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Fingerprint probes</text>
-<text x="165" y="233" text-anchor="middle" fill="var(--muted)" font-size="10">picked by which ports are open:</text>
-<text x="165" y="249" text-anchor="middle" fill="var(--muted)" font-size="10">HTTP title/server &middot; SSH banner &middot; TLS cert</text>
-<text x="165" y="263" text-anchor="middle" fill="var(--muted)" font-size="10">SNMP description &middot; NetBIOS name &middot; TTL</text>
+<text x="165" y="216" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700" data-i18n="tech_diagram_29" data-i18n-max-width="234">Fingerprint probes</text>
+<text x="165" y="233" text-anchor="middle" fill="var(--muted)" font-size="10" data-i18n="tech_diagram_30" data-i18n-max-width="234">picked by which ports are open:</text>
+<text x="165" y="249" text-anchor="middle" fill="var(--muted)" font-size="10" data-i18n="tech_diagram_31" data-i18n-max-width="234">HTTP title/server &middot; SSH banner &middot; TLS cert</text>
+<text x="165" y="263" text-anchor="middle" fill="var(--muted)" font-size="10" data-i18n="tech_diagram_32" data-i18n-max-width="234">SNMP description &middot; NetBIOS name &middot; TTL</text>
 <line x1="135" y1="150" x2="135" y2="194" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ksp2a)"/>
 <rect x="250" y="306" width="240" height="46" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
-<text x="370" y="326" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Collect every clue</text>
-<text x="370" y="342" text-anchor="middle" fill="var(--muted)" font-size="10">ports, name, maker, banners, services</text>
+<text x="370" y="326" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700" data-i18n="tech_diagram_33" data-i18n-max-width="224">Collect every clue</text>
+<text x="370" y="342" text-anchor="middle" fill="var(--muted)" font-size="10" data-i18n="tech_diagram_34" data-i18n-max-width="224">ports, name, maker, banners, services</text>
 <path d="M165 272 C165 310 205 329 246 329" fill="none" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ksp2m)"/>
 <line x1="370" y1="160" x2="370" y2="304" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ksp2m)"/>
 <path d="M605 150 C605 262 560 329 494 329" fill="none" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ksp2m)"/>
 <rect x="250" y="380" width="240" height="46" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
-<text x="370" y="400" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Weighted scoring</text>
-<text x="370" y="416" text-anchor="middle" fill="var(--muted)" font-size="10">every clue adds points; highest wins</text>
+<text x="370" y="400" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700" data-i18n="tech_diagram_35" data-i18n-max-width="224">Weighted scoring</text>
+<text x="370" y="416" text-anchor="middle" fill="var(--muted)" font-size="10" data-i18n="tech_diagram_36" data-i18n-max-width="224">every clue adds points; highest wins</text>
 <line x1="370" y1="352" x2="370" y2="378" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ksp2a)"/>
 <rect x="285" y="440" width="170" height="34" rx="8" fill="var(--modal)" stroke="var(--accent)"/>
-<text x="370" y="461" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700">Device type</text>
+<text x="370" y="461" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="700" data-i18n="tech_diagram_37" data-i18n-max-width="158">Device type</text>
 <line x1="370" y1="426" x2="370" y2="438" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ksp2a)"/>
 </svg>
 <figcaption data-i18n="tk_40">Phase 2 examines each alive device in parallel: it checks open ports, finds a name, and looks up the maker at the same time; the open ports decide which deeper fingerprint probes are worth running. Every clue is then gathered and scored, and the highest-scoring device type wins.</figcaption>
@@ -315,10 +315,10 @@
 <p data-i18n="tk_61">Every network device has a MAC address, a hardware ID built in by its maker. The first half of that ID is assigned to a specific manufacturer, so it is the strongest clue to who built the device.</p>
 <p data-i18n="tk_61_p2">A plain lookup is not always enough on its own, so KillerScan works through a fixed set of rules and uses the first one that matches:</p>
 <div class="codeblock">resolveVendor(mac):
-  1. brand override?    first 24 bits in a hand-maintained table  -> that brand
-  2. randomized MAC?    "locally administered" bit set            -> "(Randomized)"
-  3. OUI lookup         longest prefix first: MA-S - MA-M - MA-L    -> registered vendor
-  4. otherwise          -> blank</div>
+  1. <span data-i18n="tech_code_1">brand override?    first 24 bits in a hand-maintained table  -> that brand</span>
+  2. <span data-i18n="tech_code_2">randomized MAC?    "locally administered" bit set            -> "(Randomized)"</span>
+  3. <span data-i18n="tech_code_3">OUI lookup         longest prefix first: MA-S - MA-M - MA-L    -> registered vendor</span>
+  4. <span data-i18n="tech_code_4">otherwise          -> blank</span></div>
 
 <h3 id="brand" data-i18n="tk_62">1. Brand overrides</h3>
 <p data-i18n="tk_63">Some makers register their address ranges with the IEEE (the body that hands them out) as <b>"Private"</b>, or leave them unnamed, so an ordinary lookup returns nothing useful. KillerScan keeps a small table, maintained by hand, that maps those ranges to the real brand.</p>
@@ -348,12 +348,12 @@
 <p data-i18n="tk_82">Working out what a device is uses a <b>points system</b> rather than a single rule. Every clue (its name, its maker, its open ports, the banners its services return, and the mDNS and SSDP details) adds points to the device types it fits, and the type with the highest score wins, as long as it clears a minimum.</p>
 <p data-i18n="tk_82_p2">A few clues are so reliable that KillerScan acts on them straight away, before any scoring. The order is:</p>
 <div class="codeblock">classify(device):
-  1. manual override        user set a type by hand        -> that type
-  2. gateway / DNS          is this the gateway?           -> Router | DNS Server | Router/DNS
-  3. hostname keywords      "iphone", "pihole", "synology" -> matched type
-  4. weighted scoring       sum points from every signal
-                            highest score >= threshold     -> winner
-  5. fallbacks              when nothing scored high enough</div>
+  1. <span data-i18n="tech_code_5">manual override        user set a type by hand        -> that type</span>
+  2. <span data-i18n="tech_code_6">gateway / DNS          is this the gateway?           -> Router | DNS Server | Router/DNS</span>
+  3. <span data-i18n="tech_code_7">hostname keywords      "iphone", "pihole", "synology" -> matched type</span>
+  4. <span data-i18n="tech_code_8">weighted scoring       sum points from every signal</span>
+                            <span data-i18n="tech_code_9">highest score >= threshold     -> winner</span>
+  5. <span data-i18n="tech_code_10">fallbacks              when nothing scored high enough</span></div>
 
 <h3 id="gateway" data-i18n="tk_83">Gateway, DNS, and three honest labels</h3>
 <p data-i18n="tk_84">The device sitting at the gateway address is your router. Routers often pass along DNS traffic (port 53), which used to make them look like the DNS server even when they were not.</p>
@@ -372,15 +372,15 @@
 
 <h3 id="fallbacks" data-i18n="tk_98">When nothing scores</h3>
 <p data-i18n="tk_99">A device that is idle or locked down may answer at the hardware level and nothing else. Rather than give up, KillerScan makes its best honest guess, working down this list:</p>
-<div class="codeblock">randomized MAC + few ports     -> Mobile      (a phone on a privacy address)
-port 22 open                   -> Linux/SSH
-port 445 or 3389 open          -> Windows
-port 80 or 443 open            -> Web Device
-known PC/laptop maker,
-  no open ports                -> Windows     (a Dell/HP/Lenovo asleep, not "IoT")
-no open ports, has a MAC       -> IoT         (smart bulbs, plugs, sensors)
-no open ports at all           -> Unknown
-some ports open, none telling  -> Other</div>
+<div class="codeblock"><span data-i18n="tech_code_11">randomized MAC + few ports</span>     -> Mobile      <span data-i18n="tech_code_12">(a phone on a privacy address)</span>
+<span data-i18n="tech_code_13">port 22 open</span>                   -> Linux/SSH
+<span data-i18n="tech_code_14">port 445 or 3389 open</span>          -> Windows
+<span data-i18n="tech_code_15">port 80 or 443 open</span>            -> Web Device
+<span data-i18n="tech_code_16">known PC/laptop maker,</span>
+  <span data-i18n="tech_code_17">no open ports</span>                -> Windows     <span data-i18n="tech_code_18">(a Dell/HP/Lenovo asleep, not "IoT")</span>
+<span data-i18n="tech_code_19">no open ports, has a MAC</span>       -> IoT         <span data-i18n="tech_code_20">(smart bulbs, plugs, sensors)</span>
+<span data-i18n="tech_code_21">no open ports at all</span>           -> Unknown
+<span data-i18n="tech_code_22">some ports open, none telling</span>  -> Other</div>
 <p data-i18n="tk_100">That rule about PC makers exists for a real situation: a small business desktop in modern standby still answers at the hardware level but refuses every incoming connection. Without the rule, the catch-all would label your Dell a smart-home gadget.</p>
 </div>
 
@@ -453,13 +453,13 @@ some ports open, none telling  -> Other</div>
 </div>
 </div>
 <footer class="statusbar">
-<span class="left"><a href="https://github.com/SteveTheKiller/KillerScan" target="_blank" rel="noopener">Source on GitHub</a> &middot; GPLv3 &middot; Part of <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
+<span class="left"><a href="https://github.com/SteveTheKiller/KillerScan" target="_blank" rel="noopener" data-i18n="footer_src">Source on GitHub</a> &middot; GPLv3 &middot; <span data-i18n="ui_part_of">Part of</span> <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
 <span class="right"><span id="verEgg" title="click me">v1.7.0</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 <div class="dlightbox" id="diagram-lightbox" hidden><div class="dlb-inner"></div></div>
-<script src="ks-i18n.js?v=6"></script>
-<script src="ks.js?v=10"></script>
+<script src="ks-i18n.js?v=7"></script>
+<script src="ks.js?v=11"></script>
 <script>
 // COLLAPSIBLE OUTLINE. The page has eleven sections and thirteen subsections, and listing
 // all twenty-four flat made the sidebar a wall you had to read to navigate.

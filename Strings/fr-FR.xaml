@@ -170,11 +170,18 @@
     <sys:String x:Key="Str_Sc_Rescan">Réanalyser en profondeur les hôtes sélectionnés</sys:String>
     <sys:String x:Key="Str_Sc_Subnet">Aller au champ de sous-réseau</sys:String>
     <sys:String x:Key="Str_Sc_SelectAll">Sélectionner tous les appareils</sys:String>
-    <sys:String x:Key="Str_Sc_Export">Exporter les résultats</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Enregistrer les appareils en CSV</sys:String>
     <sys:String x:Key="Str_Sc_AppBigger">Agrandir l'application</sys:String>
     <sys:String x:Key="Str_Sc_AppSmaller">Réduire l'application</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">Réinitialiser la taille de l'application</sys:String>
-    <sys:String x:Key="Str_Sc_Help">Afficher cette liste</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Afficher ou masquer les raccourcis clavier</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">Afficher les appareils</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">Afficher le terminal</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">Afficher l'appareil sélectionné dans Keep Alive</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">Couper</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">Copier</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">Coller</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">Tout sélectionner</sys:String>
     <sys:String x:Key="Str_Sc_About">Ouvrir la fenêtre À propos</sys:String>
     <sys:String x:Key="Str_Sc_Hint">La taille de l'application suit aussi la molette de la souris sur le logo.</sys:String>
 
@@ -402,4 +409,19 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Toolbar_TextUnder">Texte sous les icônes</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Texte seul</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">Impossible de copier dans le presse-papiers. Réessayez.</sys:String>
+    <sys:String x:Key="Str_KS_Base">Base</sys:String>
+    <sys:String x:Key="Str_Speed_Title">Test de débit KillerScan</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">L'outil en ligne de commande Ookla speedtest n'est pas installé.</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">KillerScan peut le télécharger depuis install.speedtest.net (environ 4 Mo) ou effectuer son propre test de débit HTTP, sans rien installer.</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">Télécharger l'outil Ookla CLI ? (y/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">Échec du téléchargement : </sys:String>
+    <sys:String x:Key="Str_Speed_Server">Serveur</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">FAI</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">Latence</sys:String>
+    <sys:String x:Key="Str_Speed_Download">Réception</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">Envoi</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">gigue</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">Exécution du test de débit HTTP intégré. Ces valeurs sont indicatives et ne constituent pas un résultat officiel de speedtest.net.</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">aucune réponse</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Le test n'a pas pu se terminer : </sys:String>
 </ResourceDictionary>

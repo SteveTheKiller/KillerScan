@@ -181,11 +181,18 @@
     <sys:String x:Key="Str_Sc_Rescan">選択したホストを詳細に再スキャン</sys:String>
     <sys:String x:Key="Str_Sc_Subnet">サブネット入力欄へ移動</sys:String>
     <sys:String x:Key="Str_Sc_SelectAll">すべてのデバイスを選択</sys:String>
-    <sys:String x:Key="Str_Sc_Export">結果をエクスポート</sys:String>
+    <sys:String x:Key="Str_Sc_Export">デバイスを CSV に保存</sys:String>
     <sys:String x:Key="Str_Sc_AppBigger">アプリを大きくする</sys:String>
     <sys:String x:Key="Str_Sc_AppSmaller">アプリを小さくする</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">アプリのサイズをリセット</sys:String>
-    <sys:String x:Key="Str_Sc_Help">この一覧を表示</sys:String>
+    <sys:String x:Key="Str_Sc_Help">キーボードショートカットを表示または非表示</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">デバイスを表示</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">ターミナルを表示</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">選択デバイスを Keep Alive に表示</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">切り取り</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">コピー</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">貼り付け</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">すべて選択</sys:String>
     <sys:String x:Key="Str_Sc_About">バージョン情報ウィンドウを開く</sys:String>
     <sys:String x:Key="Str_Sc_Hint">アプリのサイズは、ロゴの上でマウスホイールを回しても変更できます。</sys:String>
 
@@ -413,4 +420,19 @@
     <sys:String x:Key="Str_Toolbar_TextUnder">アイコンの下にテキスト</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">テキストのみ</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">クリップボードにコピーできませんでした。もう一度お試しください。</sys:String>
+    <sys:String x:Key="Str_KS_Base">基本</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerScan 速度テスト</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">Ookla speedtest CLI がインストールされていません。</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">KillerScan は install.speedtest.net からダウンロードするか（約 4 MB）、何もインストールしない独自の HTTP 転送速度テストを実行できます。</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">Ookla CLI をダウンロードしますか？(y/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">ダウンロードに失敗しました: </sys:String>
+    <sys:String x:Key="Str_Speed_Server">サーバー</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">ISP</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">遅延</sys:String>
+    <sys:String x:Key="Str_Speed_Download">ダウンロード</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">アップロード</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">ジッター</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">内蔵の HTTP 転送速度テストを実行しています。数値は目安であり、speedtest.net の公式結果ではありません。</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">応答なし</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">テストを完了できませんでした: </sys:String>
 </ResourceDictionary>

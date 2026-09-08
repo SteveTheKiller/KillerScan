@@ -170,11 +170,18 @@
     <sys:String x:Key="Str_Sc_Rescan">Reescaneo profundo de los hosts seleccionados</sys:String>
     <sys:String x:Key="Str_Sc_Subnet">Ir al cuadro de subred</sys:String>
     <sys:String x:Key="Str_Sc_SelectAll">Seleccionar todos los dispositivos</sys:String>
-    <sys:String x:Key="Str_Sc_Export">Exportar resultados</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Guardar dispositivos como CSV</sys:String>
     <sys:String x:Key="Str_Sc_AppBigger">Agrandar la aplicación</sys:String>
     <sys:String x:Key="Str_Sc_AppSmaller">Reducir la aplicación</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">Restablecer el tamaño de la aplicación</sys:String>
-    <sys:String x:Key="Str_Sc_Help">Mostrar esta lista</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Mostrar u ocultar los atajos de teclado</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">Mostrar dispositivos</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">Mostrar terminal</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">Mostrar el dispositivo seleccionado en Keep Alive</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">Cortar</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">Copiar</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">Pegar</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">Seleccionar todo</sys:String>
     <sys:String x:Key="Str_Sc_About">Abrir la ventana Acerca de</sys:String>
     <sys:String x:Key="Str_Sc_Hint">El tamaño de la aplicación también responde a la rueda del ratón sobre el logotipo.</sys:String>
 
@@ -402,4 +409,19 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Toolbar_TextUnder">Texto bajo los iconos</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Solo texto</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">No se pudo copiar al portapapeles. Inténtelo de nuevo.</sys:String>
+    <sys:String x:Key="Str_KS_Base">Base</sys:String>
+    <sys:String x:Key="Str_Speed_Title">Prueba de velocidad de KillerScan</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">La herramienta CLI speedtest de Ookla no está instalada.</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">KillerScan puede descargarla de install.speedtest.net (unos 4 MB) o ejecutar su propia prueba de transferencia HTTP, que no instala nada.</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">¿Descargar la CLI de Ookla? (y/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">La descarga falló: </sys:String>
+    <sys:String x:Key="Str_Speed_Server">Servidor</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">Proveedor</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">Latencia</sys:String>
+    <sys:String x:Key="Str_Speed_Download">Descarga</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">Subida</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">variación de latencia</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">Ejecutando la prueba HTTP integrada. Estas cifras son orientativas, no un resultado oficial de speedtest.net.</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">sin respuesta</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">La prueba no pudo finalizar: </sys:String>
 </ResourceDictionary>

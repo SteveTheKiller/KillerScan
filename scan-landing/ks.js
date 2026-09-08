@@ -100,7 +100,7 @@
       if (p) { d.style.background = p[0]; d.style.color = p[0]; }
       d.setAttribute('aria-pressed', d.dataset.accent === name ? 'true' : 'false');
     });
-    if (accToggle) { accToggle.style.background = pair[0]; accToggle.title = 'Accent color'; }
+    if (accToggle) { accToggle.style.background = pair[0]; accToggle.title = uiText('ui_accent'); }
     try { localStorage.setItem('kscan-accent', name); } catch (e) {}
     updateLogos();
   }
@@ -139,7 +139,7 @@
     var pill = document.createElement('div'); pill.className = 'pill';
     var grip = document.createElement('span'); grip.className = 'grip'; grip.setAttribute('aria-hidden', 'true');
     pill.appendChild(grip);
-    var blbl = document.createElement('span'); blbl.className = 'lbl'; blbl.textContent = 'accent:';
+    var blbl = document.createElement('span'); blbl.className = 'lbl'; blbl.setAttribute('data-i18n', 'accent_label'); blbl.textContent = 'accent:';
     pill.appendChild(blbl);
     accDots.forEach(function (d) { pill.appendChild(d); });
     var bx = document.createElement('button'); bx.className = 'x'; bx.setAttribute('aria-label', 'Close'); bx.innerHTML = '&times;';
@@ -188,10 +188,141 @@
   }
   document.addEventListener('click', function (e) { if (accentBar && accentBar.classList.contains('show') && !e.target.closest('.accent-bar') && !e.target.closest('#accentToggle')) hideAccentBar(); });
 
-  // ---- i18n (English complete; other languages fall back to English until translated) ----
+  // Localized visible text, accessible names, metadata, and generated controls.
   var I18N = (typeof window !== 'undefined' && window.I18N) ? window.I18N : {};
-  var EN = {};
-  document.querySelectorAll('[data-i18n]').forEach(function (n) { EN[n.getAttribute('data-i18n')] = n.innerHTML; });
+  var EN = {
+    "ui_home": "KillerScan home",
+    "ui_theme": "Theme",
+    "ui_accent": "Accent color",
+    "ui_language": "Language",
+    "ui_click_me": "click me",
+    "ui_screenshot_expanded": "Expanded KillerScan screenshot",
+    "ui_cli_examples": "KillerScan command examples",
+    "ui_terminal_examples": "KillerScan terminal command examples",
+    "ui_carousel": "carousel",
+    "ui_slide": "slide",
+    "ui_features": "Product features",
+    "ui_previous_feature": "Previous feature",
+    "ui_next_feature": "Next feature",
+    "ui_choose_feature": "Choose a feature",
+    "ui_feature": "Feature",
+    "ui_base": "BASE",
+    "ui_part_of": "Part of",
+    "ui_report_issue": "Report an issue",
+    "ui_email": "Email",
+    "ui_coffee": "Buy me a coffee",
+    "ui_version": "version",
+    "ui_released": "released",
+    "ui_size": "size",
+    "ui_platform": "platform",
+    "ui_egg": "No packets were harmed in the scanning of this network.",
+    "ui_cmd_wait": "REM Command Prompt: wait, then read %ERRORLEVEL%",
+    "ui_ps_wait": "# PowerShell: wait for completion",
+    "ui_close": "Close",
+    "ui_choose_theme": "Choose theme",
+    "ui_theme_dark": "Dark",
+    "ui_theme_light": "Light",
+    "ui_theme_hc": "Black",
+    "ui_theme_98se": "98SE",
+    "ui_theme_blood": "Blood",
+    "ui_theme_greed": "Greed",
+    "ui_theme_cyanotic": "Cyanotic",
+    "ui_theme_ectoplasm": "Ectoplasm",
+    "ui_theme_decay": "Decay",
+    "ui_theme_malaise": "Malaise",
+    "ui_theme_sepulchre": "Sepulchre",
+    "ui_theme_delirium": "Delirium",
+    "ui_theme_mourning": "Mourning",
+    "ui_accent_red": "Red",
+    "ui_accent_orange": "Orange",
+    "ui_accent_green": "Green",
+    "ui_accent_teal": "Teal",
+    "ui_accent_blue": "Blue",
+    "ui_accent_purple": "Purple"
+  };
+  var currentLang = 'en';
+  var translatedAttributes = ['title', 'aria-label', 'aria-roledescription', 'content'];
+  function bindLabel(selector, attribute, key) {
+    document.querySelectorAll(selector).forEach(function (node) {
+      node.setAttribute('data-i18n-' + attribute, key);
+    });
+  }
+  bindLabel('.tb-home', 'title', 'ui_home');
+  bindLabel('.tgrp, .theme-toggle', 'aria-label', 'ui_choose_theme');
+  bindLabel('.theme-toggle', 'title', 'ui_theme');
+  bindLabel('#accentToggle, #accentPop', 'title', 'ui_accent');
+  bindLabel('#accentToggle, #accentPop', 'aria-label', 'ui_accent');
+  bindLabel('.lang-switch, #langToggle', 'aria-label', 'ui_language');
+  bindLabel('#langToggle', 'title', 'ui_language');
+  bindLabel('#verEgg', 'title', 'ui_click_me');
+  bindLabel('#lightbox', 'aria-label', 'ui_screenshot_expanded');
+  bindLabel('.accent-bar .x', 'aria-label', 'ui_close');
+  document.querySelectorAll('.swatch[data-theme]').forEach(function (node) {
+    var key = 'ui_theme_' + node.getAttribute('data-theme');
+    node.setAttribute('data-i18n-title', key);
+    node.setAttribute('data-i18n-aria-label', key);
+  });
+  document.querySelectorAll('.acc[data-accent]').forEach(function (node) {
+    var key = 'ui_accent_' + node.getAttribute('data-accent');
+    node.setAttribute('data-i18n-title', key);
+    node.setAttribute('data-i18n-aria-label', key);
+  });
+  document.querySelectorAll('.cli-demo[aria-label]').forEach(function (node) {
+    node.setAttribute('data-i18n-aria-label', node.getAttribute('aria-label').indexOf('terminal') >= 0 ? 'ui_terminal_examples' : 'ui_cli_examples');
+  });
+  document.querySelectorAll('[data-i18n]').forEach(function (node) {
+    EN[node.getAttribute('data-i18n')] = node.innerHTML;
+  });
+  translatedAttributes.forEach(function (attribute) {
+    document.querySelectorAll('[data-i18n-' + attribute + ']').forEach(function (node) {
+      var key = node.getAttribute('data-i18n-' + attribute);
+      if (EN[key] == null) EN[key] = node.getAttribute(attribute);
+    });
+  });
+  function uiText(key) {
+    var dict = currentLang === 'en' ? EN : I18N[currentLang];
+    return dict && dict[key] != null ? dict[key] : EN[key];
+  }
+  function translateAttributes() {
+    translatedAttributes.forEach(function (attribute) {
+      document.querySelectorAll('[data-i18n-' + attribute + ']').forEach(function (node) {
+        var value = uiText(node.getAttribute('data-i18n-' + attribute));
+        if (value != null) node.setAttribute(attribute, value);
+      });
+    });
+  }
+  function translateCarousel() {
+    var selectors = [
+      ['.feature-carousel', 'aria-roledescription', 'ui_carousel'],
+      ['.feature-carousel', 'aria-label', 'ui_features'],
+      ['.feature-carousel-arrow:first-child', 'aria-label', 'ui_previous_feature'],
+      ['.feature-carousel-arrow:last-child', 'aria-label', 'ui_next_feature'],
+      ['.feature-carousel-rail', 'aria-label', 'ui_choose_feature'],
+      ['.feature-carousel .feature-card', 'aria-roledescription', 'ui_slide']
+    ];
+    selectors.forEach(function (item) {
+      document.querySelectorAll(item[0]).forEach(function (node) {
+        node.setAttribute(item[1], uiText(item[2]));
+      });
+    });
+  }
+  function fitDiagramLabels() {
+    document.querySelectorAll('svg text[data-i18n-max-width]').forEach(function (node) {
+      node.removeAttribute('textLength');
+      node.removeAttribute('lengthAdjust');
+      var width = Number(node.getAttribute('data-i18n-max-width'));
+      var advance = node.getComputedTextLength();
+      var bounds = Math.max(advance, node.getBBox().width);
+      if (width > 0 && bounds > width) {
+        node.setAttribute('textLength', String(advance * width / bounds));
+        node.setAttribute('lengthAdjust', 'spacingAndGlyphs');
+      }
+    });
+  }
+  var features = document.querySelector('.features');
+  if (features) new MutationObserver(translateCarousel).observe(features, { childList: true, subtree: true });
+  window.addEventListener('resize', fitDiagramLabels);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitDiagramLabels);
   var LANGS = ['en','cs','es','de','fr','ja','kk','pl','ru','tr','zh','zh-cn','bn','hu','it'];
   var FLAGS = {
     en: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#fff"/><g fill="#b22234"><rect width="24" height="1.85"/><rect y="3.7" width="24" height="1.85"/><rect y="7.4" width="24" height="1.85"/><rect y="11.1" width="24" height="1.85"/><rect y="14.8" width="24" height="1.85"/><rect y="18.5" width="24" height="1.85"/><rect y="22.2" width="24" height="1.8"/></g><rect width="11" height="12.95" fill="#3c3b6e"/></svg>',
@@ -216,12 +347,16 @@
 
   function applyLang(lang) {
     if (LANGS.indexOf(lang) < 0) lang = 'en';
+    currentLang = lang;
     root.setAttribute('lang', lang === 'zh' ? 'zh-Hant' : (lang === 'zh-cn' ? 'zh-Hans' : lang));
     var dict = (lang === 'en') ? EN : (I18N[lang] || {});
     document.querySelectorAll('[data-i18n]').forEach(function (n) {
       var k = n.getAttribute('data-i18n');
       n.innerHTML = (dict && dict[k] != null) ? dict[k] : EN[k];
     });
+    translateAttributes();
+    translateCarousel();
+    fitDiagramLabels();
     langItems.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'); });
     if (langToggle) langToggle.innerHTML = FLAGS[lang] || FLAGS.en;
     try { localStorage.setItem('kscan-lang', lang); } catch (e) {}
@@ -258,7 +393,7 @@
       (function (el) { setTimeout(function () { el.remove(); }, (dur + 0.8) * 1000); })(d);
     }
     if (eggToast) {
-      eggToast.textContent = 'No packets were harmed in the scanning of this network.';
+      eggToast.textContent = uiText('ui_egg');
       eggToast.classList.add('show');
       clearTimeout(verEgg._t);
       verEgg._t = setTimeout(function () { eggToast.classList.remove('show'); }, 2800);

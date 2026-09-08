@@ -170,11 +170,18 @@
     <sys:String x:Key="Str_Sc_Rescan">Seçili ana bilgisayarları derin yeniden tara</sys:String>
     <sys:String x:Key="Str_Sc_Subnet">Alt ağ kutusuna git</sys:String>
     <sys:String x:Key="Str_Sc_SelectAll">Tüm cihazları seç</sys:String>
-    <sys:String x:Key="Str_Sc_Export">Sonuçları dışa aktar</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Cihazları CSV olarak kaydet</sys:String>
     <sys:String x:Key="Str_Sc_AppBigger">Uygulamayı büyüt</sys:String>
     <sys:String x:Key="Str_Sc_AppSmaller">Uygulamayı küçült</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">Uygulama boyutunu sıfırla</sys:String>
-    <sys:String x:Key="Str_Sc_Help">Bu listeyi göster</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Klavye kısayollarını göster veya gizle</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">Cihazları göster</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">Terminali göster</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">Seçili cihazı Keep Alive'da göster</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">Kes</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">Kopyala</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">Yapıştır</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">Tümünü seç</sys:String>
     <sys:String x:Key="Str_Sc_About">Hakkında penceresini aç</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Uygulama boyutu, logo üzerindeki fare tekerleğini de izler.</sys:String>
 
@@ -402,4 +409,19 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Toolbar_TextUnder">Simge altında metin</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Yalnızca metin</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">Panoya kopyalanamadı. Tekrar deneyin.</sys:String>
+    <sys:String x:Key="Str_KS_Base">Temel</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerScan hız testi</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">Ookla speedtest CLI kurulu değil.</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">KillerScan bunu install.speedtest.net adresinden indirebilir (yaklaşık 4 MB) veya hiçbir şey kurmayan kendi HTTP aktarım testini çalıştırabilir.</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">Ookla CLI indirilsin mi? (y/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">İndirme başarısız: </sys:String>
+    <sys:String x:Key="Str_Speed_Server">Sunucu</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">İnternet sağlayıcı</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">Gecikme</sys:String>
+    <sys:String x:Key="Str_Speed_Download">İndirme</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">Yükleme</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">gecikme değişimi</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">Yerleşik HTTP aktarım testi çalışıyor. Bu değerler fikir verir; resmi speedtest.net sonucu değildir.</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">yanıt yok</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Test tamamlanamadı: </sys:String>
 </ResourceDictionary>

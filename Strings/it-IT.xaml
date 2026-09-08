@@ -188,7 +188,7 @@
     <sys:String x:Key="Str_Sc_Rescan">Scansione approfondita degli host selezionati</sys:String>
     <sys:String x:Key="Str_Sc_Subnet">Vai alla casella della sottorete</sys:String>
     <sys:String x:Key="Str_Sc_SelectAll">Seleziona tutti i dispositivi</sys:String>
-    <sys:String x:Key="Str_Sc_Export">Esporta i risultati</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Salva i dispositivi come CSV</sys:String>
     <sys:String x:Key="Str_Sc_Browser">Apri il dispositivo selezionato in un browser</sys:String>
     <sys:String x:Key="Str_Sc_Ping">Esegui il ping del dispositivo selezionato</sys:String>
     <sys:String x:Key="Str_Sc_Rdp">Apri Desktop remoto verso il dispositivo selezionato</sys:String>
@@ -201,7 +201,14 @@
     <sys:String x:Key="Str_Sc_AppBigger">Ingrandisci l'app</sys:String>
     <sys:String x:Key="Str_Sc_AppSmaller">Rimpicciolisci l'app</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">Ripristina la dimensione dell'app</sys:String>
-    <sys:String x:Key="Str_Sc_Help">Mostra questo elenco</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Mostra o nascondi le scorciatoie da tastiera</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">Mostra dispositivi</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">Mostra terminale</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">Mostra il dispositivo selezionato in Keep Alive</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">Taglia</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">Copia</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">Incolla</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">Seleziona tutto</sys:String>
     <sys:String x:Key="Str_Sc_About">Apri la finestra Informazioni</sys:String>
     <sys:String x:Key="Str_Sc_Hint">La dimensione dell'app segue anche la rotellina del mouse sopra il logotipo.</sys:String>
 
@@ -418,4 +425,19 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Toolbar_TextUnder">Testo sotto le icone</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Solo testo</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">Impossibile copiare negli appunti. Riprova.</sys:String>
+    <sys:String x:Key="Str_KS_Base">Base</sys:String>
+    <sys:String x:Key="Str_Speed_Title">Test di velocità KillerScan</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">La CLI speedtest di Ookla non è installata.</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">KillerScan può scaricarla da install.speedtest.net (circa 4 MB) oppure eseguire il proprio test di trasferimento HTTP, che non installa nulla.</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">Scaricare la CLI Ookla? (y/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">Download non riuscito: </sys:String>
+    <sys:String x:Key="Str_Speed_Server">Server</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">Provider</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">Latenza</sys:String>
+    <sys:String x:Key="Str_Speed_Download">Download</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">Upload</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">jitter</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">Esecuzione del test HTTP integrato. I valori sono indicativi e non rappresentano un risultato ufficiale di speedtest.net.</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">nessuna risposta</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Impossibile completare il test: </sys:String>
 </ResourceDictionary>

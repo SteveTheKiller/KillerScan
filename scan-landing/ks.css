@@ -252,7 +252,7 @@ body,
 
 /* ---- Phones: reflow the app-chrome topbar into tidy rows + stack the statusbar ---- */
 @media (max-width: 560px) {
-  .topbar { min-height: 0; padding: 8px 12px; gap: 8px 9px; justify-content: center; }
+  .topbar { min-height: 0; padding: 8px 12px; gap: 8px 9px; justify-content: center; flex-wrap: wrap; }
   .tb-icon { width: 30px; height: 30px; }
   .tb-wm { height: 18px; }
   .tb-spacer { display: none; }

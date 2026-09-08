@@ -170,11 +170,18 @@
     <sys:String x:Key="Str_Sc_Rescan">深度重新掃描所選主機</sys:String>
     <sys:String x:Key="Str_Sc_Subnet">跳至子網路輸入框</sys:String>
     <sys:String x:Key="Str_Sc_SelectAll">選取所有裝置</sys:String>
-    <sys:String x:Key="Str_Sc_Export">匯出結果</sys:String>
+    <sys:String x:Key="Str_Sc_Export">將裝置儲存為 CSV</sys:String>
     <sys:String x:Key="Str_Sc_AppBigger">放大應用程式</sys:String>
     <sys:String x:Key="Str_Sc_AppSmaller">縮小應用程式</sys:String>
     <sys:String x:Key="Str_Sc_AppReset">重設應用程式大小</sys:String>
-    <sys:String x:Key="Str_Sc_Help">顯示此清單</sys:String>
+    <sys:String x:Key="Str_Sc_Help">顯示或隱藏鍵盤快捷鍵</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">顯示裝置</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">顯示終端機</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">在 Keep Alive 中顯示選取裝置</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">剪下</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">複製</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">貼上</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">全選</sys:String>
     <sys:String x:Key="Str_Sc_About">開啟關於視窗</sys:String>
     <sys:String x:Key="Str_Sc_Hint">在標誌上捲動滑鼠滾輪同樣可以調整應用程式大小。</sys:String>
 
@@ -402,4 +409,19 @@
     <sys:String x:Key="Str_Toolbar_TextUnder">圖示下方文字</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">僅文字</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">無法複製到剪貼簿。請再試一次。</sys:String>
+    <sys:String x:Key="Str_KS_Base">基本</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerScan 速度測試</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">尚未安裝 Ookla speedtest CLI。</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">KillerScan 可以從 install.speedtest.net 下載它（約 4 MB），也可以改為執行本身的 HTTP 輸送量測試，不需要安裝任何內容。</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">下載 Ookla CLI？(y/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">下載失敗： </sys:String>
+    <sys:String x:Key="Str_Speed_Server">伺服器</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">網路業者</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">延遲</sys:String>
+    <sys:String x:Key="Str_Speed_Download">下載</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">上傳</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">抖動</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">正在執行內建 HTTP 輸送量測試。這些數值僅供參考，並非 speedtest.net 官方結果。</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">無回應</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">測試無法完成： </sys:String>
 </ResourceDictionary>
