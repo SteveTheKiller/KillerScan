@@ -422,4 +422,29 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Speed_Builtin">Probíhá vestavěný test propustnosti HTTP. Hodnoty jsou orientační, nejde o oficiální výsledek speedtest.net.</sys:String>
     <sys:String x:Key="Str_Speed_NoReply">bez odpovědi</sys:String>
     <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Test nebylo možné dokončit: </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">URL testovacího serveru</sys:String>
+    <sys:String x:Key="Str_Speed_Start">Spustit test</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">Zastavit test</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">Odezva bez zátěže</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">Odezva při zátěži</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Zadejte URL testovacího serveru a spusťte test. Může přenést až 1 GiB.</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">Zahřívání</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">Test dokončen</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">Test zrušen</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">Byl dosažen datový limit; doba měření byla zkrácena.</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">Kopírovat výsledky</sys:String>
+    <sys:String x:Key="Str_Speed_Error">Test selhal: {0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">Zadejte HTTPS URL testovacího serveru.</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">Spojení</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">Přeneseno</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">Nezměřeno</sys:String>
+    <sys:String x:Key="Str_Speed_Run">Testování</sys:String>
+    <sys:String x:Key="Str_Speed_Native">Měří propustnost a dobu odezvy HTTP vybraného serveru. Výsledky závisí na trase a serveru.</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">Testovací server neodpověděl včas.</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">Nelze se připojit k testovacímu serveru.</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">Nelze navázat zabezpečené spojení s testovacím serverem.</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">Testovací server je zaneprázdněn. Zkuste to později.</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">Testovací server vrátil neplatnou odpověď.</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">Přenos selhal. Zkontrolujte připojení a zkuste to znovu.</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">Výsledky nelze zkopírovat. Zkuste to znovu.</sys:String>
 </ResourceDictionary>

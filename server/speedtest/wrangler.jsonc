@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/config-schema.json",
+  "name": "killerscan-speedtest",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-09-08",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [],
+  "limits": { "cpu_ms": 50 },
+  "observability": { "enabled": false },
+  // Review both namespace IDs against the target account before deployment.
+  "ratelimits": [
+    { "name": "CLIENT_RATE_LIMITER", "namespace_id": "715201", "simple": { "limit": 600, "period": 60 } },
+    { "name": "SERVICE_RATE_LIMITER", "namespace_id": "715202", "simple": { "limit": 3000, "period": 60 } }
+  ],
+  "env": {
+    "local": {
+      "name": "killerscan-speedtest-local",
+      "workers_dev": false,
+      "preview_urls": false,
+      "routes": [],
+      "vars": { "LOCAL_TEST": "1" }
+    }
+  }
+}

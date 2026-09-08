@@ -409,4 +409,29 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Speed_Builtin">Trwa wbudowany test przepustowości HTTP. Wyniki są orientacyjne i nie stanowią oficjalnego wyniku speedtest.net.</sys:String>
     <sys:String x:Key="Str_Speed_NoReply">brak odpowiedzi</sys:String>
     <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Nie udało się ukończyć testu: </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">URL serwera testowego</sys:String>
+    <sys:String x:Key="Str_Speed_Start">Rozpocznij test</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">Zatrzymaj test</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">Opóźnienie bez obciążenia</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">Opóźnienie pod obciążeniem</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Wpisz URL serwera testowego i rozpocznij test. Może przesłać do 1 GiB.</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">Rozgrzewanie</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">Test zakończony</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">Test anulowany</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">Osiągnięto limit danych; skrócono czas pomiaru.</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">Kopiuj wyniki</sys:String>
+    <sys:String x:Key="Str_Speed_Error">Test nie powiódł się: {0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">Wpisz adres HTTPS serwera testowego.</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">Połączenia</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">Przesłano</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">Nie zmierzono</sys:String>
+    <sys:String x:Key="Str_Speed_Run">Testowanie</sys:String>
+    <sys:String x:Key="Str_Speed_Native">Mierzy przepustowość i czas obiegu HTTP do wybranego serwera. Wyniki zależą od trasy i serwera.</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">Serwer testowy nie odpowiedział na czas.</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">Nie udało się połączyć z serwerem testowym.</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">Nie udało się nawiązać bezpiecznego połączenia z serwerem testowym.</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">Serwer testowy jest zajęty. Spróbuj ponownie później.</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">Serwer testowy zwrócił nieprawidłową odpowiedź.</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">Transfer nie powiódł się. Sprawdź połączenie i spróbuj ponownie.</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">Nie udało się skopiować wyników. Spróbuj ponownie.</sys:String>
 </ResourceDictionary>

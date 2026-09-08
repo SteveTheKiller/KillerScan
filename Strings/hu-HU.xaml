@@ -440,4 +440,29 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Speed_Builtin">A beépített HTTP-átviteli teszt fut. Az értékek tájékoztató jellegűek, nem hivatalos speedtest.net-eredmények.</sys:String>
     <sys:String x:Key="Str_Speed_NoReply">nincs válasz</sys:String>
     <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">A teszt nem fejeződött be: </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">Tesztkiszolgáló URL-je</sys:String>
+    <sys:String x:Key="Str_Speed_Start">Teszt indítása</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">Teszt leállítása</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">Késleltetés terhelés nélkül</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">Késleltetés terhelés alatt</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Adja meg a tesztkiszolgáló URL-jét, majd indítsa el a tesztet. Akár 1 GiB adatot is átvihet.</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">Bemelegítés</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">Teszt befejezve</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">Teszt megszakítva</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">Adatkorlát elérve; a mérés időtartama lerövidült.</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">Eredmények másolása</sys:String>
+    <sys:String x:Key="Str_Speed_Error">A teszt sikertelen: {0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">Adjon meg HTTPS tesztkiszolgáló-URL-t.</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">Kapcsolatok</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">Átvitt adat</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">Nincs mérés</sys:String>
+    <sys:String x:Key="Str_Speed_Run">Tesztelés</sys:String>
+    <sys:String x:Key="Str_Speed_Native">A kiválasztott kiszolgáló átviteli sebességét és HTTP oda-vissza késleltetését méri. Az eredmény az útvonaltól és a kiszolgálótól függ.</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">A tesztkiszolgáló nem válaszolt időben.</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">Nem sikerült csatlakozni a tesztkiszolgálóhoz.</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">Nem sikerült biztonságos kapcsolatot létrehozni a tesztkiszolgálóval.</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">A tesztkiszolgáló foglalt. Próbálja újra később.</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">A tesztkiszolgáló érvénytelen választ adott.</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">Az átvitel sikertelen. Ellenőrizze a kapcsolatot, és próbálja újra.</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">Nem sikerült másolni az eredményeket. Próbálja újra.</sys:String>
 </ResourceDictionary>

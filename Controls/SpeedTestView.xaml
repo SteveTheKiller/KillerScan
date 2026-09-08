@@ -1,0 +1,36 @@
+<UserControl x:Class="KillerScan.Controls.SpeedTestView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" KeyDown="View_KeyDown">
+ <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+  <StackPanel Margin="20" MaxWidth="1000" HorizontalAlignment="Stretch">
+   <TextBlock Text="{DynamicResource Str_Speed_Title}" FontSize="24" Foreground="{DynamicResource PrimaryBrush}"/>
+   <TextBlock Text="{DynamicResource Str_Speed_Native}" TextWrapping="Wrap" Margin="0,8,0,16" Foreground="{DynamicResource MutedTextBrush}"/>
+   <TextBlock Text="{DynamicResource Str_Speed_Endpoint}" Foreground="{DynamicResource TextBrush}"/>
+   <TextBox x:Name="EndpointBox" Style="{DynamicResource DarkTextBox}" Margin="0,5,0,10"
+    AutomationProperties.Name="{DynamicResource Str_Speed_Endpoint}"/>
+   <WrapPanel>
+    <Button x:Name="StartButton" Content="{DynamicResource Str_Speed_Start}" Style="{DynamicResource PrimaryButton}" Click="Start_Click" Margin="0,0,8,8"/>
+    <Button x:Name="StopButton" Content="{DynamicResource Str_Speed_Stop}" Style="{DynamicResource OutlineButton}" Click="Stop_Click" IsEnabled="False" Margin="0,0,8,8"/>
+    <Button x:Name="CopyButton" Content="{DynamicResource Str_Speed_Copy}" Style="{DynamicResource OutlineButton}" Click="Copy_Click" IsEnabled="False" Margin="0,0,8,8"/>
+   </WrapPanel>
+   <TextBlock x:Name="Status" Text="{DynamicResource Str_Speed_Ready}" TextWrapping="Wrap" Margin="0,4,0,12" Foreground="{DynamicResource TextBrush}"/>
+   <UniformGrid Columns="2">
+    <StackPanel Margin="0,0,12,12"><TextBlock Text="{DynamicResource Str_Speed_Download}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"/><TextBlock x:Name="DownloadValue" FontSize="28" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/></StackPanel>
+    <StackPanel Margin="0,0,12,12"><TextBlock Text="{DynamicResource Str_Speed_Upload}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"/><TextBlock x:Name="UploadValue" FontSize="28" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/></StackPanel>
+    <StackPanel Margin="0,0,12,12"><TextBlock Text="{DynamicResource Str_Speed_Idle}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"/><TextBlock x:Name="IdleValue" FontSize="24" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap"/></StackPanel>
+    <StackPanel Margin="0,0,12,12"><TextBlock Text="{DynamicResource Str_Speed_Jitter}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"/><TextBlock x:Name="JitterValue" FontSize="24" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap"/></StackPanel>
+   </UniformGrid>
+   <TextBlock Text="{DynamicResource Str_Speed_Download}" Foreground="{DynamicResource TextBrush}"/>
+   <Border BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" Margin="0,5,0,10" Padding="8">
+    <Grid><Canvas x:Name="DownloadChart" Height="110" ClipToBounds="True" SizeChanged="Chart_SizeChanged"><Polyline x:Name="DownloadLine" Stroke="{DynamicResource PrimaryBrush}" StrokeThickness="2"/></Canvas><TextBlock x:Name="DownloadScale" HorizontalAlignment="Right" Foreground="{DynamicResource MutedTextBrush}"/></Grid>
+   </Border>
+   <TextBlock Text="{DynamicResource Str_Speed_Upload}" Foreground="{DynamicResource TextBrush}"/>
+   <Border BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" Margin="0,5,0,10" Padding="8">
+    <Grid><Canvas x:Name="UploadChart" Height="110" ClipToBounds="True" SizeChanged="Chart_SizeChanged"><Polyline x:Name="UploadLine" Stroke="{DynamicResource PrimaryBrush}" StrokeThickness="2"/></Canvas><TextBlock x:Name="UploadScale" HorizontalAlignment="Right" Foreground="{DynamicResource MutedTextBrush}"/></Grid>
+   </Border>
+   <TextBlock Text="{DynamicResource Str_Speed_Loaded}" Foreground="{DynamicResource MutedTextBrush}"/>
+   <TextBlock x:Name="LoadedValue" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}"/>
+   <TextBlock x:Name="Details" TextWrapping="Wrap" Margin="0,8,0,0" Foreground="{DynamicResource MutedTextBrush}"/>
+  </StackPanel>
+ </ScrollViewer>
+</UserControl>

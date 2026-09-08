@@ -424,4 +424,29 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Speed_Builtin">Yerleşik HTTP aktarım testi çalışıyor. Bu değerler fikir verir; resmi speedtest.net sonucu değildir.</sys:String>
     <sys:String x:Key="Str_Speed_NoReply">yanıt yok</sys:String>
     <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Test tamamlanamadı: </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">Test sunucusu URL'si</sys:String>
+    <sys:String x:Key="Str_Speed_Start">Testi başlat</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">Testi durdur</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">Boştaki gecikme</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">Yük altındaki gecikme</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Test sunucusu URL'sini girip testi başlatın. 1 GiB'a kadar veri aktarabilir.</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">Isınıyor</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">Test tamamlandı</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">Test iptal edildi</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">Veri sınırına ulaşıldı; ölçüm süresi kısaltıldı.</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">Sonuçları kopyala</sys:String>
+    <sys:String x:Key="Str_Speed_Error">Test başarısız: {0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">HTTPS test sunucusu URL'si girin.</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">Bağlantılar</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">Aktarılan</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">Ölçülmedi</sys:String>
+    <sys:String x:Key="Str_Speed_Run">Test ediliyor</sys:String>
+    <sys:String x:Key="Str_Speed_Native">Seçilen sunucuya aktarım hızını ve HTTP gidiş-dönüş gecikmesini ölçer. Sonuçlar rotaya ve sunucuya bağlıdır.</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">Test sunucusu zamanında yanıt vermedi.</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">Test sunucusuna bağlanılamadı.</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">Test sunucusuyla güvenli bağlantı kurulamadı.</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">Test sunucusu meşgul. Daha sonra tekrar deneyin.</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">Test sunucusu geçersiz yanıt döndürdü.</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">Aktarım başarısız. Bağlantınızı kontrol edip tekrar deneyin.</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">Sonuçlar kopyalanamadı. Tekrar deneyin.</sys:String>
 </ResourceDictionary>

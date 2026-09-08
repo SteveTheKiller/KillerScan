@@ -466,4 +466,29 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Speed_Builtin">Running the built-in HTTP throughput test. These figures are indicative, not an official speedtest.net result.</sys:String>
     <sys:String x:Key="Str_Speed_NoReply">no reply</sys:String>
     <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">The test could not finish: </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">Test server URL</sys:String>
+    <sys:String x:Key="Str_Speed_Start">Start test</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">Stop test</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">Idle latency</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">Latency under load</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Enter a test server URL, then start the test. It can transfer up to 1 GiB.</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">Warming up</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">Test complete</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">Test canceled</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">Data limit reached; measurement duration was shortened.</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">Copy results</sys:String>
+    <sys:String x:Key="Str_Speed_Error">Test failed: {0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">Enter an HTTPS test server URL.</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">Connections</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">Transferred</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">Not measured</sys:String>
+    <sys:String x:Key="Str_Speed_Run">Testing</sys:String>
+    <sys:String x:Key="Str_Speed_Native">Measures throughput and HTTP round-trip latency to the selected server. Results depend on that route and server.</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">The test server did not respond in time.</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">Could not connect to the test server.</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">The test server could not establish a secure connection.</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">The test server is busy. Try again later.</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">The test server returned an invalid response.</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">The transfer failed. Check your connection and try again.</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">Could not copy the results. Try again.</sys:String>
 </ResourceDictionary>

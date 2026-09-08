@@ -68,7 +68,12 @@ namespace KillerScan.Shell
 
         // Services moved from the icon rail to the workspace toolbar, so the selected view is
         // lit by UpdateWorkspaceNavigation along with Scan, Topology, Keep Alive, and Terminal.
-        private void UpdateWorkspaceRail() => UpdateWorkspaceNavigation();
+        private void UpdateWorkspaceRail()
+        {
+            UpdateWorkspaceNavigation();
+            if (_scanWorkspace?.FindName("ExportButton") is Button export)
+                export.Visibility = _workspaceView == "speedtest" ? Visibility.Collapsed : Visibility.Visible;
+        }
 
         private void ServicesButton_Click(object sender, RoutedEventArgs e)
         {

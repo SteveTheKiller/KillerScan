@@ -466,4 +466,29 @@
     <sys:String x:Key="Str_Speed_Builtin">Кірістірілген HTTP өткізу қабілеті сынағы орындалуда. Бұл сандар бағдарлық, speedtest.net ресми нәтижесі емес.</sys:String>
     <sys:String x:Key="Str_Speed_NoReply">жауап жоқ</sys:String>
     <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Сынақты аяқтау мүмкін болмады: </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">Сынақ серверінің URL мекенжайы</sys:String>
+    <sys:String x:Key="Str_Speed_Start">Сынақты бастау</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">Сынақты тоқтату</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">Жүктемесіз кідіріс</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">Жүктеме кезіндегі кідіріс</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Сынақ серверінің URL мекенжайын енгізіп, сынақты бастаңыз. Ол 1 GiB дейін дерек тасымалдауы мүмкін.</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">Қыздыру</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">Сынақ аяқталды</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">Сынақ тоқтатылды</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">Дерек шегіне жетті; өлшеу ұзақтығы қысқартылды.</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">Нәтижелерді көшіру</sys:String>
+    <sys:String x:Key="Str_Speed_Error">Сынақ қатесі: {0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">Сынақ серверінің HTTPS URL мекенжайын енгізіңіз.</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">Қосылымдар</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">Тасымалданды</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">Өлшенбеген</sys:String>
+    <sys:String x:Key="Str_Speed_Run">Сыналуда</sys:String>
+    <sys:String x:Key="Str_Speed_Native">Таңдалған серверге өткізу қабілеті мен HTTP барып-қайту кідірісін өлшейді. Нәтижелер бағыт пен серверге байланысты.</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">Сынақ сервері уақытында жауап бермеді.</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">Сынақ серверіне қосылу мүмкін болмады.</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">Сынақ серверімен қауіпсіз қосылым орнату мүмкін болмады.</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">Сынақ сервері бос емес. Кейінірек қайталап көріңіз.</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">Сынақ сервері жарамсыз жауап қайтарды.</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">Тасымалдау сәтсіз аяқталды. Қосылымды тексеріп, қайталап көріңіз.</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">Нәтижелерді көшіру мүмкін болмады. Қайталап көріңіз.</sys:String>
 </ResourceDictionary>

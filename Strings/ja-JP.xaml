@@ -435,4 +435,29 @@
     <sys:String x:Key="Str_Speed_Builtin">内蔵の HTTP 転送速度テストを実行しています。数値は目安であり、speedtest.net の公式結果ではありません。</sys:String>
     <sys:String x:Key="Str_Speed_NoReply">応答なし</sys:String>
     <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">テストを完了できませんでした: </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">テストサーバーの URL</sys:String>
+    <sys:String x:Key="Str_Speed_Start">テスト開始</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">テスト停止</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">無負荷時の遅延</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">負荷時の遅延</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">テストサーバーの URL を入力して開始してください。最大 1 GiB 転送する場合があります。</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">ウォームアップ中</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">テスト完了</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">テスト中止</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">データ上限に達したため、測定時間を短縮しました。</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">結果をコピー</sys:String>
+    <sys:String x:Key="Str_Speed_Error">テスト失敗: {0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">HTTPS のテストサーバー URL を入力してください。</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">接続数</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">転送済み</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">未測定</sys:String>
+    <sys:String x:Key="Str_Speed_Run">テスト中</sys:String>
+    <sys:String x:Key="Str_Speed_Native">選択したサーバーへの転送速度と HTTP 往復遅延を測定します。結果は経路とサーバーに依存します。</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">テストサーバーが時間内に応答しませんでした。</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">テストサーバーに接続できませんでした。</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">テストサーバーとの安全な接続を確立できませんでした。</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">テストサーバーが混雑しています。後でもう一度お試しください。</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">テストサーバーから無効な応答が返されました。</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">転送に失敗しました。接続を確認して再試行してください。</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">結果をコピーできませんでした。再試行してください。</sys:String>
 </ResourceDictionary>

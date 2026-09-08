@@ -424,4 +424,29 @@
     <sys:String x:Key="Str_Speed_Builtin">正在執行內建 HTTP 輸送量測試。這些數值僅供參考，並非 speedtest.net 官方結果。</sys:String>
     <sys:String x:Key="Str_Speed_NoReply">無回應</sys:String>
     <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">測試無法完成： </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">測試伺服器 URL</sys:String>
+    <sys:String x:Key="Str_Speed_Start">開始測試</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">停止測試</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">閒置延遲</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">負載下延遲</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">輸入測試伺服器 URL，然後開始測試。最多可能傳輸 1 GiB 資料。</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">暖機中</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">測試完成</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">測試已取消</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">已達資料上限；測量時間已縮短。</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">複製結果</sys:String>
+    <sys:String x:Key="Str_Speed_Error">測試失敗：{0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">請輸入 HTTPS 測試伺服器 URL。</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">連線數</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">已傳輸</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">未測量</sys:String>
+    <sys:String x:Key="Str_Speed_Run">測試中</sys:String>
+    <sys:String x:Key="Str_Speed_Native">測量到所選伺服器的輸送量及 HTTP 往返延遲。結果取決於該網路路徑和伺服器。</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">測試伺服器未及時回應。</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">無法連線至測試伺服器。</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">無法與測試伺服器建立安全連線。</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">測試伺服器忙碌中。請稍後再試。</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">測試伺服器傳回無效回應。</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">傳輸失敗。請檢查連線後再試。</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">無法複製結果。請再試一次。</sys:String>
 </ResourceDictionary>

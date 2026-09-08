@@ -425,4 +425,29 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Speed_Builtin">Der integrierte HTTP-Durchsatztest läuft. Die Werte dienen zur Orientierung und sind kein offizielles speedtest.net-Ergebnis.</sys:String>
     <sys:String x:Key="Str_Speed_NoReply">keine Antwort</sys:String>
     <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Der Test konnte nicht abgeschlossen werden: </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">URL des Testservers</sys:String>
+    <sys:String x:Key="Str_Speed_Start">Test starten</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">Test stoppen</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">Latenz im Leerlauf</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">Latenz unter Last</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Geben Sie die URL eines Testservers ein und starten Sie den Test. Er kann bis zu 1 GiB übertragen.</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">Aufwärmen</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">Test abgeschlossen</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">Test abgebrochen</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">Datenlimit erreicht; die Messdauer wurde verkürzt.</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">Ergebnisse kopieren</sys:String>
+    <sys:String x:Key="Str_Speed_Error">Test fehlgeschlagen: {0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">Geben Sie eine HTTPS-URL für den Testserver ein.</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">Verbindungen</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">Übertragen</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">Nicht gemessen</sys:String>
+    <sys:String x:Key="Str_Speed_Run">Test läuft</sys:String>
+    <sys:String x:Key="Str_Speed_Native">Misst Durchsatz und HTTP-Rundlaufzeit zum gewählten Server. Die Ergebnisse hängen von Route und Server ab.</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">Der Testserver hat nicht rechtzeitig geantwortet.</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">Verbindung zum Testserver fehlgeschlagen.</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">Es konnte keine sichere Verbindung zum Testserver hergestellt werden.</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">Der Testserver ist ausgelastet. Versuchen Sie es später erneut.</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">Der Testserver hat eine ungültige Antwort gesendet.</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">Die Übertragung ist fehlgeschlagen. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">Die Ergebnisse konnten nicht kopiert werden. Versuchen Sie es erneut.</sys:String>
 </ResourceDictionary>

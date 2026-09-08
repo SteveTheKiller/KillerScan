@@ -322,6 +322,11 @@ namespace KillerScan.Shell
             ScanProgress.Value = ActiveScan?.Progress ?? 0;
             ScanProgress.Visibility = ActiveScan?.IsProgressVisible == true ? Visibility.Visible : Visibility.Collapsed;
             if (_workspaceView == "terminal") UpdateTerminalPanelStatus();
+            if (_workspaceView == "speedtest" && _speedTestView != null)
+            {
+                StatusText.Text = _speedTestView.StatusText;
+                ScanProgress.Visibility = Visibility.Collapsed;
+            }
             // Empty as well as duplicated: before the first scan there is no count to show, and
             // the cell would otherwise contribute its margin to a bar that has nothing in it.
             if (_scanWorkspace?.FindName("DeviceCount") is TextBlock count)
@@ -351,6 +356,7 @@ namespace KillerScan.Shell
 
         private string BuildStatusTooltip()
         {
+            if (_workspaceView == "speedtest") return _speedTestView?.StatusText ?? string.Empty;
             if (_workspaceView == "watch" && _watchWorkspace != null)
             {
                 var (total, replying) = _watchWorkspace.WatchState;

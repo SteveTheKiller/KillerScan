@@ -6,10 +6,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.7.2] - Unreleased
 
-1.7.2 fixes speed-test startup failures.
+1.7.2 replaces the terminal speed test with a native engine and test view.
+
+### Added
+- Sustained download and upload tests, latency under load, jitter, live graphs, cancellation, and result copying using a compatible HTTPS server.
+- A Cloudflare test endpoint implementation and automated transfer, failure, and server tests.
 
 ### Fixed
-- Removed the speed test's executable download path; uses an installed Ookla CLI or the built-in test.
+- Removed PowerShell and external executable requirements from speed tests.
 - Terminal startup failures now include the Windows error details.
 
 ## [1.7.1] - 2026-09-08

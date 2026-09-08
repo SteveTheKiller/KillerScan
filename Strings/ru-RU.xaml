@@ -450,4 +450,29 @@
     <sys:String x:Key="Str_Speed_Builtin">Выполняется встроенный тест пропускной способности HTTP. Значения ориентировочные и не являются официальным результатом speedtest.net.</sys:String>
     <sys:String x:Key="Str_Speed_NoReply">нет ответа</sys:String>
     <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Не удалось завершить тест: </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">URL тестового сервера</sys:String>
+    <sys:String x:Key="Str_Speed_Start">Начать тест</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">Остановить тест</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">Задержка без нагрузки</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">Задержка под нагрузкой</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Введите URL тестового сервера и начните тест. Он может передать до 1 ГиБ.</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">Прогрев</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">Тест завершён</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">Тест отменён</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">Достигнут лимит данных; время измерения сокращено.</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">Копировать результаты</sys:String>
+    <sys:String x:Key="Str_Speed_Error">Ошибка теста: {0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">Введите HTTPS-адрес тестового сервера.</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">Соединения</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">Передано</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">Не измерено</sys:String>
+    <sys:String x:Key="Str_Speed_Run">Тестирование</sys:String>
+    <sys:String x:Key="Str_Speed_Native">Измеряет пропускную способность и задержку HTTP до выбранного сервера и обратно. Результаты зависят от маршрута и сервера.</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">Тестовый сервер не ответил вовремя.</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">Не удалось подключиться к тестовому серверу.</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">Не удалось установить защищённое соединение с тестовым сервером.</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">Тестовый сервер занят. Попробуйте позже.</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">Тестовый сервер вернул недопустимый ответ.</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">Передача не удалась. Проверьте соединение и повторите попытку.</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">Не удалось скопировать результаты. Попробуйте ещё раз.</sys:String>
 </ResourceDictionary>

@@ -424,4 +424,29 @@
     <sys:String x:Key="Str_Speed_Builtin">অন্তর্ভুক্ত HTTP গতি পরীক্ষা চলছে। এই সংখ্যাগুলো আনুমানিক, speedtest.net-এর আনুষ্ঠানিক ফল নয়।</sys:String>
     <sys:String x:Key="Str_Speed_NoReply">সাড়া নেই</sys:String>
     <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">পরীক্ষা শেষ করা যায়নি: </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">পরীক্ষার সার্ভারের URL</sys:String>
+    <sys:String x:Key="Str_Speed_Start">পরীক্ষা শুরু</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">পরীক্ষা থামান</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">নিষ্ক্রিয় অবস্থায় বিলম্ব</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">চাপের মধ্যে বিলম্ব</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">পরীক্ষার সার্ভারের URL দিয়ে পরীক্ষা শুরু করুন। এটি সর্বোচ্চ 1 GiB ডেটা আদান-প্রদান করতে পারে।</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">প্রস্তুত হচ্ছে</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">পরীক্ষা সম্পন্ন</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">পরীক্ষা বাতিল</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">ডেটার সীমায় পৌঁছেছে; মাপার সময় কমানো হয়েছে।</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">ফলাফল কপি করুন</sys:String>
+    <sys:String x:Key="Str_Speed_Error">পরীক্ষা ব্যর্থ: {0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">পরীক্ষার সার্ভারের HTTPS URL দিন।</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">সংযোগ</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">আদান-প্রদান হয়েছে</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">মাপা হয়নি</sys:String>
+    <sys:String x:Key="Str_Speed_Run">পরীক্ষা চলছে</sys:String>
+    <sys:String x:Key="Str_Speed_Native">নির্বাচিত সার্ভারে ডেটা স্থানান্তরের গতি ও HTTP যাওয়া-আসার বিলম্ব মাপে। ফলাফল সেই পথ ও সার্ভারের ওপর নির্ভর করে।</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">পরীক্ষার সার্ভার সময়মতো সাড়া দেয়নি।</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">পরীক্ষার সার্ভারে সংযোগ করা যায়নি।</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">পরীক্ষার সার্ভারের সঙ্গে নিরাপদ সংযোগ করা যায়নি।</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">পরীক্ষার সার্ভার ব্যস্ত। পরে আবার চেষ্টা করুন।</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">পরীক্ষার সার্ভার অবৈধ উত্তর দিয়েছে।</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">ডেটা স্থানান্তর ব্যর্থ হয়েছে। সংযোগ যাচাই করে আবার চেষ্টা করুন।</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">ফলাফল কপি করা যায়নি। আবার চেষ্টা করুন।</sys:String>
 </ResourceDictionary>

@@ -424,4 +424,29 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Speed_Builtin">Ejecutando la prueba HTTP integrada. Estas cifras son orientativas, no un resultado oficial de speedtest.net.</sys:String>
     <sys:String x:Key="Str_Speed_NoReply">sin respuesta</sys:String>
     <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">La prueba no pudo finalizar: </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">URL del servidor de prueba</sys:String>
+    <sys:String x:Key="Str_Speed_Start">Iniciar prueba</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">Detener prueba</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">Latencia en reposo</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">Latencia bajo carga</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Introduzca la URL del servidor e inicie la prueba. Puede transferir hasta 1 GiB.</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">Calentando</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">Prueba completada</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">Prueba cancelada</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">Se alcanzó el límite de datos; se acortó la medición.</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">Copiar resultados</sys:String>
+    <sys:String x:Key="Str_Speed_Error">La prueba falló: {0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">Introduzca una URL HTTPS del servidor de prueba.</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">Conexiones</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">Transferido</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">Sin medir</sys:String>
+    <sys:String x:Key="Str_Speed_Run">Probando</sys:String>
+    <sys:String x:Key="Str_Speed_Native">Mide la transferencia y la latencia HTTP de ida y vuelta al servidor elegido. Los resultados dependen de la ruta y del servidor.</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">El servidor de prueba no respondió a tiempo.</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">No se pudo conectar al servidor de prueba.</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">No se pudo establecer una conexión segura con el servidor de prueba.</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">El servidor de prueba está ocupado. Inténtelo más tarde.</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">El servidor de prueba devolvió una respuesta no válida.</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">La transferencia falló. Compruebe la conexión e inténtelo de nuevo.</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">No se pudieron copiar los resultados. Inténtelo de nuevo.</sys:String>
 </ResourceDictionary>
