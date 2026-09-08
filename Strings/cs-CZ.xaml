@@ -399,4 +399,5 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Toolbar_TextBeside">Text vedle ikon</sys:String>
     <sys:String x:Key="Str_Toolbar_TextUnder">Text pod ikonami</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Pouze text</sys:String>
+    <sys:String x:Key="Str_Clipboard_Failed">Nepodařilo se kopírovat do schránky. Zkuste to znovu.</sys:String>
 </ResourceDictionary>

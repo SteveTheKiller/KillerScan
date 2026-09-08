@@ -12,13 +12,27 @@ namespace KillerScan.Controls
         private NetworkDevice? GetSelectedDevice() => ResultsGrid.SelectedItem as NetworkDevice;
 
         private void CopyIp_Click(object sender, RoutedEventArgs e)
-        { var d = GetSelectedDevice(); if (d != null) Clipboard.SetText(d.IpAddress); }
+        { var d = GetSelectedDevice(); if (d != null) CopyDeviceText(d.IpAddress); }
 
         private void CopyMac_Click(object sender, RoutedEventArgs e)
-        { var d = GetSelectedDevice(); if (d != null && !string.IsNullOrEmpty(d.MacAddress)) Clipboard.SetText(d.MacAddress); }
+        { var d = GetSelectedDevice(); if (d != null) CopyDeviceText(d.MacAddress); }
 
         private void CopyHostname_Click(object sender, RoutedEventArgs e)
-        { var d = GetSelectedDevice(); if (d != null && !string.IsNullOrEmpty(d.Hostname)) Clipboard.SetText(d.Hostname); }
+        { var d = GetSelectedDevice(); if (d != null) CopyDeviceText(d.Hostname); }
+
+        private async void CopyDeviceText(string? text)
+        {
+            if (string.IsNullOrEmpty(text)) return;
+            for (int attempt = 0; attempt < 5; attempt++)
+            {
+                try { Clipboard.SetText(text); return; }
+                catch (System.Runtime.InteropServices.COMException)
+                {
+                    if (attempt == 4) { StatusText.Text = Loc("Str_Clipboard_Failed"); return; }
+                    await System.Threading.Tasks.Task.Delay(50);
+                }
+            }
+        }
 
         private void PingDevice_Click(object sender, RoutedEventArgs e) => RaiseDeviceAction("Ping");
         private void OpenBrowser_Click(object sender, RoutedEventArgs e) => RaiseDeviceAction("Browser");

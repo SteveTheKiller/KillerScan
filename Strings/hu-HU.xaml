@@ -417,4 +417,5 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Toolbar_TextBeside">Szöveg az ikonok mellett</sys:String>
     <sys:String x:Key="Str_Toolbar_TextUnder">Szöveg az ikonok alatt</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Csak szöveg</sys:String>
+    <sys:String x:Key="Str_Clipboard_Failed">Nem sikerült a vágólapra másolni. Próbálja újra.</sys:String>
 </ResourceDictionary>

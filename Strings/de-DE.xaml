@@ -402,4 +402,5 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Toolbar_TextBeside">Text neben Symbol</sys:String>
     <sys:String x:Key="Str_Toolbar_TextUnder">Text unter Symbol</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Nur Text</sys:String>
+    <sys:String x:Key="Str_Clipboard_Failed">Kopieren in die Zwischenablage nicht möglich. Versuchen Sie es erneut.</sys:String>
 </ResourceDictionary>

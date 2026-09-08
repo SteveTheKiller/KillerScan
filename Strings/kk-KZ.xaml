@@ -443,4 +443,5 @@
     <sys:String x:Key="Str_Toolbar_TextBeside">Мәтін белгішенің қасында</sys:String>
     <sys:String x:Key="Str_Toolbar_TextUnder">Мәтін белгішенің астында</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Тек мәтін</sys:String>
+    <sys:String x:Key="Str_Clipboard_Failed">Алмасу буферіне көшірілмеді. Қайталап көріңіз.</sys:String>
 </ResourceDictionary>
