@@ -65,11 +65,15 @@ Part of [killertools.net](https://killertools.net).
 - Prebuilt binary: <https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe>
 - Source (GPL3 corresponding source for this release): <https://github.com/SteveTheKiller/KillerScan/releases/download/v1.7.1/KillerScan-1.7.1-src.zip>
 
-Or install from a package manager:
+WinGet:
 
 ```powershell
 winget install killerscan
-# or
+```
+
+Chocolatey:
+
+```powershell
 choco install killerscan
 ```
 
