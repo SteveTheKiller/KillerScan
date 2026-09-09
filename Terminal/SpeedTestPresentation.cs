@@ -24,6 +24,8 @@ namespace KillerScan.Terminal
             bool up = p.Phase is SpeedTestPhase.Upload or SpeedTestPhase.UploadWarmup;
             bool warmup = p.Phase is SpeedTestPhase.DownloadWarmup or SpeedTestPhase.UploadWarmup;
             string label = loc(down ? "Str_Speed_Download" : up ? "Str_Speed_Upload" : "Str_Speed_Idle");
+            if (p.IsPhaseComplete && !warmup && (down || up))
+                return "\r\u001b[2K" + Row(label, Value(p.Mbps, "Mbps"), down ? 36 : 35);
             string value = Value(down || up ? p.Mbps : p.LatencyMs, down || up ? "Mbps" : "ms");
             string text = label + "  " + value + (warmup ? "  " + loc("Str_Speed_Warmup") : "");
             int barWidth = Math.Max(4, Math.Min(16, Width / 4));
