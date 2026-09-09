@@ -85,13 +85,25 @@ Output lands in `bin/Release/net48/publish/`. The publish step produces a single
 
 Requires the .NET 8 SDK or later to build (even though the output targets .NET Framework 4.8).
 
+## Privacy and network connections
+
+KillerScan has no usage analytics or automatic scan-result uploads. Vendor identification and device classification run locally. It does make network connections:
+
+- Scans and diagnostics contact the selected targets and configured DNS services, which may be outside the LAN.
+- Opening About checks GitHub for updates. An update downloads release files after confirmation. Vendor refresh downloads full lists from Wireshark and GitHub without sending scanned MAC addresses.
+- Starting a speed test connects to `speed.killerscan.net` over HTTPS. Download and upload payloads are generated test data, not files, scan results, device names, or MAC addresses. Downloaded bytes are discarded from memory, never executed. The Worker counts and discards uploads and does not save test results.
+- Cloudflare processes the public IP and ordinary request metadata. The Worker uses that IP for temporary rate limiting. This is not a guarantee of zero provider infrastructure or security logs.
+- Opening a saved HTML report can fetch its logo from `scan.killertools.net`; the image request does not upload its device table. Terminal commands and links you open can contact other services.
+
+The website loads separate analytics from `koya.thekiller.net`; the no-usage-analytics statement above concerns the desktop app. See the [technical explanation](https://killerscan.net/technical.html#speedtest-network) for speed-test traffic, limits, and source links.
+
 ## Speed-test development
 
 The default profile compares two, four, and eight concurrent HTTP transfers during up to six seconds of warmup per direction, keeping the smaller count when adding connections improves throughput by less than 10%. It then measures for ten seconds. Adaptive requests reduce request traffic. A 3 GiB payload budget per direction (6 GiB total) includes warmup and can shorten a fast test; the terminal reports that limit. Final throughput uses measured payload bytes divided by monotonic elapsed time, excluding warmup. Upload counts only completed transfers accepted by the server, so unfinished uploads are conservatively omitted. Server rate limits can still stop a test; measured transfers are not retried inside the timing window. Comparing connection counts helps fill the route but does not prove ISP saturation or rule out a server bottleneck.
 
 Latency is HTTP round-trip time to the selected endpoint, including server processing. Idle latency is the median of five samples after an unmeasured connection warmup. Jitter is the mean absolute difference between consecutive samples. Loaded latency is sampled on a separate connection during each measured phase. These measurements describe that route and server, and do not claim packet loss or universal ISP capacity.
 
-The app connects automatically to `https://speed.killerscan.net/`, the dedicated [KillerScan endpoint](server/speedtest/README.md) hosted on Cloudflare Workers. Users do not need an account or server setup. Deployment credentials are kept outside the source and app.
+When you start a speed test, the app connects to `https://speed.killerscan.net/`, the dedicated [KillerScan endpoint](server/speedtest/README.md) hosted on Cloudflare Workers. Users do not need an account or server setup. Deployment credentials are kept outside the source and app.
 
 Run the retained tests on Windows with the .NET SDK and Node.js 22 or newer:
 

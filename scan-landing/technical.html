@@ -18,6 +18,11 @@
 .page-hero p { color: var(--muted); font-size: 15px; margin: 4px auto 0; max-width: 540px; }
 .content-inner { max-width: 860px; margin: 0 auto; padding: 0 28px 56px; }
 .tech-sec, .tech-sec h3 { scroll-margin-top: 84px; }
+.tech-sec details { margin: 18px 0; padding: 16px 18px; border: 1px solid var(--border); border-radius: 6px; }
+.tech-sec summary { cursor: pointer; color: var(--text); font-weight: 600; }
+.tech-sec summary:hover { color: var(--accent); }
+.tech-sec summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.tech-sec details code { overflow-wrap: anywhere; }
 @media (min-width: 901px){ .shell { grid-template-columns: 268px 1fr; } .content { margin: 8px 8px 0 2px; } }
 .sb-tabs .on { border-bottom: 0; }
 .outline { padding: 8px 0; overflow-y: auto; flex: 1; min-height: 0; }
@@ -126,6 +131,7 @@
 <a href="#deepscan" data-i18n="tk_172">Deep rescan</a>
 <a href="#deepscanall" class="sub" data-i18n="tk_deep_all_title">Deep Scan All</a>
 <a href="#privacy" data-i18n="tk_170">Privacy &amp; footprint</a>
+<a href="#speedtest-network" class="sub" data-i18n="tk_speed_network_title">Speed test: connections and data</a>
 <a href="#glossary" data-i18n="tk_171">Glossary</a>
 </nav>
 </aside>
@@ -407,8 +413,17 @@
 
 <div class="tech-sec" id="privacy">
 <h2 data-i18n="tk_101">Privacy &amp; footprint</h2>
-<p data-i18n="tk_102">Everything happens on your own machine. There is no account, no background agent, no cloud lookup, and no usage tracking.</p>
-<p data-i18n="tk_102_p2">The vendor database is built into the app, so even manufacturer names are looked up offline. Nothing about your network ever leaves your computer.</p>
+<p data-i18n="tk_102">KillerScan has no account requirement, usage analytics, or automatic scan-result uploads. Vendor identification and device classification run locally. Scans and diagnostics contact selected targets and configured DNS services, which can be outside your local network.</p>
+<p data-i18n="tk_102_p2">Opening About checks GitHub for updates. Installing an update downloads release files after confirmation. Refreshing the vendor database downloads full lists from Wireshark and GitHub without sending scanned MAC addresses. Terminal commands and links you open may also contact external services.</p>
+<p data-i18n="tk_privacy_reports">HTML reports are saved locally, but opening one can fetch its logo from scan.killertools.net; that image request does not upload the device table. This website loads a separate analytics script from koya.thekiller.net. The app's no-usage-analytics claim applies to the desktop app.</p>
+<details id="speedtest-network" open>
+<summary data-i18n="tk_speed_network_title">Speed test: connections and data</summary>
+<p data-i18n="tk_speed_network_start">The speed test connects only when you start it with F4, the rail, or the terminal menu. It uses HTTPS to <code>speed.killerscan.net</code>, a KillerScan service hosted on Cloudflare Workers. If the terminal is busy, you are asked before its task is stopped. Completion or cancellation returns to the shell.</p>
+<p data-i18n="tk_speed_network_payload">Downloads read generated test bytes from <code>GET /__down</code> into memory and discard them. Uploads send generated test bytes to <code>POST /__up</code>, where the server counts and discards them. The speed test does not send your files, scan results, device names, or MAC addresses, and it does not save or execute downloaded code. Zero-byte downloads measure HTTP latency.</p>
+<p data-i18n="tk_speed_network_metadata">Cloudflare processes your public IP address and normal request metadata to serve and protect the endpoint. The Worker uses that IP for temporary rate-limit counters. It does not save payloads or test results. This is not a promise that Cloudflare keeps no infrastructure or security logs.</p>
+<p data-i18n="tk_speed_network_measure">In 1.7.2, each direction compares 2, 4, and 8 connections during up to six seconds of warmup, then measures for up to ten seconds. The cap is 3 GiB of payload per direction, including warmup (6 GiB total, plus network overhead). Esc or Ctrl+C cancels. Upload speed counts completed server-acknowledged transfers. Latency includes server processing; these results measure this route, not guaranteed ISP capacity.</p>
+<p data-i18n="tk_speed_network_source">The server code and deployment configuration are in <a href="https://github.com/SteveTheKiller/KillerScan/tree/main/server/speedtest">server/speedtest</a>. The client engine is in <a href="https://github.com/SteveTheKiller/KillerScan/tree/main/Services/SpeedTest">Services/SpeedTest</a>. Public source contains no deployment credentials.</p>
+</details>
 <p data-i18n="tk_103">The one thing you may notice the first time you scan is a <b>Windows Firewall prompt</b>. That is the mDNS and SSDP discovery asking to listen for replies, which it has to do in order to hear Chromecasts, printers, and similar devices.</p>
 <p data-i18n="tk_103_p2">Allow it on private networks and you will not be asked again. Deny it and those two discovery methods simply find nothing, while the rest of the scan carries on as normal.</p>
 </div>
@@ -458,7 +473,7 @@
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 <div class="dlightbox" id="diagram-lightbox" hidden><div class="dlb-inner"></div></div>
-<script src="ks-i18n.js?v=9"></script>
+<script src="ks-i18n.js?v=13"></script>
 <script src="ks.js?v=11"></script>
 <script>
 // COLLAPSIBLE OUTLINE. The page has eleven sections and thirteen subsections, and listing
