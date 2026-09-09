@@ -429,7 +429,7 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Speed_Stop">Detener prueba</sys:String>
     <sys:String x:Key="Str_Speed_Idle">Latencia en reposo</sys:String>
     <sys:String x:Key="Str_Speed_Loaded">Latencia bajo carga</sys:String>
-    <sys:String x:Key="Str_Speed_Ready">Introduzca la URL del servidor e inicie la prueba. Puede transferir hasta 1 GiB.</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Introduzca la URL del servidor e inicie la prueba. Puede transferir hasta 6 GiB.</sys:String>
     <sys:String x:Key="Str_Speed_Warmup">Calentando</sys:String>
     <sys:String x:Key="Str_Speed_Completed">Prueba completada</sys:String>
     <sys:String x:Key="Str_Speed_Canceled">Prueba cancelada</sys:String>

@@ -2,9 +2,13 @@
 
 Cloudflare Worker serving KillerScan speed tests at `https://speed.killerscan.net/`. The app uses this endpoint automatically. Workers.dev and preview URLs remain disabled. Account identifiers and deployment credentials are not part of the source or app.
 
-## Deployment verification
+## Historical deployment verification
+
+The adaptive profile completed two live runs at 551.56/28.73 Mbps and 450.23/29.56 Mbps (download/upload), with all ten-second measurement phases complete. The second run selected two streams in both directions. All 29 engine/terminal checks passed, including controlled per-connection and shared bottlenecks and cancellation between warmup stages. These runs were not alternating comparisons against the earlier build. A live tail sample contained 613 request CPU measurements, reaching 68 ms; outcomes were successful or canceled, with no CPU-limit failure in that sample. This does not establish CPU headroom or gigabit capacity on Workers Free. Independent reference testing and server capacity validation remain open.
 
 September 8, 2026: deployed to Workers Free. Health, zero-byte latency, exact 8 MiB downloads, exact 4 MiB upload acknowledgments, and identity/no-store headers passed. After an initial client download timeout, two consecutive full native-engine runs passed all 26 regression checks, with both measured phases completing eight seconds. Results were 373.04/25.71 Mbps and 386.37/27.42 Mbps (download/upload). The 18 Worker tests also passed. These runs validate this connection and deployment, not reliability across all networks or production load. The initial timeout was not reproduced or assigned a confirmed cause.
+
+Those results used the earlier two-connection, 512 MiB-per-direction profile. The current client compares two, four, and eight connections during up to six seconds of warmup per direction, keeps the smaller count when an increase improves throughput by less than 10%, and measures for ten seconds. Its budget is 3 GiB per direction, including warmup. Connection comparisons do not establish ISP saturation or rule out a server bottleneck.
 
 ## Protocol
 
@@ -38,7 +42,7 @@ node loopback.mjs
 powershell.exe -NoProfile -File ./engine-loopback.ps1
 ```
 
-The check loads `bin/Debug/net48/KillerScan.exe` without opening the app and transfers up to 32 MiB per direction. Its parameters can select another compiled app or the production defaults: `-BudgetMiB 512 -PhaseSeconds 8 -WarmupSeconds 2`. The adapter's local-only `/__adapter_stats` reports request counts and statuses; it is not part of the deployed Worker. Stop the adapter with Ctrl+C. Local throughput is a compatibility check, not an internet speed result. The Node adapter does not emulate Cloudflare rate counters or edge encoding.
+The check loads `bin/Debug/net48/KillerScan.exe` without opening the app and transfers up to 32 MiB per direction. Its parameters can select another compiled app or the production timing and budget: `-BudgetMiB 3072 -PhaseSeconds 10 -WarmupSeconds 6`. The adapter's local-only `/__adapter_stats` reports request counts and statuses; it is not part of the deployed Worker. Stop the adapter with Ctrl+C. Local throughput is a compatibility check, not an internet speed result. The Node adapter does not emulate Cloudflare rate counters or edge encoding.
 
 For a local Workers runtime, use Wrangler 4.36.0 or newer:
 
@@ -53,8 +57,8 @@ The `local` environment sets `LOCAL_TEST=1`. The bypass works only for localhost
 For deployments to another account:
 
 1. Authenticate locally with Wrangler and select the intended account. The configuration uses the plan's built-in CPU limit and supports deployment on Workers Free. Verify sustained transfers against the deployed service before distributing a client.
-2. Confirm that rate-limit namespace IDs `715201` and `715202` are unused in that account or replace them with two reviewed, unique positive integer strings. Both bindings are required. The configured limits are 600 requests per minute per client IP and 3,000 requests per minute for the service in each Cloudflare location.
-3. Review shared-office/NAT behavior and expected tests per minute. A fast run can use roughly 272 requests, with the exact count affected by adaptive payloads and latency probes. The 600-request client allowance accommodates a complete default run; the 3,000-request location allowance leaves room for five such client allowances. A 1,000-request location allowance would fit fewer than two full client allowances and constrain unrelated simultaneous tests sooner. Multiple users behind one IP still share its allowance. The public endpoint has no user authentication. Do not treat client IP as a unique person.
+2. Confirm that rate-limit namespace IDs `715201` and `715202` are unused in that account or replace them with two reviewed, unique positive integer strings. Both bindings are required. The configured limits are 1,800 requests per minute per client IP and 9,000 requests per minute for the service in each Cloudflare location.
+3. Review shared-office/NAT behavior and expected tests per minute. The client can transfer up to 3 GiB per direction, including warmup, using requests capped at 8 MiB for downloads and 4 MiB for uploads. Actual request counts depend on throughput, adaptive payloads, and latency probes. The location allowance is five times the client allowance; multiple users behind one IP still share its allowance, and repeated runs can hit it. The public endpoint has no user authentication. Do not treat client IP as a unique person.
 4. Replace the Custom Domain with a hostname you control. Keep workers.dev and preview URLs disabled, and leave `LOCAL_TEST` absent from production. See [Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/) and [Wrangler configuration](https://developers.cloudflare.com/workers/wrangler/configuration/).
 5. Verify the deployed health response, zero-byte latency, exact random download sizes, upload counts, compression headers, cancellation, and 429 behavior from the app before configuring its endpoint. Measure throughput against the intended audience's locations. An edge test measures the route to Cloudflare, not every internet destination.
 

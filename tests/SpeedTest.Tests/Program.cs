@@ -33,6 +33,9 @@ internal static class Program
             await Run("Metric units, median, jitter and unavailable values", Metrics);
             await Run("Cloudflare upload response is accepted only for the exact official endpoint", CloudflareAcknowledgment);
             await Run("Public endpoint profile reduces request pressure without shortening the test", PublicProfile);
+            await Run("Adaptive warmup adds streams on a per-connection bottleneck", () => Adaptive(Mode.SlowDownload, 8));
+            await Run("Adaptive warmup retains fewer streams on a shared bottleneck", () => Adaptive(Mode.SharedDownload, 2));
+            await Run("Cancellation during adaptive warmup prevents measurement", AdaptiveCancel);
             await Run("HTTPS configuration required without contacting a remote host", InvalidEndpoint);
             await Run("Real transfers, exact acknowledgments and per-direction byte budgets", Budget);
             await Run("Sustained timed download with loaded latency and cancellation of pending reads", Duration);
@@ -85,7 +88,7 @@ internal static class Program
         var snapshot = typeof(SpeedTestEngine).GetMethod("ValidateAndCopy", BindingFlags.Static | BindingFlags.NonPublic)!;
         var profile = (SpeedTestOptions)snapshot.Invoke(null, new object[] { new SpeedTestOptions { Endpoint = new Uri("https://speed.cloudflare.com/"), MaximumStreams = 4 } })!;
         Require(profile.MaximumStreams == 2, "Public service uses at most two payload streams");
-        Require(profile.PhaseDuration == TimeSpan.FromSeconds(8) && profile.ByteBudgetPerPhase == 512L * 1024 * 1024,
+        Require(profile.PhaseDuration == TimeSpan.FromSeconds(10) && profile.ByteBudgetPerPhase == 3L * 1024 * 1024 * 1024,
             "Public service retains sustained duration and byte ceiling");
         Require(profile.DownloadPayloadBytes == 25000000 && profile.UploadPayloadBytes == 10000000,
             "Public payloads use documented Cloudflare measurement sizes");
@@ -180,16 +183,17 @@ internal static class Program
     private static async Task Internet()
     {
         var options = new SpeedTestOptions();
-        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(40));
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(60));
         var result = await new SpeedTestEngine().RunAsync(options, null, deadline.Token);
         _internetResult = result;
         Require(result.Download.Mbps > 0 && result.Upload.Mbps > 0 && result.IdleLatencySamples.Count >= 5, "Live default endpoint measurements available");
         Console.WriteLine(string.Format(CultureInfo.InvariantCulture,
-            "LIVE download={0:F2}Mbps upload={1:F2}Mbps idle={2:F2}ms jitter={3:F2}ms downloadElapsed={4:F3}s uploadElapsed={5:F3}s downloadFullDuration={6} uploadFullDuration={7} downloadLoaded={8:F2}ms uploadLoaded={9:F2}ms total={10:F2}s",
+            "LIVE download={0:F2}Mbps upload={1:F2}Mbps idle={2:F2}ms jitter={3:F2}ms downloadElapsed={4:F3}s uploadElapsed={5:F3}s downloadFullDuration={6} uploadFullDuration={7} downloadLoaded={8:F2}ms uploadLoaded={9:F2}ms total={10:F2}s downloadStreams={11} uploadStreams={12}",
             result.Download.Mbps, result.Upload.Mbps, result.IdleLatencyMs, result.JitterMs,
             result.Download.Elapsed.TotalSeconds, result.Upload.Elapsed.TotalSeconds,
             result.Download.CompletedDuration, result.Upload.CompletedDuration,
-            result.Download.LoadedLatencyMs, result.Upload.LoadedLatencyMs, result.Elapsed.TotalSeconds));
+            result.Download.LoadedLatencyMs, result.Upload.LoadedLatencyMs, result.Elapsed.TotalSeconds,
+            result.Download.StreamCount, result.Upload.StreamCount));
     }
 
     private static async Task Worker()
@@ -456,6 +460,44 @@ internal static class Program
             "Phase completion updates carry final measured counts");
     }
 
+    private static async Task AdaptiveCancel()
+    {
+        using var server = new LoopbackServer(Mode.SlowDownload);
+        using var stop = new CancellationTokenSource();
+        var options = Options(server);
+        options.MaximumStreams = 8;
+        options.WarmupDuration = TimeSpan.FromSeconds(3);
+        options.ByteBudgetPerPhase = 64L * 1024 * 1024;
+        int warmups = 0;
+        bool measured = false;
+        var updates = new CallbackProgress(p =>
+        {
+            if (p.Phase == SpeedTestPhase.Download) measured = true;
+            if (p.Phase == SpeedTestPhase.DownloadWarmup && !p.IsPhaseComplete && p.Elapsed == TimeSpan.Zero &&
+                Interlocked.Increment(ref warmups) == 2) stop.Cancel();
+        });
+        try
+        {
+            await new SpeedTestEngine().RunAsync(options, updates, stop.Token);
+            throw new InvalidOperationException("Adaptive cancellation returned a result");
+        }
+        catch (OperationCanceledException)
+        { Require(warmups == 2 && !measured, "Second warmup cancellation stops before measurement"); }
+    }
+
+    private static async Task Adaptive(Mode mode, int expectedStreams)
+    {
+        using var server = new LoopbackServer(mode);
+        var options = Options(server);
+        options.MaximumStreams = 8;
+        options.WarmupDuration = TimeSpan.FromSeconds(3);
+        options.ByteBudgetPerPhase = 64L * 1024 * 1024;
+        var result = await new SpeedTestEngine().RunAsync(options, null, CancellationToken.None);
+        Require(result.Download.StreamCount == expectedStreams, "Selected connection count follows measured scaling");
+        Require(result.Download.CompletedDuration && result.Download.BytesTransferred > 0, "Selected streams complete measurement");
+        Require(result.Download.BytesScheduled <= options.ByteBudgetPerPhase, "All adaptive stages share one byte budget");
+    }
+
     private static async Task Duration()
     {
         using var server = new LoopbackServer(Mode.SlowDownload);
@@ -536,7 +578,7 @@ internal static class Program
         }
     }
 
-    private enum Mode { Normal, SlowDownload, WrongAck, StringAck, ShortDownload, Compressed, RateLimited, Unavailable, Stall, NoPayload, NoAck,
+    private enum Mode { Normal, SlowDownload, SharedDownload, WrongAck, StringAck, ShortDownload, Compressed, RateLimited, Unavailable, Stall, NoPayload, NoAck,
         FirstRetry, RepeatedRetry, LongRetry, MeasuredRate, LoadedRate }
 
     private sealed class LoopbackServer : IDisposable
@@ -544,6 +586,7 @@ internal static class Program
         private readonly TcpListener _listener = new TcpListener(IPAddress.Loopback, 0);
         private readonly CancellationTokenSource _stop = new CancellationTokenSource();
         private readonly ConcurrentBag<TcpClient> _clients = new ConcurrentBag<TcpClient>();
+        private readonly SemaphoreSlim _bandwidth = new SemaphoreSlim(1, 1);
         private readonly Mode _mode;
         private readonly Task _accept;
         private long _downloadBytes;
@@ -659,7 +702,17 @@ internal static class Program
                             {
                                 if (_mode == Mode.SlowDownload || _mode == Mode.LoadedRate) await Task.Delay(20, _stop.Token);
                                 int size = Math.Min(buffer.Length, length);
-                                await stream.WriteAsync(buffer, 0, size, _stop.Token);
+                                if (_mode == Mode.SharedDownload)
+                                {
+                                    await _bandwidth.WaitAsync(_stop.Token);
+                                    try
+                                    {
+                                        await Task.Delay(20, _stop.Token);
+                                        await stream.WriteAsync(buffer, 0, size, _stop.Token);
+                                    }
+                                    finally { _bandwidth.Release(); }
+                                }
+                                else await stream.WriteAsync(buffer, 0, size, _stop.Token);
                                 Interlocked.Add(ref _downloadBytes, size);
                                 length -= size;
                             }

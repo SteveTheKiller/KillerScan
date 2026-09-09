@@ -9,7 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 1.7.2 runs speed tests with a native engine in the themed terminal.
 
 ### Added
-- Native terminal speed tests with live download, upload, and latency results, cancellation, and copying.
+- Native terminal speed tests with adaptive connections, longer measurements, live download, upload, and latency results, cancellation, and copying.
 - A dedicated KillerScan speed-test server and automated transfer, failure, and server tests.
 
 ### Fixed

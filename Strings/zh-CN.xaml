@@ -429,7 +429,7 @@
     <sys:String x:Key="Str_Speed_Stop">停止测试</sys:String>
     <sys:String x:Key="Str_Speed_Idle">空闲延迟</sys:String>
     <sys:String x:Key="Str_Speed_Loaded">负载下延迟</sys:String>
-    <sys:String x:Key="Str_Speed_Ready">输入测试服务器 URL，然后开始测试。最多可能传输 1 GiB 数据。</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">输入测试服务器 URL，然后开始测试。最多可能传输 6 GiB 数据。</sys:String>
     <sys:String x:Key="Str_Speed_Warmup">预热中</sys:String>
     <sys:String x:Key="Str_Speed_Completed">测试完成</sys:String>
     <sys:String x:Key="Str_Speed_Canceled">测试已取消</sys:String>

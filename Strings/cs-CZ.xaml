@@ -427,7 +427,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Speed_Stop">Zastavit test</sys:String>
     <sys:String x:Key="Str_Speed_Idle">Odezva bez zátěže</sys:String>
     <sys:String x:Key="Str_Speed_Loaded">Odezva při zátěži</sys:String>
-    <sys:String x:Key="Str_Speed_Ready">Zadejte URL testovacího serveru a spusťte test. Může přenést až 1 GiB.</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Zadejte URL testovacího serveru a spusťte test. Může přenést až 6 GiB.</sys:String>
     <sys:String x:Key="Str_Speed_Warmup">Zahřívání</sys:String>
     <sys:String x:Key="Str_Speed_Completed">Test dokončen</sys:String>
     <sys:String x:Key="Str_Speed_Canceled">Test zrušen</sys:String>

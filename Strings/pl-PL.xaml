@@ -414,7 +414,7 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Speed_Stop">Zatrzymaj test</sys:String>
     <sys:String x:Key="Str_Speed_Idle">Opóźnienie bez obciążenia</sys:String>
     <sys:String x:Key="Str_Speed_Loaded">Opóźnienie pod obciążeniem</sys:String>
-    <sys:String x:Key="Str_Speed_Ready">Wpisz URL serwera testowego i rozpocznij test. Może przesłać do 1 GiB.</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Wpisz URL serwera testowego i rozpocznij test. Może przesłać do 6 GiB.</sys:String>
     <sys:String x:Key="Str_Speed_Warmup">Rozgrzewanie</sys:String>
     <sys:String x:Key="Str_Speed_Completed">Test zakończony</sys:String>
     <sys:String x:Key="Str_Speed_Canceled">Test anulowany</sys:String>

@@ -440,7 +440,7 @@
     <sys:String x:Key="Str_Speed_Stop">テスト停止</sys:String>
     <sys:String x:Key="Str_Speed_Idle">無負荷時の遅延</sys:String>
     <sys:String x:Key="Str_Speed_Loaded">負荷時の遅延</sys:String>
-    <sys:String x:Key="Str_Speed_Ready">テストサーバーの URL を入力して開始してください。最大 1 GiB 転送する場合があります。</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">テストサーバーの URL を入力して開始してください。最大 6 GiB 転送する場合があります。</sys:String>
     <sys:String x:Key="Str_Speed_Warmup">ウォームアップ中</sys:String>
     <sys:String x:Key="Str_Speed_Completed">テスト完了</sys:String>
     <sys:String x:Key="Str_Speed_Canceled">テスト中止</sys:String>

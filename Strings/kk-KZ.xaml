@@ -471,7 +471,7 @@
     <sys:String x:Key="Str_Speed_Stop">Сынақты тоқтату</sys:String>
     <sys:String x:Key="Str_Speed_Idle">Жүктемесіз кідіріс</sys:String>
     <sys:String x:Key="Str_Speed_Loaded">Жүктеме кезіндегі кідіріс</sys:String>
-    <sys:String x:Key="Str_Speed_Ready">Сынақ серверінің URL мекенжайын енгізіп, сынақты бастаңыз. Ол 1 GiB дейін дерек тасымалдауы мүмкін.</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Сынақ серверінің URL мекенжайын енгізіп, сынақты бастаңыз. Ол 6 GiB дейін дерек тасымалдауы мүмкін.</sys:String>
     <sys:String x:Key="Str_Speed_Warmup">Қыздыру</sys:String>
     <sys:String x:Key="Str_Speed_Completed">Сынақ аяқталды</sys:String>
     <sys:String x:Key="Str_Speed_Canceled">Сынақ тоқтатылды</sys:String>

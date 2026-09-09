@@ -429,7 +429,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Speed_Stop">Arrêter le test</sys:String>
     <sys:String x:Key="Str_Speed_Idle">Latence au repos</sys:String>
     <sys:String x:Key="Str_Speed_Loaded">Latence sous charge</sys:String>
-    <sys:String x:Key="Str_Speed_Ready">Saisissez l'URL du serveur puis démarrez le test. Il peut transférer jusqu'à 1 Gio.</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Saisissez l'URL du serveur puis démarrez le test. Il peut transférer jusqu'à 6 Gio.</sys:String>
     <sys:String x:Key="Str_Speed_Warmup">Préchauffage</sys:String>
     <sys:String x:Key="Str_Speed_Completed">Test terminé</sys:String>
     <sys:String x:Key="Str_Speed_Canceled">Test annulé</sys:String>

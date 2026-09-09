@@ -79,11 +79,11 @@ namespace KillerScan.Services.SpeedTest
                 !string.IsNullOrEmpty(options.Endpoint.Query) || !string.IsNullOrEmpty(options.Endpoint.Fragment))
                 throw new SpeedTestException(SpeedTestFailureKind.InvalidConfiguration,
                     "A compatible HTTPS speed-test endpoint is required. HTTP is allowed only on loopback for testing.");
-            if (options.MaximumStreams < 1 || options.MaximumStreams > 4 ||
+            if (options.MaximumStreams < 1 || options.MaximumStreams > 8 ||
                 options.PhaseDuration < TimeSpan.FromMilliseconds(100) || options.PhaseDuration > TimeSpan.FromMinutes(1) ||
                 options.WarmupDuration < TimeSpan.Zero || options.WarmupDuration > TimeSpan.FromSeconds(10) ||
                 options.RequestTimeout < TimeSpan.FromMilliseconds(100) || options.RequestTimeout > TimeSpan.FromSeconds(30) ||
-                options.ByteBudgetPerPhase < 8 || options.ByteBudgetPerPhase > 512L * 1024 * 1024 ||
+                options.ByteBudgetPerPhase < 8 || options.ByteBudgetPerPhase > 3L * 1024 * 1024 * 1024 ||
                 options.DownloadPayloadBytes < 1 || options.DownloadPayloadBytes > 250 * 1000 * 1000 ||
                 options.UploadPayloadBytes < 1 || options.UploadPayloadBytes > 50 * 1000 * 1000 ||
                 options.IdleLatencySampleCount < 5 || options.IdleLatencySampleCount > 20)
@@ -95,7 +95,7 @@ namespace KillerScan.Services.SpeedTest
             return new SpeedTestOptions
             {
                 Endpoint = new Uri(options.Endpoint.AbsoluteUri.TrimEnd('/') + "/"),
-                MaximumStreams = Math.Min(options.MaximumStreams, publicService ? 2 : 4), PhaseDuration = options.PhaseDuration,
+                MaximumStreams = Math.Min(options.MaximumStreams, publicService ? 2 : 8), PhaseDuration = options.PhaseDuration,
                 WarmupDuration = options.WarmupDuration, RequestTimeout = options.RequestTimeout,
                 ByteBudgetPerPhase = options.ByteBudgetPerPhase,
                 DownloadPayloadBytes = Math.Min(options.DownloadPayloadBytes, publicService ? 25 * 1000 * 1000 : 8 * 1024 * 1024),
@@ -107,13 +107,33 @@ namespace KillerScan.Services.SpeedTest
         private static async Task<SpeedTestPhaseResult> DirectionAsync(bool upload, HttpClient transfers,
             HttpClient latency, SpeedTestOptions options, IProgress<SpeedTestProgress>? progress, CancellationToken token)
         {
-            long warmupBudget = Math.Min(64L * 1024 * 1024, options.ByteBudgetPerPhase / 8);
-            var warmup = await TransferPhaseAsync(upload, true, warmupBudget, options.WarmupDuration,
-                transfers, latency, options, progress, token).ConfigureAwait(false);
-            var measured = await TransferPhaseAsync(upload, false, options.ByteBudgetPerPhase - warmup.BytesScheduled,
-                options.PhaseDuration, transfers, latency, options, progress, token).ConfigureAwait(false);
-            measured.WarmupBytes = warmup.BytesTransferred;
-            measured.BytesScheduled += warmup.BytesScheduled;
+            var direction = ValidateAndCopy(options);
+            long warmupBudget = options.ByteBudgetPerPhase / 3;
+            long warmupBytes = 0, warmupScheduled = 0;
+            int maximum = direction.MaximumStreams;
+            bool adaptive = maximum > 2 && options.WarmupDuration >= TimeSpan.FromSeconds(3);
+            int selected = adaptive ? 2 : maximum;
+            double best = 0;
+            int stages = adaptive ? (maximum > 4 ? 3 : 2) : 1;
+            var stageDuration = TimeSpan.FromTicks(options.WarmupDuration.Ticks / stages);
+            for (int streams = selected; streams <= maximum; streams = Math.Min(maximum, streams * 2))
+            {
+                direction.MaximumStreams = streams;
+                var warmup = await TransferPhaseAsync(upload, true, (warmupBudget - warmupScheduled) / stages,
+                    stageDuration, transfers, latency, direction, progress, token).ConfigureAwait(false);
+                warmupBytes += warmup.BytesTransferred;
+                warmupScheduled += warmup.BytesScheduled;
+                double speed = warmup.Mbps.GetValueOrDefault();
+                if (best > 0 && speed < best * 1.10) break;
+                if (speed > best) { best = speed; selected = streams; }
+                if (!adaptive || streams == maximum || warmup.ByteBudgetReached) break;
+                stages--;
+            }
+            direction.MaximumStreams = selected;
+            var measured = await TransferPhaseAsync(upload, false, options.ByteBudgetPerPhase - warmupScheduled,
+                options.PhaseDuration, transfers, latency, direction, progress, token).ConfigureAwait(false);
+            measured.WarmupBytes = warmupBytes;
+            measured.BytesScheduled += warmupScheduled;
             return measured;
         }
 
@@ -178,9 +198,7 @@ namespace KillerScan.Services.SpeedTest
             {
                 try
                 {
-                    // Start one connection, then add the remaining connections evenly during warmup.
-                    if (warmup && index > 0)
-                        await Task.Delay(TimeSpan.FromTicks(duration.Ticks * index / options.MaximumStreams), stop.Token).ConfigureAwait(false);
+                    // Start each comparison with its full connection count.
                     stop.Token.ThrowIfCancellationRequested();
                     counters.Enter();
                     try

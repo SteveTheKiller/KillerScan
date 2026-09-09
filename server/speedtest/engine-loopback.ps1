@@ -3,7 +3,7 @@
 param(
     [string]$AppPath = (Join-Path $PSScriptRoot '../../bin/Debug/net48/KillerScan.exe'),
     [uri]$Endpoint = 'http://127.0.0.1:18765/',
-    [ValidateRange(1, 512)][int]$BudgetMiB = 32,
+    [ValidateRange(1, 3072)][int]$BudgetMiB = 32,
     [ValidateRange(1, 60)][int]$PhaseSeconds = 2,
     [ValidateRange(0, 10)][double]$WarmupSeconds = 0.25
 )

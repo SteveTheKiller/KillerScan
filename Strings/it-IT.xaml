@@ -445,7 +445,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Speed_Stop">Interrompi test</sys:String>
     <sys:String x:Key="Str_Speed_Idle">Latenza a riposo</sys:String>
     <sys:String x:Key="Str_Speed_Loaded">Latenza sotto carico</sys:String>
-    <sys:String x:Key="Str_Speed_Ready">Inserisci l'URL del server e avvia il test. Può trasferire fino a 1 GiB.</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Inserisci l'URL del server e avvia il test. Può trasferire fino a 6 GiB.</sys:String>
     <sys:String x:Key="Str_Speed_Warmup">Riscaldamento</sys:String>
     <sys:String x:Key="Str_Speed_Completed">Test completato</sys:String>
     <sys:String x:Key="Str_Speed_Canceled">Test annullato</sys:String>

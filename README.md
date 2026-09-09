@@ -87,7 +87,7 @@ Requires the .NET 8 SDK or later to build (even though the output targets .NET F
 
 ## Speed-test development
 
-The default profile uses two concurrent HTTP transfers after a two-second warmup in each direction, then measures for eight seconds. Adaptive requests reduce request traffic. A 512 MiB payload budget per direction includes warmup and can shorten a fast test; the terminal reports that limit. Final throughput uses measured payload bytes divided by monotonic elapsed time, excluding warmup. Upload counts only completed transfers accepted by the server, so unfinished uploads are conservatively omitted. Server rate limits can still stop a test; measured transfers are not retried inside the timing window.
+The default profile compares two, four, and eight concurrent HTTP transfers during up to six seconds of warmup per direction, keeping the smaller count when adding connections improves throughput by less than 10%. It then measures for ten seconds. Adaptive requests reduce request traffic. A 3 GiB payload budget per direction (6 GiB total) includes warmup and can shorten a fast test; the terminal reports that limit. Final throughput uses measured payload bytes divided by monotonic elapsed time, excluding warmup. Upload counts only completed transfers accepted by the server, so unfinished uploads are conservatively omitted. Server rate limits can still stop a test; measured transfers are not retried inside the timing window. Comparing connection counts helps fill the route but does not prove ISP saturation or rule out a server bottleneck.
 
 Latency is HTTP round-trip time to the selected endpoint, including server processing. Idle latency is the median of five samples after an unmeasured connection warmup. Jitter is the mean absolute difference between consecutive samples. Loaded latency is sampled on a separate connection during each measured phase. These measurements describe that route and server, and do not claim packet loss or universal ISP capacity.
 
@@ -101,7 +101,7 @@ dotnet build tests/SpeedTest.Tests/SpeedTest.Tests.csproj -c Release
 node --test server/speedtest/worker.test.mjs
 ```
 
-The release script also adds `--internet` to verify the deployed KillerScan service before publishing or signing. That check uses the app's full budget of up to 512 MiB in each direction. The normal checks above stay on loopback; passing them alone does not verify the deployed service.
+The release script also adds `--internet` to verify the deployed KillerScan service before publishing or signing. That check uses the app's full budget of up to 3 GiB in each direction, including warmup. The normal checks above stay on loopback; passing them alone does not verify the deployed service.
 
 ## Translations
 

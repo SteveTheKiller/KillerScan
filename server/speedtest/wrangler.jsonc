@@ -9,8 +9,8 @@
   "observability": { "enabled": false },
   // Dedicated counters for this service; deployment credentials stay outside source control.
   "ratelimits": [
-    { "name": "CLIENT_RATE_LIMITER", "namespace_id": "715201", "simple": { "limit": 600, "period": 60 } },
-    { "name": "SERVICE_RATE_LIMITER", "namespace_id": "715202", "simple": { "limit": 3000, "period": 60 } }
+    { "name": "CLIENT_RATE_LIMITER", "namespace_id": "715201", "simple": { "limit": 1800, "period": 60 } },
+    { "name": "SERVICE_RATE_LIMITER", "namespace_id": "715202", "simple": { "limit": 9000, "period": 60 } }
   ],
   "env": {
     "local": {

@@ -430,7 +430,7 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Speed_Stop">Test stoppen</sys:String>
     <sys:String x:Key="Str_Speed_Idle">Latenz im Leerlauf</sys:String>
     <sys:String x:Key="Str_Speed_Loaded">Latenz unter Last</sys:String>
-    <sys:String x:Key="Str_Speed_Ready">Geben Sie die URL eines Testservers ein und starten Sie den Test. Er kann bis zu 1 GiB übertragen.</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Geben Sie die URL eines Testservers ein und starten Sie den Test. Er kann bis zu 6 GiB übertragen.</sys:String>
     <sys:String x:Key="Str_Speed_Warmup">Aufwärmen</sys:String>
     <sys:String x:Key="Str_Speed_Completed">Test abgeschlossen</sys:String>
     <sys:String x:Key="Str_Speed_Canceled">Test abgebrochen</sys:String>

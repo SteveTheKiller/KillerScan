@@ -455,7 +455,7 @@
     <sys:String x:Key="Str_Speed_Stop">Остановить тест</sys:String>
     <sys:String x:Key="Str_Speed_Idle">Задержка без нагрузки</sys:String>
     <sys:String x:Key="Str_Speed_Loaded">Задержка под нагрузкой</sys:String>
-    <sys:String x:Key="Str_Speed_Ready">Введите URL тестового сервера и начните тест. Он может передать до 1 ГиБ.</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Введите URL тестового сервера и начните тест. Он может передать до 6 ГиБ.</sys:String>
     <sys:String x:Key="Str_Speed_Warmup">Прогрев</sys:String>
     <sys:String x:Key="Str_Speed_Completed">Тест завершён</sys:String>
     <sys:String x:Key="Str_Speed_Canceled">Тест отменён</sys:String>

@@ -429,7 +429,7 @@
     <sys:String x:Key="Str_Speed_Stop">পরীক্ষা থামান</sys:String>
     <sys:String x:Key="Str_Speed_Idle">নিষ্ক্রিয় অবস্থায় বিলম্ব</sys:String>
     <sys:String x:Key="Str_Speed_Loaded">চাপের মধ্যে বিলম্ব</sys:String>
-    <sys:String x:Key="Str_Speed_Ready">পরীক্ষার সার্ভারের URL দিয়ে পরীক্ষা শুরু করুন। এটি সর্বোচ্চ 1 GiB ডেটা আদান-প্রদান করতে পারে।</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">পরীক্ষার সার্ভারের URL দিয়ে পরীক্ষা শুরু করুন। এটি সর্বোচ্চ 6 GiB ডেটা আদান-প্রদান করতে পারে।</sys:String>
     <sys:String x:Key="Str_Speed_Warmup">প্রস্তুত হচ্ছে</sys:String>
     <sys:String x:Key="Str_Speed_Completed">পরীক্ষা সম্পন্ন</sys:String>
     <sys:String x:Key="Str_Speed_Canceled">পরীক্ষা বাতিল</sys:String>

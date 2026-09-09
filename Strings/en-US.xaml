@@ -471,7 +471,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Speed_Stop">Stop test</sys:String>
     <sys:String x:Key="Str_Speed_Idle">Idle latency</sys:String>
     <sys:String x:Key="Str_Speed_Loaded">Latency under load</sys:String>
-    <sys:String x:Key="Str_Speed_Ready">Enter a test server URL, then start the test. It can transfer up to 1 GiB.</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Enter a test server URL, then start the test. It can transfer up to 6 GiB.</sys:String>
     <sys:String x:Key="Str_Speed_Warmup">Warming up</sys:String>
     <sys:String x:Key="Str_Speed_Completed">Test complete</sys:String>
     <sys:String x:Key="Str_Speed_Canceled">Test canceled</sys:String>

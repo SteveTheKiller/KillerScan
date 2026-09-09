@@ -429,7 +429,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Speed_Stop">Testi durdur</sys:String>
     <sys:String x:Key="Str_Speed_Idle">Boştaki gecikme</sys:String>
     <sys:String x:Key="Str_Speed_Loaded">Yük altındaki gecikme</sys:String>
-    <sys:String x:Key="Str_Speed_Ready">Test sunucusu URL'sini girip testi başlatın. 1 GiB'a kadar veri aktarabilir.</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Test sunucusu URL'sini girip testi başlatın. 6 GiB'a kadar veri aktarabilir.</sys:String>
     <sys:String x:Key="Str_Speed_Warmup">Isınıyor</sys:String>
     <sys:String x:Key="Str_Speed_Completed">Test tamamlandı</sys:String>
     <sys:String x:Key="Str_Speed_Canceled">Test iptal edildi</sys:String>

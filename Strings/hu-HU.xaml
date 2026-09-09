@@ -445,7 +445,7 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Speed_Stop">Teszt leállítása</sys:String>
     <sys:String x:Key="Str_Speed_Idle">Késleltetés terhelés nélkül</sys:String>
     <sys:String x:Key="Str_Speed_Loaded">Késleltetés terhelés alatt</sys:String>
-    <sys:String x:Key="Str_Speed_Ready">Adja meg a tesztkiszolgáló URL-jét, majd indítsa el a tesztet. Akár 1 GiB adatot is átvihet.</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Adja meg a tesztkiszolgáló URL-jét, majd indítsa el a tesztet. Akár 6 GiB adatot is átvihet.</sys:String>
     <sys:String x:Key="Str_Speed_Warmup">Bemelegítés</sys:String>
     <sys:String x:Key="Str_Speed_Completed">Teszt befejezve</sys:String>
     <sys:String x:Key="Str_Speed_Canceled">Teszt megszakítva</sys:String>
