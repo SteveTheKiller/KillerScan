@@ -410,7 +410,8 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Yalnızca metin</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">Panoya kopyalanamadı. Tekrar deneyin.</sys:String>
     <sys:String x:Key="Str_KS_Base">Temel</sys:String>
-    <sys:String x:Key="Str_Speed_Title">KillerScan hız testi</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
+    <sys:String x:Key="Str_Speed_Tagline">İndirme, yükleme ve yük altındaki gecikmeyi ölçün.</sys:String>
     <sys:String x:Key="Str_Speed_NotInstalled">Ookla speedtest CLI kurulu değil.</sys:String>
     <sys:String x:Key="Str_Speed_Offer">KillerScan bunu install.speedtest.net adresinden indirebilir (yaklaşık 4 MB) veya hiçbir şey kurmayan kendi HTTP aktarım testini çalıştırabilir.</sys:String>
     <sys:String x:Key="Str_Speed_Prompt">Ookla CLI indirilsin mi? (y/N)</sys:String>

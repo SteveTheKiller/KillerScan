@@ -421,7 +421,8 @@
     <sys:String x:Key="Str_Toolbar_TextOnly">テキストのみ</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">クリップボードにコピーできませんでした。もう一度お試しください。</sys:String>
     <sys:String x:Key="Str_KS_Base">基本</sys:String>
-    <sys:String x:Key="Str_Speed_Title">KillerScan 速度テスト</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
+    <sys:String x:Key="Str_Speed_Tagline">ダウンロード、アップロード、負荷時の遅延を測定。</sys:String>
     <sys:String x:Key="Str_Speed_NotInstalled">Ookla speedtest CLI がインストールされていません。</sys:String>
     <sys:String x:Key="Str_Speed_Offer">KillerScan は install.speedtest.net からダウンロードするか（約 4 MB）、何もインストールしない独自の HTTP 転送速度テストを実行できます。</sys:String>
     <sys:String x:Key="Str_Speed_Prompt">Ookla CLI をダウンロードしますか？(y/N)</sys:String>

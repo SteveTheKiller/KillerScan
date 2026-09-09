@@ -408,7 +408,8 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Pouze text</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">Nepodařilo se kopírovat do schránky. Zkuste to znovu.</sys:String>
     <sys:String x:Key="Str_KS_Base">Základní</sys:String>
-    <sys:String x:Key="Str_Speed_Title">Test rychlosti KillerScan</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
+    <sys:String x:Key="Str_Speed_Tagline">Měření stahování, odesílání a latence při zátěži.</sys:String>
     <sys:String x:Key="Str_Speed_NotInstalled">Nástroj Ookla speedtest CLI není nainstalován.</sys:String>
     <sys:String x:Key="Str_Speed_Offer">KillerScan jej může stáhnout z install.speedtest.net (asi 4 MB), nebo spustit vlastní test propustnosti HTTP, který nic neinstaluje.</sys:String>
     <sys:String x:Key="Str_Speed_Prompt">Stáhnout Ookla CLI? (y/N)</sys:String>

@@ -426,7 +426,8 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Solo testo</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">Impossibile copiare negli appunti. Riprova.</sys:String>
     <sys:String x:Key="Str_KS_Base">Base</sys:String>
-    <sys:String x:Key="Str_Speed_Title">Test di velocità KillerScan</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
+    <sys:String x:Key="Str_Speed_Tagline">Misura download, upload e latenza sotto carico.</sys:String>
     <sys:String x:Key="Str_Speed_NotInstalled">La CLI speedtest di Ookla non è installata.</sys:String>
     <sys:String x:Key="Str_Speed_Offer">KillerScan può scaricarla da install.speedtest.net (circa 4 MB) oppure eseguire il proprio test di trasferimento HTTP, che non installa nulla.</sys:String>
     <sys:String x:Key="Str_Speed_Prompt">Scaricare la CLI Ookla? (y/N)</sys:String>

@@ -9,7 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 1.7.2 runs speed tests with a native engine in the themed terminal.
 
 ### Added
-- Native terminal speed tests with adaptive connections, colored progress and detailed results that stay visible above the prompt, plus confirmation before interrupting another task.
+- KillerSpeed terminal speed tests with adaptive connections, colored progress and detailed results that stay visible above the prompt, plus confirmation before interrupting another task.
 - A dedicated KillerScan speed-test server and automated transfer, failure, and server tests.
 
 ### Fixed

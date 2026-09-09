@@ -410,7 +410,8 @@
     <sys:String x:Key="Str_Toolbar_TextOnly">僅文字</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">無法複製到剪貼簿。請再試一次。</sys:String>
     <sys:String x:Key="Str_KS_Base">基本</sys:String>
-    <sys:String x:Key="Str_Speed_Title">KillerScan 速度測試</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
+    <sys:String x:Key="Str_Speed_Tagline">測量下載、上傳及負載下的延遲。</sys:String>
     <sys:String x:Key="Str_Speed_NotInstalled">尚未安裝 Ookla speedtest CLI。</sys:String>
     <sys:String x:Key="Str_Speed_Offer">KillerScan 可以從 install.speedtest.net 下載它（約 4 MB），也可以改為執行本身的 HTTP 輸送量測試，不需要安裝任何內容。</sys:String>
     <sys:String x:Key="Str_Speed_Prompt">下載 Ookla CLI？(y/N)</sys:String>

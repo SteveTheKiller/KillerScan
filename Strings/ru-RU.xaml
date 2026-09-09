@@ -436,7 +436,8 @@
     <sys:String x:Key="Str_Toolbar_TextOnly">Только текст</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">Не удалось скопировать в буфер обмена. Повторите попытку.</sys:String>
     <sys:String x:Key="Str_KS_Base">Основной</sys:String>
-    <sys:String x:Key="Str_Speed_Title">Тест скорости KillerScan</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
+    <sys:String x:Key="Str_Speed_Tagline">Измерение скачивания, отправки и задержки под нагрузкой.</sys:String>
     <sys:String x:Key="Str_Speed_NotInstalled">Консольная утилита Ookla speedtest не установлена.</sys:String>
     <sys:String x:Key="Str_Speed_Offer">KillerScan может скачать её с install.speedtest.net (около 4 МБ) или выполнить собственный тест пропускной способности HTTP, который ничего не устанавливает.</sys:String>
     <sys:String x:Key="Str_Speed_Prompt">Скачать утилиту Ookla CLI? (y/N)</sys:String>

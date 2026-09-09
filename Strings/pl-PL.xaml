@@ -395,7 +395,8 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Toolbar_TextOnly">Tylko tekst</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">Nie udało się skopiować do schowka. Spróbuj ponownie.</sys:String>
     <sys:String x:Key="Str_KS_Base">Podstawowa</sys:String>
-    <sys:String x:Key="Str_Speed_Title">Test prędkości KillerScan</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
+    <sys:String x:Key="Str_Speed_Tagline">Zmierz pobieranie, wysyłanie i opóźnienie pod obciążeniem.</sys:String>
     <sys:String x:Key="Str_Speed_NotInstalled">Narzędzie Ookla speedtest CLI nie jest zainstalowane.</sys:String>
     <sys:String x:Key="Str_Speed_Offer">KillerScan może pobrać je z install.speedtest.net (około 4 MB) lub uruchomić własny test przepustowości HTTP, który niczego nie instaluje.</sys:String>
     <sys:String x:Key="Str_Speed_Prompt">Pobrać Ookla CLI? (y/N)</sys:String>

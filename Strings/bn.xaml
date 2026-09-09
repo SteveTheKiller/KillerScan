@@ -410,7 +410,8 @@
     <sys:String x:Key="Str_Toolbar_TextOnly">শুধু লেখা</sys:String>
     <sys:String x:Key="Str_Clipboard_Failed">ক্লিপবোর্ডে কপি করা যায়নি। আবার চেষ্টা করুন।</sys:String>
     <sys:String x:Key="Str_KS_Base">মূল</sys:String>
-    <sys:String x:Key="Str_Speed_Title">KillerScan স্পিড টেস্ট</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
+    <sys:String x:Key="Str_Speed_Tagline">ডাউনলোড, আপলোড ও লোডের সময় ল্যাটেন্সি মাপুন।</sys:String>
     <sys:String x:Key="Str_Speed_NotInstalled">Ookla speedtest CLI ইনস্টল করা নেই।</sys:String>
     <sys:String x:Key="Str_Speed_Offer">KillerScan এটি install.speedtest.net থেকে নামাতে পারে (প্রায় 4 MB), অথবা নিজের HTTP গতি পরীক্ষা চালাতে পারে, যাতে কিছু ইনস্টল হয় না।</sys:String>
     <sys:String x:Key="Str_Speed_Prompt">Ookla CLI নামাবেন? (y/N)</sys:String>
