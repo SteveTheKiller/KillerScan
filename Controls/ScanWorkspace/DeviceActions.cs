@@ -119,7 +119,7 @@ namespace KillerScan.Controls
         {
             var d = GetSelectedDevice(); if (d == null) return;
             DevicePreferences.SetTrusted(d, !DevicePreferences.IsTrusted(d));
-            TrustDeviceDot.Fill = (System.Windows.Media.Brush)new TrustMarkConverter().Convert(
+            ((System.Windows.Shapes.Ellipse)TrustDeviceMenuItem.Icon).Fill = (System.Windows.Media.Brush)new TrustMarkConverter().Convert(
                 d, typeof(System.Windows.Media.Brush), null!, System.Globalization.CultureInfo.CurrentCulture);
             // Trust is not a property of the device, so nothing notifies the row that its gutter
             // marker has changed color. Re-reading the items is what re-runs the converter; the

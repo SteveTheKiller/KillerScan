@@ -36,7 +36,7 @@ namespace KillerScan.Controls
             RescanMenuItem.Header = Loc(n > 1 ? "Str_Ctx_RescanMany" : "Str_Ctx_RescanOne");
             RescanMenuItem.IsEnabled = n > 0 && _rescanCts == null && _active.Cts == null;
             var selected = GetSelectedDevice();
-            TrustDeviceDot.Fill = (System.Windows.Media.Brush)new TrustMarkConverter().Convert(
+            ((System.Windows.Shapes.Ellipse)TrustDeviceMenuItem.Icon).Fill = (System.Windows.Media.Brush)new TrustMarkConverter().Convert(
                 selected!, typeof(System.Windows.Media.Brush), null!, System.Globalization.CultureInfo.CurrentCulture);
             TrustDeviceMenuItem.IsEnabled = selected != null;
         }

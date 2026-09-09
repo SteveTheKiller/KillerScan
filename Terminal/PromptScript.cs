@@ -143,7 +143,7 @@ namespace KillerScan.Shell
         internal static void WritePromptPalette()
         {
             var palette = Terminal.TerminalPalette.For(Terminal.TerminalSkin.Default);
-            string Hex(System.Windows.Media.Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
+            static string Hex(System.Windows.Media.Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
             try
             {
                 Directory.CreateDirectory(PromptDir);

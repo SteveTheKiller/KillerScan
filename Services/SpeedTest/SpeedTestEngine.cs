@@ -223,7 +223,7 @@ namespace KillerScan.Services.SpeedTest
                             // HTTP requests on fast links. Configured payload sizes are ceilings.
                             double next = size * 1000d / Math.Max(1, exchange.Elapsed.TotalMilliseconds);
                             payload = (int)Math.Min(maximumPayload, Math.Max(Math.Min(16 * 1024, maximumPayload), next));
-                            if (payloadSizes != null) payloadSizes[index] = payload;
+                            payloadSizes?[index] = payload;
                         }
                     }
                     finally { counters.Leave(); }
