@@ -1,5 +1,6 @@
 var I18N = {
  "ru": {
+  "package_install_intro": "Или установите через терминал:",
   "ui_home": "Главная KillerScan",
   "ui_theme": "Тема",
   "ui_accent": "Цвет акцента",
@@ -663,6 +664,7 @@ var I18N = {
   "tk_kb_layers_p2": "Клавиша, для которой в просматриваемом слое ничего не назначено, затемняется, поэтому доступное считывается с одного взгляда, а не требует поиска."
  },
  "it": {
+  "package_install_intro": "Oppure installa dal terminale:",
   "ui_home": "Home di KillerScan",
   "ui_theme": "Tema",
   "ui_accent": "Colore accento",
@@ -1326,6 +1328,7 @@ var I18N = {
   "tk_kb_layers_p2": "Un tasto senza nulla assegnato nel livello che si sta guardando viene attenuato, cosi cio che e disponibile si legge a colpo d'occhio anziche dover essere cercato."
  },
  "hu": {
+  "package_install_intro": "Vagy telepítse a terminálból:",
   "ui_home": "KillerScan főoldal",
   "ui_theme": "Téma",
   "ui_accent": "Kiemelőszín",
@@ -1990,6 +1993,7 @@ var I18N = {
  },
 
  "pl": {
+  "package_install_intro": "Lub zainstaluj z terminala:",
   "ui_home": "Strona główna KillerScan",
   "ui_theme": "Motyw",
   "ui_accent": "Kolor akcentu",
@@ -2653,6 +2657,7 @@ var I18N = {
   "tk_kb_layers_p2": "Klawisz bez niczego przypisanego w ogladanej warstwie jest przygaszony, dzieki czemu to, co dostepne, widac na pierwszy rzut oka, zamiast musiec tego szukac."
  },
  "cs": {
+  "package_install_intro": "Nebo nainstalujte z terminálu:",
   "ui_home": "Úvodní stránka KillerScan",
   "ui_theme": "Motiv",
   "ui_accent": "Barva zvýraznění",
@@ -3316,6 +3321,7 @@ var I18N = {
   "tk_kb_layers_p2": "Klavesa, ktera nema ve sledovane vrstve nic prirazeno, je ztlumena, takze co je dostupne, se da precist na prvni pohled misto hledani."
  },
  "es": {
+  "package_install_intro": "O instala desde tu terminal:",
   "ui_home": "Inicio de KillerScan",
   "ui_theme": "Tema",
   "ui_accent": "Color de acento",
@@ -3979,6 +3985,7 @@ var I18N = {
   "tk_kb_layers_p2": "Una tecla sin nada asignado en la capa que esta viendo se atenua, de modo que lo disponible se lee de un vistazo en lugar de tener que buscarse."
  },
  "de": {
+  "package_install_intro": "Oder über das Terminal installieren:",
   "ui_home": "KillerScan-Startseite",
   "ui_theme": "Design",
   "ui_accent": "Akzentfarbe",
@@ -4642,6 +4649,7 @@ var I18N = {
   "tk_kb_layers_p2": "Eine Taste ohne Zuweisung in der gerade angezeigten Ebene wird abgedunkelt, sodass sich auf einen Blick erkennen lässt, was verfügbar ist, statt danach suchen zu müssen."
  },
  "fr": {
+  "package_install_intro": "Ou installez depuis votre terminal :",
   "ui_home": "Accueil KillerScan",
   "ui_theme": "Thème",
   "ui_accent": "Couleur d’accent",
@@ -5305,6 +5313,7 @@ var I18N = {
   "tk_kb_layers_p2": "Une touche sans rien d'assigné dans la couche que vous regardez est assombrie, si bien que ce qui est disponible se lit d'un coup d'œil plutôt que de devoir être cherché."
  },
  "tr": {
+  "package_install_intro": "Veya terminalinizden yükleyin:",
   "ui_home": "KillerScan ana sayfa",
   "ui_theme": "Tema",
   "ui_accent": "Vurgu rengi",
@@ -5968,6 +5977,7 @@ var I18N = {
   "tk_kb_layers_p2": "Baktığınız katmanda hiçbir şeye atanmamış bir tuş soluklaştırılır, böylece nelerin kullanılabilir olduğu aranmak yerine tek bakışta okunur."
  },
  "zh": {
+  "package_install_intro": "或從終端機安裝：",
   "ui_home": "KillerScan 首頁",
   "ui_theme": "主題",
   "ui_accent": "強調色",
@@ -6631,6 +6641,7 @@ var I18N = {
   "tk_kb_layers_p2": "在你目前查看的那一層中沒有任何指定功能的按鍵會顯示為暗淡，因此可用的內容一眼就能看出，不需要另外尋找。"
  },
  "zh-cn": {
+  "package_install_intro": "或从终端安装：",
   "ui_home": "KillerScan 首页",
   "ui_theme": "主题",
   "ui_accent": "强调色",
@@ -7294,6 +7305,7 @@ var I18N = {
   "tk_kb_layers_p2": "在你当前查看的那一层中没有绑定任何功能的按键会显示为暗淡，因此可用的内容一眼就能看清，无需另外寻找。"
  },
  "bn": {
+  "package_install_intro": "অথবা টার্মিনাল থেকে ইনস্টল করুন:",
   "ui_home": "KillerScan হোম",
   "ui_theme": "থিম",
   "ui_accent": "অ্যাকসেন্ট রং",
@@ -7957,6 +7969,7 @@ var I18N = {
   "tk_kb_layers_p2": "আপনি যে স্তরটি দেখছেন তাতে কিছু বাইন্ড করা নেই এমন কি ম্লান দেখানো হয়, ফলে কী পাওয়া যায় তা খুঁজতে হয় না, এক নজরেই বোঝা যায়।"
  },
  "ja": {
+  "package_install_intro": "またはターミナルからインストール：",
   "ui_home": "KillerScan ホーム",
   "ui_theme": "テーマ",
   "ui_accent": "アクセントカラー",
@@ -8620,6 +8633,7 @@ var I18N = {
   "tk_kb_layers_p2": "見ているレイヤーで何も割り当てられていないキーは薄く表示されるため、何が使えるかを探す必要なく一目で分かります。"
  },
  "kk": {
+  "package_install_intro": "Немесе терминал арқылы орнатыңыз:",
   "ui_home": "KillerScan басты беті",
   "ui_theme": "Тақырып",
   "ui_accent": "Екпін түсі",
