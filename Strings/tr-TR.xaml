@@ -7,7 +7,7 @@
     <sys:String x:Key="Str_Subtitle">Ağ Tarayıcı</sys:String>
     <sys:String x:Key="Str_TT_Language">Dil</sys:String>
     <sys:String x:Key="Str_TT_Theme">Tema</sys:String>
-    <sys:String x:Key="Str_TT_SpeedTest">Hız testi</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
     <sys:String x:Key="Str_TT_FooterNetwork">Bağdaştırıcıyı ve bağlantı hızını göster veya gizle</sys:String>
     <sys:String x:Key="Str_Light_Idle">Henüz tarama yapılmadı</sys:String>
     <sys:String x:Key="Str_Light_Scanning">Taranıyor</sys:String>

@@ -7,7 +7,7 @@
     <sys:String x:Key="Str_Subtitle">Scanner réseau</sys:String>
     <sys:String x:Key="Str_TT_Language">Langue</sys:String>
     <sys:String x:Key="Str_TT_Theme">Thème</sys:String>
-    <sys:String x:Key="Str_TT_SpeedTest">Test de débit</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
     <sys:String x:Key="Str_TT_FooterNetwork">Afficher ou masquer la carte réseau et le débit</sys:String>
     <sys:String x:Key="Str_Light_Idle">Rien n'a encore été analysé</sys:String>
     <sys:String x:Key="Str_Light_Scanning">Analyse en cours</sys:String>

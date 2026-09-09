@@ -236,7 +236,7 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <p data-i18n="tk_term_prompt_body_p3">Edit it however you like and an upgrade will never touch it; compare it against the refreshed default file when you want to pick up a change. Both are written with a byte order mark, because Windows PowerShell 5.1 reads a file without one in the system codepage and mangles the box drawing characters. Set <code>KS_PROMPT=0</code> in the environment to skip the whole thing.</p>
 <p data-i18n="tk_term_modules">The <b>KillerScripts</b> PowerShell module travels inside the executable, which is the point: it is there on a locked-down machine where you cannot install anything. It is unpacked per version to <code>%LOCALAPPDATA%\KillerScan\Modules\</code> the first time you open a terminal, written to a temporary name and moved into place with a marker file written last so a half-finished unpack is never used.</p>
 <p data-i18n="tk_term_modules_p2">The module path is appended rather than prepended, so a copy you installed properly from the gallery still wins.</p>
-<p data-i18n="tk_term_menu">Right-click for the things a terminal is expected to offer: copy, paste, select all, copy the whole session including scrollback, clear, and the speed test. Copy is offered only when there is a selection.</p>
+<p data-i18n="tk_term_menu">Right-click for the things a terminal is expected to offer: copy, paste, select all, copy the whole session including scrollback, clear, and KillerSpeed. Copy is offered only when there is a selection.</p>
 <p data-i18n="tk_term_menu_p2">Clear removes the screen and scrollback without sending input to the program. Ctrl+C copies selected text; with no selection, it reaches the running program. Ctrl+V pastes. Most other keys go to the program while the terminal has focus.</p>
 </div></div></div>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_cmd_title">Commands in the terminal</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
@@ -257,8 +257,8 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <p data-i18n="tk_cmd_note">Each command is the app doing the work: the module shells out to the same command line an installed copy puts on PATH, and reads its JSON. It knows where to find a portable copy too, so the commands work from a folder you just dropped the exe into.</p>
 <p data-i18n="tk_cmd_note_p2">The names are deliberately short because they live in this terminal rather than in your own PowerShell profile, where <code>scan</code> would be a rude thing to claim.</p>
 </div></div></div>
-<div class="acc-item"><button class="acc-head"><span data-i18n="tk_speed_title">Speed test</span><span class="kbd">F4</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
-<p data-i18n="tk_speed_body"><b>F4</b> or the rail icon starts a test in the Terminal through <code>speed.killerscan.net</code>. It transfers generated test data, up to 6 GiB total plus network overhead. <a href="technical.html#speedtest-network">Read how it works and what is sent.</a></p>
+<div class="acc-item"><button class="acc-head"><span data-i18n="tk_speed_title">KillerSpeed</span><span class="kbd">F4</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
+<p data-i18n="tk_speed_body"><b>F4</b> or the rail icon starts KillerSpeed in the Terminal through <code>speed.killerscan.net</code>. It transfers generated test data, up to 6 GiB total plus network overhead. <a href="technical.html#speedtest-network">Read how it works and what is sent.</a></p>
 <p data-i18n="tk_speed_body_p2">Live progress shows download speed, upload speed and latency.</p>
 <p data-i18n="tk_speed_detail">If another task is running, KillerScan asks before stopping it. Press Esc or Ctrl+C to stop the test. The normal terminal prompt returns when it ends. Use the terminal's right-click menu to copy all output, or select and copy the results.</p>
 </div></div></div>
@@ -397,7 +397,7 @@ html[data-theme="light"] .kbmap { --kc-scan:#d1105a; --kc-view:#a316b5; --kc-dev
 (function(){
 var KBL = {
 base: { F1:['file','Open or close the shortcut overlay'], F3:['tools','Show the selected device in Keep Alive'],
-  F4:['tools','Run a speed test in the terminal'], F5:['scan','Start or stop a scan'],
+  F4:['tools','Run KillerSpeed in the terminal'], F5:['scan','Start or stop a scan'],
   F6:['view','Show the devices view'], F7:['view','Show the services view'], F8:['view','Show the topology view'],
   F9:['view','Open Keep Alive'], F10:['view','Open a terminal'], F12:['file','Open the About window'],
   Esc:['edit','Close an overlay or filter, stop terminal ping, or cancel scanning'], Enter:['device','Open the selected device in a browser'] },
@@ -430,7 +430,7 @@ var KBT = {
   'Toolbar captions below icons':'help_toolbar_under',
   'Text-only toolbar buttons':'help_toolbar_text',
   'Open or close the shortcut overlay':'tk_196', 'Show the selected device in Keep Alive':'tk_ks_f3',
-  'Run a speed test in the terminal':'tk_ks_f4', 'Start or stop a scan':'tk_187',
+  'Run KillerSpeed in the terminal':'tk_ks_f4', 'Start or stop a scan':'tk_187',
   'Show the devices view':'tk_ks_devices', 'Show the services view':'tk_ks_f8', 'Show the topology view':'tk_ks_f9',
   'Open Keep Alive':'tk_ks_f2', 'Open a terminal':'tk_ks_terminal',
   'Open the About window':'tk_207', 'Close an overlay or filter, stop terminal ping, or cancel scanning':'tk_188',
@@ -560,7 +560,7 @@ window.addEventListener('resize', fit);
 <tr><td>F10</td><td data-i18n="tk_ks_terminal">Open a terminal</td></tr>
 <tr><td>F9</td><td data-i18n="tk_ks_f2">Open Keep Alive</td></tr>
 <tr><td>F3</td><td data-i18n="tk_ks_f3">Show the selected device in Keep Alive</td></tr>
-<tr><td>F4</td><td data-i18n="tk_ks_f4">Run a speed test in the terminal</td></tr>
+<tr><td>F4</td><td data-i18n="tk_ks_f4">Run KillerSpeed in the terminal</td></tr>
 <tr><td>Ctrl + H</td><td data-i18n="tk_ks_f6">Open scan history</td></tr>
 <tr><td>Ctrl + G</td><td data-i18n="tk_ks_f7">Cycle the topology arrangement</td></tr>
 <tr><td>Ctrl + 1 ... Ctrl + 4</td><td data-i18n="tk_ks_ctrl14">Arrange topology by Role, Type, IP, or Vendor</td></tr>
@@ -605,7 +605,7 @@ window.addEventListener('resize', fit);
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 <div class="egg-toast" id="eggToast"></div>
-<script src="ks-i18n.js?v=13"></script>
+<script src="ks-i18n.js?v=14"></script>
 <script src="ks.js?v=11"></script>
 <script>
 (function(){

@@ -13,7 +13,7 @@
     <sys:String x:Key="Str_TT_Language">Lingua</sys:String>
     <sys:String x:Key="Str_TT_AppSize">Scorri la rotellina sul logotipo per ridimensionare l'applicazione</sys:String>
     <sys:String x:Key="Str_TT_Theme">Tema</sys:String>
-    <sys:String x:Key="Str_TT_SpeedTest">Test di velocità</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
     <sys:String x:Key="Str_TT_FooterNetwork">Mostra o nascondi la scheda e la velocità del collegamento</sys:String>
     <sys:String x:Key="Str_Light_Idle">Nessuna scansione ancora</sys:String>
     <sys:String x:Key="Str_Light_Scanning">Scansione in corso</sys:String>

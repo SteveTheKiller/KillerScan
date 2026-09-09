@@ -12,7 +12,7 @@
     <sys:String x:Key="Str_Subtitle">ネットワークスキャナー</sys:String>
     <sys:String x:Key="Str_TT_Language">言語</sys:String>
     <sys:String x:Key="Str_TT_Theme">テーマ</sys:String>
-    <sys:String x:Key="Str_TT_SpeedTest">速度テスト</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
     <sys:String x:Key="Str_TT_FooterNetwork">アダプターとリンク速度の表示を切り替え</sys:String>
     <sys:String x:Key="Str_Light_Idle">まだスキャンしていません</sys:String>
     <sys:String x:Key="Str_Light_Scanning">スキャン中</sys:String>

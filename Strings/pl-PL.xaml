@@ -5,7 +5,7 @@
     <sys:String x:Key="Str_TT_Language">Język</sys:String>
     <sys:String x:Key="Str_TT_AppSize">Przewiń nad logo, aby zmienić rozmiar aplikacji</sys:String>
     <sys:String x:Key="Str_TT_Theme">Motyw</sys:String>
-    <sys:String x:Key="Str_TT_SpeedTest">Test prędkości</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
     <sys:String x:Key="Str_TT_FooterNetwork">Pokaż lub ukryj kartę sieciową i szybkość łącza</sys:String>
     <sys:String x:Key="Str_Light_Idle">Nic jeszcze nie przeskanowano</sys:String>
     <sys:String x:Key="Str_Light_Scanning">Skanowanie</sys:String>

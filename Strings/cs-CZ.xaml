@@ -8,7 +8,7 @@
     <sys:String x:Key="Str_TT_Language">Jazyk</sys:String>
     <sys:String x:Key="Str_TT_AppSize">Kolečkem myši nad logem změníte velikost aplikace</sys:String>
     <sys:String x:Key="Str_TT_Theme">Vzhled</sys:String>
-    <sys:String x:Key="Str_TT_SpeedTest">Test rychlosti</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
     <sys:String x:Key="Str_TT_FooterNetwork">Zobrazit nebo skrýt adaptér a rychlost linky</sys:String>
     <sys:String x:Key="Str_Light_Idle">Zatím nic neskenováno</sys:String>
     <sys:String x:Key="Str_Light_Scanning">Skenování</sys:String>

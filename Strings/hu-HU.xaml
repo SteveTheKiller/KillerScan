@@ -13,7 +13,7 @@
     <sys:String x:Key="Str_TT_Language">Nyelv</sys:String>
     <sys:String x:Key="Str_TT_AppSize">Az alkalmazás átméretezéséhez görgessen a szójel fölé</sys:String>
     <sys:String x:Key="Str_TT_Theme">téma</sys:String>
-    <sys:String x:Key="Str_TT_SpeedTest">Sebességteszt</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
     <sys:String x:Key="Str_TT_FooterNetwork">Adapter és kapcsolati sebesség megjelenítése vagy elrejtése</sys:String>
     <sys:String x:Key="Str_Light_Idle">Még nincs vizsgálat</sys:String>
     <sys:String x:Key="Str_Light_Scanning">Vizsgálat folyamatban</sys:String>

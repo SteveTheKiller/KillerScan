@@ -7,7 +7,7 @@
     <sys:String x:Key="Str_Subtitle">网络扫描器</sys:String>
     <sys:String x:Key="Str_TT_Language">语言</sys:String>
     <sys:String x:Key="Str_TT_Theme">主题</sys:String>
-    <sys:String x:Key="Str_TT_SpeedTest">网速测试</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
     <sys:String x:Key="Str_TT_FooterNetwork">显示或隐藏网卡和链路速度</sys:String>
     <sys:String x:Key="Str_Light_Idle">尚未扫描</sys:String>
     <sys:String x:Key="Str_Light_Scanning">正在扫描</sys:String>

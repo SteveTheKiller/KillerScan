@@ -7,7 +7,7 @@
     <sys:String x:Key="Str_Subtitle">Netzwerkscanner</sys:String>
     <sys:String x:Key="Str_TT_Language">Sprache</sys:String>
     <sys:String x:Key="Str_TT_Theme">Design</sys:String>
-    <sys:String x:Key="Str_TT_SpeedTest">Geschwindigkeitstest</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
     <sys:String x:Key="Str_TT_FooterNetwork">Adapter und Verbindungsgeschwindigkeit ein- oder ausblenden</sys:String>
     <sys:String x:Key="Str_Light_Idle">Noch nichts gescannt</sys:String>
     <sys:String x:Key="Str_Light_Scanning">Scan läuft</sys:String>

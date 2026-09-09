@@ -7,7 +7,7 @@
     <sys:String x:Key="Str_Subtitle">Escáner de red</sys:String>
     <sys:String x:Key="Str_TT_Language">Idioma</sys:String>
     <sys:String x:Key="Str_TT_Theme">Tema</sys:String>
-    <sys:String x:Key="Str_TT_SpeedTest">Prueba de velocidad</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
     <sys:String x:Key="Str_TT_FooterNetwork">Mostrar u ocultar el adaptador y la velocidad de enlace</sys:String>
     <sys:String x:Key="Str_Light_Idle">Todavía no se ha escaneado nada</sys:String>
     <sys:String x:Key="Str_Light_Scanning">Escaneando</sys:String>

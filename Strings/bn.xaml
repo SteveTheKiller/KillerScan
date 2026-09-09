@@ -7,7 +7,7 @@
     <sys:String x:Key="Str_Subtitle">নেটওয়ার্ক স্ক্যানার</sys:String>
     <sys:String x:Key="Str_TT_Language">ভাষা</sys:String>
     <sys:String x:Key="Str_TT_Theme">থিম</sys:String>
-    <sys:String x:Key="Str_TT_SpeedTest">স্পিড টেস্ট</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
     <sys:String x:Key="Str_TT_FooterNetwork">অ্যাডাপ্টার ও লিঙ্ক গতি দেখান বা লুকান</sys:String>
     <sys:String x:Key="Str_Light_Idle">এখনও কিছু স্ক্যান করা হয়নি</sys:String>
     <sys:String x:Key="Str_Light_Scanning">স্ক্যান চলছে</sys:String>

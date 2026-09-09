@@ -13,7 +13,7 @@
     <sys:String x:Key="Str_TT_Language">Тіл</sys:String>
     <sys:String x:Key="Str_TT_AppSize">Қолданба өлшемін өзгерту үшін логотиптің үстінде айналдырыңыз</sys:String>
     <sys:String x:Key="Str_TT_Theme">Тақырып</sys:String>
-    <sys:String x:Key="Str_TT_SpeedTest">Жылдамдық сынағы</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
     <sys:String x:Key="Str_TT_FooterNetwork">Адаптер мен байланыс жылдамдығын көрсету немесе жасыру</sys:String>
     <sys:String x:Key="Str_Light_Idle">Әзірге ештеңе сканерленбеді</sys:String>
     <sys:String x:Key="Str_Light_Scanning">Сканерлеу жүріп жатыр</sys:String>

@@ -13,7 +13,7 @@
     <sys:String x:Key="Str_TT_Language">Язык</sys:String>
     <sys:String x:Key="Str_TT_AppSize">Прокрутите колесо мыши над логотипом, чтобы изменить размер приложения</sys:String>
     <sys:String x:Key="Str_TT_Theme">Тема</sys:String>
-    <sys:String x:Key="Str_TT_SpeedTest">Тест скорости</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
     <sys:String x:Key="Str_TT_FooterNetwork">Показать или скрыть адаптер и скорость соединения</sys:String>
     <sys:String x:Key="Str_Light_Idle">Сканирование еще не выполнялось</sys:String>
     <sys:String x:Key="Str_Light_Scanning">Сканирование</sys:String>
