@@ -25,7 +25,7 @@ namespace KillerScan.Terminal
 
         public string Header(Uri endpoint) => "\r\n" + Rule + "  \u001b[1;36m" + loc("Str_Speed_Title") + Reset +
             "\r\n  \u001b[90m" + loc("Str_Speed_Tagline") + Reset + "\r\n" + Rule +
-            Row(loc("Str_Speed_Server"), endpoint.Host, 37) +
+            Row(loc("Str_Speed_Server"), endpoint.Host, 36) +
             "  \u001b[90mEsc / Ctrl+C\u001b[0m\r\n\r\n";
 
         public string Progress(SpeedTestProgress p)
