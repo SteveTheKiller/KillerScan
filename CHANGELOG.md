@@ -10,7 +10,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Added
 - Native terminal speed tests with live download, upload, and latency results, cancellation, and copying.
-- A Cloudflare test endpoint implementation and automated transfer, failure, and server tests.
+- A dedicated KillerScan speed-test server and automated transfer, failure, and server tests.
 
 ### Fixed
 - Removed PowerShell and external executable requirements from speed tests.

@@ -56,7 +56,7 @@ internal static class Program
             if (args.Contains("--worker"))
                 await Run("Compiled engine exchanges exact payloads with the real Worker", Worker);
             if (args.Contains("--internet"))
-                await Run("Live default Cloudflare endpoint completes native measurements", Internet);
+                await Run("Live KillerScan endpoint completes native measurements", Internet);
             await Run("Themed terminal renders managed output and routes cancel, rerun and disposal", View);
             Console.WriteLine("PASS: " + _passed + " speed-test regression checks.");
             return 0;
@@ -83,7 +83,7 @@ internal static class Program
     private static Task PublicProfile()
     {
         var snapshot = typeof(SpeedTestEngine).GetMethod("ValidateAndCopy", BindingFlags.Static | BindingFlags.NonPublic)!;
-        var profile = (SpeedTestOptions)snapshot.Invoke(null, new object[] { new SpeedTestOptions { MaximumStreams = 4 } })!;
+        var profile = (SpeedTestOptions)snapshot.Invoke(null, new object[] { new SpeedTestOptions { Endpoint = new Uri("https://speed.cloudflare.com/"), MaximumStreams = 4 } })!;
         Require(profile.MaximumStreams == 2, "Public service uses at most two payload streams");
         Require(profile.PhaseDuration == TimeSpan.FromSeconds(8) && profile.ByteBudgetPerPhase == 512L * 1024 * 1024,
             "Public service retains sustained duration and byte ceiling");
@@ -151,7 +151,7 @@ internal static class Program
 
     private static Task CloudflareAcknowledgment()
     {
-        Require(new SpeedTestOptions().Endpoint.AbsoluteUri == "https://speed.cloudflare.com/", "Default endpoint requires no setup");
+        Require(new SpeedTestOptions().Endpoint.AbsoluteUri == "https://speed.killerscan.net/", "Default endpoint requires no setup");
         var validate = typeof(SpeedTestEngine).GetMethod("ValidateUploadAcknowledgment", BindingFlags.NonPublic | BindingFlags.Static)!;
         using var response = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("", Encoding.UTF8, "text/plain") };
         response.Headers.TryAddWithoutValidation("Server-Timing", "cfSpeedEdge;dur=22, cfSpeedWorker;dur=13");

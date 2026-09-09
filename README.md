@@ -87,11 +87,11 @@ Requires the .NET 8 SDK or later to build (even though the output targets .NET F
 
 ## Speed-test development
 
-The public-service profile uses two concurrent HTTP transfers after a two-second warmup in each direction, then measures for eight seconds. Larger adaptive requests and less frequent latency probes reduce request traffic. A 512 MiB payload budget per direction includes warmup and can shorten a fast test; the terminal reports that limit. Final throughput uses measured payload bytes divided by monotonic elapsed time, excluding warmup. Upload counts only completed transfers accepted by the server, so unfinished uploads are conservatively omitted. Server rate limits can still stop a test; measured transfers are not retried inside the timing window.
+The default profile uses two concurrent HTTP transfers after a two-second warmup in each direction, then measures for eight seconds. Adaptive requests reduce request traffic. A 512 MiB payload budget per direction includes warmup and can shorten a fast test; the terminal reports that limit. Final throughput uses measured payload bytes divided by monotonic elapsed time, excluding warmup. Upload counts only completed transfers accepted by the server, so unfinished uploads are conservatively omitted. Server rate limits can still stop a test; measured transfers are not retried inside the timing window.
 
 Latency is HTTP round-trip time to the selected endpoint, including server processing. Idle latency is the median of five samples after an unmeasured connection warmup. Jitter is the mean absolute difference between consecutive samples. Loaded latency is sampled on a separate connection during each measured phase. These measurements describe that route and server, and do not claim packet loss or universal ISP capacity.
 
-The app defaults to Cloudflare's [documented public speed-test endpoints](https://github.com/cloudflare/speedtest). The optional [self-hosted endpoint](server/speedtest/README.md) remains available for future hosting; it is not required to use the speed test.
+The app connects automatically to `https://speed.killerscan.net/`, the dedicated [KillerScan endpoint](server/speedtest/README.md) hosted on Cloudflare Workers. Users do not need an account or server setup. Deployment credentials are kept outside the source and app.
 
 Run the retained tests on Windows with the .NET SDK and Node.js 22 or newer:
 
@@ -101,7 +101,7 @@ dotnet build tests/SpeedTest.Tests/SpeedTest.Tests.csproj -c Release
 node --test server/speedtest/worker.test.mjs
 ```
 
-The release script also adds `--internet` to verify the default Cloudflare service before publishing or signing. That check uses the app's full budget of up to 512 MiB in each direction. The normal checks above stay on loopback; passing them alone does not verify the public service. The latest full public-service check returned HTTP 429, so endpoint reliability remains a release blocker.
+The release script also adds `--internet` to verify the deployed KillerScan service before publishing or signing. That check uses the app's full budget of up to 512 MiB in each direction. The normal checks above stay on loopback; passing them alone does not verify the deployed service.
 
 ## Translations
 

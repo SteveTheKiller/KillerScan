@@ -1,6 +1,10 @@
 # KillerScan speed-test endpoint
 
-Optional Cloudflare Worker for hosting KillerScan speed tests. This directory is a local implementation, not a deployed service. The proposed hostname is `speed.killerscan.net`; the configuration has no active route, workers.dev address, or preview URL. The app already uses Cloudflare's public speed-test service automatically, so this Worker is not required to run a test.
+Cloudflare Worker serving KillerScan speed tests at `https://speed.killerscan.net/`. The app uses this endpoint automatically. Workers.dev and preview URLs remain disabled. Account identifiers and deployment credentials are not part of the source or app.
+
+## Deployment verification
+
+September 8, 2026: deployed to Workers Free. Health, zero-byte latency, exact 8 MiB downloads, exact 4 MiB upload acknowledgments, and identity/no-store headers passed. After an initial client download timeout, two consecutive full native-engine runs passed all 26 regression checks, with both measured phases completing eight seconds. Results were 373.04/25.71 Mbps and 386.37/27.42 Mbps (download/upload). The 18 Worker tests also passed. These runs validate this connection and deployment, not reliability across all networks or production load. The initial timeout was not reproduced or assigned a confirmed cause.
 
 ## Protocol
 
@@ -46,12 +50,12 @@ The `local` environment sets `LOCAL_TEST=1`. The bypass works only for localhost
 
 ## Production configuration review
 
-Before approving deployment:
+For deployments to another account:
 
-1. Select the intended Cloudflare account and review its Workers plan and billing controls. The supplied 50 ms CPU cap targets Workers Paid; validate real CPU time for random generation before traffic is enabled.
+1. Authenticate locally with Wrangler and select the intended account. The configuration uses the plan's built-in CPU limit and supports deployment on Workers Free. Verify sustained transfers against the deployed service before distributing a client.
 2. Confirm that rate-limit namespace IDs `715201` and `715202` are unused in that account or replace them with two reviewed, unique positive integer strings. Both bindings are required. The configured limits are 600 requests per minute per client IP and 3,000 requests per minute for the service in each Cloudflare location.
 3. Review shared-office/NAT behavior and expected tests per minute. A fast run can use roughly 272 requests, with the exact count affected by adaptive payloads and latency probes. The 600-request client allowance accommodates a complete default run; the 3,000-request location allowance leaves room for five such client allowances. A 1,000-request location allowance would fit fewer than two full client allowances and constrain unrelated simultaneous tests sooner. Multiple users behind one IP still share its allowance. The public endpoint has no user authentication. Do not treat client IP as a unique person.
-4. Review DNS ownership and add the proposed Custom Domain only after approval: `"routes": [{ "pattern": "speed.killerscan.net", "custom_domain": true }]`. Keep workers.dev and preview URLs disabled, and leave `LOCAL_TEST` absent from production. See [Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/) and [Wrangler configuration](https://developers.cloudflare.com/workers/wrangler/configuration/).
+4. Replace the Custom Domain with a hostname you control. Keep workers.dev and preview URLs disabled, and leave `LOCAL_TEST` absent from production. See [Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/) and [Wrangler configuration](https://developers.cloudflare.com/workers/wrangler/configuration/).
 5. Verify the deployed health response, zero-byte latency, exact random download sizes, upload counts, compression headers, cancellation, and 429 behavior from the app before configuring its endpoint. Measure throughput against the intended audience's locations. An edge test measures the route to Cloudflare, not every internet destination.
 
 The binding counters are permissive, eventually consistent, and local to each Cloudflare location. The service limit is not a global rate limit or a hard spending cap. Binding namespace reuse shares counters, including across Workers. These constraints and the configuration syntax are documented in [Rate Limiting](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/).
@@ -60,4 +64,4 @@ The binding counters are permissive, eventually consistent, and local to each Cl
 
 Verified against official documentation on September 8, 2026: Workers Paid starts at $5 per account per month, including 10 million requests and 30 million CPU milliseconds. Additional requests cost $0.30 per million and CPU time $0.02 per million milliseconds. Workers lists no additional egress or bandwidth charge. Free includes 100,000 requests per day and only 10 ms CPU per invocation. See [Workers pricing](https://developers.cloudflare.com/workers/platform/pricing/).
 
-Workers has a 128 MB isolate memory limit. The endpoint's byte limits are intentionally much lower than Cloudflare's HTTP body limits. Streaming bounds application buffers but does not replace rate controls, CPU caps, billing review or production load verification. See [Workers limits](https://developers.cloudflare.com/workers/platform/limits/). No account changes, deployment or billable test traffic have been performed by adding these files.
+Workers has a 128 MB isolate memory limit. The endpoint's byte limits are intentionally much lower than Cloudflare's HTTP body limits. Streaming bounds application buffers but does not replace rate controls, CPU caps, billing review or production load verification. See [Workers limits](https://developers.cloudflare.com/workers/platform/limits/).
