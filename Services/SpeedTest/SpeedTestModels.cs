@@ -7,8 +7,8 @@ namespace KillerScan.Services.SpeedTest
     public sealed class SpeedTestOptions
     {
         public Uri Endpoint { get; set; } = new Uri("https://speed.killerscan.net/");
-        public TimeSpan PhaseDuration { get; set; } = TimeSpan.FromSeconds(10);
-        public TimeSpan WarmupDuration { get; set; } = TimeSpan.FromSeconds(6);
+        public TimeSpan PhaseDuration { get; set; } = TimeSpan.FromSeconds(15);
+        public TimeSpan WarmupDuration { get; set; } = TimeSpan.FromSeconds(9);
         public int MaximumStreams { get; set; } = 8;
         public long ByteBudgetPerPhase { get; set; } = 3L * 1024 * 1024 * 1024;
         public TimeSpan RequestTimeout { get; set; } = TimeSpan.FromSeconds(5);

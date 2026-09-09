@@ -89,7 +89,7 @@ internal static class Program
         var snapshot = typeof(SpeedTestEngine).GetMethod("ValidateAndCopy", BindingFlags.Static | BindingFlags.NonPublic)!;
         var profile = (SpeedTestOptions)snapshot.Invoke(null, new object[] { new SpeedTestOptions { Endpoint = new Uri("https://speed.cloudflare.com/"), MaximumStreams = 4 } })!;
         Require(profile.MaximumStreams == 2, "Public service uses at most two payload streams");
-        Require(profile.PhaseDuration == TimeSpan.FromSeconds(10) && profile.ByteBudgetPerPhase == 3L * 1024 * 1024 * 1024,
+        Require(profile.PhaseDuration == TimeSpan.FromSeconds(15) && profile.ByteBudgetPerPhase == 3L * 1024 * 1024 * 1024,
             "Public service retains sustained duration and byte ceiling");
         Require(profile.DownloadPayloadBytes == 25000000 && profile.UploadPayloadBytes == 10000000,
             "Public payloads use documented Cloudflare measurement sizes");
