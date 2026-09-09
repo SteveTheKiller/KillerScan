@@ -661,6 +661,9 @@ internal static class Program
             .Where(p => p.StartsWith("/__down?bytes=") && !p.StartsWith("/__down?bytes=0&")).Take(4).ToArray();
         Require(expandedRequests.Length == 4 && expandedRequests.All(p => !p.StartsWith("/__down?bytes=65536&")),
             "Added connections inherit the learned payload instead of restarting with 64 KiB requests");
+        Require(expandedRequests.All(p => int.Parse(p.Split('=')[1].Split('&')[0], CultureInfo.InvariantCulture)
+                <= options.DownloadPayloadBytes / 2),
+            "Doubling connections divides the initial per-connection payload to respect shared bandwidth");
         string request = server.Requests.Skip(measuredStart).First(p => p.StartsWith("/__down?bytes=") && !p.StartsWith("/__down?bytes=0&"));
         Require(!request.StartsWith("/__down?bytes=65536&"), "Measurement must not restart with the initial 64 KiB payload");
     }
