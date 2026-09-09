@@ -1,5 +1,6 @@
 var I18N = {
  "ru": {
+  "package_install_intro": "Или установите через терминал:",
   "tk_privacy_reports": "HTML-отчеты сохраняются локально, но при открытии могут загружать логотип с scan.killertools.net; этот запрос изображения не отправляет таблицу устройств. Этот сайт загружает отдельный скрипт аналитики с koya.thekiller.net. Утверждение об отсутствии аналитики использования относится к настольному приложению.",
   "tk_speed_network_title": "KillerSpeed: подключения и данные",
   "tk_speed_network_start": "KillerSpeed подключается только при запуске через F4, боковую панель или меню терминала. Он использует HTTPS для обращения к <code>speed.killerscan.net</code>, службе KillerScan на Cloudflare Workers. Если терминал занят, перед остановкой задачи запрашивается подтверждение. После завершения или отмены управление возвращается оболочке.",
@@ -670,6 +671,7 @@ var I18N = {
   "tk_kb_layers_p2": "Клавиша, для которой в просматриваемом слое ничего не назначено, затемняется, поэтому доступное считывается с одного взгляда, а не требует поиска."
  },
  "it": {
+  "package_install_intro": "Oppure installa dal terminale:",
   "tk_privacy_reports": "I report HTML vengono salvati localmente, ma aprendoli è possibile che il logo venga scaricato da scan.killertools.net; questa richiesta non invia la tabella dei dispositivi. Questo sito carica uno script di analisi separato da koya.thekiller.net. L’assenza di analisi di utilizzo si riferisce all’app desktop.",
   "tk_speed_network_title": "KillerSpeed: connessioni e dati",
   "tk_speed_network_start": "KillerSpeed si connette solo quando lo avvii con F4, la barra laterale o il menu del terminale. Usa HTTPS verso <code>speed.killerscan.net</code>, un servizio KillerScan ospitato su Cloudflare Workers. Se il terminale è occupato, chiede conferma prima di interrompere l’attività. Al termine o all’annullamento torna alla shell.",
@@ -1340,6 +1342,7 @@ var I18N = {
   "tk_kb_layers_p2": "Un tasto senza nulla assegnato nel livello che si sta guardando viene attenuato, cosi cio che e disponibile si legge a colpo d'occhio anziche dover essere cercato."
  },
  "hu": {
+  "package_install_intro": "Vagy telepítse a terminálból:",
   "tk_privacy_reports": "A HTML-jelentések helyben tárolódnak, de megnyitásukkor a logó letöltődhet a scan.killertools.net címről; ez a képkérés nem tölti fel az eszköztáblázatot. Ez a webhely külön analitikai szkriptet tölt be a koya.thekiller.net címről. A használati analitika hiányára vonatkozó állítás az asztali alkalmazásra érvényes.",
   "tk_speed_network_title": "KillerSpeed: kapcsolatok és adatok",
   "tk_speed_network_start": "KillerSpeed csak az F4, az oldalsáv vagy a terminálmenü használatával indítva kapcsolódik. HTTPS-kapcsolatot használ a <code>speed.killerscan.net</code> címhez, a KillerScan Cloudflare Workers környezetben futó szolgáltatásához. Ha a terminál foglalt, a feladat leállítása előtt megerősítést kér. Befejezés vagy megszakítás után visszatér a parancsértelmezőhöz.",
@@ -2011,6 +2014,7 @@ var I18N = {
  },
 
  "pl": {
+  "package_install_intro": "Lub zainstaluj z terminala:",
   "tk_privacy_reports": "Raporty HTML są zapisywane lokalnie, ale po otwarciu mogą pobierać logo z scan.killertools.net; żądanie obrazu nie wysyła tabeli urządzeń. Ta witryna ładuje osobny skrypt analityczny z koya.thekiller.net. Deklaracja braku analityki użytkowania dotyczy aplikacji komputerowej.",
   "tk_speed_network_title": "KillerSpeed: połączenia i dane",
   "tk_speed_network_start": "KillerSpeed łączy się tylko po uruchomieniu klawiszem F4, z paska bocznego lub menu terminala. Używa HTTPS do <code>speed.killerscan.net</code>, usługi KillerScan na Cloudflare Workers. Jeśli terminal jest zajęty, pyta przed zatrzymaniem zadania. Po zakończeniu lub anulowaniu wraca do powłoki.",
@@ -2681,6 +2685,7 @@ var I18N = {
   "tk_kb_layers_p2": "Klawisz bez niczego przypisanego w ogladanej warstwie jest przygaszony, dzieki czemu to, co dostepne, widac na pierwszy rzut oka, zamiast musiec tego szukac."
  },
  "cs": {
+  "package_install_intro": "Nebo nainstalujte z terminálu:",
   "tk_privacy_reports": "HTML sestavy se ukládají místně, ale po otevření mohou stáhnout logo ze scan.killertools.net; tento požadavek na obrázek neodesílá tabulku zařízení. Tento web načítá samostatný analytický skript z koya.thekiller.net. Tvrzení o absenci analytiky používání platí pro desktopovou aplikaci.",
   "tk_speed_network_title": "KillerSpeed: připojení a data",
   "tk_speed_network_start": "KillerSpeed se připojí pouze po spuštění pomocí F4, postranní lišty nebo nabídky terminálu. Používá HTTPS k <code>speed.killerscan.net</code>, službě KillerScan hostované na Cloudflare Workers. Pokud je terminál zaneprázdněn, před zastavením úlohy žádá o potvrzení. Po dokončení či zrušení se vrátí do shellu.",
@@ -3351,6 +3356,7 @@ var I18N = {
   "tk_kb_layers_p2": "Klavesa, ktera nema ve sledovane vrstve nic prirazeno, je ztlumena, takze co je dostupne, se da precist na prvni pohled misto hledani."
  },
  "es": {
+  "package_install_intro": "O instala desde tu terminal:",
   "tk_privacy_reports": "Los informes HTML se guardan localmente, pero al abrirlos pueden descargar su logotipo desde scan.killertools.net; esa solicitud de imagen no envía la tabla de dispositivos. Este sitio web carga un script de analítica independiente desde koya.thekiller.net. La afirmación de que no hay analíticas de uso se refiere a la aplicación de escritorio.",
   "tk_speed_network_title": "KillerSpeed: conexiones y datos",
   "tk_speed_network_start": "KillerSpeed solo se conecta cuando lo inicias con F4, la barra lateral o el menú del terminal. Usa HTTPS hacia <code>speed.killerscan.net</code>, un servicio de KillerScan alojado en Cloudflare Workers. Si el terminal está ocupado, pide confirmación antes de detener su tarea. Al terminar o cancelar, vuelve al intérprete de comandos.",
@@ -4021,6 +4027,7 @@ var I18N = {
   "tk_kb_layers_p2": "Una tecla sin nada asignado en la capa que esta viendo se atenua, de modo que lo disponible se lee de un vistazo en lugar de tener que buscarse."
  },
  "de": {
+  "package_install_intro": "Oder über das Terminal installieren:",
   "tk_privacy_reports": "HTML-Berichte werden lokal gespeichert, können beim Öffnen aber ihr Logo von scan.killertools.net laden; diese Bildanfrage überträgt keine Gerätetabelle. Diese Website lädt ein separates Analyseskript von koya.thekiller.net. Die Aussage, dass keine Nutzungsanalysen erfolgen, bezieht sich auf die Desktop-App.",
   "tk_speed_network_title": "KillerSpeed: Verbindungen und Daten",
   "tk_speed_network_start": "KillerSpeed verbindet sich nur, wenn Sie ihn über F4, die Seitenleiste oder das Terminalmenü starten. Er verwendet HTTPS zu <code>speed.killerscan.net</code>, einem auf Cloudflare Workers gehosteten KillerScan-Dienst. Ist das Terminal belegt, fragt die App vor dem Beenden der Aufgabe nach. Nach Abschluss oder Abbruch kehrt sie zur Shell zurück.",
@@ -4691,6 +4698,7 @@ var I18N = {
   "tk_kb_layers_p2": "Eine Taste ohne Zuweisung in der gerade angezeigten Ebene wird abgedunkelt, sodass sich auf einen Blick erkennen lässt, was verfügbar ist, statt danach suchen zu müssen."
  },
  "fr": {
+  "package_install_intro": "Ou installez depuis votre terminal :",
   "tk_privacy_reports": "Les rapports HTML sont enregistrés localement, mais leur ouverture peut charger le logo depuis scan.killertools.net ; cette requête d’image n’envoie pas le tableau des appareils. Ce site charge un script d’analyse distinct depuis koya.thekiller.net. L’absence d’analyse d’utilisation concerne l’application de bureau.",
   "tk_speed_network_title": "KillerSpeed: connexions et données",
   "tk_speed_network_start": "KillerSpeed se connecte uniquement lorsque vous le lancez avec F4, la barre latérale ou le menu du terminal. Il utilise HTTPS vers <code>speed.killerscan.net</code>, un service KillerScan hébergé sur Cloudflare Workers. Si le terminal est occupé, une confirmation est demandée avant l’arrêt de sa tâche. Une fois terminé ou annulé, il revient à l’interpréteur de commandes.",
@@ -5361,6 +5369,7 @@ var I18N = {
   "tk_kb_layers_p2": "Une touche sans rien d'assigné dans la couche que vous regardez est assombrie, si bien que ce qui est disponible se lit d'un coup d'œil plutôt que de devoir être cherché."
  },
  "tr": {
+  "package_install_intro": "Veya terminalinizden yükleyin:",
   "tk_privacy_reports": "HTML raporları yerel olarak kaydedilir, ancak açıldıklarında logoyu scan.killertools.net üzerinden alabilirler; bu resim isteği cihaz tablosunu yüklemez. Bu web sitesi koya.thekiller.net üzerinden ayrı bir analitik betiği yükler. Kullanım analitiği olmadığı ifadesi masaüstü uygulaması için geçerlidir.",
   "tk_speed_network_title": "KillerSpeed: bağlantılar ve veriler",
   "tk_speed_network_start": "KillerSpeed yalnızca F4, yan çubuk veya terminal menüsüyle başlattığınızda bağlanır. Cloudflare Workers üzerinde barındırılan KillerScan hizmeti <code>speed.killerscan.net</code> için HTTPS kullanır. Terminal meşgulse görevi durdurmadan önce onay ister. Tamamlandığında veya iptal edildiğinde kabuğa döner.",
@@ -6031,6 +6040,7 @@ var I18N = {
   "tk_kb_layers_p2": "Baktığınız katmanda hiçbir şeye atanmamış bir tuş soluklaştırılır, böylece nelerin kullanılabilir olduğu aranmak yerine tek bakışta okunur."
  },
  "zh": {
+  "package_install_intro": "或從終端機安裝：",
   "tk_privacy_reports": "HTML 報告儲存在本機，但開啟時可能從 scan.killertools.net 載入標誌；這項圖片請求不會上傳裝置表格。本網站會從 koya.thekiller.net 載入獨立的分析指令碼。不收集使用情況分析資料的聲明適用於桌面應用程式。",
   "tk_speed_network_title": "KillerSpeed：連線與資料",
   "tk_speed_network_start": "KillerSpeed 只在您使用 F4、側邊欄或終端機選單啟動時連線。它透過 HTTPS 連線至 <code>speed.killerscan.net</code>，這是託管於 Cloudflare Workers 的 KillerScan 服務。如果終端機正忙碌，會先詢問您是否停止目前工作。完成或取消後會返回命令殼層。",
@@ -6701,6 +6711,7 @@ var I18N = {
   "tk_kb_layers_p2": "在你目前查看的那一層中沒有任何指定功能的按鍵會顯示為暗淡，因此可用的內容一眼就能看出，不需要另外尋找。"
  },
  "zh-cn": {
+  "package_install_intro": "或从终端安装：",
   "tk_privacy_reports": "HTML 报告保存在本地，但打开时可能从 scan.killertools.net 加载标志；此图片请求不会上传设备表格。本网站会从 koya.thekiller.net 加载独立的分析脚本。不收集使用情况分析数据的声明适用于桌面应用。",
   "tk_speed_network_title": "KillerSpeed：连接与数据",
   "tk_speed_network_start": "KillerSpeed 仅在您使用 F4、侧边栏或终端菜单启动时连接。它通过 HTTPS 连接到 <code>speed.killerscan.net</code>，这是托管在 Cloudflare Workers 上的 KillerScan 服务。如果终端正忙，会先询问您是否停止当前任务。完成或取消后会返回命令行。",
@@ -7371,6 +7382,7 @@ var I18N = {
   "tk_kb_layers_p2": "在你当前查看的那一层中没有绑定任何功能的按键会显示为暗淡，因此可用的内容一眼就能看清，无需另外寻找。"
  },
  "bn": {
+  "package_install_intro": "অথবা টার্মিনাল থেকে ইনস্টল করুন:",
   "tk_privacy_reports": "HTML প্রতিবেদন স্থানীয়ভাবে সংরক্ষিত হয়, তবে খুললে scan.killertools.net থেকে লোগো আনতে পারে; ছবির এই অনুরোধ ডিভাইসের সারণি আপলোড করে না। এই ওয়েবসাইট koya.thekiller.net থেকে আলাদা বিশ্লেষণী স্ক্রিপ্ট লোড করে। ব্যবহারের বিশ্লেষণী তথ্য সংগ্রহ না করার দাবিটি ডেস্কটপ অ্যাপের জন্য প্রযোজ্য।",
   "tk_speed_network_title": "KillerSpeed: সংযোগ ও ডেটা",
   "tk_speed_network_start": "F4, পাশের বার বা টার্মিনাল মেনু দিয়ে চালু করলেই KillerSpeed সংযোগ করে। এটি Cloudflare Workers-এ হোস্ট করা KillerScan পরিষেবা <code>speed.killerscan.net</code>-এ HTTPS ব্যবহার করে। টার্মিনাল ব্যস্ত থাকলে তার কাজ থামানোর আগে সম্মতি চায়। শেষ হলে বা বাতিল করলে শেলে ফিরে যায়।",
@@ -8041,6 +8053,7 @@ var I18N = {
   "tk_kb_layers_p2": "আপনি যে স্তরটি দেখছেন তাতে কিছু বাইন্ড করা নেই এমন কি ম্লান দেখানো হয়, ফলে কী পাওয়া যায় তা খুঁজতে হয় না, এক নজরেই বোঝা যায়।"
  },
  "ja": {
+  "package_install_intro": "またはターミナルからインストール：",
   "tk_privacy_reports": "HTML レポートはローカルに保存されますが、開くと scan.killertools.net からロゴを取得する場合があります。この画像リクエストでデバイスの表がアップロードされることはありません。この Web サイトは koya.thekiller.net から独立した分析スクリプトを読み込みます。利用状況の分析を行わないという説明はデスクトップアプリに適用されます。",
   "tk_speed_network_title": "KillerSpeed：接続とデータ",
   "tk_speed_network_start": "KillerSpeed は F4、サイドバー、またはターミナルメニューで開始したときだけ接続します。Cloudflare Workers でホストする KillerScan サービス <code>speed.killerscan.net</code> に HTTPS で接続します。ターミナルが使用中の場合は、処理を停止する前に確認します。終了またはキャンセルするとシェルに戻ります。",
@@ -8711,6 +8724,7 @@ var I18N = {
   "tk_kb_layers_p2": "見ているレイヤーで何も割り当てられていないキーは薄く表示されるため、何が使えるかを探す必要なく一目で分かります。"
  },
  "kk": {
+  "package_install_intro": "Немесе терминал арқылы орнатыңыз:",
   "tk_privacy_reports": "HTML есептері жергілікті сақталады, бірақ ашылғанда логотипті scan.killertools.net сайтынан алуы мүмкін; бұл сурет сұрауы құрылғылар кестесін жібермейді. Бұл веб-сайт koya.thekiller.net сайтынан бөлек аналитика скриптін жүктейді. Пайдалану аналитикасының жоқтығы туралы мәлімдеме жұмыс үстелі қолданбасына қатысты.",
   "tk_speed_network_title": "KillerSpeed: қосылымдар мен деректер",
   "tk_speed_network_start": "KillerSpeed тек F4, бүйірлік жолақ немесе терминал мәзірі арқылы іске қосылғанда желіге қосылады. Ол Cloudflare Workers-та орналасқан KillerScan қызметі <code>speed.killerscan.net</code> мекенжайына HTTPS арқылы қосылады. Терминал бос болмаса, оның тапсырмасын тоқтатпас бұрын растау сұралады. Аяқталғаннан немесе бас тартылғаннан кейін командалық қабықшаға оралады.",
