@@ -62,10 +62,18 @@ function download(url) {
   if (count === null) return error(400, "bytes must be a nonnegative integer.");
   if (count > DOWNLOAD_MAX_BYTES) return error(413, "Download exceeds the 8 MiB limit.");
   let remaining = count;
+  // Reuse immutable random blocks. Compression is disabled, and generating
+  // fresh randomness for every block can exhaust the Worker's CPU allowance.
+  const payload = new Uint8Array(Math.min(2 * CHUNK_BYTES, count));
+  for (let offset = 0; offset < payload.length; offset += CHUNK_BYTES) {
+    crypto.getRandomValues(payload.subarray(offset, offset + CHUNK_BYTES));
+  }
+  let position = 0;
   const body = count === 0 ? null : new ReadableStream({
     pull(controller) {
-      const chunk = new Uint8Array(Math.min(CHUNK_BYTES, remaining));
-      crypto.getRandomValues(chunk);
+      const size = Math.min(CHUNK_BYTES, remaining);
+      const chunk = payload.subarray(position, position + size);
+      position = (position + size) % payload.length;
       remaining -= chunk.byteLength;
       controller.enqueue(chunk);
       if (remaining === 0) controller.close();

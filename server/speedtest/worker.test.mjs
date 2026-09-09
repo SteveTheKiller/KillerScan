@@ -54,7 +54,13 @@ test("zero-byte download measures response latency without payload", async () =>
   assert.equal(response.headers.get("X-SpeedTest-Bytes"), "0");
 });
 
-test("default download streams exactly 8 MiB in chunks no larger than 64 KiB", async () => {
+test("default download streams exactly 8 MiB with bounded random generation", async (t) => {
+  const original = crypto.getRandomValues.bind(crypto);
+  let generated = 0;
+  t.mock.method(crypto, "getRandomValues", (buffer) => {
+    generated += buffer.byteLength;
+    return original(buffer);
+  });
   const response = await fetchLocal("/__down?nonce=download-1");
   assert.equal(response.status, 200);
   assertUncached(response, "application/octet-stream");
@@ -71,6 +77,7 @@ test("default download streams exactly 8 MiB in chunks no larger than 64 KiB", a
   }
   assert.equal(bytes, DOWNLOAD_MAX_BYTES);
   assert.equal(chunkCount, DOWNLOAD_MAX_BYTES / CHUNK_BYTES);
+  assert.ok(generated <= 2 * CHUNK_BYTES, "Large downloads must not regenerate random bytes for every chunk");
 });
 
 test("download is fresh random data and not a compressible repeated pattern", async () => {

@@ -111,6 +111,7 @@ namespace KillerScan.Services.SpeedTest
             long warmupBudget = options.ByteBudgetPerPhase / 3;
             long warmupBytes = 0, warmupScheduled = 0;
             int maximum = direction.MaximumStreams;
+            var payloadSizes = new int[maximum];
             bool adaptive = maximum > 2 && options.WarmupDuration >= TimeSpan.FromSeconds(3);
             int selected = adaptive ? 2 : maximum;
             double best = 0;
@@ -120,18 +121,17 @@ namespace KillerScan.Services.SpeedTest
             {
                 direction.MaximumStreams = streams;
                 var warmup = await TransferPhaseAsync(upload, true, (warmupBudget - warmupScheduled) / stages,
-                    stageDuration, transfers, latency, direction, progress, token).ConfigureAwait(false);
+                    stageDuration, transfers, latency, direction, progress, token, payloadSizes).ConfigureAwait(false);
                 warmupBytes += warmup.BytesTransferred;
                 warmupScheduled += warmup.BytesScheduled;
                 double speed = warmup.Mbps.GetValueOrDefault();
-                if (best > 0 && speed < best * 1.10) break;
-                if (speed > best) { best = speed; selected = streams; }
+                if (best == 0 || speed >= best * 1.10) { best = speed; selected = streams; }
                 if (!adaptive || streams == maximum || warmup.ByteBudgetReached) break;
                 stages--;
             }
             direction.MaximumStreams = selected;
             var measured = await TransferPhaseAsync(upload, false, options.ByteBudgetPerPhase - warmupScheduled,
-                options.PhaseDuration, transfers, latency, direction, progress, token).ConfigureAwait(false);
+                options.PhaseDuration, transfers, latency, direction, progress, token, payloadSizes).ConfigureAwait(false);
             measured.WarmupBytes = warmupBytes;
             measured.BytesScheduled += warmupScheduled;
             return measured;
@@ -178,7 +178,7 @@ namespace KillerScan.Services.SpeedTest
 
         private static async Task<SpeedTestPhaseResult> TransferPhaseAsync(bool upload, bool warmup,
             long budget, TimeSpan duration, HttpClient client, HttpClient latencyClient, SpeedTestOptions options,
-            IProgress<SpeedTestProgress>? progress, CancellationToken token)
+            IProgress<SpeedTestProgress>? progress, CancellationToken token, int[]? payloadSizes = null)
         {
             token.ThrowIfCancellationRequested();
             if (duration == TimeSpan.Zero)
@@ -208,7 +208,8 @@ namespace KillerScan.Services.SpeedTest
                             using (var random = RandomNumberGenerator.Create()) random.GetBytes(buffer);
                         int maximumPayload = upload ? options.UploadPayloadBytes : options.DownloadPayloadBytes;
                         bool publicService = IsCloudflareEndpoint(options.Endpoint);
-                        int payload = Math.Min(publicService ? 100000 : BufferSize, maximumPayload);
+                        int payload = Math.Min(payloadSizes?[index] > 0 ? payloadSizes[index] :
+                            (publicService ? 100000 : BufferSize), maximumPayload);
                         while (!stop.IsCancellationRequested)
                         {
                             int size = counters.Reserve(payload, budget);
@@ -220,8 +221,9 @@ namespace KillerScan.Services.SpeedTest
                                 await DownloadAsync(client, options, size, buffer, counters.Add, stop.Token).ConfigureAwait(false);
                             // Keep acknowledgments frequent on slow links without imposing tiny
                             // HTTP requests on fast links. Configured payload sizes are ceilings.
-                            double next = size * (publicService ? 1000d : 250d) / Math.Max(1, exchange.Elapsed.TotalMilliseconds);
+                            double next = size * 1000d / Math.Max(1, exchange.Elapsed.TotalMilliseconds);
                             payload = (int)Math.Min(maximumPayload, Math.Max(Math.Min(16 * 1024, maximumPayload), next));
+                            if (payloadSizes != null) payloadSizes[index] = payload;
                         }
                     }
                     finally { counters.Leave(); }

@@ -37,6 +37,7 @@ internal static class Program
             await Run("Adaptive warmup adds streams on a per-connection bottleneck", () => Adaptive(Mode.SlowDownload, 8));
             await Run("Adaptive warmup retains fewer streams on a shared bottleneck", () => Adaptive(Mode.SharedDownload, 2));
             await Run("Cancellation during adaptive warmup prevents measurement", AdaptiveCancel);
+            await Run("Measurement retains the payload size learned during warmup", WarmupPayload);
             await Run("HTTPS configuration required without contacting a remote host", InvalidEndpoint);
             await Run("Real transfers, exact acknowledgments and per-direction byte budgets", Budget);
             await Run("Sustained timed download with loaded latency and cancellation of pending reads", Duration);
@@ -622,10 +623,36 @@ internal static class Program
         options.MaximumStreams = 8;
         options.WarmupDuration = TimeSpan.FromSeconds(3);
         options.ByteBudgetPerPhase = 64L * 1024 * 1024;
-        var result = await new SpeedTestEngine().RunAsync(options, null, CancellationToken.None);
+        int warmupStages = 0;
+        var progress = new CallbackProgress(p =>
+        {
+            if (p.Phase == SpeedTestPhase.DownloadWarmup && p.IsPhaseComplete) warmupStages++;
+        });
+        var result = await new SpeedTestEngine().RunAsync(options, progress, CancellationToken.None);
+        Require(warmupStages == 3, "A plateau must not prevent testing the remaining connection counts");
         Require(result.Download.StreamCount == expectedStreams, "Selected connection count follows measured scaling");
         Require(result.Download.CompletedDuration && result.Download.BytesTransferred > 0, "Selected streams complete measurement");
         Require(result.Download.BytesScheduled <= options.ByteBudgetPerPhase, "All adaptive stages share one byte budget");
+    }
+
+    private static async Task WarmupPayload()
+    {
+        using var server = new LoopbackServer(Mode.SlowDownload);
+        var options = Options(server);
+        options.MaximumStreams = 1;
+        options.WarmupDuration = TimeSpan.FromMilliseconds(800);
+        options.DownloadPayloadBytes = 1024 * 1024;
+        options.ByteBudgetPerPhase = 16 * 1024 * 1024;
+        int measuredStart = -1;
+        var updates = new CallbackProgress(p =>
+        {
+            if (p.Phase == SpeedTestPhase.Download && p.Elapsed == TimeSpan.Zero)
+                measuredStart = server.Requests.Count;
+        });
+        await new SpeedTestEngine().RunAsync(options, updates, CancellationToken.None);
+        Require(measuredStart >= 0, "Measurement started after warmup");
+        string request = server.Requests.Skip(measuredStart).First(p => p.StartsWith("/__down?bytes=") && !p.StartsWith("/__down?bytes=0&"));
+        Require(!request.StartsWith("/__down?bytes=65536&"), "Measurement must not restart with the initial 64 KiB payload");
     }
 
     private static async Task Duration()

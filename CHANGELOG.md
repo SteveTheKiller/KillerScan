@@ -13,7 +13,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - A dedicated KillerScan speed-test server and automated transfer, failure, and server tests.
 
 ### Fixed
-- Speed tests allow longer connection warmup and sustained measurement.
+- Speed tests use longer sustained transfers, retain warmup settings, and check all available connection counts before selecting one.
+- Reduced speed-test server CPU use to prevent large downloads being cut off.
 - Removed third-party speed-test downloads; the native engine displays results through the terminal's existing shell.
 - Terminal startup failures now include the Windows error details, and redirected launches keep shell input and output inside the app.
 - Terminal prompts now follow the app's theme accent instead of falling back to red.
