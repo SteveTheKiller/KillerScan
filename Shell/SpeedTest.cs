@@ -14,18 +14,26 @@ namespace KillerScan.Shell
         private void SpeedTestButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             if (_terminalPanelDisposed) return;
-            if (_speedTestTerminal != null && ReferenceEquals(_terminalControl, _speedTestTerminal))
+            if (_terminalControl?.HasRunningCommand == true)
             {
-                ShowWorkspaceContent(_speedTestTerminal, "terminal");
-                _speedTestTerminal.Focus();
-                return;
+                var dialog = new Controls.ConfirmDialog(Loc("Str_Speed_Title"), Loc("Str_Speed_ReplaceRunning"),
+                    Loc("Str_Speed_Start"), Loc("Str_Btn_Cancel")) { Owner = this };
+                dialog.ShowDialog();
+                if (!dialog.Confirmed) return;
+                NewTerminal(title: Loc("Str_Speed_Title"), managed: true);
             }
-            NewTerminal(title: Loc("Str_Speed_Title"), managed: true);
+            else if (_terminalControl == null || _terminalExited)
+                NewTerminal(title: Loc("Str_Speed_Title"), managed: true);
+            else
+            {
+                _terminalControl.BeginManagedSession();
+                ShowWorkspaceContent(_terminalControl, "terminal");
+                _terminalControl.Focus();
+            }
             var terminal = _speedTestTerminal = _terminalControl!;
             terminal.ManagedInput += input =>
             {
                 if (input == "\u001b" || input == "\u0003") _speedTestRun?.Cancel();
-                else if (input == "\r" && _speedTestRun == null) _ = RunTerminalSpeedTestAsync(terminal);
             };
             terminal.Disposed += () =>
             {
@@ -107,7 +115,18 @@ namespace KillerScan.Shell
                 if (Current())
                 {
                     _speedTestRun = null;
-                    terminal.WriteManaged("\r\n" + Loc("Str_Speed_Retry") + "\r\n");
+                    _speedTestTerminal = null;
+                    terminal.EndManagedSession();
+                    if (!terminal.HasShell)
+                    {
+                        EnsureBundledModules();
+                        string shell = ResolveTerminalShell();
+                        terminal.Start(QuoteArgument(shell) + " -NoLogo" + PromptArgs(),
+                            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+                    }
+                    _terminalStatusKey = null;
+                    _terminalTitle = null;
+                    _terminalIsPing = false;
                     UpdateTerminalPanelStatus();
                 }
                 cancellation.Dispose();

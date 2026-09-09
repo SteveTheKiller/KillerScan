@@ -465,5 +465,5 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">A tesztkiszolgáló érvénytelen választ adott.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Az átvitel sikertelen. Ellenőrizze a kapcsolatot, és próbálja újra.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Nem sikerült másolni az eredményeket. Próbálja újra.</sys:String>
-    <sys:String x:Key="Str_Speed_Retry">Újraindításhoz nyomja meg az Entert.</sys:String>
+    <sys:String x:Key="Str_Speed_ReplaceRunning">A terminálban egy feladat fut. Leállítja, és helyette elindítja a sebességtesztet?</sys:String>
 </ResourceDictionary>

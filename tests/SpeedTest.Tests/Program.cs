@@ -29,6 +29,7 @@ internal static class Program
     {
         try
         {
+            if (args.SequenceEqual(new[] { "--terminal" })) { await View(); return 0; }
             Require(args.All(value => value == "--worker" || value == "--internet"), "Usage: SpeedTest.Tests.exe [--worker] [--internet]");
             await Run("Metric units, median, jitter and unavailable values", Metrics);
             await Run("Cloudflare upload response is accepted only for the exact official endpoint", CloudflareAcknowledgment);
@@ -303,8 +304,8 @@ internal static class Program
                     "Text and accent theme brushes resolve");
                 var terminalType = assembly.GetType("KillerScan.Terminal.TerminalControl", true)!;
                 var terminal = (FrameworkElement)Activator.CreateInstance(terminalType)!;
-                using var terminalLifetime = (IDisposable)terminal;
                 using var cancellation = new CancellationTokenSource();
+                using var terminalLifetime = (IDisposable)terminal;
                 int cancelInputs = 0, rerunInputs = 0, disposed = 0;
                 Action<string> onInput = input =>
                 {
@@ -340,7 +341,7 @@ internal static class Program
                         ? "Test complete." : "Data limit reached; measurement duration was shortened.") + "\r\n");
                 }
                 else Write("Ready to test.\r\n");
-                Write("\u001b[90mEnter: test again. Escape or Ctrl+C: cancel.\u001b[0m\r\n");
+                Write("\u001b[90mEscape or Ctrl+C: cancel.\u001b[0m\r\n");
                 terminal.UpdateLayout();
                 var bitmap = new RenderTargetBitmap(900, 500, 96, 96, PixelFormats.Pbgra32);
                 bitmap.Render(terminal);
@@ -349,6 +350,47 @@ internal static class Program
                 encoder.Frames.Add(BitmapFrame.Create(bitmap));
                 using (var file = File.Create(imagePath)) encoder.Save(file);
                 Console.WriteLine("Offscreen terminal: " + imagePath);
+                terminalType.GetMethod("EndManagedSession")!.Invoke(terminal, null);
+                bool Busy() => (bool)terminalType.GetProperty("HasRunningCommand")!.GetValue(terminal)!;
+                void Send(string value) => terminalType.GetMethod("Send")!.Invoke(terminal, new object[] { value });
+                void WaitFor(Func<bool> ready)
+                {
+                    var clock = Stopwatch.StartNew();
+                    while (!ready() && clock.Elapsed < TimeSpan.FromSeconds(10))
+                    {
+                        var frame = new System.Windows.Threading.DispatcherFrame();
+                        var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(20) };
+                        timer.Tick += (_, _) => { timer.Stop(); frame.Continue = false; };
+                        timer.Start();
+                        System.Windows.Threading.Dispatcher.PushFrame(frame);
+                    }
+                    Require(ready(), "Shell state reached before deadline");
+                }
+                string shell = (string)assembly.GetType("KillerScan.Shell.MainWindow", true)!
+                    .GetMethod("ResolveTerminalShell", BindingFlags.Static | BindingFlags.NonPublic)!.Invoke(null, null)!;
+                terminalType.GetEvent("StartFailed")!.AddEventHandler(terminal,
+                    (Action<Exception>)(ex => throw new InvalidOperationException("Shell launch failed", ex)));
+                terminalType.GetMethod("Start")!.Invoke(terminal, new object[] {
+                    "\"" + shell + "\" -NoLogo -NoProfile -NoExit -Command \"function prompt { 'PS> ' + [string][char]27 + ']133;B' + [char]7 }\"",
+                    Path.GetTempPath() });
+                WaitFor(() => !Busy());
+                Require((bool)terminalType.GetProperty("HasShell")!.GetValue(terminal)!, "Shell remains alive at prompt");
+                Send("$ksTestValue = 42\r");
+                Require(Busy(), "Submitting a command marks the terminal busy");
+                WaitFor(() => !Busy());
+                terminalType.GetMethod("BeginManagedSession")!.Invoke(terminal, null);
+                Write("\r\nSPEEDTEST-RESULT\r\n");
+                terminalType.GetMethod("EndManagedSession")!.Invoke(terminal, null);
+                WaitFor(() => !Busy());
+                Send("Write-Output ('KEPT-' + $ksTestValue)\r");
+                WaitFor(() => Text().Contains("KEPT-42") && !Busy());
+                Require(Text().Contains("SPEEDTEST-RESULT"), "Returning to shell retains speed-test output and variables");
+                Require(rerunInputs == 1, "Shell Enter is no longer routed to the managed handler");
+                Send("Write-Output ('RUN' + 'NING'); Start-Sleep -Seconds 30\r");
+                WaitFor(() => Text().Contains("RUNNING"));
+                Require(Busy(), "Running shell command requires confirmation before replacement");
+                Send("\u0003");
+                WaitFor(() => !Busy());
                 terminalLifetime.Dispose();
                 terminalLifetime.Dispose();
                 Require(disposed == 1, "Disposal notification fires once");

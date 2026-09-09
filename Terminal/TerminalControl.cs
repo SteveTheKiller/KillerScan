@@ -47,17 +47,36 @@ namespace KillerScan.Terminal
         public event Action<string>? ManagedInput;
         public event Action? Disposed;
         public bool IsManaged { get; private set; }
+        private bool _atPrompt;
+        public bool HasRunningCommand => IsManaged || (_pty != null && !_pty.HasExited && !_atPrompt);
+        public bool HasShell => _pty != null && !_pty.HasExited;
 
         public void BeginManagedSession()
         {
-            if (_closed || _pty != null) throw new InvalidOperationException();
+            if (_closed || HasRunningCommand) throw new InvalidOperationException();
             IsManaged = true;
             _cursorOn = false;
         }
 
         public void WriteManaged(string text)
         {
-            if (!_closed && IsManaged) ShowScript(text);
+            if (!_closed && IsManaged)
+            {
+                ApplySize();
+                var bytes = Encoding.UTF8.GetBytes(text);
+                _parser.Feed(bytes, bytes.Length);
+                InvalidateVisual();
+            }
+        }
+
+        public void EndManagedSession()
+        {
+            if (IsManaged) _buf.PreserveScreenInHistory();
+            IsManaged = false;
+            ManagedInput = null;
+            _cursorOn = true;
+            if (HasShell) Send("\u0003");
+            InvalidateVisual();
         }
 
         public TerminalBuffer Buffer => _buf;
@@ -76,6 +95,7 @@ namespace KillerScan.Terminal
             BuildContextMenu();
 
             _buf.Respond += Send;
+            _buf.PromptReady += () => _atPrompt = true;
 
             LoadFont();
             Loaded += (_, _) => Focus();
@@ -284,6 +304,7 @@ namespace KillerScan.Terminal
             if (_closed) return;
             if (IsManaged) { ManagedInput?.Invoke(s); return; }
             if (_pty == null || _pty.HasExited || string.IsNullOrEmpty(s)) return;
+            if (s.Contains("\r") || s.Contains("\n") || s.Contains("\u0003")) _atPrompt = false;
             try
             {
                 var b = Encoding.UTF8.GetBytes(s);

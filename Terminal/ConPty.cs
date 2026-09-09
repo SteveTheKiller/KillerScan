@@ -72,6 +72,9 @@ namespace KillerScan.Terminal
         {
             var si = new STARTUPINFOEX();
             si.StartupInfo.cb = Marshal.SizeOf<STARTUPINFOEX>();
+            // Prevent redirected parent streams from overriding the pseudoconsole.
+            si.StartupInfo.dwFlags = 0x00000100; // STARTF_USESTDHANDLES
+            si.StartupInfo.hStdInput = si.StartupInfo.hStdOutput = si.StartupInfo.hStdError = IntPtr.Zero;
 
             IntPtr bytes = IntPtr.Zero;
             InitializeProcThreadAttributeList(IntPtr.Zero, 1, 0, ref bytes);

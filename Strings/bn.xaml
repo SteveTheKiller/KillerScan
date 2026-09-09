@@ -449,5 +449,5 @@
     <sys:String x:Key="Str_Speed_BadResponse">পরীক্ষার সার্ভার অবৈধ উত্তর দিয়েছে।</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">ডেটা স্থানান্তর ব্যর্থ হয়েছে। সংযোগ যাচাই করে আবার চেষ্টা করুন।</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">ফলাফল কপি করা যায়নি। আবার চেষ্টা করুন।</sys:String>
-    <sys:String x:Key="Str_Speed_Retry">আবার চালাতে Enter চাপুন।</sys:String>
+    <sys:String x:Key="Str_Speed_ReplaceRunning">টার্মিনালে একটি কাজ চলছে। সেটি থামিয়ে গতি পরীক্ষা চালাবেন?</sys:String>
 </ResourceDictionary>

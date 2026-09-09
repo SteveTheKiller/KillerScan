@@ -449,5 +449,5 @@
     <sys:String x:Key="Str_Speed_BadResponse">测试服务器返回了无效响应。</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">传输失败。请检查连接后重试。</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">无法复制结果。请重试。</sys:String>
-    <sys:String x:Key="Str_Speed_Retry">按 Enter 再次运行。</sys:String>
+    <sys:String x:Key="Str_Speed_ReplaceRunning">终端中有程序正在运行。要停止并改为运行速度测试吗？</sys:String>
 </ResourceDictionary>

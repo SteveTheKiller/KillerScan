@@ -72,6 +72,7 @@ namespace KillerScan.Terminal
 
         public event Action<string>? TitleChanged;
         public event Action<string>? DirectoryChanged;
+        public event Action? PromptReady;
 
         public event Action<string>? Respond;
 
@@ -86,6 +87,16 @@ namespace KillerScan.Terminal
         }
 
         public int TotalLines => _scrollback.Count + Rows;
+
+        public void PreserveScreenInHistory()
+        {
+            int last = Rows - 1;
+            while (last >= 0 && Array.TrueForAll(_screen[last], cell => cell.Ch == 0 || cell.Ch == ' ')) last--;
+            for (int row = 0; row <= last; row++) _scrollback.Add((Cell[])_screen[row].Clone());
+            if (_scrollback.Count > ScrollbackLimit)
+                _scrollback.RemoveRange(0, _scrollback.Count - ScrollbackLimit);
+            Version++;
+        }
 
         public void Resize(int cols, int rows)
         {
@@ -593,6 +604,9 @@ namespace KillerScan.Terminal
         {
             switch (cmd)
             {
+                case 133:
+                    if (data == "B") PromptReady?.Invoke();
+                    break;
                 case 0: case 2:
                     Title = data;
                     TitleChanged?.Invoke(data);

@@ -450,5 +450,5 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Der Testserver hat eine ungültige Antwort gesendet.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Die Übertragung ist fehlgeschlagen. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Die Ergebnisse konnten nicht kopiert werden. Versuchen Sie es erneut.</sys:String>
-    <sys:String x:Key="Str_Speed_Retry">Drücken Sie Enter, um erneut zu starten.</sys:String>
+    <sys:String x:Key="Str_Speed_ReplaceRunning">Im Terminal läuft bereits ein Vorgang. Diesen beenden und stattdessen den Geschwindigkeitstest starten?</sys:String>
 </ResourceDictionary>

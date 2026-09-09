@@ -135,7 +135,8 @@ namespace KillerScan.Shell
                 "$script:KSCwdInner = $function:prompt; " +
                 "function prompt { $q = & $script:KSCwdInner; $l = Get-Location; " +
                 "if ($l.Provider.Name -eq 'FileSystem') " +
-                "{ $q = [string][char]27 + ']9;9;' + $l.ProviderPath + [char]7 + $q }; $q }";
+                "{ $q = [string][char]27 + ']9;9;' + $l.ProviderPath + [char]7 + $q }; " +
+                "$q + [string][char]27 + ']133;B' + [char]7 }";
 
             return " -NoExit -Command \". '" + safe + "'; " + wrap + tail + "\"";
         }

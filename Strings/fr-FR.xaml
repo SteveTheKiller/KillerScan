@@ -449,5 +449,5 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Le serveur de test a renvoyé une réponse invalide.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Le transfert a échoué. Vérifiez votre connexion et réessayez.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Impossible de copier les résultats. Réessayez.</sys:String>
-    <sys:String x:Key="Str_Speed_Retry">Appuyez sur Enter pour recommencer.</sys:String>
+    <sys:String x:Key="Str_Speed_ReplaceRunning">Une tâche est en cours dans le terminal. L’arrêter et lancer le test de vitesse à la place ?</sys:String>
 </ResourceDictionary>

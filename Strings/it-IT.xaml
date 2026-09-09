@@ -465,5 +465,5 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Il server di test ha restituito una risposta non valida.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Trasferimento non riuscito. Controlla la connessione e riprova.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Impossibile copiare i risultati. Riprova.</sys:String>
-    <sys:String x:Key="Str_Speed_Retry">Premi Enter per ripetere.</sys:String>
+    <sys:String x:Key="Str_Speed_ReplaceRunning">È in corso un'attività nel terminale. Interromperla ed eseguire il test di velocità?</sys:String>
 </ResourceDictionary>
