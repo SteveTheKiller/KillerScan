@@ -92,6 +92,12 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
   .hero .tagline { font-size: 15px; }
   .features h2 { font-size: 20px; margin-bottom: 20px; }
 }
+/* Package manager commands */
+.package-commands { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; max-width: 980px; margin: 22px auto 0; text-align: left; }
+.package-commands pre { flex: 1 1 300px; min-width: 0; margin: 0; padding: 12px 16px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); color: var(--text); overflow-x: auto; }
+.package-commands code { font: 13px/1.6 Consolas, 'Courier New', monospace; white-space: pre; user-select: all; }
+.package-commands .manager { color: var(--accent); font-weight: 700; }
+.package-commands .verb { color: var(--muted); }
 </style>
 </head>
 <body>
@@ -182,6 +188,10 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <div class="row"><span class="k">sha256</span>&nbsp;<span class="v hash">1410c6a3ef513162650e00cc2296c035<br>4fc48e0e6f08c30b9f2f30e5a74c4cfa</span></div>
 <p class="note" data-i18n="hero_note">Install or run portable. Free, open source, GPLv3.<br>No agent, account, subscription, or ads.<br>The app sends no usage analytics. <a href="technical.html#privacy">Network connections explained.</a></p>
 </div>
+</div>
+<div class="package-commands">
+<pre><code><span class="manager">winget</span> <span class="verb">install</span> killerscan</code></pre>
+<pre><code><span class="manager">choco</span> <span class="verb">install</span> killerscan</code></pre>
 </div>
 <div class="hero-blurbs">
 <div class="blurb"><h3 data-i18n="b3_t">What it is for</h3><p data-i18n="b3_d2"><b>Walking into a site you have never seen.</b> Scan the subnet and you have the router, the switches, the hypervisors, the NAS, the printers and the cameras before anyone hands you documentation.</p><br><p data-i18n="b3_d5"><b>Chasing an intermittent drop.</b> Put the gateway and the device in Keep Alive, watch which one actually loses packets, and paste the result straight into the ticket.</p><br><p data-i18n="b3_d6"><b>Asked what changed.</b> Scan history compares this run against the last one of the same target and names what appeared, what went missing and what opened a port.</p><br><p data-i18n="b3_d3">Run it from a USB stick without installing the app. Scan results stay local unless you export or share them. Bug reports and requests go on the <a href="https://github.com/SteveTheKiller/KillerScan/issues" target="_blank" rel="noopener">GitHub issues</a> page.</p><br><p data-i18n="b3_d4">Read the story behind it on the <a href="about.html">About</a> page.</p></div>
