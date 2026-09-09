@@ -20,13 +20,12 @@ namespace KillerScan.Shell
                     Loc("Str_Speed_Start"), Loc("Str_Btn_Cancel")) { Owner = this };
                 dialog.ShowDialog();
                 if (!dialog.Confirmed) return;
-                NewTerminal(title: Loc("Str_Speed_Title"), managed: true);
+                NewTerminal(title: Loc("Str_Speed_Title"), shellCommand: string.Empty);
             }
             else if (_terminalControl == null || _terminalExited)
-                NewTerminal(title: Loc("Str_Speed_Title"), managed: true);
+                NewTerminal(title: Loc("Str_Speed_Title"), shellCommand: string.Empty);
             else
             {
-                _terminalControl.BeginManagedSession();
                 ShowWorkspaceContent(_terminalControl, "terminal");
                 _terminalControl.Focus();
             }
@@ -57,39 +56,29 @@ namespace KillerScan.Shell
                 UpdateTerminalPanelStatus();
             }
             void Line(string text, int color = 36) => terminal.WriteManaged($"\r\u001b[2K\u001b[{color}m{text}\u001b[0m");
-            terminal.WriteManaged("\r\n\u001b[1;36m" + Loc("Str_Speed_Title") + "\u001b[0m\r\n");
+            var presentation = new SpeedTestPresentation(Loc, () => terminal.Buffer.Cols);
             Status("Str_Speed_Run");
-            bool downloadPrinted = false, uploadPrinted = false;
+            bool acceptingProgress = true;
             var progress = new Progress<SpeedTestProgress>(p =>
             {
-                if (!Current() || p.Phase == SpeedTestPhase.Completed) return;
+                if (!Current() || !acceptingProgress || p.Phase == SpeedTestPhase.Completed) return;
                 bool down = p.Phase is SpeedTestPhase.Download or SpeedTestPhase.DownloadWarmup;
                 bool up = p.Phase is SpeedTestPhase.Upload or SpeedTestPhase.UploadWarmup;
                 string key = down ? "Str_Speed_Download" : up ? "Str_Speed_Upload" : "Str_Speed_Latency";
                 Status(key);
-                double? value = down || up ? p.Mbps : p.LatencyMs;
-                string line = Loc(key) + ": " + (value?.ToString("N1") ?? "...") + (down || up ? " Mbps" : " ms");
-                if (p.IsPhaseComplete && p.Mbps.HasValue &&
-                    ((p.Phase == SpeedTestPhase.Download && !downloadPrinted) ||
-                     (p.Phase == SpeedTestPhase.Upload && !uploadPrinted)))
-                {
-                    if (down) downloadPrinted = true; else uploadPrinted = true;
-                    Line(line + "\r\n", 32);
-                    return;
-                }
-                int width = Math.Max(1, terminal.Buffer.Cols - 1);
-                Line(line.Length > width ? line.Substring(0, width) : line);
+                terminal.WriteManaged(presentation.Progress(p));
             });
             try
             {
-                var result = await new SpeedTestEngine().RunAsync(new SpeedTestOptions(), progress, cancellation.Token);
+                await terminal.BeginShellManagedSessionAsync(cancellation.Token);
+                var options = new SpeedTestOptions();
+                terminal.WriteManaged(presentation.Header(options.Endpoint));
+                var result = await new SpeedTestEngine().RunAsync(options, progress, cancellation.Token);
+                acceptingProgress = false;
                 if (!Current()) return;
-                if (!downloadPrinted) Line(Loc("Str_Speed_Download") + ": " + (result.Download.Mbps?.ToString("N1") ?? Loc("Str_Speed_Unavailable")) + " Mbps\r\n", 32);
-                if (!uploadPrinted) Line(Loc("Str_Speed_Upload") + ": " + (result.Upload.Mbps?.ToString("N1") ?? Loc("Str_Speed_Unavailable")) + " Mbps\r\n", 32);
-                Line(Loc("Str_Speed_Latency") + ": " + (result.IdleLatencyMs?.ToString("N1") ?? Loc("Str_Speed_Unavailable")) + " ms\r\n", 36);
+                terminal.WriteManaged(presentation.Result(result));
                 string key = result.Download.CompletedDuration && result.Upload.CompletedDuration ? "Str_Speed_Completed" : "Str_Speed_Limited";
                 Status(key);
-                Line(Loc(key) + "\r\n", 32);
             }
             catch (OperationCanceledException)
             {
@@ -112,22 +101,20 @@ namespace KillerScan.Shell
             }
             finally
             {
+                acceptingProgress = false;
                 if (Current())
                 {
-                    _speedTestRun = null;
-                    _speedTestTerminal = null;
-                    terminal.EndManagedSession();
-                    if (!terminal.HasShell)
+                    try { await terminal.EndShellManagedSessionAsync(); }
+                    catch (System.IO.IOException) { /* The shell closed while output was draining. */ }
+                    catch (ObjectDisposedException) { /* The terminal was replaced during completion. */ }
+                    if (Current())
                     {
-                        EnsureBundledModules();
-                        string shell = ResolveTerminalShell();
-                        terminal.Start(QuoteArgument(shell) + " -NoLogo" + PromptArgs(),
-                            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+                        _speedTestRun = null;
+                        _speedTestTerminal = null;
+                        _terminalTitle = null;
+                        _terminalIsPing = false;
+                        UpdateTerminalPanelStatus();
                     }
-                    _terminalStatusKey = null;
-                    _terminalTitle = null;
-                    _terminalIsPing = false;
-                    UpdateTerminalPanelStatus();
                 }
                 cancellation.Dispose();
             }

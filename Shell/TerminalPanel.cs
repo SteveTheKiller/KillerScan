@@ -87,7 +87,8 @@ namespace KillerScan.Shell
                 else
                 {
                     string shell = ResolveTerminalShell();
-                    terminal.Start(QuoteArgument(shell) + " -NoLogo" + PromptArgs(shellCommand), home);
+                    terminal.Start(QuoteArgument(shell) + " -NoLogo" + PromptArgs(terminal.ManagedShellSetup +
+                        (string.IsNullOrEmpty(shellCommand) ? "" : "; " + shellCommand)), home);
                 }
             }
             else ShowWorkspaceContent(_terminalControl, "terminal");

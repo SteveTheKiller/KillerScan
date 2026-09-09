@@ -285,6 +285,7 @@ internal static class Program
                 typeof(Application).GetField("_resourceAssembly", BindingFlags.NonPublic | BindingFlags.Static)!
                     .SetValue(null, typeof(KillerScan.App).Assembly);
                 var app = new TestApplication();
+                SynchronizationContext.SetSynchronizationContext(new System.Windows.Threading.DispatcherSynchronizationContext());
                 var xml = new XmlDocument();
                 xml.Load(Path.Combine(directory!.FullName, "App.xaml"));
                 string dictionary = xml.DocumentElement!.FirstChild!.FirstChild!.OuterXml
@@ -370,22 +371,109 @@ internal static class Program
                     .GetMethod("ResolveTerminalShell", BindingFlags.Static | BindingFlags.NonPublic)!.Invoke(null, null)!;
                 terminalType.GetEvent("StartFailed")!.AddEventHandler(terminal,
                     (Action<Exception>)(ex => throw new InvalidOperationException("Shell launch failed", ex)));
-                terminalType.GetMethod("Start")!.Invoke(terminal, new object[] {
-                    "\"" + shell + "\" -NoLogo -NoProfile -NoExit -Command \"function prompt { 'PS> ' + [string][char]27 + ']133;B' + [char]7 }\"",
-                    Path.GetTempPath() });
+                var windowType = assembly.GetType("KillerScan.Shell.MainWindow", true)!;
+                string promptArgs = (string)windowType.GetMethod("PromptArgs", BindingFlags.Static | BindingFlags.NonPublic)!
+                    .Invoke(null, new[] { terminalType.GetProperty("ManagedShellSetup")!.GetValue(terminal) })!;
+                string palettePath = (string)windowType.GetProperty("PromptPalettePath", BindingFlags.Static | BindingFlags.NonPublic)!.GetValue(null)!;
+                var primary = ((SolidColorBrush)app.FindResource("PrimaryBrush")).Color;
+                Require(File.ReadAllText(palettePath).Contains($"ACCENT=#{primary.R:X2}{primary.G:X2}{primary.B:X2}"),
+                    "Prompt receives the selected theme accent instead of the red fallback");
+                string? previousTerm = Environment.GetEnvironmentVariable("TERM");
+                string? previousNoColor = Environment.GetEnvironmentVariable("NO_COLOR");
+                try
+                {
+                    // Exercise the colored desktop terminal even when the test runner disables color.
+                    Environment.SetEnvironmentVariable("TERM", "xterm-256color");
+                    Environment.SetEnvironmentVariable("NO_COLOR", null);
+                    terminalType.GetMethod("Start")!.Invoke(terminal, new object[] {
+                        "\"" + shell + "\" -NoLogo -NoProfile" + promptArgs,
+                        Path.GetTempPath() });
+                }
+                finally
+                {
+                    Environment.SetEnvironmentVariable("TERM", previousTerm);
+                    Environment.SetEnvironmentVariable("NO_COLOR", previousNoColor);
+                }
                 WaitFor(() => !Busy());
                 Require((bool)terminalType.GetProperty("HasShell")!.GetValue(terminal)!, "Shell remains alive at prompt");
                 Send("$ksTestValue = 42\r");
                 Require(Busy(), "Submitting a command marks the terminal busy");
                 WaitFor(() => !Busy());
-                terminalType.GetMethod("BeginManagedSession")!.Invoke(terminal, null);
+                var begin = (Task)terminalType.GetMethod("BeginShellManagedSessionAsync")!.Invoke(terminal, new object[] { CancellationToken.None })!;
+                WaitFor(() => begin.IsCompleted);
+                begin.GetAwaiter().GetResult();
+                var presentationType = assembly.GetType("KillerScan.Terminal.SpeedTestPresentation", true)!;
+                var presentation = Activator.CreateInstance(presentationType,
+                    new Func<string, string>(key => (string)app.FindResource(key)), new Func<int>(() => 100))!;
+                void Set(object target, string name, object value) => target.GetType().GetProperty(name)!.SetValue(target, value);
+                var sample = new SpeedTestResult();
+                var download = new SpeedTestPhaseResult();
+                var upload = new SpeedTestPhaseResult();
+                Set(sample, "Endpoint", new Uri("https://speed.killerscan.net/"));
+                Set(sample, "Download", download); Set(sample, "Upload", upload);
+                Set(sample, "IdleLatencySamples", new double[] { 12, 13, 11 });
+                Set(download, "Mbps", 812.4d); Set(upload, "Mbps", 38.7d);
+                Set(download, "StreamCount", 8); Set(upload, "StreamCount", 2);
+                Set(download, "CompletedDuration", true); Set(upload, "CompletedDuration", true);
+                Set(download, "LatencySamples", new double[] { 28, 30, 29 });
+                Set(upload, "LatencySamples", new double[] { 43, 45, 44 });
+                Write((string)presentationType.GetMethod("Header")!.Invoke(presentation, new object[] { sample.Endpoint })!);
+                Write((string)presentationType.GetMethod("Result")!.Invoke(presentation, new object[] { sample })!);
                 Write("\r\nSPEEDTEST-RESULT\r\n");
-                terminalType.GetMethod("EndManagedSession")!.Invoke(terminal, null);
+                WaitFor(() => Text().Contains("SPEEDTEST-RESULT"));
+                Require(Busy(), "Live output reaches the console before the managed command ends");
+                var end = (Task)terminalType.GetMethod("EndShellManagedSessionAsync")!.Invoke(terminal, null)!;
+                WaitFor(() => end.IsCompleted);
+                end.GetAwaiter().GetResult();
                 WaitFor(() => !Busy());
+                var buffer = terminalType.GetProperty("Buffer")!.GetValue(terminal)!;
+                string Visible()
+                {
+                    int rows = (int)buffer.GetType().GetProperty("Rows")!.GetValue(buffer)!;
+                    int total = (int)buffer.GetType().GetProperty("TotalLines")!.GetValue(buffer)!;
+                    var visible = new System.Text.StringBuilder();
+                    for (int row = total - rows; row < total; row++)
+                        foreach (var cell in (Array)buffer.GetType().GetMethod("LineAt")!.Invoke(buffer, new object[] { row })!)
+                            visible.Append(char.ConvertFromUtf32((int)cell.GetType().GetField("Ch")!.GetValue(cell)!));
+                    return visible.ToString();
+                }
+                Require(Visible().Contains("SPEEDTEST-RESULT"), "Completed results remain on the visible screen above the prompt");
+                Require(Visible().Contains("812.4") && Visible().Contains("38.7"), "Both results remain visible after the prompt redraw");
+                int totalLines = (int)buffer.GetType().GetProperty("TotalLines")!.GetValue(buffer)!;
+                int expectedAccent = 0x1000000 | (primary.R << 16) | (primary.G << 8) | primary.B;
+                bool promptAccent = false;
+                int screenRows = (int)buffer.GetType().GetProperty("Rows")!.GetValue(buffer)!;
+                int cursorRow = (int)buffer.GetType().GetProperty("CursorRow")!.GetValue(buffer)!;
+                for (int row = Math.Max(0, totalLines - screenRows + cursorRow - 2); row < totalLines; row++)
+                    foreach (var cell in (Array)buffer.GetType().GetMethod("LineAt")!.Invoke(buffer, new object[] { row })!)
+                    {
+                        promptAccent |= (int)cell.GetType().GetField("Fg")!.GetValue(cell)! == expectedAccent ||
+                            (int)cell.GetType().GetField("Bg")!.GetValue(cell)! == expectedAccent;
+                    }
+                Require(promptAccent, "The visible prompt uses the selected accent color");
+                terminal.UpdateLayout();
+                var completedBitmap = new RenderTargetBitmap(900, 500, 96, 96, PixelFormats.Pbgra32);
+                completedBitmap.Render(terminal);
+                var completedEncoder = new PngBitmapEncoder();
+                completedEncoder.Frames.Add(BitmapFrame.Create(completedBitmap));
+                using (var file = File.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SpeedTestCompleted.png"))) completedEncoder.Save(file);
                 Send("Write-Output ('KEPT-' + $ksTestValue)\r");
                 WaitFor(() => Text().Contains("KEPT-42") && !Busy());
                 Require(Text().Contains("SPEEDTEST-RESULT"), "Returning to shell retains speed-test output and variables");
                 Require(rerunInputs == 1, "Shell Enter is no longer routed to the managed handler");
+                begin = (Task)terminalType.GetMethod("BeginShellManagedSessionAsync")!.Invoke(terminal, new object[] { CancellationToken.None })!;
+                WaitFor(() => begin.IsCompleted);
+                begin.GetAwaiter().GetResult();
+                bool canceled = false;
+                terminalType.GetEvent("ManagedInput")!.AddEventHandler(terminal, (Action<string>)(s => canceled |= s == "\u0003"));
+                Send("\u0003");
+                Require(canceled, "Ctrl+C reaches the running test instead of interrupting its shell");
+                Write("\r\nCANCELED-RESULT\r\n");
+                end = (Task)terminalType.GetMethod("EndShellManagedSessionAsync")!.Invoke(terminal, null)!;
+                WaitFor(() => end.IsCompleted);
+                end.GetAwaiter().GetResult();
+                WaitFor(() => !Busy());
+                Require(Visible().Contains("CANCELED-RESULT"), "A repeated canceled run also leaves visible output and a usable prompt");
                 Send("Write-Output ('RUN' + 'NING'); Start-Sleep -Seconds 30\r");
                 WaitFor(() => Text().Contains("RUNNING"));
                 Require(Busy(), "Running shell command requires confirmation before replacement");

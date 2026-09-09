@@ -9,12 +9,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 1.7.2 runs speed tests with a native engine in the themed terminal.
 
 ### Added
-- Native terminal speed tests with adaptive connections and live results, confirmation before interrupting another task, and a return to the normal prompt when finished.
+- Native terminal speed tests with adaptive connections, colored progress and detailed results that stay visible above the prompt, plus confirmation before interrupting another task.
 - A dedicated KillerScan speed-test server and automated transfer, failure, and server tests.
 
 ### Fixed
-- Removed PowerShell and external executable requirements from speed tests.
+- Removed third-party speed-test downloads; the native engine displays results through the terminal's existing shell.
 - Terminal startup failures now include the Windows error details, and redirected launches keep shell input and output inside the app.
+- Terminal prompts now follow the app's theme accent instead of falling back to red.
 - Reduced device trust markers to small, centered dots.
 
 ## [1.7.1] - 2026-09-08

@@ -62,6 +62,7 @@ namespace KillerScan.Terminal
         {
             if (!_closed && IsManaged)
             {
+                if (_bridge != null) { WriteShellManaged(text); return; }
                 ApplySize();
                 var bytes = Encoding.UTF8.GetBytes(text);
                 _parser.Feed(bytes, bytes.Length);
@@ -115,6 +116,7 @@ namespace KillerScan.Terminal
         public void RefreshTheme()
         {
             _palette = TerminalPalette.For(_palette.Skin);
+            Shell.MainWindow.WritePromptPalette();
             InvalidateVisual();
         }
 
@@ -330,6 +332,7 @@ namespace KillerScan.Terminal
             _blink?.Stop();
             SelectionMouseUp();
             Disposed?.Invoke();
+            _bridge?.Dispose();
             ManagedInput = null;
             Disposed = null;
             var session = _pty;

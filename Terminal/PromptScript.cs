@@ -106,15 +106,9 @@ namespace KillerScan.Shell
         internal static string PromptArgs(string? then = null)
         {
             string tail = string.IsNullOrEmpty(then) ? string.Empty : "; " + then;
-
-            // Set KS_PROMPT=0 to opt out for good. Checked here rather than in the script so
-            // opting out also skips the unpack and the command line stays clean.
-            if (Environment.GetEnvironmentVariable("KS_PROMPT") == "0")
-                return tail.Length == 0 ? " -NoExit" : " -NoExit -Command \"" + then + "\"";
-
-            EnsurePromptScript();
-            if (!File.Exists(PromptScriptPath))
-                return tail.Length == 0 ? " -NoExit" : " -NoExit -Command \"" + then + "\"";
+            bool customPrompt = Environment.GetEnvironmentVariable("KS_PROMPT") != "0";
+            if (customPrompt) EnsurePromptScript();
+            WritePromptPalette();
 
             // Single quotes inside the double-quoted -Command argument, so a path containing a
             // space needs no further escaping. A literal single quote in the path is doubled,
@@ -138,7 +132,28 @@ namespace KillerScan.Shell
                 "{ $q = [string][char]27 + ']9;9;' + $l.ProviderPath + [char]7 + $q }; " +
                 "$q + [string][char]27 + ']133;B' + [char]7 }";
 
-            return " -NoExit -Command \". '" + safe + "'; " + wrap + tail + "\"";
+            string setup = "$env:KS_STATE = '" + PromptPalettePath.Replace("'", "''") + "'; ";
+            if (customPrompt && File.Exists(PromptScriptPath)) setup += ". '" + safe + "'; ";
+            return " -NoExit -Command \"" + setup + wrap + tail + "\"";
+        }
+
+        internal static string PromptPalettePath => Path.Combine(PromptDir, "palette-" +
+            System.Diagnostics.Process.GetCurrentProcess().Id + ".txt");
+
+        internal static void WritePromptPalette()
+        {
+            var palette = Terminal.TerminalPalette.For(Terminal.TerminalSkin.Default);
+            string Hex(System.Windows.Media.Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
+            try
+            {
+                Directory.CreateDirectory(PromptDir);
+                WriteIfDifferent(PromptPalettePath, "ACCENT=" + Hex(palette.Cursor) +
+                    "\nFG=" + Hex(palette.Foreground) + "\nMUTED=" + Hex(palette.Ansi[7]) +
+                    "\nDIM=" + Hex(palette.Ansi[8]) + "\nOK=" + Hex(palette.Ansi[2]) +
+                    "\nWARN=" + Hex(palette.Ansi[3]) + "\n");
+            }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
         }
 
     }
