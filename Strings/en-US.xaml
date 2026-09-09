@@ -454,6 +454,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_KS_Base">Base</sys:String>
     <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
     <sys:String x:Key="Str_Speed_Tagline">Measure download, upload, and latency under load.</sys:String>
+    <sys:String x:Key="Str_Speed_Consent">Test your connection? KillerSpeed downloads and uploads generated data through speed.killerscan.net (up to 6 GiB plus network overhead). Your files are not sent, and downloaded data is not saved or executed. Press Enter to start or Esc to cancel.</sys:String>
     <sys:String x:Key="Str_Speed_NotInstalled">The Ookla speedtest CLI is not installed.</sys:String>
     <sys:String x:Key="Str_Speed_Offer">KillerScan can download it from install.speedtest.net (about 4 MB), or run its own HTTP throughput test instead, which installs nothing.</sys:String>
     <sys:String x:Key="Str_Speed_Prompt">Download the Ookla CLI? (y/N)</sys:String>

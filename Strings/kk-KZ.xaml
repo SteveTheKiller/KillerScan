@@ -454,6 +454,7 @@
     <sys:String x:Key="Str_KS_Base">Негізгі</sys:String>
     <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
     <sys:String x:Key="Str_Speed_Tagline">Жүктеп алу, жүктеп жіберу және жүктеме кезіндегі кідірісті өлшеңіз.</sys:String>
+    <sys:String x:Key="Str_Speed_Consent">Қосылымды тексеру керек пе? KillerSpeed speed.killerscan.net арқылы жасалған деректерді жүктеп алады және жүктеп жібереді (6 GiB дейін және қосымша желілік трафик). Файлдарыңыз жіберілмейді, ал жүктеп алынған деректер сақталмайды және орындалмайды. Бастау үшін Enter, бас тарту үшін Esc пернесін басыңыз.</sys:String>
     <sys:String x:Key="Str_Speed_NotInstalled">Ookla speedtest CLI орнатылмаған.</sys:String>
     <sys:String x:Key="Str_Speed_Offer">KillerScan оны install.speedtest.net сайтынан жүктей алады (шамамен 4 МБ) немесе ештеңе орнатпайтын өз HTTP өткізу қабілеті сынағын орындай алады.</sys:String>
     <sys:String x:Key="Str_Speed_Prompt">Ookla CLI жүктелсін бе? (y/N)</sys:String>

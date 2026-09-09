@@ -412,6 +412,7 @@
     <sys:String x:Key="Str_KS_Base">基本</sys:String>
     <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
     <sys:String x:Key="Str_Speed_Tagline">测量下载、上传及负载下的延迟。</sys:String>
+    <sys:String x:Key="Str_Speed_Consent">要测试您的连接吗？KillerSpeed 通过 speed.killerscan.net 下载和上传生成的数据（最多 6 GiB，另加网络额外流量）。不会发送您的文件，也不会保存或执行下载的数据。按 Enter 开始，或按 Esc 取消。</sys:String>
     <sys:String x:Key="Str_Speed_NotInstalled">尚未安装 Ookla speedtest CLI。</sys:String>
     <sys:String x:Key="Str_Speed_Offer">KillerScan 可以从 install.speedtest.net 下载它（约 4 MB），也可以改为运行自身的 HTTP 吞吐量测试，无需安装任何内容。</sys:String>
     <sys:String x:Key="Str_Speed_Prompt">下载 Ookla CLI？(y/N)</sys:String>

@@ -410,6 +410,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_KS_Base">Základní</sys:String>
     <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
     <sys:String x:Key="Str_Speed_Tagline">Měření stahování, odesílání a latence při zátěži.</sys:String>
+    <sys:String x:Key="Str_Speed_Consent">Otestovat připojení? KillerSpeed stahuje a odesílá generovaná data přes speed.killerscan.net (až 6 GiB plus síťová režie). Vaše soubory se neodesílají a stažená data se neukládají ani nespouštějí. Stiskněte Enter pro spuštění nebo Esc pro zrušení.</sys:String>
     <sys:String x:Key="Str_Speed_NotInstalled">Nástroj Ookla speedtest CLI není nainstalován.</sys:String>
     <sys:String x:Key="Str_Speed_Offer">KillerScan jej může stáhnout z install.speedtest.net (asi 4 MB), nebo spustit vlastní test propustnosti HTTP, který nic neinstaluje.</sys:String>
     <sys:String x:Key="Str_Speed_Prompt">Stáhnout Ookla CLI? (y/N)</sys:String>

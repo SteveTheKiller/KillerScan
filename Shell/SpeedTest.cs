@@ -30,10 +30,6 @@ namespace KillerScan.Shell
                 _terminalControl.Focus();
             }
             var terminal = _speedTestTerminal = _terminalControl!;
-            terminal.ManagedInput += input =>
-            {
-                if (input == "\u001b" || input == "\u0003") _speedTestRun?.Cancel();
-            };
             terminal.Disposed += () =>
             {
                 if (!ReferenceEquals(_speedTestTerminal, terminal)) return;
@@ -57,7 +53,14 @@ namespace KillerScan.Shell
             }
             void Line(string text, int color = 36) => terminal.WriteManaged($"\r\u001b[2K\u001b[{color}m{text}\u001b[0m");
             var presentation = new SpeedTestPresentation(Loc, () => terminal.Buffer.Cols);
-            Status("Str_Speed_Run");
+            Status("Str_Speed_Title");
+            var consent = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            using var consentCancellation = cancellation.Token.Register(() => consent.TrySetCanceled());
+            terminal.ManagedInput += input =>
+            {
+                if (input == "\u001b" || input == "\u0003") cancellation.Cancel();
+                else if (input == "\r" || input == "\n") consent.TrySetResult(true);
+            };
             bool acceptingProgress = true;
             var progress = new Progress<SpeedTestProgress>(p =>
             {
@@ -73,6 +76,10 @@ namespace KillerScan.Shell
                 await terminal.BeginShellManagedSessionAsync(cancellation.Token);
                 var options = new SpeedTestOptions();
                 terminal.WriteManaged(presentation.Header(options.Endpoint));
+                terminal.WriteManaged("\u001b[37m" + Loc("Str_Speed_Consent") + "\u001b[0m\r\n\r\n");
+                await consent.Task;
+                cancellation.Token.ThrowIfCancellationRequested();
+                Status("Str_Speed_Run");
                 var result = await new SpeedTestEngine().RunAsync(options, progress, cancellation.Token);
                 acceptingProgress = false;
                 if (!Current()) return;
