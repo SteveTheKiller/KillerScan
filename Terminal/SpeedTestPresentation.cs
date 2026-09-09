@@ -12,6 +12,16 @@ namespace KillerScan.Terminal
         private string Value(double? value, string unit) => value.HasValue ? value.Value.ToString("N1") + " " + unit : loc("Str_Speed_Unavailable");
         private string Row(string label, string value, int color) =>
             "  \u001b[37m" + label + "  \u001b[1;" + color + "m" + value + Reset + "\r\n";
+        private string TableRow(string label, string value, int color)
+        {
+            int valueWidth = Math.Max(16, value.Length);
+            int labelWidth = Width - valueWidth - 7;
+            if (labelWidth < 8 || label.Length > labelWidth)
+                return Row(label, "", 37) + Row("", value, color);
+            return "\u001b[36m| \u001b[37m" + label.PadRight(labelWidth) +
+                "\u001b[36m | \u001b[1;" + color + "m" + value.PadLeft(valueWidth) +
+                "\u001b[36m |" + Reset + "\r\n";
+        }
 
         public string Header(Uri endpoint) => "\r\n" + Rule + "  \u001b[1;36m" + loc("Str_Speed_Title") + Reset +
             "\r\n  \u001b[90m" + loc("Str_Speed_Tagline") + Reset + "\r\n" + Rule +
@@ -39,16 +49,18 @@ namespace KillerScan.Terminal
         public string Result(SpeedTestResult result)
         {
             var text = new StringBuilder("\r\u001b[2K").Append(Rule);
-            text.Append(Row(loc("Str_Speed_Download"), Value(result.Download.Mbps, "Mbps"), 36));
-            text.Append(Row(loc("Str_Speed_Upload"), Value(result.Upload.Mbps, "Mbps"), 35));
-            text.Append(Row(loc("Str_Speed_Idle"), Value(result.IdleLatencyMs, "ms"), 33));
-            text.Append(Row(loc("Str_Speed_Jitter"), Value(result.JitterMs, "ms"), 33));
+            text.Append(TableRow(loc("Str_Speed_Download"), Value(result.Download.Mbps, "Mbps"), 36));
+            text.Append(TableRow(loc("Str_Speed_Upload"), Value(result.Upload.Mbps, "Mbps"), 35));
+            text.Append(Rule);
+            text.Append(TableRow(loc("Str_Speed_Idle"), Value(result.IdleLatencyMs, "ms"), 33));
+            text.Append(TableRow(loc("Str_Speed_Jitter"), Value(result.JitterMs, "ms"), 33));
             text.Append("\r\n\u001b[37m  " + loc("Str_Speed_Loaded") + Reset + "\r\n");
-            text.Append(Row("  " + loc("Str_Speed_Download"), Value(result.Download.LoadedLatencyMs, "ms"), 36));
-            text.Append(Row("  " + loc("Str_Speed_Upload"), Value(result.Upload.LoadedLatencyMs, "ms"), 35));
-            text.Append(Row(loc("Str_Speed_Streams"), result.Download.StreamCount + " / " + result.Upload.StreamCount, 37));
+            text.Append(TableRow(loc("Str_Speed_Download"), Value(result.Download.LoadedLatencyMs, "ms"), 36));
+            text.Append(TableRow(loc("Str_Speed_Upload"), Value(result.Upload.LoadedLatencyMs, "ms"), 35));
+            text.Append(Rule);
+            text.Append(TableRow(loc("Str_Speed_Streams"), result.Download.StreamCount + " / " + result.Upload.StreamCount, 37));
             double mib = (result.Download.BytesTransferred + result.Download.WarmupBytes + result.Upload.BytesTransferred + result.Upload.WarmupBytes) / 1048576d;
-            text.Append(Row(loc("Str_Speed_Transferred"), mib.ToString("N1") + " MiB", 37));
+            text.Append(TableRow(loc("Str_Speed_Transferred"), mib.ToString("N1") + " MiB", 37));
             bool complete = result.Download.CompletedDuration && result.Upload.CompletedDuration;
             text.Append(Rule).Append("  \u001b[" + (complete ? "32" : "33") + "m" +
                 loc(complete ? "Str_Speed_Completed" : "Str_Speed_Limited") + Reset + "\r\n\r\n");
