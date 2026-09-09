@@ -600,8 +600,8 @@
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <Rectangle Width="3" HorizontalAlignment="Left" VerticalAlignment="Stretch"
-                                                   Margin="0,-2,7,-2" RadiusX="1.5" RadiusY="1.5"
+                                        <Ellipse Width="4" Height="4" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                   Margin="0,0,6,0"
                                                    Fill="{Binding Converter={StaticResource TrustMark}}"
                                                    ToolTip="{DynamicResource Str_TT_TrustMark}"/>
                                         <TextBlock Grid.Column="1" Text="{Binding IpAddress}" VerticalAlignment="Center"/>

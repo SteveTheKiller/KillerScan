@@ -15,6 +15,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Fixed
 - Removed PowerShell and external executable requirements from speed tests.
 - Terminal startup failures now include the Windows error details, and redirected launches keep shell input and output inside the app.
+- Reduced device trust markers to small, centered dots.
 
 ## [1.7.1] - 2026-09-08
 
