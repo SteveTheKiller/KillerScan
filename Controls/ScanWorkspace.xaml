@@ -431,7 +431,9 @@
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE894;"/></MenuItem.Icon>
                             </MenuItem>
                             <MenuItem x:Name="TrustDeviceMenuItem" Header="{DynamicResource Str_Trust_Device}"
-                                      IsCheckable="True" Click="TrustDevice_Click"/>
+                                      Click="TrustDevice_Click">
+                                <MenuItem.Icon><Ellipse x:Name="TrustDeviceDot" Width="10" Height="10"/></MenuItem.Icon>
+                            </MenuItem>
                             <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
                             <MenuItem Header="{DynamicResource Str_Ctx_SetType}" SubmenuOpened="SetTypeMenu_Opened">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8EC;"/></MenuItem.Icon>
