@@ -120,6 +120,12 @@ namespace KillerScan.Services.SpeedTest
             for (int streams = selected; streams <= maximum; streams = Math.Min(maximum, streams * 2))
             {
                 direction.MaximumStreams = streams;
+                // Added connections inherit the learned request size instead of repeating
+                // the small-request ramp during a short connection-count comparison.
+                int learnedPayload = payloadSizes.Max();
+                if (learnedPayload > 0)
+                    for (int i = 0; i < streams; i++)
+                        if (payloadSizes[i] == 0) payloadSizes[i] = learnedPayload;
                 var warmup = await TransferPhaseAsync(upload, true, (warmupBudget - warmupScheduled) / stages,
                     stageDuration, transfers, latency, direction, progress, token, payloadSizes).ConfigureAwait(false);
                 warmupBytes += warmup.BytesTransferred;

@@ -639,18 +639,28 @@ internal static class Program
     {
         using var server = new LoopbackServer(Mode.SlowDownload);
         var options = Options(server);
-        options.MaximumStreams = 1;
-        options.WarmupDuration = TimeSpan.FromMilliseconds(800);
+        options.MaximumStreams = 4;
+        options.WarmupDuration = TimeSpan.FromSeconds(3);
         options.DownloadPayloadBytes = 1024 * 1024;
         options.ByteBudgetPerPhase = 16 * 1024 * 1024;
         int measuredStart = -1;
+        int warmupStages = 0, expandedStart = -1;
         var updates = new CallbackProgress(p =>
         {
+            if (p.Phase == SpeedTestPhase.DownloadWarmup && p.IsPhaseComplete) warmupStages++;
+            if (p.Phase == SpeedTestPhase.DownloadWarmup && !p.IsPhaseComplete &&
+                p.Elapsed == TimeSpan.Zero && warmupStages == 1)
+                expandedStart = server.Requests.Count;
             if (p.Phase == SpeedTestPhase.Download && p.Elapsed == TimeSpan.Zero)
                 measuredStart = server.Requests.Count;
         });
         await new SpeedTestEngine().RunAsync(options, updates, CancellationToken.None);
         Require(measuredStart >= 0, "Measurement started after warmup");
+        Require(expandedStart >= 0, "Expanded connection comparison started");
+        var expandedRequests = server.Requests.Skip(expandedStart)
+            .Where(p => p.StartsWith("/__down?bytes=") && !p.StartsWith("/__down?bytes=0&")).Take(4).ToArray();
+        Require(expandedRequests.Length == 4 && expandedRequests.All(p => !p.StartsWith("/__down?bytes=65536&")),
+            "Added connections inherit the learned payload instead of restarting with 64 KiB requests");
         string request = server.Requests.Skip(measuredStart).First(p => p.StartsWith("/__down?bytes=") && !p.StartsWith("/__down?bytes=0&"));
         Require(!request.StartsWith("/__down?bytes=65536&"), "Measurement must not restart with the initial 64 KiB payload");
     }
@@ -751,7 +761,7 @@ internal static class Program
         private int _requestCount;
         private int _rateResponses;
         public int RateResponses => Volatile.Read(ref _rateResponses);
-        public readonly ConcurrentBag<string> Requests = new ConcurrentBag<string>();
+        public readonly ConcurrentQueue<string> Requests = new ConcurrentQueue<string>();
         public Uri Endpoint { get; }
         public long DownloadBytes => Interlocked.Read(ref _downloadBytes);
         public long UploadBytes => Interlocked.Read(ref _uploadBytes);
@@ -810,7 +820,7 @@ internal static class Program
                         var lines = header.Split(new[] { "\r\n" }, StringSplitOptions.None);
                         var parts = lines[0].Split(' ');
                         string path = parts[1];
-                        Requests.Add(path);
+                        Requests.Enqueue(path);
                         int requestNumber = Interlocked.Increment(ref _requestCount);
                         bool upload = parts[0] == "POST";
                         int requested = 0;

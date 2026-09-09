@@ -15,7 +15,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Fixed
 - Terminal status clears the ping stop hint when the prompt returns and resets to Ready after ten seconds idle.
 - The trusted-device menu uses a larger green or amber dot matching the device row.
-- Speed tests use longer sustained transfers, retain warmup settings, and check all available connection counts before selecting one.
+- Speed tests use longer sustained transfers, share learned request sizes with added connections, and check all available connection counts before selecting one.
 - Completed download results remain visible while the upload test runs.
 - Reduced speed-test server CPU use to prevent large downloads being cut off.
 - Removed third-party speed-test downloads; the native engine displays results through the terminal's existing shell.
