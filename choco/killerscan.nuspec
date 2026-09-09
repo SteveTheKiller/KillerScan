@@ -15,7 +15,7 @@
     <docsUrl>https://github.com/SteveTheKiller/KillerScan/blob/main/README.md</docsUrl>
     <bugTrackerUrl>https://github.com/SteveTheKiller/KillerScan/issues</bugTrackerUrl>
     <tags>network scanner ip arp lan wifi portable</tags>
-    <summary>Network scanner for field techs. No install required, no telemetry.</summary>
+    <summary>Open-source network scanner for Windows with device discovery, port scanning, service identification and live monitoring.</summary>
     <description>Fast local network scanner for Windows, built for field techs. One click maps the subnet - IP, hostname, MAC, vendor, device type, and open ports - with no admin console and no subscription.
 
 - ARP cache + parallel ping sweep discovery; a second ARP pass catches phones and devices that block ICMP
