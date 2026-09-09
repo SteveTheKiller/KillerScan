@@ -62,7 +62,7 @@ namespace KillerScan.Services.SpeedTest
             return result;
         }
 
-        private static HttpClientHandler CreateHandler(int streams) => new HttpClientHandler
+        private static HttpClientHandler CreateHandler(int streams) => new()
         {
             AllowAutoRedirect = false,
             AutomaticDecompression = DecompressionMethods.None,
@@ -119,7 +119,7 @@ namespace KillerScan.Services.SpeedTest
 
         private sealed class Counters
         {
-            private readonly object _gate = new object();
+            private readonly object _gate = new();
             private long _bytes;
             private long _scheduled;
             private bool _ended;
@@ -225,11 +225,11 @@ namespace KillerScan.Services.SpeedTest
                     while (true)
                     {
                         await Task.Delay(100, stop.Token).ConfigureAwait(false);
-                        var snapshot = counters.Snapshot();
+                        var (bytes, _, elapsed) = counters.Snapshot();
                         progress?.Report(new SpeedTestProgress
                         {
-                            Phase = phase, BytesTransferred = snapshot.Bytes, Elapsed = snapshot.Elapsed,
-                            Mbps = warmup ? null : SpeedTestMetrics.MegabitsPerSecond(snapshot.Bytes, snapshot.Elapsed),
+                            Phase = phase, BytesTransferred = bytes, Elapsed = elapsed,
+                            Mbps = warmup ? null : SpeedTestMetrics.MegabitsPerSecond(bytes, elapsed),
                             ActiveStreams = Volatile.Read(ref counters.ActiveStreams)
                         });
                     }
@@ -252,11 +252,11 @@ namespace KillerScan.Services.SpeedTest
                             if (!stop.IsCancellationRequested)
                             {
                                 samples.Add(milliseconds);
-                                var snapshot = counters.Snapshot();
+                                var (bytes, _, elapsed) = counters.Snapshot();
                                 progress?.Report(new SpeedTestProgress
                                 {
-                                    Phase = phase, BytesTransferred = snapshot.Bytes, Elapsed = snapshot.Elapsed,
-                                    Mbps = SpeedTestMetrics.MegabitsPerSecond(snapshot.Bytes, snapshot.Elapsed),
+                                    Phase = phase, BytesTransferred = bytes, Elapsed = elapsed,
+                                    Mbps = SpeedTestMetrics.MegabitsPerSecond(bytes, elapsed),
                                     LatencyMs = milliseconds, ActiveStreams = Volatile.Read(ref counters.ActiveStreams)
                                 });
                             }
@@ -290,17 +290,17 @@ namespace KillerScan.Services.SpeedTest
             }
             token.ThrowIfCancellationRequested();
             if (counters.Failure != null) throw Normalize(counters.Failure);
-            var final = counters.Snapshot();
-            if (!warmup && final.Bytes == 0)
+            var (finalBytes, finalScheduled, finalElapsed) = counters.Snapshot();
+            if (!warmup && finalBytes == 0)
                 throw new SpeedTestException(SpeedTestFailureKind.TransferFailed,
                     upload ? "No upload payload was acknowledged before the measurement ended."
                            : "No download payload was received before the measurement ended.");
             var result = new SpeedTestPhaseResult
             {
-                BytesTransferred = final.Bytes, BytesScheduled = final.Scheduled, Elapsed = final.Elapsed,
-                Mbps = SpeedTestMetrics.MegabitsPerSecond(final.Bytes, final.Elapsed),
-                StreamCount = counters.PeakStreams, ByteBudgetReached = final.Scheduled >= budget,
-                CompletedDuration = final.Elapsed >= duration, LatencySamples = samples.AsReadOnly(),
+                BytesTransferred = finalBytes, BytesScheduled = finalScheduled, Elapsed = finalElapsed,
+                Mbps = SpeedTestMetrics.MegabitsPerSecond(finalBytes, finalElapsed),
+                StreamCount = counters.PeakStreams, ByteBudgetReached = finalScheduled >= budget,
+                CompletedDuration = finalElapsed >= duration, LatencySamples = samples.AsReadOnly(),
                 FailedLatencySamples = failedSamples
             };
             progress?.Report(new SpeedTestProgress
@@ -410,7 +410,7 @@ namespace KillerScan.Services.SpeedTest
                 bool timing = response.Headers.TryGetValues("Server-Timing", out var values) && values.Any(value =>
                     value.Split(',').Any(metric => metric.Trim().StartsWith("cfSpeedWorker;", StringComparison.Ordinal) &&
                         metric.Split(';').Any(part => part.Trim().StartsWith("dur=", StringComparison.Ordinal) &&
-                            double.TryParse(part.Trim().Substring(4), System.Globalization.NumberStyles.Float,
+                            double.TryParse(part.Trim()[4..], System.Globalization.NumberStyles.Float,
                                 System.Globalization.CultureInfo.InvariantCulture, out double duration) && duration >= 0 &&
                             !double.IsInfinity(duration) && !double.IsNaN(duration))));
                 if (body.Length != 0 || !timing || response.Content.Headers.ContentType?.MediaType != "text/plain")

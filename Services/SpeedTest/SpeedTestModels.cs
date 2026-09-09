@@ -20,13 +20,12 @@ namespace KillerScan.Services.SpeedTest
     public enum SpeedTestPhase { IdleLatency, DownloadWarmup, Download, UploadWarmup, Upload, Completed }
     public enum SpeedTestFailureKind { InvalidConfiguration, Timeout, EndpointUnavailable, TlsFailure, HttpError, RateLimited, InvalidResponse, TransferFailed }
 
-    public sealed class SpeedTestException : Exception
+    public sealed class SpeedTestException(SpeedTestFailureKind kind, string message, Exception? innerException = null,
+        int? statusCode = null, TimeSpan? retryAfter = null) : Exception(message, innerException)
     {
-        public SpeedTestFailureKind Kind { get; }
-        public int? StatusCode { get; }
-        public TimeSpan? RetryAfter { get; }
-        public SpeedTestException(SpeedTestFailureKind kind, string message, Exception? innerException = null, int? statusCode = null, TimeSpan? retryAfter = null)
-            : base(message, innerException) { Kind = kind; StatusCode = statusCode; RetryAfter = retryAfter; }
+        public SpeedTestFailureKind Kind { get; } = kind;
+        public int? StatusCode { get; } = statusCode;
+        public TimeSpan? RetryAfter { get; } = retryAfter;
     }
 
     public sealed class SpeedTestProgress
@@ -50,7 +49,7 @@ namespace KillerScan.Services.SpeedTest
         public int StreamCount { get; internal set; }
         public bool ByteBudgetReached { get; internal set; }
         public bool CompletedDuration { get; internal set; }
-        public IReadOnlyList<double> LatencySamples { get; internal set; } = Array.Empty<double>();
+        public IReadOnlyList<double> LatencySamples { get; internal set; } = [];
         public double? LoadedLatencyMs => SpeedTestMetrics.Median(LatencySamples);
         public double? LoadedJitterMs => SpeedTestMetrics.Jitter(LatencySamples);
         public int FailedLatencySamples { get; internal set; }
@@ -63,7 +62,7 @@ namespace KillerScan.Services.SpeedTest
         public TimeSpan Elapsed { get; internal set; }
         public SpeedTestPhaseResult Download { get; internal set; } = null!;
         public SpeedTestPhaseResult Upload { get; internal set; } = null!;
-        public IReadOnlyList<double> IdleLatencySamples { get; internal set; } = Array.Empty<double>();
+        public IReadOnlyList<double> IdleLatencySamples { get; internal set; } = [];
         public double? IdleLatencyMs => SpeedTestMetrics.Median(IdleLatencySamples);
         public double? JitterMs => SpeedTestMetrics.Jitter(IdleLatencySamples);
     }
