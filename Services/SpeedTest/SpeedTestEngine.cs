@@ -35,7 +35,7 @@ namespace KillerScan.Services.SpeedTest
             var idle = new List<double>();
 
             // Establish TLS and the latency connection before collecting idle samples.
-            await LatencyAsync(latency, settings, token).ConfigureAwait(false);
+            await PreflightAsync(latency, settings, token).ConfigureAwait(false);
             for (int i = 0; i < settings.IdleLatencySampleCount; i++)
             {
                 var milliseconds = await LatencyAsync(latency, settings, token).ConfigureAwait(false);
@@ -45,7 +45,7 @@ namespace KillerScan.Services.SpeedTest
                     Phase = SpeedTestPhase.IdleLatency, LatencyMs = milliseconds, Elapsed = clock.Elapsed
                 });
                 if (i + 1 < settings.IdleLatencySampleCount)
-                    await Task.Delay(100, token).ConfigureAwait(false);
+                    await Task.Delay(IsCloudflareEndpoint(settings.Endpoint) ? 250 : 100, token).ConfigureAwait(false);
             }
 
             var download = await DirectionAsync(false, transfers, latency, settings, progress, token).ConfigureAwait(false);
@@ -84,19 +84,23 @@ namespace KillerScan.Services.SpeedTest
                 options.WarmupDuration < TimeSpan.Zero || options.WarmupDuration > TimeSpan.FromSeconds(10) ||
                 options.RequestTimeout < TimeSpan.FromMilliseconds(100) || options.RequestTimeout > TimeSpan.FromSeconds(30) ||
                 options.ByteBudgetPerPhase < 8 || options.ByteBudgetPerPhase > 512L * 1024 * 1024 ||
-                options.DownloadPayloadBytes < 1 || options.DownloadPayloadBytes > 8 * 1024 * 1024 ||
-                options.UploadPayloadBytes < 1 || options.UploadPayloadBytes > 4 * 1024 * 1024 ||
+                options.DownloadPayloadBytes < 1 || options.DownloadPayloadBytes > 250 * 1000 * 1000 ||
+                options.UploadPayloadBytes < 1 || options.UploadPayloadBytes > 50 * 1000 * 1000 ||
                 options.IdleLatencySampleCount < 5 || options.IdleLatencySampleCount > 20)
                 throw new SpeedTestException(SpeedTestFailureKind.InvalidConfiguration,
                     "The speed-test duration, stream count, byte budget, payload, or latency sample count is outside its supported range.");
-            // Snapshot mutable UI options so changing a setting cannot alter a test already running.
+            bool publicService = IsCloudflareEndpoint(options.Endpoint);
+            // Snapshot mutable UI options. Public-service ceilings keep requests larger and
+            // less frequent; the private Worker has smaller protocol payload limits.
             return new SpeedTestOptions
             {
                 Endpoint = new Uri(options.Endpoint.AbsoluteUri.TrimEnd('/') + "/"),
-                MaximumStreams = options.MaximumStreams, PhaseDuration = options.PhaseDuration,
+                MaximumStreams = Math.Min(options.MaximumStreams, publicService ? 2 : 4), PhaseDuration = options.PhaseDuration,
                 WarmupDuration = options.WarmupDuration, RequestTimeout = options.RequestTimeout,
-                ByteBudgetPerPhase = options.ByteBudgetPerPhase, DownloadPayloadBytes = options.DownloadPayloadBytes,
-                UploadPayloadBytes = options.UploadPayloadBytes, IdleLatencySampleCount = options.IdleLatencySampleCount
+                ByteBudgetPerPhase = options.ByteBudgetPerPhase,
+                DownloadPayloadBytes = Math.Min(options.DownloadPayloadBytes, publicService ? 25 * 1000 * 1000 : 8 * 1024 * 1024),
+                UploadPayloadBytes = Math.Min(options.UploadPayloadBytes, publicService ? 10 * 1000 * 1000 : 4 * 1024 * 1024),
+                IdleLatencySampleCount = options.IdleLatencySampleCount
             };
         }
 
@@ -185,7 +189,8 @@ namespace KillerScan.Services.SpeedTest
                         if (upload)
                             using (var random = RandomNumberGenerator.Create()) random.GetBytes(buffer);
                         int maximumPayload = upload ? options.UploadPayloadBytes : options.DownloadPayloadBytes;
-                        int payload = Math.Min(BufferSize, maximumPayload);
+                        bool publicService = IsCloudflareEndpoint(options.Endpoint);
+                        int payload = Math.Min(publicService ? 100000 : BufferSize, maximumPayload);
                         while (!stop.IsCancellationRequested)
                         {
                             int size = counters.Reserve(payload, budget);
@@ -197,7 +202,7 @@ namespace KillerScan.Services.SpeedTest
                                 await DownloadAsync(client, options, size, buffer, counters.Add, stop.Token).ConfigureAwait(false);
                             // Keep acknowledgments frequent on slow links without imposing tiny
                             // HTTP requests on fast links. Configured payload sizes are ceilings.
-                            double next = size * 250d / Math.Max(1, exchange.Elapsed.TotalMilliseconds);
+                            double next = size * (publicService ? 1000d : 250d) / Math.Max(1, exchange.Elapsed.TotalMilliseconds);
                             payload = (int)Math.Min(maximumPayload, Math.Max(Math.Min(16 * 1024, maximumPayload), next));
                         }
                     }
@@ -240,7 +245,7 @@ namespace KillerScan.Services.SpeedTest
                     while (true)
                     {
                         // Wait for the payload workers to put traffic on the connection first.
-                        await Task.Delay(200, stop.Token).ConfigureAwait(false);
+                        await Task.Delay(IsCloudflareEndpoint(options.Endpoint) ? 1000 : 200, stop.Token).ConfigureAwait(false);
                         try
                         {
                             var milliseconds = await LatencyAsync(latencyClient, options, stop.Token).ConfigureAwait(false);
@@ -256,7 +261,16 @@ namespace KillerScan.Services.SpeedTest
                                 });
                             }
                         }
-                        catch (SpeedTestException) when (!stop.IsCancellationRequested) { failedSamples++; }
+                        catch (SpeedTestException ex) when (!stop.IsCancellationRequested)
+                        {
+                            if (ex.Kind == SpeedTestFailureKind.RateLimited)
+                            {
+                                Interlocked.CompareExchange(ref counters.Failure, ex, null);
+                                stop.Cancel();
+                                return;
+                            }
+                            failedSamples++;
+                        }
                     }
                 }
                 catch (OperationCanceledException) when (stop.IsCancellationRequested) { }
@@ -292,7 +306,7 @@ namespace KillerScan.Services.SpeedTest
             progress?.Report(new SpeedTestProgress
             {
                 Phase = phase, BytesTransferred = result.BytesTransferred, Elapsed = result.Elapsed,
-                Mbps = warmup ? null : result.Mbps, LatencyMs = result.LoadedLatencyMs, ActiveStreams = 0
+                Mbps = warmup ? null : result.Mbps, LatencyMs = result.LoadedLatencyMs, ActiveStreams = 0, IsPhaseComplete = true
             });
             return result;
         }
@@ -312,7 +326,8 @@ namespace KillerScan.Services.SpeedTest
         {
             if (response.StatusCode != HttpStatusCode.OK)
                 throw new SpeedTestException((int)response.StatusCode == 429 ? SpeedTestFailureKind.RateLimited : SpeedTestFailureKind.HttpError,
-                    "The speed-test endpoint returned HTTP " + (int)response.StatusCode + ".", statusCode: (int)response.StatusCode);
+                    "The speed-test endpoint returned HTTP " + (int)response.StatusCode + ".",
+                    statusCode: (int)response.StatusCode, retryAfter: ReadRetryAfter(response));
             if (response.Content.Headers.ContentEncoding.Any(encoding => !encoding.Equals("identity", StringComparison.OrdinalIgnoreCase)))
                 throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "The speed-test endpoint compressed the payload.");
             if (response.Headers.Age.HasValue && response.Headers.Age.Value > TimeSpan.Zero)
@@ -389,9 +404,7 @@ namespace KillerScan.Services.SpeedTest
 
             // Cloudflare's public speed-test API acknowledges uploads with an empty 200
             // response and server timing. Other endpoints must provide the exact byte count.
-            bool cloudflare = endpoint.Scheme == Uri.UriSchemeHttps && endpoint.Port == 443 &&
-                endpoint.Host.Equals("speed.cloudflare.com", StringComparison.OrdinalIgnoreCase) && endpoint.AbsolutePath == "/" &&
-                string.IsNullOrEmpty(endpoint.Query) && string.IsNullOrEmpty(endpoint.Fragment) && string.IsNullOrEmpty(endpoint.UserInfo);
+            bool cloudflare = IsCloudflareEndpoint(endpoint);
             if (cloudflare)
             {
                 bool timing = response.Headers.TryGetValues("Server-Timing", out var values) && values.Any(value =>
@@ -417,6 +430,35 @@ namespace KillerScan.Services.SpeedTest
                 {
                     throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "The endpoint returned an invalid upload acknowledgment.", ex);
                 }
+            }
+        }
+
+        private static bool IsCloudflareEndpoint(Uri endpoint) => endpoint.Scheme == Uri.UriSchemeHttps && endpoint.Port == 443 &&
+            endpoint.Host.Equals("speed.cloudflare.com", StringComparison.OrdinalIgnoreCase) && endpoint.AbsolutePath == "/" &&
+            string.IsNullOrEmpty(endpoint.Query) && string.IsNullOrEmpty(endpoint.Fragment) && string.IsNullOrEmpty(endpoint.UserInfo);
+
+        private static TimeSpan? ReadRetryAfter(HttpResponseMessage response)
+        {
+            var retry = response.Headers.RetryAfter;
+            if (retry?.Delta is TimeSpan delay) return delay < TimeSpan.Zero ? TimeSpan.Zero : delay;
+            if (retry?.Date is DateTimeOffset date)
+            {
+                var remaining = date - DateTimeOffset.UtcNow;
+                return remaining < TimeSpan.Zero ? TimeSpan.Zero : remaining;
+            }
+            return null;
+        }
+
+        private static async Task PreflightAsync(HttpClient client, SpeedTestOptions options, CancellationToken token)
+        {
+            try { await LatencyAsync(client, options, token).ConfigureAwait(false); }
+            catch (SpeedTestException ex) when (ex.Kind == SpeedTestFailureKind.RateLimited &&
+                ex.RetryAfter is TimeSpan wait && wait <= TimeSpan.FromSeconds(5))
+            {
+                // Retry once, only before measurements. A longer cooldown or another 429 is
+                // returned to the caller; no retry delays are hidden in throughput results.
+                await Task.Delay(ex.RetryAfter!.Value < TimeSpan.FromSeconds(1) ? TimeSpan.FromSeconds(1) : ex.RetryAfter.Value, token).ConfigureAwait(false);
+                await LatencyAsync(client, options, token).ConfigureAwait(false);
             }
         }
 

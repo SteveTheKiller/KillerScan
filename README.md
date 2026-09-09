@@ -34,7 +34,7 @@ Part of [killertools.net](https://killertools.net).
 - Weighted-score classifier identifies hypervisors, Windows boxes, Linux servers, printers, NAS, network gear, cameras, IoT, mobile, Home Assistant and more; gateway/DNS aware (Router, DNS Server, or Router/DNS - Pi-hole safe)
 - Right-click to copy IP/MAC/hostname, launch RDP/SSH/browser, or override a device type. SSH does not assume your Windows account name: it asks which user to sign in as the first time you reach a device, remembers the answer against that device's MAC, and offers "SSH as..." for connecting as somebody else
 - Export follows the active view: devices as CSV or HTML, the service list as its own CSV in Services, the arranged topology as a transparent PNG, a flattened JPG or an HTML page carrying real SVG, the Keep Alive run as CSV, a page or a picture, and the terminal session as text
-- A native speed test (F4 or the icon rail) shows download speed, upload speed, and latency in one compact view. Click Start to test against Cloudflare automatically, Stop or Esc to cancel, and Copy results when finished.
+- A native speed test (F4 or the icon rail) runs in the existing themed terminal, with live download, upload, and latency results. Esc or Ctrl+C cancels; Enter runs another test when finished. Use the terminal's copy commands to copy the results.
 - Device diagnostics (F3 or the device menu) checks reverse and forward DNS, ICMP replies, the local route, and common or previously discovered TCP ports. Results can be copied for ticket notes. A missing ping reply does not mean the device is offline.
 - Headless command line for scripts and RMM work: scan one or several targets, deep-probe one host, inspect the active network, or look up a MAC vendor. Filter by text, type, vendor, or ports; sort and limit results; set progress and timeout behavior; and emit table, CSV, JSON, or themed HTML to the console or a file. No window opens, it runs while the app is open, and it returns distinct exit codes for success, failure, bad usage, and empty results
 - Keyboard shortcuts, on F1, which switches between a grouped shortcut list in two colored columns and a persistent keyboard map that paints each key in its category color: F5 scan/stop, Esc cancel, Ctrl+R deep rescan the selection, Ctrl+F subnet box, Ctrl+A select all, Ctrl+E export, F6 Devices, F7 Services, F8 Topology, F9 Keep Alive, F10 Terminal, F3 diagnostics, F4 speed test, Ctrl+H history, Ctrl+Shift+P profiles, Ctrl+G topology arrangement, F12 About, and single-key device actions (ping, RDP, SSH, browser, copy IP/MAC/hostname)
@@ -87,7 +87,7 @@ Requires the .NET 8 SDK or later to build (even though the output targets .NET F
 
 ## Speed-test development
 
-The engine uses four concurrent HTTP transfers after a two-second warmup in each direction, then measures for eight seconds. A 512 MiB payload budget per direction includes warmup and can shorten a fast test. The view reports that limit explicitly. Final throughput uses measured payload bytes divided by monotonic elapsed time, excluding warmup. Upload counts only completed transfers accepted by the server, so unfinished uploads are conservatively omitted.
+The public-service profile uses two concurrent HTTP transfers after a two-second warmup in each direction, then measures for eight seconds. Larger adaptive requests and less frequent latency probes reduce request traffic. A 512 MiB payload budget per direction includes warmup and can shorten a fast test; the terminal reports that limit. Final throughput uses measured payload bytes divided by monotonic elapsed time, excluding warmup. Upload counts only completed transfers accepted by the server, so unfinished uploads are conservatively omitted. Server rate limits can still stop a test; measured transfers are not retried inside the timing window.
 
 Latency is HTTP round-trip time to the selected endpoint, including server processing. Idle latency is the median of five samples after an unmeasured connection warmup. Jitter is the mean absolute difference between consecutive samples. Loaded latency is sampled on a separate connection during each measured phase. These measurements describe that route and server, and do not claim packet loss or universal ISP capacity.
 
@@ -101,7 +101,7 @@ dotnet build tests/SpeedTest.Tests/SpeedTest.Tests.csproj -c Release
 node --test server/speedtest/worker.test.mjs
 ```
 
-The release script also adds `--internet` to verify the default Cloudflare service before publishing or signing. That check transfers up to 128 MiB in each direction. The normal checks above stay on loopback; passing them alone does not verify the public service.
+The release script also adds `--internet` to verify the default Cloudflare service before publishing or signing. That check uses the app's full budget of up to 512 MiB in each direction. The normal checks above stay on loopback; passing them alone does not verify the public service. The latest full public-service check returned HTTP 429, so endpoint reliability remains a release blocker.
 
 ## Translations
 

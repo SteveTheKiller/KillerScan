@@ -447,4 +447,5 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Testovací server vrátil neplatnou odpověď.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Přenos selhal. Zkontrolujte připojení a zkuste to znovu.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Výsledky nelze zkopírovat. Zkuste to znovu.</sys:String>
+    <sys:String x:Key="Str_Speed_Retry">Pro opakování stiskněte Enter.</sys:String>
 </ResourceDictionary>

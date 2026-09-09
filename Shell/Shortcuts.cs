@@ -110,11 +110,16 @@ namespace KillerScan.Shell
             {
                 if (ShortcutsOverlay.Visibility == Visibility.Visible) { HideShortcuts(); e.Handled = true; return; }
                 if (AboutOverlay.Visibility == Visibility.Visible) { AboutClose_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
-                if (_workspaceView == "speedtest" && _speedTestView?.IsRunning == true)
+                if (_workspaceView == "terminal" && _speedTestRun != null)
                 {
-                    _speedTestView.Cancel(); e.Handled = true; return;
+                    _speedTestRun.Cancel(); e.Handled = true; return;
                 }
                 if (InterruptTerminalPing()) { e.Handled = true; return; }
+            }
+            if (modifiers == ModifierKeys.None && Keyboard.FocusedElement is KillerScan.Terminal.TerminalControl)
+            {
+                if (e.Key == Key.F4) { SpeedTestButton_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
+                if (e.Key == Key.F10) { NewTerminal(); e.Handled = true; return; }
             }
             if (Keyboard.FocusedElement is KillerScan.Terminal.TerminalControl) return;
             if (modifiers == ModifierKeys.None)

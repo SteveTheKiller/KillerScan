@@ -71,8 +71,6 @@ namespace KillerScan.Shell
         private void UpdateWorkspaceRail()
         {
             UpdateWorkspaceNavigation();
-            if (_scanWorkspace?.FindName("ExportButton") is Button export)
-                export.Visibility = _workspaceView == "speedtest" ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void ServicesButton_Click(object sender, RoutedEventArgs e)

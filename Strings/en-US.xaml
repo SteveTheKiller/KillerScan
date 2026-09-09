@@ -491,4 +491,5 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">The test server returned an invalid response.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">The transfer failed. Check your connection and try again.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Could not copy the results. Try again.</sys:String>
+    <sys:String x:Key="Str_Speed_Retry">Press Enter to run again.</sys:String>
 </ResourceDictionary>

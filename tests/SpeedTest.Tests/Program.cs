@@ -32,6 +32,7 @@ internal static class Program
             Require(args.All(value => value == "--worker" || value == "--internet"), "Usage: SpeedTest.Tests.exe [--worker] [--internet]");
             await Run("Metric units, median, jitter and unavailable values", Metrics);
             await Run("Cloudflare upload response is accepted only for the exact official endpoint", CloudflareAcknowledgment);
+            await Run("Public endpoint profile reduces request pressure without shortening the test", PublicProfile);
             await Run("HTTPS configuration required without contacting a remote host", InvalidEndpoint);
             await Run("Real transfers, exact acknowledgments and per-direction byte budgets", Budget);
             await Run("Sustained timed download with loaded latency and cancellation of pending reads", Duration);
@@ -40,6 +41,12 @@ internal static class Program
             await Run("Short declared download rejected", () => Reject(Mode.ShortDownload, SpeedTestFailureKind.InvalidResponse));
             await Run("Compressed download rejected", () => Reject(Mode.Compressed, SpeedTestFailureKind.InvalidResponse));
             await Run("HTTP 429 classified as rate limited", () => Reject(Mode.RateLimited, SpeedTestFailureKind.RateLimited));
+            await Run("Retry-After is honored once before measurement", PreflightRetry);
+            await Run("Repeated preflight rate limit stops after one retry", () => RateRetry(Mode.RepeatedRetry, 2));
+            await Run("Long Retry-After is surfaced without automatic retry", () => RateRetry(Mode.LongRetry, 1));
+            await Run("Preflight retry wait is cancellable", CancelRetry);
+            await Run("Measured rate limit never retries or waits inside throughput timing", MeasurementRateLimit);
+            await Run("Loaded-latency rate limit stops payload traffic", () => Reject(Mode.LoadedRate, SpeedTestFailureKind.RateLimited));
             await Run("HTTP 503 classified as HTTP error", () => Reject(Mode.Unavailable, SpeedTestFailureKind.HttpError));
             await Run("Stalled response bounded by request timeout", Timeout);
             await Run("No measured download bytes is a failure, not completion", () => Reject(Mode.NoPayload, SpeedTestFailureKind.TransferFailed));
@@ -50,7 +57,7 @@ internal static class Program
                 await Run("Compiled engine exchanges exact payloads with the real Worker", Worker);
             if (args.Contains("--internet"))
                 await Run("Live default Cloudflare endpoint completes native measurements", Internet);
-            await Run("WPF speed-test view constructs and renders without a visible window", View);
+            await Run("Themed terminal renders managed output and routes cancel, rerun and disposal", View);
             Console.WriteLine("PASS: " + _passed + " speed-test regression checks.");
             return 0;
         }
@@ -71,6 +78,75 @@ internal static class Program
     private static void Require(bool condition, string message)
     {
         if (!condition) throw new InvalidOperationException(message);
+    }
+
+    private static Task PublicProfile()
+    {
+        var snapshot = typeof(SpeedTestEngine).GetMethod("ValidateAndCopy", BindingFlags.Static | BindingFlags.NonPublic)!;
+        var profile = (SpeedTestOptions)snapshot.Invoke(null, new object[] { new SpeedTestOptions { MaximumStreams = 4 } })!;
+        Require(profile.MaximumStreams == 2, "Public service uses at most two payload streams");
+        Require(profile.PhaseDuration == TimeSpan.FromSeconds(8) && profile.ByteBudgetPerPhase == 512L * 1024 * 1024,
+            "Public service retains sustained duration and byte ceiling");
+        Require(profile.DownloadPayloadBytes == 25000000 && profile.UploadPayloadBytes == 10000000,
+            "Public payloads use documented Cloudflare measurement sizes");
+        return Task.CompletedTask;
+    }
+
+    private static async Task PreflightRetry()
+    {
+        using var server = new LoopbackServer(Mode.FirstRetry);
+        var clock = Stopwatch.StartNew();
+        var result = await new SpeedTestEngine().RunAsync(Options(server), null, CancellationToken.None);
+        Require(clock.Elapsed >= TimeSpan.FromSeconds(1), "Preflight honored Retry-After");
+        Require(result.Download.Mbps > 0 && result.Upload.Mbps > 0, "Retry was outside valid throughput phases");
+        Require(server.RateResponses == 1, "Only first preflight response was rate limited");
+    }
+
+    private static async Task RateRetry(Mode mode, int expectedRequests)
+    {
+        using var server = new LoopbackServer(mode);
+        try
+        {
+            await new SpeedTestEngine().RunAsync(Options(server), null, CancellationToken.None);
+            throw new InvalidOperationException("Rate-limited preflight returned success");
+        }
+        catch (SpeedTestException ex)
+        {
+            Require(ex.Kind == SpeedTestFailureKind.RateLimited && ex.RetryAfter == TimeSpan.FromSeconds(mode == Mode.LongRetry ? 30 : 1),
+                "Rate limit retains server cooldown");
+            Require(server.Requests.Count == expectedRequests, "Retry count remains bounded");
+        }
+    }
+
+    private static async Task CancelRetry()
+    {
+        using var server = new LoopbackServer(Mode.RepeatedRetry);
+        using var cancel = new CancellationTokenSource(TimeSpan.FromMilliseconds(150));
+        try
+        {
+            await new SpeedTestEngine().RunAsync(Options(server), null, cancel.Token);
+            throw new InvalidOperationException("Canceled preflight returned success");
+        }
+        catch (OperationCanceledException) { Require(server.Requests.Count == 1, "Cancellation prevents retry request"); }
+    }
+
+    private static async Task MeasurementRateLimit()
+    {
+        using var server = new LoopbackServer(Mode.MeasuredRate);
+        var options = Options(server);
+        options.WarmupDuration = TimeSpan.Zero;
+        options.MaximumStreams = 1;
+        var clock = Stopwatch.StartNew();
+        try
+        {
+            await new SpeedTestEngine().RunAsync(options, null, CancellationToken.None);
+            throw new InvalidOperationException("Rate-limited transfer returned success");
+        }
+        catch (SpeedTestException ex)
+        {
+            Require(ex.Kind == SpeedTestFailureKind.RateLimited && ex.RetryAfter == TimeSpan.FromSeconds(1), "Measured cooldown retained");
+            Require(server.RateResponses == 1 && clock.Elapsed < TimeSpan.FromSeconds(1.4), "Measured rate limit is not retried or delayed");
+        }
     }
 
     private static Task CloudflareAcknowledgment()
@@ -103,7 +179,7 @@ internal static class Program
 
     private static async Task Internet()
     {
-        var options = new SpeedTestOptions { ByteBudgetPerPhase = 128L * 1024 * 1024 };
+        var options = new SpeedTestOptions();
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(40));
         var result = await new SpeedTestEngine().RunAsync(options, null, deadline.Token);
         _internetResult = result;
@@ -221,39 +297,60 @@ internal static class Program
                 loadTheme.Invoke(null, new[] { Enum.Parse(theme, "Black"), Enum.Parse(accent, "Orange") });
                 Require(app.TryFindResource("TextBrush") is Brush && app.TryFindResource("PrimaryBrush") is Brush,
                     "Text and accent theme brushes resolve");
-                using var view = new KillerScan.Controls.SpeedTestView();
-                view.Measure(new Size(900, 500));
-                view.Arrange(new Rect(0, 0, 900, 500));
-                view.UpdateLayout();
-                Require(view.FindName("ContentPanel") is FrameworkElement panel && panel.DesiredSize.Height <= 320,
-                    "Compact speed-test content stays within 320 pixels");
-                Require(!Descendants(view).Any(element => element is ScrollViewer || element is TextBox),
-                    "Speed-test view has no server input or scrolling surface");
+                var terminalType = assembly.GetType("KillerScan.Terminal.TerminalControl", true)!;
+                var terminal = (FrameworkElement)Activator.CreateInstance(terminalType)!;
+                using var terminalLifetime = (IDisposable)terminal;
+                using var cancellation = new CancellationTokenSource();
+                int cancelInputs = 0, rerunInputs = 0, disposed = 0;
+                Action<string> onInput = input =>
+                {
+                    if (input == "\u001b" || input == "\u0003") { cancelInputs++; cancellation.Cancel(); }
+                    if (input == "\r") rerunInputs++;
+                };
+                terminalType.GetEvent("ManagedInput")!.AddEventHandler(terminal, onInput);
+                terminalType.GetEvent("Disposed")!.AddEventHandler(terminal, (Action)(() => { disposed++; cancellation.Cancel(); }));
+                terminal.Measure(new Size(900, 500));
+                terminal.Arrange(new Rect(0, 0, 900, 500));
+                terminalType.GetMethod("BeginManagedSession")!.Invoke(terminal, null);
+                Require((bool)terminalType.GetProperty("IsManaged")!.GetValue(terminal)!, "Terminal accepts managed output");
+                Require(terminalType.GetField("_pty", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(terminal) == null,
+                    "Managed terminal starts no external process");
+                void Write(string text) => terminalType.GetMethod("WriteManaged")!.Invoke(terminal, new object[] { text });
+                string Text() => (string)terminalType.GetMethod("GetText")!.Invoke(terminal, null)!;
+                Write("\u001b[32mDownload: 999 Mbps\u001b[0m");
+                Write("\r\u001b[2KDownload: 42.5 Mbps\r\n");
+                Require(Text().Contains("Download: 42.5 Mbps") && !Text().Contains("999") && !Text().Contains("\u001b"),
+                    "ANSI overwrite produces clean current copy text");
+                foreach (string input in new[] { "\u001b", "\u0003", "\r" })
+                    terminalType.GetMethod("Send")!.Invoke(terminal, new object[] { input });
+                Require(cancelInputs == 2 && rerunInputs == 1 && cancellation.IsCancellationRequested,
+                    "Managed terminal forwards cancel and rerun inputs");
+
+                Write("\u001b[2J\u001b[H\u001b[1;36mKillerScan speed test\u001b[0m\r\n\r\n");
                 if (_internetResult != null)
                 {
-                    typeof(KillerScan.Controls.SpeedTestView).GetField("_result", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(view, _internetResult);
-                    typeof(KillerScan.Controls.SpeedTestView).GetMethod("ShowResult", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(view, new object[] { _internetResult });
-                    var completion = typeof(KillerScan.Controls.SpeedTestView).GetMethod("CompletionKey", BindingFlags.Static | BindingFlags.NonPublic)!
-                        .Invoke(null, new object[] { _internetResult });
-                    typeof(KillerScan.Controls.SpeedTestView).GetMethod("SetStatus", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(view, new[] { completion });
-                    ((Button)view.FindName("CopyButton")).Visibility = Visibility.Visible;
-                    ((ProgressBar)view.FindName("TestProgress")).Value = 100;
-                    view.UpdateLayout();
+                    Write(string.Format(CultureInfo.InvariantCulture,
+                        "\u001b[32mDownload: {0:F1} Mbps\r\nUpload: {1:F1} Mbps\u001b[0m\r\nLatency: {2:F1} ms\r\n\r\n",
+                        _internetResult.Download.Mbps, _internetResult.Upload.Mbps, _internetResult.IdleLatencyMs));
+                    Write((_internetResult.Download.CompletedDuration && _internetResult.Upload.CompletedDuration
+                        ? "Test complete." : "Data limit reached; measurement duration was shortened.") + "\r\n");
                 }
+                else Write("Ready to test.\r\n");
+                Write("\u001b[90mEnter: test again. Escape or Ctrl+C: cancel.\u001b[0m\r\n");
+                terminal.UpdateLayout();
                 var bitmap = new RenderTargetBitmap(900, 500, 96, 96, PixelFormats.Pbgra32);
-                bitmap.Render(view);
-                var imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SpeedTestView.png");
+                bitmap.Render(terminal);
+                var imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SpeedTestTerminal.png");
                 var encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bitmap));
                 using (var file = File.Create(imagePath)) encoder.Save(file);
-                Console.WriteLine("Offscreen view: " + imagePath);
-                Require(!view.IsRunning, "Constructing the view never starts network traffic");
-                Require(!view.StatusText.StartsWith("Str_", StringComparison.Ordinal), "Status localization resolves");
-                Require(view.FindName("StartButton") is Button button && button.Style != null, "Themed start control resolves");
-                Require(view.FindName("StopButton") is Button stop && stop.Foreground != null && stop.BorderBrush != null,
-                    "Disabled stop control resolves foreground and border");
-                Require(view.FindName("CopyButton") is Button copy && copy.Foreground != null && copy.BorderBrush != null,
-                    "Disabled copy control resolves foreground and border");
+                Console.WriteLine("Offscreen terminal: " + imagePath);
+                terminalLifetime.Dispose();
+                terminalLifetime.Dispose();
+                Require(disposed == 1, "Disposal notification fires once");
+                string closedText = Text();
+                Write("must not appear");
+                Require(Text() == closedText, "Disposed terminal ignores later progress");
             }
             catch (Exception ex) { failure = ex; }
         });
@@ -334,7 +431,8 @@ internal static class Program
     {
         using var server = new LoopbackServer(Mode.Normal);
         var options = Options(server);
-        var result = await new SpeedTestEngine().RunAsync(options, null, CancellationToken.None);
+        var updates = new ConcurrentQueue<SpeedTestProgress>();
+        var result = await new SpeedTestEngine().RunAsync(options, new CallbackProgress(updates.Enqueue), CancellationToken.None);
         Require(result.IdleLatencySamples.Count == 5 && result.IdleLatencyMs.HasValue && result.JitterMs.HasValue, "Repeated idle latency");
         foreach (var phase in new[] { result.Download, result.Upload })
         {
@@ -350,6 +448,12 @@ internal static class Program
         Require(server.DownloadBytes <= options.ByteBudgetPerPhase, "Server download byte bound");
         Require(server.UploadBytes <= options.ByteBudgetPerPhase, "Server upload byte bound");
         Require(server.Requests.All(path => path.Contains("r=")), "Every request bypasses cache by unique URL");
+        var completed = updates.Where(update => update.IsPhaseComplete).ToArray();
+        Require(completed.Length == 4 && completed.Select(update => update.Phase).Distinct().Count() == 4,
+            "Exactly one explicit completion update is emitted for each transfer phase");
+        Require(completed.Single(update => update.Phase == SpeedTestPhase.Download).BytesTransferred == result.Download.BytesTransferred &&
+            completed.Single(update => update.Phase == SpeedTestPhase.Upload).BytesTransferred == result.Upload.BytesTransferred,
+            "Phase completion updates carry final measured counts");
     }
 
     private static async Task Duration()
@@ -368,9 +472,15 @@ internal static class Program
     private static async Task Reject(Mode mode, SpeedTestFailureKind expected)
     {
         using var server = new LoopbackServer(mode);
+        var options = Options(server);
+        if (mode == Mode.LoadedRate)
+        {
+            options.ByteBudgetPerPhase = 16 * 1024 * 1024;
+            options.PhaseDuration = TimeSpan.FromMilliseconds(650);
+        }
         try
         {
-            await new SpeedTestEngine().RunAsync(Options(server), null, CancellationToken.None);
+            await new SpeedTestEngine().RunAsync(options, null, CancellationToken.None);
             throw new InvalidOperationException("Invalid endpoint response was accepted: " + mode);
         }
         catch (SpeedTestException ex) { Require(ex.Kind == expected, mode + " returned " + ex.Kind + " instead of " + expected); }
@@ -426,7 +536,8 @@ internal static class Program
         }
     }
 
-    private enum Mode { Normal, SlowDownload, WrongAck, StringAck, ShortDownload, Compressed, RateLimited, Unavailable, Stall, NoPayload, NoAck }
+    private enum Mode { Normal, SlowDownload, WrongAck, StringAck, ShortDownload, Compressed, RateLimited, Unavailable, Stall, NoPayload, NoAck,
+        FirstRetry, RepeatedRetry, LongRetry, MeasuredRate, LoadedRate }
 
     private sealed class LoopbackServer : IDisposable
     {
@@ -437,6 +548,9 @@ internal static class Program
         private readonly Task _accept;
         private long _downloadBytes;
         private long _uploadBytes;
+        private int _requestCount;
+        private int _rateResponses;
+        public int RateResponses => Volatile.Read(ref _rateResponses);
         public readonly ConcurrentBag<string> Requests = new ConcurrentBag<string>();
         public Uri Endpoint { get; }
         public long DownloadBytes => Interlocked.Read(ref _downloadBytes);
@@ -497,11 +611,22 @@ internal static class Program
                         var parts = lines[0].Split(' ');
                         string path = parts[1];
                         Requests.Add(path);
+                        int requestNumber = Interlocked.Increment(ref _requestCount);
                         bool upload = parts[0] == "POST";
                         int requested = 0;
                         foreach (string item in path.Substring(path.IndexOf('?') + 1).Split('&'))
                             if (item.StartsWith("bytes=", StringComparison.Ordinal)) requested = int.Parse(item.Substring(6), CultureInfo.InvariantCulture);
                         if (_mode == Mode.Stall) { await Task.Delay(3000, _stop.Token); return; }
+                        bool retry = _mode == Mode.RepeatedRetry || _mode == Mode.LongRetry ||
+                            (_mode == Mode.FirstRetry && requestNumber == 1) ||
+                            (_mode == Mode.MeasuredRate && requested > 0) ||
+                            (_mode == Mode.LoadedRate && requested == 0 && requestNumber > 6);
+                        if (retry)
+                        {
+                            Interlocked.Increment(ref _rateResponses);
+                            await WriteHeader(stream, "429 Too Many Requests", 0, "Retry-After: " + (_mode == Mode.LongRetry ? "30" : "1") + "\r\n");
+                            continue;
+                        }
                         if (_mode == Mode.RateLimited || _mode == Mode.Unavailable)
                         {
                             await WriteHeader(stream, _mode == Mode.RateLimited ? "429 Too Many Requests" : "503 Service Unavailable", 0);
@@ -532,7 +657,7 @@ internal static class Program
                             if (_mode == Mode.NoPayload && length > 0) { await Task.Delay(3000, _stop.Token); return; }
                             while (length > 0)
                             {
-                                if (_mode == Mode.SlowDownload) await Task.Delay(20, _stop.Token);
+                                if (_mode == Mode.SlowDownload || _mode == Mode.LoadedRate) await Task.Delay(20, _stop.Token);
                                 int size = Math.Min(buffer.Length, length);
                                 await stream.WriteAsync(buffer, 0, size, _stop.Token);
                                 Interlocked.Add(ref _downloadBytes, size);

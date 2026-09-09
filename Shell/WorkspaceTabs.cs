@@ -307,6 +307,14 @@ namespace KillerScan.Shell
             menu.IsOpen = true;
         }
 
-        private void NewTerminalView() => NewTerminal();
+        private void NewTerminalView()
+        {
+            if (_terminalControl?.IsManaged == true)
+            {
+                ShowWorkspaceContent(_terminalControl, "terminal");
+                _terminalControl.Focus();
+            }
+            else NewTerminal();
+        }
     }
 }

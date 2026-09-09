@@ -449,4 +449,5 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Test sunucusu geçersiz yanıt döndürdü.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Aktarım başarısız. Bağlantınızı kontrol edip tekrar deneyin.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Sonuçlar kopyalanamadı. Tekrar deneyin.</sys:String>
+    <sys:String x:Key="Str_Speed_Retry">Yeniden çalıştırmak için Enter'a basın.</sys:String>
 </ResourceDictionary>

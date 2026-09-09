@@ -44,6 +44,21 @@ namespace KillerScan.Terminal
 
         public event Action<int>? Exited;
         public event Action<Exception>? StartFailed;
+        public event Action<string>? ManagedInput;
+        public event Action? Disposed;
+        public bool IsManaged { get; private set; }
+
+        public void BeginManagedSession()
+        {
+            if (_closed || _pty != null) throw new InvalidOperationException();
+            IsManaged = true;
+            _cursorOn = false;
+        }
+
+        public void WriteManaged(string text)
+        {
+            if (!_closed && IsManaged) ShowScript(text);
+        }
 
         public TerminalBuffer Buffer => _buf;
 
@@ -266,6 +281,8 @@ namespace KillerScan.Terminal
 
         public void Send(string s)
         {
+            if (_closed) return;
+            if (IsManaged) { ManagedInput?.Invoke(s); return; }
             if (_pty == null || _pty.HasExited || string.IsNullOrEmpty(s)) return;
             try
             {
@@ -291,6 +308,9 @@ namespace KillerScan.Terminal
             _pump?.Stop();
             _blink?.Stop();
             SelectionMouseUp();
+            Disposed?.Invoke();
+            ManagedInput = null;
+            Disposed = null;
             var session = _pty;
             _pty = null;
             // Closing a pseudoconsole can block until its output is drained.

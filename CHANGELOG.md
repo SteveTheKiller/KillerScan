@@ -6,10 +6,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.7.2] - Unreleased
 
-1.7.2 replaces the terminal speed test with a native engine and test view.
+1.7.2 runs speed tests with a native engine in the themed terminal.
 
 ### Added
-- One-click speed tests with download, upload, and latency results, cancellation, and copying in a compact view.
+- Native terminal speed tests with live download, upload, and latency results, cancellation, and copying.
 - A Cloudflare test endpoint implementation and automated transfer, failure, and server tests.
 
 ### Fixed

@@ -9,11 +9,11 @@ namespace KillerScan.Services.SpeedTest
         public Uri Endpoint { get; set; } = new Uri("https://speed.cloudflare.com/");
         public TimeSpan PhaseDuration { get; set; } = TimeSpan.FromSeconds(8);
         public TimeSpan WarmupDuration { get; set; } = TimeSpan.FromSeconds(2);
-        public int MaximumStreams { get; set; } = 4;
+        public int MaximumStreams { get; set; } = 2;
         public long ByteBudgetPerPhase { get; set; } = 512L * 1024 * 1024;
         public TimeSpan RequestTimeout { get; set; } = TimeSpan.FromSeconds(5);
-        public int DownloadPayloadBytes { get; set; } = 8 * 1024 * 1024;
-        public int UploadPayloadBytes { get; set; } = 4 * 1024 * 1024;
+        public int DownloadPayloadBytes { get; set; } = 25 * 1000 * 1000;
+        public int UploadPayloadBytes { get; set; } = 10 * 1000 * 1000;
         public int IdleLatencySampleCount { get; set; } = 5;
     }
 
@@ -24,8 +24,9 @@ namespace KillerScan.Services.SpeedTest
     {
         public SpeedTestFailureKind Kind { get; }
         public int? StatusCode { get; }
-        public SpeedTestException(SpeedTestFailureKind kind, string message, Exception? innerException = null, int? statusCode = null)
-            : base(message, innerException) { Kind = kind; StatusCode = statusCode; }
+        public TimeSpan? RetryAfter { get; }
+        public SpeedTestException(SpeedTestFailureKind kind, string message, Exception? innerException = null, int? statusCode = null, TimeSpan? retryAfter = null)
+            : base(message, innerException) { Kind = kind; StatusCode = statusCode; RetryAfter = retryAfter; }
     }
 
     public sealed class SpeedTestProgress
@@ -36,6 +37,7 @@ namespace KillerScan.Services.SpeedTest
         public TimeSpan Elapsed { get; internal set; }
         public double? LatencyMs { get; internal set; }
         public int ActiveStreams { get; internal set; }
+        public bool IsPhaseComplete { get; internal set; }
     }
 
     public sealed class SpeedTestPhaseResult

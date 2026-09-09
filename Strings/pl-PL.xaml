@@ -434,4 +434,5 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Serwer testowy zwrócił nieprawidłową odpowiedź.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Transfer nie powiódł się. Sprawdź połączenie i spróbuj ponownie.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Nie udało się skopiować wyników. Spróbuj ponownie.</sys:String>
+    <sys:String x:Key="Str_Speed_Retry">Naciśnij Enter, aby powtórzyć.</sys:String>
 </ResourceDictionary>

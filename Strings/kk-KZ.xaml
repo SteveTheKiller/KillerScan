@@ -491,4 +491,5 @@
     <sys:String x:Key="Str_Speed_BadResponse">Сынақ сервері жарамсыз жауап қайтарды.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Тасымалдау сәтсіз аяқталды. Қосылымды тексеріп, қайталап көріңіз.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Нәтижелерді көшіру мүмкін болмады. Қайталап көріңіз.</sys:String>
+    <sys:String x:Key="Str_Speed_Retry">Қайта іске қосу үшін Enter басыңыз.</sys:String>
 </ResourceDictionary>

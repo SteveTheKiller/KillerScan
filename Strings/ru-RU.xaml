@@ -475,4 +475,5 @@
     <sys:String x:Key="Str_Speed_BadResponse">Тестовый сервер вернул недопустимый ответ.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Передача не удалась. Проверьте соединение и повторите попытку.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Не удалось скопировать результаты. Попробуйте ещё раз.</sys:String>
+    <sys:String x:Key="Str_Speed_Retry">Нажмите Enter, чтобы повторить.</sys:String>
 </ResourceDictionary>

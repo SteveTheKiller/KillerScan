@@ -29,10 +29,10 @@ namespace KillerScan.Shell
         private static string DemoTerminalTranscript() =>
             Services.DemoData.Current is { } scan ? Services.DemoData.TerminalTranscript(scan) : string.Empty;
 
-        private void NewTerminal(string? command = null, string? title = null, string? shellCommand = null)
+        private void NewTerminal(string? command = null, string? title = null, string? shellCommand = null, bool managed = false)
         {
             if (_terminalPanelDisposed) return;
-            if (_terminalControl == null || command != null || shellCommand != null || _terminalExited)
+            if (_terminalControl == null || command != null || shellCommand != null || _terminalExited || managed || _terminalControl.IsManaged)
             {
                 if (_terminalControl != null)
                 {
@@ -65,6 +65,13 @@ namespace KillerScan.Shell
                 };
                 terminal.LayoutTransform = new ScaleTransform(_appScale, _appScale);
                 ShowWorkspaceContent(terminal, "terminal");
+                if (managed)
+                {
+                    terminal.BeginManagedSession();
+                    terminal.Focus();
+                    UpdateTerminalPanelStatus();
+                    return;
+                }
                 // Demo mode paints a scripted session instead of starting a shell, so a screenshot
                 // never carries the real machine's name, paths, or history.
                 if (Services.DemoData.Enabled)
@@ -146,7 +153,7 @@ namespace KillerScan.Shell
                 : string.Format(Loc(_terminalStatusKey), _terminalStatusArgument);
             // A continuous ping never ends on its own, so the way out belongs on screen while it
             // runs rather than only in the shortcuts overlay.
-            if (_terminalIsPing && !_terminalExited) text += "   " + Loc("Str_Workspace_EscStop");
+            if ((_terminalIsPing && !_terminalExited) || _speedTestRun != null) text += "   " + Loc("Str_Workspace_EscStop");
             StatusText.Text = text;
         }
 
