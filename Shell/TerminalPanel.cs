@@ -14,6 +14,7 @@ namespace KillerScan.Shell
         private string? _terminalTitle;
         private string? _terminalStatusKey;
         private object? _terminalStatusArgument;
+        private int _terminalPromptGeneration;
 
         private void ToggleTerminalPanel() => NewTerminal();
 
@@ -47,6 +48,7 @@ namespace KillerScan.Shell
                 _terminalStatusArgument = null;
                 terminal.GotKeyboardFocus += (_, _) => UpdateTerminalPanelStatus();
                 terminal.SpeedTestRequested += () => SpeedTestButton_Click(this, new RoutedEventArgs());
+                terminal.PromptReady += () => TerminalPromptReady(terminal);
                 terminal.Exited += code =>
                 {
                     if (_terminalControl != terminal) return;
@@ -139,6 +141,29 @@ namespace KillerScan.Shell
                 }
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
                 "WindowsPowerShell", "v1.0", "powershell.exe");
+        }
+
+        private async void TerminalPromptReady(TerminalControl terminal)
+        {
+            int generation = ++_terminalPromptGeneration;
+            if (_terminalControl != terminal || _terminalPanelDisposed || _terminalExited || _speedTestRun != null) return;
+            if (_terminalIsPing)
+            {
+                _terminalIsPing = false;
+                _terminalTitle = null;
+                _terminalStatusKey = "Str_Watch_Stopped";
+                _terminalStatusArgument = null;
+                UpdateTerminalPanelStatus();
+            }
+            string? statusKey = _terminalStatusKey;
+            await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(10));
+            if (generation != _terminalPromptGeneration || _terminalControl != terminal ||
+                _terminalPanelDisposed || _terminalExited || terminal.HasRunningCommand ||
+                _speedTestRun != null || _terminalStatusKey != statusKey) return;
+            _terminalTitle = null;
+            _terminalStatusKey = "Str_St_Ready";
+            _terminalStatusArgument = null;
+            UpdateTerminalPanelStatus();
         }
 
         private void RefreshTerminalPanelTheme()

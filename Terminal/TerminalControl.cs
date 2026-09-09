@@ -46,6 +46,7 @@ namespace KillerScan.Terminal
         public event Action<Exception>? StartFailed;
         public event Action<string>? ManagedInput;
         public event Action? Disposed;
+        public event Action? PromptReady;
         public bool IsManaged { get; private set; }
         private bool _atPrompt;
         public bool HasRunningCommand => IsManaged || (_pty != null && !_pty.HasExited && !_atPrompt);
@@ -96,7 +97,11 @@ namespace KillerScan.Terminal
             BuildContextMenu();
 
             _buf.Respond += Send;
-            _buf.PromptReady += () => _atPrompt = true;
+            _buf.PromptReady += () =>
+            {
+                _atPrompt = true;
+                PromptReady?.Invoke();
+            };
 
             LoadFont();
             Loaded += (_, _) => Focus();

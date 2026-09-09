@@ -13,6 +13,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - A dedicated KillerScan speed-test server and automated transfer, failure, and server tests.
 
 ### Fixed
+- Terminal status clears the ping stop hint when the prompt returns and resets to Ready after ten seconds idle.
 - The trusted-device menu uses a larger green or amber dot matching the device row.
 - Speed tests use longer sustained transfers, retain warmup settings, and check all available connection counts before selecting one.
 - Completed download results remain visible while the upload test runs.
