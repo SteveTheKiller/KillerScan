@@ -20,8 +20,9 @@ namespace KillerScan.Terminal
             "function global:Invoke-KillerScanSpeedTest { " +
             "$p = [System.IO.Pipes.NamedPipeClientStream]::new('.', '" + _bridgeName + "', [System.IO.Pipes.PipeDirection]::In); " +
             "try { $p.Connect(10000); $r = [System.IO.StreamReader]::new($p, [System.Text.Encoding]::UTF8); " +
+            "[Console]::Write(([char]27).ToString() + '[1A' + [char]13 + ([char]27).ToString() + '[2K'); " +
             "while ($null -ne ($line = $r.ReadLine())) { [Console]::Write([System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($line))) } " +
-            "} finally { $p.Dispose() } }";
+            "} finally { $p.Dispose() } }; Set-Alias -Name speedtest -Value Invoke-KillerScanSpeedTest -Scope Global";
 
         public async Task BeginShellManagedSessionAsync(CancellationToken cancellation)
         {
@@ -40,7 +41,7 @@ namespace KillerScan.Terminal
             var pipe = _bridge = new NamedPipeServerStream(_bridgeName, PipeDirection.Out, 1,
                 PipeTransmissionMode.Byte, PipeOptions.Asynchronous, 4096, 4096, security);
             _bridgeWrites = Task.CompletedTask;
-            Send("Invoke-KillerScanSpeedTest\r");
+            Send("speedtest\r");
             IsManaged = true;
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
             timeout.CancelAfter(TimeSpan.FromSeconds(15));
