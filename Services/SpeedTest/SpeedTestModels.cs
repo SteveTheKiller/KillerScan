@@ -12,8 +12,8 @@ namespace KillerScan.Services.SpeedTest
         public int MaximumStreams { get; set; } = 8;
         public long ByteBudgetPerPhase { get; set; } = 3L * 1024 * 1024 * 1024;
         public TimeSpan RequestTimeout { get; set; } = TimeSpan.FromSeconds(5);
-        public int DownloadPayloadBytes { get; set; } = 25 * 1000 * 1000;
-        public int UploadPayloadBytes { get; set; } = 10 * 1000 * 1000;
+        public int DownloadPayloadBytes { get; set; } = 8 * 1024 * 1024;
+        public int UploadPayloadBytes { get; set; } = 4 * 1024 * 1024;
         public int IdleLatencySampleCount { get; set; } = 5;
     }
 

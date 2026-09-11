@@ -88,7 +88,11 @@ internal static class Program
     private static Task PublicProfile()
     {
         var snapshot = typeof(SpeedTestEngine).GetMethod("ValidateAndCopy", BindingFlags.Static | BindingFlags.NonPublic)!;
-        var profile = (SpeedTestOptions)snapshot.Invoke(null, new object[] { new SpeedTestOptions { Endpoint = new Uri("https://speed.cloudflare.com/"), MaximumStreams = 4 } })!;
+        var profile = (SpeedTestOptions)snapshot.Invoke(null, new object[] { new SpeedTestOptions
+        {
+            Endpoint = new Uri("https://speed.cloudflare.com/"), MaximumStreams = 4,
+            DownloadPayloadBytes = 25000000, UploadPayloadBytes = 10000000
+        } })!;
         Require(profile.MaximumStreams == 2, "Public service uses at most two payload streams");
         Require(profile.PhaseDuration == TimeSpan.FromSeconds(15) && profile.ByteBudgetPerPhase == 3L * 1024 * 1024 * 1024,
             "Public service retains sustained duration and byte ceiling");
@@ -523,7 +527,7 @@ internal static class Program
     {
         using var cancel = new CancellationTokenSource();
         var contentType = typeof(SpeedTestEngine).GetNestedType("PayloadContent", BindingFlags.NonPublic)!;
-        using var content = (HttpContent)Activator.CreateInstance(contentType, 2048, new byte[2048], cancel.Token)!;
+        using var content = (HttpContent)Activator.CreateInstance(contentType, 2048, new byte[2048], new Action<int>(_ => { }), cancel.Token)!;
         var stream = new IncompleteUploadStream();
         var transfer = content.CopyToAsync(stream);
         cancel.Cancel();

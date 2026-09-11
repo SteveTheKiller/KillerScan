@@ -10,14 +10,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Added
 - KillerSpeed terminal speed tests with consent before network transfers, adaptive connections, colored progress and aligned result tables that stay visible above the prompt, plus confirmation before interrupting another task.
-- A dedicated KillerScan speed-test server and automated transfer, failure, and server tests.
+- A dedicated KillerScan speed-test server with automated client and server checks.
 
 ### Fixed
 - Terminal status clears the ping stop hint when the prompt returns and resets to Ready after ten seconds idle.
 - The trusted-device menu uses a larger green or amber dot matching the device row.
-- Speed tests use longer sustained transfers, divide learned request sizes across added connections, and check all available connection counts before selecting one.
+- Improved speed-test accuracy with sustained transfers, adaptive request sizing, upload byte accounting, and measured stream selection.
 - Completed download results remain visible while the upload test runs.
-- Reduced speed-test server CPU use to prevent large downloads being cut off.
 - Removed third-party speed-test downloads; the native engine displays results through the terminal's existing shell.
 - Terminal startup failures now include the Windows error details, and redirected launches keep shell input and output inside the app.
 - Terminal prompts now follow the app's theme accent instead of falling back to red.

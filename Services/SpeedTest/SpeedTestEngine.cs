@@ -91,7 +91,7 @@ namespace KillerScan.Services.SpeedTest
                     "The speed-test duration, stream count, byte budget, payload, or latency sample count is outside its supported range.");
             bool publicService = IsCloudflareEndpoint(options.Endpoint);
             // Snapshot mutable UI options. Public-service ceilings keep requests larger and
-            // less frequent; the private Worker has smaller protocol payload limits.
+            // less frequent; the private Worker uses its deployed protocol limits.
             return new SpeedTestOptions
             {
                 Endpoint = new Uri(options.Endpoint.AbsoluteUri.TrimEnd('/') + "/"),
@@ -117,24 +117,23 @@ namespace KillerScan.Services.SpeedTest
             double best = 0;
             int stages = adaptive ? (maximum > 4 ? 3 : 2) : 1;
             var stageDuration = TimeSpan.FromTicks(options.WarmupDuration.Ticks / stages);
-            int previousStreams = selected;
             for (int streams = selected; streams <= maximum; streams = Math.Min(maximum, streams * 2))
             {
                 direction.MaximumStreams = streams;
-                // Preserve the learned aggregate request size when adding connections:
-                // they may share the same bandwidth rather than adding capacity.
+                // Seed newly added streams with the learned per-stream request size so they
+                // don't start from the small default; established streams keep their own.
                 int learnedPayload = payloadSizes.Max();
                 if (learnedPayload > 0)
                     for (int i = 0; i < streams; i++)
-                        payloadSizes[i] = Math.Max(1, (int)((long)(payloadSizes[i] > 0 ?
-                            payloadSizes[i] : learnedPayload) * previousStreams / streams));
-                previousStreams = streams;
+                        if (payloadSizes[i] == 0) payloadSizes[i] = learnedPayload;
                 var warmup = await TransferPhaseAsync(upload, true, (warmupBudget - warmupScheduled) / stages,
                     stageDuration, transfers, latency, direction, progress, token, payloadSizes).ConfigureAwait(false);
                 warmupBytes += warmup.BytesTransferred;
                 warmupScheduled += warmup.BytesScheduled;
                 double speed = warmup.Mbps.GetValueOrDefault();
-                if (best == 0 || speed >= best * 1.10) { best = speed; selected = streams; }
+                // Ignore small warmup variance while accepting scaling that the earlier
+                // 10% threshold missed on fast links.
+                if (best == 0 || speed >= best * 1.05) { best = speed; selected = streams; }
                 if (!adaptive || streams == maximum || warmup.ByteBudgetReached) break;
                 stages--;
             }
@@ -151,12 +150,14 @@ namespace KillerScan.Services.SpeedTest
             private readonly object _gate = new();
             private long _bytes;
             private long _scheduled;
+            private int _acknowledgments;
             private bool _ended;
             private TimeSpan _elapsed;
             public readonly Stopwatch Clock = Stopwatch.StartNew();
             public int ActiveStreams;
             public int PeakStreams;
             public Exception? Failure;
+            public int Acknowledgments { get { lock (_gate) return _acknowledgments; } }
 
             public int Reserve(int requested, long budget)
             {
@@ -169,6 +170,7 @@ namespace KillerScan.Services.SpeedTest
                 }
             }
             public void Add(int bytes) { lock (_gate) { if (!_ended) _bytes += bytes; } }
+            public void Acknowledge() { lock (_gate) { if (!_ended) _acknowledgments++; } }
             public void End() { lock (_gate) { if (!_ended) { _elapsed = Clock.Elapsed; _ended = true; } } }
             public (long Bytes, long Scheduled, TimeSpan Elapsed) Snapshot()
             {
@@ -225,7 +227,7 @@ namespace KillerScan.Services.SpeedTest
                             if (size == 0) break;
                             var exchange = Stopwatch.StartNew();
                             if (upload)
-                                await UploadAsync(client, options, size, buffer, counters.Add, stop.Token).ConfigureAwait(false);
+                                await UploadAsync(client, options, size, buffer, counters.Add, counters.Acknowledge, stop.Token).ConfigureAwait(false);
                             else
                                 await DownloadAsync(client, options, size, buffer, counters.Add, stop.Token).ConfigureAwait(false);
                             // Keep acknowledgments frequent on slow links without imposing tiny
@@ -320,7 +322,10 @@ namespace KillerScan.Services.SpeedTest
             token.ThrowIfCancellationRequested();
             if (counters.Failure != null) throw Normalize(counters.Failure);
             var (finalBytes, finalScheduled, finalElapsed) = counters.Snapshot();
-            if (!warmup && finalBytes == 0)
+            // Upload bytes are counted as they leave the socket, so a stalled endpoint that
+            // never acknowledges any request would still register serialized bytes. Fail on
+            // the ack count instead of the sent count so a broken endpoint cannot fake a rate.
+            if (!warmup && (upload ? counters.Acknowledgments == 0 : finalBytes == 0))
                 throw new SpeedTestException(SpeedTestFailureKind.TransferFailed,
                     upload ? "No upload payload was acknowledged before the measurement ended."
                            : "No download payload was received before the measurement ended.");
@@ -394,12 +399,12 @@ namespace KillerScan.Services.SpeedTest
         }
 
         private static async Task UploadAsync(HttpClient client, SpeedTestOptions options, int bytes,
-            byte[] buffer, Action<int> count, CancellationToken token)
+            byte[] buffer, Action<int> count, Action acknowledge, CancellationToken token)
         {
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
             timeout.CancelAfter(options.RequestTimeout);
             using var request = Request(options, HttpMethod.Post, "__up", bytes);
-            var payload = new PayloadContent(bytes, buffer, timeout.Token);
+            var payload = new PayloadContent(bytes, buffer, count, timeout.Token);
             request.Content = payload;
             using var requestCancellation = timeout.Token.Register(() => DisposeCanceled(request));
             try
@@ -420,7 +425,7 @@ namespace KillerScan.Services.SpeedTest
                     throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "The upload acknowledgment was too large.");
                 ValidateUploadAcknowledgment(options.Endpoint, response, Encoding.UTF8.GetString(reply, 0, length), payload.BytesSerialized, bytes);
                 timeout.Token.ThrowIfCancellationRequested();
-                count(payload.BytesSerialized);
+                acknowledge();
             }
             catch (Exception ex) { throw RequestFailure(ex, token, timeout.Token); }
         }
@@ -518,12 +523,13 @@ namespace KillerScan.Services.SpeedTest
         {
             private readonly int _length;
             private readonly byte[] _buffer;
+            private readonly Action<int> _count;
             private readonly CancellationToken _token;
             private int _serialized;
             public int BytesSerialized => Volatile.Read(ref _serialized);
-            public PayloadContent(int length, byte[] buffer, CancellationToken token)
+            public PayloadContent(int length, byte[] buffer, Action<int> count, CancellationToken token)
             {
-                _length = length; _buffer = buffer; _token = token;
+                _length = length; _buffer = buffer; _count = count; _token = token;
                 Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
                 Headers.ContentLength = length;
             }
@@ -537,6 +543,9 @@ namespace KillerScan.Services.SpeedTest
                     int size = Math.Min(_buffer.Length, _length - sent);
                     await stream.WriteAsync(_buffer, 0, size, _token).ConfigureAwait(false);
                     Interlocked.Add(ref _serialized, size);
+                    // Count bytes as they leave the socket so in-flight uploads cut short by
+                    // the phase-end cancellation are still reflected in the measured rate.
+                    _count(size);
                     sent += size;
                 }
             }

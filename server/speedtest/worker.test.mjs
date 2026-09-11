@@ -54,7 +54,7 @@ test("zero-byte download measures response latency without payload", async () =>
   assert.equal(response.headers.get("X-SpeedTest-Bytes"), "0");
 });
 
-test("default download streams exactly 8 MiB with bounded random generation", async (t) => {
+test("default download streams the configured maximum with bounded random generation", async (t) => {
   const original = crypto.getRandomValues.bind(crypto);
   let generated = 0;
   t.mock.method(crypto, "getRandomValues", (buffer) => {
