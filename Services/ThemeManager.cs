@@ -33,9 +33,9 @@ namespace KillerScan.Services
     {
         private static Theme _current = Theme.Black;
         // Dark, Light, and Black each remember their own accent independently.
-        private static Accent _darkAccent  = Accent.Orange;
-        private static Accent _lightAccent = Accent.Orange;
-        private static Accent _blackAccent = Accent.Orange;
+        private static Accent _darkAccent  = Accent.Teal;
+        private static Accent _lightAccent = Accent.Teal;
+        private static Accent _blackAccent = Accent.Teal;
         // Blue is the Windows 98 default and the one this theme is built around, so it is 98SE's
         // starting accent rather than the Green base every other family starts on.
         private static Accent _se98Accent  = Accent.Blue;
@@ -84,28 +84,16 @@ namespace KillerScan.Services
             string? saved = App.GetSetting("Theme");
             _current     = saved == "98SE" ? Theme.SE98
                          : Enum.TryParse<Theme>(saved, out var t) ? t : Theme.Black;
-            _darkAccent  = Enum.TryParse<Accent>(App.GetSetting("DarkAccent"),  out var da) ? da : Accent.Orange;
-            _lightAccent = Enum.TryParse<Accent>(App.GetSetting("LightAccent"), out var la) ? la : Accent.Orange;
-            _blackAccent = Enum.TryParse<Accent>(App.GetSetting("BlackAccent"), out var ba) ? ba : Accent.Orange;
+            _darkAccent  = Enum.TryParse<Accent>(App.GetSetting("DarkAccent"),  out var da) ? da : Accent.Teal;
+            _lightAccent = Enum.TryParse<Accent>(App.GetSetting("LightAccent"), out var la) ? la : Accent.Teal;
+            _blackAccent = Enum.TryParse<Accent>(App.GetSetting("BlackAccent"), out var ba) ? ba : Accent.Teal;
             _se98Accent  = Enum.TryParse<Accent>(App.GetSetting("SE98Accent"),  out var sa) ? sa : Accent.Blue;
 
-            // The pre-release accent picker wrote Green as Dark and Light's default, and local
-            // test installs may also have persisted Green for Black. Move those installations to
-            // KillerScan's orange brand default once. The marker makes this a migration rather
-            // than a permanent override: choosing Green afterward still survives every restart.
-            if (App.GetSetting("NeutralAccentDefaultsV2") != "1")
-            {
-                _darkAccent = _lightAccent = _blackAccent = Accent.Orange;
-                App.SetSetting("DarkAccent", Accent.Orange.ToString());
-                App.SetSetting("LightAccent", Accent.Orange.ToString());
-                App.SetSetting("BlackAccent", Accent.Orange.ToString());
-                App.SetSetting("NeutralAccentDefaultsV2", "1");
-            }
             LoadDict(_current);
         }
 
         /// <summary>Load the standalone installer palette without changing saved preferences.</summary>
-        internal static void InitializeInstaller() => LoadDict(Theme.Black, Accent.Orange);
+        internal static void InitializeInstaller() => LoadDict(Theme.Black, Accent.Teal);
 
         /// <summary>Change theme, persist the choice, and repaint.</summary>
         public static void Apply(Theme theme)

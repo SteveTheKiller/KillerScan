@@ -8,6 +8,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 1.7.2 runs speed tests with a native engine in the themed terminal.
 
+### Changed
+- Changed the app, standalone setup dialogs, and landing-page default to Black/Teal while preserving saved theme choices.
+
 ### Added
 - KillerSpeed terminal speed tests with consent before network transfers, adaptive connections, colored progress and aligned result tables that stay visible above the prompt, plus confirmation before interrupting another task.
 - A dedicated KillerScan speed-test server with automated client and server checks.
