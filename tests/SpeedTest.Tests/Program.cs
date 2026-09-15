@@ -32,6 +32,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--terminal" })) { await View(); return 0; }
             Require(args.All(value => value == "--worker" || value == "--internet"), "Usage: SpeedTest.Tests.exe [--worker] [--internet]");
             await Run("Metric units, median, jitter and unavailable values", Metrics);
+            await Run("Scan terminal progress stays on one line and results fit narrow widths", ScanPresentation);
             await Run("Cloudflare upload response is accepted only for the exact official endpoint", CloudflareAcknowledgment);
             await Run("Public endpoint profile reduces request pressure without shortening the test", PublicProfile);
             await Run("Adaptive warmup adds streams on a per-connection bottleneck", () => Adaptive(Mode.SlowDownload, 8));
@@ -84,6 +85,29 @@ internal static class Program
     private static void Require(bool condition, string message)
     {
         if (!condition) throw new InvalidOperationException(message);
+    }
+
+    private static Task ScanPresentation()
+    {
+        var type = typeof(SpeedTestEngine).Assembly.GetType("KillerScan.Terminal.TerminalScanPresentation")!;
+        var devices = new List<KillerScan.Models.NetworkDevice>
+        {
+            new() { IpAddress = "192.168.0.1", Hostname = "router.internal", Vendor = "A long vendor name for wrapping",
+                MacAddress = "00:11:22:33:44:55", OpenPorts = [22, 53, 80, 443, 8080, 8443] }
+        };
+        foreach (int width in new[] { 24, 40, 80, 120 })
+        {
+            var view = Activator.CreateInstance(type, new Func<string, string>(_ => "Open Ports"), new Func<int>(() => width))!;
+            string progress = (string)type.GetMethod("Progress")!.Invoke(view, new object[] { "Progress: 72%" })!;
+            Require(progress.StartsWith("\r\u001b[2K") && !progress.Contains('\n'), "Progress replaces the current row");
+            string rendered = (string)type.GetMethod("Result")!.Invoke(view, new object[] { devices })!;
+            string plain = System.Text.RegularExpressions.Regex.Replace(rendered, "\u001b\\[[0-9;]*[A-Za-z]", "");
+            Require(plain.Split('\n').All(line => line.TrimEnd('\r').Length <= width - 2), "Every result row fits the terminal");
+            foreach (string port in new[] { "22", "53", "80", "443", "8080", "8443" })
+                Require(plain.Contains(port), "Complete port numbers are preserved");
+            Require(!plain.Contains("---"), "No table separator lines");
+        }
+        return Task.CompletedTask;
     }
 
     private static Task PublicProfile()
