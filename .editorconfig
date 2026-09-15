@@ -1,0 +1,3 @@
+# Match the Markdown line-ending policy in .gitattributes.
+[*.md]
+end_of_line = lf
