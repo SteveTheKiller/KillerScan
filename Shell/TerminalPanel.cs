@@ -102,14 +102,7 @@ namespace KillerScan.Shell
         }
 
         /// <summary>
-        /// A continuous ping, tinted as it streams. ping.exe emits no color of its own, so the
-        /// lines are matched and wrapped here: a reply green, a loss red, everything else (the
-        /// banner, the blank lines, the summary) left alone. TTL= and the timeout words are what
-        /// the two states have in common across the ping builds we see; an unmatched line simply
-        /// prints as it always did rather than being colored wrongly.
-        ///
-        /// Single quotes throughout: this whole pipeline rides inside the double-quoted -Command
-        /// that also carries the prompt.
+        /// Uses the same shell command and semantic display colors as a typed ping.
         /// </summary>
         private static string PingCommand(string ip) =>
             "ping.exe -t " + ip;

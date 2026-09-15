@@ -429,6 +429,18 @@ internal static class Program
                 encoder.Frames.Add(BitmapFrame.Create(bitmap));
                 using (var file = File.Create(imagePath)) encoder.Save(file);
                 Console.WriteLine("Offscreen terminal: " + imagePath);
+                string? networkSample = Environment.GetEnvironmentVariable("KILLERSCAN_NETWORK_COLOR_SAMPLE");
+                if (!string.IsNullOrEmpty(networkSample))
+                {
+                    Write("\u001b[2J\u001b[H" + File.ReadAllText(networkSample));
+                    terminal.UpdateLayout();
+                    var networkBitmap = new RenderTargetBitmap(900, 500, 96, 96, PixelFormats.Pbgra32);
+                    networkBitmap.Render(terminal);
+                    var networkEncoder = new PngBitmapEncoder();
+                    networkEncoder.Frames.Add(BitmapFrame.Create(networkBitmap));
+                    using var output = File.Create(Path.ChangeExtension(networkSample, ".png"));
+                    networkEncoder.Save(output);
+                }
                 terminalType.GetMethod("EndManagedSession")!.Invoke(terminal, null);
                 bool Busy() => (bool)terminalType.GetProperty("HasRunningCommand")!.GetValue(terminal)!;
                 void Send(string value) => terminalType.GetMethod("Send")!.Invoke(terminal, new object[] { value });
@@ -474,6 +486,27 @@ internal static class Program
                 }
                 WaitFor(() => !Busy());
                 Require((bool)terminalType.GetProperty("HasShell")!.GetValue(terminal)!, "Shell remains alive at prompt");
+                Send("ping -n 1 127.0.0.1\r");
+                WaitFor(() => !Busy() && Text().Contains("TTL="));
+                var networkBuffer = terminalType.GetProperty("Buffer")!.GetValue(terminal)!;
+                bool ColoredReply()
+                {
+                    int count = (int)networkBuffer.GetType().GetProperty("TotalLines")!.GetValue(networkBuffer)!;
+                    for (int row = 0; row < count; row++)
+                    {
+                        var cells = (Array)networkBuffer.GetType().GetMethod("LineAt")!.Invoke(networkBuffer, new object[] { row })!;
+                        var line = new StringBuilder();
+                        foreach (var cell in cells) line.Append(char.ConvertFromUtf32((int)cell.GetType().GetField("Ch")!.GetValue(cell)!));
+                        int address = line.ToString().IndexOf("127.0.0.1", StringComparison.Ordinal);
+                        if (address >= 0 && line.ToString().Contains("TTL="))
+                        {
+                            object cell = cells.GetValue(address)!;
+                            return (int)cell.GetType().GetField("Fg")!.GetValue(cell)! == 6;
+                        }
+                    }
+                    return false;
+                }
+                Require(ColoredReply(), "Typed ping reaches the real terminal with teal address cells");
                 Send("$ksTestValue = 42\r");
                 Require(Busy(), "Submitting a command marks the terminal busy");
                 WaitFor(() => !Busy());
