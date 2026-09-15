@@ -476,11 +476,14 @@
              the Effect on 98SE and restores it otherwise. Same approach KillerShell takes. -->
         <Grid x:Name="WorkspaceHost" Grid.Row="1" Grid.Column="1"
               Margin="{DynamicResource DevicesPaneMargin}" Panel.ZIndex="10">
-        <Border x:Name="DevicesPane" Grid.Row="1"
+        <Border x:Name="DevicesPaneShadow" Grid.Row="1" IsHitTestVisible="False"
+                Background="{DynamicResource ScanContentPaneBrush}"
+                CornerRadius="{DynamicResource PanelCornerRadius}"
+                Effect="{StaticResource PaneShadow}"/>
+        <Border x:Name="DevicesPane" Grid.Row="1" SnapsToDevicePixels="True" UseLayoutRounding="True"
                 Background="{DynamicResource ScanContentPaneBrush}"
                 BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1"
-                CornerRadius="{DynamicResource PanelCornerRadius}"
-                Effect="{StaticResource PaneShadow}">
+                CornerRadius="{DynamicResource PanelCornerRadius}">
             <Grid x:Name="TerminalLayout" WindowChrome.IsHitTestVisibleInChrome="True">
             </Grid>
         </Border>
