@@ -20,6 +20,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - A dedicated KillerScan speed-test server with automated client and server checks.
 
 ### Fixed
+- Fixed the terminal font dialog crash and aligned device-list headers with the status-dot spacing.
 - Preserved terminal session history through resizing, clearing, and shell replacement, including exported transcripts; added horizontal scrolling for narrow windows.
 - Kept terminal scrolling in place while new output arrives and refreshed Scan availability when the shell becomes ready.
 - Restored a single themed pane border and corrected About panel colors and header contrast.

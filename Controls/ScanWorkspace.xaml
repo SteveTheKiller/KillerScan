@@ -515,7 +515,7 @@
                             <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
                             <Setter Property="FontSize" Value="11"/>
                             <Setter Property="FontWeight" Value="Normal"/>
-                            <Setter Property="Padding" Value="8,0"/>
+                            <Setter Property="Padding" Value="15,0,8,0"/>
                             <Setter Property="BorderBrush" Value="{DynamicResource HeaderLineBrush}"/>
                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
                             <Setter Property="Cursor" Value="Hand"/>
