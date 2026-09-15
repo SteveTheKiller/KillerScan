@@ -15,6 +15,12 @@ namespace KillerScan.Controls
         public TerminalFontDialog(string font, double size)
         {
             InitializeComponent();
+            if (TryFindResource("InputDialogPlainTitleVisibility") is Visibility.Visible)
+            {
+                // Keep the dropdowns and preview on the theme's recessed content surface.
+                Resources["PaneBrush"] = FindResource("ListPaneBrush");
+                Resources["InputDialogTitleBrush"] = FindResource("TitleBarBrush");
+            }
             FontBox.ItemsSource = Fonts.SystemFontFamilies.Where(IsMonospace)
                 .Select(f => f.Source).OrderBy(f => f).ToArray();
             FontBox.SelectedItem = font;

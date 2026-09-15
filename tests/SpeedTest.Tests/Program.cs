@@ -428,6 +428,35 @@ internal static class Program
                 var se98Dictionary = new ResourceDictionary
                     { Source = new Uri("pack://application:,,,/KillerScan;component/Themes/98SE.xaml") };
                 app.Resources.MergedDictionaries.Add(se98Dictionary);
+                var previousThemeValues = new Dictionary<object, object>();
+                var directThemeKeys = new HashSet<object>(app.Resources.Keys.Cast<object>());
+                foreach (object key in se98Dictionary.Keys)
+                {
+                    previousThemeValues[key] = app.Resources[key];
+                    app.Resources[key] = se98Dictionary[key];
+                }
+                var classicFont = new KillerScan.Controls.TerminalFontDialog("Consolas", 11);
+                var classicRoot = (FrameworkElement)classicFont.Content;
+                classicRoot.Opacity = 1;
+                classicRoot.Measure(new Size(440, double.PositiveInfinity));
+                classicRoot.Arrange(new Rect(new Point(), classicRoot.DesiredSize));
+                classicRoot.UpdateLayout();
+                Require(((Border)classicFont.FindName("DialogTitleBar")).Background is LinearGradientBrush,
+                    "98SE font dialog uses the gradient caption");
+                Require(((SolidColorBrush)((ComboBox)classicFont.FindName("FontBox")).Background).Color == Colors.White &&
+                    ((SolidColorBrush)((Border)classicFont.FindName("PreviewPane")).Background).Color == Colors.White,
+                    "98SE font fields and preview use white wells");
+                var classicImage = new RenderTargetBitmap((int)classicRoot.ActualWidth, (int)classicRoot.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                classicImage.Render(classicRoot);
+                var classicEncoder = new PngBitmapEncoder();
+                classicEncoder.Frames.Add(BitmapFrame.Create(classicImage));
+                using (var output = File.Create(Path.Combine(Path.GetTempPath(), "KillerScanFont98SE.png"))) classicEncoder.Save(output);
+                classicFont.Close();
+                foreach (var entry in previousThemeValues)
+                {
+                    if (!directThemeKeys.Contains(entry.Key)) app.Resources.Remove(entry.Key);
+                    else app.Resources[entry.Key] = entry.Value;
+                }
                 var windowXml = new XmlDocument();
                 windowXml.Load(Path.Combine(directory.FullName, "Shell", "MainWindow.xaml"));
                 var ns = new XmlNamespaceManager(windowXml.NameTable);

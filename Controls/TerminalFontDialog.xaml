@@ -47,7 +47,7 @@
                 </Grid.RowDefinitions>
 
 
-                <Border Grid.Row="0" Height="{DynamicResource DialogTitleBarHeight}"
+                <Border x:Name="DialogTitleBar" Grid.Row="0" Height="{DynamicResource DialogTitleBarHeight}"
                         Background="{DynamicResource InputDialogTitleBrush}"
                         MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                     <Grid>
@@ -80,9 +80,17 @@
                     <ComboBox Style="{StaticResource DarkComboBox}" x:Name="FontBox" SelectionChanged="PreviewChanged" PreviewMouseWheel="Selector_MouseWheel" Margin="0,0,0,12"/>
                     <TextBlock Text="{DynamicResource Str_Sys_Size}" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
                     <ComboBox Style="{StaticResource DarkComboBox}" x:Name="SizeBox" SelectionChanged="PreviewChanged" PreviewMouseWheel="Selector_MouseWheel" Margin="0,0,0,12"/>
-                    <Border Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" Padding="10" Height="100">
+                    <Grid Height="100">
+                    <Border x:Name="PreviewPane" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" Padding="10">
                         <TextBlock x:Name="Preview" Text="KillerScan  192.168.8.1&#xA;AaBbCc  0123456789&#xA;22, 53, 80, 443" Foreground="{DynamicResource TextBrush}" ClipToBounds="True"/>
                     </Border>
+                    <Border IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelDarkBrush}" BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
+                    <Border IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelLightBrush}" BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
+                    <Grid Margin="{DynamicResource PaneBevelInnerMargin}" IsHitTestVisible="False">
+                        <Border BorderBrush="{DynamicResource PaneBevelDark2Brush}" BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
+                        <Border BorderBrush="{DynamicResource PaneBevelLight2Brush}" BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
+                    </Grid>
+                    </Grid>
                 </StackPanel>
 
 
