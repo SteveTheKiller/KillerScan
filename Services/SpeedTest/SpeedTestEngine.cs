@@ -29,7 +29,9 @@ namespace KillerScan.Services.SpeedTest
             var started = DateTimeOffset.UtcNow;
             var clock = Stopwatch.StartNew();
             using var transferHandler = CreateHandler(settings.MaximumStreams);
-            using var latencyHandler = CreateHandler(1);
+            // Framework handlers write to the same host's ServicePoint connection limit.
+            // Latency probes run sequentially, but must not lower the transfer pool's limit.
+            using var latencyHandler = CreateHandler(settings.MaximumStreams);
             using var transfers = new HttpClient(transferHandler) { Timeout = Timeout.InfiniteTimeSpan };
             using var latency = new HttpClient(latencyHandler) { Timeout = Timeout.InfiniteTimeSpan };
             var idle = new List<double>();

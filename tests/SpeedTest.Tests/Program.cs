@@ -39,6 +39,7 @@ internal static class Program
             await Run("Cancellation during adaptive warmup prevents measurement", AdaptiveCancel);
             await Run("Measurement retains the payload size learned during warmup", WarmupPayload);
             await Run("HTTPS configuration required without contacting a remote host", InvalidEndpoint);
+            await Run("Latency probes preserve the shared server connection limit", LatencyConnectionLimit);
             await Run("Real transfers, exact acknowledgments and per-direction byte budgets", Budget);
             await Run("Sustained timed download with loaded latency and cancellation of pending reads", Duration);
             await Run("Wrong upload acknowledgment rejected", () => Reject(Mode.WrongAck, SpeedTestFailureKind.InvalidResponse));
@@ -560,6 +561,20 @@ internal static class Program
         DownloadPayloadBytes = 16 * 1024, UploadPayloadBytes = 16 * 1024,
         RequestTimeout = TimeSpan.FromSeconds(2), MaximumStreams = 4
     };
+
+    private static async Task LatencyConnectionLimit()
+    {
+        using var server = new LoopbackServer(Mode.Normal);
+        var options = Options(server);
+        int lowestLimit = int.MaxValue;
+        var progress = new CallbackProgress(p =>
+        {
+            if (p.Phase == SpeedTestPhase.IdleLatency)
+                lowestLimit = Math.Min(lowestLimit, ServicePointManager.FindServicePoint(server.Endpoint).ConnectionLimit);
+        });
+        await new SpeedTestEngine().RunAsync(options, progress, CancellationToken.None);
+        Require(lowestLimit == options.MaximumStreams, "Latency requests must not lower the shared ServicePoint limit");
+    }
 
     private static async Task InvalidEndpoint()
     {
