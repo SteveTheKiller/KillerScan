@@ -112,10 +112,7 @@ namespace KillerScan.Shell
         /// that also carries the prompt.
         /// </summary>
         private static string PingCommand(string ip) =>
-            "ping.exe -t " + ip + " | ForEach-Object { $e = [char]27; " +
-            "if ($_ -match 'TTL=') { $e + '[32m' + $_ + $e + '[0m' } " +
-            "elseif ($_ -match 'timed out|unreachable|transmit failed|General failure') " +
-            "{ $e + '[31m' + $_ + $e + '[0m' } else { $_ } }";
+            "ping.exe -t " + ip;
 
         private bool InterruptTerminalPing()
         {

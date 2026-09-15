@@ -17,6 +17,7 @@ namespace KillerScan.Terminal
 
         // Output passes through the shell's console, so ConPTY owns its cursor and history.
         public string ManagedShellSetup =>
+            NetworkColorSetup +
             "function global:Invoke-KillerScanSpeedTest { " +
             "$p = [System.IO.Pipes.NamedPipeClientStream]::new('.', '" + _bridgeName + "', [System.IO.Pipes.PipeDirection]::In); " +
             "try { $p.Connect(10000); $r = [System.IO.StreamReader]::new($p, [System.Text.Encoding]::UTF8); " +
