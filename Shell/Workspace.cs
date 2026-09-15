@@ -454,11 +454,6 @@ namespace KillerScan.Shell
 
         private void ClipWorkspaceSurface()
         {
-            if (TryFindResource("RailSeparatorMargin") is Thickness railMargin)
-            {
-                railMargin.Top += WorkspaceHost.RowDefinitions[0].ActualHeight;
-                WorkspaceRailSeparator.Margin = railMargin;
-            }
             double radius = DevicesPane.CornerRadius.BottomLeft;
             if (TerminalLayout.ActualWidth > 0 && TerminalLayout.ActualHeight > 0)
                 TerminalLayout.Clip = new RectangleGeometry(new Rect(0, 0, TerminalLayout.ActualWidth, TerminalLayout.ActualHeight), radius, radius);

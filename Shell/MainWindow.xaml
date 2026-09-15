@@ -160,11 +160,6 @@
             </Border>
         </Border>
 
-        <!-- The family rail has a single hairline at its content edge. -->
-        <Border x:Name="WorkspaceRailSeparator" Grid.Row="1" Grid.Column="0" BorderBrush="{DynamicResource PaneBorderBrush}"
-                BorderThickness="0,0,1,0" IsHitTestVisible="False"
-                Margin="{DynamicResource RailSeparatorMargin}"
-                Visibility="{DynamicResource RailSeparatorVisibility}"/>
 
         <!-- ================================================================
              ICON RAIL (column 0).
