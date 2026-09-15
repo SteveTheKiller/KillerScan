@@ -21,6 +21,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 - Fixed the terminal font dialog crash and aligned device-list headers with the status-dot spacing.
+- Rounded the font dialog surface, enabled hover-wheel font and size selection, and kept KillerSpeed in the sidebar, including 98SE.
 - Preserved terminal session history through resizing, clearing, and shell replacement, including exported transcripts; added horizontal scrolling for narrow windows.
 - Kept terminal scrolling in place while new output arrives and refreshed Scan availability when the shell becomes ready.
 - Restored a single themed pane border and corrected About panel colors and header contrast.

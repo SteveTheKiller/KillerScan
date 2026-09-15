@@ -14,9 +14,6 @@ namespace KillerScan.Terminal
     {
         private MenuItem? _copyItem;
 
-        /// <summary>Raised by the menu's speed test entry, handled by the window that hosts this.</summary>
-        internal event Action? SpeedTestRequested;
-
         private void BuildContextMenu()
         {
             var menu = new ContextMenu();
@@ -32,10 +29,6 @@ namespace KillerScan.Terminal
             menu.Items.Add(new Separator());
             menu.Items.Add(Entry("Str_Term_Clear", null, ClearScreen));
             menu.Items.Add(Entry("Str_Term_Font", null, ChooseFont));
-            // The speed test runs in a terminal, so offering it from one is the shortest path to
-            // it. The control has no idea what a speed test is; the shell that owns the rail
-            // button answers this.
-            menu.Items.Add(Entry("Str_TT_SpeedTest", null, () => SpeedTestRequested?.Invoke()));
 
             // Copy is only meaningful with a selection, and Paste only with text on the clipboard,
             // so both are settled as the menu opens rather than left permanently enabled.

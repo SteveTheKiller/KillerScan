@@ -45,6 +45,24 @@ namespace KillerScan.Controls
         }
 
         private void PreviewChanged(object sender, SelectionChangedEventArgs e) => UpdatePreview();
+        private void Selector_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var selector = (ComboBox)sender;
+            if (e.Delta != 0 && selector.Items.Count > 0)
+            {
+                int direction = e.Delta > 0 ? 1 : -1;
+                if (selector == FontBox) direction = -direction;
+                selector.SelectedIndex = Math.Max(0, Math.Min(selector.Items.Count - 1,
+                    selector.SelectedIndex + direction));
+            }
+            e.Handled = true;
+        }
+
+        private void DialogSurface_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double radius = RootBorder.CornerRadius.TopLeft;
+            DialogSurface.Clip = new RectangleGeometry(new Rect(e.NewSize), radius, radius);
+        }
         private void UpdatePreview()
         {
             if (Preview == null || SizeBox == null) return;

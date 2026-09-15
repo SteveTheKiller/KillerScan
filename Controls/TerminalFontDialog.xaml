@@ -21,13 +21,13 @@
             Background="{StaticResource BackgroundBrush}"
             BorderBrush="{StaticResource CardBorderBrush}"
             BorderThickness="1"
-            CornerRadius="{DynamicResource FlyoutCornerRadius}"
+            CornerRadius="{DynamicResource PanelCornerRadius}"
             Margin="{DynamicResource DialogHaloMargin}">
         <Border.Effect>
             <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="3" Direction="270"
                               Opacity="{DynamicResource FlyoutShadowOpacity}"/>
         </Border.Effect>
-        <Grid>
+        <Grid x:Name="DialogSurface" SizeChanged="DialogSurface_SizeChanged">
             <Border IsHitTestVisible="False" Panel.ZIndex="8"
                     BorderBrush="{DynamicResource FrameOuterLightBrush}"
                     BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
@@ -35,7 +35,7 @@
                     BorderBrush="{DynamicResource FrameOuterDarkBrush}"
                     BorderThickness="{DynamicResource FrameOuterDarkThickness}"/>
 
-            <Border IsHitTestVisible="False" CornerRadius="{DynamicResource FlyoutCornerRadius}"
+            <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}"
                     Opacity="{DynamicResource GrainOpacity}"
                     Background="{DynamicResource GrainTileBrush}"/>
 
@@ -77,9 +77,9 @@
 
                                 <StackPanel Grid.Row="1" Margin="{DynamicResource DialogContentMargin}">
                     <TextBlock Text="{DynamicResource Str_Term_Font}" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
-                    <ComboBox Style="{StaticResource DarkComboBox}" x:Name="FontBox" SelectionChanged="PreviewChanged" Margin="0,0,0,12"/>
+                    <ComboBox Style="{StaticResource DarkComboBox}" x:Name="FontBox" SelectionChanged="PreviewChanged" PreviewMouseWheel="Selector_MouseWheel" Margin="0,0,0,12"/>
                     <TextBlock Text="{DynamicResource Str_Sys_Size}" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
-                    <ComboBox Style="{StaticResource DarkComboBox}" x:Name="SizeBox" SelectionChanged="PreviewChanged" Margin="0,0,0,12"/>
+                    <ComboBox Style="{StaticResource DarkComboBox}" x:Name="SizeBox" SelectionChanged="PreviewChanged" PreviewMouseWheel="Selector_MouseWheel" Margin="0,0,0,12"/>
                     <Border Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" Padding="10" Height="100">
                         <TextBlock x:Name="Preview" Text="KillerScan  192.168.8.1&#xA;AaBbCc  0123456789&#xA;22, 53, 80, 443" Foreground="{DynamicResource TextBrush}" ClipToBounds="True"/>
                     </Border>

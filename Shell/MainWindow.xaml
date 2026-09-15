@@ -515,6 +515,10 @@
         <StackPanel x:Name="FixedRail" Grid.Row="2" Width="{DynamicResource RailWidth}" VerticalAlignment="Bottom"
                     HorizontalAlignment="Left" Margin="0,0,0,10" Panel.ZIndex="30"
                     Visibility="{DynamicResource FixedRailVisibility}">
+            <Button x:Name="FixedSpeedTestButton" Style="{StaticResource RailButton}" Content="&#xE9D2;"
+                    FontSize="15" Click="SpeedTestButton_Click" Margin="0,0,0,10">
+                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_TT_SpeedTest}"/><Run Text=" (F4)"/></TextBlock></Button.ToolTip>
+            </Button>
             <Button x:Name="FixedProfilesButton" Style="{StaticResource RailButton}" Content="&#xE8B7;"
                     FontSize="15" Click="ProfilesButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Profiles_Title}"/><Run Text=" (Ctrl+Shift+P)"/></TextBlock></Button.ToolTip>

@@ -403,6 +403,21 @@ internal static class Program
                 fontRoot.Measure(new Size(420, 420));
                 fontRoot.Arrange(new Rect(0, 0, 420, 420));
                 fontRoot.UpdateLayout();
+                var sizeSelector = (ComboBox)fontDialog.FindName("SizeBox");
+                var wheel = new System.Windows.Input.MouseWheelEventArgs(System.Windows.Input.Mouse.PrimaryDevice, 0, 120)
+                    { RoutedEvent = System.Windows.Input.Mouse.PreviewMouseWheelEvent };
+                sizeSelector.RaiseEvent(wheel);
+                Require(wheel.Handled && fontDialog.SelectedSize == 16 && !sizeSelector.IsKeyboardFocused,
+                    "Hover wheel changes size without keyboard focus");
+                var fontSelector = (ComboBox)fontDialog.FindName("FontBox");
+                int priorFont = fontSelector.SelectedIndex;
+                fontSelector.RaiseEvent(new System.Windows.Input.MouseWheelEventArgs(System.Windows.Input.Mouse.PrimaryDevice, 0, -120)
+                    { RoutedEvent = System.Windows.Input.Mouse.PreviewMouseWheelEvent });
+                Require(fontSelector.SelectedIndex == Math.Min(fontSelector.Items.Count - 1, priorFont + 1),
+                    "Hover wheel changes font without keyboard focus");
+                var surface = (FrameworkElement)fontDialog.FindName("DialogSurface");
+                Require(surface.Clip is RectangleGeometry rounded && rounded.RadiusX > 0 &&
+                    !rounded.FillContains(new Point(0, 0)), "Dialog contents are clipped at the rounded corners");
                 var fontBitmap = new RenderTargetBitmap(420, 420, 96, 96, PixelFormats.Pbgra32);
                 fontBitmap.Render(fontRoot);
                 var fontEncoder = new PngBitmapEncoder();
@@ -410,8 +425,27 @@ internal static class Program
                 using (var fontImage = File.Create(Path.Combine(Path.GetTempPath(), "KillerScanFontDialog.png")))
                     fontEncoder.Save(fontImage);
                 fontDialog.Close();
+                var se98Dictionary = new ResourceDictionary
+                    { Source = new Uri("pack://application:,,,/KillerScan;component/Themes/98SE.xaml") };
+                app.Resources.MergedDictionaries.Add(se98Dictionary);
+                var windowXml = new XmlDocument();
+                windowXml.Load(Path.Combine(directory.FullName, "Shell", "MainWindow.xaml"));
+                var ns = new XmlNamespaceManager(windowXml.NameTable);
+                ns.AddNamespace("x", "http://schemas.microsoft.com/winfx/2006/xaml");
+                var speedNode = (XmlElement)windowXml.SelectSingleNode("//*[@x:Name='FixedSpeedTestButton']", ns)!;
+                Require(speedNode.GetAttribute("Click") == "SpeedTestButton_Click", "98SE speed button uses the existing action");
+                speedNode.RemoveAttribute("Click");
+                var speedButton = (Button)XamlReader.Parse(speedNode.OuterXml.Replace("\uE9D2", "&#xE9D2;"), context);
+                speedButton.Measure(new Size(20, 30));
+                speedButton.Arrange(new Rect(0, 0, 20, 30));
+                Require((Visibility)se98Dictionary["FixedRailVisibility"] == Visibility.Visible &&
+                    speedButton.Content.ToString() == "\uE9D2", "98SE sidebar includes the speed icon: " +
+                    (int)speedButton.Content.ToString()![0] + " visibility " + se98Dictionary["FixedRailVisibility"]);
+                app.Resources.MergedDictionaries.Remove(se98Dictionary);
                 var terminalType = assembly.GetType("KillerScan.Terminal.TerminalControl", true)!;
                 var terminal = (FrameworkElement)Activator.CreateInstance(terminalType)!;
+                Require(!terminal.ContextMenu.Items.OfType<MenuItem>().Any(item =>
+                    Equals(item.Header, app.FindResource("Str_TT_SpeedTest"))), "Terminal menu omits KillerSpeed");
                 using var cancellation = new CancellationTokenSource();
                 using var terminalLifetime = (IDisposable)terminal;
                 int cancelInputs = 0, rerunInputs = 0, disposed = 0;

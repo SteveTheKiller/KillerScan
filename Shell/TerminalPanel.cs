@@ -50,7 +50,6 @@ namespace KillerScan.Shell
                 _terminalStatusArgument = null;
                 _terminalScanHasStatus = false;
                 terminal.GotKeyboardFocus += (_, _) => UpdateTerminalPanelStatus();
-                terminal.SpeedTestRequested += () => SpeedTestButton_Click(this, new RoutedEventArgs());
                 terminal.PromptReady += () => TerminalPromptReady(terminal);
                 terminal.Exited += code =>
                 {
