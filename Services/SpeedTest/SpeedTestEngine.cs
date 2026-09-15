@@ -137,7 +137,13 @@ namespace KillerScan.Services.SpeedTest
                 if (!adaptive || streams == maximum || warmup.ByteBudgetReached) break;
                 stages--;
             }
-            direction.MaximumStreams = selected;
+            // Short download bursts do not predict sustained throughput. Keep the full
+            // connection count for measurement rather than scaling back after warmup.
+            direction.MaximumStreams = upload ? selected : maximum;
+            int finalPayload = payloadSizes.Max();
+            if (finalPayload > 0)
+                for (int i = 0; i < direction.MaximumStreams; i++)
+                    if (payloadSizes[i] == 0) payloadSizes[i] = finalPayload;
             var measured = await TransferPhaseAsync(upload, false, options.ByteBudgetPerPhase - warmupScheduled,
                 options.PhaseDuration, transfers, latency, direction, progress, token, payloadSizes).ConfigureAwait(false);
             measured.WarmupBytes = warmupBytes;

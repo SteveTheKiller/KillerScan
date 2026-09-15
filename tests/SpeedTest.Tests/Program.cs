@@ -35,7 +35,7 @@ internal static class Program
             await Run("Cloudflare upload response is accepted only for the exact official endpoint", CloudflareAcknowledgment);
             await Run("Public endpoint profile reduces request pressure without shortening the test", PublicProfile);
             await Run("Adaptive warmup adds streams on a per-connection bottleneck", () => Adaptive(Mode.SlowDownload, 8));
-            await Run("Adaptive warmup retains fewer streams on a shared bottleneck", () => Adaptive(Mode.SharedDownload, 2));
+            await Run("Download measurement keeps all streams after a shared warmup bottleneck", () => Adaptive(Mode.SharedDownload, 8));
             await Run("Cancellation during adaptive warmup prevents measurement", AdaptiveCancel);
             await Run("Measurement retains the payload size learned during warmup", WarmupPayload);
             await Run("HTTPS configuration required without contacting a remote host", InvalidEndpoint);
@@ -190,7 +190,12 @@ internal static class Program
     {
         var options = new SpeedTestOptions();
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(60));
-        var result = await new SpeedTestEngine().RunAsync(options, null, deadline.Token);
+        var progress = new CallbackProgress(p =>
+        {
+            if (p.IsPhaseComplete)
+                Console.WriteLine($"PHASE {p.Phase} bytes={p.BytesTransferred} seconds={p.Elapsed.TotalSeconds:F3} Mbps={SpeedTestMetrics.MegabitsPerSecond(p.BytesTransferred, p.Elapsed):F2}");
+        });
+        var result = await new SpeedTestEngine().RunAsync(options, progress, deadline.Token);
         _internetResult = result;
         Require(result.Download.Mbps > 0 && result.Upload.Mbps > 0 && result.IdleLatencySamples.Count >= 5, "Live default endpoint measurements available");
         Console.WriteLine(string.Format(CultureInfo.InvariantCulture,
@@ -634,7 +639,7 @@ internal static class Program
         });
         var result = await new SpeedTestEngine().RunAsync(options, progress, CancellationToken.None);
         Require(warmupStages == 3, "A plateau must not prevent testing the remaining connection counts");
-        Require(result.Download.StreamCount == expectedStreams, "Selected connection count follows measured scaling");
+        Require(result.Download.StreamCount == expectedStreams, "Download measurement keeps the configured connection count");
         Require(result.Download.CompletedDuration && result.Download.BytesTransferred > 0, "Selected streams complete measurement");
         Require(result.Download.BytesScheduled <= options.ByteBudgetPerPhase, "All adaptive stages share one byte budget");
     }
