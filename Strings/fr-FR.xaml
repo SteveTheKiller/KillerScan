@@ -412,7 +412,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_KS_Base">Base</sys:String>
     <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
     <sys:String x:Key="Str_Speed_Tagline">Mesurez le débit descendant, le débit montant et la latence sous charge.</sys:String>
-    <sys:String x:Key="Str_Speed_Consent">Tester votre connexion ? KillerSpeed télécharge et envoie des données générées via speed.killerscan.net (jusqu’à 6 GiB, plus la surcharge réseau). Vos fichiers ne sont pas envoyés, et les données téléchargées ne sont ni enregistrées ni exécutées. Appuyez sur Entrée pour démarrer ou sur Échap pour annuler.</sys:String>
+    <sys:String x:Key="Str_Speed_Consent">Entrée pour démarrer, Échap pour annuler.</sys:String>
     <sys:String x:Key="Str_Speed_NotInstalled">L'outil en ligne de commande Ookla speedtest n'est pas installé.</sys:String>
     <sys:String x:Key="Str_Speed_Offer">KillerScan peut le télécharger depuis install.speedtest.net (environ 4 Mo) ou effectuer son propre test de débit HTTP, sans rien installer.</sys:String>
     <sys:String x:Key="Str_Speed_Prompt">Télécharger l'outil Ookla CLI ? (y/N)</sys:String>
