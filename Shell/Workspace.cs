@@ -94,6 +94,7 @@ namespace KillerScan.Shell
                 var scanToolbar = _scanWorkspace.DetachToolbar();
                 scanToolbar.Margin = new Thickness(8, 0, 0, 0);
                 RegisterViewToolbar("scan", scanToolbar);
+                InitializeTerminalScanToolbar((TextBox)_scanWorkspace.FindName("SubnetInput"));
                 var networkDetails = new StackPanel();
                 foreach (string name in new[] { "LocalIpLabel", "GatewayLabel", "DnsLabel", "InterfaceLabel" })
                 {
