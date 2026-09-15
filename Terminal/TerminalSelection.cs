@@ -19,8 +19,8 @@ namespace KillerScan.Terminal
             int row = _cellH > 0 ? (int)(p.Y / _cellH) : 0;
             line = first + Math.Max(0, Math.Min(_buf.Rows - 1, row));
 
-            col = _cellW > 0 ? (int)Math.Round((p.X - LeftInset) / _cellW) : 0;
-            col = Math.Max(0, Math.Min(_buf.Cols, col));
+            col = _cellW > 0 ? (int)Math.Round((p.X - LeftInset) / _cellW) + _horizontalScroll : 0;
+            col = Math.Max(0, Math.Min(_buf.LineAt(line).Length, col));
         }
 
         private void SelectionMouseDown(MouseButtonEventArgs e)

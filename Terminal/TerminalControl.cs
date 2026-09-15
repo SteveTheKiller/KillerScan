@@ -36,6 +36,7 @@ namespace KillerScan.Terminal
         private float _pixelsPerDip = 1f;
 
         private int _scroll;                 // lines scrolled back; 0 is live
+        private int _horizontalScroll;
         private bool _cursorOn = true;
         private DispatcherTimer? _blink;
 
@@ -253,7 +254,7 @@ namespace KillerScan.Terminal
 
         private void Drain(bool complete = false)
         {
-            bool any = false;
+            int previousHistory = _buf.ScrollbackCount;
             int budget = complete ? int.MaxValue : 262144;
             while (budget > 0)
             {
@@ -267,9 +268,8 @@ namespace KillerScan.Terminal
                 }
                 _parser.Feed(chunk, chunk.Length);
                 budget -= chunk.Length;
-                any = true;
             }
-            if (any) _scroll = 0;               // new output jumps back to the bottom
+            if (_scroll > 0) _scroll += _buf.ScrollbackCount - previousHistory;
             if (_buf.Version != _drawnVersion) InvalidateVisual();
         }
 
@@ -365,12 +365,14 @@ namespace KillerScan.Terminal
 
             if (ActualWidth <= LeftInset || ActualHeight <= 0) return;
 
-            int cols = Math.Max(1, (int)(Math.Max(0, ActualWidth - LeftInset) / _cellW));
+            int cols = Math.Max(96, (int)(Math.Max(0, ActualWidth - LeftInset) / _cellW));
             int rows = Math.Max(1, (int)(ActualHeight / _cellH));
 
             if (cols != _buf.Cols || rows != _buf.Rows)
             {
+                int previousHistory = _buf.ScrollbackCount;
                 _buf.Resize(cols, rows);
+                if (_scroll > 0) _scroll += _buf.ScrollbackCount - previousHistory;
                 _pty?.Resize((short)cols, (short)rows);
                 InvalidateVisual();
             }
@@ -397,7 +399,10 @@ namespace KillerScan.Terminal
             if (_glyphs == null) return;
 
             int first = Math.Max(0, _buf.ScrollbackCount - _scroll);
-            dc.PushTransform(new TranslateTransform(LeftInset, 0));
+            int visibleColumns = Math.Max(1, (int)((ActualWidth - LeftInset) / _cellW));
+            int visibleWidth = Enumerable.Range(0, _buf.Rows).Max(r => _buf.LineAt(first + r).Length);
+            _horizontalScroll = Math.Min(_horizontalScroll, Math.Max(0, visibleWidth - visibleColumns));
+            dc.PushTransform(new TranslateTransform(LeftInset - _horizontalScroll * _cellW, 0));
 
             for (int r = 0; r < _buf.Rows; r++)
             {
@@ -629,6 +634,16 @@ namespace KillerScan.Terminal
 
         protected override void OnMouseWheel(MouseWheelEventArgs e)
         {
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0)
+            {
+                int visible = Math.Max(1, (int)((ActualWidth - LeftInset) / _cellW));
+                int widest = Enumerable.Range(0, _buf.TotalLines).Max(i => _buf.LineAt(i).Length);
+                _horizontalScroll = Math.Max(0, Math.Min(Math.Max(0, widest - visible),
+                    _horizontalScroll + (e.Delta > 0 ? -4 : 4)));
+                InvalidateVisual();
+                e.Handled = true;
+                return;
+            }
 
             if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
             {

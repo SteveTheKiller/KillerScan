@@ -33,6 +33,7 @@ internal static class Program
             Require(args.All(value => value == "--worker" || value == "--internet"), "Usage: SpeedTest.Tests.exe [--worker] [--internet]");
             await Run("Metric units, median, jitter and unavailable values", Metrics);
             await Run("Scan terminal progress stays on one line and results fit narrow widths", ScanPresentation);
+            await Run("Terminal history survives resizing, clears and shell replacement", TerminalHistory);
             await Run("Cloudflare upload response is accepted only for the exact official endpoint", CloudflareAcknowledgment);
             await Run("Public endpoint profile reduces request pressure without shortening the test", PublicProfile);
             await Run("Adaptive warmup adds streams on a per-connection bottleneck", () => Adaptive(Mode.SlowDownload, 8));
@@ -85,6 +86,48 @@ internal static class Program
     private static void Require(bool condition, string message)
     {
         if (!condition) throw new InvalidOperationException(message);
+    }
+
+    private static Task TerminalHistory()
+    {
+        var assembly = typeof(SpeedTestEngine).Assembly;
+        var type = assembly.GetType("KillerScan.Terminal.TerminalBuffer")!;
+        var parserType = assembly.GetType("KillerScan.Terminal.VtParser")!;
+        var buffer = Activator.CreateInstance(type, 40, 5)!;
+        var parser = Activator.CreateInstance(parserType, buffer)!;
+        void Feed(string text)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(text);
+            parserType.GetMethod("Feed")!.Invoke(parser, new object[] { bytes, bytes.Length });
+        }
+        string Text(object source)
+        {
+            var text = new StringBuilder();
+            int total = (int)type.GetProperty("TotalLines")!.GetValue(source)!;
+            for (int row = 0; row < total; row++)
+            {
+                var cells = (Array)type.GetMethod("LineAt")!.Invoke(source, new object[] { row })!;
+                foreach (object cell in cells)
+                {
+                    int ch = (int)cell.GetType().GetField("Ch")!.GetValue(cell)!;
+                    text.Append(ch == 0 ? ' ' : (char)ch);
+                }
+                text.AppendLine();
+            }
+            return text.ToString();
+        }
+        Feed("first-row-retained\r\nsecond-row-retained\r\nthird-row-retained");
+        type.GetMethod("Resize")!.Invoke(buffer, new object[] { 8, 2 });
+        type.GetMethod("Resize")!.Invoke(buffer, new object[] { 40, 8 });
+        Feed("\u001b[2J\u001b[3J\u001b[Hnew-output");
+        foreach (string expected in new[] { "first-row-retained", "second-row-retained", "third-row-retained", "new-output" })
+            Require(Text(buffer).Contains(expected), "Resize and clear preserve " + expected);
+        type.GetMethod("ClearAll", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(buffer, null);
+        Require(Text(buffer).Contains("new-output"), "Clear menu preserves output");
+        var next = Activator.CreateInstance(type, 40, 8)!;
+        type.GetMethod("ImportHistory")!.Invoke(next, new[] { buffer });
+        Require(Text(next).Contains("first-row-retained") && Text(next).Contains("new-output"), "Replacement shell inherits the session");
+        return Task.CompletedTask;
     }
 
     private static Task ScanPresentation()

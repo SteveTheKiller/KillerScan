@@ -61,7 +61,7 @@ namespace KillerScan.Terminal
         }
 
         /// <summary>
-        /// Clears what is on screen and the scrollback with it, the way `cls` would, without
+        /// Moves visible output into session history and clears the viewport without
         /// sending anything to the program on the other end: a full-screen program would redraw
         /// over it anyway, and a shell mid-command should not receive stray input.
         /// </summary>

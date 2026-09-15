@@ -32,6 +32,8 @@ namespace KillerScan.Terminal
                     .OrderByDescending(c => widths[c]).First();
                 widths[column]--;
             }
+            int[] flexible = [1, 3, 5];
+            for (int extra = 0; widths.Sum() < available; extra++) widths[flexible[extra % flexible.Length]]++;
             static List<string> Wrap(string text, int width)
             {
                 string remaining = Clean(text);

@@ -35,7 +35,7 @@ namespace KillerScan.Terminal
         private Cell[][]? _altScreen;                       // non-null while the alt buffer is up
         private readonly List<Cell[]> _scrollback = [];
 
-        public int ScrollbackLimit { get; set; } = 5000;
+        public int ScrollbackLimit { get; set; } = int.MaxValue;
 
         public int ScrollbackCount => _scrollback.Count;
 
@@ -88,6 +88,14 @@ namespace KillerScan.Terminal
 
         public int TotalLines => _scrollback.Count + Rows;
 
+        public void ImportHistory(TerminalBuffer previous)
+        {
+            int last = previous.TotalLines - 1;
+            while (last >= 0 && Array.TrueForAll(previous.LineAt(last), cell => cell.Ch == 0 || cell.Ch == ' ')) last--;
+            for (int row = 0; row <= last; row++) _scrollback.Add((Cell[])previous.LineAt(row).Clone());
+            Version++;
+        }
+
         public void PreserveScreenInHistory()
         {
             int last = Rows - 1;
@@ -106,10 +114,17 @@ namespace KillerScan.Terminal
 
             var old = _screen;
             int oldRows = Rows;
-
+            int removed = Math.Max(0, oldRows - rows);
+            if (_altScreen == null)
+                for (int r = 0; r < removed; r++) _scrollback.Add(old[r]);
             _screen = New(cols, rows);
             for (int r = 0; r < Math.Min(oldRows, rows); r++)
-                Array.Copy(old[r], _screen[r], Math.Min(Cols, cols));
+            {
+                var source = old[r + removed];
+                _screen[r] = NewLine(Math.Max(cols, source.Length));
+                Array.Copy(source, _screen[r], source.Length);
+            }
+            CursorRow = Math.Max(0, CursorRow - removed);
 
             if (_altScreen != null)
             {
@@ -289,22 +304,22 @@ namespace KillerScan.Terminal
         }
 
         /// <summary>
-        /// Clears the screen and the scrollback, leaving the cursor at the top and every other
+        /// Preserves the screen in history, leaving the cursor at the top and every other
         /// mode alone. What `cls` gives you, without resetting the terminal underneath it.
         /// </summary>
         internal void ClearAll()
         {
+            if (_altScreen == null) PreserveScreenInHistory();
             _screen = New(Cols, Rows);
-            _scrollback.Clear();
             CursorRow = CursorCol = 0;
             Version++;
         }
 
         private void FullReset()
         {
+            if (_altScreen == null) PreserveScreenInHistory();
             _screen = New(Cols, Rows);
             _altScreen = null;
-            _scrollback.Clear();
             CursorRow = CursorCol = 0;
             _curFg = _curBg = DefaultColor;
             _curFlags = CellFlags.None;
@@ -457,10 +472,12 @@ namespace KillerScan.Terminal
                     for (int r = 0; r < CursorRow; r++) ClearRun(_screen[r], 0, Cols - 1);
                     ClearRun(_screen[CursorRow], 0, CursorCol);
                     break;
+                case 3:
+                    // Session history remains available even when a shell requests ED 3.
+                    break;
                 default:
-                    for (int r = 0; r < Rows; r++) ClearRun(_screen[r], 0, Cols - 1);
-
-                    if (mode == 3) _scrollback.Clear();
+                    if (_altScreen == null) PreserveScreenInHistory();
+                    for (int r = 0; r < Rows; r++) ClearRun(_screen[r], 0, _screen[r].Length - 1);
                     break;
             }
             Version++;

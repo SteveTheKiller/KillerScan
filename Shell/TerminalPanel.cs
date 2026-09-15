@@ -35,12 +35,14 @@ namespace KillerScan.Shell
             if (_terminalPanelDisposed) return;
             if (_terminalControl == null || command != null || shellCommand != null || _terminalExited || managed || _terminalControl.IsManaged)
             {
+                var previousBuffer = _terminalControl?.Buffer;
                 if (_terminalControl != null)
                 {
                     _workspaceBody.Children.Remove(_terminalControl);
                     _terminalControl.Dispose();
                 }
                 var terminal = _terminalControl = new TerminalControl();
+                if (previousBuffer != null) terminal.Buffer.ImportHistory(previousBuffer);
                 _terminalTitle = title;
                 _terminalExited = false;
                 _terminalIsPing = shellCommand?.StartsWith("ping.exe ", StringComparison.OrdinalIgnoreCase) == true;
