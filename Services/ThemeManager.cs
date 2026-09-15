@@ -214,10 +214,10 @@ namespace KillerScan.Services
                 newDict["OutlineHoverTextBrush"] = newDict["OnPrimaryBrush"];
             if (!newDict.Contains("OutlinePressedBrush"))
                 newDict["OutlinePressedBrush"] = Brushes.Transparent;
-            // The About info panel. Tracks the flyout surface unless a theme names its own; 98SE
+            // The About info panel. Tracks the pane surface unless a theme names its own; 98SE
             // does, because there the panel is a white client area rather than a card.
             if (!newDict.Contains("AboutPanelBrush"))
-                newDict["AboutPanelBrush"] = newDict["MenuBackgroundBrush"];
+                newDict["AboutPanelBrush"] = newDict["PaneBrush"];
             if (!newDict.Contains("AboutPanelEdgeBrush"))
                 newDict["AboutPanelEdgeBrush"] = newDict["PaneBorderBrush"];
             // The keyboard map's key caps. Tracks the raised surface unless a theme names its own;
