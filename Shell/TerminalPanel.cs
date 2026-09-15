@@ -145,6 +145,7 @@ namespace KillerScan.Shell
 
         private async void TerminalPromptReady(TerminalControl terminal)
         {
+            System.Windows.Input.CommandManager.InvalidateRequerySuggested();
             int generation = ++_terminalPromptGeneration;
             if (_terminalControl != terminal || _terminalPanelDisposed || _terminalExited || _speedTestRun != null) return;
             if (_terminalIsPing)
