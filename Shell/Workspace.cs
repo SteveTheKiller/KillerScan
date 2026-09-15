@@ -62,9 +62,8 @@ namespace KillerScan.Shell
 
         private void UpdateViewToolbar()
         {
-            // Scan owns the bar for every view built on the scan workspace; the rest fall back
-            // to it too, so switching to a view without its own controls is never a blank bar.
-            string key = _viewToolbars.ContainsKey(_workspaceView) ? _workspaceView : "scan";
+            // Only scan-backed views share scan controls. Other views use their own toolbar.
+            string key = ActiveScan != null ? "scan" : _workspaceView;
             foreach (var pair in _viewToolbars)
                 pair.Value.Visibility = pair.Key == key ? Visibility.Visible : Visibility.Collapsed;
             // The bars are different widths, so what fits beside them changes with the view.
