@@ -478,7 +478,7 @@
               Margin="{DynamicResource DevicesPaneMargin}" Panel.ZIndex="10">
         <Border x:Name="DevicesPane" Grid.Row="1"
                 Background="{DynamicResource ScanContentPaneBrush}"
-                BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="0"
+                BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1"
                 CornerRadius="{DynamicResource PanelCornerRadius}"
                 Effect="{StaticResource PaneShadow}">
             <Grid x:Name="TerminalLayout" WindowChrome.IsHitTestVisibleInChrome="True">
