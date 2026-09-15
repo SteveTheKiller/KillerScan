@@ -450,4 +450,5 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Přenos selhal. Zkontrolujte připojení a zkuste to znovu.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Výsledky nelze zkopírovat. Zkuste to znovu.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">V terminálu běží úloha. Zastavit ji a spustit test rychlosti?</sys:String>
+    <sys:String x:Key="Str_Term_Font">Písmo a velikost</sys:String>
 </ResourceDictionary>

@@ -468,4 +468,5 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Trasferimento non riuscito. Controlla la connessione e riprova.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Impossibile copiare i risultati. Riprova.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">È in corso un'attività nel terminale. Interromperla ed eseguire il test di velocità?</sys:String>
+    <sys:String x:Key="Str_Term_Font">Carattere e dimensione</sys:String>
 </ResourceDictionary>

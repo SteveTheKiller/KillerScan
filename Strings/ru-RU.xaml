@@ -478,4 +478,5 @@
     <sys:String x:Key="Str_Speed_TransferFailed">Передача не удалась. Проверьте соединение и повторите попытку.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Не удалось скопировать результаты. Попробуйте ещё раз.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">В терминале выполняется задача. Остановить её и запустить тест скорости?</sys:String>
+    <sys:String x:Key="Str_Term_Font">Шрифт и размер</sys:String>
 </ResourceDictionary>

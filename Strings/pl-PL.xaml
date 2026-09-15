@@ -437,4 +437,5 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Transfer nie powiódł się. Sprawdź połączenie i spróbuj ponownie.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Nie udało się skopiować wyników. Spróbuj ponownie.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">W terminalu trwa zadanie. Zatrzymać je i uruchomić test prędkości?</sys:String>
+    <sys:String x:Key="Str_Term_Font">Czcionka i rozmiar</sys:String>
 </ResourceDictionary>

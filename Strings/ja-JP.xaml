@@ -463,4 +463,5 @@
     <sys:String x:Key="Str_Speed_TransferFailed">転送に失敗しました。接続を確認して再試行してください。</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">結果をコピーできませんでした。再試行してください。</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">ターミナルで処理が実行中です。停止して速度テストを実行しますか？</sys:String>
+    <sys:String x:Key="Str_Term_Font">フォントとサイズ</sys:String>
 </ResourceDictionary>

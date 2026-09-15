@@ -1,0 +1,96 @@
+<Window x:Class="KillerScan.Controls.TerminalFontDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="KillerScan"
+        Width="440" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        ShowInTaskbar="False">
+
+
+    <Border x:Name="RootBorder" Opacity="0"
+            Background="{StaticResource BackgroundBrush}"
+            BorderBrush="{StaticResource CardBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="{DynamicResource FlyoutCornerRadius}"
+            Margin="{DynamicResource DialogHaloMargin}">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="3" Direction="270"
+                              Opacity="{DynamicResource FlyoutShadowOpacity}"/>
+        </Border.Effect>
+        <Grid>
+            <Border IsHitTestVisible="False" Panel.ZIndex="8"
+                    BorderBrush="{DynamicResource FrameOuterLightBrush}"
+                    BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
+            <Border IsHitTestVisible="False" Panel.ZIndex="8"
+                    BorderBrush="{DynamicResource FrameOuterDarkBrush}"
+                    BorderThickness="{DynamicResource FrameOuterDarkThickness}"/>
+
+            <Border IsHitTestVisible="False" CornerRadius="{DynamicResource FlyoutCornerRadius}"
+                    Opacity="{DynamicResource GrainOpacity}"
+                    Background="{DynamicResource GrainTileBrush}"/>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+
+                <Border Grid.Row="0" Height="{DynamicResource DialogTitleBarHeight}"
+                        Background="{DynamicResource InputDialogTitleBrush}"
+                        MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                    <Grid>
+
+                        <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Margin="14,0,0,0"
+                              Visibility="{DynamicResource InputDialogWordmarkVisibility}">
+                            <StackPanel Orientation="Horizontal" Margin="1,2,0,0"
+                                        Opacity="{DynamicResource IconShadowOpacity}">
+                                <StackPanel.Effect><BlurEffect Radius="3"/></StackPanel.Effect>
+                                <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15"><Run Text="Killer" Foreground="#D8000000"/><Run Text="Scan" FontSize="19.5" FontWeight="Bold" Foreground="#D8000000"/></TextBlock>
+                            </StackPanel>
+                            <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="19.5" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
+                        </Grid>
+                        <TextBlock Text="{DynamicResource Str_Ssh_Title}" Margin="6,0,0,0" VerticalAlignment="Center"
+                                   Visibility="{DynamicResource InputDialogPlainTitleVisibility}"
+                                   FontFamily="Tahoma" FontSize="11" FontWeight="Bold"
+                                   Foreground="{DynamicResource ChromeTextBrush}"/>
+
+                        <Button Content="{DynamicResource AboutCloseGlyph}" Click="Cancel_Click"
+                                Style="{StaticResource OverlayCloseButton}"
+                                HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Width="{DynamicResource AboutCloseWidth}" Height="{DynamicResource AboutCloseHeight}"
+                                Margin="{DynamicResource AboutCloseMargin}"/>
+                    </Grid>
+                </Border>
+
+
+                                <StackPanel Grid.Row="1" Margin="{DynamicResource DialogContentMargin}">
+                    <TextBlock Text="{DynamicResource Str_Term_Font}" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+                    <ComboBox Style="{StaticResource DarkComboBox}" x:Name="FontBox" SelectionChanged="PreviewChanged" Margin="0,0,0,12"/>
+                    <TextBlock Text="{DynamicResource Str_Sys_Size}" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
+                    <ComboBox Style="{StaticResource DarkComboBox}" x:Name="SizeBox" SelectionChanged="PreviewChanged" Margin="0,0,0,12"/>
+                    <Border Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" Padding="10" Height="100">
+                        <TextBlock x:Name="Preview" Text="KillerScan  192.168.8.1&#xA;AaBbCc  0123456789&#xA;22, 53, 80, 443" Foreground="{DynamicResource TextBrush}" ClipToBounds="True"/>
+                    </Border>
+                </StackPanel>
+
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal"
+                            HorizontalAlignment="Right" Margin="{DynamicResource DialogButtonsMargin}">
+                    <Button x:Name="CancelButton" Content="{DynamicResource Str_Btn_Cancel}" IsCancel="True" Click="Cancel_Click"
+                            Style="{StaticResource SurfaceButton}"
+                            MinWidth="80" Margin="0,0,8,0"/>
+
+                    <Button x:Name="OkButton" Content="{DynamicResource Str_Btn_Save}" IsDefault="True" Click="OK_Click"
+                            Style="{StaticResource OutlineButton}"
+                            MinWidth="80"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

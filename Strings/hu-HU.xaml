@@ -468,4 +468,5 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Az átvitel sikertelen. Ellenőrizze a kapcsolatot, és próbálja újra.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Nem sikerült másolni az eredményeket. Próbálja újra.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">A terminálban egy feladat fut. Leállítja, és helyette elindítja a sebességtesztet?</sys:String>
+    <sys:String x:Key="Str_Term_Font">Betűtípus és méret</sys:String>
 </ResourceDictionary>

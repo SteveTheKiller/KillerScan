@@ -32,7 +32,8 @@ namespace KillerScan.Terminal
 
         private GlyphTypeface? _glyphs;
         private double _cellW, _cellH, _baseline;
-        private double _fontSize = 13;
+        private double _fontSize = 11;
+        private string _fontFamily = string.Empty;
         private float _pixelsPerDip = 1f;
 
         private int _scroll;                 // lines scrolled back; 0 is live
@@ -104,6 +105,7 @@ namespace KillerScan.Terminal
                 PromptReady?.Invoke();
             };
 
+            LoadFontPreference();
             LoadFont();
             Loaded += (_, _) => Focus();
         }
@@ -146,6 +148,7 @@ namespace KillerScan.Terminal
 
             string[] order = Fonts.SystemFontFamilies.Any(f => f.Source == "ProFont IIx Nerd Font")
                 ? ["ProFont IIx Nerd Font", .. FontOrder] : FontOrder;
+            if (!string.IsNullOrEmpty(_fontFamily)) order = [_fontFamily, .. order];
 
             foreach (var name in order)
             {
@@ -157,6 +160,7 @@ namespace KillerScan.Terminal
                     if (!gt.CharacterToGlyphMap.ContainsKey('M')) continue;
 
                     _glyphs = gt;
+                    _fontFamily = name;
 
                     double ppd = _pixelsPerDip > 0 ? _pixelsPerDip : 1.0;
                     _cellW = Math.Max(1.0, Math.Round(gt.AdvanceWidths[gt.CharacterToGlyphMap['M']] * _fontSize * ppd)) / ppd;
@@ -756,7 +760,7 @@ namespace KillerScan.Terminal
 
                     case Key.OemPlus: case Key.Add:       SetFontSize(_fontSize + 1); return true;
                     case Key.OemMinus: case Key.Subtract: SetFontSize(_fontSize - 1); return true;
-                    case Key.D0: case Key.NumPad0:        SetFontSize(13); return true;
+                    case Key.D0: case Key.NumPad0:        SetFontSize(11); return true;
 
                     case Key.V: Paste(); return true;
                     // Deliberately no Ctrl+A here. It belongs to the program on the other end as

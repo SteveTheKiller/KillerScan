@@ -452,4 +452,5 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">La transferencia falló. Compruebe la conexión e inténtelo de nuevo.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">No se pudieron copiar los resultados. Inténtelo de nuevo.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Hay una tarea en ejecución en el terminal. ¿Detenerla y ejecutar la prueba de velocidad?</sys:String>
+    <sys:String x:Key="Str_Term_Font">Fuente y tamaño</sys:String>
 </ResourceDictionary>

@@ -452,4 +452,5 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Aktarım başarısız. Bağlantınızı kontrol edip tekrar deneyin.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Sonuçlar kopyalanamadı. Tekrar deneyin.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Terminalde bir işlem çalışıyor. İşlemi durdurup hız testini çalıştırmak ister misiniz?</sys:String>
+    <sys:String x:Key="Str_Term_Font">Yazı tipi ve boyutu</sys:String>
 </ResourceDictionary>

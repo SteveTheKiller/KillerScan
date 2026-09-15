@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 1.7.2 runs speed tests with a native engine in the themed terminal.
 
 ### Changed
+- Reduced the default terminal font size to 11 and added a saved font and size selector with a live preview in the right-click menu.
 - Changed the app, standalone setup dialogs, and landing-page default to Black/Teal while preserving saved theme choices.
 
 ### Added

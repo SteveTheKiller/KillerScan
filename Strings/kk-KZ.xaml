@@ -494,4 +494,5 @@
     <sys:String x:Key="Str_Speed_TransferFailed">Тасымалдау сәтсіз аяқталды. Қосылымды тексеріп, қайталап көріңіз.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Нәтижелерді көшіру мүмкін болмады. Қайталап көріңіз.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Терминалда тапсырма орындалып жатыр. Оны тоқтатып, орнына жылдамдық сынағын іске қосу керек пе?</sys:String>
+    <sys:String x:Key="Str_Term_Font">Қаріп және өлшем</sys:String>
 </ResourceDictionary>

@@ -452,4 +452,5 @@
     <sys:String x:Key="Str_Speed_TransferFailed">傳輸失敗。請檢查連線後再試。</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">無法複製結果。請再試一次。</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">終端機中有程式正在執行。要停止並改為執行速度測試嗎？</sys:String>
+    <sys:String x:Key="Str_Term_Font">字型與大小</sys:String>
 </ResourceDictionary>

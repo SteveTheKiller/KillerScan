@@ -31,6 +31,7 @@ namespace KillerScan.Terminal
             menu.Items.Add(Entry("Str_Term_CopyAll", null, CopyAll));
             menu.Items.Add(new Separator());
             menu.Items.Add(Entry("Str_Term_Clear", null, ClearScreen));
+            menu.Items.Add(Entry("Str_Term_Font", null, ChooseFont));
             // The speed test runs in a terminal, so offering it from one is the shortest path to
             // it. The control has no idea what a speed test is; the shell that owns the rail
             // button answers this.
