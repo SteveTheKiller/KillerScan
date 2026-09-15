@@ -275,7 +275,12 @@ namespace KillerScan.Features.Cli
                 scanner.ProgressChanged += p =>
                 {
                     if (p == 100 || p >= lastProgress + 5)
-                    { lastProgress = p; err.WriteLine($"Progress: {p}%"); }
+                    {
+                        lastProgress = p;
+                        string percent = $"{p}%";
+                        if (_errAnsi && !terminalProgress) percent = "\x1b[94m" + percent + AnsiReset;
+                        err.WriteLine("Progress: " + percent);
+                    }
                 };
             }
             if (terminalProgress)
@@ -447,7 +452,7 @@ namespace KillerScan.Features.Cli
             }
             if (header)
             {
-                Row(headers, ansi ? AnsiDim : "");
+                Row(headers, ansi ? "\x1b[1;37m" : "");
                 Row([.. width.Select(w => new string('-', w))], ansi ? AnsiDim : "");
             }
             foreach (var row in rows) Row(row, "");

@@ -12,6 +12,7 @@ namespace KillerScan.Terminal
         {
             string text = Clean(status);
             if (text.Length > Width) text = text[..Width];
+            text = System.Text.RegularExpressions.Regex.Replace(text, @"\d+%", "\u001b[94m$0\u001b[0m");
             return "\r\u001b[2K" + text;
         }
 
@@ -60,7 +61,7 @@ namespace KillerScan.Terminal
                     {
                         int color = header ? 37 : c switch { 0 => 36, 2 => 33, 4 => 35, 5 => 32, _ => 37 };
                         string cell = line < lines[c].Count ? lines[c][line] : "";
-                        result.Append("\u001b[").Append(color).Append('m').Append(cell.PadRight(widths[c])).Append("\u001b[0m");
+                        result.Append(header ? "\u001b[1;" : "\u001b[").Append(color).Append('m').Append(cell.PadRight(widths[c])).Append("\u001b[0m");
                         if (c < 5) result.Append("  ");
                     }
                     result.Append("\r\n");

@@ -29,6 +29,7 @@ internal static class Program
     {
         try
         {
+            if (args.SequenceEqual(new[] { "--scan-presentation" })) { await ScanPresentation(); return 0; }
             if (args.SequenceEqual(new[] { "--terminal" })) { await View(); return 0; }
             Require(args.All(value => value == "--worker" || value == "--internet"), "Usage: SpeedTest.Tests.exe [--worker] [--internet]");
             await Run("Metric units, median, jitter and unavailable values", Metrics);
@@ -143,13 +144,21 @@ internal static class Program
             var view = Activator.CreateInstance(type, new Func<string, string>(_ => "Open Ports"), new Func<int>(() => width))!;
             string progress = (string)type.GetMethod("Progress")!.Invoke(view, new object[] { "Progress: 72%" })!;
             Require(progress.StartsWith("\r\u001b[2K") && !progress.Contains('\n'), "Progress replaces the current row");
+            Require(progress.Contains("\u001b[94m72%\u001b[0m"), "Scan percentages use blue");
             string rendered = (string)type.GetMethod("Result")!.Invoke(view, new object[] { devices })!;
+            Require(rendered.Contains("\u001b[1;37m"), "Terminal column headers use bold");
             string plain = System.Text.RegularExpressions.Regex.Replace(rendered, "\u001b\\[[0-9;]*[A-Za-z]", "");
             Require(plain.Split('\n').All(line => line.Trim('\r').Length <= width - 2), "Every result row fits the terminal");
             foreach (string port in new[] { "22", "53", "80", "443", "8080", "8443" })
                 Require(plain.Contains(port), "Complete port numbers are preserved");
             Require(!plain.Contains("---"), "No table separator lines");
         }
+        var cli = typeof(SpeedTestEngine).Assembly.GetType("KillerScan.Features.Cli.CliRunner", true)!;
+        var table = cli.GetMethod("Table", BindingFlags.Static | BindingFlags.NonPublic)!;
+        string ansi = (string)table.Invoke(null, new object[] { devices, true, true })!;
+        string plainTable = (string)table.Invoke(null, new object[] { devices, true, false })!;
+        Require(ansi.Contains("\u001b[1;37m"), "CLI column headers use bold");
+        Require(!plainTable.Contains("\u001b"), "Redirected CLI table remains plain text");
         return Task.CompletedTask;
     }
 

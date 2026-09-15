@@ -513,6 +513,14 @@ namespace KillerScan.Terminal
 
                 var run = MakeRun(face, indices, widths, new Point(x, y + _baseline));
                 if (run != null) dc.DrawGlyphRun(brush, run);
+                // Simulate bold within the fixed cell even when the chosen bitmap-style font
+                // has no bold face. Keep column widths and the baseline unchanged.
+                if (run != null && (flags & CellFlags.Bold) != 0)
+                {
+                    dc.PushTransform(new TranslateTransform(0.5 / _pixelsPerDip, 0));
+                    dc.DrawGlyphRun(brush, run);
+                    dc.Pop();
+                }
 
                 if (stretch) dc.Pop();
 

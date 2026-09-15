@@ -14,6 +14,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Added
 - Added consistent address, MAC, port, timing, and success/failure colors to network commands while preserving plain text and PowerShell objects for pipelines and exports.
+- Made scan percentages blue and table headings bold in the terminal and CLI.
 - Added a terminal Scan box with a hidden CLI launch, in-place progress, width-aware tables, and matching footer status, device counts, and trust alerts.
 - KillerSpeed terminal speed tests with consent before network transfers, adaptive connections, colored progress and aligned result tables that stay visible above the prompt, plus confirmation before interrupting another task.
 - A dedicated KillerScan speed-test server with automated client and server checks.
