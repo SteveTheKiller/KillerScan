@@ -18,33 +18,54 @@ namespace KillerScan.Terminal
         public string Result(IEnumerable<NetworkDevice> devices)
         {
             var result = new StringBuilder("\r\u001b[2K");
-            void Line(string text, int color)
+            string[] headers = [loc("Str_Col_Ip"), loc("Str_Col_Host"), loc("Str_Col_Mac"),
+                loc("Str_Col_Vendor"), loc("Str_Col_Type"), loc("Str_Col_Ports")];
+            var rows = devices.Select(d => new[] { d.IpAddress, d.Hostname, d.MacAddress,
+                d.Vendor, d.DeviceType, d.OpenPortsDisplay }).ToList();
+            int[] limits = [15, 24, 17, 30, 14, 24];
+            int[] widths = Enumerable.Range(0, 6).Select(c => Math.Min(limits[c],
+                Math.Max(headers[c].Length, rows.Select(r => Clean(r[c]).Length).DefaultIfEmpty(0).Max()))).ToArray();
+            int available = Math.Max(12, Width - 10);
+            while (widths.Sum() > available)
+            {
+                int column = Enumerable.Range(0, 6).Where(c => widths[c] > (c == 5 ? 6 : 1))
+                    .OrderByDescending(c => widths[c]).First();
+                widths[column]--;
+            }
+            static List<string> Wrap(string text, int width)
             {
                 string remaining = Clean(text);
-                bool continuation = false;
+                var lines = new List<string>();
                 do
                 {
-                    int available = Width - (continuation ? 2 : 0);
-                    int length = Math.Min(remaining.Length, available);
+                    int length = Math.Min(remaining.Length, width);
                     if (length < remaining.Length)
                     {
                         int space = remaining.LastIndexOf(' ', length - 1, length);
                         if (space > 0) length = space;
                     }
-                    result.Append("\u001b[").Append(color).Append('m');
-                    if (continuation) result.Append("  ");
-                    result.Append(remaining[..length]).Append("\u001b[0m\r\n");
+                    lines.Add(remaining[..length]);
                     remaining = remaining[length..].TrimStart();
-                    continuation = true;
                 } while (remaining.Length > 0);
+                return lines;
             }
-            foreach (var device in devices)
+            void Row(string[] cells, bool header)
             {
-                Line($"{device.IpAddress}  {device.Hostname}  {device.DeviceType}", 36);
-                Line($"  {device.MacAddress}  {device.Vendor}", 37);
-                Line($"  {loc("Str_Col_Ports")}: {device.OpenPortsDisplay}", 32);
-                result.Append("\r\n");
+                var lines = cells.Select((cell, c) => Wrap(cell, widths[c])).ToArray();
+                for (int line = 0; line < lines.Max(c => c.Count); line++)
+                {
+                    for (int c = 0; c < 6; c++)
+                    {
+                        int color = header ? 37 : c switch { 0 => 36, 2 => 33, 4 => 35, 5 => 32, _ => 37 };
+                        string cell = line < lines[c].Count ? lines[c][line] : "";
+                        result.Append("\u001b[").Append(color).Append('m').Append(cell.PadRight(widths[c])).Append("\u001b[0m");
+                        if (c < 5) result.Append("  ");
+                    }
+                    result.Append("\r\n");
+                }
             }
+            Row(headers, true);
+            foreach (var row in rows) Row(row, false);
             return result.ToString();
         }
     }
