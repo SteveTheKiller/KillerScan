@@ -308,7 +308,7 @@
 </Grid>
 <Border x:Name="DevicesPane"
                 Grid.Row="1" Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
-                BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}" Margin="0" Panel.ZIndex="10"
+                BorderThickness="0" CornerRadius="{DynamicResource PanelCornerRadius}" Margin="0" Panel.ZIndex="10"
                 >
             <Grid>
                 <Grid.RowDefinitions><RowDefinition Height="*"/></Grid.RowDefinitions>
