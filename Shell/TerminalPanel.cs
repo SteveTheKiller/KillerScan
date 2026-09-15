@@ -48,6 +48,7 @@ namespace KillerScan.Shell
                 _terminalIsPing = shellCommand?.StartsWith("ping.exe ", StringComparison.OrdinalIgnoreCase) == true;
                 _terminalStatusKey = null;
                 _terminalStatusArgument = null;
+                _terminalScanHasStatus = false;
                 terminal.GotKeyboardFocus += (_, _) => UpdateTerminalPanelStatus();
                 terminal.SpeedTestRequested += () => SpeedTestButton_Click(this, new RoutedEventArgs());
                 terminal.PromptReady += () => TerminalPromptReady(terminal);
@@ -162,7 +163,7 @@ namespace KillerScan.Shell
             await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(10));
             if (generation != _terminalPromptGeneration || _terminalControl != terminal ||
                 _terminalPanelDisposed || _terminalExited || terminal.HasRunningCommand ||
-                _speedTestRun != null || _terminalStatusKey != statusKey) return;
+                _speedTestRun != null || _terminalScanHasStatus || _terminalStatusKey != statusKey) return;
             _terminalTitle = null;
             _terminalStatusKey = "Str_St_Ready";
             _terminalStatusArgument = null;

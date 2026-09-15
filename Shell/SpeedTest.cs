@@ -45,6 +45,7 @@ namespace KillerScan.Shell
         {
             if (_speedTestRun != null || !ReferenceEquals(_speedTestTerminal, terminal)) return;
             var cancellation = _speedTestRun = new CancellationTokenSource();
+            _terminalScanHasStatus = false;
             bool Current() => ReferenceEquals(_speedTestTerminal, terminal) && ReferenceEquals(_speedTestRun, cancellation);
             void Status(string key)
             {

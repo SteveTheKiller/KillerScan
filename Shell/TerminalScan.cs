@@ -14,8 +14,15 @@ namespace KillerScan.Shell
     public partial class MainWindow
     {
         private bool _terminalScanRunning;
+        private int _terminalScanCount;
+        private double _terminalScanProgress;
+        private bool _terminalScanHasStatus;
+        private string? _terminalScanError;
+        private readonly TextBlock _terminalDeviceCount = new() { FontSize = 11, Visibility = Visibility.Collapsed };
         private void InitializeTerminalScanToolbar(TextBox scanTarget)
         {
+            _terminalDeviceCount.SetResourceReference(TextBlock.ForegroundProperty, "DimTextBrush");
+            DeviceCountFooter.Children.Add(_terminalDeviceCount);
             var bar = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(8, 0, 0, 0) };
             var target = new TextBox
             {
@@ -53,6 +60,14 @@ namespace KillerScan.Shell
             if (_terminalControl?.HasShell != true || _terminalControl.HasRunningCommand || _terminalExited || _terminalScanRunning) return;
             var terminal = _terminalControl;
             _terminalScanRunning = true;
+            _terminalScanCount = 0;
+            _terminalScanProgress = 0;
+            _terminalScanHasStatus = true;
+            _terminalScanError = null;
+            _terminalStatusKey = "Str_St_Discovering";
+            _terminalStatusArgument = target;
+            UpdateWorkspaceStatus();
+            UpdateScanLight();
             using var stop = new CancellationTokenSource();
             void Cancel() => stop.Cancel();
             terminal.Disposed += Cancel;
@@ -67,7 +82,7 @@ namespace KillerScan.Shell
                 using var process = new Process { StartInfo = new ProcessStartInfo
                 {
                     FileName = Assembly.GetExecutingAssembly().Location,
-                    Arguments = "/scan " + QuoteArgument(target.Trim()) + " /json /progress",
+                    Arguments = "/scan " + QuoteArgument(target.Trim()) + " /json /progress /terminal-progress",
                     UseShellExecute = false, CreateNoWindow = true,
                     RedirectStandardOutput = true, RedirectStandardError = true
                 } };
@@ -80,17 +95,54 @@ namespace KillerScan.Shell
                 var output = process.StandardOutput.ReadToEndAsync();
                 string? status;
                 while ((status = await process.StandardError.ReadLineAsync()) != null)
-                    terminal.WriteManaged(presentation.Progress(status));
+                {
+                    if (status.StartsWith("Progress: ") && int.TryParse(status.Substring(10).TrimEnd('%'), out int percent))
+                        _terminalScanProgress = percent;
+                    else if (status.StartsWith("Devices: ") && int.TryParse(status.Substring(9), out int count))
+                        _terminalScanCount = count;
+                    else if (status.StartsWith("Str_St_", StringComparison.Ordinal) && status.Contains('|'))
+                    {
+                        int separator = status.IndexOf('|');
+                        _terminalStatusKey = status[..separator];
+                        _terminalStatusArgument = status[(separator + 1)..];
+                    }
+                    else if (status.StartsWith("Error:", StringComparison.Ordinal)) _terminalScanError = status;
+                    UpdateWorkspaceStatus();
+                    terminal.WriteManaged(presentation.Progress(string.Format(Loc(_terminalStatusKey!), _terminalStatusArgument) +
+                        "  " + _terminalScanProgress + "%"));
+                }
                 string json = await output;
                 await Task.Run(() => process.WaitForExit());
                 stop.Token.ThrowIfCancellationRequested();
                 if (process.ExitCode == 0)
-                    terminal.WriteManaged(presentation.Result(JsonSerializer.Deserialize<List<NetworkDevice>>(json) ?? []));
-                else terminal.WriteManaged("\r\n");
+                {
+                    var devices = JsonSerializer.Deserialize<List<NetworkDevice>>(json) ?? [];
+                    _terminalScanCount = devices.Count;
+                    if (!Services.DevicePreferences.HasTrustedDevices)
+                    {
+                        Services.DevicePreferences.TrustAll(devices);
+                        _terminalStatusKey = "Str_St_TrustedBaseline";
+                        _terminalStatusArgument = devices.Count;
+                    }
+                    else
+                    {
+                        int unknown = devices.Count(device => !Services.DevicePreferences.IsTrusted(device));
+                        _terminalStatusKey = unknown > 0 ? "Str_St_UnknownDevices" : "Str_St_ScanComplete";
+                        _terminalStatusArgument = unknown > 0 ? unknown : devices.Count;
+                    }
+                    terminal.WriteManaged(presentation.Result(devices));
+                }
+                else { _terminalScanError ??= Loc("Str_Speed_TransferFailed"); terminal.WriteManaged("\r\n"); }
             }
-            catch (OperationCanceledException) { if (connected) terminal.WriteManaged("\r\n"); }
+            catch (OperationCanceledException)
+            {
+                _terminalStatusKey = "Str_St_ScanCanceled";
+                _terminalStatusArgument = null;
+                if (connected) terminal.WriteManaged("\r\n");
+            }
             catch (Exception ex) when (ex is not OutOfMemoryException)
             {
+                _terminalScanError = ex.Message;
                 if (connected) terminal.WriteManaged("\r\n" + ex.Message + "\r\n");
             }
             finally
@@ -100,6 +152,9 @@ namespace KillerScan.Shell
                 catch (System.IO.IOException) { }
                 catch (ObjectDisposedException) { }
                 _terminalScanRunning = false;
+                if (_terminalScanError != null) { _terminalStatusKey = "Str_Err_Scan"; _terminalStatusArgument = _terminalScanError; }
+                UpdateWorkspaceStatus();
+                UpdateScanLight();
                 CommandManager.InvalidateRequerySuggested();
             }
         }

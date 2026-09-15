@@ -141,6 +141,7 @@ namespace KillerScan.Features.Cli
         [
             "dark", "light", "black", "98se", "blood", "greed", "cyanotic", "ectoplasm",
             "decay", "malaise", "sepulchre", "delirium", "mourning"
+            "/terminal-progress",
         ];
 
         internal static bool TryRunCli(string[] args, out int exitCode)
@@ -224,6 +225,7 @@ namespace KillerScan.Features.Cli
             if (probe && positionals.Count != 1) return Usage(err, "/probe needs exactly one IPv4 address.");
             if (probe && (!IPAddress.TryParse(positionals[0], out probeIp) || probeIp.GetAddressBytes().Length != 4))
                 return Usage(err, "/probe currently accepts an IPv4 address, not a hostname.");
+            bool terminalProgress = Has(options, "/terminal-progress");
 
             // Screenshot mode: same fabricated-network generator the GUI's --demo uses, so the
             // console output never shows a real environment. Scan only; no network is touched.
@@ -275,6 +277,12 @@ namespace KillerScan.Features.Cli
                     if (p == 100 || p >= lastProgress + 5)
                     { lastProgress = p; err.WriteLine($"Progress: {p}%"); }
                 };
+            }
+            if (terminalProgress)
+            {
+                scanner.Localizer = key => key + "|{0}";
+                int found = 0;
+                scanner.DeviceFound += _ => err.WriteLine("Devices: " + Interlocked.Increment(ref found));
             }
             string target = probe ? positionals[0] : demo ? demoScan!.Subnet : parsed!.Summary;
             string suffix = probe ? "..." : $" ({(demo ? 254 : parsed!.Addresses.Count):N0} addresses)...";

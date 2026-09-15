@@ -201,7 +201,10 @@ namespace KillerScan.Shell
         private void UpdateScanLight()
         {
             if (ScanLight == null) return;
-            var state = _scanWorkspace?.Indicator ?? Controls.ScanIndicator.Idle;
+            var state = _workspaceView == "terminal" && _terminalScanHasStatus
+                ? (_terminalScanRunning ? Controls.ScanIndicator.Scanning : _terminalScanError == null && _terminalStatusKey != "Str_St_ScanCanceled"
+                    ? Controls.ScanIndicator.Complete : Controls.ScanIndicator.Idle)
+                : _scanWorkspace?.Indicator ?? Controls.ScanIndicator.Idle;
             (string fill, string key) = state switch
             {
                 Controls.ScanIndicator.Scanning => ("#D0453A", "Str_Light_Scanning"),
@@ -326,9 +329,18 @@ namespace KillerScan.Shell
             // the cell would otherwise contribute its margin to a bar that has nothing in it.
             if (_scanWorkspace?.FindName("DeviceCount") is TextBlock count)
             {
-                bool hide = string.IsNullOrEmpty(count.Text) || StatusText.Text.Contains(count.Text);
+                bool hide = _workspaceView == "terminal" || string.IsNullOrEmpty(count.Text) || StatusText.Text.Contains(count.Text);
                 count.Visibility = hide ? Visibility.Collapsed : Visibility.Visible;
                 DeviceCountFooter.Visibility = hide ? Visibility.Collapsed : Visibility.Visible;
+            }
+            bool terminalCount = _workspaceView == "terminal" && _terminalScanHasStatus;
+            _terminalDeviceCount.Visibility = terminalCount ? Visibility.Visible : Visibility.Collapsed;
+            if (terminalCount)
+            {
+                _terminalDeviceCount.Text = string.Format(Loc("Str_Count_Found"), _terminalScanCount);
+                DeviceCountFooter.Visibility = Visibility.Visible;
+                ScanProgress.Value = _terminalScanProgress;
+                ScanProgress.Visibility = _terminalScanRunning ? Visibility.Visible : Visibility.Collapsed;
             }
             FitFooterStatus();
         }
