@@ -50,7 +50,7 @@ namespace KillerScan.Shell
             string arguments = "/scan " + QuoteArgument(target.Trim()) + " /progress";
             string command = "Start-Process -FilePath " + Literal(Assembly.GetExecutingAssembly().Location) +
                 " -ArgumentList " + Literal(arguments) + " -NoNewWindow -Wait";
-            _terminalControl.Send("\u0015" + command + "\r");
+            _terminalControl.Send(command + "\r");
             _terminalControl.Focus();
         }
     }
