@@ -390,6 +390,26 @@ internal static class Program
                 loadTheme.Invoke(null, new[] { Enum.Parse(theme, "Black"), Enum.Parse(accent, "Orange") });
                 Require(app.TryFindResource("TextBrush") is Brush && app.TryFindResource("PrimaryBrush") is Brush,
                     "Text and accent theme brushes resolve");
+                var fontDialog = new KillerScan.Controls.TerminalFontDialog("Consolas", 11);
+                fontDialog.Measure(new Size(440, 500));
+                fontDialog.Arrange(new Rect(0, 0, 440, 500));
+                Require(fontDialog.SelectedFont == "Consolas" && fontDialog.SelectedSize == 11,
+                    "Font dialog constructs and lays out with saved selections");
+                ((ComboBox)fontDialog.FindName("SizeBox")).SelectedItem = 15;
+                Require(((TextBlock)fontDialog.FindName("Preview")).FontSize == 15,
+                    "Changing the size updates the live preview");
+                var fontRoot = (FrameworkElement)fontDialog.Content;
+                fontRoot.Opacity = 1;
+                fontRoot.Measure(new Size(420, 420));
+                fontRoot.Arrange(new Rect(0, 0, 420, 420));
+                fontRoot.UpdateLayout();
+                var fontBitmap = new RenderTargetBitmap(420, 420, 96, 96, PixelFormats.Pbgra32);
+                fontBitmap.Render(fontRoot);
+                var fontEncoder = new PngBitmapEncoder();
+                fontEncoder.Frames.Add(BitmapFrame.Create(fontBitmap));
+                using (var fontImage = File.Create(Path.Combine(Path.GetTempPath(), "KillerScanFontDialog.png")))
+                    fontEncoder.Save(fontImage);
+                fontDialog.Close();
                 var terminalType = assembly.GetType("KillerScan.Terminal.TerminalControl", true)!;
                 var terminal = (FrameworkElement)Activator.CreateInstance(terminalType)!;
                 using var cancellation = new CancellationTokenSource();
