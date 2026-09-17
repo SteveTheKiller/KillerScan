@@ -10,7 +10,7 @@ One-click, fast network scanner built for field techs.
 - MAC vendor lookup across the full IEEE OUI registries
 - Weighted-score device classifier
 
-Single portable EXE, no runtime install required.
+Single portable EXE. The only requirement is .NET Framework 4.8, which Windows 10 (version 1903 and later) and Windows 11 already include.
 Free, open-source, GPLv3.
 
 Part of [killertools.net](https://killertools.net).
@@ -19,7 +19,7 @@ Part of [killertools.net](https://killertools.net).
 
 - Permanent Devices, Services, Topology, Keep Alive and Terminal views sit on the right of the toolbar. Each keeps its own state, a right-click menu sets icon size and caption placement, and buttons that do not fit overflow into a menu rather than squeezing the input bar.
 - Embedded terminals run PowerShell, ping, and SSH using the system clients, preferring PowerShell 7 where it is installed. They use KillerShell's font, palette and prompt, and the prompt unpacks to a file you can edit and keeps your version across upgrades. The KillerScripts module travels inside the EXE, so it is there on a machine you cannot install anything on. Closing a terminal ends its process.
-- Keep Alive (F9) watches any number of selected devices at once, each as a status card with a latency sparkline, packet loss, its own checks on banded rows, and its own event log. Right-click a card to copy the address, run diagnostics, reset its counters, or drop it from the run. Checks start for the whole set as soon as a run begins.
+- Keep Alive (F9) watches up to 16 devices at once, each as a status card with a latency sparkline, packet loss, its own checks on banded rows, and its own event log. Right-click a card to copy the address, run diagnostics, reset its counters, or drop it from the run. Checks start for the whole set as soon as a run begins.
 - Topology (F8) infers how the network fits together and draws devices as movable, multi-selectable boxes in four arrangement modes, cycled with Ctrl+G or picked directly with Ctrl+1 through Ctrl+4. Connectors stay attached to boxes you move, and the arranged view exports at full resolution as a picture or as editable SVG.
 - Deep Scan runs a cancellable rescan of all discovered hosts, or the selection with Ctrl+R, probing ports 1-1024 plus the additional service ports to improve hostnames, services and classifications.
 - Scan history (Ctrl+H) compares each scan against the last run of the same target for added, missing and changed devices, or shows the saved run in full, and supports trusted-device baselines with alerts for unknown devices. A marker beside each address says whether the device is trusted. Scan profiles (Ctrl+Shift+P) remember targets you can load or run, optionally following with Deep Scan. Both share a sliding sidebar that opens from the icon rail and resizes by dragging.
@@ -57,7 +57,7 @@ Part of [killertools.net](https://killertools.net).
 ## Requirements
 
 - Windows 10 or 11 (x64)
-- No runtime install. Everything needed is inside the EXE (targets .NET Framework 4.8, which ships with every supported Windows release).
+- .NET Framework 4.8, included with Windows 10 version 1903 and later and with Windows 11, so there is normally nothing to install. All other dependencies are bundled inside the EXE.
 - Run as admin for best ARP results on some networks
 
 ## Download

@@ -26,7 +26,7 @@
 - Right-click to copy IP/MAC/hostname, launch RDP/SSH/browser, or override a device type; SSH asks which account to use and remembers it per device
 - Permanent Devices, Services, Topology, Keep Alive and Terminal views, each keeping its own state
 - Topology (F8) infers how the network fits together, with movable multi-select device boxes, four arrangement modes, and full-resolution image or SVG export
-- Keep Alive (F9) watches any number of devices at once as status cards with latency sparklines, packet loss, per-device checks and event logs
+- Keep Alive (F9) watches up to 16 devices at once as status cards with latency sparklines, packet loss, per-device checks and event logs
 - Embedded terminals run PowerShell 7, ping and SSH with KillerShell's prompt and the KillerScripts module carried inside the EXE
 - A speed test (F4) runs in the terminal with KillerScan's own engine against speed.killerscan.net, asking before any data is sent
 - Deep Scan checks discovered hosts on ports 1-1024 plus additional service ports and collects more fingerprints; scan profiles (Ctrl+Shift+P) remember targets and can follow with Deep Scan
