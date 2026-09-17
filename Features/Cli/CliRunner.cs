@@ -49,6 +49,16 @@ namespace KillerScan.Features.Cli
         private const string AnsiGood = "\x1b[92m";    // bright green
         private const string AnsiBad = "\x1b[91m";     // bright red
         private const string AnsiDim = "\x1b[90m";
+        // Brand prefix on the scan/probe status line, so a driving process (Cojack, etc.) or a
+        // human watching the console knows which tool is running. Kept on stderr - the CSV/JSON/
+        // HTML pipe is untouched. "Killer" in bright white, "Scan" in the app's orange from the
+        // logo (256-color 208), then a divider. Both halves fall back to plain text on a console
+        // without VT support.
+        private const string AnsiBrandKiller = "\x1b[97m";
+        private const string AnsiBrandScan   = "\x1b[38;5;208m";
+        private static string BrandPrefix(bool ansi) =>
+            ansi ? AnsiBrandKiller + "Killer" + AnsiBrandScan + "Scan" + AnsiReset + " | "
+                 : "KillerScan | ";
 
         /// <summary>Returns true when the given std stream is an interactive console; enables VT
         /// escape processing on it so ANSI colors render (a no-op on Windows Terminal, required
@@ -131,6 +141,7 @@ namespace KillerScan.Features.Cli
 
         private static readonly string[] FlagOptions =
         [
+            "/terminal-progress",
             "/quick", "--quick", "/full", "--full", "/quiet", "--quiet",
             "/progress", "--progress", "/descending", "--descending", "/desc", "--desc",
             "/no-header", "--no-header", "/fail-empty", "--fail-empty", "/demo", "--demo",
@@ -141,7 +152,6 @@ namespace KillerScan.Features.Cli
         [
             "dark", "light", "black", "98se", "blood", "greed", "cyanotic", "ectoplasm",
             "decay", "malaise", "sepulchre", "delirium", "mourning"
-            "/terminal-progress",
         ];
 
         internal static bool TryRunCli(string[] args, out int exitCode)
@@ -215,6 +225,7 @@ namespace KillerScan.Features.Cli
             bool quiet = Has(options, "/quiet", "--quiet");
             bool quick = Has(options, "/quick", "--quick");
             bool progress = Has(options, "/progress", "--progress");
+            bool terminalProgress = Has(options, "/terminal-progress");
             bool noHeader = Has(options, "/no-header", "--no-header");
             bool failEmpty = Has(options, "/fail-empty", "--fail-empty");
             string? exportPath = Value(options, "/export", "--export", "/output", "--output");
@@ -225,7 +236,6 @@ namespace KillerScan.Features.Cli
             if (probe && positionals.Count != 1) return Usage(err, "/probe needs exactly one IPv4 address.");
             if (probe && (!IPAddress.TryParse(positionals[0], out probeIp) || probeIp.GetAddressBytes().Length != 4))
                 return Usage(err, "/probe currently accepts an IPv4 address, not a hostname.");
-            bool terminalProgress = Has(options, "/terminal-progress");
 
             // Screenshot mode: same fabricated-network generator the GUI's --demo uses, so the
             // console output never shows a real environment. Scan only; no network is touched.
@@ -268,6 +278,12 @@ namespace KillerScan.Features.Cli
             try { Console.CancelKeyPress += OnCancel; } catch { }
 
             var scanner = new NetworkScanner();
+            if (terminalProgress)
+            {
+                scanner.Localizer = key => key + "|{0}";
+                int found = 0;
+                scanner.DeviceFound += _ => err.WriteLine("Devices: " + Interlocked.Increment(ref found));
+            }
             int lastProgress = -1;
             if (progress && !quiet)
             {
@@ -283,25 +299,20 @@ namespace KillerScan.Features.Cli
                     }
                 };
             }
-            if (terminalProgress)
-            {
-                scanner.Localizer = key => key + "|{0}";
-                int found = 0;
-                scanner.DeviceFound += _ => err.WriteLine("Devices: " + Interlocked.Increment(ref found));
-            }
             string target = probe ? positionals[0] : demo ? demoScan!.Subnet : parsed!.Summary;
             string suffix = probe ? "..." : $" ({(demo ? 254 : parsed!.Addresses.Count):N0} addresses)...";
-            string verb = probe ? "Deep-probing " : "Scanning ";
+            string verb = probe ? "deep-probing " : "scanning ";
             // Interactive console gets the animated spinner on the same line, with the target in
             // the IP color and the spinner glyph in the MAC color; a redirected stderr gets the
-            // plain one-shot line so logs stay clean.
+            // plain one-shot line so logs stay clean. Prefixed with the BrandPrefix so a driving
+            // process (Cojack, etc.) that reads stderr can see which tool is running the scan.
             Spinner? spinner = null;
             if (!quiet && !progress)
             {
                 if (_errAnsi)
-                    spinner = new Spinner(err, verb + AnsiIp + target + AnsiReset + suffix,
-                        (verb + target + suffix).Length);
-                else err.WriteLine(verb + target + suffix);
+                    spinner = new Spinner(err, BrandPrefix(true) + verb + AnsiIp + target + AnsiReset + suffix,
+                        (BrandPrefix(false) + verb + target + suffix).Length);
+                else err.WriteLine(BrandPrefix(false) + verb + target + suffix);
             }
 
             List<NetworkDevice> devices;
