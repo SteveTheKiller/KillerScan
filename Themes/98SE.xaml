@@ -76,8 +76,6 @@
     <SolidColorBrush x:Key="ExportButtonBackground" Color="#c0c0c0" po:Freeze="True"/>
     <Visibility x:Key="GripDotsVisibility">Collapsed</Visibility>
     <Visibility x:Key="GripHatchVisibility">Visible</Visibility>
-    <Visibility x:Key="ScaledRailVisibility">Collapsed</Visibility>
-    <Visibility x:Key="FixedRailVisibility">Visible</Visibility>
     <Visibility x:Key="RailSeparatorVisibility">Collapsed</Visibility>
     <GridLength x:Key="RailColumnWidth">20</GridLength>
     <sys:Double x:Key="RailWidth">20</sys:Double>

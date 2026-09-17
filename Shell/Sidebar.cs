@@ -90,14 +90,12 @@ namespace KillerScan.Shell
             else RefreshHistoryList();
         }
 
-        /// <summary>Lights the rail button whose section is showing, on both rails.</summary>
+        /// <summary>Lights the rail button whose section is showing.</summary>
         private void UpdateSidebarRailTags()
         {
             bool open = !_sidebarCollapsed;
-            object? history = open && _sidebarSection == "history" ? "on" : null;
-            object? profiles = open && _sidebarSection == "profiles" ? "on" : null;
-            HistoryButton.Tag = FixedHistoryButton.Tag = history;
-            ProfilesButton.Tag = FixedProfilesButton.Tag = profiles;
+            HistoryButton.Tag = open && _sidebarSection == "history" ? "on" : null;
+            ProfilesButton.Tag = open && _sidebarSection == "profiles" ? "on" : null;
         }
 
         private void SidebarToggle_Click(object sender, RoutedEventArgs e) => ToggleSidebar();
@@ -145,7 +143,6 @@ namespace KillerScan.Shell
             {
                 SidebarCol.BeginAnimation(ColumnDefinition.WidthProperty, null);
                 SidebarCol.Width = new GridLength(target);
-                PlaceFixedRail(target);
                 if (_sidebarCollapsed) HistorySidebar.Visibility = Visibility.Collapsed;
                 return;
             }
@@ -170,18 +167,10 @@ namespace KillerScan.Shell
                 SidebarCol.Width = new GridLength(target);
                 HistorySidebar.ClearValue(WidthProperty);
                 HistorySidebar.HorizontalAlignment = HorizontalAlignment.Stretch;
-                PlaceFixedRail(target);
                 if (_sidebarCollapsed) HistorySidebar.Visibility = Visibility.Collapsed;
             };
             SidebarCol.BeginAnimation(ColumnDefinition.WidthProperty, anim);
         }
-
-        /// <summary>
-        /// The 98SE rail lives outside the zoom host, so it cannot sit in the sidebar column and
-        /// has to be offset by hand to stay on the panel's inner lip.
-        /// </summary>
-        private void PlaceFixedRail(double laneWidth) =>
-            FixedRail.Margin = new Thickness(Math.Max(0, laneWidth - RailW), 0, 0, 10);
 
         /// <summary>Re-applies the width after an app-zoom change, which moves the logical size.</summary>
         internal void RefreshSidebarWidth()

@@ -461,15 +461,18 @@ internal static class Program
                 windowXml.Load(Path.Combine(directory.FullName, "Shell", "MainWindow.xaml"));
                 var ns = new XmlNamespaceManager(windowXml.NameTable);
                 ns.AddNamespace("x", "http://schemas.microsoft.com/winfx/2006/xaml");
-                var speedNode = (XmlElement)windowXml.SelectSingleNode("//*[@x:Name='FixedSpeedTestButton']", ns)!;
-                Require(speedNode.GetAttribute("Click") == "SpeedTestButton_Click", "98SE speed button uses the existing action");
+                var speedNode = (XmlElement)windowXml.SelectSingleNode("//*[@x:Name='RailButtons']/*[@x:Name='SpeedTestButton']", ns)!;
+                Require(speedNode.GetAttribute("Click") == "SpeedTestButton_Click", "Rail speed button uses the existing action");
+                Require(windowXml.SelectNodes("//*[starts-with(@x:Name,'Fixed')]", ns)!.Count == 0 &&
+                    !windowXml.OuterXml.Contains("ScaledRailVisibility") && !windowXml.OuterXml.Contains("FixedRailVisibility") &&
+                    !se98Dictionary.Contains("ScaledRailVisibility") && !se98Dictionary.Contains("FixedRailVisibility"),
+                    "One sidebar rail serves every theme, including 98SE");
                 speedNode.RemoveAttribute("Click");
                 var speedButton = (Button)XamlReader.Parse(speedNode.OuterXml.Replace("\uE9D2", "&#xE9D2;"), context);
                 speedButton.Measure(new Size(20, 30));
                 speedButton.Arrange(new Rect(0, 0, 20, 30));
-                Require((Visibility)se98Dictionary["FixedRailVisibility"] == Visibility.Visible &&
-                    speedButton.Content.ToString() == "\uE9D2", "98SE sidebar includes the speed icon: " +
-                    (int)speedButton.Content.ToString()![0] + " visibility " + se98Dictionary["FixedRailVisibility"]);
+                Require(speedButton.Content.ToString() == "\uE9D2", "98SE rail includes the speed icon: " +
+                    (int)speedButton.Content.ToString()![0]);
                 app.Resources.MergedDictionaries.Remove(se98Dictionary);
                 var terminalType = assembly.GetType("KillerScan.Terminal.TerminalControl", true)!;
                 var terminal = (FrameworkElement)Activator.CreateInstance(terminalType)!;

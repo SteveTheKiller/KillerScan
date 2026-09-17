@@ -20,6 +20,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - A dedicated KillerScan speed-test server with automated client and server checks.
 
 ### Fixed
+- Replaced the separate 98SE sidebar rail with the one rail every theme uses, restoring Export, the sidebar toggle, and the history and profiles panel on 98SE.
 - Fixed the terminal font dialog crash and aligned device-list headers with the status-dot spacing.
 - Rounded the font dialog surface, enabled hover-wheel font and size selection, and kept KillerSpeed in the sidebar, including 98SE.
 - Matched the 98SE font dialog to its gradient caption, white dropdowns, and recessed white preview.
