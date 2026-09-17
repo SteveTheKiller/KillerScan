@@ -191,7 +191,7 @@ namespace KillerScan.Controls
             foreach (var device in devices) _active.Devices.Add(device);
             RefreshDeviceCount();
             UpdateDeepScanButton();
-            ExportButton.IsEnabled = _active.Devices.Count > 0;
+            UpdateExportButtonAvailability();
         }
         private void RaiseDeviceAction(string action, bool beside = false)
         {

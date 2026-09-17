@@ -39,7 +39,7 @@ namespace KillerScan.Controls
             ScanProgress.Value = _active.Progress;
             ScanProgress.Visibility = _active.IsScanning ? Visibility.Visible : Visibility.Collapsed;
             ScanBtn.Content = Loc(_active.IsScanning ? "Str_Btn_Stop" : "Str_Btn_Scan");
-            ExportButton.IsEnabled = _active.Devices.Count > 0;
+            UpdateExportButtonAvailability();
             UpdateDeepScanButton();
             FilterInput_TextChanged(FilterInput, null!);
         }

@@ -61,7 +61,7 @@ namespace KillerScan.Controls
             _active.Cts = cts;
             ScanProgress.Value = 0;
             ScanProgress.Visibility = Visibility.Visible;
-            ExportButton.IsEnabled = false;
+            UpdateExportButtonAvailability();
             ScanBtn.Content = Loc("Str_Btn_Stop");
             // A scan in flight is no longer a complete picture, so the light drops out of its
             // finished state here rather than when this one ends.
@@ -106,7 +106,7 @@ namespace KillerScan.Controls
                     _active.Status = StatusText.Text;
                     ScanBtn.Content = Loc("Str_Btn_Scan");
                     ScanProgress.Visibility = Visibility.Collapsed;
-                    ExportButton.IsEnabled = _active.Devices.Count > 0;
+                    UpdateExportButtonAvailability();
                     UpdateDeepScanButton();
                     StateChanged?.Invoke(this, EventArgs.Empty);
                 }

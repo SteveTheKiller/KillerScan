@@ -21,14 +21,22 @@ namespace KillerScan.Controls
         public string ExportContext
         {
             get => _exportContext;
-            set => _exportContext = string.IsNullOrWhiteSpace(value) ? "scan" : value;
+            set
+            {
+                _exportContext = string.IsNullOrWhiteSpace(value) ? "scan" : value;
+                UpdateExportButtonAvailability();
+            }
         }
+
+        private void UpdateExportButtonAvailability() =>
+            ExportButton.IsEnabled = _exportContext is "watch" or "terminal" || ActiveDevices.Count > 0;
 
         /// <summary>Raised for the exports the shell owns: the Keep Alive run and the terminal.</summary>
         public event EventHandler<string>? ShellExportRequested;
 
         private void ExportWatchCsv_Click(object sender, RoutedEventArgs e) => ShellExportRequested?.Invoke(this, "watch-csv");
         private void ExportWatchHtml_Click(object sender, RoutedEventArgs e) => ShellExportRequested?.Invoke(this, "watch-html");
+        private void ExportWatchTxt_Click(object sender, RoutedEventArgs e) => ShellExportRequested?.Invoke(this, "watch-txt");
         private void ExportWatchPng_Click(object sender, RoutedEventArgs e) => ShellExportRequested?.Invoke(this, "watch-png");
         private void ExportTerminalText_Click(object sender, RoutedEventArgs e) => ShellExportRequested?.Invoke(this, "terminal-txt");
 
@@ -58,6 +66,7 @@ namespace KillerScan.Controls
             ExportTopologySvgItem.Visibility  = When(context == "topology");
             ExportWatchCsvItem.Visibility     = When(context == "watch");
             ExportWatchHtmlItem.Visibility    = When(context == "watch");
+            ExportWatchTxtItem.Visibility     = When(context == "watch");
             ExportWatchPngItem.Visibility     = When(context == "watch");
             ExportTerminalTextItem.Visibility = When(context == "terminal");
             ExportServicesCsvItem.Visibility = _showServices ? Visibility.Visible : Visibility.Collapsed;

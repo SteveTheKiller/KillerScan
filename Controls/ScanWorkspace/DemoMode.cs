@@ -49,7 +49,7 @@ namespace KillerScan.Controls
             var done = string.Format(Loc("Str_St_ScanComplete"), _active.Devices.Count);
             _active.Status = done;
             StatusText.Text = done;
-            ExportButton.IsEnabled = true;
+            UpdateExportButtonAvailability();
         }
     }
 }
