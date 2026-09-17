@@ -339,6 +339,8 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">That file does not exist.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">That folder does not exist.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Replace {0}?</sys:String>
+    <sys:String x:Key="Str_Btn_Replace">Replace</sys:String>
+    <sys:String x:Key="Str_Dlg_Preview">Preview</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Pin to places</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Remove from places</sys:String>
     <sys:String x:Key="Str_QA_Desktop">Desktop</sys:String>
@@ -391,7 +393,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Watch_Latency">Latest / average (ms)</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Last change</sys:String>
     <sys:String x:Key="Str_Watch_Events">Recent changes</sys:String>
-    <sys:String x:Key="Str_Watch_Copy">Copy results</sys:String>
+    <sys:String x:Key="Str_Export_Txt">Export as TXT</sys:String>
     <sys:String x:Key="Str_Watch_Clear">Clear log</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Copy address</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Reset statistics</sys:String>

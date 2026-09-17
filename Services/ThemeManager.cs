@@ -200,6 +200,38 @@ namespace KillerScan.Services
             if (!newDict.Contains("TableRowBrush"))
                 newDict["TableRowBrush"] = Brushes.Transparent;
 
+            // File picker tokens, completed with KillerPDF's defaults. 98SE states its own
+            // values; every other theme gets the modern picker look.
+            void Complete(string key, object value) { if (!newDict.Contains(key)) newDict[key] = value; }
+            Complete("ComboFieldBrush", newDict["PaneBrush"]);
+            Complete("ComboFieldHoverBrush", newDict["RowHoverBrush"]);
+            Complete("ComboPopupBrush", newDict["PaneBrush"]);
+            Complete("ComboButtonBrush", Brushes.Transparent);
+            Complete("ComboButtonHoverBrush", newDict["RowHoverBrush"]);
+            Complete("ComboButtonSize", 18.0);
+            Complete("ComboButtonHeight", newDict["ComboButtonSize"]);
+            Complete("ComboButtonMinWidth", 22.0);
+            Complete("ComboChevGlyph", ((char)0xE70D).ToString());
+            Complete("ComboChevFont", new FontFamily("Segoe MDL2 Assets"));
+            Complete("ComboChevMargin", new Thickness(0));
+            Complete("DialogTitleBarBrush", newDict["TitleBarBrush"]);
+            Complete("DialogFrameBrush", newDict["AppBorderBrush"]);
+            Complete("DialogFrameThickness", new Thickness(1));
+            Complete("DialogFramePadding", new Thickness(0));
+            Complete("DialogWindowFrameThickness", new Thickness(0));
+            Complete("DialogWindowFramePadding", new Thickness(0));
+            Complete("ButtonBevelLightThickness", newDict["BevelLightThickness"]);
+            Complete("ButtonBevelDarkThickness", newDict["BevelDarkThickness"]);
+            Complete("FileDialogPaneBrush", newDict["PaneBrush"]);
+            Complete("MenuFontFamily", new FontFamily("Segoe UI"));
+            Complete("MenuFontSize", 12.0);
+            Complete("MenuItemPadding", new Thickness(8, 6, 10, 6));
+            bool compactDialogCaption = newDict.Contains("UseDialogCaption") && newDict["UseDialogCaption"] is true;
+            Complete("DialogCloseWidth", compactDialogCaption ? newDict["CaptionButtonWidth"] : 28.0);
+            Complete("DialogCloseHeight", compactDialogCaption ? newDict["CaptionButtonHeight"] : 26.0);
+            Complete("DialogCaptionButtonsMargin", new Thickness(0, 0,
+                newDict["CaptionButtonsMargin"] is Thickness captionButtonsMargin ? captionButtonsMargin.Right : 0, 0));
+
             // Outline buttons use neutral Win98 faces when that palette supplies them. Every
             // ordinary palette falls back to the original hollow-accent behavior.
             if (!newDict.Contains("OutlineFaceBrush"))
@@ -282,6 +314,11 @@ namespace KillerScan.Services
                     var target = merged[0];
                     foreach (object key in accentDict.Keys)
                         target[key] = accentDict[key];
+                    // The picker caption follows the accent's title bar unless the overlay names
+                    // its own, the same way the main window's caption does.
+                    if (accentDict.Contains("TitleBarBrush") && !accentDict.Contains("DialogTitleBarBrush")
+                        && !palette.Contains("DialogTitleBarBrush"))
+                        target["DialogTitleBarBrush"] = accentDict["TitleBarBrush"];
 
                     // OutlineButton consumes the derived roles below, not OutlineBtnBrush
                     // directly. They were created from the base palette before this overlay was

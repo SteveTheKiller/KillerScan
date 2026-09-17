@@ -295,6 +295,8 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Tento soubor neexistuje.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Tato složka neexistuje.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Nahradit {0}?</sys:String>
+    <sys:String x:Key="Str_Btn_Replace">Nahradit</sys:String>
+    <sys:String x:Key="Str_Dlg_Preview">Náhled</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Připnout k místům</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Odebrat z míst</sys:String>
     <sys:String x:Key="Str_QA_Desktop">Plocha</sys:String>
@@ -347,7 +349,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Watch_Latency">Poslední / průměrná (ms)</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Poslední změna</sys:String>
     <sys:String x:Key="Str_Watch_Events">Nedávné změny</sys:String>
-    <sys:String x:Key="Str_Watch_Copy">Kopírovat výsledky</sys:String>
+    <sys:String x:Key="Str_Export_Txt">Exportovat jako TXT</sys:String>
     <sys:String x:Key="Str_Watch_Clear">Vymazat protokol</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Kopírovat adresu</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Vynulovat statistiky</sys:String>

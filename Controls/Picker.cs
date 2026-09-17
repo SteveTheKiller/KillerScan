@@ -35,17 +35,9 @@ namespace KillerScan.Controls
         public System.Windows.Media.ImageSource? Icon
             => ShellIcons.Small(FullPath, IsFolder);
 
-        /// <summary>
-        /// Shell icon, 32px, for the icon grid - or a real THUMBNAIL when the file is an image.
-        /// Picking a picture out of a grid of identical type icons is guesswork, so an image shows
-        /// itself. Falls back to the type icon when the file is not an image or will not decode.
-        /// </summary>
+        /// <summary>Shell icon, 32px, for the icon grid.</summary>
         public System.Windows.Media.ImageSource? IconLarge
-            => ShellIcons.Thumbnail(FullPath, 32) ?? ShellIcons.Large(FullPath, IsFolder);
-
-        /// <summary>The preview pane's image: bigger, and null for anything that is not an image.</summary>
-        public System.Windows.Media.ImageSource? Preview
-            => IsFolder ? null : ShellIcons.Thumbnail(FullPath, 512);
+            => ShellIcons.Large(FullPath, IsFolder);
 
         public string SizeLabel     => IsFolder ? string.Empty : FormatSize(SizeBytes);
         public string ModifiedLabel => Modified == DateTime.MinValue ? string.Empty : Modified.ToString("yyyy-MM-dd HH:mm");

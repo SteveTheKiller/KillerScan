@@ -108,4 +108,6 @@
     <SolidColorBrush x:Key="KsCatToolbar" Color="#0077b3" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="KsCatApp" Color="#cc6a00" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
+    <!-- File picker folder tree connecting lines, KillerPDF's value. -->
+    <SolidColorBrush x:Key="TreeLineBrush" Color="#c2c2c2" po:Freeze="True"/>
 </ResourceDictionary>

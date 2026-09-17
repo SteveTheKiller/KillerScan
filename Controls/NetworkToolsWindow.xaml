@@ -161,11 +161,10 @@
                                        Visibility="Collapsed"
                                        Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
                             <TextBox x:Name="Targets" KeyDown="Targets_KeyDown" Style="{StaticResource DarkTextBox}" Padding="5,3,9,3"
-                                     FontSize="12" Height="28" Width="280" MaxWidth="360" HorizontalAlignment="Left"
-                                     ToolTip="{DynamicResource Str_Watch_Targets}" Margin="0,0,6,0"/>
-                            <Button x:Name="StartButton" Style="{StaticResource OutlineButton}" Click="Start_Click" FontSize="12" Padding="8,3" Margin="0,0,6,0"/>
-                            <Button x:Name="StopButton" Content="{DynamicResource Str_Watch_Stop}" Style="{StaticResource OutlineButton}" Click="Stop_Click" IsEnabled="False" FontSize="12" Padding="8,3" Margin="0,0,6,0"/>
-                            <Button Content="{DynamicResource Str_Watch_Copy}" Style="{StaticResource OutlineButton}" Click="Copy_Click" FontSize="12" Padding="8,3"/>
+                                     FontSize="12" Width="280" MaxWidth="360" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                     ToolTip="{DynamicResource Str_Watch_Targets}" Margin="0,2,8,2"/>
+                            <Button x:Name="StartButton" Style="{StaticResource OutlineButton}" Click="Start_Click" FontSize="12" Padding="8,3" Margin="0,2,6,2"/>
+                            <Button x:Name="StopButton" Content="{DynamicResource Str_Watch_Stop}" Style="{StaticResource OutlineButton}" Click="Stop_Click" IsEnabled="False" FontSize="12" Padding="8,3" Margin="0,2,6,2"/>
                         </StackPanel>
                         <TextBlock x:Name="Status" TextWrapping="Wrap" Foreground="{DynamicResource PrimaryBrush}" Margin="8,0,8,4">
                             <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers>

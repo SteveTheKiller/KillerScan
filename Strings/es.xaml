@@ -297,6 +297,8 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Ese archivo no existe.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Esa carpeta no existe.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">¿Reemplazar {0}?</sys:String>
+    <sys:String x:Key="Str_Btn_Replace">Reemplazar</sys:String>
+    <sys:String x:Key="Str_Dlg_Preview">Vista previa</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Anclar a lugares</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Quitar de lugares</sys:String>
     <sys:String x:Key="Str_QA_Desktop">Escritorio</sys:String>
@@ -349,7 +351,7 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Watch_Latency">Última / media (ms)</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Último cambio</sys:String>
     <sys:String x:Key="Str_Watch_Events">Cambios recientes</sys:String>
-    <sys:String x:Key="Str_Watch_Copy">Copiar resultados</sys:String>
+    <sys:String x:Key="Str_Export_Txt">Exportar como TXT</sys:String>
     <sys:String x:Key="Str_Watch_Clear">Borrar registro</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Copiar dirección</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Restablecer estadísticas</sys:String>

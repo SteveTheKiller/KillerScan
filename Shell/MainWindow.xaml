@@ -258,10 +258,18 @@
                 <!-- The panel's own surface. Transparent on the flat themes, which paint nothing
                      here and let the window through, and the white well on 98SE, where a panel
                      with no surface of its own is just an empty gray strip. -->
-                <Border Grid.RowSpan="3" Margin="-6,-6,2,-4" Panel.ZIndex="-1"
-                        Background="{DynamicResource SidebarPaneBrush}"
-                        BorderBrush="{DynamicResource PaneBorderBrush}"
-                        BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
+                <!-- Cancels the panel's 14,14,0,10 inset so the well spans the same row height as
+                     the content pane, then carries the same four-layer sunken edge. -->
+                <Border Grid.RowSpan="3" Margin="-14,-14,2,-10" Panel.ZIndex="-1"
+                        Background="{DynamicResource SidebarPaneBrush}"/>
+                <Border Grid.RowSpan="3" Margin="-14,-14,2,-10" Panel.ZIndex="5" IsHitTestVisible="False"
+                        BorderBrush="{DynamicResource PaneBevelDarkBrush}" BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
+                <Border Grid.RowSpan="3" Margin="-14,-14,2,-10" Panel.ZIndex="5" IsHitTestVisible="False"
+                        BorderBrush="{DynamicResource PaneBevelLightBrush}" BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
+                <Border Grid.RowSpan="3" Margin="-13,-13,3,-9" Panel.ZIndex="5" IsHitTestVisible="False"
+                        BorderBrush="{DynamicResource PaneBevelDark2Brush}" BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
+                <Border Grid.RowSpan="3" Margin="-13,-13,3,-9" Panel.ZIndex="5" IsHitTestVisible="False"
+                        BorderBrush="{DynamicResource PaneBevelLight2Brush}" BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
                 <TextBlock x:Name="SidebarHeading" Grid.Row="0" Text="{DynamicResource Str_History_Title}" Margin="1,0,8,12"
                            Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource WordmarkFont}"
                            FontSize="20" TextTrimming="CharacterEllipsis"/>

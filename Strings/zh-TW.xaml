@@ -297,6 +297,8 @@
     <sys:String x:Key="Str_Dlg_NoSuchFile">該檔案不存在。</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">該資料夾不存在。</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">要取代 {0} 嗎?</sys:String>
+    <sys:String x:Key="Str_Btn_Replace">取代</sys:String>
+    <sys:String x:Key="Str_Dlg_Preview">預覽</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">釘選到位置</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">從位置移除</sys:String>
     <sys:String x:Key="Str_QA_Desktop">桌面</sys:String>
@@ -349,7 +351,7 @@
     <sys:String x:Key="Str_Watch_Latency">最新 / 平均 (ms)</sys:String>
     <sys:String x:Key="Str_Watch_Changed">上次變更</sys:String>
     <sys:String x:Key="Str_Watch_Events">最近變更</sys:String>
-    <sys:String x:Key="Str_Watch_Copy">複製結果</sys:String>
+    <sys:String x:Key="Str_Export_Txt">匯出為 TXT</sys:String>
     <sys:String x:Key="Str_Watch_Clear">清除紀錄</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">複製位址</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">重設統計</sys:String>

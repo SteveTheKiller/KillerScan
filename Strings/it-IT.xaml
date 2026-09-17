@@ -313,6 +313,8 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Quel file non esiste.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Quella cartella non esiste.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Sostituire {0}?</sys:String>
+    <sys:String x:Key="Str_Btn_Replace">Sostituisci</sys:String>
+    <sys:String x:Key="Str_Dlg_Preview">Anteprima</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Aggiungi ai percorsi</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Rimuovi dai percorsi</sys:String>
     <sys:String x:Key="Str_QA_Desktop">Desktop</sys:String>
@@ -365,7 +367,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Watch_Latency">Ultima / media (ms)</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Ultima modifica</sys:String>
     <sys:String x:Key="Str_Watch_Events">Modifiche recenti</sys:String>
-    <sys:String x:Key="Str_Watch_Copy">Copia risultati</sys:String>
+    <sys:String x:Key="Str_Export_Txt">Esporta come TXT</sys:String>
     <sys:String x:Key="Str_Watch_Clear">Cancella registro</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Copia indirizzo</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Azzera statistiche</sys:String>

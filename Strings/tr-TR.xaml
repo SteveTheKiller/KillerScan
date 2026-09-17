@@ -297,6 +297,8 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Bu dosya mevcut değil.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Bu klasör mevcut değil.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">{0} değiştirilsin mi?</sys:String>
+    <sys:String x:Key="Str_Btn_Replace">Değiştir</sys:String>
+    <sys:String x:Key="Str_Dlg_Preview">Önizleme</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Yerlere sabitle</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Yerlerden kaldır</sys:String>
     <sys:String x:Key="Str_QA_Desktop">Masaüstü</sys:String>
@@ -349,7 +351,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Watch_Latency">Son / ortalama (ms)</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Son değişiklik</sys:String>
     <sys:String x:Key="Str_Watch_Events">Son değişiklikler</sys:String>
-    <sys:String x:Key="Str_Watch_Copy">Sonuçları kopyala</sys:String>
+    <sys:String x:Key="Str_Export_Txt">TXT olarak dışa aktar</sys:String>
     <sys:String x:Key="Str_Watch_Clear">Günlüğü temizle</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Adresi kopyala</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">İstatistikleri sıfırla</sys:String>

@@ -298,6 +298,8 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Diese Datei existiert nicht.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Dieser Ordner existiert nicht.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">{0} ersetzen?</sys:String>
+    <sys:String x:Key="Str_Btn_Replace">Ersetzen</sys:String>
+    <sys:String x:Key="Str_Dlg_Preview">Vorschau</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">An Orte anheften</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Von Orten entfernen</sys:String>
     <sys:String x:Key="Str_QA_Desktop">Desktop</sys:String>
@@ -350,7 +352,7 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Watch_Latency">Zuletzt / Durchschnitt (ms)</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Letzte Änderung</sys:String>
     <sys:String x:Key="Str_Watch_Events">Letzte Änderungen</sys:String>
-    <sys:String x:Key="Str_Watch_Copy">Ergebnisse kopieren</sys:String>
+    <sys:String x:Key="Str_Export_Txt">Als TXT exportieren</sys:String>
     <sys:String x:Key="Str_Watch_Clear">Protokoll leeren</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Adresse kopieren</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Statistik zurücksetzen</sys:String>

@@ -339,6 +339,8 @@
     <sys:String x:Key="Str_Dlg_NoSuchFile">Мұндай файл жоқ.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Мұндай қалта жоқ.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">{0} ауыстырылсын ба?</sys:String>
+    <sys:String x:Key="Str_Btn_Replace">Ауыстыру</sys:String>
+    <sys:String x:Key="Str_Dlg_Preview">Алдын ала қарау</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Орындарға бекіту</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Орындардан алып тастау</sys:String>
     <sys:String x:Key="Str_QA_Desktop">Жұмыс үстелі</sys:String>
@@ -391,7 +393,7 @@
     <sys:String x:Key="Str_Watch_Latency">Соңғы / орташа (ms)</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Соңғы өзгеріс</sys:String>
     <sys:String x:Key="Str_Watch_Events">Соңғы өзгерістер</sys:String>
-    <sys:String x:Key="Str_Watch_Copy">Нәтижелерді көшіру</sys:String>
+    <sys:String x:Key="Str_Export_Txt">TXT ретінде экспорттау</sys:String>
     <sys:String x:Key="Str_Watch_Clear">Журналды тазалау</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Мекенжайды көшіру</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Статистиканы қалпына келтіру</sys:String>

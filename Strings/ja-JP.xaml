@@ -308,6 +308,8 @@
     <sys:String x:Key="Str_Dlg_NoSuchFile">そのファイルは存在しません。</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">そのフォルダーは存在しません。</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">{0} を置き換えますか?</sys:String>
+    <sys:String x:Key="Str_Btn_Replace">置き換え</sys:String>
+    <sys:String x:Key="Str_Dlg_Preview">プレビュー</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">場所にピン留め</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">場所から削除</sys:String>
     <sys:String x:Key="Str_QA_Desktop">デスクトップ</sys:String>
@@ -360,7 +362,7 @@
     <sys:String x:Key="Str_Watch_Latency">直近 / 平均 (ms)</sys:String>
     <sys:String x:Key="Str_Watch_Changed">最終変更</sys:String>
     <sys:String x:Key="Str_Watch_Events">最近の変更</sys:String>
-    <sys:String x:Key="Str_Watch_Copy">結果をコピー</sys:String>
+    <sys:String x:Key="Str_Export_Txt">TXT としてエクスポート</sys:String>
     <sys:String x:Key="Str_Watch_Clear">ログを消去</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">アドレスをコピー</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">統計をリセット</sys:String>

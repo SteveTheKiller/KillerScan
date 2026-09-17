@@ -297,6 +297,8 @@
     <sys:String x:Key="Str_Dlg_NoSuchFile">ওই ফাইলটি নেই।</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">ওই ফোল্ডারটি নেই।</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">{0} প্রতিস্থাপন করবেন?</sys:String>
+    <sys:String x:Key="Str_Btn_Replace">পরিবর্তন</sys:String>
+    <sys:String x:Key="Str_Dlg_Preview">পূর্বরূপ</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">স্থানে পিন করুন</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">স্থান থেকে সরান</sys:String>
     <sys:String x:Key="Str_QA_Desktop">ডেস্কটপ</sys:String>
@@ -349,7 +351,7 @@
     <sys:String x:Key="Str_Watch_Latency">সর্বশেষ / গড় (ms)</sys:String>
     <sys:String x:Key="Str_Watch_Changed">সর্বশেষ পরিবর্তন</sys:String>
     <sys:String x:Key="Str_Watch_Events">সাম্প্রতিক পরিবর্তন</sys:String>
-    <sys:String x:Key="Str_Watch_Copy">ফলাফল কপি করুন</sys:String>
+    <sys:String x:Key="Str_Export_Txt">TXT হিসেবে এক্সপোর্ট</sys:String>
     <sys:String x:Key="Str_Watch_Clear">লগ সাফ করুন</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">ঠিকানা কপি করুন</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">পরিসংখ্যান রিসেট করুন</sys:String>

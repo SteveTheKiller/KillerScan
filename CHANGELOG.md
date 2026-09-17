@@ -8,36 +8,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 1.7.2 runs speed tests with a native engine in the themed terminal.
 
-### Changed
-- Reduced the default terminal font size to 11 and added a saved font and size selector with a live preview in the right-click menu.
-- The command-line scan status line now starts with a KillerScan prefix so calling tools can tell which scanner is running; exported output is unchanged.
-
 ### Added
-- Added consistent address, MAC, port, timing, and success/failure colors to network commands while preserving plain text and PowerShell objects for pipelines and exports.
-- Made scan percentages blue and table headings bold in the terminal and CLI.
-- Added a terminal Scan box with a hidden CLI launch, in-place progress, width-aware tables, and matching footer status, device counts, and trust alerts.
-- KillerSpeed terminal speed tests with consent before network transfers, adaptive connections, colored progress and aligned result tables that stay visible above the prompt, plus confirmation before interrupting another task.
-- A dedicated KillerScan speed-test server with automated client and server checks.
+- KillerSpeed, a native speed test in the terminal backed by a dedicated KillerScan server, with adaptive connections, aligned result tables, and consent before any transfer. It replaces the Ookla download and the HTTP fallback.
+- A Scan box in the terminal with in-place progress, width-aware tables, and scan status and trust alerts in the footer.
+- A terminal font and size selector with a live preview, plus consistent colors for addresses, MACs, ports, timing, and results in network command output.
+
+### Changed
+- Keep Alive's Copy results button was replaced by a TXT export in the Export menu, alongside CSV, HTML and PNG.
+- Trust markers are now small centered dots, matched in the trusted-device menu and the device list header spacing.
+- The terminal defaults to a smaller 11 point font, and command-line scan status starts with a KillerScan prefix.
 
 ### Fixed
-- Replaced the separate 98SE sidebar rail with the one rail every theme uses, restoring Export, the sidebar toggle, and the history and profiles panel on 98SE.
-- Removed the duplicate sunken edge inside the Devices, Services and Topology views that doubled the black line on the 98SE pane.
-- The toolbar no longer grows 4 pixels taller when the view overflow button appears, such as in Keep Alive.
-- Fixed the terminal font dialog crash and aligned device-list headers with the status-dot spacing.
-- Rounded the font dialog surface, enabled hover-wheel font and size selection, and kept KillerSpeed in the sidebar, including 98SE.
-- Matched the 98SE font dialog to its gradient caption, white dropdowns, and recessed white preview.
-- Preserved terminal session history through resizing, clearing, and shell replacement, including exported transcripts; added horizontal scrolling for narrow windows.
-- Kept terminal scrolling in place while new output arrives and refreshed Scan availability when the shell becomes ready.
-- Restored a single themed pane border and corrected About panel colors and header contrast.
-- Kept scan sort and filter controls out of unrelated views and shortened the speed-test prompt in all languages.
-- Terminal status clears the ping stop hint when the prompt returns and resets to Ready after ten seconds idle.
-- The trusted-device menu uses a green or amber dot matching the device row.
-- Improved speed-test accuracy with sustained transfers, adaptive request sizing, and upload byte accounting; retained all download connections and prevented latency probes from lowering their shared limit.
-- Completed download results remain visible while the upload test runs.
-- Removed third-party speed-test downloads; the native engine displays results through the terminal's existing shell.
-- Terminal startup failures now include the Windows error details, and redirected launches keep shell input and output inside the app.
-- Terminal prompts now follow the app's theme accent instead of falling back to red.
-- Reduced device trust markers to small, centered dots.
+- 98SE now uses the same rail as every other theme, restoring Export, the speed test, and the history and profiles sidebar.
+- Restored the themed pane border and removed the doubled inner border and sunken edge in the Devices, Services and Topology views.
+- The toolbar no longer grows taller when the view overflow button appears, and sort and filter controls stay out of views they do not apply to.
+- The terminal keeps its history through resizing and clearing, holds its scroll position as output arrives, uses the theme accent for its prompt, clears the ping stop hint at the prompt, and reports Windows error details when it fails to start.
+- Corrected About panel colors and header contrast.
 
 ## [1.7.1] - 2026-09-08
 

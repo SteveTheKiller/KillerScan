@@ -251,6 +251,21 @@
     <sys:String x:Key="ComboChevGlyph" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">6</sys:String>
 
     <FontFamily x:Key="ComboChevFont" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">Marlett</FontFamily>
+    <!-- File picker, KillerPDF's 98SE values. -->
+    <SolidColorBrush x:Key="ComboFieldHoverBrush" Color="#ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ComboButtonHoverBrush" Color="#c0c0c0" po:Freeze="True"/>
+    <sys:Double x:Key="ComboButtonSize">18</sys:Double>
+    <sys:Double x:Key="ComboButtonHeight">26</sys:Double>
+    <SolidColorBrush x:Key="TreeLineBrush" Color="#808080" po:Freeze="True"/>
+    <FontFamily x:Key="MenuFontFamily">Microsoft Sans Serif</FontFamily>
+    <sys:Double x:Key="MenuFontSize">11</sys:Double>
+    <Thickness x:Key="MenuItemPadding">6,3,8,3</Thickness>
+    <SolidColorBrush x:Key="FileDialogPaneBrush" Color="#ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="DialogFrameBrush" Color="#000000" po:Freeze="True"/>
+    <Thickness x:Key="DialogFrameThickness">0</Thickness>
+    <Thickness x:Key="DialogFramePadding">2</Thickness>
+    <Thickness x:Key="DialogWindowFrameThickness">3</Thickness>
+    <Thickness x:Key="DialogWindowFramePadding">5</Thickness>
 
     <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 

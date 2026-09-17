@@ -297,6 +297,8 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Ce fichier n'existe pas.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Ce dossier n'existe pas.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Remplacer {0} ?</sys:String>
+    <sys:String x:Key="Str_Btn_Replace">Remplacer</sys:String>
+    <sys:String x:Key="Str_Dlg_Preview">Aperçu</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Épingler aux emplacements</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Retirer des emplacements</sys:String>
     <sys:String x:Key="Str_QA_Desktop">Bureau</sys:String>
@@ -349,7 +351,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Watch_Latency">Dernière / moyenne (ms)</sys:String>
     <sys:String x:Key="Str_Watch_Changed">Dernier changement</sys:String>
     <sys:String x:Key="Str_Watch_Events">Changements récents</sys:String>
-    <sys:String x:Key="Str_Watch_Copy">Copier les résultats</sys:String>
+    <sys:String x:Key="Str_Export_Txt">Exporter en TXT</sys:String>
     <sys:String x:Key="Str_Watch_Clear">Effacer le journal</sys:String>
     <sys:String x:Key="Str_Watch_CopyAddress">Copier l'adresse</sys:String>
     <sys:String x:Key="Str_Watch_ResetStats">Réinitialiser les statistiques</sys:String>

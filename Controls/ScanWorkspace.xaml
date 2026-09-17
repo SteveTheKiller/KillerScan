@@ -274,7 +274,13 @@
                                 </MenuItem>
                                 <MenuItem x:Name="ExportWatchTxtItem" Header="{DynamicResource Str_Export_Txt}"
                                           InputGestureText="Ctrl+Shift+X" Click="ExportWatchTxt_Click" Visibility="Collapsed">
-                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8A5;"/></MenuItem.Icon>
+                                    <MenuItem.Icon>
+                                        <Grid Width="16" Height="16">
+                                            <TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8A5;"/>
+                                            <TextBlock Style="{StaticResource MenuIcon}" Text="&#xE70B;" FontSize="8"
+                                                       HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+                                        </Grid>
+                                    </MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem x:Name="ExportWatchPngItem" Header="{DynamicResource Str_Export_WatchPng}"
                                           InputGestureText="Ctrl+Shift+G" Click="ExportWatchPng_Click" Visibility="Collapsed">
@@ -282,7 +288,13 @@
                                 </MenuItem>
                                 <MenuItem x:Name="ExportTerminalTextItem" Header="{DynamicResource Str_Export_TerminalTxt}"
                                           InputGestureText="Ctrl+Shift+X" Click="ExportTerminalText_Click" Visibility="Collapsed">
-                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8A5;"/></MenuItem.Icon>
+                                    <MenuItem.Icon>
+                                        <Grid Width="16" Height="16">
+                                            <TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8A5;"/>
+                                            <TextBlock Style="{StaticResource MenuIcon}" Text="&#xE70B;" FontSize="8"
+                                                       HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+                                        </Grid>
+                                    </MenuItem.Icon>
                                 </MenuItem>
                                 <!-- Topology only, and flat rather than a submenu: these are simply
                                      the other things you can export while looking at the picture.

@@ -51,7 +51,7 @@ namespace KillerScan.Controls
         internal FrameworkElement DetachToolbar()
         {
             ((Panel)ToolBar.Parent).Children.Remove(ToolBar);
-            ToolBar.Margin = new Thickness(0);
+            ToolBar.Margin = new Thickness(0, 2, 0, 2);
             return ToolBar;
         }
 
@@ -533,7 +533,8 @@ namespace KillerScan.Controls
         internal (int Total, int Replying) WatchState =>
             (_cards.Count, _cards.Count(card => card.IsReplying));
 
-        private void Copy_Click(object sender, RoutedEventArgs e)
+        /// <summary>The same run as plain text, one block per card.</summary>
+        internal string BuildText()
         {
             var text = new System.Text.StringBuilder();
             text.AppendLine(L("Str_View_KeepAlive"));
@@ -548,8 +549,7 @@ namespace KillerScan.Controls
                 foreach (var check in card.Checks) text.AppendLine("\t" + check.Check + "\t" + check.Result);
                 foreach (var entry in card.Events) text.AppendLine("\t" + entry.Time + "\t" + entry.State);
             }
-            try { Clipboard.SetText(text.ToString()); }
-            catch (System.Runtime.InteropServices.COMException) { Status.Text = L("Str_Diag_Error"); }
+            return text.ToString();
         }
     }
 }

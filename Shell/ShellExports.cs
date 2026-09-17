@@ -22,6 +22,7 @@ namespace KillerScan.Shell
             {
                 case "watch-csv":  SaveWatch("csv"); break;
                 case "watch-html": SaveWatch("html"); break;
+                case "watch-txt":  SaveWatch("txt"); break;
                 case "watch-png":  SaveWatch("png"); break;
                 case "terminal-txt": SaveTerminalText(); break;
             }
@@ -35,6 +36,7 @@ namespace KillerScan.Shell
             {
                 "html" => ("Str_Filter_Html", ".html"),
                 "png"  => ("Str_Filter_Png", ".png"),
+                "txt"  => ("Str_Filter_Text", ".txt"),
                 _      => ("Str_Filter_Csv", ".csv"),
             };
 
@@ -50,8 +52,12 @@ namespace KillerScan.Shell
             try
             {
                 if (format == "png") SaveElementPng(watch.CardsVisual, dlg.FileName);
-                else File.WriteAllText(dlg.FileName, format == "html" ? watch.BuildHtml() : watch.BuildCsv(),
-                                       new UTF8Encoding(false));
+                else File.WriteAllText(dlg.FileName, format switch
+                {
+                    "html" => watch.BuildHtml(),
+                    "txt"  => watch.BuildText(),
+                    _      => watch.BuildCsv(),
+                }, new UTF8Encoding(false));
             }
             catch (Exception ex) when (ex is not OutOfMemoryException)
             {

@@ -283,7 +283,15 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 </div></div></div>
 <h2 class="help-cat" id="export" data-i18n="tk_exp_nav">Export</h2>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_exp_title">Export</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
-<p data-i18n="tk_exp_shortcut">Use the rail Export button for the formats below. Ctrl+E directly saves device CSV in Devices, Services or Topology; it does not open this menu. In the terminal, Ctrl+E goes to the running program.</p>
+<p data-i18n="tk_exp_shortcut">Use Export on the rail. Each supported export format has a direct shortcut:</p>
+<table class="spec-table">
+<tr><td><kbd>Ctrl+E</kbd></td><td>CSV</td></tr>
+<tr><td><kbd>Ctrl+Shift+E</kbd></td><td>HTML</td></tr>
+<tr><td><kbd>Ctrl+Shift+X</kbd></td><td>TXT</td></tr>
+<tr><td><kbd>Ctrl+Shift+G</kbd></td><td>PNG</td></tr>
+<tr><td><kbd>Ctrl+Shift+J</kbd></td><td>JPG</td></tr>
+<tr><td><kbd>Ctrl+Alt+H</kbd></td><td>HTML + SVG</td></tr>
+</table>
 <p data-i18n="tk_exp_body">Export offers only what the view in front of you can actually produce, so the menu changes as you move between views. In Devices and Services it writes the device list as CSV or as the HTML report, with the service list as its own CSV while Services is showing.</p>
 <p data-i18n="tk_exp_body_p2">In Topology it drops those entirely, because there is no table on screen to write, and offers the picture instead: a transparent PNG to drop onto someone else's document, a JPG flattened onto the theme's own surface and grain for the places that refuse transparency, and an HTML page carrying real SVG, which stays sharp at any size and can be edited afterwards. In Keep Alive it writes the run as CSV or as a page, or the cards themselves as a picture.</p>
 <p data-i18n="tk_exp_body_p3">In the Terminal it writes the session to a text file, scrollback included. Files are named with the date and time, so exporting the same network twice in an afternoon does not overwrite the morning's evidence.</p>
@@ -556,6 +564,11 @@ window.addEventListener('resize', fit);
 <tr><td>Ctrl + F</td><td data-i18n="tk_190">Jump to the subnet box</td></tr>
 <tr><td>Ctrl + A</td><td data-i18n="tk_191">Select every device</td></tr>
 <tr><td>Ctrl + E</td><td data-i18n="tk_192">Save the device list as CSV</td></tr>
+<tr><td>Ctrl + Shift + E</td><td><code>HTML</code></td></tr>
+<tr><td>Ctrl + Shift + X</td><td><code>TXT</code></td></tr>
+<tr><td>Ctrl + Shift + G</td><td><code>PNG</code></td></tr>
+<tr><td>Ctrl + Shift + J</td><td><code>JPG</code></td></tr>
+<tr><td>Ctrl + Alt + H</td><td><code>HTML</code> + <code>SVG</code></td></tr>
 <tr><td>F6</td><td data-i18n="tk_ks_devices">Show the devices view</td></tr>
 <tr><td>F10</td><td data-i18n="tk_ks_terminal">Open a terminal</td></tr>
 <tr><td>F9</td><td data-i18n="tk_ks_f2">Open Keep Alive</td></tr>

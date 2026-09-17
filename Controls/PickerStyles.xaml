@@ -16,21 +16,113 @@
                     xmlns:local="clr-namespace:KillerScan.Controls"
                     xmlns:kui="clr-namespace:KillerScan.Controls">
 
-    <!-- NO OutlineButton / SurfaceButton HERE (2026-08-07). This file used to carry its
-         own copies of both, and it merges AFTER Controls.xaml, so the picker silently ignored
-         the real definitions - four separate fixes to Controls.xaml changed nothing on screen
-         and Cancel stayed white while every other Cancel in the app went gray. Button styles
-         live in Controls.xaml, once. Do not reintroduce them here. -->
+    <Style x:Key="OutlineButton" TargetType="Button">
+        <!-- Transparent at rest, NOT RowSelectedBrush. Filled with RowSelectedBrush while its text
+             was OutlineBtnBrush, both resolve to the accent on several palettes - so the confirm
+             button was a solid block of color with its caption invisible inside it. -->
+        <Setter Property="Background" Value="{DynamicResource OutlineFaceBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource OutlineTextBrush}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="14,5"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource OutlineRestBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <!-- WPF's dotted focus rectangle draws over the caption; the template shows focus itself. -->
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <!-- Bevels are SIBLINGS of the border so they land on the button's outer edge,
+                         not inside its 1px edge and 14,5 padding. Zero-thickness off 98SE. -->
+                    <Grid>
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{DynamicResource ControlCornerRadius}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <Border x:Name="bevelLight" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelLightBrush}" BorderThickness="{DynamicResource ButtonBevelLightThickness}"/>
+                        <Border x:Name="bevelDark" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelDarkBrush}" BorderThickness="{DynamicResource ButtonBevelDarkThickness}"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- Order matters: IsPressed must come after IsMouseOver to win. -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource OutlineHoverBrush}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource OutlineHoverTextBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource OutlinePressedBrush}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource OutlineTextBrush}"/>
+                            <!-- Bevel inverts on press: sunken, the classic behavior. -->
+                            <Setter TargetName="bevelLight" Property="BorderBrush" Value="{DynamicResource BevelDarkBrush}"/>
+                            <Setter TargetName="bevelDark" Property="BorderBrush" Value="{DynamicResource BevelLightBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SurfaceButton" TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource PaneBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <!-- ButtonEdgeBrush: a beveled theme makes it transparent so the bevel is the edge and
+             the flat outline does not draw a second line beside it. -->
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonEdgeBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{DynamicResource ControlCornerRadius}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <Border x:Name="bevelLight" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelLightBrush}" BorderThickness="{DynamicResource ButtonBevelLightThickness}"/>
+                        <Border x:Name="bevelDark" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelDarkBrush}" BorderThickness="{DynamicResource ButtonBevelDarkThickness}"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- Order matters: IsPressed after IsMouseOver so it wins. -->
+                        <!-- A real fill change, not an opacity fade. Opacity 0.75 on a PaneBrush
+                             button over the dark panel is a ~9-step move - invisible in practice,
+                             so Cancel read as dead - no hover at all. (2026-07-30) -->
+                        <!-- Fill only, no accent border: the accent outline is the CONFIRM
+                             button's identity (OutlineButton), and a neutral button borrowing it
+                             on hover reads as a second confirm. (2026-07-30) -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+                            <Setter TargetName="bevelLight" Property="BorderBrush" Value="{DynamicResource BevelDarkBrush}"/>
+                            <Setter TargetName="bevelDark" Property="BorderBrush" Value="{DynamicResource BevelLightBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4"/>
+                            <Setter Property="Cursor" Value="Arrow"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style x:Key="DarkTextBox" TargetType="TextBox">
         <!-- SurfaceBrush (#333333 on Dark), NOT BackgroundBrush. The appointment sidebar paints
              nothing of its own and sits straight on the window's BackgroundBrush (#1c1c1c), so a
              BackgroundBrush field was the exact same color as the panel behind it - the only thing
-             separating a text box from empty space was its 1px border. KillerScan has always used
+             separating a text box from empty space was its 1px border. KillerNotes has always used
              SurfaceBrush here; this is that. (2026-07-30)
              It reads correctly on the other surfaces too: the dialog cards are PaneBrush (#3a3a3a),
              against which a SurfaceBrush field is a step darker and reads as recessed. -->
-        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource TextFieldBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
@@ -70,12 +162,98 @@
     </Style>
 
     <ContextMenu x:Key="TextInputContextMenu" x:Shared="False">
-        <MenuItem Command="ApplicationCommands.Cut"   Header="{DynamicResource Str_Ctx_Cut}"/>
-        <MenuItem Command="ApplicationCommands.Copy"  Header="{DynamicResource Str_Ctx_Copy}"/>
-        <MenuItem Command="ApplicationCommands.Paste" Header="{DynamicResource Str_Ctx_Paste}"/>
+        <MenuItem Command="ApplicationCommands.Cut" Header="{DynamicResource Str_Ctx_Cut}" InputGestureText="Ctrl+X">
+            <MenuItem.Icon><TextBlock Text="&#xE8C6;" FontFamily="Segoe MDL2 Assets" FontSize="12"/></MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Command="ApplicationCommands.Copy" Header="{DynamicResource Str_Ctx_Copy}" InputGestureText="Ctrl+C">
+            <MenuItem.Icon><TextBlock Text="&#xE8C8;" FontFamily="Segoe MDL2 Assets" FontSize="12"/></MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Command="ApplicationCommands.Paste" Header="{DynamicResource Str_Ctx_Paste}" InputGestureText="Ctrl+V">
+            <MenuItem.Icon><TextBlock Text="&#xE77F;" FontFamily="Segoe MDL2 Assets" FontSize="12"/></MenuItem.Icon>
+        </MenuItem>
         <Separator/>
-        <MenuItem Command="ApplicationCommands.SelectAll" Header="{DynamicResource Str_Ctx_SelectAll}"/>
+        <MenuItem Command="ApplicationCommands.SelectAll" Header="{DynamicResource Str_Ctx_SelectAll}" InputGestureText="Ctrl+A">
+            <MenuItem.Icon><TextBlock Text="&#xE8B3;" FontFamily="Segoe MDL2 Assets" FontSize="12"/></MenuItem.Icon>
+        </MenuItem>
     </ContextMenu>
+
+    <Style x:Key="PickerContextMenu" TargetType="ContextMenu">
+        <Setter Property="Background" Value="{DynamicResource FileDialogPaneBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource MenuBorderBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+        <Setter Property="Padding" Value="3"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContextMenu">
+                    <Grid Margin="8">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="{DynamicResource ControlCornerRadius}"
+                                IsHitTestVisible="False">
+                            <Border.Effect>
+                                <DropShadowEffect Color="Black" BlurRadius="14" ShadowDepth="2"
+                                                  Direction="270" Opacity="{DynamicResource FlyoutShadowOpacity}"/>
+                            </Border.Effect>
+                        </Border>
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                                CornerRadius="{DynamicResource ControlCornerRadius}">
+                            <Grid>
+                                <StackPanel IsItemsHost="True" Margin="{TemplateBinding Padding}"/>
+                                <Border IsHitTestVisible="False"
+                                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                                        Background="{DynamicResource GrainTileBrush}"
+                                        Opacity="{DynamicResource GrainOpacity}"/>
+                            </Grid>
+                        </Border>
+                        <Control Panel.ZIndex="20" Style="{StaticResource PaneBevelOverlay}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="PickerMenuItem" TargetType="MenuItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+        <Setter Property="Padding" Value="8,5"/>
+        <Setter Property="FontFamily" Value="{DynamicResource MenuFontFamily}"/>
+        <Setter Property="FontSize" Value="{DynamicResource MenuFontSize}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="MenuItem">
+                    <Border x:Name="ItemBorder" Background="{TemplateBinding Background}"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            Padding="{TemplateBinding Padding}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="18"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="CheckGlyph" Text="&#xE73E;"
+                                       FontFamily="Segoe MDL2 Assets" FontSize="11"
+                                       Foreground="{DynamicResource PrimaryBrush}"
+                                       VerticalAlignment="Center" Visibility="Collapsed"/>
+                            <ContentPresenter Grid.Column="1" ContentSource="Header"
+                                              VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="ItemBorder" Property="Background"
+                                    Value="{DynamicResource SurfaceHoverBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="CheckGlyph" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!-- The places / bookmarks rail. Same template as PickerRow but tight: the rail is a
          navigation list beside a folder tree, so its rows should match the tree's line height and
@@ -133,11 +311,9 @@
     </Style>
 
     <Style x:Key="PickerRowContent" TargetType="Panel">
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                <Setter Property="Effect" Value="{DynamicResource TextStroke}"/>
-            </DataTrigger>
-        </Style.Triggers>
+        <!-- Keep selected names crisp against SelectionBg. TextStroke rendered as a dark
+             drop shadow inside the yellow selection and made filenames look doubled. -->
+        <Setter Property="Effect" Value="{x:Null}"/>
     </Style>
 
     <Style x:Key="PickerName" TargetType="TextBlock">
@@ -185,8 +361,8 @@
                         <Border x:Name="bg" Background="Transparent" CornerRadius="{DynamicResource SmallCornerRadius}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <Border x:Name="bevelLight" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelLightBrush}" BorderThickness="{DynamicResource BevelLightThickness}"/>
-                        <Border x:Name="bevelDark" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelDarkBrush}" BorderThickness="{DynamicResource BevelDarkThickness}"/>
+                        <Border x:Name="bevelLight" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelLightBrush}" BorderThickness="{DynamicResource ButtonBevelLightThickness}"/>
+                        <Border x:Name="bevelDark" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelDarkBrush}" BorderThickness="{DynamicResource ButtonBevelDarkThickness}"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -200,6 +376,43 @@
                         <Trigger Property="Tag" Value="on">
                             <Setter TargetName="bg" Property="Background" Value="{DynamicResource SelectionBg}"/>
                             <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                            <Setter TargetName="bevelLight" Property="BorderBrush" Value="{DynamicResource BevelDarkBrush}"/>
+                            <Setter TargetName="bevelDark" Property="BorderBrush" Value="{DynamicResource BevelLightBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- The address-bar dropdown is the same classic arrow face used by ComboBox fields.
+         Keeping it here means every Open, Save and image picker receives one implementation. -->
+    <Style x:Key="PickerComboArrowBtn" TargetType="Button">
+        <Setter Property="Width" Value="{DynamicResource ComboButtonSize}"/>
+        <Setter Property="Height" Value="{DynamicResource ComboButtonHeight}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource ComboChevFont}"/>
+        <Setter Property="FontSize" Value="8"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Border x:Name="face" Background="{DynamicResource ComboButtonBrush}"/>
+                        <Border x:Name="bevelLight" IsHitTestVisible="False"
+                                BorderBrush="{DynamicResource BevelLightBrush}"
+                                BorderThickness="{DynamicResource ButtonBevelLightThickness}"/>
+                        <Border x:Name="bevelDark" IsHitTestVisible="False"
+                                BorderBrush="{DynamicResource BevelDarkBrush}"
+                                BorderThickness="{DynamicResource ButtonBevelDarkThickness}"/>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="face" Property="Background" Value="{DynamicResource ComboButtonHoverBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="bevelLight" Property="BorderBrush" Value="{DynamicResource BevelDarkBrush}"/>
                             <Setter TargetName="bevelDark" Property="BorderBrush" Value="{DynamicResource BevelLightBrush}"/>
                         </Trigger>
@@ -279,21 +492,205 @@
         <WrapPanel Orientation="Horizontal" ItemWidth="96" ItemHeight="76"/>
     </ItemsPanelTemplate>
 
-    <!-- THE FOLDER TREE IS GONE (2026-08-07). The picker's left column is bookmarks only
-         now, so LastChildConverter/IsLastChild, TreeExpander, TreeName, FolderTreeItem and
-         FolderTreeView were all dead - together with SharedPicker/FolderTree.cs, which is deleted.
-         Nothing in the app builds a TreeView any more; do not reintroduce these without the tree. -->
+    <kui:LastChildConverter x:Key="IsLastChild"/>
 
+    <Style x:Key="TreeExpander" TargetType="ToggleButton">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Width" Value="16"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border Background="Transparent" Width="16" Height="16">
+                        <Canvas Width="16" Height="16">
+                            <Path x:Name="arrowFill" Data="M 7,3.5 L 13,7.5 L 7,11.5"
+                                  Fill="{DynamicResource BackgroundBrush}" SnapsToDevicePixels="False"/>
+                            <Path x:Name="arrow" Data="M 8.5,3.5 L 13,7.5 L 8.5,11.5"
+                                  StrokeThickness="1.4" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                  Stroke="{DynamicResource DimTextBrush}" SnapsToDevicePixels="False"/>
+                        </Canvas>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <!-- Points down, vertex landing on x=8 - the line's center. Arm length
+                                 and angle match the collapsed chevron, worked out by hand: a
+                                 RenderTransform cannot be reached by TargetName (MC4111). -->
+                            <Setter TargetName="arrow"     Property="Data" Value="M 4,5.25 L 8,9.75 L 12,5.25"/>
+                            <Setter TargetName="arrowFill" Property="Data" Value="M 4,5.25 L 8,9.75 L 12,5.25"/>
+                            <Setter TargetName="arrow" Property="Stroke" Value="{DynamicResource PrimaryBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="arrow" Property="Stroke" Value="{DynamicResource PrimaryBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TreeName" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Consolas"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="FolderTreeItem" TargetType="TreeViewItem">
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+        <Setter Property="Padding" Value="2,1"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TreeViewItem">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <!-- 16px gutter carries the expander AND the connecting lines, so
+                                 the lines land dead center on the triangle at every depth. -->
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Connecting lines. The vertical runs the full height of the node and
+                             its children; the horizontal is the stub out to this node's icon.
+                             For the last child the vertical is cut to an elbow (see trigger). -->
+                        <Rectangle x:Name="VerLine" Grid.RowSpan="2" Width="1"
+                                   HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                                   Fill="{DynamicResource TreeLineBrush}" SnapsToDevicePixels="True"/>
+                        <!-- Only drawn for a node with no expander - where there IS one, the
+                             chevron is the connector. -->
+                        <Rectangle x:Name="HorLine" Height="1" Margin="8,0,0,0"
+                                   VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                   Visibility="Collapsed"
+                                   Fill="{DynamicResource TreeLineBrush}" SnapsToDevicePixels="True"/>
+
+                        <ToggleButton x:Name="Expander" Style="{StaticResource TreeExpander}"
+                                      ClickMode="Press" VerticalAlignment="Center"
+                                      IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"/>
+
+                        <Border x:Name="Bd" Grid.Column="1" CornerRadius="{DynamicResource SmallCornerRadius}" Margin="2,0,0,0"
+                                Background="Transparent" Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter x:Name="PART_Header" ContentSource="Header"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                        </Border>
+
+                        <ItemsPresenter x:Name="ItemsHost" Grid.Row="1" Grid.Column="1"/>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="False">
+                            <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                        <!-- No children means no chevron, so the elbow stub takes over as the
+                             connector. The vertical stays either way: a leaf still belongs to
+                             the run of siblings drawn down the gutter. -->
+                        <Trigger Property="HasItems" Value="False">
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden"/>
+                            <Setter TargetName="HorLine" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" SourceName="Bd" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                        </Trigger>
+                        <!-- SelectionBg, the family pair - not KillerShell's RowSelectedBrush,
+                             because in THIS dialog the tree node and the places row mean the same
+                             thing and must light up the same way. -->
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SelectionBg}"/>
+                        </Trigger>
+                        <!-- Last sibling: cut the vertical to an elbow. Bound to the container
+                             itself so a recycled container re-evaluates (FolderTree.cs). -->
+                        <DataTrigger Value="True"
+                                     Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource IsLastChild}}">
+                            <Setter TargetName="VerLine" Property="VerticalAlignment" Value="Top"/>
+                            <Setter TargetName="VerLine" Property="Height" Value="11"/>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="BareScrollViewer" TargetType="ScrollViewer">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollViewer">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <ScrollContentPresenter Grid.Row="0" Grid.Column="0"
+                                                Margin="{TemplateBinding Padding}"
+                                                CanContentScroll="{TemplateBinding CanContentScroll}"
+                                                CanHorizontallyScroll="False"
+                                                CanVerticallyScroll="False"/>
+
+                        <!-- The PART_ names are what ScrollViewer wires its own scrolling to, so
+                             Value binds one-way and the control drives it from there. -->
+                        <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Row="0" Grid.Column="1"
+                                   Orientation="Vertical" Cursor="Arrow"
+                                   Minimum="0" Maximum="{TemplateBinding ScrollableHeight}"
+                                   ViewportSize="{TemplateBinding ViewportHeight}"
+                                   Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                   Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+
+                        <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Row="1" Grid.Column="0"
+                                   Orientation="Horizontal" Cursor="Arrow"
+                                   Minimum="0" Maximum="{TemplateBinding ScrollableWidth}"
+                                   ViewportSize="{TemplateBinding ViewportWidth}"
+                                   Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                   Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
+
+                        <!-- Row 1 / Column 1 deliberately left empty: that is the corner. -->
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="FolderTreeView" TargetType="TreeView">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="ItemContainerStyle" Value="{StaticResource FolderTreeItem}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TreeView">
+                    <Border Background="{TemplateBinding Background}" BorderThickness="0">
+                        <ScrollViewer Style="{StaticResource BareScrollViewer}"
+                                      Padding="{TemplateBinding Padding}"
+                                      CanContentScroll="False"
+                                      HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Auto">
+                            <ItemsPresenter/>
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!-- ============================================================ -->
-    <!-- File-type ComboBox.                                          -->
-    <!--                                                              -->
-    <!-- Copied from MainWindow.xaml's zoom dropdown (DarkComboToggle -->
-    <!-- / DarkComboItem / DarkComboBox), which lives in that         -->
-    <!-- window's own Window.Resources and so is invisible from this  -->
-    <!-- separate window - the picker's filter combo came up in the   -->
-    <!-- stock white-and-blue WPF template without it. Keep the two    -->
-    <!-- copies in step if either is restyled.                        -->
+    <!-- Shared ComboBox chrome used by both the main-window zoom field and every file picker. -->
     <!-- ============================================================ -->
 
     <!-- Toggle button used inside the ComboBox template -->
@@ -317,9 +714,9 @@
         <Setter Property="OverridesDefaultStyle" Value="True"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-        <Setter Property="Padding" Value="8,5"/>
-        <Setter Property="FontFamily" Value="Consolas"/>
-        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Padding" Value="{DynamicResource MenuItemPadding}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource MenuFontFamily}"/>
+        <Setter Property="FontSize" Value="{DynamicResource MenuFontSize}"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -346,12 +743,12 @@
     <!-- The ComboBox itself -->
     <Style x:Key="DarkComboBox" TargetType="ComboBox">
         <Setter Property="OverridesDefaultStyle" Value="True"/>
-        <Setter Property="Background" Value="{DynamicResource PaneBrush}"/>
+        <Setter Property="Background" Value="{DynamicResource ComboFieldBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource MenuBorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="FontFamily" Value="Consolas"/>
-        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontFamily" Value="{DynamicResource MenuFontFamily}"/>
+        <Setter Property="FontSize" Value="{DynamicResource MenuFontSize}"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="ItemContainerStyle" Value="{StaticResource DarkComboItem}"/>
         <Setter Property="Template">
@@ -367,7 +764,7 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="22"/>
+                                    <ColumnDefinition Width="Auto" MinWidth="{DynamicResource ComboButtonMinWidth}"/>
                                 </Grid.ColumnDefinitions>
                                 <!-- Selected item text (non-editable mode) -->
                                 <ContentPresenter x:Name="ContentSite"
@@ -385,8 +782,8 @@
                                          Background="Transparent"
                                          BorderThickness="0"
                                          Foreground="{DynamicResource TextBrush}"
-                                         FontFamily="Consolas"
-                                         FontSize="11"
+                                         FontFamily="{DynamicResource MenuFontFamily}"
+                                         FontSize="{DynamicResource MenuFontSize}"
                                          VerticalAlignment="Center"
                                          IsReadOnly="{TemplateBinding IsReadOnly}"
                                          Visibility="Hidden"
@@ -394,31 +791,21 @@
                                          SelectionBrush="{DynamicResource RowSelectedBrush}"
                                          SelectionTextBrush="{DynamicResource PrimaryBrush}"
                                          CaretBrush="{DynamicResource PrimaryBrush}"/>
-                                <!-- The drop chevron is a real BUTTON FACE, matching the address
-                                     bar's recents button (2026-08-07): a square with the
-                                     caption-button fill and a raised bevel, not a bare glyph
-                                     floating on the field. Both keys are transparent / zero
-                                     thickness off a beveled theme, so the other twelve still
-                                     show exactly the flat chevron they showed before. -->
-                                <!-- FLUSH right, no gap. The 1px inset left a sliver of the field's
-                                     own fill showing past the button - white on a theme whose edit
-                                     fields are white - which read as a stray white column between
-                                     the button and the combo's edge. A Win98 drop button sits hard
-                                     against the inside of the field. (2026-08-07) -->
-                                <Grid Grid.Column="1" Width="20" Height="20" IsHitTestVisible="False"
-                                      HorizontalAlignment="Right" Margin="0"
-                                      VerticalAlignment="Center">
-                                    <Border Background="{DynamicResource CaptionButtonBrush}"/>
-                                    <Border BorderBrush="{DynamicResource BevelLightBrush}"
-                                            BorderThickness="{DynamicResource BevelLightThickness}"/>
-                                    <Border BorderBrush="{DynamicResource BevelDarkBrush}"
-                                            BorderThickness="{DynamicResource BevelDarkThickness}"/>
-                                    <TextBlock Text="&#xE70D;"
-                                               FontFamily="Segoe MDL2 Assets"
-                                               FontSize="8"
-                                               Foreground="{DynamicResource MutedTextBrush}"
-                                               VerticalAlignment="Center"
-                                               HorizontalAlignment="Center"/>
+                                <!-- The arrow face stretches to the field's INNER height. A fixed
+                                     26px face clipped inside the 22px toolbar zoom box, cutting its
+                                     bevel in half while looking correct in taller dialog fields. -->
+                                <Grid Grid.Column="1" Width="{DynamicResource ComboButtonSize}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                                       IsHitTestVisible="False">
+                                    <Border x:Name="ComboChevFace" Background="{DynamicResource ComboButtonBrush}"/>
+                                    <Border x:Name="ComboChevLight" BorderBrush="{DynamicResource BevelLightBrush}"
+                                            BorderThickness="{DynamicResource ButtonBevelLightThickness}"/>
+                                    <Border x:Name="ComboChevDark" BorderBrush="{DynamicResource BevelDarkBrush}"
+                                            BorderThickness="{DynamicResource ButtonBevelDarkThickness}"/>
+                                    <TextBlock Text="{DynamicResource ComboChevGlyph}"
+                                               FontFamily="{DynamicResource ComboChevFont}" FontSize="8"
+                                               Foreground="{DynamicResource TextBrush}"
+                                               VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </Grid>
                                 <!-- Invisible toggle over the whole control -->
                                 <ToggleButton Grid.Column="0" Grid.ColumnSpan="2"
@@ -427,6 +814,19 @@
                                                           RelativeSource={RelativeSource TemplatedParent}}"/>
                             </Grid>
                         </Border>
+                        <!-- A classic edit/combo field is a two-stage SUNKEN frame: gray/white
+                             outside, black/control-face inside. Modern themes make these shared
+                             pane-bevel resources transparent and zero-width. -->
+                        <Border IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelDarkBrush}"
+                                BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
+                        <Border IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelLightBrush}"
+                                BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
+                        <Border IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}"
+                                BorderBrush="{DynamicResource PaneBevelDark2Brush}"
+                                BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
+                        <Border IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}"
+                                BorderBrush="{DynamicResource PaneBevelLight2Brush}"
+                                BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
                         <!-- Dropdown popup -->
                         <Popup x:Name="PART_Popup"
                                AllowsTransparency="True"
@@ -434,7 +834,7 @@
                                Focusable="False"
                                PopupAnimation="Fade"
                                Placement="Bottom">
-                            <Border Background="{DynamicResource PaneBrush}"
+                            <Border Background="{DynamicResource ComboPopupBrush}"
                                     BorderBrush="{DynamicResource CardBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="{DynamicResource SmallCornerRadius}"
@@ -442,9 +842,10 @@
                                     Margin="0,2,6,6"
                                     MinWidth="{Binding ActualWidth,
                                                RelativeSource={RelativeSource TemplatedParent}}"
-                                    MaxHeight="220">
+                                    MaxHeight="{TemplateBinding MaxDropDownHeight}">
                                 <Border.Effect>
-                                    <DropShadowEffect Color="Black" BlurRadius="12" ShadowDepth="2" Direction="270" Opacity="0.5"/>
+                                    <DropShadowEffect Color="Black" BlurRadius="12" ShadowDepth="2" Direction="270"
+                                                      Opacity="{DynamicResource FlyoutShadowOpacity}"/>
                                 </Border.Effect>
                                 <ScrollViewer VerticalScrollBarVisibility="Auto"
                                               HorizontalScrollBarVisibility="Disabled">
@@ -459,10 +860,14 @@
                             <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ComboFieldHoverBrush}"/>
+                            <Setter TargetName="ComboChevFace" Property="Background" Value="{DynamicResource ComboButtonHoverBrush}"/>
                         </Trigger>
                         <Trigger Property="IsDropDownOpen" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ComboFieldHoverBrush}"/>
+                            <Setter TargetName="ComboChevFace" Property="Background" Value="{DynamicResource ComboButtonHoverBrush}"/>
+                            <Setter TargetName="ComboChevLight" Property="BorderBrush" Value="{DynamicResource BevelDarkBrush}"/>
+                            <Setter TargetName="ComboChevDark" Property="BorderBrush" Value="{DynamicResource BevelLightBrush}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Bd" Property="Opacity" Value="0.4"/>
