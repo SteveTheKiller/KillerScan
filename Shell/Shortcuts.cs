@@ -32,7 +32,12 @@ namespace KillerScan.Shell
             ("Ctrl + F",        "Str_Sc_Subnet",            "Scan"),
             ("Ctrl + Shift + F", "Str_FilterPlaceholder",   "Scan"),
             ("Ctrl + A",        "Str_Sc_SelectAll",         "Scan"),
-            ("Ctrl + E",        "Str_Sc_Export",            "Scan"),
+            ("Ctrl + E",        "Str_Export_Csv",           "Scan"),
+            ("Ctrl + Shift + E", "Str_Export_Html",          "Scan"),
+            ("Ctrl + Shift + X", "Str_Export_Txt",           "Scan"),
+            ("Ctrl + Shift + G", "Str_Export_WatchPng",      "Scan"),
+            ("Ctrl + Shift + J", "Str_Export_SnapJpeg",      "Scan"),
+            ("Ctrl + Alt + H",  "Str_Export_SnapSvg",        "Scan"),
 
             ("Enter",           "Str_Sc_Browser",           "Device"),
             ("F3",              "Str_Sc_Diagnostics",       "Device"),
@@ -105,6 +110,32 @@ namespace KillerScan.Shell
                     if (shift) ToggleTerminalPanel(); else NewScan();
                     e.Handled = true; return;
                 }
+            }
+            if (ctrl && !shift && !alt && e.Key == Key.E)
+            {
+                _scanWorkspace?.Export("csv");
+                e.Handled = true; return;
+            }
+            if (ctrl && shift && !alt)
+            {
+                string? format = e.Key switch
+                {
+                    Key.E => "html",
+                    Key.X => "txt",
+                    Key.G => "png",
+                    Key.J => "jpg",
+                    _ => null,
+                };
+                if (format != null)
+                {
+                    _scanWorkspace?.Export(format);
+                    e.Handled = true; return;
+                }
+            }
+            if (ctrl && alt && !shift && e.Key == Key.H)
+            {
+                _scanWorkspace?.Export("svg");
+                e.Handled = true; return;
             }
             if (e.Key == Key.Escape)
             {

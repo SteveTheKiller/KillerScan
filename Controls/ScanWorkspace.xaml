@@ -257,26 +257,31 @@
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9F9;"/></MenuItem.Icon>
                                 </MenuItem>
 
-                                <MenuItem x:Name="ExportHtmlItem" Header="{DynamicResource Str_Export_Html}" Click="ExportHtml_Click">
+                                <MenuItem x:Name="ExportHtmlItem" Header="{DynamicResource Str_Export_Html}"
+                                          InputGestureText="Ctrl+Shift+E" Click="ExportHtml_Click">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE943;"/></MenuItem.Icon>
                                 </MenuItem>
                                 <!-- Keep Alive: the run as a table, as a page, or as a picture of
                                      the cards. The shell owns that control, so these are requests
                                      rather than handlers. -->
                                 <MenuItem x:Name="ExportWatchCsvItem" Header="{DynamicResource Str_Export_Csv}"
-                                          Click="ExportWatchCsv_Click" Visibility="Collapsed">
+                                          InputGestureText="Ctrl+E" Click="ExportWatchCsv_Click" Visibility="Collapsed">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9F9;"/></MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem x:Name="ExportWatchHtmlItem" Header="{DynamicResource Str_Export_Html}"
-                                          Click="ExportWatchHtml_Click" Visibility="Collapsed">
+                                          InputGestureText="Ctrl+Shift+E" Click="ExportWatchHtml_Click" Visibility="Collapsed">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE943;"/></MenuItem.Icon>
                                 </MenuItem>
+                                <MenuItem x:Name="ExportWatchTxtItem" Header="{DynamicResource Str_Export_Txt}"
+                                          InputGestureText="Ctrl+Shift+X" Click="ExportWatchTxt_Click" Visibility="Collapsed">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8A5;"/></MenuItem.Icon>
+                                </MenuItem>
                                 <MenuItem x:Name="ExportWatchPngItem" Header="{DynamicResource Str_Export_WatchPng}"
-                                          Click="ExportWatchPng_Click" Visibility="Collapsed">
+                                          InputGestureText="Ctrl+Shift+G" Click="ExportWatchPng_Click" Visibility="Collapsed">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xEB9F;"/></MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem x:Name="ExportTerminalTextItem" Header="{DynamicResource Str_Export_TerminalTxt}"
-                                          Click="ExportTerminalText_Click" Visibility="Collapsed">
+                                          InputGestureText="Ctrl+Shift+X" Click="ExportTerminalText_Click" Visibility="Collapsed">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8A5;"/></MenuItem.Icon>
                                 </MenuItem>
                                 <!-- Topology only, and flat rather than a submenu: these are simply
@@ -285,19 +290,19 @@
                                      flattened onto the theme's own surface and grain, and an HTML
                                      page carrying real SVG. -->
                                 <MenuItem x:Name="ExportTopologyPngItem" Header="{DynamicResource Str_Export_SnapPngAlpha}"
-                                          Click="ExportSnapshotPngAlpha_Click" Visibility="Collapsed">
+                                          InputGestureText="Ctrl+Shift+G" Click="ExportSnapshotPngAlpha_Click" Visibility="Collapsed">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE91B;"/></MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem x:Name="ExportTopologyJpegItem" Header="{DynamicResource Str_Export_SnapJpeg}"
-                                          Click="ExportSnapshotJpeg_Click" Visibility="Collapsed">
+                                          InputGestureText="Ctrl+Shift+J" Click="ExportSnapshotJpeg_Click" Visibility="Collapsed">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xEB9F;"/></MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem x:Name="ExportTopologySvgItem" Header="{DynamicResource Str_Export_SnapSvg}"
-                                          Click="ExportSnapshotSvg_Click" Visibility="Collapsed">
+                                          InputGestureText="Ctrl+Alt+H" Click="ExportSnapshotSvg_Click" Visibility="Collapsed">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE943;"/></MenuItem.Icon>
                                 </MenuItem>
                                 <MenuItem x:Name="ExportServicesCsvItem" Header="{DynamicResource Str_Export_ServicesCsv}"
-                                          Click="ExportServicesCsv_Click" Visibility="Collapsed">
+                                          InputGestureText="Ctrl+E" Click="ExportServicesCsv_Click" Visibility="Collapsed">
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9F9;"/></MenuItem.Icon>
                                 </MenuItem>
                             </ContextMenu>

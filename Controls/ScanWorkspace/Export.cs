@@ -31,6 +31,10 @@ namespace KillerScan.Controls
         private void UpdateExportButtonAvailability() =>
             ExportButton.IsEnabled = _exportContext is "watch" or "terminal" || ActiveDevices.Count > 0;
 
+        private string CurrentExportContext() => _exportContext == "scan"
+            ? (_showTopology ? "topology" : _showServices ? "services" : "devices")
+            : _exportContext;
+
         /// <summary>Raised for the exports the shell owns: the Keep Alive run and the terminal.</summary>
         public event EventHandler<string>? ShellExportRequested;
 
@@ -39,6 +43,26 @@ namespace KillerScan.Controls
         private void ExportWatchTxt_Click(object sender, RoutedEventArgs e) => ShellExportRequested?.Invoke(this, "watch-txt");
         private void ExportWatchPng_Click(object sender, RoutedEventArgs e) => ShellExportRequested?.Invoke(this, "watch-png");
         private void ExportTerminalText_Click(object sender, RoutedEventArgs e) => ShellExportRequested?.Invoke(this, "terminal-txt");
+
+        public void Export(string format)
+        {
+            if (!ExportButton.IsEnabled) return;
+
+            switch (CurrentExportContext(), format)
+            {
+                case ("devices", "csv"): ExportCsv_Click(this, new RoutedEventArgs()); break;
+                case ("services", "csv"): ExportServicesCsv_Click(this, new RoutedEventArgs()); break;
+                case ("watch", "csv"): ExportWatchCsv_Click(this, new RoutedEventArgs()); break;
+                case ("devices", "html"): ExportHtml_Click(this, new RoutedEventArgs()); break;
+                case ("watch", "html"): ExportWatchHtml_Click(this, new RoutedEventArgs()); break;
+                case ("watch", "txt"): ExportWatchTxt_Click(this, new RoutedEventArgs()); break;
+                case ("terminal", "txt"): ExportTerminalText_Click(this, new RoutedEventArgs()); break;
+                case ("watch", "png"): ExportWatchPng_Click(this, new RoutedEventArgs()); break;
+                case ("topology", "png"): ExportSnapshotPngAlpha_Click(this, new RoutedEventArgs()); break;
+                case ("topology", "jpg"): ExportSnapshotJpeg_Click(this, new RoutedEventArgs()); break;
+                case ("topology", "svg"): ExportSnapshotSvg_Click(this, new RoutedEventArgs()); break;
+            }
+        }
 
         private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
@@ -51,9 +75,7 @@ namespace KillerScan.Controls
             // write, so CSV and the device report are hidden there rather than exporting the list
             // behind the picture; Keep Alive and the terminal export themselves through the shell,
             // which is what owns those controls.
-            string context = _exportContext == "scan"
-                ? (_showTopology ? "topology" : _showServices ? "services" : "devices")
-                : _exportContext;
+            string context = CurrentExportContext();
 
             static Visibility When(bool shown) => shown ? Visibility.Visible : Visibility.Collapsed;
             bool table = context is "devices" or "services";
