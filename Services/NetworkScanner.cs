@@ -261,7 +261,8 @@ namespace KillerScan.Services
                     await probeSemaphore.WaitAsync(ct);
                     try
                     {
-                        var device = await ProbeHostAsync(entry.Addr, entry.Mac);
+                        var device = await ProbeHostAsync(entry.Addr, entry.Mac, ct);
+                        ct.ThrowIfCancellationRequested();
                         DeviceFound?.Invoke(device);
                         int done = Interlocked.Increment(ref completed);
                         ProgressChanged?.Invoke(40 + (int)(done * 60.0 / total));
@@ -287,11 +288,13 @@ namespace KillerScan.Services
                         {
                             IpAddress = entry.Addr.ToString(),
                             MacAddress = entry.Mac,
-                            Hostname = await ResolveVerifiedHostnameAsync(entry.Addr)
+                            Hostname = await AwaitWithCancellation(ResolveVerifiedHostnameAsync(entry.Addr), ct)
                         };
 
                         if (!string.IsNullOrEmpty(entry.Mac))
                             device.Vendor = ResolveVendor(entry.Mac);
+
+                        ct.ThrowIfCancellationRequested();
 
                         // Classify even in quick scan (hostname + OUI, no ports)
                         device.DeviceType = ClassifyDevice(device);
@@ -376,8 +379,34 @@ namespace KillerScan.Services
             }
         }
 
-        private async Task<NetworkDevice> ProbeHostAsync(IPAddress addr, string cachedMac)
+        private static async Task AwaitWithCancellation(Task task, CancellationToken token)
         {
+            if (task.IsCompleted)
+            {
+                await task;
+                token.ThrowIfCancellationRequested();
+                return;
+            }
+
+            if (await Task.WhenAny(task, Task.Delay(Timeout.Infinite, token)) != task)
+            {
+                _ = task.ContinueWith(t => { _ = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);
+                token.ThrowIfCancellationRequested();
+            }
+
+            await task;
+            token.ThrowIfCancellationRequested();
+        }
+
+        private static async Task<T> AwaitWithCancellation<T>(Task<T> task, CancellationToken token)
+        {
+            await AwaitWithCancellation((Task)task, token);
+            return await task;
+        }
+
+        private async Task<NetworkDevice> ProbeHostAsync(IPAddress addr, string cachedMac, CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
             var device = new NetworkDevice
             {
                 IpAddress = addr.ToString(),
@@ -409,21 +438,22 @@ namespace KillerScan.Services
                 {
                     using var client = new TcpClient();
                     var connectTask = client.ConnectAsync(addr, port);
-                    if (await Task.WhenAny(connectTask, Task.Delay(200)) == connectTask
+                    if (await Task.WhenAny(connectTask, Task.Delay(200, token)) == connectTask
                         && client.Connected)
                     {
                         return port;
                     }
                 }
+                catch (OperationCanceledException) { throw; }
                 catch { }
                 return -1;
             });
 
-            var results = await Task.WhenAll(portTasks);
+            var results = await AwaitWithCancellation(Task.WhenAll(portTasks), token);
             device.OpenPorts = [.. results.Where(p => p > 0).OrderBy(p => p)];
 
             // Wait for hostname + TTL probes to finish before fingerprinting.
-            await Task.WhenAll(dnsTask, ttlTask);
+            await AwaitWithCancellation(Task.WhenAll(dnsTask, ttlTask), token);
 
             // Look up vendor from MAC OUI (used by later probes + classifier).
             if (!string.IsNullOrEmpty(device.MacAddress))
@@ -451,7 +481,7 @@ namespace KillerScan.Services
             fpTasks.Add(ProbeNetbiosAsync(device, addr));
             fpTasks.Add(ProbeSnmpAsync(device, addr));
 
-            await Task.WhenAll(fpTasks);
+            await AwaitWithCancellation(Task.WhenAll(fpTasks), token);
 
             // Last-resort name: NetBIOS computer name when reverse DNS and mDNS both came up empty.
             if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(device.NetbiosName))

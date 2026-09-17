@@ -19,6 +19,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The terminal defaults to a smaller 11 point font, and command-line scan status starts with a KillerScan prefix.
 
 ### Fixed
+- Stop now cancels active host probes without waiting for their network timeouts.
 - 98SE now uses the same rail as every other theme, restoring Export, the speed test, and the history and profiles sidebar.
 - Restored the themed pane border and removed the doubled inner border and sunken edge in the Devices, Services and Topology views.
 - The toolbar no longer grows taller when the view overflow button appears, and sort and filter controls stay out of views they do not apply to.
