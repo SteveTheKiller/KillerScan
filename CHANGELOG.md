@@ -8,6 +8,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 - Kept the About update action readable and usable in every theme, including 98SE.
+- Gave 98SE confirmation dialogs their classic caption bar, beveled frame, and gray close button.
 
 ## [1.7.2] - 2026-09-17
 

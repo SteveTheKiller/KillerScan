@@ -472,6 +472,12 @@ internal static class Program
                 Require(updateButton.GetAttribute("Style") == "{StaticResource PrimaryButton}" &&
                     updateText.GetAttribute("Foreground") == "{DynamicResource OnPrimaryBrush}",
                     "About update button uses the shared primary-button contrast");
+                var confirmXml = new XmlDocument();
+                confirmXml.Load(Path.Combine(directory.FullName, "Controls", "ConfirmDialog.xaml"));
+                Require(confirmXml.OuterXml.Contains("Background=\"{DynamicResource InputDialogTitleBrush}\"") &&
+                    confirmXml.OuterXml.Contains("Style=\"{StaticResource OverlayCloseButton}\"") &&
+                    confirmXml.OuterXml.Contains("BorderThickness=\"{DynamicResource FrameOuterLightThickness}\""),
+                    "98SE confirmation dialogs use the themed caption, close control, and bevel");
                 speedNode.RemoveAttribute("Click");
                 var speedButton = (Button)XamlReader.Parse(speedNode.OuterXml.Replace("\uE9D2", "&#xE9D2;"), context);
                 speedButton.Measure(new Size(20, 30));
