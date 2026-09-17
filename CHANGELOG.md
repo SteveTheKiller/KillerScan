@@ -10,7 +10,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Changed
 - Reduced the default terminal font size to 11 and added a saved font and size selector with a live preview in the right-click menu.
-- Changed the app, standalone setup dialogs, and landing-page default to Black/Teal while preserving saved theme choices.
 
 ### Added
 - Added consistent address, MAC, port, timing, and success/failure colors to network commands while preserving plain text and PowerShell objects for pipelines and exports.

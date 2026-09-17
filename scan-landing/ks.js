@@ -24,7 +24,7 @@
   var accentSwitch = document.getElementById('accentSwitch');
   var accToggle = document.getElementById('accentToggle');
   var accPop = document.getElementById('accentPop');
-  var curAccent = 'teal';
+  var curAccent = 'orange';
 
   function buildThemeFlyout() {
     var group = document.querySelector('.topbar .tgrp');
@@ -113,7 +113,7 @@
       src = 'brand/killerscan-logo-' + theme + '.svg';
     } else {
       var variant = theme === 'light' ? 'light' : theme === 'hc' ? 'black' : 'dark';
-      var color = (NEUTRAL.indexOf(theme) >= 0) ? curAccent : 'teal';
+      var color = (NEUTRAL.indexOf(theme) >= 0) ? curAccent : 'orange';
       src = 'brand/killerscan-logo-' + variant + '-' + color + '.svg';
     }
     var imgs = document.querySelectorAll('img.wm-logo');
@@ -401,7 +401,7 @@
   });
 
   // ---- Init ----
-  var savedTheme = 'hc', savedAccent = 'teal', savedLang = 'en';
+  var savedTheme = 'hc', savedAccent = 'orange', savedLang = 'en';
   try {
     savedTheme  = localStorage.getItem('kscan-theme')  || savedTheme;
     savedAccent = localStorage.getItem('kscan-accent') || savedAccent;
