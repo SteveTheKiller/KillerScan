@@ -314,20 +314,6 @@
                 <Grid.RowDefinitions><RowDefinition Height="*"/></Grid.RowDefinitions>
 
 
-                <Border Grid.RowSpan="1" IsHitTestVisible="False" Panel.ZIndex="20"
-                        BorderBrush="{DynamicResource PaneBevelDarkBrush}"
-                        BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
-                <Border Grid.RowSpan="1" IsHitTestVisible="False" Panel.ZIndex="20"
-                        BorderBrush="{DynamicResource PaneBevelLightBrush}"
-                        BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
-                <Border Grid.RowSpan="1" IsHitTestVisible="False" Panel.ZIndex="20"
-                        Margin="{DynamicResource PaneBevelInnerMargin}"
-                        BorderBrush="{DynamicResource PaneBevelDark2Brush}"
-                        BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
-                <Border Grid.RowSpan="1" IsHitTestVisible="False" Panel.ZIndex="20"
-                        Margin="{DynamicResource PaneBevelInnerMargin}"
-                        BorderBrush="{DynamicResource PaneBevelLight2Brush}"
-                        BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
                 <Border Grid.RowSpan="1" IsHitTestVisible="False" Panel.ZIndex="21" VerticalAlignment="Top"
                         Height="{DynamicResource ScanPaneBandSize}" Background="{DynamicResource ScanPaneTopBrush}"/>
                 <Border Grid.RowSpan="1" IsHitTestVisible="False" Panel.ZIndex="21" HorizontalAlignment="Left"
