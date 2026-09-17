@@ -27,8 +27,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Restored a single themed pane border and corrected About panel colors and header contrast.
 - Kept scan sort and filter controls out of unrelated views and shortened the speed-test prompt in all languages.
 - Terminal status clears the ping stop hint when the prompt returns and resets to Ready after ten seconds idle.
-- The trusted-device menu uses a larger green or amber dot matching the device row.
-- Improved speed-test accuracy with sustained transfers, adaptive request sizing, upload byte accounting, and measured stream selection.
+- The trusted-device menu uses a green or amber dot matching the device row.
+- Improved speed-test accuracy with sustained transfers, adaptive request sizing, and upload byte accounting; retained all download connections and prevented latency probes from lowering their shared limit.
 - Completed download results remain visible while the upload test runs.
 - Removed third-party speed-test downloads; the native engine displays results through the terminal's existing shell.
 - Terminal startup failures now include the Windows error details, and redirected launches keep shell input and output inside the app.
