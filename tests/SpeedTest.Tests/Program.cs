@@ -467,6 +467,11 @@ internal static class Program
                     !windowXml.OuterXml.Contains("ScaledRailVisibility") && !windowXml.OuterXml.Contains("FixedRailVisibility") &&
                     !se98Dictionary.Contains("ScaledRailVisibility") && !se98Dictionary.Contains("FixedRailVisibility"),
                     "One sidebar rail serves every theme, including 98SE");
+                var updateButton = (XmlElement)windowXml.SelectSingleNode("//*[@x:Name='AboutUpdateButton']", ns)!;
+                var updateText = (XmlElement)updateButton.SelectSingleNode(".//*[@x:Name='AboutUpdateText']", ns)!;
+                Require(updateButton.GetAttribute("Style") == "{StaticResource PrimaryButton}" &&
+                    updateText.GetAttribute("Foreground") == "{DynamicResource OnPrimaryBrush}",
+                    "About update button uses the shared primary-button contrast");
                 speedNode.RemoveAttribute("Click");
                 var speedButton = (Button)XamlReader.Parse(speedNode.OuterXml.Replace("\uE9D2", "&#xE9D2;"), context);
                 speedButton.Measure(new Size(20, 30));

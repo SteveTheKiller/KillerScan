@@ -955,22 +955,9 @@
                             </Grid>
 
                             <!-- Update notice: shown only when a newer release is found -->
-                            <Button x:Name="AboutUpdateButton" Visibility="Collapsed" Margin="0,14,0,0"
+                            <Button x:Name="AboutUpdateButton" Style="{StaticResource PrimaryButton}" Visibility="Collapsed" Margin="0,14,0,0"
                                     HorizontalAlignment="Left" Cursor="Hand" Click="AboutUpdateButton_Click">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border x:Name="ub" Background="Transparent" BorderBrush="{DynamicResource PrimaryBrush}"
-                                                BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14,7">
-                                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="ub" Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Button.Template>
-                                <TextBlock x:Name="AboutUpdateText" Text="Update available" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}"/>
+                                <TextBlock x:Name="AboutUpdateText" Text="Update available" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource OnPrimaryBrush}"/>
                             </Button>
 
                         </StackPanel>
