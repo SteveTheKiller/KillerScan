@@ -16,7 +16,7 @@ namespace KillerScan.Shell
         private readonly Button _toolbarOverflow = new()
         {
             Content = "\uE712", FontFamily = new System.Windows.Media.FontFamily("Segoe MDL2 Assets"),
-            FontSize = 14, Width = 36, Height = 34, Margin = new Thickness(8, 2, 8, 2),
+            FontSize = 14, Width = 36, Height = 34, Margin = new Thickness(8, 0, 8, 0),
             VerticalAlignment = VerticalAlignment.Center, Visibility = Visibility.Collapsed
         };
 
@@ -184,6 +184,9 @@ namespace KillerScan.Shell
                 }
                 button.Content = panel;
             }
+            // The overflow button shares the strip with the view buttons. It matches their height
+            // and carries no vertical margin, so it appearing never makes the toolbar row taller.
+            _toolbarOverflow.Height = under ? (large ? 56 : 52) : none ? (large ? 42 : 32) : 34;
             foreach (var item in _toolbarMenu.Items.OfType<MenuItem>())
             {
                 if (item.Tag is ToolbarIconSize size)

@@ -22,6 +22,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Fixed
 - Replaced the separate 98SE sidebar rail with the one rail every theme uses, restoring Export, the sidebar toggle, and the history and profiles panel on 98SE.
 - Removed the duplicate sunken edge inside the Devices, Services and Topology views that doubled the black line on the 98SE pane.
+- The toolbar no longer grows 4 pixels taller when the view overflow button appears, such as in Keep Alive.
 - Fixed the terminal font dialog crash and aligned device-list headers with the status-dot spacing.
 - Rounded the font dialog surface, enabled hover-wheel font and size selection, and kept KillerSpeed in the sidebar, including 98SE.
 - Matched the 98SE font dialog to its gradient caption, white dropdowns, and recessed white preview.
