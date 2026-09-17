@@ -119,7 +119,7 @@
                             Margin="{DynamicResource DialogCaptionButtonsMargin}"
                             FontSize="10" FontFamily="Segoe MDL2 Assets"
                             Foreground="{DynamicResource CaptionCloseBrush}"
-                            Background="Transparent" BorderThickness="0" Cursor="Hand"/>
+                            Cursor="Hand"/>
                 </Grid>
                 </Grid>
             </Border>
