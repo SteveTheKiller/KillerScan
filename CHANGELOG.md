@@ -9,7 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Fixed
 - Kept the About update action readable and usable in every theme, including 98SE.
 - Gave 98SE confirmation dialogs their classic caption bar, beveled frame, and gray close button.
-- Made the terminal `speedtest` command start a fresh KillerSpeed run instead of reconnecting to a completed output bridge.
+- Made KillerSpeed tolerate brief network stalls and let the terminal `speedtest` command start a fresh run.
 
 ## [1.7.2] - 2026-09-17
 

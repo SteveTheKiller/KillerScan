@@ -266,7 +266,7 @@ internal static class Program
     private static async Task Internet()
     {
         var options = new SpeedTestOptions();
-        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(75));
         var progress = new CallbackProgress(p =>
         {
             if (p.IsPhaseComplete)
