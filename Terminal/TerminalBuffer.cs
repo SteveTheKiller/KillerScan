@@ -73,6 +73,7 @@ namespace KillerScan.Terminal
         public event Action<string>? TitleChanged;
         public event Action<string>? DirectoryChanged;
         public event Action? PromptReady;
+        public event Action? SpeedTestRequested;
 
         public event Action<string>? Respond;
 
@@ -623,6 +624,7 @@ namespace KillerScan.Terminal
             {
                 case 133:
                     if (data == "B") PromptReady?.Invoke();
+                    else if (data == "KillerScan;SpeedTest") SpeedTestRequested?.Invoke();
                     break;
                 case 0: case 2:
                     Title = data;

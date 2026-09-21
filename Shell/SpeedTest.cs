@@ -12,6 +12,9 @@ namespace KillerScan.Shell
         private CancellationTokenSource? _speedTestRun;
 
         private void SpeedTestButton_Click(object sender, System.Windows.RoutedEventArgs e)
+            => StartSpeedTest();
+
+        private void StartSpeedTest()
         {
             if (_terminalPanelDisposed) return;
             if (_terminalControl?.HasRunningCommand == true)

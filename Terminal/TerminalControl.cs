@@ -49,8 +49,10 @@ namespace KillerScan.Terminal
         public event Action<string>? ManagedInput;
         public event Action? Disposed;
         public event Action? PromptReady;
+        public event Action? SpeedTestRequested;
         public bool IsManaged { get; private set; }
         private bool _atPrompt;
+        private bool _speedTestRequested;
         public bool HasRunningCommand => IsManaged || (_pty != null && !_pty.HasExited && !_atPrompt);
         public bool HasShell => _pty != null && !_pty.HasExited;
 
@@ -99,10 +101,16 @@ namespace KillerScan.Terminal
             BuildContextMenu();
 
             _buf.Respond += Send;
+            _buf.SpeedTestRequested += () => _speedTestRequested = true;
             _buf.PromptReady += () =>
             {
                 _atPrompt = true;
                 PromptReady?.Invoke();
+                if (_speedTestRequested)
+                {
+                    _speedTestRequested = false;
+                    SpeedTestRequested?.Invoke();
+                }
             };
 
             LoadFontPreference();

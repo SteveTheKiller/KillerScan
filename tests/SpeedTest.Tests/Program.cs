@@ -616,6 +616,13 @@ internal static class Program
                 Send("$ksTestValue = 42\r");
                 Require(Busy(), "Submitting a command marks the terminal busy");
                 WaitFor(() => !Busy());
+                int speedTestRequests = 0;
+                terminalType.GetEvent("SpeedTestRequested")!.AddEventHandler(terminal,
+                    (Action)(() => speedTestRequests++));
+                Send("speedtest\r");
+                WaitFor(() => speedTestRequests == 1 && !Busy());
+                Require(!Text().Contains("MethodInvocationException"),
+                    "Typed speedtest requests a new run without exposing a stale pipe error");
                 var begin = (Task)terminalType.GetMethod("BeginShellManagedSessionAsync")!.Invoke(terminal, new object[] { CancellationToken.None })!;
                 WaitFor(() => begin.IsCompleted);
                 begin.GetAwaiter().GetResult();
