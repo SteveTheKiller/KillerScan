@@ -14,10 +14,17 @@
   refuses to overwrite it with a smaller result, so a blocked or partial download can't downgrade
   or wipe your data. Compatible with PowerShell 5.1 and 7.
 #>
+[CmdletBinding()]
+param(
+    [string]$OutputPath = (Join-Path $PSScriptRoot '..\Resources\oui.txt'),
+    [string]$BaselinePath = (Join-Path $PSScriptRoot '..\Resources\oui.txt'),
+    [switch]$PassThru
+)
+
 $ErrorActionPreference = 'Stop'
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
-$out        = Join-Path $PSScriptRoot '..\Resources\oui.txt'
+$out        = $OutputPath
 $ua         = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 $minHealthy = 1000   # below this a source is considered blocked/failed
 
@@ -115,8 +122,8 @@ function Add-NmapList($content, $sb) {
 
 # How many entries does the current oui.txt already have? We never write fewer than this.
 $currentCount = 0
-if (Test-Path $out) {
-    try { $currentCount = ([System.IO.File]::ReadAllLines($out) | Where-Object { $_ -match "`t" }).Count } catch { }
+if (Test-Path $BaselinePath) {
+    try { $currentCount = ([System.IO.File]::ReadAllLines($BaselinePath) | Where-Object { $_ -match "`t" }).Count } catch { }
 }
 Write-Host "Current oui.txt has $currentCount entries."
 
@@ -149,8 +156,25 @@ if ($bestCount -lt $minHealthy) {
 if ($bestCount -lt $currentCount) {
     Write-Warning ("Best source '$bestName' returned $bestCount entries, fewer than your current " +
                    "$currentCount. Keeping your existing list - NOT downgrading.")
+    if ($PassThru) {
+        [pscustomobject]@{
+            EntryCount = $currentCount
+            Source = 'Existing database'
+            Updated = $false
+            OutputPath = $BaselinePath
+        }
+    }
     exit 0
 }
 
+[System.IO.Directory]::CreateDirectory((Split-Path -Parent $out)) | Out-Null
 [System.IO.File]::WriteAllText($out, $bestData, (New-Object System.Text.UTF8Encoding($false)))
 Write-Host "Wrote $bestCount OUI entries from $bestName to $out"
+if ($PassThru) {
+    [pscustomobject]@{
+        EntryCount = $bestCount
+        Source = $bestName
+        Updated = $true
+        OutputPath = $out
+    }
+}

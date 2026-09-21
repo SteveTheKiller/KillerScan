@@ -42,6 +42,35 @@ function Step([string]$Message) {
     Write-Host "==> $Message" -ForegroundColor Cyan
 }
 
+function Get-OuiChangelogText {
+    param(
+        [Parameter(Mandatory)][string]$Text,
+        [Parameter(Mandatory)][string]$ReleaseVersion,
+        [Parameter(Mandatory)][int]$EntryCount
+    )
+
+    $entry = '- Refreshed the bundled MAC vendor database to {0:N0} assignments.' -f $EntryCount
+    $nl = if ($Text.Contains("`r`n")) { "`r`n" } else { "`n" }
+    $sectionPattern = '(?ms)(^## \[' + [regex]::Escape($ReleaseVersion) + '\][^\r\n]*\r?\n)(.*?)(?=^## \[|\z)'
+    $sectionMatch = [regex]::Match($Text, $sectionPattern)
+    if (-not $sectionMatch.Success) { Fail "CHANGELOG.md has no [$ReleaseVersion] section" }
+
+    $body = $sectionMatch.Groups[2].Value
+    $existingPattern = '(?m)^- Refreshed the bundled MAC vendor database[^\r\n]*$'
+    if ($body -match $existingPattern) {
+        $newBody = [regex]::Replace($body, $existingPattern, $entry, 1)
+    } elseif ($body -match '(?m)^### Changed\r?$') {
+        $newBody = [regex]::Replace($body, '(?m)^(### Changed\r?\n)', ('$1' + $entry + $nl), 1)
+    } elseif ($body -match '(?m)^### Fixed\r?$') {
+        $newBody = [regex]::Replace($body, '(?m)^### Fixed\r?$', ("### Changed$nl" + $entry + "$nl$nl### Fixed"), 1)
+    } else {
+        $newBody = $body.TrimEnd() + "$nl$nl### Changed$nl$entry$nl$nl"
+    }
+
+    return $Text.Substring(0, $sectionMatch.Groups[2].Index) + $newBody +
+           $Text.Substring($sectionMatch.Groups[2].Index + $sectionMatch.Groups[2].Length)
+}
+
 # Landing-page find/replace that refuses to silently do nothing. If a page's markup changes,
 # a plain -replace leaves the stale value behind and the release can still appear successful.
 # Release facts use this helper so a stale site becomes a hard preflight failure instead.
@@ -138,6 +167,43 @@ if ($csprojReleaseDate -ne $changelogDate) {
 Write-Host "Release date: $csprojReleaseDate"
 
 Write-Host 'Preflight OK'
+
+# --- 2b. OUI vendor database refresh ---
+# This happens before the build and source bundle so both release artifacts contain the exact
+# database recorded in the changelog. A real release commits and pushes these inputs first;
+# DryRun downloads to a temporary path and reports the prospective change without touching git.
+Step "Refreshing the OUI vendor database"
+$ouiPath = Join-Path $PSScriptRoot 'Resources\oui.txt'
+$ouiOutputPath = if ($DryRun) { Join-Path $env:TEMP "KillerScan-$Version-oui.txt" } else { $ouiPath }
+try {
+    $ouiResult = & (Join-Path $PSScriptRoot 'build\update-oui.ps1') `
+        -OutputPath $ouiOutputPath -BaselinePath $ouiPath -PassThru
+    if ($LASTEXITCODE -ne 0 -or -not $ouiResult) { Fail 'OUI vendor database refresh failed' }
+
+    $ouiEntryCount = [int]$ouiResult.EntryCount
+    $ouiChangelog = Get-OuiChangelogText -Text $changelog -ReleaseVersion $Version -EntryCount $ouiEntryCount
+    if ($DryRun) {
+        Write-Host ("DryRun: would record {0:N0} OUI assignments in CHANGELOG.md." -f $ouiEntryCount) -ForegroundColor Yellow
+        Write-Host 'DryRun: OUI download was written only to the temporary directory.' -ForegroundColor Yellow
+    } else {
+        if ($ouiChangelog -ne $changelog) {
+            [System.IO.File]::WriteAllText((Join-Path $PSScriptRoot 'CHANGELOG.md'), $ouiChangelog)
+        }
+        $ouiDirty = git status --porcelain -- Resources/oui.txt CHANGELOG.md
+        if ($ouiDirty) {
+            git add -- Resources/oui.txt CHANGELOG.md
+            git commit -m "v${Version}: refresh OUI vendor database" --quiet
+            if ($LASTEXITCODE -ne 0) { Fail 'OUI database release commit failed' }
+            git push origin $defaultBranch --quiet
+            if ($LASTEXITCODE -ne 0) { Fail 'OUI database release commit failed to push' }
+            Write-Host ("Committed and pushed {0:N0} OUI assignments for v{1}." -f $ouiEntryCount, $Version)
+        } else {
+            Write-Host ("OUI database and changelog already record {0:N0} assignments." -f $ouiEntryCount)
+        }
+    }
+} finally {
+    if ($DryRun -and (Test-Path $ouiOutputPath)) { Remove-Item -LiteralPath $ouiOutputPath -Force }
+}
 
 # --- 3. Vulnerable package scan (required at every release) ---
 Step "Scanning for vulnerable packages"
