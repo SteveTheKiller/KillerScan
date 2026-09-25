@@ -435,7 +435,7 @@
              put at the window edge while the panel is collapsed. Width is pinned to the rail so
              the glyphs stay centred on their own strip however wide the lane gets. -->
         <StackPanel x:Name="RailButtons" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Panel.ZIndex="20"
-                    HorizontalAlignment="Right" Width="{DynamicResource RailWidth}" Margin="2,0,0,10">
+                    HorizontalAlignment="Right" Width="{DynamicResource RailWidth}" Margin="2,0,0,6">
             <Button x:Name="SpeedTestButton" Style="{StaticResource RailButton}" Content="&#xE9D2;"
                     FontSize="15" Click="SpeedTestButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_TT_SpeedTest}"/><Run Text=" (F4)"/></TextBlock></Button.ToolTip>
