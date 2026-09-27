@@ -96,9 +96,9 @@ namespace KillerScan.Shell
                 string? status;
                 while ((status = await process.StandardError.ReadLineAsync()) != null)
                 {
-                    if (status.StartsWith("Progress: ") && int.TryParse(status.Substring(10).TrimEnd('%'), out int percent))
+                    if (status.StartsWith("Progress: ") && int.TryParse(status[10..].TrimEnd('%'), out int percent))
                         _terminalScanProgress = percent;
-                    else if (status.StartsWith("Devices: ") && int.TryParse(status.Substring(9), out int count))
+                    else if (status.StartsWith("Devices: ") && int.TryParse(status[9..], out int count))
                         _terminalScanCount = count;
                     else if (status.StartsWith("Str_St_", StringComparison.Ordinal) && status.Contains('|'))
                     {

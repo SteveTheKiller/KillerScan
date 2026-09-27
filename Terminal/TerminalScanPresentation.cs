@@ -6,7 +6,7 @@ namespace KillerScan.Terminal
     internal sealed class TerminalScanPresentation(Func<string, string> loc, Func<int> columns)
     {
         private int Width => Math.Max(12, columns() - 2);
-        private static string Clean(string text) => new(text.Where(c => !char.IsControl(c)).ToArray());
+        private static string Clean(string text) => new([.. text.Where(c => !char.IsControl(c))]);
 
         public string Progress(string status)
         {
@@ -24,8 +24,8 @@ namespace KillerScan.Terminal
             var rows = devices.Select(d => new[] { d.IpAddress, d.Hostname, d.MacAddress,
                 d.Vendor, d.DeviceType, d.OpenPortsDisplay }).ToList();
             int[] limits = [15, 24, 17, 30, 14, 24];
-            int[] widths = Enumerable.Range(0, 6).Select(c => Math.Min(limits[c],
-                Math.Max(headers[c].Length, rows.Select(r => Clean(r[c]).Length).DefaultIfEmpty(0).Max()))).ToArray();
+            int[] widths = [.. Enumerable.Range(0, 6).Select(c => Math.Min(limits[c],
+                Math.Max(headers[c].Length, rows.Select(r => Clean(r[c]).Length).DefaultIfEmpty(0).Max())))];
             int available = Math.Max(12, Width - 10);
             while (widths.Sum() > available)
             {
