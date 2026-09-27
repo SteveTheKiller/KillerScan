@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using KillerScan.Models;
 using KillerScan.Services;
+using KillerScan.Services.SpeedTest;
 
 namespace KillerScan.Features.Cli
 {
@@ -136,7 +137,8 @@ namespace KillerScan.Features.Cli
             "/export", "--export", "/output", "--output", "/format", "--format",
             "/sort", "--sort", "/filter", "--filter", "/type", "--type",
             "/vendor-filter", "--vendor-filter", "/ports", "--ports", "/limit", "--limit",
-            "/timeout", "--timeout", "/theme", "--theme"
+            "/timeout", "--timeout", "/theme", "--theme", "/count", "--count",
+            "/interval", "--interval", "/max-hops", "--max-hops"
         ];
 
         private static readonly string[] FlagOptions =
@@ -160,7 +162,10 @@ namespace KillerScan.Features.Cli
             if (args is null || args.Length == 0) return false;
             string? command = args.FirstOrDefault(a => IsHelp(a) || IsVersion(a) ||
                 Eq(a, "/scan") || Eq(a, "--scan") || Eq(a, "/probe") || Eq(a, "--probe") ||
-                Eq(a, "/network") || Eq(a, "--network") || Eq(a, "/vendor") || Eq(a, "--vendor"));
+                Eq(a, "/network") || Eq(a, "--network") || Eq(a, "/vendor") || Eq(a, "--vendor") ||
+                Eq(a, "/ping") || Eq(a, "--ping") || Eq(a, "/trace") || Eq(a, "--trace") ||
+                Eq(a, "/diagnose") || Eq(a, "--diagnose") || Eq(a, "/watch") || Eq(a, "--watch") ||
+                Eq(a, "/speedtest") || Eq(a, "--speedtest"));
             if (command is null) return false;
 
             // CLI mode runs on the WPF dispatcher thread inside OnStartup, where a
@@ -185,6 +190,16 @@ namespace KillerScan.Features.Cli
                     exitCode = RunNetwork(positionals, options, @out, err);
                 else if (Eq(command, "/vendor") || Eq(command, "--vendor"))
                     exitCode = RunVendor(positionals, options, @out, err);
+                else if (Eq(command, "/ping") || Eq(command, "--ping"))
+                    exitCode = RunPing(positionals, options, @out, err);
+                else if (Eq(command, "/trace") || Eq(command, "--trace"))
+                    exitCode = RunTrace(positionals, options, @out, err);
+                else if (Eq(command, "/diagnose") || Eq(command, "--diagnose"))
+                    exitCode = RunDiagnose(positionals, options, @out, err);
+                else if (Eq(command, "/watch") || Eq(command, "--watch"))
+                    exitCode = RunWatch(positionals, options, @out, err);
+                else if (Eq(command, "/speedtest") || Eq(command, "--speedtest"))
+                    exitCode = RunSpeedTest(positionals, options, @out, err);
                 else
                     exitCode = RunDevices(positionals, options, @out, err,
                         probe: Eq(command, "/probe") || Eq(command, "--probe"));
@@ -218,6 +233,158 @@ namespace KillerScan.Features.Cli
             @out.WriteLine(vendor.Length == 0 ? "Unknown" : vendor);
             return vendor.Length == 0 ? 3 : 0;
         }
+
+        private sealed class PingSample
+        {
+            public int Sequence { get; set; }
+            public string Address { get; set; } = "";
+            public bool Success { get; set; }
+            public long? LatencyMs { get; set; }
+        }
+
+        private sealed class TraceSample
+        {
+            public int Hop { get; set; }
+            public string? Address { get; set; }
+            public long? LatencyMs { get; set; }
+            public bool Arrived { get; set; }
+        }
+
+        private static int RunPing(List<string> positionals, Dictionary<string, string> options,
+                                   TextWriter @out, TextWriter err)
+        {
+            if (positionals.Count != 1 || !Only(options, "/count", "--count", "/json", "--json"))
+                return Usage(err, "/ping needs one IPv4 address or hostname and accepts /count and /json.");
+            if (!TryResolveIPv4(positionals[0], out var address)) return Usage(err, "the ping target could not be resolved.");
+            int count = ParsePositive(options, "/count", "--count");
+            if (count == -1 || count > 20) return Usage(err, "/count must be from 1 to 20.");
+            if (count == 0) count = 4;
+            var replies = new List<PingSample>();
+            for (int i = 1; i <= count; i++)
+            {
+                long? latency = ConnectionChecks.PingAsync(address).GetAwaiter().GetResult();
+                replies.Add(new PingSample { Sequence = i, Address = address.ToString(), Success = latency.HasValue, LatencyMs = latency });
+            }
+            int received = replies.Count(reply => reply.Success);
+            var result = new { target = positionals[0], address = address.ToString(), sent = count, received,
+                lossPercent = 100d * (count - received) / count, replies };
+            if (Has(options, "/json", "--json")) @out.WriteLine(JsonSerializer.Serialize(result));
+            else
+            {
+                foreach (var reply in replies) @out.WriteLine(reply.Success ? $"Reply from {address}: {reply.LatencyMs} ms" : $"No reply from {address}");
+                @out.WriteLine($"Sent {count}, received {received}, lost {count - received} ({result.lossPercent:0.#}%).");
+            }
+            return received > 0 ? 0 : 3;
+        }
+
+        private static int RunTrace(List<string> positionals, Dictionary<string, string> options,
+                                    TextWriter @out, TextWriter err)
+        {
+            if (positionals.Count != 1 || !Only(options, "/max-hops", "--max-hops", "/json", "--json"))
+                return Usage(err, "/trace needs one IPv4 address or hostname and accepts /max-hops and /json.");
+            if (!TryResolveIPv4(positionals[0], out var address)) return Usage(err, "the trace target could not be resolved.");
+            int maxHops = ParsePositive(options, "/max-hops", "--max-hops");
+            if (maxHops == -1 || maxHops > 64) return Usage(err, "/max-hops must be from 1 to 64.");
+            if (maxHops == 0) maxHops = 30;
+            var hops = new List<TraceSample>();
+            ConnectionChecks.TraceAsync(address, maxHops, hop => hops.Add(new TraceSample
+            {
+                Hop = hop.Ttl, Address = hop.Address?.ToString(), LatencyMs = hop.Latency, Arrived = hop.Arrived
+            }), CancellationToken.None).GetAwaiter().GetResult();
+            if (Has(options, "/json", "--json")) @out.WriteLine(JsonSerializer.Serialize(new { target = positionals[0], address = address.ToString(), hops }));
+            else foreach (var hop in hops) @out.WriteLine($"{hop.Hop,2}  {hop.Address ?? "*"}  {(hop.LatencyMs.HasValue ? hop.LatencyMs + " ms" : "*")}");
+            return hops.Any(hop => hop.Arrived) ? 0 : 3;
+        }
+
+        private static int RunDiagnose(List<string> positionals, Dictionary<string, string> options,
+                                       TextWriter @out, TextWriter err)
+        {
+            if (positionals.Count != 1 || !Only(options, "/ports", "--ports", "/json", "--json"))
+                return Usage(err, "/diagnose needs one IPv4 address or hostname and accepts /ports and /json.");
+            if (!TryResolveIPv4(positionals[0], out var address)) return Usage(err, "the diagnostic target could not be resolved.");
+            int[] ports = ParsePorts(Value(options, "/ports", "--ports")) ?? [22, 80, 443, 445, 3389];
+            if (ports.Length == 0) return Usage(err, "/ports must be comma-separated numbers from 1 to 65535.");
+            string reverse = "";
+            try { reverse = Dns.GetHostEntry(address).HostName; } catch { }
+            long? ping = ConnectionChecks.PingAsync(address).GetAwaiter().GetResult();
+            var route = ConnectionChecks.Route(address);
+            var checks = ports.Select(port => new { port, open = ConnectionChecks.TcpAsync(address, port, CancellationToken.None).GetAwaiter().GetResult() }).ToArray();
+            var result = new { target = positionals[0], address = address.ToString(), reverseDns = reverse,
+                pingMs = ping, route = route?.Interface, nextHop = route?.NextHop, ports = checks };
+            if (Has(options, "/json", "--json")) @out.WriteLine(JsonSerializer.Serialize(result));
+            else
+            {
+                @out.WriteLine("ADDRESS     " + address);
+                @out.WriteLine("REVERSE DNS " + (reverse.Length == 0 ? "-" : reverse));
+                @out.WriteLine("PING        " + (ping.HasValue ? ping + " ms" : "no reply"));
+                @out.WriteLine("ROUTE       " + (route?.Interface ?? "-") + (string.IsNullOrEmpty(route?.NextHop) ? "" : " via " + route?.NextHop));
+                foreach (var check in checks) @out.WriteLine($"TCP {check.port,-5} {(check.open ? "open" : "closed")}");
+            }
+            return ping.HasValue || checks.Any(check => check.open) ? 0 : 3;
+        }
+
+        private static int RunWatch(List<string> positionals, Dictionary<string, string> options,
+                                    TextWriter @out, TextWriter err)
+        {
+            if (positionals.Count == 0 || !Only(options, "/count", "--count", "/interval", "--interval", "/json", "--json"))
+                return Usage(err, "/watch needs one to 16 IPv4 addresses and accepts /count, /interval, and /json.");
+            if (!ConnectionChecks.TryTargets(string.Join(",", positionals), out var targets))
+                return Usage(err, "/watch needs one to 16 IPv4 addresses.");
+            int count = ParsePositive(options, "/count", "--count");
+            int interval = ParsePositive(options, "/interval", "--interval");
+            if (count == -1 || count > 60) return Usage(err, "/count must be from 1 to 60.");
+            if (interval == -1 || interval > 60) return Usage(err, "/interval must be from 1 to 60 seconds.");
+            if (count == 0) count = 4;
+            if (interval == 0) interval = 1;
+            var samples = new List<PingSample>();
+            for (int sequence = 1; sequence <= count; sequence++)
+            {
+                foreach (var target in targets)
+                {
+                    long? latency = ConnectionChecks.PingAsync(target).GetAwaiter().GetResult();
+                    samples.Add(new PingSample { Sequence = sequence, Address = target.ToString(), Success = latency.HasValue, LatencyMs = latency });
+                }
+                if (sequence < count) Thread.Sleep(TimeSpan.FromSeconds(interval));
+            }
+            if (Has(options, "/json", "--json")) @out.WriteLine(JsonSerializer.Serialize(new { count, intervalSeconds = interval, samples }));
+            else foreach (var sample in samples) @out.WriteLine($"{sample.Sequence,2}  {sample.Address,-15}  {(sample.Success ? sample.LatencyMs + " ms" : "no reply")}");
+            return samples.Any(sample => sample.Success) ? 0 : 3;
+        }
+
+        private static int RunSpeedTest(List<string> positionals, Dictionary<string, string> options,
+                                        TextWriter @out, TextWriter err)
+        {
+            if (positionals.Count > 0 || !Only(options, "/json", "--json"))
+                return Usage(err, "/speedtest takes no target and accepts /json.");
+            var result = new SpeedTestEngine().RunAsync(new SpeedTestOptions(), null, CancellationToken.None).GetAwaiter().GetResult();
+            var output = new { endpoint = result.Endpoint.ToString(), downloadMbps = result.Download.Mbps,
+                uploadMbps = result.Upload.Mbps, idleLatencyMs = result.IdleLatencyMs, jitterMs = result.JitterMs,
+                downloadLoadedLatencyMs = result.Download.LoadedLatencyMs, uploadLoadedLatencyMs = result.Upload.LoadedLatencyMs,
+                elapsedSeconds = result.Elapsed.TotalSeconds };
+            if (Has(options, "/json", "--json")) @out.WriteLine(JsonSerializer.Serialize(output));
+            else
+            {
+                @out.WriteLine($"Download  {output.downloadMbps:0.##} Mbps");
+                @out.WriteLine($"Upload    {output.uploadMbps:0.##} Mbps");
+                @out.WriteLine($"Latency   {output.idleLatencyMs:0.##} ms");
+                @out.WriteLine($"Jitter    {output.jitterMs:0.##} ms");
+            }
+            return 0;
+        }
+
+        private static bool TryResolveIPv4(string target, out IPAddress address)
+        {
+            if (IPAddress.TryParse(target, out address!) && address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) return true;
+            try
+            {
+                address = Dns.GetHostAddresses(target).First(candidate => candidate.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+                return true;
+            }
+            catch { address = IPAddress.None; return false; }
+        }
+
+        private static bool Only(Dictionary<string, string> options, params string[] allowed) =>
+            options.Keys.All(key => allowed.Any(name => Eq(key, name)));
 
         private static int RunDevices(List<string> positionals, Dictionary<string, string> options,
                                       TextWriter @out, TextWriter err, bool probe)
@@ -524,6 +691,11 @@ namespace KillerScan.Features.Cli
             "  /probe <IPv4>          deep-probe one host, including ports 1-1024",
             "  /network               show the detected interface, subnet, gateway, and DNS",
             "  /vendor <MAC>          look up a MAC address in the offline OUI database",
+            "  /ping <target>         send a bounded set of ICMP checks",
+            "  /trace <target>        trace the network path to an IPv4 target",
+            "  /diagnose <target>     check DNS, ping, route, and TCP ports",
+            "  /watch <targets>       sample up to 16 IPv4 targets for availability",
+            "  /speedtest             run the native KillerSpeed test",
             "  /version               print the version             /help  show this text", "",
             "SCAN AND PROBE OPTIONS",
             "  /quick                 discovery only; skip fingerprinting and the full port pass",
@@ -548,7 +720,12 @@ namespace KillerScan.Features.Cli
             "  /uiscan 192.168.1.10-50",
             "  /scan 10.0.0.0/24,10.0.1.0/24 /json /ports 22,443 /sort vendor",
             "  /probe 192.168.1.20 /json /export host.json /timeout 30",
-            "  /scan /quick /progress /filter printer /csv /no-header", "",
+            "  /scan /quick /progress /filter printer /csv /no-header",
+            "  /ping gateway.local /count 4 /json",
+            "  /trace 1.1.1.1 /max-hops 20 /json",
+            "  /diagnose 192.168.1.20 /ports 22,80,443 /json",
+            "  /watch 192.168.1.1 192.168.1.20 /count 6 /interval 2 /json",
+            "  /speedtest /json", "",
             $"Several targets may be separate or comma-delimited; overlaps are deduplicated and the ceiling is {ScanTargets.MaxAddresses:N0} addresses.",
             "Ctrl+C cancels. Exit codes: 0 success, 1 failure/cancel/timeout, 2 usage, 3 empty/not found.",
             "Because this is a GUI-subsystem EXE, cmd scripts should use `start /wait`; PowerShell",

@@ -7,7 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ## [1.7.4] - Unreleased
 
 ### Added
-- KillerMCP can use the installed app for network details, bounded scans, deep host probes, and offline MAC vendor lookup.
+- Added headless ping, traceroute, diagnostics, availability monitoring, and native speed tests for KillerMCP and automation.
 - Added Vietnamese localization for the app and killerscan.net. (Thanks @vuanhvu11982)
 
 ### Fixed
