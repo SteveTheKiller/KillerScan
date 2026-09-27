@@ -8,7 +8,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Added
 - Added headless ping, traceroute, diagnostics, availability monitoring, and native speed tests for KillerMCP and automation.
-- Added Vietnamese localization for the app and killerscan.net. (Thanks @vuanhvu11982)
+- Added Vietnamese localization for the app and killerscan.net.
 
 ### Fixed
 - Aligned the sidebar rail with the family footer spacing.
