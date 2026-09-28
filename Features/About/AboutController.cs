@@ -138,8 +138,8 @@ namespace KillerScan.Features.About
         }
 
         /// <summary>Downloads the newer release, verifies it, and hands off to the helper that swaps
-        /// the exe and relaunches. Every failure path falls back to the releases page, so a user who
-        /// cannot be updated automatically is never left thinking nothing happened.</summary>
+        /// the exe and relaunches. Download failures open the releases page; the replacement helper
+        /// shows its own error log if it cannot finish after elevation.</summary>
         internal async void Update()
         {
             var tag = _updateTag;

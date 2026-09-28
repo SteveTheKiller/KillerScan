@@ -145,25 +145,39 @@ namespace KillerScan.Services
                 : $"start \"\" \"{curExe}\"";
 
             string staged = curExe + "." + Guid.NewGuid().ToString("N") + ".new";
+            string log = Path.ChangeExtension(bat, ".log");
 
             File.WriteAllText(bat,
                 "@echo off\r\n" +
+                "setlocal\r\n" +
                 ":wait\r\n" +
                 $"tasklist /fi \"PID eq {pid}\" 2>nul | find \"{pid}\" >nul\r\n" +
                 "if not errorlevel 1 ( ping -n 2 127.0.0.1 >nul & goto wait )\r\n" +
-                $"copy /b /y \"{newExe}\" \"{staged}\" >nul 2>&1\r\n" +
+                "set \"failure=staging the download\"\r\n" +
+                $"copy /b /y \"{newExe}\" \"{staged}\" >\"{log}\" 2>&1\r\n" +
                 "if errorlevel 1 goto failed\r\n" +
-                $"fc /b \"{newExe}\" \"{staged}\" >nul 2>&1\r\n" +
+                "set \"failure=verifying the staged file\"\r\n" +
+                $"fc /b \"{newExe}\" \"{staged}\" >>\"{log}\" 2>&1\r\n" +
                 "if errorlevel 1 goto failed\r\n" +
-                $"move /y \"{staged}\" \"{curExe}\" >nul 2>&1\r\n" +
+                "set \"failure=replacing the installed executable\"\r\n" +
+                "for /l %%i in (1,1,10) do (\r\n" +
+                $"  move /y \"{staged}\" \"{curExe}\" >>\"{log}\" 2>&1\r\n" +
+                "  if not errorlevel 1 goto replaced\r\n" +
+                "  timeout /t 1 /nobreak >nul\r\n" +
+                ")\r\n" +
+                "goto failed\r\n" +
+                ":replaced\r\n" +
+                "set \"failure=verifying the installed executable\"\r\n" +
+                $"fc /b \"{newExe}\" \"{curExe}\" >>\"{log}\" 2>&1\r\n" +
                 "if errorlevel 1 goto failed\r\n" +
                 regLines +
                 relaunch + "\r\n" +
+                $"del \"{log}\" >nul 2>&1\r\n" +
                 "goto cleanup\r\n" +
                 ":failed\r\n" +
-                // Do not relaunch a stale exe and call it an update: send the user to the releases
-                // page so the failure is visible and fixable by hand.
-                $"start \"\" \"{ReleasesUrl}\"\r\n" +
+                $"echo KillerScan could not finish its update while %failure%. >>\"{log}\"\r\n" +
+                $"echo Check the app version before retrying. Manual download: {ReleasesUrl} >>\"{log}\"\r\n" +
+                $"start \"\" notepad.exe \"{log}\"\r\n" +
                 ":cleanup\r\n" +
                 $"del \"{staged}\" >nul 2>&1\r\n" +
                 $"del \"{newExe}\" >nul 2>&1\r\n" +

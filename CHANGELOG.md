@@ -4,6 +4,13 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.5] - Unreleased
+
+KillerScan 1.7.5 improves the in-app update handoff.
+
+### Fixed
+- Retried the executable replacement and showed the failure reason when an in-app update could not finish.
+
 ## [1.7.4] - 2026-09-28
 
 KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localization.
