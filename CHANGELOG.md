@@ -11,6 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Added Vietnamese localization for the app and killerscan.net.
 
 ### Fixed
+- Allowed more time for upload acknowledgments during KillerSpeed tests on busy connections.
 - Aligned the sidebar rail with the family footer spacing.
 
 ## [1.7.3] - 2026-09-21
