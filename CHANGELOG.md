@@ -8,6 +8,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 KillerScan 1.7.5 improves the in-app update handoff.
 
+### Changed
+- Refreshed the bundled MAC vendor database to 58,417 assignments.
+
 ### Fixed
 - Retried the executable replacement and showed the failure reason when an in-app update could not finish.
 
