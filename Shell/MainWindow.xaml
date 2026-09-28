@@ -129,9 +129,9 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top"
                             Margin="{DynamicResource ScanCaptionButtonsMargin}"
                             WindowChrome.IsHitTestVisibleInChrome="True">
-                    <Button Content="&#xE921;" Click="MinimizeBtn_Click" Style="{StaticResource ChromeButton}"/>
-                    <Button x:Name="MaximizeBtn" Content="&#xE922;" Click="MaximizeBtn_Click" Style="{StaticResource ChromeButton}"/>
-                    <Button Content="&#xE8BB;" Click="CloseBtn_Click" Style="{StaticResource ChromeCloseButton}"/>
+                    <Button Content="&#xE921;" Click="MinimizeBtn_Click" Style="{StaticResource ChromeButton}" ToolTip="{DynamicResource Str_Sys_Minimize}"/>
+                    <Button x:Name="MaximizeBtn" Content="&#xE922;" Click="MaximizeBtn_Click" Style="{StaticResource ChromeButton}" ToolTip="{DynamicResource Str_Sys_Maximize}"/>
+                    <Button Content="&#xE8BB;" Click="CloseBtn_Click" Style="{StaticResource ChromeCloseButton}" ToolTip="{DynamicResource Str_Sys_Close}"/>
                 </StackPanel>
             </Grid>
         </Border>

@@ -248,6 +248,7 @@
 
             <!-- Primary Button Style -->
             <Style x:Key="PrimaryButton" TargetType="Button">
+                <Setter Property="AutomationProperties.Name" Value="{Binding RelativeSource={RelativeSource Self}, Path=ToolTip}"/>
                 <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
                 <Setter Property="Foreground" Value="{DynamicResource OnPrimaryBrush}"/>
                 <Setter Property="FontSize" Value="14"/>
@@ -304,6 +305,7 @@
                  gray block - which is what it did on Delirium. A hollow button has no fill by
                  definition, so there was never a brush to look up here. -->
             <Style x:Key="OutlineButton" TargetType="Button">
+                <Setter Property="AutomationProperties.Name" Value="{Binding RelativeSource={RelativeSource Self}, Path=ToolTip}"/>
                 <Setter Property="Background" Value="{DynamicResource OutlineFaceBrush}"/>
                 <Setter Property="Foreground" Value="{DynamicResource OutlineTextBrush}"/>
                 <Setter Property="FontSize" Value="13"/>
@@ -453,6 +455,7 @@
                  hover that dims rather than colors. Accent on hover belongs to OutlineButton and
                  PrimaryButton; a secondary button that lights up accent reads as the primary action. -->
             <Style x:Key="SurfaceButton" TargetType="Button">
+                <Setter Property="AutomationProperties.Name" Value="{Binding RelativeSource={RelativeSource Self}, Path=ToolTip}"/>
                 <Setter Property="Background" Value="{DynamicResource PaneBrush}"/>
                 <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
                 <Setter Property="FontSize" Value="13"/>
@@ -1057,6 +1060,7 @@
                  scales icons rather than blank strip.
                  ================================================================ -->
             <Style x:Key="ViewToolbarButton" TargetType="Button">
+                <Setter Property="AutomationProperties.Name" Value="{Binding RelativeSource={RelativeSource Self}, Path=ToolTip}"/>
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
                 <Setter Property="BorderThickness" Value="0"/>
@@ -1103,6 +1107,7 @@
             </Style>
 
             <Style x:Key="RailButton" TargetType="Button">
+                <Setter Property="AutomationProperties.Name" Value="{Binding RelativeSource={RelativeSource Self}, Path=ToolTip}"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                 <Setter Property="Width" Value="20"/>
@@ -1232,6 +1237,7 @@
                  moved to the named ThemeRadio rows above. Background = the color;
                  BorderBrush/Thickness form the active ring (set in code). -->
             <Style x:Key="ThemeSwatch" TargetType="Button">
+                <Setter Property="AutomationProperties.Name" Value="{Binding RelativeSource={RelativeSource Self}, Path=Tag}"/>
                 <Setter Property="Width" Value="18"/>
                 <Setter Property="Height" Value="18"/>
                 <Setter Property="Margin" Value="0,0,7,0"/>
@@ -1276,6 +1282,7 @@
                  wants a black glyph and its TextBrush is already black, so one key does both jobs
                  and there is one less thing to keep in step. -->
             <Style x:Key="ChromeButton" TargetType="Button">
+                <Setter Property="AutomationProperties.Name" Value="{Binding RelativeSource={RelativeSource Self}, Path=ToolTip}"/>
                 <Setter Property="Background" Value="{DynamicResource CaptionButtonBrush}"/>
                 <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
                 <Setter Property="BorderThickness" Value="0"/>
@@ -1345,6 +1352,7 @@
 
             <!-- Shared close control for the About and keyboard-shortcuts cards. -->
             <Style x:Key="OverlayCloseButton" TargetType="Button">
+                <Setter Property="AutomationProperties.Name" Value="{Binding RelativeSource={RelativeSource Self}, Path=ToolTip}"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="Foreground" Value="{DynamicResource AboutCloseFg}"/>
                 <Setter Property="FontFamily" Value="{DynamicResource AboutCloseFont}"/>
