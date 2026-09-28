@@ -11,7 +11,7 @@
 <meta name="description" data-i18n-content="page_help_description" content="How to use KillerScan: every view, tool, workflow and keyboard shortcut explained.">
 <link rel="icon" type="image/x-icon" href="brand/ks-icon.ico">
 <script defer src="https://koya.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
-<link rel="stylesheet" href="ks.css?v=20260926-mcpbutton">
+<link rel="stylesheet" href="ks.css?v=20260927-sidebar">
 <style>
 .content-inner { max-width: 880px; margin: 0 auto; padding: 0 28px 56px; }
 .help-hero { text-align: center; padding: 44px 16px 6px; }
@@ -53,7 +53,7 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 @media (max-width: 900px) { .content-inner { padding: 0 16px 44px; } .kbd-cols { grid-template-columns: 1fr; gap: 0; } .outline { display: flex; flex-direction: row; flex-wrap: wrap; padding: 8px; gap: 4px; } .outline a { border-left: 0; border-radius: 5px; padding: 6px 10px; } .outline a.on { border-left: 0; } }
 </style>
 </head>
-<body>
+<body class="compact-sidebar sidebar-first">
 
 <div class="topbar">
 <a href="index.html" class="tb-home" title="KillerScan home">
@@ -251,11 +251,11 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <tr><td><code>netinfo</code></td><td data-i18n="tk_cmd_netinfo">The active network as an object: <code>Interface</code>, <code>Address</code>, <code>Subnet</code>, <code>Gateway</code> and <code>Dns</code>. A field Windows could not report is empty rather than a dash.</td></tr>
 </table>
 <div class="cli-demo" aria-label="KillerScan terminal command examples"><span class="prompt">&gt;</span> scan <span class="arg">| ? Type -eq 'Printer' | ft Ip, Hostname, Vendor</span>
-<span class="prompt">&gt;</span> scan <span class="arg">192.168.8.0/24 -Quick | measure</span>
+<span class="prompt">&gt;</span> scan <span class="arg">192.168.50.0/24 -Quick | measure</span>
 <span class="prompt">&gt;</span> scan <span class="arg">| ? { $_.Ports -contains 3389 }</span>
 <span class="prompt">&gt;</span> scan <span class="arg">| sort Vendor | export-csv site.csv -NoTypeInformation</span>
 <span class="prompt">&gt;</span> scan <span class="arg">(netinfo).Subnet</span>
-<span class="prompt">&gt;</span> probe <span class="arg">192.168.8.20 | fl *</span></div>
+<span class="prompt">&gt;</span> probe <span class="arg">192.168.50.20 | fl *</span></div>
 <p data-i18n="tk_cmd_note">Each command is the app doing the work: the module shells out to the same command line an installed copy puts on PATH, and reads its JSON. It knows where to find a portable copy too, so the commands work from a folder you just dropped the exe into.</p>
 <p data-i18n="tk_cmd_note_p2">The names are deliberately short because they live in this terminal rather than in your own PowerShell profile, where <code>scan</code> would be a rude thing to claim.</p>
 </div></div></div>
@@ -311,9 +311,9 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <p data-i18n="tk_cli_intro_p2">Windows commands are case-insensitive, so <code>killerscan</code> and <code>KillerScan</code> are the same command. Running it without any flags opens the normal app.</p>
 <p data-i18n="tk_ssh_security"><b>SSH usernames and authentication.</b> KillerScan remembers the username you choose for a device. The Windows SSH client handles authentication in the terminal; KillerScan does not store passwords or private keys.</p>
 <p data-i18n="tk_ssh_security_p2">The normal Windows SSH client handles the connection and all authentication.</p>
-<div class="cli-demo" aria-label="KillerScan command examples"><span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan 192.168.8.0/24</span>
-<span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan 192.168.8.10-50 /quick</span>
-<span class="prompt">C:\&gt;</span> killerscan <span class="arg">/probe 192.168.8.20 /json /timeout 30</span>
+<div class="cli-demo" aria-label="KillerScan command examples"><span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan 192.168.50.0/24</span>
+<span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan 192.168.50.10-50 /quick</span>
+<span class="prompt">C:\&gt;</span> killerscan <span class="arg">/probe 192.168.50.20 /json /timeout 30</span>
 <span class="prompt">C:\&gt;</span> killerscan <span class="arg">/scan /ports 22,443 /sort vendor /export report.html</span>
 <span class="prompt">C:\&gt;</span> killerscan <span class="arg">/help</span></div>
 </div></div></div>
@@ -327,6 +327,11 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <tr><td><code>killerscan /probe &lt;IPv4&gt;</code></td><td data-i18n="tk_cli_probe">Deep-probe one host, scanning ports 1-1024 plus KillerScan's extended service list and collecting every available fingerprint.</td></tr>
 <tr><td><code>killerscan /network</code></td><td data-i18n="tk_cli_network">Print the detected interface, local address, subnet, gateway and DNS server without scanning.</td></tr>
 <tr><td><code>killerscan /vendor &lt;MAC&gt;</code></td><td data-i18n="tk_cli_vendorcmd">Resolve a MAC address against the embedded offline IEEE OUI database.</td></tr>
+<tr><td><code>killerscan /ping &lt;target&gt;</code></td><td data-i18n="tk_cli_pingcmd">Measure latency and packet loss with 1 to 20 ICMP checks.</td></tr>
+<tr><td><code>killerscan /trace &lt;target&gt;</code></td><td data-i18n="tk_cli_tracecmd">Trace up to 64 hops to an IPv4 address or hostname.</td></tr>
+<tr><td><code>killerscan /diagnose &lt;target&gt;</code></td><td data-i18n="tk_cli_diagnosecmd">Check DNS, ping, route selection, and selected TCP ports.</td></tr>
+<tr><td><code>killerscan /watch &lt;targets&gt;</code></td><td data-i18n="tk_cli_watchcmd">Sample availability and latency for 1 to 16 IPv4 addresses.</td></tr>
+<tr><td><code>killerscan /speedtest</code></td><td data-i18n="tk_cli_speedtestcmd">Run KillerSpeed and report download, upload, latency, and jitter.</td></tr>
 <tr><td><code>/quick</code></td><td data-i18n="tk_cli_quick">Run discovery, hostname, MAC, vendor, and lightweight device classification without the full port and fingerprint probe.</td></tr>
 <tr><td><code>/progress</code>, <code>/timeout N</code></td><td data-i18n="tk_cli_progress">Report status every five percent or cancel after a deadline.</td></tr>
 <tr><td><code>/filter text</code>, <code>/type text</code>, <code>/vendor-filter text</code>, <code>/ports p,p</code></td><td data-i18n="tk_cli_filters">Keep only matching devices. The general filter searches displayed values and every collected fingerprint.</td></tr>
@@ -341,22 +346,22 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 </table>
 </div></div></div>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_cli_target_title">Target formats</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
-<p data-i18n="tk_cli_target_body">Targets use exactly the same syntax as the subnet box: CIDR blocks such as <code>192.168.8.0/24</code>, a single host, a full address range, or a range with only the final octet on the right. Supply several targets separated by commas or as separate arguments.</p>
+<p data-i18n="tk_cli_target_body">Targets use exactly the same syntax as the subnet box: CIDR blocks such as <code>192.168.50.0/24</code>, a single host, a full address range, or a range with only the final octet on the right. Supply several targets separated by commas or as separate arguments.</p>
 <p data-i18n="tk_cli_target_body_p2">Overlaps are removed and the combined safety ceiling is 65,536 addresses.</p>
-<div class="codeblock">killerscan <span class="arg">/scan 192.168.8.0/24</span>
-killerscan <span class="arg">/scan 192.168.8.25</span>
-killerscan <span class="arg">/scan 192.168.8.10-192.168.8.50</span>
-killerscan <span class="arg">/scan 192.168.8.10-50</span>
-killerscan <span class="arg">/scan 192.168.8.0/24 10.0.0.10-20</span></div>
+<div class="codeblock">killerscan <span class="arg">/scan 192.168.50.0/24</span>
+killerscan <span class="arg">/scan 192.168.50.25</span>
+killerscan <span class="arg">/scan 192.168.50.10-192.168.50.50</span>
+killerscan <span class="arg">/scan 192.168.50.10-50</span>
+killerscan <span class="arg">/scan 192.168.50.0/24 10.0.0.10-20</span></div>
 </div></div></div>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_cli_automation_title">Automation and output</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
 <p data-i18n="tk_cli_automation_body">KillerScan sends the result table to standard output and progress or errors to standard error, so redirecting the table does not mix in status messages. Ctrl+C cancels a running scan.</p>
 <p data-i18n="tk_cli_automation_body_p2">Because KillerScan is also a graphical Windows app, Command Prompt may return its prompt before the headless process finishes; scripts that need the result must explicitly wait:</p>
 <div class="codeblock"><span class="cm" data-i18n="ui_cmd_wait">REM Command Prompt: wait, then read %ERRORLEVEL%</span>
-<span class="prompt">start /wait ""</span> killerscan <span class="arg">/scan 192.168.8.0/24 /export hosts.csv</span>
+<span class="prompt">start /wait ""</span> killerscan <span class="arg">/scan 192.168.50.0/24 /export hosts.csv</span>
 
 <span class="cm" data-i18n="ui_ps_wait"># PowerShell: wait for completion</span>
-<span class="prompt">Start-Process -Wait</span> killerscan <span class="arg">-ArgumentList '/scan 192.168.8.0/24 /export hosts.csv'</span></div>
+<span class="prompt">Start-Process -Wait</span> killerscan <span class="arg">-ArgumentList '/scan 192.168.50.0/24 /export hosts.csv'</span></div>
 <table class="spec-table exit-table"><tr><th data-i18n="tk_cli_exit">Exit code</th><th data-i18n="tk_cli_meaning">Meaning</th></tr>
 <tr><td><code>0</code></td><td data-i18n="tk_cli_exit0">The scan and any requested export completed successfully.</td></tr>
 <tr><td><code>1</code></td><td data-i18n="tk_cli_exit1">The scan or export failed, or the scan was canceled.</td></tr>
@@ -621,7 +626,8 @@ window.addEventListener('resize', fit);
 <div class="egg-toast" id="eggToast"></div>
 <div class="egg-toast" id="eggToast"></div>
 <script src="ks-i18n.js?v=18"></script>
-<script src="ks.js?v=20260916-orange"></script>
+<script src="cli-help-i18n.js?v=1"></script>
+<script src="ks.js?v=20260926-theme-sync"></script>
 <script>
 (function(){
   var items=[].slice.call(document.querySelectorAll('.acc-item'));

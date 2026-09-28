@@ -72,6 +72,32 @@
   }
   buildThemeFlyout();
 
+  function localPreviewSetting(name) {
+    if (window.location.protocol !== 'file:') return null;
+    try { return new URLSearchParams(window.location.search).get(name); } catch (e) { return null; }
+  }
+
+  function syncLocalPreviewLinks() {
+    if (window.location.protocol !== 'file:') return;
+    try {
+      var current = new URL(window.location.href);
+      current.searchParams.set('theme', root.getAttribute('data-theme'));
+      current.searchParams.set('accent', curAccent);
+      window.history.replaceState(null, '', current.href);
+    } catch (e) {}
+    document.querySelectorAll('a[href]').forEach(function (link) {
+      var href = link.getAttribute('href');
+      if (!href || href.charAt(0) === '#' || /^(?:https?:|mailto:|javascript:)/i.test(href)) return;
+      try {
+        var target = new URL(href, window.location.href);
+        if (target.protocol !== 'file:' || !/\.html$/i.test(target.pathname)) return;
+        target.searchParams.set('theme', root.getAttribute('data-theme'));
+        target.searchParams.set('accent', curAccent);
+        link.href = target.href;
+      } catch (e) {}
+    });
+  }
+
   function applyAccent(name) {
     var theme = root.getAttribute('data-theme');
     var fam = famFor(theme);
@@ -103,6 +129,7 @@
     if (accToggle) { accToggle.style.background = pair[0]; accToggle.title = uiText('ui_accent'); }
     try { localStorage.setItem('kscan-accent', name); } catch (e) {}
     updateLogos();
+    syncLocalPreviewLinks();
   }
   function updateLogos() {
     var theme = root.getAttribute('data-theme');
@@ -402,12 +429,14 @@
   });
 
   // ---- Init ----
-  var savedTheme = 'hc', savedAccent = 'orange', savedLang = 'en';
+  var savedTheme = localPreviewSetting('theme'), savedAccent = localPreviewSetting('accent'), savedLang = 'en';
   try {
-    savedTheme  = localStorage.getItem('kscan-theme')  || savedTheme;
-    savedAccent = localStorage.getItem('kscan-accent') || savedAccent;
+    savedTheme  = savedTheme || localStorage.getItem('kscan-theme');
+    savedAccent = savedAccent || localStorage.getItem('kscan-accent');
     savedLang   = localStorage.getItem('kscan-lang')   || savedLang;
   } catch (e) {}
+  savedTheme = savedTheme || 'hc';
+  savedAccent = savedAccent || 'orange';
   curAccent = savedAccent;
   setTheme(savedTheme);
   applyLang(savedLang);

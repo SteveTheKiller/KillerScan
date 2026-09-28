@@ -11,13 +11,21 @@
 <meta data-i18n-content="page_technical_description" name="description" content="How KillerScan works under the hood: how it scans your network, works out who made each device, and figures out what every device is.">
 <link rel="icon" type="image/x-icon" href="brand/ks-icon.ico">
 <script defer src="https://koya.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
-<link rel="stylesheet" href="ks.css?v=20260926-mcpbutton">
+<link rel="stylesheet" href="ks.css?v=20260927-sidebar">
 <style>
 .page-hero { text-align: center; padding: 44px 16px 8px; }
 .page-hero .wm-logo { height: clamp(46px, 8vw, 76px); width: auto; margin: 0 auto 8px; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.55)); }
 .page-hero p { color: var(--muted); font-size: 15px; margin: 4px auto 0; max-width: 540px; }
-.content-inner { max-width: 860px; margin: 0 auto; padding: 0 28px 56px; }
+.content-inner { max-width: 1440px; margin: 0 auto; padding: 0 28px 56px; }
+.tech-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.tech-column { display: grid; gap: 18px; min-width: 0; }
+.tech-sec { min-width: 0; margin: 0; padding: 20px 22px; border: 1px solid var(--pane-border); border-top: 2px solid var(--sel, var(--accent)); border-radius: 10px; background: var(--modal) url('grain.png?v=2') repeat; background-size: 256px 256px; }
 .tech-sec, .tech-sec h3 { scroll-margin-top: 84px; }
+.tech-sec > :first-child { margin-top: 0; }
+.tech-sec > :last-child { margin-bottom: 0; }
+.tech-sec table { width: 100%; }
+.tech-sec code { overflow-wrap: anywhere; }
+@media (max-width: 1050px) { .tech-grid { grid-template-columns: 1fr; } }
 .tech-sec details { margin: 18px 0; padding: 16px 18px; border: 1px solid var(--border); border-radius: 6px; }
 .tech-sec summary { cursor: pointer; color: var(--text); font-weight: 600; }
 .tech-sec summary:hover { color: var(--accent); }
@@ -46,7 +54,7 @@
 @media (max-width: 900px) { .outline { display:flex; flex-direction:row; flex-wrap:wrap; padding:8px; gap:4px; } .outline a { border-left:0; border-radius:5px; padding:6px 10px; } .outline a.on { border-left:0; } .outline a.sub { padding-left:10px; } }
 </style>
 </head>
-<body>
+<body class="compact-sidebar sidebar-first">
 
 <div class="topbar">
 <a href="index.html" class="tb-home" title="KillerScan home">
@@ -147,6 +155,9 @@
 <p data-i18n="tk_2">A look under the hood at how KillerScan finds every device on your network, works out who made it, and figures out what it is.</p>
 </section>
 
+<div class="tech-grid">
+<div class="tech-column">
+
 <div class="tech-sec" id="stack">
 <h2 data-i18n="tk_3">Tech stack</h2>
 <p data-i18n="tk_4">KillerScan is a native Windows app. There is no Electron, no browser engine, no runtime to install, and no separate scanner program running behind the scenes.</p>
@@ -174,7 +185,7 @@
 <p data-i18n="tk_22_p2">Then it takes a closer look at each of those devices at the same time. Doing it in that order means the slow, detailed work only happens for addresses that actually replied, which keeps the whole scan fast.</p>
 
 <h3 id="phase0" data-i18n="tk_23">Phase 0: building the address list</h3>
-<p data-i18n="tk_24">You give KillerScan the addresses to check, and it accepts more than one at a time: a subnet in the usual shorthand like <code>192.168.8.0/24</code> (that "/24" simply means the block of 256 addresses on your local network), a single address like <code>192.168.8.10</code>, a full range like <code>192.168.8.10-192.168.8.50</code>, or the short form of that same range, <code>192.168.8.10-50</code>. Separate as many of those as you like with commas; stray spaces around them are ignored rather than treated as a mistake.</p>
+<p data-i18n="tk_24">You give KillerScan the addresses to check, and it accepts more than one at a time: a subnet in the usual shorthand like <code>192.168.50.0/24</code> (that "/24" simply means the block of 256 addresses on your local network), a single address like <code>192.168.50.10</code>, a full range like <code>192.168.50.10-192.168.50.50</code>, or the short form of that same range, <code>192.168.50.10-50</code>. Separate as many of those as you like with commas; stray spaces around them are ignored rather than treated as a mistake.</p>
 <p data-i18n="tk_24_p2">KillerScan turns the lot into one list of addresses worth testing, dropping duplicates where the entries overlap, and tells you rather than trying it if the total comes to more than 65,536 addresses. It also reads three things from your active network connection: your own address, your router's address (the gateway), and the DNS server you are set to use.</p>
 <p data-i18n="tk_24_p3">Those are passed to the classifier so the router can be labeled correctly later on.</p>
 
@@ -200,7 +211,7 @@
 </defs>
 <rect x="230" y="20" width="280" height="46" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
 <text x="370" y="39" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700" data-i18n="tech_diagram_1" data-i18n-max-width="264">Address list</text>
-<text x="370" y="55" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-family="Consolas, monospace" data-i18n="tech_diagram_2" data-i18n-max-width="264">e.g. 192.168.8.0/24</text>
+<text x="370" y="55" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-family="Consolas, monospace" data-i18n="tech_diagram_2" data-i18n-max-width="264">e.g. 192.168.50.0/24</text>
 <rect x="230" y="86" width="280" height="46" rx="8" fill="var(--panel)" stroke="var(--pane-border)"/>
 <text x="370" y="105" text-anchor="middle" fill="var(--text)" font-size="12.5" font-weight="700" data-i18n="tech_diagram_3" data-i18n-max-width="264">Read the ARP cache</text>
 <text x="370" y="121" text-anchor="middle" fill="var(--muted)" font-size="10.5" data-i18n="tech_diagram_4" data-i18n-max-width="264">devices Windows already knows</text>
@@ -295,6 +306,9 @@
 <figcaption data-i18n="tk_40">Phase 2 examines each alive device in parallel: it checks open ports, finds a name, and looks up the maker at the same time; the open ports decide which deeper fingerprint probes are worth running. Every clue is then gathered and scored, and the highest-scoring device type wins.</figcaption>
 </figure>
 </div>
+
+</div>
+<div class="tech-column">
 
 <div class="tech-sec" id="ports">
 <h2 data-i18n="tk_41">Ports probed</h2>
@@ -456,13 +470,16 @@
 <tr><td data-i18n="tk_146">SNMP (Simple Network Management Protocol)</td><td data-i18n="tk_147">A standard way network gear and printers report "what I am". KillerScan reads the description line.</td></tr>
 <tr><td data-i18n="tk_148">SSDP (part of UPnP)</td><td data-i18n="tk_149">A discovery broadcast used by smart TVs, media players, and similar gear to announce themselves.</td></tr>
 <tr><td data-i18n="tk_150">SSH (Secure Shell)</td><td data-i18n="tk_151">A secure remote-login service (port 22), common on Linux hosts and network gear. Its greeting text names the software.</td></tr>
-<tr><td data-i18n="tk_152">Subnet</td><td data-i18n="tk_153">A block of addresses on one local network, written like 192.168.8.0/24 (the "/24" meaning 256 addresses).</td></tr>
+<tr><td data-i18n="tk_152">Subnet</td><td data-i18n="tk_153">A block of addresses on one local network, written like 192.168.50.0/24 (the "/24" meaning 256 addresses).</td></tr>
 <tr><td data-i18n="tk_154">TCP</td><td data-i18n="tk_155">The connection-based part of internet traffic. KillerScan opens TCP connections to test ports and to check whether a silent host is alive.</td></tr>
 <tr><td data-i18n="tk_156">TLS</td><td data-i18n="tk_157">The encryption behind HTTPS. The certificate it presents often carries the device's name.</td></tr>
 <tr><td data-i18n="tk_158">TTL (time to live)</td><td data-i18n="tk_159">A small countdown number attached to network replies. Its starting value hints at the operating system.</td></tr>
 <tr><td data-i18n="tk_160">UPnP (Universal Plug and Play)</td><td data-i18n="tk_161">The family of protocols (including SSDP) that lets home devices discover each other.</td></tr>
 <tr><td data-i18n="tk_162">VPN (Virtual Private Network)</td><td data-i18n="tk_163">An encrypted tunnel that places you on a remote network. Because it is routed, local tricks like ARP cannot reach the devices on the far side.</td></tr>
 </table>
+</div>
+
+</div>
 </div>
 
 </div>
@@ -476,7 +493,7 @@
 <div class="egg-toast" id="eggToast"></div>
 <div class="dlightbox" id="diagram-lightbox" hidden><div class="dlb-inner"></div></div>
 <script src="ks-i18n.js?v=18"></script>
-<script src="ks.js?v=20260916-orange"></script>
+<script src="ks.js?v=20260926-theme-sync"></script>
 <script>
 // COLLAPSIBLE OUTLINE. The page has eleven sections and thirteen subsections, and listing
 // all twenty-four flat made the sidebar a wall you had to read to navigate.

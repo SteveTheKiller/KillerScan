@@ -1,0 +1,1 @@
+(function(){Object.keys(I18N).forEach(function(lang){var d=I18N[lang];Object.assign(d,{tk_cli_pingcmd:d.mcp_tool_5_body,tk_cli_tracecmd:d.mcp_tool_6_body,tk_cli_diagnosecmd:d.mcp_tool_7_body,tk_cli_watchcmd:d.mcp_tool_8_body,tk_cli_speedtestcmd:d.mcp_tool_9_body});});})();
