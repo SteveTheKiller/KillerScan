@@ -7,6 +7,7 @@
     <owners>SteveTheKiller</owners>
     <title>KillerScan</title>
     <authors>Steve the Killer</authors>
+    <copyright>Copyright (c) 2026 Steve the Killer</copyright>
     <projectUrl>https://killerscan.net</projectUrl>
     <iconUrl>https://cdn.jsdelivr.net/gh/SteveTheKiller/KillerScan@vREPLACE_VERSION/Resources/ks-icon.ico</iconUrl>
     <licenseUrl>https://github.com/SteveTheKiller/KillerScan/blob/main/LICENSE</licenseUrl>
@@ -33,9 +34,9 @@
 - Scan history (Ctrl+H) compares runs for added, missing and changed devices, or shows a saved run in full, with trusted-device baselines and unknown-device alerts
 - A service-centric view (F7) organizes results by service, port and device
 - Export follows the view: devices as CSV or HTML, services as CSV, topology as PNG, JPG or SVG, the Keep Alive run as CSV or a page, and the terminal session as text
-- Headless command line for scripts and RMM: /scan, /probe, /network, offline /vendor, /export to CSV, JSON or HTML, filters, sorting, limits, timeouts, and real exit codes
+- Headless command line for scripts, RMM, and KillerMCP: scan, probe, network details, offline vendor lookup, ping, traceroute, diagnostics, availability monitoring, speed tests, and CSV, JSON or HTML export
 - Scan several networks in one pass: comma-separated CIDR blocks, single hosts, and ranges
-- Thirteen themes, localized in fifteen languages
+- Thirteen themes, localized in sixteen languages
 - Keyboard shortcuts on F1, with a shortcut list and a color-coded keyboard map, plus an app-wide size control from 70% to 250%
 - One self-contained Windows EXE that requires .NET Framework 4.8; installs per-user or for all users, or runs portable
 - GPLv3, no account, no telemetry; device identification runs locally, and only network features such as updates, vendor database refresh and speed tests connect out
