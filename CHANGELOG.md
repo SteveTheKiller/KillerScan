@@ -12,6 +12,9 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 - Added headless ping, traceroute, diagnostics, availability monitoring, and native speed tests for KillerMCP and automation.
 - Added Vietnamese localization for the app and killerscan.net.
 
+### Changed
+- Refreshed the bundled MAC vendor database to 58,417 assignments.
+
 ### Fixed
 - Allowed more time for upload acknowledgments during KillerSpeed tests on busy connections.
 - Improved accessibility labels for window controls and file dialogs.
