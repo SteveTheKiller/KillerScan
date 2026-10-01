@@ -36,7 +36,7 @@
 - Export follows the view: devices as CSV or HTML, services as CSV, topology as PNG, JPG or SVG, the Keep Alive run as CSV or a page, and the terminal session as text
 - Headless command line for scripts, RMM, and KillerMCP: scan, probe, network details, offline vendor lookup, ping, traceroute, diagnostics, availability monitoring, speed tests, and CSV, JSON or HTML export
 - Scan several networks in one pass: comma-separated CIDR blocks, single hosts, and ranges
-- Thirteen themes, localized in sixteen languages
+- Thirteen themes, localized in nineteen languages
 - Keyboard shortcuts on F1, with a shortcut list and a color-coded keyboard map, plus an app-wide size control from 70% to 250%
 - One self-contained Windows EXE that requires .NET Framework 4.8; installs per-user or for all users, or runs portable
 - GPLv3, no account, no telemetry; device identification runs locally, and only network features such as updates, vendor database refresh and speed tests connect out
