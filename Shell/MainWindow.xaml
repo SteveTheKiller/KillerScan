@@ -233,13 +233,16 @@
                                     <RowDefinition Height="*"/><RowDefinition Height="*"/>
                                     <RowDefinition Height="*"/><RowDefinition Height="*"/>
                                     <RowDefinition Height="*"/><RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/><RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
                                 <Button x:Name="AccentStripDot0" Grid.Row="0" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
                                 <Button x:Name="AccentStripDot1" Grid.Row="1" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
                                 <Button x:Name="AccentStripDot2" Grid.Row="2" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
                                 <Button x:Name="AccentStripDot3" Grid.Row="3" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
                                 <Button x:Name="AccentStripDot4" Grid.Row="4" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
-                                <Button x:Name="AccentStripDot5" Grid.Row="5" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0" Click="AccentSwatch_Click"/>
+                                <Button x:Name="AccentStripDot5" Grid.Row="5" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
+                                <Button x:Name="AccentStripDot6" Grid.Row="6" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
+                                <Button x:Name="AccentStripDot7" Grid.Row="7" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0" Click="AccentSwatch_Click"/>
                             </Grid>
                         </Grid>
                     </Grid>
