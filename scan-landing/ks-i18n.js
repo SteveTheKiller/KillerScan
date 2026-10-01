@@ -12305,3 +12305,7 @@ I18N.pt = {
  "mcp_tool_9_title": "Executar o KillerSpeed",
  "mcp_tool_9_body": "Mede download, upload, latência e jitter com speed.killerscan.net."
 };
+if (I18N["uk"]) Object.assign(I18N["uk"], {
+ "ui_accent_yellow": "Жовтий",
+ "ui_accent_magenta": "Пурпуровий"
+});
