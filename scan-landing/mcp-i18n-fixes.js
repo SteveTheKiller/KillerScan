@@ -14,3 +14,19 @@ if (I18N.uk) Object.assign(I18N.uk, {
  "mcp_examples_intro": "<code>killer</code> - найкоротша форма. ШІ-агент може розпізнати KillerScan із чіткого мережевого запиту. Використовуйте <code>killerscan</code>, коли хочете явно вказати застосунок.",
  "mcp_tools_intro": "KillerMCP надає всі дев'ять безвіконних команд командного рядка KillerScan."
 });
+if (I18N.nb) Object.assign(I18N.nb, {
+ "mcp_hero": "Undersøk nettverket fra agenten din.",
+ "mcp_install_intro": "KillerMCP inneholder alle 81 KillerTools-verktøy pluss verktøy fra støttede Killer-apper i én lokal tilkobling. Installasjonsprogrammet oppdager KillerScan og registrerer den delte tilkoblingen hos støttede agentklienter.",
+ "mcp_step_2": "<strong>La oppsettet koble til agenten din.</strong> Det registrerer KillerMCP hos Codex, Claude Code, Claude Desktop, Cursor, GitHub Copilot, Gemini CLI og Windsurf når det finner dem. Du trenger ingen kildekode, Node-installasjon eller manuell kommandoliste.",
+ "mcp_step_3": "<strong>Åpne en ny agentsamtale og spør.</strong> Tilgjengelige verktøy oppdages automatisk.",
+ "mcp_examples_intro": "<code>killer</code> er den korteste formen. Agenten din kan utlede KillerScan fra en tydelig nettverksforespørsel. Bruk <code>killerscan</code> når du vil gjøre appen eksplisitt.",
+ "mcp_tools_intro": "KillerMCP eksponerer alle ni hodeløse KillerScan-kommandoer."
+});
+if (I18N.pt) Object.assign(I18N.pt, {
+ "mcp_hero": "Inspecione a rede com o seu agente de IA.",
+ "mcp_install_intro": "O KillerMCP inclui todas as 81 utilidades do KillerTools, além das ferramentas dos aplicativos Killer compatíveis, em uma única conexão local. O instalador detecta o KillerScan e registra essa conexão compartilhada com os aplicativos de agentes de IA compatíveis.",
+ "mcp_step_2": "<strong>Deixe o instalador conectar o seu agente de IA.</strong> Ele registra o KillerMCP no Codex, Claude Code, Claude Desktop, Cursor, GitHub Copilot, Gemini CLI e Windsurf quando os encontra. Não é preciso clonar código-fonte, instalar o Node nem seguir uma lista manual de comandos.",
+ "mcp_step_3": "<strong>Abra uma nova conversa com o agente de IA e faça uma pergunta.</strong> As ferramentas disponíveis são descobertas automaticamente.",
+ "mcp_examples_intro": "<code>killer</code> é a forma mais curta. O agente de IA pode reconhecer o KillerScan a partir de uma solicitação de rede clara. Use <code>killerscan</code> quando quiser indicar o aplicativo explicitamente.",
+ "mcp_tools_intro": "O KillerMCP expõe todos os nove comandos de linha de comando sem janela do KillerScan."
+});
