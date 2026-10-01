@@ -384,6 +384,7 @@ html[data-theme="light"] .tech-sec h3 { text-shadow: none; }
 .diagram { margin: 20px 0 6px; padding: 14px 16px; border: 1px solid var(--pane-border); border-radius: 10px; background: var(--modal); }
 /* Technical cards match the app's textured context-menu surface. */
 .codeblock, .cli-demo, .diagram { background: var(--modal) url('grain.png?v=2') repeat; background-size: 256px 256px; }
+html:not([data-theme="light"]) .codeblock { background-color: color-mix(in srgb, var(--modal) 65%, #000); border-color: color-mix(in srgb, var(--text) 28%, var(--modal)); border-left-color: var(--accent); }
 .diagram svg { width: 100%; height: auto; display: block; cursor: zoom-in; }
 .diagram figcaption { font-size: 12.5px; line-height: 1.55; color: var(--muted); margin-top: 10px; }
 .diagram .zoom-hint { display: block; color: var(--muted); font-size: 11px; margin-top: 4px; }
