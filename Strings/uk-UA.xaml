@@ -1,0 +1,500 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ================================================================
+         KillerScan  -  Українська (uk-UA) strings.
+         x:Key values are looked up at runtime - never change them.
+         Other locales layer over this file; any key they omit falls back here.
+         ================================================================ -->
+
+    <!-- Title bar / chrome -->
+    <sys:String x:Key="Str_Subtitle">Мережевий сканер</sys:String>
+    <sys:String x:Key="Str_TT_Language">Мова</sys:String>
+    <sys:String x:Key="Str_TT_AppSize">Прокрутіть коліщатко над назвою, щоб змінити розмір застосунку</sys:String>
+    <sys:String x:Key="Str_TT_Theme">Тема</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">Показати або сховати адаптер і швидкість з'єднання</sys:String>
+    <sys:String x:Key="Str_Light_Idle">Ще нічого не скановано</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">Сканування</sys:String>
+    <sys:String x:Key="Str_Light_Deep">Триває глибоке сканування</sys:String>
+    <sys:String x:Key="Str_Light_Done">Сканування завершено</sys:String>
+    <sys:String x:Key="Str_TT_Export">Експорт</sys:String>
+    <sys:String x:Key="Str_Lbl_Theme">ТЕМА</sys:String>
+    <sys:String x:Key="Str_Lbl_Accent">АКЦЕНТ</sys:String>
+
+    <!-- Scan bar -->
+    <sys:String x:Key="Str_Lbl_Subnet">Підмережа</sys:String>
+    <sys:String x:Key="Str_Btn_Scan">Сканувати</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Глибоке сканування</sys:String>
+    <sys:String x:Key="Str_Lbl_Local">Локальна</sys:String>
+    <sys:String x:Key="Str_Lbl_Gateway">Шлюз</sys:String>
+    <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
+
+    <!-- Status bar + counts ({0}/{1} are filled in by the app - keep them) -->
+    <sys:String x:Key="Str_Btn_Stop">Зупинити</sys:String>
+    <sys:String x:Key="Str_Status_Ready">Готово - завантажено виробників OUI: {0}</sys:String>
+    <sys:String x:Key="Str_Count_Found">Знайдено пристроїв: {0}</sys:String>
+    <sys:String x:Key="Str_Count_Shown">Показано {0} із {1}</sys:String>
+
+    <!-- Results pane -->
+    <sys:String x:Key="Str_DiscoveredDevices">Виявлені пристрої</sys:String>
+    <sys:String x:Key="Str_Topology_Title">Топологія мережі</sys:String>
+    <sys:String x:Key="Str_Topology_Role">Роль</sys:String>
+    <sys:String x:Key="Str_TT_TopologyOrder">Упорядкувати топологію за</sys:String>
+    <sys:String x:Key="Str_Sc_CycleTopologyOrder">Перемкнути впорядкування топології</sys:String>
+    <sys:String x:Key="Str_History_Title">Історія сканувань</sys:String>
+    <sys:String x:Key="Str_History_Empty">Завершених сканувань ще немає.</sys:String>
+    <sys:String x:Key="Str_History_Change">Зміна</sys:String>
+    <sys:String x:Key="Str_History_Added">Додано</sys:String>
+    <sys:String x:Key="Str_History_Removed">Зникло</sys:String>
+    <sys:String x:Key="Str_History_Changed">Змінено</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">Перше сканування цієї цілі. Усі пристрої нові.</sys:String>
+    <sys:String x:Key="Str_History_Summary">Додано: {0}, зникло: {1}, змінено: {2}</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">ЗМІНИ</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">УСІ ПРИСТРОЇ</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">Пристроїв у цьому скануванні: {0}</sys:String>
+    <sys:String x:Key="Str_TT_Topology">Показати або сховати топологію мережі</sys:String>
+    <sys:String x:Key="Str_Topology_Network">Локальна мережа</sys:String>
+    <sys:String x:Key="Str_Topology_Inferred">Припущене з'єднання</sys:String>
+    <sys:String x:Key="Str_Topology_Empty">Скануйте мережу, щоб додати виявлені пристрої.</sys:String>
+    <sys:String x:Key="Str_FilterPlaceholder">Фільтр пристроїв...</sys:String>
+    <sys:String x:Key="Str_Export_Csv">Експортувати як CSV</sys:String>
+    <sys:String x:Key="Str_Export_Html">Експортувати як HTML</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">Експортувати топологію як PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">Експортувати як прозорий PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">Експортувати як JPG</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">Експортувати як HTML</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">Експортувати картки як PNG</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">Експортувати сеанс у TXT</sys:String>
+    <sys:String x:Key="Str_Filter_Text">Текстовий файл</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">Зображення JPEG</sys:String>
+    <sys:String x:Key="Str_Export_ServicesCsv">Експортувати служби як CSV</sys:String>
+
+    <!-- Results columns -->
+    <sys:String x:Key="Str_Col_Ip">IP-адреса</sys:String>
+    <sys:String x:Key="Str_Col_Host">Ім'я хоста</sys:String>
+    <sys:String x:Key="Str_Col_Mac">MAC-адреса</sys:String>
+    <sys:String x:Key="Str_Col_Vendor">Виробник</sys:String>
+    <sys:String x:Key="Str_Col_Type">Тип</sys:String>
+    <sys:String x:Key="Str_Col_Ports">Відкриті порти</sys:String>
+
+    <!-- Right-click device menu -->
+    <sys:String x:Key="Str_Ctx_RescanOne">Повторно сканувати IP</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanMany">Повторно сканувати IP-адреси</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyIp">Копіювати IP-адресу</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyMac">Копіювати MAC-адресу</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyHost">Копіювати ім'я хоста</sys:String>
+    <sys:String x:Key="Str_Ctx_Ping">Ping</sys:String>
+    <sys:String x:Key="Str_Ctx_OpenBrowser">Відкрити в браузері</sys:String>
+    <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
+    <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">SSH як...</sys:String>
+    <sys:String x:Key="Str_Ctx_SetType">Задати тип пристрою</sys:String>
+    <sys:String x:Key="Str_Ctx_ClearOverride">Скинути заміну</sys:String>
+
+    <!-- SSH username prompt ({0} is the device, filled in by the app) -->
+    <sys:String x:Key="Str_Ssh_Head">Підключитися до {0} через SSH</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">Обліковий запис для входу. KillerScan запам'ятовує його для цього пристрою, тож запит з'явиться лише раз. Залиште поле порожнім, щоб вибір зробив клієнт SSH.</sys:String>
+    <sys:String x:Key="Str_Ssh_User">ІМ'Я КОРИСТУВАЧА</sys:String>
+    <sys:String x:Key="Str_Ssh_Connect">Підключитися</sys:String>
+    <sys:String x:Key="Str_Btn_Cancel">Скасувати</sys:String>
+
+    <!-- Theme names, shown in the rail's theme flyout. Shared with KillerShell and KillerNotes
+         key for key, so the same thirteen themes read the same way across the family. SE98 is
+         listed here ahead of the theme itself landing, because the name is not translated. -->
+    <sys:String x:Key="Str_Theme_Dark">Темна</sys:String>
+    <sys:String x:Key="Str_Theme_Light">Світла</sys:String>
+    <sys:String x:Key="Str_Theme_Black">Чорна</sys:String>
+    <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+    <sys:String x:Key="Str_Theme_Blood">Кров</sys:String>
+    <sys:String x:Key="Str_Theme_Greed">Жадоба</sys:String>
+    <sys:String x:Key="Str_Theme_Cyanotic">Ціаноз</sys:String>
+    <sys:String x:Key="Str_Theme_Ectoplasm">Ектоплазма</sys:String>
+    <sys:String x:Key="Str_Theme_Decay">Тлін</sys:String>
+    <sys:String x:Key="Str_Theme_Malaise">Нездужання</sys:String>
+    <sys:String x:Key="Str_Theme_Sepulchre">Гробниця</sys:String>
+    <sys:String x:Key="Str_Theme_Delirium">Марення</sys:String>
+    <sys:String x:Key="Str_Theme_Mourning">Жалоба</sys:String>
+
+    <!-- About overlay -->
+    <sys:String x:Key="Str_About_Version">ВЕРСІЯ</sys:String>
+    <sys:String x:Key="Str_About_Publisher">ВИДАВЕЦЬ</sys:String>
+    <sys:String x:Key="Str_About_Thumbprint">ВІДБИТОК СЕРТИФІКАТА</sys:String>
+    <sys:String x:Key="Str_About_Sha">SHA-256 файлу EXE</sys:String>
+    <sys:String x:Key="Str_About_Db">БАЗА ВИРОБНИКІВ</sys:String>
+    <sys:String x:Key="Str_About_DbUpdate">Оновити з найновіших реєстрів</sys:String>
+    <sys:String x:Key="Str_About_DbHint">Зі списку OUI від Wireshark.</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">Записів: {0}</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">оновлено {0}</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">входить до складу застосунку</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">Сканування ARP та IP із визначенням виробника, класифікацією пристроїв і експортом у HTML із темами та сортуванням. Утиліта від </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve">.</sys:String>
+
+    <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
+    <sys:String x:Key="Str_St_Discovering">Пошук хостів у {0}...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingMacs">Визначення MAC-адрес: {0}...</sys:String>
+    <sys:String x:Key="Str_St_Probing">Перевірка активних хостів: {0}...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingHosts">Визначення імен хостів: {0}...</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">Сканування завершено - знайдено пристроїв: {0}</sys:String>
+    <sys:String x:Key="Str_St_Ready">Готово</sys:String>
+    <sys:String x:Key="Str_St_ScanCanceled">Сканування скасовано</sys:String>
+    <sys:String x:Key="Str_St_Rescanning">Глибоке сканування {0}...</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">Повторне сканування завершено - оновлено хостів: {0}</sys:String>
+    <sys:String x:Key="Str_St_Exported">Експортовано до {0}</sys:String>
+    <sys:String x:Key="Str_St_OverrideSet">Заміну задано: {0} = {1}</sys:String>
+    <sys:String x:Key="Str_St_OverrideCleared">Заміну скинуто для {0}</sys:String>
+    <sys:String x:Key="Str_St_AppSize">Розмір застосунку {0}%</sys:String>
+    <sys:String x:Key="Str_St_BadTarget">Недійсна ціль: «{0}». Використовуйте 192.168.1.0/24, 192.168.1.7 або 192.168.1.10-50, розділяючи комами</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">Це {0} адрес, забагато для одного сканування (ліміт {1}). Звузьте діапазон або скануйте його частинами.</sys:String>
+    <sys:String x:Key="Str_St_NoTarget">Введіть підмережу, адресу або діапазон для сканування</sys:String>
+
+    <!-- Portable footer badge + install dialog -->
+    <sys:String x:Key="Str_Portable">ПОРТАТИВНИЙ</sys:String>
+    <sys:String x:Key="Str_TT_Portable">Портативний режим - установити KillerScan</sys:String>
+    <sys:String x:Key="Str_InstallBtn">Установити KillerScan</sys:String>
+    <sys:String x:Key="Str_Install_AllUsers">Установити для всіх користувачів (потрібен адміністратор)</sys:String>
+    <sys:String x:Key="Str_Install_AllUsersNote">Установлює в Program Files для кожного облікового запису на цьому ПК. Windows запитає дозвіл.</sys:String>
+    <sys:String x:Key="Str_Install_HeadUser">Установити KillerScan у ваш профіль користувача?</sys:String>
+    <sys:String x:Key="Str_Install_HeadAll">Установити KillerScan для всіх користувачів цього ПК?</sys:String>
+    <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan уже встановлено для всіх користувачів цього ПК, тому буде оновлено цю копію. Windows запитає дозвіл.</sys:String>
+    <sys:String x:Key="Str_St_InstallCanceled">Установлення скасовано</sys:String>
+
+    <!-- Themed window system menu (right-click the title bar / Alt+Space) -->
+    <sys:String x:Key="Str_Sys_Restore">Відновити</sys:String>
+    <sys:String x:Key="Str_Sys_Move">Перемістити</sys:String>
+    <sys:String x:Key="Str_Sys_Size">Розмір</sys:String>
+    <sys:String x:Key="Str_Sys_Minimize">Згорнути</sys:String>
+    <sys:String x:Key="Str_Sys_Maximize">Розгорнути</sys:String>
+    <sys:String x:Key="Str_Sys_Close">Закрити</sys:String>
+
+    <!-- Keyboard shortcuts overlay (F1) -->
+    <sys:String x:Key="Str_TT_Shortcuts">Сполучення клавіш (F1)</sys:String>
+    <sys:String x:Key="Str_TT_ExpandSidebar">Показати історію сканувань</sys:String>
+    <sys:String x:Key="Str_TT_CollapseSidebar">Сховати історію сканувань</sys:String>
+    <sys:String x:Key="Str_Shortcuts_Title">Сполучення клавіш</sys:String>
+    <sys:String x:Key="Str_KS_ViewList">СПИСОК</sys:String>
+    <sys:String x:Key="Str_KS_ViewKeyboard">КЛАВІАТУРА</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Повний посібник і поради онлайн</sys:String>
+    <sys:String x:Key="Str_KS_Views">ВИГЛЯДИ</sys:String>
+    <sys:String x:Key="Str_KS_Scan">СКАНУВАННЯ</sys:String>
+    <sys:String x:Key="Str_KS_Device">ПРИСТРОЇ</sys:String>
+    <sys:String x:Key="Str_KS_Topology">ТОПОЛОГІЯ</sys:String>
+    <sys:String x:Key="Str_KS_Toolbar">ПАНЕЛЬ ІНСТРУМЕНТІВ</sys:String>
+    <sys:String x:Key="Str_KS_App">ЗАСТОСУНОК</sys:String>
+    <sys:String x:Key="Str_Sc_Scan">Почати або зупинити сканування</sys:String>
+    <sys:String x:Key="Str_Sc_Cancel">Скасувати сканування або закрити це вікно</sys:String>
+    <sys:String x:Key="Str_Sc_Rescan">Глибоко пересканувати вибрані хости</sys:String>
+    <sys:String x:Key="Str_Sc_Subnet">Перейти до поля підмережі</sys:String>
+    <sys:String x:Key="Str_Sc_SelectAll">Вибрати всі пристрої</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Зберегти пристрої як CSV</sys:String>
+    <sys:String x:Key="Str_Sc_Browser">Відкрити вибраний пристрій у браузері</sys:String>
+    <sys:String x:Key="Str_Sc_Ping">Пінгувати вибраний пристрій</sys:String>
+    <sys:String x:Key="Str_Sc_Rdp">Відкрити віддалений робочий стіл на вибраному пристрої</sys:String>
+    <sys:String x:Key="Str_Sc_Ssh">Підключитися до вибраного пристрою через SSH</sys:String>
+    <sys:String x:Key="Str_Sc_SshAs">Вибрати обліковий запис SSH і підключитися</sys:String>
+    <sys:String x:Key="Str_Sc_CopyIp">Копіювати вибрану IP-адресу</sys:String>
+    <sys:String x:Key="Str_Sc_CopyMac">Копіювати вибрану MAC-адресу</sys:String>
+    <sys:String x:Key="Str_Sc_CopyHost">Копіювати вибране ім'я хоста</sys:String>
+    <sys:String x:Key="Str_Sc_DeviceMenu">Відкрити всі дії для вибраного пристрою</sys:String>
+    <sys:String x:Key="Str_Sc_AppBigger">Збільшити застосунок</sys:String>
+    <sys:String x:Key="Str_Sc_AppSmaller">Зменшити застосунок</sys:String>
+    <sys:String x:Key="Str_Sc_AppReset">Скинути розмір застосунку</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Показати або сховати сполучення клавіш</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">Показати пристрої</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">Показати термінал</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">Показати вибраний пристрій у Keep Alive</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">Вирізати</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">Копіювати</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">Вставити</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">Виділити все</sys:String>
+    <sys:String x:Key="Str_Sc_About">Відкрити вікно «Про програму»</sys:String>
+    <sys:String x:Key="Str_Sc_Hint">Розмір застосунку також змінюється коліщатком миші над назвою.</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">Утримуйте Ctrl / Shift / Alt, щоб переглянути рівень</sys:String>
+
+    <!-- ==== DIALOGS, UPDATES AND ERRORS ==== -->
+    <sys:String x:Key="Str_About_Title">Про KillerScan</sys:String>
+    <sys:String x:Key="Str_TT_About">Про KillerScan</sys:String>
+    <sys:String x:Key="Str_About_Aka" xml:space="preserve">ВІДОМИЙ ЯК </sys:String>
+    <sys:String x:Key="Str_About_Unsigned">(не підписано або ланцюжок недійсний)</sys:String>
+    <sys:String x:Key="Str_About_Computing">обчислення...</sys:String>
+    <sys:String x:Key="Str_Ssh_Title">Обліковий запис SSH</sys:String>
+    <sys:String x:Key="Str_Btn_Install">Установити</sys:String>
+    <sys:String x:Key="Str_Install_BulletShortcut">- ярлик у меню «Пуск»</sys:String>
+    <sys:String x:Key="Str_Install_BulletArp">- з'являється в розділі «Установлення й видалення програм»</sys:String>
+
+    <!-- Vendor database. {0} is a count, already formatted with the locale's own separators. -->
+    <sys:String x:Key="Str_Db_Checking">Пошук новіших даних про виробників...</sys:String>
+    <sys:String x:Key="Str_Db_Downloading">Завантаження даних про виробників...</sys:String>
+    <sys:String x:Key="Str_Db_Fallback">Спроба резервного джерела...</sys:String>
+    <sys:String x:Key="Str_Db_Blocked">Не вдалося оновити - завантаження заблоковано або порожнє. Ваш список не змінено.</sys:String>
+    <sys:String x:Key="Str_Db_Smaller">Найновіші дані містили записів: {0}, що менше за поточні {1}. Ваш список збережено.</sys:String>
+    <sys:String x:Key="Str_Db_UpToDate">База вже актуальна (записів: {0}).</sys:String>
+    <sys:String x:Key="Str_Db_Updated">Оновлено до записів: {0}.</sys:String>
+    <sys:String x:Key="Str_Db_SaveFailed">Не вдалося зберегти базу: {0}</sys:String>
+    <sys:String x:Key="Str_Db_Failed">Не вдалося оновити: {0}</sys:String>
+
+    <!-- Self-update. {0} is the release tag; in the heading {0} is the app name and {1} the tag. -->
+    <sys:String x:Key="Str_Upd_Available">Доступне оновлення: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Downloading">Завантаження...</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmHead">Завантажити й установити {0} {1}?</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBody">Застосунок закриється та відкриється знову автоматично.</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBtn">Оновити</sys:String>
+
+    <!-- Install conflict, uninstall. Two whole sentences rather than one with the scope
+         substituted in: a language that inflects the noun cannot take a drop-in word. -->
+    <sys:String x:Key="Str_Conflict_Title">конфлікт установлення</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveUser">KillerScan установлено двічі. Видалити іншу копію для окремого користувача зараз?
+
+Ваші налаштування не буде видалено.</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveMachine">KillerScan установлено двічі. Видалити іншу копію для всіх користувачів зараз?
+
+Ваші налаштування не буде видалено.</sys:String>
+    <sys:String x:Key="Str_Install_Failed">Не вдалося установити:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Title">Видалення</sys:String>
+    <sys:String x:Key="Str_Uninstall_Confirm">Видалити KillerScan із цього комп'ютера?</sys:String>
+    <sys:String x:Key="Str_Uninstall_NoAdmin">Не вдалося запросити доступ адміністратора для видалення:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Done">KillerScan видалено.</sys:String>
+
+    <!-- Errors and file dialogs. The text before the | in a save filter is what Windows shows
+         in its type dropdown; the *.ext pattern after it is not interface text. -->
+    <sys:String x:Key="Str_Err_Export">Помилка експорту: {0}</sys:String>
+    <sys:String x:Key="Str_Err_Scan">Помилка сканування: {0}</sys:String>
+    <sys:String x:Key="Str_Filter_Csv">Файл CSV</sys:String>
+    <sys:String x:Key="Str_Filter_Html">Звіт HTML</sys:String>
+    <sys:String x:Key="Str_Filter_Png">Зображення PNG</sys:String>
+
+    <!-- Adapter kind and the randomized-MAC vendor placeholder. -->
+    <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
+    <sys:String x:Key="Str_Vendor_Randomized">(випадкова)</sys:String>
+
+    <!-- ==== EXPORTED HTML REPORT ====
+         The report reuses the grid's Str_Col_* headers and the picker's Str_Theme_* names, so it
+         can never disagree with the app that produced it. Only these are its own. Accent names
+         are new: the app's accent dots are swatches with no text, but the report's need titles. -->
+    <sys:String x:Key="Str_Rep_Theme">Тема</sys:String>
+    <sys:String x:Key="Str_Rep_Accent">Акцент</sys:String>
+    <sys:String x:Key="Str_Rep_Subnet">Підмережа</sys:String>
+    <sys:String x:Key="Str_Rep_Scanned">Скановано</sys:String>
+    <sys:String x:Key="Str_Rep_Devices">пристроїв</sys:String>
+    <sys:String x:Key="Str_Rep_GeneratedBy">Створено в</sys:String>
+    <sys:String x:Key="Str_Accent_Red">Червоний</sys:String>
+    <sys:String x:Key="Str_Accent_Orange">Помаранчевий</sys:String>
+    <sys:String x:Key="Str_Accent_Green">Зелений</sys:String>
+    <sys:String x:Key="Str_Accent_Teal">Бірюзовий</sys:String>
+    <sys:String x:Key="Str_Accent_Blue">Синій</sys:String>
+    <sys:String x:Key="Str_Accent_Purple">Фіолетовий</sys:String>
+
+    <!-- ==== DEVICE TYPES ====================================================================
+         DISPLAY LABELS ONLY. The stored value stays English in every locale - it is written to
+         the override registry, matched by the Type column's color triggers, used as a CSS class
+         in the exported report and accepted by the CLI's /type filter. DeviceTypeConverter maps
+         one to the other on the way to the screen, and derives each key by stripping everything
+         that is not a letter or digit ("Switch/AP" -> Str_Dev_SwitchAP).
+
+         The list covers the classifier's whole vocabulary, not just the 21 rows in the "Set
+         device type" menu: a type the menu cannot set can still be detected and shown.
+
+         Product names (Windows, Linux, NAS, IoT, DNS, Apple, Android) are proper nouns and stay
+         as they are when translated - only the surrounding words change. -->
+    <sys:String x:Key="Str_Dev_Router">Маршрутизатор</sys:String>
+    <sys:String x:Key="Str_Dev_RouterDNS">Маршрутизатор/DNS</sys:String>
+    <sys:String x:Key="Str_Dev_SwitchAP">Комутатор/точка доступу</sys:String>
+    <sys:String x:Key="Str_Dev_Network">Мережа</sys:String>
+    <sys:String x:Key="Str_Dev_Windows">Windows</sys:String>
+    <sys:String x:Key="Str_Dev_WindowsServer">Windows Server</sys:String>
+    <sys:String x:Key="Str_Dev_LinuxSSH">Linux/SSH</sys:String>
+    <sys:String x:Key="Str_Dev_Server">Сервер</sys:String>
+    <sys:String x:Key="Str_Dev_Printer">Принтер</sys:String>
+    <sys:String x:Key="Str_Dev_SmartTV">Смарт-телевізор</sys:String>
+    <sys:String x:Key="Str_Dev_AppleTV">Apple TV</sys:String>
+    <sys:String x:Key="Str_Dev_MediaStreamer">Медіаплеєр</sys:String>
+    <sys:String x:Key="Str_Dev_AppleDevice">Пристрій Apple</sys:String>
+    <sys:String x:Key="Str_Dev_iPhone">iPhone</sys:String>
+    <sys:String x:Key="Str_Dev_Android">Android</sys:String>
+    <sys:String x:Key="Str_Dev_Mobile">Мобільний</sys:String>
+    <sys:String x:Key="Str_Dev_IoT">IoT</sys:String>
+    <sys:String x:Key="Str_Dev_NAS">NAS</sys:String>
+    <sys:String x:Key="Str_Dev_Camera">Камера</sys:String>
+    <sys:String x:Key="Str_Dev_Hypervisor">Гіпервізор</sys:String>
+    <sys:String x:Key="Str_Dev_HomeAssistant">Home Assistant</sys:String>
+    <sys:String x:Key="Str_Dev_DNSServer">DNS-сервер</sys:String>
+    <sys:String x:Key="Str_Dev_WebDevice">Вебпристрій</sys:String>
+    <sys:String x:Key="Str_Dev_Other">Інше</sys:String>
+    <sys:String x:Key="Str_Dev_Unknown">Невідомо</sys:String>
+
+    <sys:String x:Key="Str_Btn_Open">Відкрити</sys:String>
+    <sys:String x:Key="Str_Btn_Save">Зберегти</sys:String>
+    <sys:String x:Key="Str_Col_Modified">змінено</sys:String>
+    <sys:String x:Key="Str_Col_Name">ім'я</sys:String>
+    <sys:String x:Key="Str_Col_Size">розмір</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">Усі файли</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">Ім'я файлу:</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">Тип файлу:</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">Тут немає файлів поточного типу.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">Попередній перегляд недоступний</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">Такого файлу не існує.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">Такої папки не існує.</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">Замінити {0}?</sys:String>
+    <sys:String x:Key="Str_Btn_Replace">Замінити</sys:String>
+    <sys:String x:Key="Str_Dlg_Preview">Попередній перегляд</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">Закріпити в місцях</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">Прибрати з місць</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">Робочий стіл</sys:String>
+    <sys:String x:Key="Str_QA_Documents">Документи</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">Завантаження</sys:String>
+    <sys:String x:Key="Str_QA_Home">Домівка</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">Зображення</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">Папок: {0}, файлів: {1}</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">Нещодавні розташування</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">Показувати приховані та системні елементи</sys:String>
+    <sys:String x:Key="Str_TT_Up">На рівень вище</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">Таблиця</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">Значки</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">Список</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">Перейменувати пристрій</sys:String>
+    <sys:String x:Key="Str_Rename_Label">Ім'я:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">Зберегти</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">Скинути ім'я, задане вручну</sys:String>
+    <sys:String x:Key="Str_Trust_Device">Довірений пристрій</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">Зелений: довірений пристрій. Бурштиновий: немає у вашому списку довірених.</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">Створено довірену основу з пристроїв: {0}.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">Увага: знайдено невідомих пристроїв: {0}.</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">Немає у вашому списку довірених:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">і ще {0}</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">Клацніть пристрій правою кнопкою, щоб позначити його довіреним.</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">Пристроїв: {0}, з відкритими портами: {1}</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">Відстежується цілей: {0}, без відповіді: {1}</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} о {1}, записано пристроїв: {2}</sys:String>
+    <sys:String x:Key="Str_Services_Title">Служби</sys:String>
+    <sys:String x:Key="Str_Services_Service">Служба</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">Профілі сканування</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">Зберегти поточний профіль</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">Запустити профіль</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">Завантажити ціль</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">Потім глибоке сканування всіх</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">Видалити профіль</sys:String>
+    <sys:String x:Key="Str_Watch_Title">Відстеження з'єднання</sys:String>
+    <sys:String x:Key="Str_Watch_Targets">IP-адреси (до 16, через кому)</sys:String>
+    <sys:String x:Key="Str_Watch_Start">Почати</sys:String>
+    <sys:String x:Key="Str_Watch_Stop">Зупинити</sys:String>
+    <sys:String x:Key="Str_Watch_Hint">Перевіряє ICMP кожні дві секунди. Відсутність відповіді може означати фільтрацію, а не збій.</sys:String>
+    <sys:String x:Key="Str_Watch_Invalid">Введіть від 1 до 16 дійсних IP-адрес.</sys:String>
+    <sys:String x:Key="Str_Watch_Reply">Відповідь</sys:String>
+    <sys:String x:Key="Str_Watch_NoReply">Немає відповіді</sys:String>
+    <sys:String x:Key="Str_Watch_Waiting">Очікування</sys:String>
+    <sys:String x:Key="Str_Watch_Sent">Надіслано</sys:String>
+    <sys:String x:Key="Str_Watch_Loss">Втрати</sys:String>
+    <sys:String x:Key="Str_Watch_Latency">Остання / середня (мс)</sys:String>
+    <sys:String x:Key="Str_Watch_Changed">Остання зміна</sys:String>
+    <sys:String x:Key="Str_Watch_Events">Нещодавні зміни</sys:String>
+    <sys:String x:Key="Str_Export_Txt">Експортувати як TXT</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">Очистити журнал</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">Копіювати адресу</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">Скинути статистику</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">Припинити відстеження цієї цілі</sys:String>
+    <sys:String x:Key="Str_Trace_Run">Трасувати маршрут</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">Перехід {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">Немає відповіді</sys:String>
+    <sys:String x:Key="Str_Diag_Working">Перевірка</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">Перевірити знову</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">Виберіть картку, щоб виконати перевірки для цієї цілі.</sys:String>
+    <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
+    <sys:String x:Key="Str_Watch_Stopped">Зупинено</sys:String>
+    <sys:String x:Key="Str_Diag_Title">Діагностика пристрою</sys:String>
+    <sys:String x:Key="Str_Diag_Run">Виконати перевірки</sys:String>
+    <sys:String x:Key="Str_Diag_Hint">Перевіряє DNS, ICMP, локальний маршрут і поширені або раніше виявлені порти TCP. Невдала перевірка не доводить, що пристрій вимкнений.</sys:String>
+    <sys:String x:Key="Str_Diag_Check">Перевірка</sys:String>
+    <sys:String x:Key="Str_Diag_Result">Результат</sys:String>
+    <sys:String x:Key="Str_Diag_Dns">Зворотний DNS</sys:String>
+    <sys:String x:Key="Str_Diag_Match">Прямий DNS збігається</sys:String>
+    <sys:String x:Key="Str_Diag_Mismatch">Прямий DNS не збігається</sys:String>
+    <sys:String x:Key="Str_Diag_Route">Локальний маршрут</sys:String>
+    <sys:String x:Key="Str_Diag_RouteValue">Інтерфейс: {0}; наступний вузол: {1}</sys:String>
+    <sys:String x:Key="Str_Diag_OnLink">У тій самій мережі</sys:String>
+    <sys:String x:Key="Str_Diag_Open">Підключено</sys:String>
+    <sys:String x:Key="Str_Diag_Failed">Немає відповіді або з'єднання відхилено</sys:String>
+    <sys:String x:Key="Str_Diag_Unavailable">Недоступно</sys:String>
+    <sys:String x:Key="Str_Diag_Select">Спершу виберіть пристрій.</sys:String>
+    <sys:String x:Key="Str_Diag_Error">Не вдалося завершити перевірки.</sys:String>
+    <sys:String x:Key="Str_Diag_Time">Перевірено о</sys:String>
+    <sys:String x:Key="Str_Watch_Reset">Повторний запуск очищає попередні результати.</sys:String>
+    <sys:String x:Key="Str_Watch_Add">Відстежувати пристрій</sys:String>
+    <sys:String x:Key="Str_Workspace_NewScan">Нове сканування</sys:String>
+    <sys:String x:Key="Str_View_Devices">Пристрої</sys:String>
+    <sys:String x:Key="Str_View_Topology">Топологія</sys:String>
+    <sys:String x:Key="Str_View_KeepAlive">Keep Alive</sys:String>
+    <sys:String x:Key="Str_Workspace_Terminal">Термінал</sys:String>
+    <sys:String x:Key="Str_Term_Copy">Копіювати</sys:String>
+    <sys:String x:Key="Str_Term_Paste">Вставити</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">Виділити все</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">Копіювати все</sys:String>
+    <sys:String x:Key="Str_Term_Clear">Очистити</sys:String>
+    <sys:String x:Key="Str_Workspace_EscStop">Esc - зупинити</sys:String>
+    <sys:String x:Key="Str_Workspace_Split">Розділити панелі</sys:String>
+    <sys:String x:Key="Str_Workspace_Move">Перемістити до іншої панелі</sys:String>
+    <sys:String x:Key="Str_Workspace_Close">Закрити вкладку</sys:String>
+    <sys:String x:Key="Str_Workspace_Next">Наступна вкладка</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenTab">Відкрити у вкладці</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenBeside">Відкрити поруч</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenExternal">Відкрити в окремому вікні</sys:String>
+    <sys:String x:Key="Str_Workspace_Exited">Процес завершено ({0})</sys:String>
+    <sys:String x:Key="Str_Workspace_StartFailed">Не вдалося запустити термінал: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">Панель інструментів</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">Без тексту</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">Малі значки</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">Великі значки</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">Текст поруч зі значками</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">Текст під значками</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">Лише текст</sys:String>
+    <sys:String x:Key="Str_Clipboard_Failed">Не вдалося скопіювати до буфера обміну. Спробуйте ще раз.</sys:String>
+    <sys:String x:Key="Str_KS_Base">Основні</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
+    <sys:String x:Key="Str_Speed_Tagline">Вимірюйте швидкість завантаження, вивантаження та затримку під навантаженням.</sys:String>
+    <sys:String x:Key="Str_Speed_Consent">Натисніть Enter, щоб почати, або Esc, щоб скасувати.</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">Інтерфейс командного рядка Ookla speedtest не встановлено.</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">KillerScan може завантажити його з install.speedtest.net (близько 4 МБ) або натомість запустити власний тест пропускної здатності HTTP, який нічого не встановлює.</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">Завантажити Ookla CLI? (y/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">Не вдалося завантажити: </sys:String>
+    <sys:String x:Key="Str_Speed_Server">Сервер</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">Провайдер</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">Затримка</sys:String>
+    <sys:String x:Key="Str_Speed_Download">Завантаження</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">Вивантаження</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">джитер</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">Виконується вбудований тест пропускної здатності HTTP. Ці показники орієнтовні й не є офіційним результатом speedtest.net.</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">немає відповіді</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Не вдалося завершити тест: </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">URL тестового сервера</sys:String>
+    <sys:String x:Key="Str_Speed_Start">Почати тест</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">Зупинити тест</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">Затримка без навантаження</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">Затримка під навантаженням</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Введіть URL тестового сервера й почніть тест. Він може передати до 6 ГіБ.</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">Прогрів</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">Тест завершено</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">Тест скасовано</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">Досягнуто ліміт даних; тривалість вимірювання скорочено.</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">Копіювати результати</sys:String>
+    <sys:String x:Key="Str_Speed_Error">Тест не вдався: {0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">Введіть URL тестового сервера HTTPS.</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">З'єднання</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">Передано</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">Не виміряно</sys:String>
+    <sys:String x:Key="Str_Speed_Run">Тестування</sys:String>
+    <sys:String x:Key="Str_Speed_Native">Вимірює пропускну здатність і затримку HTTP до вибраного сервера. Результати залежать від цього маршруту й сервера.</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">Тестовий сервер не відповів вчасно.</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">Не вдалося підключитися до тестового сервера.</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">Тестовий сервер не зміг установити безпечне з'єднання.</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">Тестовий сервер зайнятий. Спробуйте пізніше.</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">Тестовий сервер повернув недійсну відповідь.</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">Передавання не вдалося. Перевірте з'єднання й повторіть спробу.</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">Не вдалося скопіювати результати. Спробуйте ще раз.</sys:String>
+    <sys:String x:Key="Str_Speed_ReplaceRunning">У терміналі щось виконується. Зупинити це й запустити тест швидкості?</sys:String>
+    <sys:String x:Key="Str_Term_Font">Шрифт і розмір</sys:String>
+</ResourceDictionary>
