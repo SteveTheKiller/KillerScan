@@ -1,0 +1,500 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ================================================================
+         KillerScan  -  Norsk bokmål (nb-NO) strings.
+         x:Key values are looked up at runtime - never change them.
+         Other locales layer over this file; any key they omit falls back here.
+         ================================================================ -->
+
+    <!-- Title bar / chrome -->
+    <sys:String x:Key="Str_Subtitle">Nettverksskanner</sys:String>
+    <sys:String x:Key="Str_TT_Language">Språk</sys:String>
+    <sys:String x:Key="Str_TT_AppSize">Rull over ordmerket for å endre størrelsen på appen</sys:String>
+    <sys:String x:Key="Str_TT_Theme">Tema</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">Vis eller skjul adapteren og linkhastigheten</sys:String>
+    <sys:String x:Key="Str_Light_Idle">Ingenting skannet ennå</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">Skanner</sys:String>
+    <sys:String x:Key="Str_Light_Deep">Dyp skanning pågår</sys:String>
+    <sys:String x:Key="Str_Light_Done">Skanningen er fullført</sys:String>
+    <sys:String x:Key="Str_TT_Export">Eksporter</sys:String>
+    <sys:String x:Key="Str_Lbl_Theme">TEMA</sys:String>
+    <sys:String x:Key="Str_Lbl_Accent">AKSENT</sys:String>
+
+    <!-- Scan bar -->
+    <sys:String x:Key="Str_Lbl_Subnet">Subnett</sys:String>
+    <sys:String x:Key="Str_Btn_Scan">Skann</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Dypskann</sys:String>
+    <sys:String x:Key="Str_Lbl_Local">Lokal</sys:String>
+    <sys:String x:Key="Str_Lbl_Gateway">Gateway</sys:String>
+    <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
+
+    <!-- Status bar + counts ({0}/{1} are filled in by the app - keep them) -->
+    <sys:String x:Key="Str_Btn_Stop">Stopp</sys:String>
+    <sys:String x:Key="Str_Status_Ready">Klar - {0} OUI-produsenter lastet inn</sys:String>
+    <sys:String x:Key="Str_Count_Found">{0} enheter funnet</sys:String>
+    <sys:String x:Key="Str_Count_Shown">{0} av {1} vist</sys:String>
+
+    <!-- Results pane -->
+    <sys:String x:Key="Str_DiscoveredDevices">Oppdagede enheter</sys:String>
+    <sys:String x:Key="Str_Topology_Title">Nettverkstopologi</sys:String>
+    <sys:String x:Key="Str_Topology_Role">Rolle</sys:String>
+    <sys:String x:Key="Str_TT_TopologyOrder">Ordne topologien etter</sys:String>
+    <sys:String x:Key="Str_Sc_CycleTopologyOrder">Bla gjennom topologiordninger</sys:String>
+    <sys:String x:Key="Str_History_Title">Skanneloggen</sys:String>
+    <sys:String x:Key="Str_History_Empty">Ingen fullførte skanninger ennå.</sys:String>
+    <sys:String x:Key="Str_History_Change">Endring</sys:String>
+    <sys:String x:Key="Str_History_Added">Lagt til</sys:String>
+    <sys:String x:Key="Str_History_Removed">Mangler</sys:String>
+    <sys:String x:Key="Str_History_Changed">Endret</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">Første skanning av dette målet. Alle enheter er nye.</sys:String>
+    <sys:String x:Key="Str_History_Summary">{0} lagt til, {1} mangler, {2} endret</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">ENDRINGER</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">ALLE ENHETER</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">{0} enheter i denne skanningen</sys:String>
+    <sys:String x:Key="Str_TT_Topology">Slå nettverkstopologi av eller på</sys:String>
+    <sys:String x:Key="Str_Topology_Network">Lokalt nettverk</sys:String>
+    <sys:String x:Key="Str_Topology_Inferred">Utledet tilkobling</sys:String>
+    <sys:String x:Key="Str_Topology_Empty">Skann nettverket for å legge til oppdagede enheter.</sys:String>
+    <sys:String x:Key="Str_FilterPlaceholder">Filtrer enheter...</sys:String>
+    <sys:String x:Key="Str_Export_Csv">Eksporter som CSV</sys:String>
+    <sys:String x:Key="Str_Export_Html">Eksporter som HTML</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">Eksporter topologi som PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">Eksporter som gjennomsiktig PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">Eksporter til JPG</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">Eksporter til HTML</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">Eksporter kort som PNG</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">Eksporter økt til TXT</sys:String>
+    <sys:String x:Key="Str_Filter_Text">Tekstfil</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">JPEG-bilde</sys:String>
+    <sys:String x:Key="Str_Export_ServicesCsv">Eksporter tjenester som CSV</sys:String>
+
+    <!-- Results columns -->
+    <sys:String x:Key="Str_Col_Ip">IP-adresse</sys:String>
+    <sys:String x:Key="Str_Col_Host">Vertsnavn</sys:String>
+    <sys:String x:Key="Str_Col_Mac">MAC-adresse</sys:String>
+    <sys:String x:Key="Str_Col_Vendor">Produsent</sys:String>
+    <sys:String x:Key="Str_Col_Type">Type</sys:String>
+    <sys:String x:Key="Str_Col_Ports">Åpne porter</sys:String>
+
+    <!-- Right-click device menu -->
+    <sys:String x:Key="Str_Ctx_RescanOne">Skann IP på nytt</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanMany">Skann IP-er på nytt</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyIp">Kopier IP-adresse</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyMac">Kopier MAC-adresse</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyHost">Kopier vertsnavn</sys:String>
+    <sys:String x:Key="Str_Ctx_Ping">Ping</sys:String>
+    <sys:String x:Key="Str_Ctx_OpenBrowser">Åpne i nettleser</sys:String>
+    <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
+    <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">SSH som...</sys:String>
+    <sys:String x:Key="Str_Ctx_SetType">Angi enhetstype</sys:String>
+    <sys:String x:Key="Str_Ctx_ClearOverride">Fjern overstyring</sys:String>
+
+    <!-- SSH username prompt ({0} is the device, filled in by the app) -->
+    <sys:String x:Key="Str_Ssh_Head">Koble til {0} via SSH</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">Kontoen det skal logges på som. KillerScan husker den for denne enheten, så du blir bare spurt én gang. La feltet stå tomt for at SSH-klienten skal bestemme.</sys:String>
+    <sys:String x:Key="Str_Ssh_User">BRUKERNAVN</sys:String>
+    <sys:String x:Key="Str_Ssh_Connect">Koble til</sys:String>
+    <sys:String x:Key="Str_Btn_Cancel">Avbryt</sys:String>
+
+    <!-- Theme names, shown in the rail's theme flyout. Shared with KillerShell and KillerNotes
+         key for key, so the same thirteen themes read the same way across the family. SE98 is
+         listed here ahead of the theme itself landing, because the name is not translated. -->
+    <sys:String x:Key="Str_Theme_Dark">Mørk</sys:String>
+    <sys:String x:Key="Str_Theme_Light">Lys</sys:String>
+    <sys:String x:Key="Str_Theme_Black">Svart</sys:String>
+    <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+    <sys:String x:Key="Str_Theme_Blood">Blod</sys:String>
+    <sys:String x:Key="Str_Theme_Greed">Grådighet</sys:String>
+    <sys:String x:Key="Str_Theme_Cyanotic">Cyanotisk</sys:String>
+    <sys:String x:Key="Str_Theme_Ectoplasm">Ektoplasma</sys:String>
+    <sys:String x:Key="Str_Theme_Decay">Forfall</sys:String>
+    <sys:String x:Key="Str_Theme_Malaise">Ubehag</sys:String>
+    <sys:String x:Key="Str_Theme_Sepulchre">Gravkammer</sys:String>
+    <sys:String x:Key="Str_Theme_Delirium">Delirium</sys:String>
+    <sys:String x:Key="Str_Theme_Mourning">Sorg</sys:String>
+
+    <!-- About overlay -->
+    <sys:String x:Key="Str_About_Version">VERSJON</sys:String>
+    <sys:String x:Key="Str_About_Publisher">UTGIVER</sys:String>
+    <sys:String x:Key="Str_About_Thumbprint">AVTRYKK</sys:String>
+    <sys:String x:Key="Str_About_Sha">EXE SHA-256</sys:String>
+    <sys:String x:Key="Str_About_Db">PRODUSENTDATABASE</sys:String>
+    <sys:String x:Key="Str_About_DbUpdate">Oppdater fra de nyeste registrene</sys:String>
+    <sys:String x:Key="Str_About_DbHint">Fra Wireshark OUI-listen.</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} oppføringer</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">oppdatert {0}</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">følger med appen</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">ARP- og IP-søk med produsentoppslag, enhetsklassifisering og en HTML-eksport som kan sorteres og få egne temaer. Et </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve"> verktøy.</sys:String>
+
+    <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
+    <sys:String x:Key="Str_St_Discovering">Oppdager verter på {0}...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingMacs">Løser opp {0} MAC-adresser...</sys:String>
+    <sys:String x:Key="Str_St_Probing">Undersøker {0} aktive verter...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingHosts">Løser opp {0} verter...</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">Skanningen er fullført - {0} enheter funnet</sys:String>
+    <sys:String x:Key="Str_St_Ready">Klar</sys:String>
+    <sys:String x:Key="Str_St_ScanCanceled">Skanningen ble avbrutt</sys:String>
+    <sys:String x:Key="Str_St_Rescanning">Dypskanner {0} ...</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">Ny skanning fullført - {0} vert(er) oppdatert</sys:String>
+    <sys:String x:Key="Str_St_Exported">Eksportert til {0}</sys:String>
+    <sys:String x:Key="Str_St_OverrideSet">Overstyring satt: {0} = {1}</sys:String>
+    <sys:String x:Key="Str_St_OverrideCleared">Overstyringen er fjernet for {0}</sys:String>
+    <sys:String x:Key="Str_St_AppSize">Appstørrelse {0} %</sys:String>
+    <sys:String x:Key="Str_St_BadTarget">Ikke et gyldig mål: "{0}" - bruk 192.168.1.0/24, 192.168.1.7 eller 192.168.1.10-50, atskilt med komma</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">Det er {0} adresser - for mange for én skanning (grense {1}). Begrens området, eller skann det i deler.</sys:String>
+    <sys:String x:Key="Str_St_NoTarget">Skriv inn et subnett, en adresse eller et område som skal skannes</sys:String>
+
+    <!-- Portable footer badge + install dialog -->
+    <sys:String x:Key="Str_Portable">PORTABEL</sys:String>
+    <sys:String x:Key="Str_TT_Portable">Portabel modus - installer KillerScan</sys:String>
+    <sys:String x:Key="Str_InstallBtn">Installer KillerScan</sys:String>
+    <sys:String x:Key="Str_Install_AllUsers">Installer for alle brukere (krever administrator)</sys:String>
+    <sys:String x:Key="Str_Install_AllUsersNote">Installeres i Program Files for alle kontoer på denne PC-en. Windows ber om tillatelse.</sys:String>
+    <sys:String x:Key="Str_Install_HeadUser">Installere KillerScan i brukerprofilen din?</sys:String>
+    <sys:String x:Key="Str_Install_HeadAll">Installere KillerScan for alle brukere på denne PC-en?</sys:String>
+    <sys:String x:Key="Str_Install_AlreadyAllUsers">KillerScan er allerede installert for alle brukere på denne PC-en, så dette oppdaterer den kopien. Windows ber om tillatelse.</sys:String>
+    <sys:String x:Key="Str_St_InstallCanceled">Installasjonen ble avbrutt</sys:String>
+
+    <!-- Themed window system menu (right-click the title bar / Alt+Space) -->
+    <sys:String x:Key="Str_Sys_Restore">Gjenopprett</sys:String>
+    <sys:String x:Key="Str_Sys_Move">Flytt</sys:String>
+    <sys:String x:Key="Str_Sys_Size">Størrelse</sys:String>
+    <sys:String x:Key="Str_Sys_Minimize">Minimer</sys:String>
+    <sys:String x:Key="Str_Sys_Maximize">Maksimer</sys:String>
+    <sys:String x:Key="Str_Sys_Close">Lukk</sys:String>
+
+    <!-- Keyboard shortcuts overlay (F1) -->
+    <sys:String x:Key="Str_TT_Shortcuts">Hurtigtaster (F1)</sys:String>
+    <sys:String x:Key="Str_TT_ExpandSidebar">Vis skanneloggen</sys:String>
+    <sys:String x:Key="Str_TT_CollapseSidebar">Skjul skanneloggen</sys:String>
+    <sys:String x:Key="Str_Shortcuts_Title">Hurtigtaster</sys:String>
+    <sys:String x:Key="Str_KS_ViewList">LISTE</sys:String>
+    <sys:String x:Key="Str_KS_ViewKeyboard">TASTATUR</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Full veiledning &amp; fremgangsmåter på nett</sys:String>
+    <sys:String x:Key="Str_KS_Views">VISNINGER</sys:String>
+    <sys:String x:Key="Str_KS_Scan">SKANNING</sys:String>
+    <sys:String x:Key="Str_KS_Device">ENHETER</sys:String>
+    <sys:String x:Key="Str_KS_Topology">TOPOLOGI</sys:String>
+    <sys:String x:Key="Str_KS_Toolbar">VERKTØYLINJE</sys:String>
+    <sys:String x:Key="Str_KS_App">APP</sys:String>
+    <sys:String x:Key="Str_Sc_Scan">Start eller stopp en skanning</sys:String>
+    <sys:String x:Key="Str_Sc_Cancel">Avbryt skanningen, eller lukk dette</sys:String>
+    <sys:String x:Key="Str_Sc_Rescan">Dypskann de valgte vertene på nytt</sys:String>
+    <sys:String x:Key="Str_Sc_Subnet">Gå til subnettfeltet</sys:String>
+    <sys:String x:Key="Str_Sc_SelectAll">Merk alle enheter</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Lagre enheter som CSV</sys:String>
+    <sys:String x:Key="Str_Sc_Browser">Åpne den valgte enheten i en nettleser</sys:String>
+    <sys:String x:Key="Str_Sc_Ping">Ping den valgte enheten</sys:String>
+    <sys:String x:Key="Str_Sc_Rdp">Åpne Eksternt skrivebord til den valgte enheten</sys:String>
+    <sys:String x:Key="Str_Sc_Ssh">Koble til den valgte enheten via SSH</sys:String>
+    <sys:String x:Key="Str_Sc_SshAs">Velg en SSH-konto og koble til</sys:String>
+    <sys:String x:Key="Str_Sc_CopyIp">Kopier den valgte IP-adressen</sys:String>
+    <sys:String x:Key="Str_Sc_CopyMac">Kopier den valgte MAC-adressen</sys:String>
+    <sys:String x:Key="Str_Sc_CopyHost">Kopier det valgte vertsnavnet</sys:String>
+    <sys:String x:Key="Str_Sc_DeviceMenu">Åpne alle handlinger for den valgte enheten</sys:String>
+    <sys:String x:Key="Str_Sc_AppBigger">Gjør appen større</sys:String>
+    <sys:String x:Key="Str_Sc_AppSmaller">Gjør appen mindre</sys:String>
+    <sys:String x:Key="Str_Sc_AppReset">Tilbakestill appstørrelsen</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Vis eller skjul hurtigtaster</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">Vis Enheter</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">Vis Terminal</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">Vis valgt enhet i Keep Alive</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">Klipp ut</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">Kopier</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">Lim inn</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">Merk alt</sys:String>
+    <sys:String x:Key="Str_Sc_About">Åpne Om-vinduet</sys:String>
+    <sys:String x:Key="Str_Sc_Hint">Appstørrelsen følger også musehjulet over ordmerket.</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">Hold inne Ctrl / Shift / Alt for å forhåndsvise et lag</sys:String>
+
+    <!-- ==== DIALOGS, UPDATES AND ERRORS ==== -->
+    <sys:String x:Key="Str_About_Title">Om KillerScan</sys:String>
+    <sys:String x:Key="Str_TT_About">Om KillerScan</sys:String>
+    <sys:String x:Key="Str_About_Aka" xml:space="preserve">AKA </sys:String>
+    <sys:String x:Key="Str_About_Unsigned">(ikke signert eller kjedekontroll mislyktes)</sys:String>
+    <sys:String x:Key="Str_About_Computing">beregner...</sys:String>
+    <sys:String x:Key="Str_Ssh_Title">SSH-konto</sys:String>
+    <sys:String x:Key="Str_Btn_Install">Installer</sys:String>
+    <sys:String x:Key="Str_Install_BulletShortcut">- Snarvei i Startmenyen</sys:String>
+    <sys:String x:Key="Str_Install_BulletArp">- Vises i «Legg til eller fjern programmer»</sys:String>
+
+    <!-- Vendor database. {0} is a count, already formatted with the locale's own separators. -->
+    <sys:String x:Key="Str_Db_Checking">Ser etter nyere produsentdata...</sys:String>
+    <sys:String x:Key="Str_Db_Downloading">Laster ned produsentdata...</sys:String>
+    <sys:String x:Key="Str_Db_Fallback">Prøver reservekilde...</sys:String>
+    <sys:String x:Key="Str_Db_Blocked">Oppdateringen mislyktes - nedlastingen ble blokkert eller var tom. Listen din er uendret.</sys:String>
+    <sys:String x:Key="Str_Db_Smaller">De nyeste dataene hadde {0} oppføringer, færre enn de {1} du har nå. Beholdt listen din.</sys:String>
+    <sys:String x:Key="Str_Db_UpToDate">Databasen er allerede oppdatert ({0} oppføringer).</sys:String>
+    <sys:String x:Key="Str_Db_Updated">Oppdatert til {0} oppføringer.</sys:String>
+    <sys:String x:Key="Str_Db_SaveFailed">Kunne ikke lagre databasen: {0}</sys:String>
+    <sys:String x:Key="Str_Db_Failed">Oppdateringen mislyktes: {0}</sys:String>
+
+    <!-- Self-update. {0} is the release tag; in the heading {0} is the app name and {1} the tag. -->
+    <sys:String x:Key="Str_Upd_Available">Oppdatering tilgjengelig: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Downloading">Laster ned...</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmHead">Laste ned og installere {0} {1}?</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBody">Appen lukkes og åpnes på nytt automatisk.</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBtn">Oppdater</sys:String>
+
+    <!-- Install conflict, uninstall. Two whole sentences rather than one with the scope
+         substituted in: a language that inflects the noun cannot take a drop-in word. -->
+    <sys:String x:Key="Str_Conflict_Title">installasjonskonflikt</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveUser">KillerScan er installert to ganger. Fjerne den andre kopien per bruker nå?
+
+Innstillingene dine fjernes ikke.</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveMachine">KillerScan er installert to ganger. Fjerne den andre kopien for alle brukere nå?
+
+Innstillingene dine fjernes ikke.</sys:String>
+    <sys:String x:Key="Str_Install_Failed">Installasjonen mislyktes:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Title">Avinstaller</sys:String>
+    <sys:String x:Key="Str_Uninstall_Confirm">Avinstallere KillerScan fra denne datamaskinen?</sys:String>
+    <sys:String x:Key="Str_Uninstall_NoAdmin">Avinstalleringen kunne ikke be om administratortilgang:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Done">KillerScan er avinstallert.</sys:String>
+
+    <!-- Errors and file dialogs. The text before the | in a save filter is what Windows shows
+         in its type dropdown; the *.ext pattern after it is not interface text. -->
+    <sys:String x:Key="Str_Err_Export">Eksportfeil: {0}</sys:String>
+    <sys:String x:Key="Str_Err_Scan">Skannefeil: {0}</sys:String>
+    <sys:String x:Key="Str_Filter_Csv">CSV-fil</sys:String>
+    <sys:String x:Key="Str_Filter_Html">HTML-rapport</sys:String>
+    <sys:String x:Key="Str_Filter_Png">PNG-bilde</sys:String>
+
+    <!-- Adapter kind and the randomized-MAC vendor placeholder. -->
+    <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
+    <sys:String x:Key="Str_Vendor_Randomized">(Tilfeldig)</sys:String>
+
+    <!-- ==== EXPORTED HTML REPORT ====
+         The report reuses the grid's Str_Col_* headers and the picker's Str_Theme_* names, so it
+         can never disagree with the app that produced it. Only these are its own. Accent names
+         are new: the app's accent dots are swatches with no text, but the report's need titles. -->
+    <sys:String x:Key="Str_Rep_Theme">Tema</sys:String>
+    <sys:String x:Key="Str_Rep_Accent">Aksent</sys:String>
+    <sys:String x:Key="Str_Rep_Subnet">Subnett</sys:String>
+    <sys:String x:Key="Str_Rep_Scanned">Skannet</sys:String>
+    <sys:String x:Key="Str_Rep_Devices">enheter</sys:String>
+    <sys:String x:Key="Str_Rep_GeneratedBy">Opprettet av</sys:String>
+    <sys:String x:Key="Str_Accent_Red">Rød</sys:String>
+    <sys:String x:Key="Str_Accent_Orange">Oransje</sys:String>
+    <sys:String x:Key="Str_Accent_Green">Grønn</sys:String>
+    <sys:String x:Key="Str_Accent_Teal">Blågrønn</sys:String>
+    <sys:String x:Key="Str_Accent_Blue">Blå</sys:String>
+    <sys:String x:Key="Str_Accent_Purple">Lilla</sys:String>
+
+    <!-- ==== DEVICE TYPES ====================================================================
+         DISPLAY LABELS ONLY. The stored value stays English in every locale - it is written to
+         the override registry, matched by the Type column's color triggers, used as a CSS class
+         in the exported report and accepted by the CLI's /type filter. DeviceTypeConverter maps
+         one to the other on the way to the screen, and derives each key by stripping everything
+         that is not a letter or digit ("Switch/AP" -> Str_Dev_SwitchAP).
+
+         The list covers the classifier's whole vocabulary, not just the 21 rows in the "Set
+         device type" menu: a type the menu cannot set can still be detected and shown.
+
+         Product names (Windows, Linux, NAS, IoT, DNS, Apple, Android) are proper nouns and stay
+         as they are when translated - only the surrounding words change. -->
+    <sys:String x:Key="Str_Dev_Router">Ruter</sys:String>
+    <sys:String x:Key="Str_Dev_RouterDNS">Ruter/DNS</sys:String>
+    <sys:String x:Key="Str_Dev_SwitchAP">Svitsj/AP</sys:String>
+    <sys:String x:Key="Str_Dev_Network">Nettverk</sys:String>
+    <sys:String x:Key="Str_Dev_Windows">Windows</sys:String>
+    <sys:String x:Key="Str_Dev_WindowsServer">Windows Server</sys:String>
+    <sys:String x:Key="Str_Dev_LinuxSSH">Linux/SSH</sys:String>
+    <sys:String x:Key="Str_Dev_Server">Server</sys:String>
+    <sys:String x:Key="Str_Dev_Printer">Skriver</sys:String>
+    <sys:String x:Key="Str_Dev_SmartTV">Smart-TV</sys:String>
+    <sys:String x:Key="Str_Dev_AppleTV">Apple TV</sys:String>
+    <sys:String x:Key="Str_Dev_MediaStreamer">Mediestrømmer</sys:String>
+    <sys:String x:Key="Str_Dev_AppleDevice">Apple-enhet</sys:String>
+    <sys:String x:Key="Str_Dev_iPhone">iPhone</sys:String>
+    <sys:String x:Key="Str_Dev_Android">Android</sys:String>
+    <sys:String x:Key="Str_Dev_Mobile">Mobil</sys:String>
+    <sys:String x:Key="Str_Dev_IoT">IoT</sys:String>
+    <sys:String x:Key="Str_Dev_NAS">NAS</sys:String>
+    <sys:String x:Key="Str_Dev_Camera">Kamera</sys:String>
+    <sys:String x:Key="Str_Dev_Hypervisor">Hypervisor</sys:String>
+    <sys:String x:Key="Str_Dev_HomeAssistant">Home Assistant</sys:String>
+    <sys:String x:Key="Str_Dev_DNSServer">DNS-server</sys:String>
+    <sys:String x:Key="Str_Dev_WebDevice">Nettenhet</sys:String>
+    <sys:String x:Key="Str_Dev_Other">Annet</sys:String>
+    <sys:String x:Key="Str_Dev_Unknown">Ukjent</sys:String>
+
+    <sys:String x:Key="Str_Btn_Open">Åpne</sys:String>
+    <sys:String x:Key="Str_Btn_Save">Lagre</sys:String>
+    <sys:String x:Key="Str_Col_Modified">endret</sys:String>
+    <sys:String x:Key="Str_Col_Name">navn</sys:String>
+    <sys:String x:Key="Str_Col_Size">størrelse</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">Alle filer</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">Filnavn:</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">Filtype:</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">Ingenting her samsvarer med gjeldende filtype.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">Ingen forhåndsvisning tilgjengelig</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">Den filen finnes ikke.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">Den mappen finnes ikke.</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">Erstatte {0}?</sys:String>
+    <sys:String x:Key="Str_Btn_Replace">Erstatt</sys:String>
+    <sys:String x:Key="Str_Dlg_Preview">Forhåndsvisning</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">Fest til steder</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">Fjern fra steder</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">Skrivebord</sys:String>
+    <sys:String x:Key="Str_QA_Documents">Dokumenter</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">Nedlastinger</sys:String>
+    <sys:String x:Key="Str_QA_Home">Hjem</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">Bilder</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">{0} mappe(r), {1} fil(er)</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">Nylige plasseringer</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">Vis skjulte elementer og systemelementer</sys:String>
+    <sys:String x:Key="Str_TT_Up">Opp ett mappenivå</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">Detaljvisning</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">Ikonvisning</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">Listevisning</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">Gi enheten nytt navn</sys:String>
+    <sys:String x:Key="Str_Rename_Label">Navn:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">Lagre</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">Fjern manuelt navn</sys:String>
+    <sys:String x:Key="Str_Trust_Device">Klarert enhet</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">Grønn: klarert enhet. Gul: ikke i listen over klarerte enheter.</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">Klarert grunnlinje opprettet med {0} enheter.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">Varsel: {0} ukjente enheter funnet.</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">Ikke i listen over klarerte enheter:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">og {0} til</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">Høyreklikk en enhet for å merke den som klarert.</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0} enheter, {1} med åpne porter</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">Overvåker {0} mål, {1} svarer ikke</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} kl. {1}, {2} enheter registrert</sys:String>
+    <sys:String x:Key="Str_Services_Title">Tjenester</sys:String>
+    <sys:String x:Key="Str_Services_Service">Tjeneste</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">Skanneprofiler</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">Lagre gjeldende profil</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">Kjør profil</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">Last inn mål</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">Dypskann alle etterpå</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">Slett profil</sys:String>
+    <sys:String x:Key="Str_Watch_Title">Tilkoblingsovervåking</sys:String>
+    <sys:String x:Key="Str_Watch_Targets">IP-adresser (opptil 16, atskilt med komma)</sys:String>
+    <sys:String x:Key="Str_Watch_Start">Start</sys:String>
+    <sys:String x:Key="Str_Watch_Stop">Stopp</sys:String>
+    <sys:String x:Key="Str_Watch_Hint">Sjekker ICMP hvert andre sekund. Uteblitt svar kan bety filtrering, ikke et avbrudd.</sys:String>
+    <sys:String x:Key="Str_Watch_Invalid">Skriv inn 1 til 16 gyldige IP-adresser.</sys:String>
+    <sys:String x:Key="Str_Watch_Reply">Svar</sys:String>
+    <sys:String x:Key="Str_Watch_NoReply">Uten svar</sys:String>
+    <sys:String x:Key="Str_Watch_Waiting">Venter</sys:String>
+    <sys:String x:Key="Str_Watch_Sent">Sendt</sys:String>
+    <sys:String x:Key="Str_Watch_Loss">Tap</sys:String>
+    <sys:String x:Key="Str_Watch_Latency">Siste / gjennomsnitt (ms)</sys:String>
+    <sys:String x:Key="Str_Watch_Changed">Siste endring</sys:String>
+    <sys:String x:Key="Str_Watch_Events">Nylige endringer</sys:String>
+    <sys:String x:Key="Str_Export_Txt">Eksporter som TXT</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">Tøm loggen</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">Kopier adresse</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">Tilbakestill statistikk</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">Slutt å overvåke dette målet</sys:String>
+    <sys:String x:Key="Str_Trace_Run">Spor rute</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">Hopp {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">Uten svar</sys:String>
+    <sys:String x:Key="Str_Diag_Working">Sjekker</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">Sjekk på nytt</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">Velg et kort for å kjøre sjekker mot det målet.</sys:String>
+    <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
+    <sys:String x:Key="Str_Watch_Stopped">Stoppet</sys:String>
+    <sys:String x:Key="Str_Diag_Title">Enhetsdiagnostikk</sys:String>
+    <sys:String x:Key="Str_Diag_Run">Kjør sjekker</sys:String>
+    <sys:String x:Key="Str_Diag_Hint">Sjekker DNS, ICMP, den lokale ruten og vanlige eller tidligere oppdagede TCP-porter. En mislykket sjekk beviser ikke at enheten er frakoblet.</sys:String>
+    <sys:String x:Key="Str_Diag_Check">Sjekk</sys:String>
+    <sys:String x:Key="Str_Diag_Result">Resultat</sys:String>
+    <sys:String x:Key="Str_Diag_Dns">Omvendt DNS</sys:String>
+    <sys:String x:Key="Str_Diag_Match">Fremover-DNS samsvarer</sys:String>
+    <sys:String x:Key="Str_Diag_Mismatch">Fremover-DNS samsvarer ikke</sys:String>
+    <sys:String x:Key="Str_Diag_Route">Lokal rute</sys:String>
+    <sys:String x:Key="Str_Diag_RouteValue">Grensesnitt: {0}; neste hopp: {1}</sys:String>
+    <sys:String x:Key="Str_Diag_OnLink">På lenken</sys:String>
+    <sys:String x:Key="Str_Diag_Open">Tilkoblet</sys:String>
+    <sys:String x:Key="Str_Diag_Failed">Ingen respons eller tilkoblingen ble avvist</sys:String>
+    <sys:String x:Key="Str_Diag_Unavailable">Utilgjengelig</sys:String>
+    <sys:String x:Key="Str_Diag_Select">Velg en enhet først.</sys:String>
+    <sys:String x:Key="Str_Diag_Error">Sjekkene kunne ikke fullføres.</sys:String>
+    <sys:String x:Key="Str_Diag_Time">Sjekket kl.</sys:String>
+    <sys:String x:Key="Str_Watch_Reset">Når du starter på nytt, fjernes de forrige resultatene.</sys:String>
+    <sys:String x:Key="Str_Watch_Add">Overvåk enhet</sys:String>
+    <sys:String x:Key="Str_Workspace_NewScan">Ny skanning</sys:String>
+    <sys:String x:Key="Str_View_Devices">Enheter</sys:String>
+    <sys:String x:Key="Str_View_Topology">Topologi</sys:String>
+    <sys:String x:Key="Str_View_KeepAlive">Keep Alive</sys:String>
+    <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_Copy">Kopier</sys:String>
+    <sys:String x:Key="Str_Term_Paste">Lim inn</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">Merk alt</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">Kopier alt</sys:String>
+    <sys:String x:Key="Str_Term_Clear">Tøm</sys:String>
+    <sys:String x:Key="Str_Workspace_EscStop">Esc for å stoppe</sys:String>
+    <sys:String x:Key="Str_Workspace_Split">Del ruter</sys:String>
+    <sys:String x:Key="Str_Workspace_Move">Flytt til det andre panelet</sys:String>
+    <sys:String x:Key="Str_Workspace_Close">Lukk fane</sys:String>
+    <sys:String x:Key="Str_Workspace_Next">Neste fane</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenTab">Åpne i fane</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenBeside">Åpne ved siden av</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenExternal">Åpne i eget vindu</sys:String>
+    <sys:String x:Key="Str_Workspace_Exited">Prosessen avsluttet ({0})</sys:String>
+    <sys:String x:Key="Str_Workspace_StartFailed">Kunne ikke starte terminalen: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">Verktøylinje</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">Ingen tekst</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">Små ikoner</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">Store ikoner</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">Tekst ved siden av ikoner</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">Tekst under ikoner</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">Bare tekst</sys:String>
+    <sys:String x:Key="Str_Clipboard_Failed">Kunne ikke kopiere til utklippstavlen. Prøv igjen.</sys:String>
+    <sys:String x:Key="Str_KS_Base">Base</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
+    <sys:String x:Key="Str_Speed_Tagline">Mål nedlasting, opplasting og ventetid under belastning.</sys:String>
+    <sys:String x:Key="Str_Speed_Consent">Trykk Enter for å starte eller Esc for å avbryte.</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">Ookla speedtest CLI er ikke installert.</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">KillerScan kan laste den ned fra install.speedtest.net (omtrent 4 MB), eller kjøre sin egen HTTP-gjennomstrømningstest i stedet, som ikke installerer noe.</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">Laste ned Ookla CLI? (y/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">Nedlastingen mislyktes: </sys:String>
+    <sys:String x:Key="Str_Speed_Server">Server</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">Internettleverandør</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">Ventetid</sys:String>
+    <sys:String x:Key="Str_Speed_Download">Nedlasting</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">Opplasting</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">jitter</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">Kjører den innebygde HTTP-gjennomstrømningstesten. Disse tallene er veiledende, ikke et offisielt speedtest.net-resultat.</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">uten svar</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Testen kunne ikke fullføres: </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">URL til testserver</sys:String>
+    <sys:String x:Key="Str_Speed_Start">Start test</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">Stopp test</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">Ventetid i hvile</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">Ventetid under belastning</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Skriv inn en URL til en testserver, og start deretter testen. Den kan overføre opptil 6 GiB.</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">Varmer opp</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">Testen er fullført</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">Testen ble avbrutt</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">Datagrensen er nådd; målingens varighet ble forkortet.</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">Kopier resultater</sys:String>
+    <sys:String x:Key="Str_Speed_Error">Testen mislyktes: {0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">Skriv inn en HTTPS-URL til en testserver.</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">Tilkoblinger</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">Overført</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">Ikke målt</sys:String>
+    <sys:String x:Key="Str_Speed_Run">Tester</sys:String>
+    <sys:String x:Key="Str_Speed_Native">Måler gjennomstrømning og HTTP-rundturstid til den valgte serveren. Resultatene avhenger av den ruten og den serveren.</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">Testserveren svarte ikke i tide.</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">Kunne ikke koble til testserveren.</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">Testserveren kunne ikke opprette en sikker tilkobling.</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">Testserveren er opptatt. Prøv igjen senere.</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">Testserveren returnerte et ugyldig svar.</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">Overføringen mislyktes. Sjekk tilkoblingen og prøv igjen.</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">Kunne ikke kopiere resultatene. Prøv igjen.</sys:String>
+    <sys:String x:Key="Str_Speed_ReplaceRunning">Noe kjører i terminalen. Stoppe det og kjøre hastighetstesten i stedet?</sys:String>
+    <sys:String x:Key="Str_Term_Font">Skrifttype og størrelse</sys:String>
+</ResourceDictionary>

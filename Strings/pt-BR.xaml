@@ -1,0 +1,500 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ================================================================
+         KillerScan  -  Português (Brasil) (pt-BR) strings.
+         x:Key values are looked up at runtime - never change them.
+         Other locales layer over this file; any key they omit falls back here.
+         ================================================================ -->
+
+    <!-- Title bar / chrome -->
+    <sys:String x:Key="Str_Subtitle">Scanner de Rede</sys:String>
+    <sys:String x:Key="Str_TT_Language">Idioma</sys:String>
+    <sys:String x:Key="Str_TT_AppSize">Role sobre o logotipo para redimensionar o app</sys:String>
+    <sys:String x:Key="Str_TT_Theme">Tema</sys:String>
+    <sys:String x:Key="Str_TT_SpeedTest">KillerSpeed</sys:String>
+    <sys:String x:Key="Str_TT_FooterNetwork">Mostrar ou ocultar o adaptador e a velocidade do link</sys:String>
+    <sys:String x:Key="Str_Light_Idle">Nada verificado ainda</sys:String>
+    <sys:String x:Key="Str_Light_Scanning">Verificando</sys:String>
+    <sys:String x:Key="Str_Light_Deep">Verificação profunda em andamento</sys:String>
+    <sys:String x:Key="Str_Light_Done">Verificação concluída</sys:String>
+    <sys:String x:Key="Str_TT_Export">Exportar</sys:String>
+    <sys:String x:Key="Str_Lbl_Theme">TEMA</sys:String>
+    <sys:String x:Key="Str_Lbl_Accent">DESTAQUE</sys:String>
+
+    <!-- Scan bar -->
+    <sys:String x:Key="Str_Lbl_Subnet">Sub-rede</sys:String>
+    <sys:String x:Key="Str_Btn_Scan">Verificar</sys:String>
+    <sys:String x:Key="Str_Btn_DeepScanAll">Verificação Profunda</sys:String>
+    <sys:String x:Key="Str_Lbl_Local">Local</sys:String>
+    <sys:String x:Key="Str_Lbl_Gateway">Gateway</sys:String>
+    <sys:String x:Key="Str_Lbl_Dns">DNS</sys:String>
+
+    <!-- Status bar + counts ({0}/{1} are filled in by the app - keep them) -->
+    <sys:String x:Key="Str_Btn_Stop">Parar</sys:String>
+    <sys:String x:Key="Str_Status_Ready">Pronto - {0} fabricantes OUI carregados</sys:String>
+    <sys:String x:Key="Str_Count_Found">{0} dispositivos encontrados</sys:String>
+    <sys:String x:Key="Str_Count_Shown">{0} de {1} exibidos</sys:String>
+
+    <!-- Results pane -->
+    <sys:String x:Key="Str_DiscoveredDevices">Dispositivos Descobertos</sys:String>
+    <sys:String x:Key="Str_Topology_Title">Topologia da Rede</sys:String>
+    <sys:String x:Key="Str_Topology_Role">Função</sys:String>
+    <sys:String x:Key="Str_TT_TopologyOrder">Organizar a topologia por</sys:String>
+    <sys:String x:Key="Str_Sc_CycleTopologyOrder">Alternar a organização da topologia</sys:String>
+    <sys:String x:Key="Str_History_Title">Histórico de verificações</sys:String>
+    <sys:String x:Key="Str_History_Empty">Nenhuma verificação concluída ainda.</sys:String>
+    <sys:String x:Key="Str_History_Change">Alteração</sys:String>
+    <sys:String x:Key="Str_History_Added">Adicionado</sys:String>
+    <sys:String x:Key="Str_History_Removed">Ausente</sys:String>
+    <sys:String x:Key="Str_History_Changed">Alterado</sys:String>
+    <sys:String x:Key="Str_History_FirstScan">Primeira verificação deste destino. Todos os dispositivos são novos.</sys:String>
+    <sys:String x:Key="Str_History_Summary">{0} adicionado(s), {1} ausente(s), {2} alterado(s)</sys:String>
+    <sys:String x:Key="Str_History_ViewChanges">ALTERAÇÕES</sys:String>
+    <sys:String x:Key="Str_History_ViewAll">TODOS OS DISPOSITIVOS</sys:String>
+    <sys:String x:Key="Str_History_AllSummary">{0} dispositivos nesta verificação</sys:String>
+    <sys:String x:Key="Str_TT_Topology">Alternar topologia da rede</sys:String>
+    <sys:String x:Key="Str_Topology_Network">Rede local</sys:String>
+    <sys:String x:Key="Str_Topology_Inferred">Conexão inferida</sys:String>
+    <sys:String x:Key="Str_Topology_Empty">Verifique a rede para adicionar os dispositivos descobertos.</sys:String>
+    <sys:String x:Key="Str_FilterPlaceholder">Filtrar dispositivos...</sys:String>
+    <sys:String x:Key="Str_Export_Csv">Exportar como CSV</sys:String>
+    <sys:String x:Key="Str_Export_Html">Exportar como HTML</sys:String>
+    <sys:String x:Key="Str_Export_TopologyPng">Exportar topologia como PNG</sys:String>
+    <sys:String x:Key="Str_Export_SnapPngAlpha">Exportar como PNG transparente</sys:String>
+    <sys:String x:Key="Str_Export_SnapJpeg">Exportar para JPG</sys:String>
+    <sys:String x:Key="Str_Export_SnapSvg">Exportar para HTML</sys:String>
+    <sys:String x:Key="Str_Export_WatchPng">Exportar cartões como PNG</sys:String>
+    <sys:String x:Key="Str_Export_TerminalTxt">Exportar sessão para TXT</sys:String>
+    <sys:String x:Key="Str_Filter_Text">Arquivo de texto</sys:String>
+    <sys:String x:Key="Str_Filter_Jpeg">Imagem JPEG</sys:String>
+    <sys:String x:Key="Str_Export_ServicesCsv">Exportar serviços como CSV</sys:String>
+
+    <!-- Results columns -->
+    <sys:String x:Key="Str_Col_Ip">Endereço IP</sys:String>
+    <sys:String x:Key="Str_Col_Host">Nome do host</sys:String>
+    <sys:String x:Key="Str_Col_Mac">Endereço MAC</sys:String>
+    <sys:String x:Key="Str_Col_Vendor">Fabricante</sys:String>
+    <sys:String x:Key="Str_Col_Type">Tipo</sys:String>
+    <sys:String x:Key="Str_Col_Ports">Portas abertas</sys:String>
+
+    <!-- Right-click device menu -->
+    <sys:String x:Key="Str_Ctx_RescanOne">Verificar IP novamente</sys:String>
+    <sys:String x:Key="Str_Ctx_RescanMany">Verificar IPs novamente</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyIp">Copiar endereço IP</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyMac">Copiar endereço MAC</sys:String>
+    <sys:String x:Key="Str_Ctx_CopyHost">Copiar nome do host</sys:String>
+    <sys:String x:Key="Str_Ctx_Ping">Ping</sys:String>
+    <sys:String x:Key="Str_Ctx_OpenBrowser">Abrir no navegador</sys:String>
+    <sys:String x:Key="Str_Ctx_Rdp">RDP</sys:String>
+    <sys:String x:Key="Str_Ctx_Ssh">SSH</sys:String>
+    <sys:String x:Key="Str_Ctx_SshAs">SSH como...</sys:String>
+    <sys:String x:Key="Str_Ctx_SetType">Definir tipo de dispositivo</sys:String>
+    <sys:String x:Key="Str_Ctx_ClearOverride">Limpar substituição</sys:String>
+
+    <!-- SSH username prompt ({0} is the device, filled in by the app) -->
+    <sys:String x:Key="Str_Ssh_Head">Conectar a {0} por SSH</sys:String>
+    <sys:String x:Key="Str_Ssh_Detail">A conta com a qual entrar. O KillerScan a memoriza para este dispositivo, então você só precisa informá-la uma vez. Deixe em branco para que o cliente SSH decida.</sys:String>
+    <sys:String x:Key="Str_Ssh_User">NOME DE USUÁRIO</sys:String>
+    <sys:String x:Key="Str_Ssh_Connect">Conectar</sys:String>
+    <sys:String x:Key="Str_Btn_Cancel">Cancelar</sys:String>
+
+    <!-- Theme names, shown in the rail's theme flyout. Shared with KillerShell and KillerNotes
+         key for key, so the same thirteen themes read the same way across the family. SE98 is
+         listed here ahead of the theme itself landing, because the name is not translated. -->
+    <sys:String x:Key="Str_Theme_Dark">Escuro</sys:String>
+    <sys:String x:Key="Str_Theme_Light">Claro</sys:String>
+    <sys:String x:Key="Str_Theme_Black">Preto</sys:String>
+    <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+    <sys:String x:Key="Str_Theme_Blood">Sangue</sys:String>
+    <sys:String x:Key="Str_Theme_Greed">Ganância</sys:String>
+    <sys:String x:Key="Str_Theme_Cyanotic">Cianótico</sys:String>
+    <sys:String x:Key="Str_Theme_Ectoplasm">Ectoplasma</sys:String>
+    <sys:String x:Key="Str_Theme_Decay">Decadência</sys:String>
+    <sys:String x:Key="Str_Theme_Malaise">Mal-estar</sys:String>
+    <sys:String x:Key="Str_Theme_Sepulchre">Sepulcro</sys:String>
+    <sys:String x:Key="Str_Theme_Delirium">Delírio</sys:String>
+    <sys:String x:Key="Str_Theme_Mourning">Luto</sys:String>
+
+    <!-- About overlay -->
+    <sys:String x:Key="Str_About_Version">VERSÃO</sys:String>
+    <sys:String x:Key="Str_About_Publisher">EDITOR</sys:String>
+    <sys:String x:Key="Str_About_Thumbprint">IMPRESSÃO DIGITAL</sys:String>
+    <sys:String x:Key="Str_About_Sha">SHA-256 DO EXE</sys:String>
+    <sys:String x:Key="Str_About_Db">BANCO DE DADOS DE FABRICANTES</sys:String>
+    <sys:String x:Key="Str_About_DbUpdate">Atualizar a partir dos registros mais recentes</sys:String>
+    <sys:String x:Key="Str_About_DbHint">Da lista OUI do Wireshark.</sys:String>
+    <sys:String x:Key="Str_About_DbEntries">{0} entradas</sys:String>
+    <sys:String x:Key="Str_About_DbRefreshed">atualizado em {0}</sys:String>
+    <sys:String x:Key="Str_About_DbBundled">incluído no app</sys:String>
+    <sys:String x:Key="Str_About_DescA" xml:space="preserve">Varredura ARP + IP com consulta de fabricante, classificação de dispositivos e uma exportação HTML ordenável e com temas. Um utilitário </sys:String>
+    <sys:String x:Key="Str_About_DescB" xml:space="preserve">.</sys:String>
+
+    <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
+    <sys:String x:Key="Str_St_Discovering">Descobrindo hosts em {0}...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingMacs">Resolvendo {0} endereços MAC...</sys:String>
+    <sys:String x:Key="Str_St_Probing">Sondando {0} hosts ativos...</sys:String>
+    <sys:String x:Key="Str_St_ResolvingHosts">Resolvendo {0} hosts...</sys:String>
+    <sys:String x:Key="Str_St_ScanComplete">Verificação concluída - {0} dispositivos encontrados</sys:String>
+    <sys:String x:Key="Str_St_Ready">Pronto</sys:String>
+    <sys:String x:Key="Str_St_ScanCanceled">Verificação cancelada</sys:String>
+    <sys:String x:Key="Str_St_Rescanning">Verificação profunda de {0} ...</sys:String>
+    <sys:String x:Key="Str_St_RescanDone">Nova verificação concluída - {0} host(s) atualizado(s)</sys:String>
+    <sys:String x:Key="Str_St_Exported">Exportado para {0}</sys:String>
+    <sys:String x:Key="Str_St_OverrideSet">Substituição definida: {0} = {1}</sys:String>
+    <sys:String x:Key="Str_St_OverrideCleared">Substituição removida para {0}</sys:String>
+    <sys:String x:Key="Str_St_AppSize">Tamanho do app {0}%</sys:String>
+    <sys:String x:Key="Str_St_BadTarget">Destino inválido: “{0}” - use 192.168.1.0/24, 192.168.1.7 ou 192.168.1.10-50, separados por vírgulas</sys:String>
+    <sys:String x:Key="Str_St_TooManyAddresses">São {0} endereços - demais para uma única verificação (limite {1}). Reduza o intervalo ou verifique em partes.</sys:String>
+    <sys:String x:Key="Str_St_NoTarget">Informe uma sub-rede, um endereço ou um intervalo para verificar</sys:String>
+
+    <!-- Portable footer badge + install dialog -->
+    <sys:String x:Key="Str_Portable">PORTÁTIL</sys:String>
+    <sys:String x:Key="Str_TT_Portable">Modo portátil - instalar o KillerScan</sys:String>
+    <sys:String x:Key="Str_InstallBtn">Instalar o KillerScan</sys:String>
+    <sys:String x:Key="Str_Install_AllUsers">Instalar para todos os usuários (requer administrador)</sys:String>
+    <sys:String x:Key="Str_Install_AllUsersNote">Instala em Arquivos de Programas para todas as contas neste PC. O Windows pedirá permissão.</sys:String>
+    <sys:String x:Key="Str_Install_HeadUser">Instalar o KillerScan no seu perfil de usuário?</sys:String>
+    <sys:String x:Key="Str_Install_HeadAll">Instalar o KillerScan para todos os usuários neste PC?</sys:String>
+    <sys:String x:Key="Str_Install_AlreadyAllUsers">O KillerScan já está instalado para todos os usuários neste PC, então esta ação atualizará essa cópia. O Windows pedirá permissão.</sys:String>
+    <sys:String x:Key="Str_St_InstallCanceled">Instalação cancelada</sys:String>
+
+    <!-- Themed window system menu (right-click the title bar / Alt+Space) -->
+    <sys:String x:Key="Str_Sys_Restore">Restaurar</sys:String>
+    <sys:String x:Key="Str_Sys_Move">Mover</sys:String>
+    <sys:String x:Key="Str_Sys_Size">Tamanho</sys:String>
+    <sys:String x:Key="Str_Sys_Minimize">Minimizar</sys:String>
+    <sys:String x:Key="Str_Sys_Maximize">Maximizar</sys:String>
+    <sys:String x:Key="Str_Sys_Close">Fechar</sys:String>
+
+    <!-- Keyboard shortcuts overlay (F1) -->
+    <sys:String x:Key="Str_TT_Shortcuts">Atalhos de teclado (F1)</sys:String>
+    <sys:String x:Key="Str_TT_ExpandSidebar">Mostrar histórico de verificações</sys:String>
+    <sys:String x:Key="Str_TT_CollapseSidebar">Ocultar histórico de verificações</sys:String>
+    <sys:String x:Key="Str_Shortcuts_Title">Atalhos de teclado</sys:String>
+    <sys:String x:Key="Str_KS_ViewList">LISTA</sys:String>
+    <sys:String x:Key="Str_KS_ViewKeyboard">TECLADO</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Guia completo e instruções online</sys:String>
+    <sys:String x:Key="Str_KS_Views">EXIBIÇÕES</sys:String>
+    <sys:String x:Key="Str_KS_Scan">VERIFICAÇÃO</sys:String>
+    <sys:String x:Key="Str_KS_Device">DISPOSITIVOS</sys:String>
+    <sys:String x:Key="Str_KS_Topology">TOPOLOGIA</sys:String>
+    <sys:String x:Key="Str_KS_Toolbar">BARRA DE FERRAMENTAS</sys:String>
+    <sys:String x:Key="Str_KS_App">APP</sys:String>
+    <sys:String x:Key="Str_Sc_Scan">Iniciar ou parar uma verificação</sys:String>
+    <sys:String x:Key="Str_Sc_Cancel">Cancelar a verificação ou fechar isto</sys:String>
+    <sys:String x:Key="Str_Sc_Rescan">Refazer a verificação profunda dos hosts selecionados</sys:String>
+    <sys:String x:Key="Str_Sc_Subnet">Ir para a caixa de sub-rede</sys:String>
+    <sys:String x:Key="Str_Sc_SelectAll">Selecionar todos os dispositivos</sys:String>
+    <sys:String x:Key="Str_Sc_Export">Salvar dispositivos como CSV</sys:String>
+    <sys:String x:Key="Str_Sc_Browser">Abrir o dispositivo selecionado em um navegador</sys:String>
+    <sys:String x:Key="Str_Sc_Ping">Fazer ping no dispositivo selecionado</sys:String>
+    <sys:String x:Key="Str_Sc_Rdp">Abrir a Área de Trabalho Remota no dispositivo selecionado</sys:String>
+    <sys:String x:Key="Str_Sc_Ssh">Conectar ao dispositivo selecionado por SSH</sys:String>
+    <sys:String x:Key="Str_Sc_SshAs">Escolher uma conta SSH e conectar</sys:String>
+    <sys:String x:Key="Str_Sc_CopyIp">Copiar o endereço IP selecionado</sys:String>
+    <sys:String x:Key="Str_Sc_CopyMac">Copiar o endereço MAC selecionado</sys:String>
+    <sys:String x:Key="Str_Sc_CopyHost">Copiar o nome do host selecionado</sys:String>
+    <sys:String x:Key="Str_Sc_DeviceMenu">Abrir todas as ações do dispositivo selecionado</sys:String>
+    <sys:String x:Key="Str_Sc_AppBigger">Aumentar o app</sys:String>
+    <sys:String x:Key="Str_Sc_AppSmaller">Diminuir o app</sys:String>
+    <sys:String x:Key="Str_Sc_AppReset">Redefinir o tamanho do app</sys:String>
+    <sys:String x:Key="Str_Sc_Help">Mostrar ou ocultar os atalhos de teclado</sys:String>
+    <sys:String x:Key="Str_Sc_Devices">Mostrar Dispositivos</sys:String>
+    <sys:String x:Key="Str_Sc_Terminal">Mostrar Terminal</sys:String>
+    <sys:String x:Key="Str_Sc_Diagnostics">Mostrar o dispositivo selecionado em Keep Alive</sys:String>
+    <sys:String x:Key="Str_Ctx_Cut">Recortar</sys:String>
+    <sys:String x:Key="Str_Ctx_Copy">Copiar</sys:String>
+    <sys:String x:Key="Str_Ctx_Paste">Colar</sys:String>
+    <sys:String x:Key="Str_Ctx_SelectAll">Selecionar tudo</sys:String>
+    <sys:String x:Key="Str_Sc_About">Abrir a janela Sobre</sys:String>
+    <sys:String x:Key="Str_Sc_Hint">O tamanho do app também acompanha a roda do mouse sobre o logotipo.</sys:String>
+    <sys:String x:Key="Str_KS_HoldHint">Mantenha Ctrl / Shift / Alt pressionado para visualizar uma camada</sys:String>
+
+    <!-- ==== DIALOGS, UPDATES AND ERRORS ==== -->
+    <sys:String x:Key="Str_About_Title">Sobre o KillerScan</sys:String>
+    <sys:String x:Key="Str_TT_About">Sobre o KillerScan</sys:String>
+    <sys:String x:Key="Str_About_Aka" xml:space="preserve">AKA </sys:String>
+    <sys:String x:Key="Str_About_Unsigned">(não assinado ou falha na cadeia)</sys:String>
+    <sys:String x:Key="Str_About_Computing">calculando...</sys:String>
+    <sys:String x:Key="Str_Ssh_Title">Conta SSH</sys:String>
+    <sys:String x:Key="Str_Btn_Install">Instalar</sys:String>
+    <sys:String x:Key="Str_Install_BulletShortcut">- Atalho no Menu Iniciar</sys:String>
+    <sys:String x:Key="Str_Install_BulletArp">- Aparece em Adicionar ou remover programas</sys:String>
+
+    <!-- Vendor database. {0} is a count, already formatted with the locale's own separators. -->
+    <sys:String x:Key="Str_Db_Checking">Verificando dados de fabricantes mais recentes...</sys:String>
+    <sys:String x:Key="Str_Db_Downloading">Baixando dados de fabricantes...</sys:String>
+    <sys:String x:Key="Str_Db_Fallback">Tentando a fonte alternativa...</sys:String>
+    <sys:String x:Key="Str_Db_Blocked">Falha na atualização - o download foi bloqueado ou veio vazio. Sua lista não foi alterada.</sys:String>
+    <sys:String x:Key="Str_Db_Smaller">Os dados mais recentes tinham {0} entradas, menos que as {1} atuais. Sua lista foi mantida.</sys:String>
+    <sys:String x:Key="Str_Db_UpToDate">O banco de dados já está atualizado ({0} entradas).</sys:String>
+    <sys:String x:Key="Str_Db_Updated">Atualizado para {0} entradas.</sys:String>
+    <sys:String x:Key="Str_Db_SaveFailed">Não foi possível salvar o banco de dados: {0}</sys:String>
+    <sys:String x:Key="Str_Db_Failed">Falha na atualização: {0}</sys:String>
+
+    <!-- Self-update. {0} is the release tag; in the heading {0} is the app name and {1} the tag. -->
+    <sys:String x:Key="Str_Upd_Available">Atualização disponível: {0}</sys:String>
+    <sys:String x:Key="Str_Upd_Downloading">Baixando...</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmHead">Baixar e instalar {0} {1}?</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBody">O app será fechado e reaberto automaticamente.</sys:String>
+    <sys:String x:Key="Str_Upd_ConfirmBtn">Atualizar</sys:String>
+
+    <!-- Install conflict, uninstall. Two whole sentences rather than one with the scope
+         substituted in: a language that inflects the noun cannot take a drop-in word. -->
+    <sys:String x:Key="Str_Conflict_Title">conflito de instalação</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveUser">O KillerScan está instalado duas vezes. Remover agora a outra cópia por usuário?
+
+Suas configurações não serão removidas.</sys:String>
+    <sys:String x:Key="Str_Conflict_RemoveMachine">O KillerScan está instalado duas vezes. Remover agora a outra cópia para todos os usuários?
+
+Suas configurações não serão removidas.</sys:String>
+    <sys:String x:Key="Str_Install_Failed">Falha na instalação:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Title">Desinstalar</sys:String>
+    <sys:String x:Key="Str_Uninstall_Confirm">Desinstalar o KillerScan deste computador?</sys:String>
+    <sys:String x:Key="Str_Uninstall_NoAdmin">A desinstalação não conseguiu solicitar acesso de administrador:
+{0}</sys:String>
+    <sys:String x:Key="Str_Uninstall_Done">O KillerScan foi desinstalado.</sys:String>
+
+    <!-- Errors and file dialogs. The text before the | in a save filter is what Windows shows
+         in its type dropdown; the *.ext pattern after it is not interface text. -->
+    <sys:String x:Key="Str_Err_Export">Erro de exportação: {0}</sys:String>
+    <sys:String x:Key="Str_Err_Scan">Erro de verificação: {0}</sys:String>
+    <sys:String x:Key="Str_Filter_Csv">Arquivo CSV</sys:String>
+    <sys:String x:Key="Str_Filter_Html">Relatório HTML</sys:String>
+    <sys:String x:Key="Str_Filter_Png">Imagem PNG</sys:String>
+
+    <!-- Adapter kind and the randomized-MAC vendor placeholder. -->
+    <sys:String x:Key="Str_Iface_WiFi">Wi-Fi</sys:String>
+    <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
+    <sys:String x:Key="Str_Vendor_Randomized">(Aleatório)</sys:String>
+
+    <!-- ==== EXPORTED HTML REPORT ====
+         The report reuses the grid's Str_Col_* headers and the picker's Str_Theme_* names, so it
+         can never disagree with the app that produced it. Only these are its own. Accent names
+         are new: the app's accent dots are swatches with no text, but the report's need titles. -->
+    <sys:String x:Key="Str_Rep_Theme">Tema</sys:String>
+    <sys:String x:Key="Str_Rep_Accent">Destaque</sys:String>
+    <sys:String x:Key="Str_Rep_Subnet">Sub-rede</sys:String>
+    <sys:String x:Key="Str_Rep_Scanned">Verificado</sys:String>
+    <sys:String x:Key="Str_Rep_Devices">dispositivos</sys:String>
+    <sys:String x:Key="Str_Rep_GeneratedBy">Gerado por</sys:String>
+    <sys:String x:Key="Str_Accent_Red">Vermelho</sys:String>
+    <sys:String x:Key="Str_Accent_Orange">Laranja</sys:String>
+    <sys:String x:Key="Str_Accent_Green">Verde</sys:String>
+    <sys:String x:Key="Str_Accent_Teal">Verde-azulado</sys:String>
+    <sys:String x:Key="Str_Accent_Blue">Azul</sys:String>
+    <sys:String x:Key="Str_Accent_Purple">Roxo</sys:String>
+
+    <!-- ==== DEVICE TYPES ====================================================================
+         DISPLAY LABELS ONLY. The stored value stays English in every locale - it is written to
+         the override registry, matched by the Type column's color triggers, used as a CSS class
+         in the exported report and accepted by the CLI's /type filter. DeviceTypeConverter maps
+         one to the other on the way to the screen, and derives each key by stripping everything
+         that is not a letter or digit ("Switch/AP" -> Str_Dev_SwitchAP).
+
+         The list covers the classifier's whole vocabulary, not just the 21 rows in the "Set
+         device type" menu: a type the menu cannot set can still be detected and shown.
+
+         Product names (Windows, Linux, NAS, IoT, DNS, Apple, Android) are proper nouns and stay
+         as they are when translated - only the surrounding words change. -->
+    <sys:String x:Key="Str_Dev_Router">Roteador</sys:String>
+    <sys:String x:Key="Str_Dev_RouterDNS">Roteador/DNS</sys:String>
+    <sys:String x:Key="Str_Dev_SwitchAP">Switch/AP</sys:String>
+    <sys:String x:Key="Str_Dev_Network">Rede</sys:String>
+    <sys:String x:Key="Str_Dev_Windows">Windows</sys:String>
+    <sys:String x:Key="Str_Dev_WindowsServer">Windows Server</sys:String>
+    <sys:String x:Key="Str_Dev_LinuxSSH">Linux/SSH</sys:String>
+    <sys:String x:Key="Str_Dev_Server">Servidor</sys:String>
+    <sys:String x:Key="Str_Dev_Printer">Impressora</sys:String>
+    <sys:String x:Key="Str_Dev_SmartTV">Smart TV</sys:String>
+    <sys:String x:Key="Str_Dev_AppleTV">Apple TV</sys:String>
+    <sys:String x:Key="Str_Dev_MediaStreamer">Streaming de Mídia</sys:String>
+    <sys:String x:Key="Str_Dev_AppleDevice">Dispositivo Apple</sys:String>
+    <sys:String x:Key="Str_Dev_iPhone">iPhone</sys:String>
+    <sys:String x:Key="Str_Dev_Android">Android</sys:String>
+    <sys:String x:Key="Str_Dev_Mobile">Celular</sys:String>
+    <sys:String x:Key="Str_Dev_IoT">IoT</sys:String>
+    <sys:String x:Key="Str_Dev_NAS">NAS</sys:String>
+    <sys:String x:Key="Str_Dev_Camera">Câmera</sys:String>
+    <sys:String x:Key="Str_Dev_Hypervisor">Hipervisor</sys:String>
+    <sys:String x:Key="Str_Dev_HomeAssistant">Home Assistant</sys:String>
+    <sys:String x:Key="Str_Dev_DNSServer">Servidor DNS</sys:String>
+    <sys:String x:Key="Str_Dev_WebDevice">Dispositivo Web</sys:String>
+    <sys:String x:Key="Str_Dev_Other">Outro</sys:String>
+    <sys:String x:Key="Str_Dev_Unknown">Desconhecido</sys:String>
+
+    <sys:String x:Key="Str_Btn_Open">Abrir</sys:String>
+    <sys:String x:Key="Str_Btn_Save">Salvar</sys:String>
+    <sys:String x:Key="Str_Col_Modified">modificado</sys:String>
+    <sys:String x:Key="Str_Col_Name">nome</sys:String>
+    <sys:String x:Key="Str_Col_Size">tamanho</sys:String>
+    <sys:String x:Key="Str_Dlg_AllFiles">Todos os arquivos</sys:String>
+    <sys:String x:Key="Str_Dlg_FileName">Nome do arquivo:</sys:String>
+    <sys:String x:Key="Str_Dlg_FileType">Tipo de arquivo:</sys:String>
+    <sys:String x:Key="Str_Dlg_NoMatchingFiles">Nada aqui corresponde ao tipo de arquivo atual.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoPreview">Nenhuma visualização disponível</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFile">Esse arquivo não existe.</sys:String>
+    <sys:String x:Key="Str_Dlg_NoSuchFolder">Essa pasta não existe.</sys:String>
+    <sys:String x:Key="Str_Dlg_OverwriteMsg">Substituir {0}?</sys:String>
+    <sys:String x:Key="Str_Btn_Replace">Substituir</sys:String>
+    <sys:String x:Key="Str_Dlg_Preview">Visualização</sys:String>
+    <sys:String x:Key="Str_Menu_PinPlace">Fixar em locais</sys:String>
+    <sys:String x:Key="Str_Menu_UnpinPlace">Remover dos locais</sys:String>
+    <sys:String x:Key="Str_QA_Desktop">Área de Trabalho</sys:String>
+    <sys:String x:Key="Str_QA_Documents">Documentos</sys:String>
+    <sys:String x:Key="Str_QA_Downloads">Downloads</sys:String>
+    <sys:String x:Key="Str_QA_Home">Início</sys:String>
+    <sys:String x:Key="Str_QA_Pictures">Imagens</sys:String>
+    <sys:String x:Key="Str_Sum_Counts">{0} pasta(s), {1} arquivo(s)</sys:String>
+    <sys:String x:Key="Str_TT_RecentLocations">Locais recentes</sys:String>
+    <sys:String x:Key="Str_TT_ShowHidden">Mostrar itens ocultos e de sistema</sys:String>
+    <sys:String x:Key="Str_TT_Up">Subir uma pasta</sys:String>
+    <sys:String x:Key="Str_TT_ViewDetails">Exibição em detalhes</sys:String>
+    <sys:String x:Key="Str_TT_ViewIcons">Exibição em ícones</sys:String>
+    <sys:String x:Key="Str_TT_ViewList">Exibição em lista</sys:String>
+    <sys:String x:Key="Str_Wordmark_A">Killer</sys:String>
+    <sys:String x:Key="Str_Wordmark_B">Scan</sys:String>
+    <sys:String x:Key="Str_Rename_Title">Renomear dispositivo</sys:String>
+    <sys:String x:Key="Str_Rename_Label">Nome:</sys:String>
+    <sys:String x:Key="Str_Rename_Save">Salvar</sys:String>
+    <sys:String x:Key="Str_Rename_Clear">Limpar nome manual</sys:String>
+    <sys:String x:Key="Str_Trust_Device">Dispositivo confiável</sys:String>
+    <sys:String x:Key="Str_TT_TrustMark">Verde: dispositivo confiável. Âmbar: não está na sua lista de confiáveis.</sys:String>
+    <sys:String x:Key="Str_St_TrustedBaseline">Linha de base confiável criada com {0} dispositivos.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevices">Alerta: {0} dispositivos desconhecidos encontrados.</sys:String>
+    <sys:String x:Key="Str_Tip_UnknownHead">Fora da sua lista de confiáveis:</sys:String>
+    <sys:String x:Key="Str_Tip_AndMore">e mais {0}</sys:String>
+    <sys:String x:Key="Str_Tip_TrustHint">Clique com o botão direito em um dispositivo para defini-lo como confiável.</sys:String>
+    <sys:String x:Key="Str_Tip_Scan">{0} dispositivos, {1} com portas abertas</sys:String>
+    <sys:String x:Key="Str_Tip_Watch">Monitorando {0} destinos, {1} sem resposta</sys:String>
+    <sys:String x:Key="Str_Tip_History">{0} em {1}, {2} dispositivos registrados</sys:String>
+    <sys:String x:Key="Str_Services_Title">Serviços</sys:String>
+    <sys:String x:Key="Str_Services_Service">Serviço</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">Perfis de verificação</sys:String>
+    <sys:String x:Key="Str_Profiles_Save">Salvar perfil atual</sys:String>
+    <sys:String x:Key="Str_Profiles_Run">Executar perfil</sys:String>
+    <sys:String x:Key="Str_Profiles_Load">Carregar destino</sys:String>
+    <sys:String x:Key="Str_Profiles_Deep">Verificação Profunda de Todos depois</sys:String>
+    <sys:String x:Key="Str_Profiles_Delete">Excluir perfil</sys:String>
+    <sys:String x:Key="Str_Watch_Title">Monitoramento de conexão</sys:String>
+    <sys:String x:Key="Str_Watch_Targets">Endereços IP (até 16, separados por vírgulas)</sys:String>
+    <sys:String x:Key="Str_Watch_Start">Iniciar</sys:String>
+    <sys:String x:Key="Str_Watch_Stop">Parar</sys:String>
+    <sys:String x:Key="Str_Watch_Hint">Verifica ICMP a cada dois segundos. A falta de resposta pode significar filtragem, não uma queda.</sys:String>
+    <sys:String x:Key="Str_Watch_Invalid">Informe de 1 a 16 endereços IP válidos.</sys:String>
+    <sys:String x:Key="Str_Watch_Reply">Resposta</sys:String>
+    <sys:String x:Key="Str_Watch_NoReply">Sem resposta</sys:String>
+    <sys:String x:Key="Str_Watch_Waiting">Aguardando</sys:String>
+    <sys:String x:Key="Str_Watch_Sent">Enviados</sys:String>
+    <sys:String x:Key="Str_Watch_Loss">Perda</sys:String>
+    <sys:String x:Key="Str_Watch_Latency">Última / média (ms)</sys:String>
+    <sys:String x:Key="Str_Watch_Changed">Última alteração</sys:String>
+    <sys:String x:Key="Str_Watch_Events">Alterações recentes</sys:String>
+    <sys:String x:Key="Str_Export_Txt">Exportar como TXT</sys:String>
+    <sys:String x:Key="Str_Watch_Clear">Limpar log</sys:String>
+    <sys:String x:Key="Str_Watch_CopyAddress">Copiar endereço</sys:String>
+    <sys:String x:Key="Str_Watch_ResetStats">Redefinir estatísticas</sys:String>
+    <sys:String x:Key="Str_Watch_Remove">Parar de monitorar este destino</sys:String>
+    <sys:String x:Key="Str_Trace_Run">Rastrear rota</sys:String>
+    <sys:String x:Key="Str_Trace_Hop">Salto {0}</sys:String>
+    <sys:String x:Key="Str_Trace_Timeout">Sem resposta</sys:String>
+    <sys:String x:Key="Str_Diag_Working">Verificando</sys:String>
+    <sys:String x:Key="Str_Diag_Refresh">Verificar novamente</sys:String>
+    <sys:String x:Key="Str_Diag_Pick">Selecione um cartão para executar verificações nesse destino.</sys:String>
+    <sys:String x:Key="Str_Watch_Event">{0}: {1}</sys:String>
+    <sys:String x:Key="Str_Watch_Stopped">Parado</sys:String>
+    <sys:String x:Key="Str_Diag_Title">Diagnóstico do dispositivo</sys:String>
+    <sys:String x:Key="Str_Diag_Run">Executar verificações</sys:String>
+    <sys:String x:Key="Str_Diag_Hint">Verifica DNS, ICMP, a rota local e portas TCP comuns ou descobertas anteriormente. Uma verificação com falha não prova que o dispositivo está offline.</sys:String>
+    <sys:String x:Key="Str_Diag_Check">Verificação</sys:String>
+    <sys:String x:Key="Str_Diag_Result">Resultado</sys:String>
+    <sys:String x:Key="Str_Diag_Dns">DNS reverso</sys:String>
+    <sys:String x:Key="Str_Diag_Match">O DNS direto corresponde</sys:String>
+    <sys:String x:Key="Str_Diag_Mismatch">O DNS direto não corresponde</sys:String>
+    <sys:String x:Key="Str_Diag_Route">Rota local</sys:String>
+    <sys:String x:Key="Str_Diag_RouteValue">Interface: {0}; próximo salto: {1}</sys:String>
+    <sys:String x:Key="Str_Diag_OnLink">No link</sys:String>
+    <sys:String x:Key="Str_Diag_Open">Conectado</sys:String>
+    <sys:String x:Key="Str_Diag_Failed">Sem resposta ou conexão recusada</sys:String>
+    <sys:String x:Key="Str_Diag_Unavailable">Indisponível</sys:String>
+    <sys:String x:Key="Str_Diag_Select">Selecione um dispositivo primeiro.</sys:String>
+    <sys:String x:Key="Str_Diag_Error">Não foi possível concluir as verificações.</sys:String>
+    <sys:String x:Key="Str_Diag_Time">Verificado em</sys:String>
+    <sys:String x:Key="Str_Watch_Reset">Iniciar novamente limpa os resultados anteriores.</sys:String>
+    <sys:String x:Key="Str_Watch_Add">Monitorar dispositivo</sys:String>
+    <sys:String x:Key="Str_Workspace_NewScan">Nova verificação</sys:String>
+    <sys:String x:Key="Str_View_Devices">Dispositivos</sys:String>
+    <sys:String x:Key="Str_View_Topology">Topologia</sys:String>
+    <sys:String x:Key="Str_View_KeepAlive">Keep Alive</sys:String>
+    <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_Copy">Copiar</sys:String>
+    <sys:String x:Key="Str_Term_Paste">Colar</sys:String>
+    <sys:String x:Key="Str_Term_SelectAll">Selecionar tudo</sys:String>
+    <sys:String x:Key="Str_Term_CopyAll">Copiar tudo</sys:String>
+    <sys:String x:Key="Str_Term_Clear">Limpar</sys:String>
+    <sys:String x:Key="Str_Workspace_EscStop">Esc para parar</sys:String>
+    <sys:String x:Key="Str_Workspace_Split">Dividir painéis</sys:String>
+    <sys:String x:Key="Str_Workspace_Move">Mover para o outro painel</sys:String>
+    <sys:String x:Key="Str_Workspace_Close">Fechar guia</sys:String>
+    <sys:String x:Key="Str_Workspace_Next">Próxima guia</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenTab">Abrir em guia</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenBeside">Abrir ao lado</sys:String>
+    <sys:String x:Key="Str_Workspace_OpenExternal">Abrir em janela separada</sys:String>
+    <sys:String x:Key="Str_Workspace_Exited">Processo encerrado ({0})</sys:String>
+    <sys:String x:Key="Str_Workspace_StartFailed">Não foi possível iniciar o terminal: {0}</sys:String>
+    <sys:String x:Key="Str_Toolbar_Header">Barra de ferramentas</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextNone">Sem texto</sys:String>
+    <sys:String x:Key="Str_Toolbar_SmallIcons">Ícones pequenos</sys:String>
+    <sys:String x:Key="Str_Toolbar_LargeIcons">Ícones grandes</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextBeside">Texto ao lado dos ícones</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextUnder">Texto abaixo dos ícones</sys:String>
+    <sys:String x:Key="Str_Toolbar_TextOnly">Somente texto</sys:String>
+    <sys:String x:Key="Str_Clipboard_Failed">Não foi possível copiar para a área de transferência. Tente novamente.</sys:String>
+    <sys:String x:Key="Str_KS_Base">Base</sys:String>
+    <sys:String x:Key="Str_Speed_Title">KillerSpeed</sys:String>
+    <sys:String x:Key="Str_Speed_Tagline">Meça download, upload e latência sob carga.</sys:String>
+    <sys:String x:Key="Str_Speed_Consent">Pressione Enter para iniciar ou Esc para cancelar.</sys:String>
+    <sys:String x:Key="Str_Speed_NotInstalled">A CLI speedtest da Ookla não está instalada.</sys:String>
+    <sys:String x:Key="Str_Speed_Offer">O KillerScan pode baixá-la de install.speedtest.net (cerca de 4 MB) ou executar o próprio teste de taxa de transferência HTTP, que não instala nada.</sys:String>
+    <sys:String x:Key="Str_Speed_Prompt">Baixar a CLI da Ookla? (s/N)</sys:String>
+    <sys:String x:Key="Str_Speed_DownloadFailed" xml:space="preserve">O download falhou: </sys:String>
+    <sys:String x:Key="Str_Speed_Server">Servidor</sys:String>
+    <sys:String x:Key="Str_Speed_Isp">Provedor</sys:String>
+    <sys:String x:Key="Str_Speed_Latency">Latência</sys:String>
+    <sys:String x:Key="Str_Speed_Download">Download</sys:String>
+    <sys:String x:Key="Str_Speed_Upload">Upload</sys:String>
+    <sys:String x:Key="Str_Speed_Jitter">jitter</sys:String>
+    <sys:String x:Key="Str_Speed_Builtin">Executando o teste de taxa de transferência HTTP integrado. Estes valores são indicativos, não um resultado oficial do speedtest.net.</sys:String>
+    <sys:String x:Key="Str_Speed_NoReply">sem resposta</sys:String>
+    <sys:String x:Key="Str_Speed_Failed" xml:space="preserve">Não foi possível concluir o teste: </sys:String>
+    <sys:String x:Key="Str_Speed_Endpoint">URL do servidor de teste</sys:String>
+    <sys:String x:Key="Str_Speed_Start">Iniciar teste</sys:String>
+    <sys:String x:Key="Str_Speed_Stop">Parar teste</sys:String>
+    <sys:String x:Key="Str_Speed_Idle">Latência ociosa</sys:String>
+    <sys:String x:Key="Str_Speed_Loaded">Latência sob carga</sys:String>
+    <sys:String x:Key="Str_Speed_Ready">Informe a URL de um servidor de teste e inicie o teste. Ele pode transferir até 6 GiB.</sys:String>
+    <sys:String x:Key="Str_Speed_Warmup">Aquecendo</sys:String>
+    <sys:String x:Key="Str_Speed_Completed">Teste concluído</sys:String>
+    <sys:String x:Key="Str_Speed_Canceled">Teste cancelado</sys:String>
+    <sys:String x:Key="Str_Speed_Limited">Limite de dados atingido; a duração da medição foi reduzida.</sys:String>
+    <sys:String x:Key="Str_Speed_Copy">Copiar resultados</sys:String>
+    <sys:String x:Key="Str_Speed_Error">Falha no teste: {0}</sys:String>
+    <sys:String x:Key="Str_Speed_EndpointInvalid">Informe uma URL HTTPS de servidor de teste.</sys:String>
+    <sys:String x:Key="Str_Speed_Streams">Conexões</sys:String>
+    <sys:String x:Key="Str_Speed_Transferred">Transferido</sys:String>
+    <sys:String x:Key="Str_Speed_Unavailable">Não medido</sys:String>
+    <sys:String x:Key="Str_Speed_Run">Testando</sys:String>
+    <sys:String x:Key="Str_Speed_Native">Mede a taxa de transferência e a latência de ida e volta HTTP até o servidor selecionado. Os resultados dependem dessa rota e desse servidor.</sys:String>
+    <sys:String x:Key="Str_Speed_Timeout">O servidor de teste não respondeu a tempo.</sys:String>
+    <sys:String x:Key="Str_Speed_Unreachable">Não foi possível conectar ao servidor de teste.</sys:String>
+    <sys:String x:Key="Str_Speed_Tls">O servidor de teste não conseguiu estabelecer uma conexão segura.</sys:String>
+    <sys:String x:Key="Str_Speed_RateLimited">O servidor de teste está ocupado. Tente novamente mais tarde.</sys:String>
+    <sys:String x:Key="Str_Speed_BadResponse">O servidor de teste retornou uma resposta inválida.</sys:String>
+    <sys:String x:Key="Str_Speed_TransferFailed">A transferência falhou. Verifique sua conexão e tente novamente.</sys:String>
+    <sys:String x:Key="Str_Speed_ClipboardFailed">Não foi possível copiar os resultados. Tente novamente.</sys:String>
+    <sys:String x:Key="Str_Speed_ReplaceRunning">Algo está em execução no terminal. Interrompê-lo e executar o teste de velocidade?</sys:String>
+    <sys:String x:Key="Str_Term_Font">Fonte e tamanho</sys:String>
+</ResourceDictionary>
