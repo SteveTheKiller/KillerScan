@@ -312,7 +312,14 @@ namespace KillerScan.Shell
             itemStyle.Setters.Add(new Setter(Control.TemplateProperty, itemTemplate));
             menu.ItemContainerStyle = itemStyle;
 
-            var panel = new StackPanel { Margin = new Thickness(12, 10, 14, 10) };
+            var columns = new StackPanel { Orientation = Orientation.Horizontal,
+                                           Margin = new Thickness(12, 10, 14, 10) };
+            var left = new StackPanel { Width = 200 };
+            var right = new StackPanel { Width = 200, Margin = new Thickness(14, 0, 0, 0) };
+            columns.Children.Add(left);
+            columns.Children.Add(right);
+            int half = (Languages.Length + 1) / 2;
+            int index = 0;
             var current = Services.LocaleManager.Current;
 
             foreach (var (loc, name, code) in Languages)
@@ -349,9 +356,9 @@ namespace KillerScan.Shell
                 };
                 // Subscribed after IsChecked is set, so building the menu never fires a locale apply.
                 radio.Checked += Lang_Checked;
-                panel.Children.Add(radio);
+                (index++ < half ? left : right).Children.Add(radio);
             }
-            menu.Items.Add(panel);
+            menu.Items.Add(columns);
         }
 
         private void Lang_Checked(object sender, RoutedEventArgs e)

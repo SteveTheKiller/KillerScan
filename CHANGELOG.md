@@ -12,6 +12,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Norwegian (Bokmål) localization.
 - Brazilian Portuguese localization.
 
+### Changed
+- The language menu now shows its 19 languages in two columns.
+
 ## [1.7.5] - 2026-09-28
 
 KillerScan 1.7.5 improves the in-app update handoff.
