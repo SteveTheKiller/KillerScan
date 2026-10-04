@@ -10,7 +10,8 @@
     <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#FF2BBD" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#2E0022" po:Freeze="True"/>
 
-    <LinearGradientBrush x:Key="SelectionBg"         po:Freeze="True" StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#702058" Offset="0"/><GradientStop Color="#500838" Offset="1"/></LinearGradientBrush>
+    <LinearGradientBrush x:Key="SelectionBg"         po:Freeze="True" StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#FF48CE" Offset="0"/><GradientStop Color="#F31FB1" Offset="1"/></LinearGradientBrush>
+    <SolidColorBrush x:Key="SelectionFg" Color="#1E1F22"/>
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#2E0022" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#88FF2BBD" po:Freeze="True"/>
 </ResourceDictionary>

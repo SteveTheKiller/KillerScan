@@ -12,7 +12,8 @@
     <!-- The other Black accents select with a very dark tone of themselves and white text. This
          one carried the full accent, so a selected row was a solid orange block with orange text
          on it and nothing readable. -->
-    <LinearGradientBrush x:Key="SelectionBg"         po:Freeze="True" StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#734B1A" Offset="0"/><GradientStop Color="#532B02" Offset="1"/></LinearGradientBrush>
+    <LinearGradientBrush x:Key="SelectionBg"         po:Freeze="True" StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#FFA428" Offset="0"/><GradientStop Color="#E67E00" Offset="1"/></LinearGradientBrush>
+    <SolidColorBrush x:Key="SelectionFg" Color="#1E1F22"/>
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#332208" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#88FF910A" po:Freeze="True"/>
 </ResourceDictionary>

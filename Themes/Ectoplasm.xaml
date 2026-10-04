@@ -53,7 +53,7 @@
     <!-- Ectoplasm's selected row is the same solid sickly-yellow/black pair used by its
          primary controls. A pale neutral wash made selection look detached from the palette. -->
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#ead900" po:Freeze="True"/>
-    <LinearGradientBrush x:Key="SelectionBg" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#F6E61E" Offset="0"/><GradientStop Color="#D2C200" Offset="1"/></LinearGradientBrush>
+    <LinearGradientBrush x:Key="SelectionBg" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#FFF58A" Offset="0"/><GradientStop Color="#CEB600" Offset="1"/></LinearGradientBrush>
     <SolidColorBrush x:Key="SelectionFg" Color="#1e1f22" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
     <!-- Inputs / menus / scrollbar -->
