@@ -3,16 +3,20 @@
                     xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
 
     <LinearGradientBrush x:Key="TitleBarBrush" StartPoint="0,0" EndPoint="1,0" po:Freeze="True">
-        <GradientStop Color="#685900" Offset="0"/><GradientStop Color="#847100" Offset="1"/>
+        <GradientStop Color="#FFF3A1" Offset="0"/><GradientStop Color="#F2C313" Offset="1"/>
     </LinearGradientBrush>
-    <SolidColorBrush x:Key="PrimaryBrush"        Color="#685900" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#847100" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#4F4300" po:Freeze="True"/>
-    <SolidColorBrush x:Key="HeaderLineBrush"     Color="#685900" po:Freeze="True"/>
-    <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#685900" po:Freeze="True"/>
-    <SolidColorBrush x:Key="SelectionBg"         Color="#685900" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#685900" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryBrush"        Color="#2B2A24" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#484539" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#1B1A16" po:Freeze="True"/>
+    <SolidColorBrush x:Key="HeaderLineBrush"     Color="#C69500" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#2B2A24" po:Freeze="True"/>
+    <LinearGradientBrush x:Key="SelectionBg" StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#FFF5A3" Offset="0"/><GradientStop Color="#FFD43B" Offset="1"/></LinearGradientBrush>
+    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#FFD94D" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowAltBrush"         Color="#F1EABF" po:Freeze="True"/>
 
-    <SolidColorBrush x:Key="TableHoverTextBrush" Color="#685900" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TableHoverTextBrush" Color="#2B2A24" po:Freeze="True"/>
+  <SolidColorBrush x:Key="SelectionFg" Color="#24231C"/>
+  <SolidColorBrush x:Key="ChromeTextBrush" Color="#24231C"/>
+  <SolidColorBrush x:Key="SelectionAccent" Color="#C69500"/>
+  <SolidColorBrush x:Key="RadioAccent" Color="#C69500"/>
 </ResourceDictionary>
