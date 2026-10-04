@@ -2,26 +2,26 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
-namespace KillerScan.Services
+namespace KillerScan.Engine
 {
     /// <summary>What the active interface is and what it is attached to.</summary>
-    internal sealed class LocalNet
+    public sealed class LocalNet
     {
         /// <summary>The attached network in CIDR form, e.g. "192.168.1.0/24".</summary>
-        internal string Subnet = "";
-        internal string LocalIp = "";
-        internal string Gateway = "";
-        internal string Dns = "";
+        public string Subnet = "";
+        public string LocalIp = "";
+        public string Gateway = "";
+        public string Dns = "";
         /// <summary>"Wi-Fi", "Ethernet", or the raw interface type for anything else.</summary>
-        internal string InterfaceLabel = "";
-        internal bool Wireless;
+        public string InterfaceLabel = "";
+        public bool Wireless;
         /// <summary>The adapter's hardware description, e.g. "Realtek PCIe GbE Family Controller".</summary>
-        internal string AdapterName = "";
+        public string AdapterName = "";
         /// <summary>Current link speed in bits per second, or 0 when Windows does not report one.</summary>
-        internal long LinkSpeed;
+        public long LinkSpeed;
 
         /// <summary>Link speed for display, e.g. "1 Gbps" or "300 Mbps". Empty when unknown.</summary>
-        internal string LinkSpeedText => LinkSpeed <= 0 ? ""
+        public string LinkSpeedText => LinkSpeed <= 0 ? ""
             : LinkSpeed >= 1000000000 ? $"{LinkSpeed / 1000000000d:0.##} Gbps"
             : $"{LinkSpeed / 1000000d:0.##} Mbps";
     }
@@ -31,7 +31,7 @@ namespace KillerScan.Services
     /// which pre-fills the subnet box from it, and the command line, which uses it when /scan is
     /// given no targets.
     /// </summary>
-    internal static class LocalNetwork
+    public static class LocalNetwork
     {
         /// <summary>
         /// The best candidate interface, or null if none could be read. Preference order: has an
@@ -43,7 +43,7 @@ namespace KillerScan.Services
         /// that just forwards, so every caller wants them set; a detect that left them unset would
         /// silently mis-classify.
         /// </summary>
-        internal static LocalNet? Detect()
+        public static LocalNet? Detect()
         {
             try
             {

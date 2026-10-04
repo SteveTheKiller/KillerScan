@@ -4,13 +4,11 @@ using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Security.Authentication;
 using System.Text;
 using System.Text.RegularExpressions;
-using KillerScan.Models;
 
-namespace KillerScan.Services
+namespace KillerScan.Engine
 {
     public class NetworkScanner
     {
@@ -65,30 +63,24 @@ namespace KillerScan.Services
         // have a unique MAC, so a low ceiling is safe; 2 tolerates the odd multi-homed NIC.
         private const int MaxIpsPerMac = 2;
 
-        // ARP table import for MAC address resolution
-        [DllImport("iphlpapi.dll", ExactSpelling = true)]
-        private static extern int SendARP(int destIp, int srcIp, byte[] macAddr, ref int macLen);
+        public static void FlushLocalDnsCache() => NetworkPlatform.Current.FlushDnsCache();
 
-        [DllImport("dnsapi.dll", ExactSpelling = true)]
-        private static extern bool DnsFlushResolverCache();
-
-        public static void FlushLocalDnsCache()
-        {
-            try { DnsFlushResolverCache(); }
-            catch { }
-        }
-
-        public event Action<string>? StatusChanged;
+        /// <summary>Stage changes. The host turns each one into text in its own language.</summary>
+        public event Action<ScanStatus>? StatusChanged;
         public event Action<int>? ProgressChanged;
         public event Action<NetworkDevice>? DeviceFound;
 
         /// <summary>
-        /// Resolves a Str_* key to the current locale's FORMAT string for status messages. Set by
-        /// the UI (WireSession); when unset (headless/tests) the English fallback passed to L() is
-        /// used, so the scanner never depends on WPF resources itself.
+        /// A manual device type keyed by MAC address. When it returns a value, that type wins over
+        /// classification. Set once by the host; unset means no manual types.
         /// </summary>
-        public Func<string, string?>? Localizer { get; set; }
-        private string L(string key, string fallback) => Localizer?.Invoke(key) ?? fallback;
+        public static Func<string, string?>? ManualTypeLookup { get; set; }
+
+        /// <summary>
+        /// Runs on every finished device before it is reported, so the host can apply saved
+        /// preferences such as a user-given name. Set once by the host.
+        /// </summary>
+        public static Action<NetworkDevice>? DeviceCompleted { get; set; }
 
         // Network-wide service discovery results (collected once per scan, keyed by IP).
         private Dictionary<string, MulticastDiscovery.MdnsInfo> _mdns = [];
@@ -140,7 +132,7 @@ namespace KillerScan.Services
             int total = addresses.Count;
 
             // Phase 1: Fast ping sweep + ARP cache
-            StatusChanged?.Invoke(string.Format(L("Str_St_Discovering", "Discovering hosts on {0}..."), label));
+            StatusChanged?.Invoke(new ScanStatus(ScanStage.Discovering, addresses.Count, label));
             var discoveredHosts = new System.Collections.Concurrent.ConcurrentDictionary<string, (IPAddress Addr, string Mac)>();
 
             // Grab existing ARP cache first (instant, catches IoT devices)
@@ -202,7 +194,7 @@ namespace KillerScan.Services
             }
 
             // Resolve MAC addresses via ARP for discovered hosts (fast, they're alive)
-            StatusChanged?.Invoke(string.Format(L("Str_St_ResolvingMacs", "Resolving {0} MAC addresses..."), discoveredHosts.Count));
+            StatusChanged?.Invoke(new ScanStatus(ScanStage.ResolvingMacs, discoveredHosts.Count));
             var macTasks = discoveredHosts.Keys.ToList().Select(async ip =>
             {
                 var addr = IPAddress.Parse(ip);
@@ -254,7 +246,7 @@ namespace KillerScan.Services
 
             if (fullScan)
             {
-                StatusChanged?.Invoke(string.Format(L("Str_St_Probing", "Probing {0} alive hosts..."), total));
+                StatusChanged?.Invoke(new ScanStatus(ScanStage.Probing, total));
                 var probeSemaphore = new SemaphoreSlim(20);
                 var probeTasks = sortedHosts.Select(async entry =>
                 {
@@ -277,7 +269,7 @@ namespace KillerScan.Services
             else
             {
                 // Quick scan: resolve hostname and vendor in parallel, no port scan
-                StatusChanged?.Invoke(string.Format(L("Str_St_ResolvingHosts", "Resolving {0} hosts..."), total));
+                StatusChanged?.Invoke(new ScanStatus(ScanStage.ResolvingHosts, total));
                 var quickSemaphore = new SemaphoreSlim(20);
                 var quickTasks = sortedHosts.Select(async entry =>
                 {
@@ -298,7 +290,7 @@ namespace KillerScan.Services
 
                         // Classify even in quick scan (hostname + OUI, no ports)
                         device.DeviceType = ClassifyDevice(device);
-                        DevicePreferences.Apply(device);
+                        DeviceCompleted?.Invoke(device);
 
                         DeviceFound?.Invoke(device);
                         int done = Interlocked.Increment(ref completed);
@@ -312,50 +304,14 @@ namespace KillerScan.Services
                 devices.AddRange(quickResults.OrderBy(d => d.IpSortKey));
             }
 
-            StatusChanged?.Invoke(string.Format(L("Str_St_ScanComplete", "Scan complete -- {0} devices found"), devices.Count));
+            StatusChanged?.Invoke(new ScanStatus(ScanStage.Complete, devices.Count));
             ProgressChanged?.Invoke(100);
             return devices;
         }
 
-        /// <summary>
-        /// Read the system ARP cache via arp -a.
-        /// </summary>
-        private static Dictionary<string, string> GetArpCache()
-        {
-            var cache = new Dictionary<string, string>();
-            try
-            {
-                var psi = new ProcessStartInfo("arp", "-a")
-                {
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-                using var proc = Process.Start(psi);
-                if (proc == null) return cache;
-
-                string output = proc.StandardOutput.ReadToEnd();
-                proc.WaitForExit(3000);
-
-                foreach (var line in output.Split('\n'))
-                {
-                    var trimmed = line.Trim();
-                    if (string.IsNullOrEmpty(trimmed)) continue;
-
-                    // Parse lines like: 192.168.1.1     00-00-5e-00-53-01     dynamic
-                    var parts = trimmed.Split([' '], StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length >= 2)
-                    {
-                        string ip = parts[0];
-                        string mac = parts[1].Replace('-', ':').ToUpperInvariant();
-                        if (IPAddress.TryParse(ip, out _) && mac.Length == 17 && mac.Contains(':'))
-                            cache[ip] = mac;
-                    }
-                }
-            }
-            catch { }
-            return cache;
-        }
+        /// <summary>The neighbor (ARP) cache from the platform.</summary>
+        private static IReadOnlyDictionary<string, string> GetArpCache() =>
+            NetworkPlatform.Current.ReadNeighborCache();
 
         /// <summary>
         /// Probe a single host for hostname, open ports, fingerprints, and device type.
@@ -489,7 +445,7 @@ namespace KillerScan.Services
 
             // Classify device type using weighted scoring over all signals.
             device.DeviceType = ClassifyDevice(device);
-            DevicePreferences.Apply(device);
+            DeviceCompleted?.Invoke(device);
 
             return device;
         }
@@ -580,7 +536,7 @@ namespace KillerScan.Services
                 device.Hostname = device.NetbiosName;
 
             device.DeviceType = ClassifyDevice(device);
-            DevicePreferences.Apply(device);
+            DeviceCompleted?.Invoke(device);
             return device;
         }
 
@@ -725,7 +681,7 @@ namespace KillerScan.Services
         public static string ClassifyDevice(NetworkDevice device)
         {
             // 1. Manual override always wins.
-            var manual = DeviceOverrides.Get(device.MacAddress);
+            var manual = ManualTypeLookup?.Invoke(device.MacAddress);
             if (manual != null)
                 return manual;
 
@@ -1220,23 +1176,6 @@ namespace KillerScan.Services
         /// <summary>
         /// Get MAC address of a host using ARP.
         /// </summary>
-        private static string GetMacAddress(IPAddress addr)
-        {
-            try
-            {
-                byte[] mac = new byte[6];
-                int macLen = mac.Length;
-                int ipInt = BitConverter.ToInt32(addr.GetAddressBytes(), 0);
-                int result = SendARP(ipInt, 0, mac, ref macLen);
-                if (result == 0)
-                {
-                    string macStr = string.Join(":", mac.Select(b => b.ToString("X2")));
-                    if (macStr != "00:00:00:00:00:00")
-                        return macStr;
-                }
-            }
-            catch { }
-            return string.Empty;
-        }
+        private static string GetMacAddress(IPAddress addr) => NetworkPlatform.Current.ResolveMac(addr);
     }
 }

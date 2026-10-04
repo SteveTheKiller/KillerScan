@@ -62,8 +62,12 @@
     </PackageReference>
   </ItemGroup>
 
+  <!-- Scanning, discovery and the result models live in Engine\KillerScan.Engine.csproj, which
+       also embeds Resources\oui.txt. Costura bundles the engine DLL into the exe. -->
   <ItemGroup>
-    <EmbeddedResource Include="Resources\oui.txt" />
+    <ProjectReference Include="Engine\KillerScan.Engine.csproj" />
+    <Using Include="KillerScan.Engine" />
+    <Using Include="KillerScan.Engine.SpeedTest" />
   </ItemGroup>
 
   <!-- KillerScripts and the shell prompt, shipped inside the exe (Modules.cs, PromptScript.cs).
@@ -86,6 +90,9 @@
 
   <ItemGroup>
     <Compile Remove="tests\**\*.cs" />
+    <Compile Remove="Engine\**" />
+    <Compile Remove="samples\**" />
+    <None Remove="Engine\**;samples\**" />
   </ItemGroup>
 
   <!-- Every build input, including each complete theme dictionary, lives in this repository. -->

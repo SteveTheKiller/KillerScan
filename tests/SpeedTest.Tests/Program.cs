@@ -18,7 +18,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml;
-using KillerScan.Services.SpeedTest;
+using KillerScan.Engine.SpeedTest;
 
 internal static class Program
 {
@@ -91,7 +91,7 @@ internal static class Program
 
     private static Task TerminalHistory()
     {
-        var assembly = typeof(SpeedTestEngine).Assembly;
+        var assembly = typeof(KillerScan.App).Assembly;
         var type = assembly.GetType("KillerScan.Terminal.TerminalBuffer")!;
         var parserType = assembly.GetType("KillerScan.Terminal.VtParser")!;
         var buffer = Activator.CreateInstance(type, 40, 5)!;
@@ -133,8 +133,8 @@ internal static class Program
 
     private static Task ScanPresentation()
     {
-        var type = typeof(SpeedTestEngine).Assembly.GetType("KillerScan.Terminal.TerminalScanPresentation")!;
-        var devices = new List<KillerScan.Models.NetworkDevice>
+        var type = typeof(KillerScan.App).Assembly.GetType("KillerScan.Terminal.TerminalScanPresentation")!;
+        var devices = new List<KillerScan.Engine.NetworkDevice>
         {
             new() { IpAddress = "192.168.0.1", Hostname = "router.internal", Vendor = "A long vendor name for wrapping",
                 MacAddress = "00:11:22:33:44:55", OpenPorts = [22, 53, 80, 443, 8080, 8443] }
@@ -153,7 +153,7 @@ internal static class Program
                 Require(plain.Contains(port), "Complete port numbers are preserved");
             Require(!plain.Contains("---"), "No table separator lines");
         }
-        var cli = typeof(SpeedTestEngine).Assembly.GetType("KillerScan.Features.Cli.CliRunner", true)!;
+        var cli = typeof(KillerScan.App).Assembly.GetType("KillerScan.Features.Cli.CliRunner", true)!;
         var table = cli.GetMethod("Table", BindingFlags.Static | BindingFlags.NonPublic)!;
         string ansi = (string)table.Invoke(null, new object[] { devices, true, true })!;
         string plainTable = (string)table.Invoke(null, new object[] { devices, true, false })!;

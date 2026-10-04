@@ -61,7 +61,7 @@ namespace KillerScan.Controls
             ScanProgress.Value = 0;
             ScanProgress.Visibility = Visibility.Visible;
             int done = 0;
-            KillerScan.Services.NetworkScanner.FlushLocalDnsCache();
+            NetworkScanner.FlushLocalDnsCache();
 
             try
             {
@@ -120,7 +120,7 @@ namespace KillerScan.Controls
             ScanProgress.Visibility = Visibility.Visible;
             UpdateDeepScanButton();
             StateChanged?.Invoke(this, EventArgs.Empty);
-            KillerScan.Services.NetworkScanner.FlushLocalDnsCache();
+            NetworkScanner.FlushLocalDnsCache();
 
             try
             {

@@ -57,7 +57,7 @@ namespace KillerScan.Shell
             OpenNetworkTool(device, true);
         }
 
-        private void OpenNetworkTool(Models.NetworkDevice device, bool diagnostics)
+        private void OpenNetworkTool(NetworkDevice device, bool diagnostics)
         {
             Watch_Click(this, new RoutedEventArgs());
             if (diagnostics) _watchWorkspace!.ShowDetails(device.IpAddress, device.OpenPorts.Concat(CommonPorts));
@@ -71,7 +71,7 @@ namespace KillerScan.Shell
         private void ShowDeviceDetails(string address)
         {
             var known = (_scanWorkspace?.FindName("ResultsGrid") as System.Windows.Controls.DataGrid)?
-                .Items.OfType<Models.NetworkDevice>().FirstOrDefault(d => d.IpAddress == address);
+                .Items.OfType<NetworkDevice>().FirstOrDefault(d => d.IpAddress == address);
             _watchWorkspace?.ShowDetails(address, known?.OpenPorts.Concat(CommonPorts) ?? CommonPorts);
         }
     }

@@ -223,6 +223,14 @@ if ($LASTEXITCODE -ne 0) { Fail 'Speed-test regression tests failed' }
 node --test server/speedtest/worker.test.mjs
 if ($LASTEXITCODE -ne 0) { Fail 'Speed-test endpoint tests failed' }
 
+Step "Testing KillerScan.Engine on both targets"
+dotnet build tests\KillerScan.Engine.Tests\KillerScan.Engine.Tests.csproj -c Release -v:minimal
+if ($LASTEXITCODE -ne 0) { Fail 'Engine test build failed' }
+foreach ($tfm in 'net48', 'net10.0') {
+    dotnet run --project tests\KillerScan.Engine.Tests\KillerScan.Engine.Tests.csproj -c Release -f $tfm --no-build
+    if ($LASTEXITCODE -ne 0) { Fail "Engine regression tests failed on $tfm" }
+}
+
 # --- 4. Clean Release publish (FolderProfile1: net48, win-x64, Costura single exe) ---
 Step "Building Release (publish)"
 if (Test-Path 'bin\Release') { Remove-Item 'bin\Release' -Recurse -Force }

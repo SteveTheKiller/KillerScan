@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KillerScan.Services.SpeedTest
+namespace KillerScan.Engine.SpeedTest
 {
     public sealed class SpeedTestOptions
     {

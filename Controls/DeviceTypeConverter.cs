@@ -67,7 +67,7 @@ namespace KillerScan.Controls
         public static string Display(string? vendor)
         {
             if (string.IsNullOrEmpty(vendor)) return string.Empty;
-            if (vendor != Services.NetworkScanner.VendorRandomized) return vendor!;
+            if (vendor != NetworkScanner.VendorRandomized) return vendor!;
             return System.Windows.Application.Current?.TryFindResource("Str_Vendor_Randomized") as string ?? vendor!;
         }
 
@@ -101,7 +101,7 @@ namespace KillerScan.Controls
         }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            => value is Models.NetworkDevice device && Services.DevicePreferences.IsTrusted(device)
+            => value is NetworkDevice device && Services.DevicePreferences.IsTrusted(device)
                 ? Trusted : Unknown;
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

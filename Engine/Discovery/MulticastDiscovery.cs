@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace KillerScan.Services
+namespace KillerScan.Engine
 {
     // Network-wide service discovery, run once per scan. mDNS (Bonjour) and SSDP (UPnP) are
     // multicast, so a few queries reach the whole LAN at once; responses are mapped back to hosts

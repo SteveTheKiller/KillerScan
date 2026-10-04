@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace KillerScan.Services
+namespace KillerScan.Engine
 {
     /// <summary>Why a target string could not be turned into an address list.</summary>
-    internal enum TargetError { None, Empty, Invalid, TooLarge }
+    public enum TargetError { None, Empty, Invalid, TooLarge }
 
     /// <summary>Result of parsing the subnet box. Never throws - a bad token comes back as
     /// <see cref="Error"/> plus the offending text in <see cref="Detail"/>, so the UI can say
     /// which piece is wrong instead of surfacing a raw exception.</summary>
-    internal sealed class ScanTargetResult
+    public sealed class ScanTargetResult
     {
         public List<IPAddress> Addresses { get; } = [];
         /// <summary>Cleaned target tokens, in the order given, e.g. ["192.168.9.0/24", "192.168.10.10-50"].</summary>
@@ -39,7 +39,7 @@ namespace KillerScan.Services
     /// No IPv4 target has a meaningful space in it, so nothing is lost by doing that. Empty
     /// tokens are skipped, which makes a trailing or doubled comma harmless.
     /// </summary>
-    internal static class ScanTargets
+    public static class ScanTargets
     {
         /// <summary>Combined ceiling across every target - one /16 worth of addresses. A
         /// fat-fingered /8 is 16.7M and would lock the app up, so it is refused with a count

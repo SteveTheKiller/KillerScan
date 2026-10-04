@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using KillerScan.Services.SpeedTest;
+using KillerScan.Engine.SpeedTest;
 using KillerScan.Terminal;
 
 namespace KillerScan.Shell

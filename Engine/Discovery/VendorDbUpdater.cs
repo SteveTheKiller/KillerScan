@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KillerScan.Services
+namespace KillerScan.Engine
 {
     /// <summary>
     /// Refreshes the MAC vendor database from the internet, in-app (no script needed). Pulls the
@@ -40,7 +40,10 @@ namespace KillerScan.Services
 
         public static async Task<(bool ok, int count, Status status)> UpdateAsync(IProgress<Status>? progress = null)
         {
+#if !NET
+            // .NET Framework 4.8 can default to older TLS; modern .NET negotiates TLS 1.2+ itself.
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+#endif
             int current = OuiLookup.Count;
 
             StringBuilder? best = null; int bestCount = 0;

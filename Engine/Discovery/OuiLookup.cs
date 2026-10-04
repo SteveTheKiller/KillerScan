@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace KillerScan.Services
+namespace KillerScan.Engine
 {
     /// <summary>
     /// MAC OUI vendor lookup using the full MA-L/MA-M/MA-S registry set (~58k entries, from the

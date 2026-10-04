@@ -1,6 +1,6 @@
 using System;
 using System.Text;
-using KillerScan.Services.SpeedTest;
+using KillerScan.Engine.SpeedTest;
 
 namespace KillerScan.Terminal
 {

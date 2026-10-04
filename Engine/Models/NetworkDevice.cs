@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace KillerScan.Models
+namespace KillerScan.Engine
 {
     public class NetworkDevice
     {
@@ -15,8 +15,13 @@ namespace KillerScan.Models
         /// English key behind it, so the order the grid shows is alphabetical in the language the
         /// reader is actually looking at. Resolved on each read, not cached, because a locale
         /// change rewrites every one of these without touching the devices themselves.
+        /// The host supplies the translation through <see cref="DeviceTypeDisplayResolver"/>;
+        /// without one the English key is shown.
         /// </summary>
-        public string DeviceTypeDisplay => Controls.DeviceTypeConverter.Display(DeviceType);
+        public string DeviceTypeDisplay => DeviceTypeDisplayResolver?.Invoke(DeviceType) ?? DeviceType;
+
+        /// <summary>Turns a stored device type key into display text. Set once by the host.</summary>
+        public static Func<string, string>? DeviceTypeDisplayResolver { get; set; }
         public List<int> OpenPorts { get; set; } = [];
 
         // -- Active fingerprint fields (populated by scanner) --

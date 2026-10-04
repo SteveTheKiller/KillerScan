@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using KillerScan.Models;
 using KillerScan.Services;
-using KillerScan.Services.SpeedTest;
+using KillerScan.Engine.SpeedTest;
 
 namespace KillerScan.Features.Cli
 {
@@ -447,14 +447,14 @@ namespace KillerScan.Features.Cli
             var scanner = new NetworkScanner();
             if (terminalProgress)
             {
-                scanner.Localizer = key => key + "|{0}";
                 int found = 0;
                 scanner.DeviceFound += _ => err.WriteLine("Devices: " + Interlocked.Increment(ref found));
             }
             int lastProgress = -1;
             if (progress && !quiet)
             {
-                scanner.StatusChanged += s => err.WriteLine(s);
+                // The in-app terminal reads key|argument lines and localizes them itself.
+                scanner.StatusChanged += s => err.WriteLine(terminalProgress ? ScanStatusText.Protocol(s) : s.ToString());
                 scanner.ProgressChanged += p =>
                 {
                     if (p == 100 || p >= lastProgress + 5)

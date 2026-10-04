@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Scanning, discovery, fingerprinting and the raw result models, with no WPF and no UI
+       text. The desktop app, its command line and any other host reference this project; the
+       app embeds the built DLL in its single exe. net48 serves the current Windows apps and
+       net10.0 is the target for future hosts. -->
+  <PropertyGroup>
+    <TargetFrameworks>net48;net10.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>KillerScan.Engine</RootNamespace>
+    <AssemblyName>KillerScan.Engine</AssemblyName>
+    <!-- KillerScan.csproj stays the single version source; the engine reads it at build time. -->
+    <Version>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\KillerScan.csproj')), '&lt;Version&gt;([0-9]+\.[0-9]+\.[0-9]+)&lt;/Version&gt;').Groups[1].Value)</Version>
+    <FileVersion>$(Version).0</FileVersion>
+    <AssemblyVersion>$(Version).0</AssemblyVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Reference Include="System.Net.Http" />
+    <!-- Same transitive pin as the app: System.Text.Json brings in packages whose old
+         System.Net.Http and RegularExpressions versions carry advisories. Nothing from them
+         is compiled or shipped. -->
+    <PackageReference Include="System.Net.Http" Version="4.3.4" ExcludeAssets="all" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" ExcludeAssets="all" />
+    <PackageReference Include="System.Text.Json" Version="10.0.11" />
+    <PackageReference Include="PolySharp" Version="1.16.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- The vendor database stays at Resources\oui.txt, where release.ps1 refreshes it. -->
+  <ItemGroup>
+    <EmbeddedResource Include="..\Resources\oui.txt" Link="Resources\oui.txt" LogicalName="KillerScan.Engine.oui.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="KillerScan.Engine.Tests" />
+  </ItemGroup>
+
+</Project>

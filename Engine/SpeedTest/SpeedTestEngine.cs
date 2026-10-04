@@ -12,7 +12,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace KillerScan.Services.SpeedTest
+namespace KillerScan.Engine.SpeedTest
 {
     /// <summary>A bounded HTTP throughput test against a compatible endpoint. Download counts
     /// bytes read from the response stream; upload counts only bytes acknowledged by the server.
@@ -542,7 +542,11 @@ namespace KillerScan.Services.SpeedTest
                 Headers.ContentLength = length;
             }
             protected override bool TryComputeLength(out long length) { length = _length; return true; }
+#if NET
+            protected override async Task SerializeToStreamAsync(Stream stream, TransportContext? context)
+#else
             protected override async Task SerializeToStreamAsync(Stream stream, TransportContext context)
+#endif
             {
                 using var cancellation = _token.Register(() => DisposeCanceled(stream));
                 for (int sent = 0; sent < _length;)

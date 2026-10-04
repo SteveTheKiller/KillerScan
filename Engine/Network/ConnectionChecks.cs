@@ -1,13 +1,12 @@
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 
-namespace KillerScan.Services
+namespace KillerScan.Engine
 {
-    internal static class ConnectionChecks
+    public static class ConnectionChecks
     {
-        internal static bool TryTargets(string text, out IPAddress[] addresses)
+        public static bool TryTargets(string text, out IPAddress[] addresses)
         {
             var parts = text.Split([',', ';', '\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
             var parsed = new List<IPAddress>();
@@ -20,7 +19,7 @@ namespace KillerScan.Services
             return addresses.Length is > 0 and <= 16;
         }
 
-        internal static async Task<long?> PingAsync(IPAddress address)
+        public static async Task<long?> PingAsync(IPAddress address)
         {
             using var ping = new Ping();
             try
@@ -33,7 +32,7 @@ namespace KillerScan.Services
         }
 
         /// <summary>One traceroute hop: who answered, and how long it took.</summary>
-        internal readonly struct Hop(int ttl, IPAddress? address, long? latency, bool arrived)
+        public readonly struct Hop(int ttl, IPAddress? address, long? latency, bool arrived)
         {
             public int Ttl { get; } = ttl;
             public IPAddress? Address { get; } = address;
@@ -52,7 +51,7 @@ namespace KillerScan.Services
         /// list, so the caller can fill a table live. net48 has no IAsyncEnumerable without an
         /// extra package, and one callback is not worth taking that dependency for.
         /// </remarks>
-        internal static async Task TraceAsync(IPAddress address, int maxHops, Action<Hop> report,
+        public static async Task TraceAsync(IPAddress address, int maxHops, Action<Hop> report,
             CancellationToken token)
         {
             var buffer = new byte[32];
@@ -88,7 +87,7 @@ namespace KillerScan.Services
             }
         }
 
-        internal static async Task<bool> TcpAsync(IPAddress address, int port, CancellationToken token)
+        public static async Task<bool> TcpAsync(IPAddress address, int port, CancellationToken token)
         {
             using var client = new TcpClient(address.AddressFamily);
             try
@@ -100,7 +99,7 @@ namespace KillerScan.Services
             catch (TimeoutException) { return false; }
         }
 
-        internal static async Task BoundedAsync(Task task, CancellationToken token)
+        public static async Task BoundedAsync(Task task, CancellationToken token)
         {
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
             var winner = await Task.WhenAny(task, Task.Delay(1500, timeout.Token)).ConfigureAwait(false);
@@ -116,37 +115,18 @@ namespace KillerScan.Services
             token.ThrowIfCancellationRequested();
         }
 
-        internal static async Task<T> BoundedAsync<T>(Task<T> task, CancellationToken token)
+        public static async Task<T> BoundedAsync<T>(Task<T> task, CancellationToken token)
         {
             await BoundedAsync((Task)task, token).ConfigureAwait(false);
             return await task.ConfigureAwait(false);
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        private struct ForwardRow
-        {
-            public uint Destination, Mask, Policy, NextHop, InterfaceIndex, Type, Protocol,
-                Age, NextHopAs, Metric1, Metric2, Metric3, Metric4, Metric5;
-        }
-
-        [DllImport("iphlpapi.dll")]
-        private static extern uint GetBestRoute(uint destination, uint source, out ForwardRow route);
-
-        internal static (string Interface, string NextHop)? Route(IPAddress address)
-        {
-            if (address.AddressFamily != AddressFamily.InterNetwork) return null;
-            if (GetBestRoute(BitConverter.ToUInt32(address.GetAddressBytes(), 0), 0, out var route) != 0) return null;
-            var iface = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(n =>
-            {
-                try { return n.GetIPProperties().GetIPv4Properties()?.Index == route.InterfaceIndex; }
-                catch (NetworkInformationException) { return false; }
-            });
-            return (iface?.Name ?? route.InterfaceIndex.ToString(),
-                route.NextHop == 0 ? string.Empty : new IPAddress(route.NextHop).ToString());
-        }
+        /// <summary>The interface and next hop the OS would route this address through.</summary>
+        public static (string Interface, string NextHop)? Route(IPAddress address) =>
+            NetworkPlatform.Current.BestRoute(address);
     }
 
-    internal sealed class ConnectionSample
+    public sealed class ConnectionSample
     {
         public string Address { get; }
         public int Sent { get; private set; }
@@ -156,8 +136,8 @@ namespace KillerScan.Services
         public double Loss => Sent == 0 ? 0 : 100.0 * (Sent - Received) / Sent;
         public DateTimeOffset? Changed { get; private set; }
         private long _total;
-        internal ConnectionSample(string address) => Address = address;
-        internal bool Record(long? latency, DateTimeOffset time)
+        public ConnectionSample(string address) => Address = address;
+        public bool Record(long? latency, DateTimeOffset time)
         {
             bool changed = Sent == 0 || Latest.HasValue != latency.HasValue;
             Sent++;

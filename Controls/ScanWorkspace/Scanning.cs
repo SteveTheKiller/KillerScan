@@ -12,10 +12,10 @@ namespace KillerScan.Controls
 
         private void WireSession(ScanSession session)
         {
-            session.Scanner.Localizer = key => Dispatcher.Invoke(() => Loc(key));
-            session.Scanner.StatusChanged += status => Dispatcher.Invoke(() =>
+            session.Scanner.StatusChanged += scanStatus => Dispatcher.Invoke(() =>
             {
                 if (_disposed) return;
+                string status = ScanStatusText.Format(scanStatus, Loc);
                 session.Status = status;
                 StatusText.Text = status;
                 StateChanged?.Invoke(this, EventArgs.Empty);

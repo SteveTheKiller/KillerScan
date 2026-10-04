@@ -60,6 +60,7 @@ namespace KillerScan
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            Services.EngineHost.Configure();
             // Startup prompts can close before the main window exists.
             ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
