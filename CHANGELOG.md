@@ -4,7 +4,7 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.7.7] - Unreleased
+## [1.8.0] - Unreleased
 
 ### Added
 - Added yellow and magenta accents to the neutral and 98SE themes.
