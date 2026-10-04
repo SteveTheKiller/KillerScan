@@ -16,6 +16,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Menu rows now show accent text and icons on the theme's hover color.
 - Scanning, discovery and device classification now live in KillerScan.Engine, a separate library the app, its command line and other programs share.
 - The language menu now shows its 19 languages in two columns.
+- Selected states now use subtle gradients outside 98SE, Light buttons have softer gray borders, and yellow wordmarks match their accent.
 
 ### Fixed
 - Install and uninstall windows now show the film grain and the app icon in the title bar, and all four corners are rounded.

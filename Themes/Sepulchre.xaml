@@ -56,7 +56,7 @@
 <!-- Selection carries the accent with dark text, as Malaise and Mourning do. The old #2d595d was
      within 1.3:1 of the #454039 surface and of the background gradient's teal end, so a selected
      view button read as unselected. -->
-<SolidColorBrush x:Key="SelectionBg" Color="#4faaa8" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+<LinearGradientBrush x:Key="SelectionBg" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#5DB1AF" Offset="0"/><GradientStop Color="#4AA09E" Offset="1"/></LinearGradientBrush>
 <SolidColorBrush x:Key="SelectionFg" Color="#1e2424" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
     <!-- Inputs / menus / scrollbar -->

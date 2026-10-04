@@ -312,7 +312,8 @@ namespace KillerScan.Services
                     if (theme != Theme.SE98)
                     {
                         target["OutlineTextBrush"] = target["OutlineBtnBrush"];
-                        target["OutlineRestBrush"] = target["OutlineBtnBrush"];
+                        if (!palette.Contains("OutlineRestBrush"))
+                            target["OutlineRestBrush"] = target["OutlineBtnBrush"];
                         target["OutlineHoverBrush"] = target["OutlineBtnBrush"];
                     }
                 }

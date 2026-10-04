@@ -14,4 +14,5 @@
     <SolidColorBrush x:Key="SelectionFg"         Color="#1A1A1A" po:Freeze="True"/>
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#F4EDB8" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#88766600" po:Freeze="True"/>
+    <SolidColorBrush x:Key="AccentLogo" Color="#C69500" po:Freeze="True"/>
 </ResourceDictionary>

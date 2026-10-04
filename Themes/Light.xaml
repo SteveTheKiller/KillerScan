@@ -40,7 +40,7 @@
          (OutlinePressedBrush, below) - as a selected-row fill it read as a highlighter stripe.
          Light's selection is DARK on light. -->
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#1b5e20" po:Freeze="True"/>
-    <SolidColorBrush x:Key="SelectionBg" Color="#1b5e20" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <LinearGradientBrush x:Key="SelectionBg" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#2D6B32" Offset="0"/><GradientStop Color="#19581E" Offset="1"/></LinearGradientBrush>
     <SolidColorBrush x:Key="SelectionFg" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
 <SolidColorBrush x:Key="InputBorderBrush" Color="#c0c0c0" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
@@ -110,4 +110,5 @@
 
     <!-- File picker folder tree connecting lines, KillerPDF's value. -->
     <SolidColorBrush x:Key="TreeLineBrush" Color="#c2c2c2" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlineRestBrush" Color="#777777" po:Freeze="True"/>
 </ResourceDictionary>
