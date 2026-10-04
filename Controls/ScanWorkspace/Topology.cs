@@ -344,10 +344,11 @@ namespace KillerScan.Controls
             border.SetResourceReference(Border.BorderBrushProperty, "TopologyNodeBorderBrush");
             if (device != null)
             {
-                border.Cursor = Cursors.Hand;
+                border.Cursor = DragCursors.Open;   // a node is picked up and carried
                 border.MouseLeftButtonDown += TopologyNode_Click;
                 border.MouseMove += TopologyNode_MouseMove;
                 border.MouseLeftButtonUp += TopologyNode_MouseLeftButtonUp;
+                border.LostMouseCapture += (_, _) => DragCursors.EndDrag();
                 border.PreviewMouseRightButtonDown += TopologyNode_RightClick;
                 border.MouseEnter += TopologyNode_MouseEnter;
                 border.MouseLeave += TopologyNode_MouseLeave;
@@ -386,6 +387,7 @@ namespace KillerScan.Controls
                     _topologyDragStarts[node] = new Point(Canvas.GetLeft(node), Canvas.GetTop(node));
                 _topologyDragMouseStart = e.GetPosition(TopologyCanvas);
                 border.CaptureMouse();
+                DragCursors.BeginDrag();
             }
             e.Handled = true;
         }
@@ -422,6 +424,7 @@ namespace KillerScan.Controls
         {
             if (sender is Border border && border.IsMouseCaptured) border.ReleaseMouseCapture();
             _topologyDragStarts.Clear();
+            DragCursors.EndDrag();
             e.Handled = true;
         }
 

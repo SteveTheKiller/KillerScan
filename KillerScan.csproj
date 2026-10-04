@@ -81,6 +81,10 @@
     <Resource Include="Resources\ks-icon.ico" />
     <Resource Include="Resources\ks-icon.png" />
     <Resource Include="Fonts\KillerScan.ttf" />
+    <!-- The family grab cursors (Controls\DragCursors.cs): open hand on a draggable surface,
+         closed hand while it is carried. -->
+    <Resource Include="Resources\open_hand.cur" />
+    <Resource Include="Resources\closed_hand.cur" />
   </ItemGroup>
 
   <!-- GPL3 source bundle: produces <AppName>-<Version>-src.zip in the publish folder every time you Publish. -->
