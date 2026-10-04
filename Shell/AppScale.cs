@@ -45,6 +45,22 @@ namespace KillerScan.Shell
             scale = Math.Round(Math.Max(AppScaleMin, Math.Min(AppScaleMax, scale)), 3);
             _appScale = scale;
             ApplyWorkspaceScale(scale);
+
+            // The window runs Display + ClearType, which pixel-snaps glyphs and color-fringes
+            // them for maximum crispness at 1:1. Under a fractional scale those snapped stems
+            // land on partial device pixels and the text goes soft. Ideal + Grayscale positions
+            // glyphs at sub-pixel precision and stays smooth at any scale; at exactly 1.0 the
+            // window's own crisp setting comes back.
+            if (scale == 1.0)
+            {
+                ScaleHost.ClearValue(TextOptions.TextFormattingModeProperty);
+                ScaleHost.ClearValue(TextOptions.TextRenderingModeProperty);
+            }
+            else
+            {
+                TextOptions.SetTextFormattingMode(ScaleHost, TextFormattingMode.Ideal);
+                TextOptions.SetTextRenderingMode(ScaleHost, TextRenderingMode.Grayscale);
+            }
             // The sidebar's width is stored in screen pixels so it keeps a constant on-screen
             // size, which means a zoom change has to recompute its logical width.
             RefreshSidebarWidth();
