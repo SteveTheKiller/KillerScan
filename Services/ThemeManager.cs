@@ -321,6 +321,8 @@ namespace KillerScan.Services
             // The two window-like overlays follow the fully merged outer-window surface, including
             // gradients in the material palettes; they are not context menus.
             newDict["OverlayWindowBrush"] = newDict["BackgroundBrush"];
+            if (theme != Theme.SE98 && theme != Theme.Mourning)
+                newDict["ComboHighlightTextBrush"] = newDict["PrimaryBrush"];
             Publish(newDict);
         }
 

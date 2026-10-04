@@ -906,20 +906,14 @@
                                 </Grid>
                             </Border>
                             <ControlTemplate.Triggers>
-                                <!-- SELECTION, not a gray wash - solid SelectionBg fill with
-                                     SelectionFg text, the same treatment a selected tool or tab
-                                     gets. The gesture and chevron are recolored too: they are
-                                     MutedTextBrush at rest, which is unreadable on a saturated
-                                     fill. Family standard, see KillerUI. (2026-07-30) -->
+                                <!-- Hover uses the menu wash and its contrast text brush. -->
                                 <Trigger Property="IsHighlighted" Value="True">
-                                    <Setter TargetName="bg" Property="Background" Value="{DynamicResource SelectionBg}"/>
-                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
-                                    <Setter TargetName="Gesture" Property="Foreground" Value="{DynamicResource SelectionFg}"/>
-                                    <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SelectionFg}"/>
-                                    <!-- Icon and tick move with the label. On 98SE the highlight is
-                                         solid navy and both were left dark against it. -->
-                                    <Setter TargetName="ico" Property="TextElement.Foreground" Value="{DynamicResource SelectionFg}"/>
-                                    <Setter TargetName="check" Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                    <Setter TargetName="bg" Property="Background" Value="{DynamicResource MenuHoverBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource ComboHighlightTextBrush}"/>
+                                    <Setter TargetName="Gesture" Property="Foreground" Value="{DynamicResource ComboHighlightTextBrush}"/>
+                                    <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ComboHighlightTextBrush}"/>
+                                    <Setter TargetName="ico" Property="TextElement.Foreground" Value="{DynamicResource ComboHighlightTextBrush}"/>
+                                    <Setter TargetName="check" Property="Foreground" Value="{DynamicResource ComboHighlightTextBrush}"/>
                                 </Trigger>
                                 <!-- Collapse the shortcut column when there is no gesture, so items
                                      without one do not reserve its 24px margin as phantom padding. -->
