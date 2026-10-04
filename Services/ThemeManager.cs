@@ -279,26 +279,9 @@ namespace KillerScan.Services
                 newDict["WatchDownBrush"] = Frozen(watch[1]);
             if (!newDict.Contains("WatchIdleBrush"))
                 newDict["WatchIdleBrush"] = Frozen(watch[8]);
-            var merged  = Application.Current.Resources.MergedDictionaries;
-
-            // In-place per-key update: fires a targeted change notification for each key
-            // without structurally modifying MergedDictionaries (a structural swap fires a
-            // synchronous ResourcesChanged that can re-enter lookups before the new dict
-            // is fully in place). Theme dictionaries hold colors/brushes only.
-            if (merged.Count > 0)
-            {
-                var existing = merged[0];
-                foreach (object key in newDict.Keys)
-                    existing[key] = newDict[key];
-            }
-            else
-            {
-                merged.Add(newDict);
-            }
-
             // Accent overlay: Dark/Light/Black recolor their accent-family keys on top of
-            // the base green. Green is the base itself, so it needs no overlay (re-applying
-            // the base above already restored green). Overlays live in Accents/<Family>/.
+            // the base green. Green is the base itself, so it needs no overlay (the base
+            // palette loaded above is already green). Overlays live in Accents/<Family>/.
             var accent = accentOverride ?? AccentFor(theme);
             if (HasAccents(theme) && accent != Accent.Green)
             {
@@ -312,7 +295,7 @@ namespace KillerScan.Services
                     {
                         Source = new Uri($"pack://application:,,,/Themes/Accents/{family}/{accent}.xaml")
                     };
-                    var target = merged[0];
+                    var target = newDict;
                     foreach (object key in accentDict.Keys)
                         target[key] = accentDict[key];
                     // The picker caption follows the accent's title bar unless the overlay names
@@ -337,7 +320,24 @@ namespace KillerScan.Services
             }
             // The two window-like overlays follow the fully merged outer-window surface, including
             // gradients in the material palettes; they are not context menus.
-            merged[0]["OverlayWindowBrush"] = merged[0]["BackgroundBrush"];
+            newDict["OverlayWindowBrush"] = newDict["BackgroundBrush"];
+            Publish(newDict);
+        }
+
+        /// <summary>
+        /// Attaches a fully built palette as MergedDictionaries[0], in ONE assignment, the way
+        /// KillerNotes and KillerShell do. A per-key copy into the live dictionary can overwrite a
+        /// key but never remove one, so a key only some themes define (98SE's caption and bevel
+        /// tokens) leaked into every theme chosen after it, and every key fired its own
+        /// invalidation pass. Building the whole palette off-tree first, accent overlay and derived
+        /// roles included, means the swap publishes a finished dictionary and nothing can read a
+        /// half-built one.
+        /// </summary>
+        private static void Publish(ResourceDictionary target)
+        {
+            var merged = Application.Current.Resources.MergedDictionaries;
+            if (merged.Count > 0) merged[0] = target;
+            else merged.Add(target);
         }
     }
 }
