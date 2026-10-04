@@ -205,6 +205,21 @@ try {
     if ($DryRun -and (Test-Path $ouiOutputPath)) { Remove-Item -LiteralPath $ouiOutputPath -Force }
 }
 
+# --- 2c. Punctuation ---
+# No en dashes or em dashes in anything we write, translations included - the KillerNotes rule.
+# The one exclusion is the IEEE OUI registry, which is third-party vendor data refreshed above,
+# not KillerScan text. The clean-tree preflight guarantees every other candidate is tracked, so
+# git grep sees the complete set.
+Step "Checking punctuation"
+$dashMatches = @(git grep -n -I -P '[\x{2013}\x{2014}]' -- . ':(exclude)Resources/oui.txt' 2>$null)
+$dashGrepExit = $LASTEXITCODE
+if ($dashGrepExit -notin 0, 1) { Fail "Punctuation scan failed with exit code $dashGrepExit" }
+if ($dashMatches.Count) {
+    Write-Host ($dashMatches -join "`n")
+    Fail "En/em dashes found in $($dashMatches.Count) place(s). Use a single hyphen."
+}
+Write-Host 'Punctuation OK'
+
 # --- 3. Vulnerable package scan (required at every release) ---
 Step "Scanning for vulnerable packages"
 dotnet restore | Out-Null
