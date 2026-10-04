@@ -222,6 +222,7 @@ namespace KillerScan.Services
             Complete("DialogWindowFramePadding", new Thickness(0));
             Complete("ButtonBevelLightThickness", newDict["BevelLightThickness"]);
             Complete("ButtonBevelDarkThickness", newDict["BevelDarkThickness"]);
+            Complete("SurfaceButtonEdgeBrush", newDict.Contains("ButtonEdgeBrush") ? newDict["ButtonEdgeBrush"] : newDict["CardBorderBrush"]);
             Complete("FileDialogPaneBrush", newDict["PaneBrush"]);
             Complete("MenuFontFamily", new FontFamily("Segoe UI"));
             Complete("MenuFontSize", 12.0);

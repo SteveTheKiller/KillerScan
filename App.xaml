@@ -461,16 +461,25 @@
                 <Setter Property="FontSize" Value="13"/>
                 <Setter Property="Padding" Value="12,6"/>
                 <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+                <!-- SurfaceButtonEdgeBrush is CardBorderBrush everywhere except 98SE, where the bevel
+                     is the edge and the flat outline would draw a second line beside it. -->
+                <Setter Property="BorderBrush" Value="{DynamicResource SurfaceButtonEdgeBrush}"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border x:Name="border" Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="{DynamicResource ControlCornerRadius}" Padding="{TemplateBinding Padding}">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
+                            <Grid>
+                                <Border x:Name="border" Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{DynamicResource ControlCornerRadius}" Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <!-- RAISED bevel over the whole button, the file picker's SurfaceButton.
+                                     Zero thickness on every theme but 98SE; pressing crosses the
+                                     brushes so the button sinks. -->
+                                <Border x:Name="bevelLight" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelLightBrush}" BorderThickness="{DynamicResource ButtonBevelLightThickness}"/>
+                                <Border x:Name="bevelDark" IsHitTestVisible="False" BorderBrush="{DynamicResource BevelDarkBrush}" BorderThickness="{DynamicResource ButtonBevelDarkThickness}"/>
+                            </Grid>
                             <ControlTemplate.Triggers>
                                 <!-- Order matters: IsPressed after IsMouseOver so it wins. -->
                                 <!-- A real fill change, not an opacity fade - the fade is invisible
@@ -480,6 +489,8 @@
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
                                     <Setter TargetName="border" Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+                                    <Setter TargetName="bevelLight" Property="BorderBrush" Value="{DynamicResource BevelDarkBrush}"/>
+                                    <Setter TargetName="bevelDark" Property="BorderBrush" Value="{DynamicResource BevelLightBrush}"/>
                                 </Trigger>
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter Property="Opacity" Value="0.4"/>
