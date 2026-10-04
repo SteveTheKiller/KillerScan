@@ -43,6 +43,11 @@ namespace KillerScan.Shell
             // toolbar grid it shared a column with these buttons and simply painted on top of them.
             _workspaceNavigation.Children.Add(_toolbarOverflow);
             _workspaceToolbar.SizeChanged += (_, _) => FitToolbarViews();
+            // A theme changes button fonts and padding without necessarily resizing the bar, so
+            // the fit that ran mid-switch would otherwise stick (98SE to Dark pushed Topology into
+            // the overflow). Refit once the new theme has laid out.
+            Services.ThemeManager.ThemeChanged += () => Dispatcher.BeginInvoke(
+                new Action(FitToolbarViews), System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
         private void AddViewButton(string view, string key, string shortcut, Action action)
@@ -227,6 +232,8 @@ namespace KillerScan.Shell
         /// width rather than being squeezed until they wrap. Scan's bar and Keep Alive's are
         /// different widths, so the budget is measured from whichever is showing.
         /// </remarks>
+        private const double ScanTargetGive = 60;
+
         private void FitToolbarViews()
         {
             if (_workspaceToolbar.ActualWidth <= 0) return;
@@ -247,6 +254,10 @@ namespace KillerScan.Shell
             {
                 toolbar.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
                 reserved += toolbar.DesiredSize.Width + toolbar.Margin.Left + toolbar.Margin.Right;
+                // The scan bar's address box narrows a little when the bar is tight (layout
+                // squeezes it), and a slightly narrower box beats a view going missing. Count that
+                // give before pushing views into the overflow.
+                if (key == "scan") reserved -= ScanTargetGive;
             }
 
             _toolbarOverflow.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));

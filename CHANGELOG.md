@@ -22,6 +22,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Topology boxes show an open hand on hover and a closed hand while they are dragged.
 - Text stays sharp at app sizes other than 100% again.
 - Pinned places in the file picker can be dragged into a new order.
+- Switching themes no longer pushes a toolbar view into the overflow menu.
 - The uninstaller has its own taskbar button, labeled "Uninstall KillerScan", with the app icon.
 
 ## [1.7.5] - 2026-09-28
