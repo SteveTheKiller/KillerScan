@@ -9,7 +9,7 @@
     <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#E8962C" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#E8962C" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#2A1D0D" po:Freeze="True"/>
-    <LinearGradientBrush x:Key="SelectionBg"         po:Freeze="True" StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#F3A239" Offset="0"/><GradientStop Color="#E39126" Offset="1"/></LinearGradientBrush>
+    <LinearGradientBrush x:Key="SelectionBg"         po:Freeze="True" StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#FEAD44" Offset="0"/><GradientStop Color="#D8861B" Offset="1"/></LinearGradientBrush>
     <!-- The only accent light enough to need its own selection text. Dark's white on this orange
          is 2.2:1; the other four accents are dark fills where white is right. -->
     <SolidColorBrush x:Key="SelectionFg"         Color="#1C1C1C" po:Freeze="True"/>

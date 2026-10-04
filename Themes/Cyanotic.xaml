@@ -38,7 +38,7 @@
     <SolidColorBrush x:Key="RowAltBrush" Color="#18FFFFFF" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="RowHoverBrush" Color="#0a5478" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#44ffffff" po:Freeze="True"/>
-    <LinearGradientBrush x:Key="SelectionBg"         po:Freeze="True" StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#4CFFFFFF" Offset="0"/><GradientStop Color="#3CFFFFFF" Offset="1"/></LinearGradientBrush>
+    <LinearGradientBrush x:Key="SelectionBg"         po:Freeze="True" StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#60FFFFFF" Offset="0"/><GradientStop Color="#30FFFFFF" Offset="1"/></LinearGradientBrush>
     <SolidColorBrush x:Key="SelectionFg" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
     <SolidColorBrush x:Key="InputBorderBrush" Color="#183450" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />

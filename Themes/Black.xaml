@@ -37,7 +37,7 @@
     <SolidColorBrush x:Key="RowAltBrush" Color="#18FFFFFF" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="RowHoverBrush" Color="#333333" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#003322" po:Freeze="True"/>
-    <LinearGradientBrush x:Key="SelectionBg" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#144327" Offset="0"/><GradientStop Color="#003013" Offset="1"/></LinearGradientBrush>
+    <LinearGradientBrush x:Key="SelectionBg" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#1E4D31" Offset="0"/><GradientStop Color="#002609" Offset="1"/></LinearGradientBrush>
     <SolidColorBrush x:Key="SelectionFg" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
     <SolidColorBrush x:Key="InputBorderBrush" Color="#2e2e2e" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
