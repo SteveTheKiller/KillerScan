@@ -26,6 +26,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Pinned places in the file picker can be dragged into a new order.
 - Switching themes no longer pushes a toolbar view into the overflow menu.
 - The uninstaller has its own taskbar button, labeled "Uninstall KillerScan", with the app icon.
+- Selected language and theme rows keep the active accent on hover.
 
 ## [1.7.5] - 2026-09-28
 

@@ -298,6 +298,8 @@ namespace KillerScan.Services
                     var target = newDict;
                     foreach (object key in accentDict.Keys)
                         target[key] = accentDict[key];
+                    if (!palette.Contains("RadioHoverFgBrush") && !accentDict.Contains("RadioHoverFgBrush"))
+                        target["RadioHoverFgBrush"] = target["PrimaryBrush"];
                     // The picker caption follows the accent's title bar unless the overlay names
                     // its own, the same way the main window's caption does.
                     if (accentDict.Contains("TitleBarBrush") && !accentDict.Contains("DialogTitleBarBrush")
