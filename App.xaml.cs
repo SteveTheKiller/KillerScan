@@ -61,6 +61,7 @@ namespace KillerScan
         {
             base.OnStartup(e);
             Services.EngineHost.Configure();
+            Shell.MainWindow.PublishGrainTile();   // install and uninstall dialogs open before any main window
             // Startup prompts can close before the main window exists.
             ShutdownMode = ShutdownMode.OnExplicitShutdown;
 

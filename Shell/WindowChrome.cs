@@ -368,6 +368,21 @@ namespace KillerScan.Shell
 
         private void ApplyGrainTexture()
         {
+            var bmp = PublishGrainTile();
+            _grainBrush.ImageSource = bmp;
+            if (FindName("TitleGrainBrush")   is ImageBrush tg) tg.ImageSource = bmp;
+            if (FindName("ToolbarGrainBrush") is ImageBrush tb) tb.ImageSource = bmp;
+            if (FindName("StatusGrainBrush")  is ImageBrush sg) sg.ImageSource = bmp;
+            if (FindName("FlyoutGrainBrush")  is ImageBrush fg) fg.ImageSource = bmp;
+        }
+
+        /// <summary>
+        /// Generates the grain tile and publishes it as the app-level GrainTileBrush. App startup
+        /// calls this too, so dialogs shown before any main window exists (install, uninstall,
+        /// install repair) are textured like the rest of the app.
+        /// </summary>
+        internal static BitmapSource PublishGrainTile()
+        {
             const int size = 256;
             var bmp = new WriteableBitmap(size, size, 96, 96, PixelFormats.Bgra32, null);
             var pixels = new byte[size * size * 4]; // start fully transparent
@@ -385,12 +400,6 @@ namespace KillerScan.Shell
             }
             bmp.WritePixels(new Int32Rect(0, 0, size, size), pixels, size * 4, 0);
 
-            _grainBrush.ImageSource = bmp;
-            if (FindName("TitleGrainBrush")   is ImageBrush tg) tg.ImageSource = bmp;
-            if (FindName("ToolbarGrainBrush") is ImageBrush tb) tb.ImageSource = bmp;
-            if (FindName("StatusGrainBrush")  is ImageBrush sg) sg.ImageSource = bmp;
-            if (FindName("FlyoutGrainBrush")  is ImageBrush fg) fg.ImageSource = bmp;
-
             // The keyed resource brush is auto-frozen (unlike the x:Named ones above), so its
             // ImageSource can't be set in place. Swap in a fresh, frozen brush instead - DynamicResource
             // consumers (the context menus) re-resolve automatically.
@@ -403,6 +412,7 @@ namespace KillerScan.Shell
             };
             grainTile.Freeze();
             Application.Current.Resources["GrainTileBrush"] = grainTile;
+            return bmp;
         }
     }
 }

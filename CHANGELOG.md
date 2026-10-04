@@ -16,6 +16,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Scanning, discovery and device classification now live in KillerScan.Engine, a separate library the app, its command line and other programs share.
 - The language menu now shows its 19 languages in two columns.
 
+### Fixed
+- Install and uninstall windows now show the film grain and the app icon in the title bar, and all four corners are rounded.
+
 ## [1.7.5] - 2026-09-28
 
 KillerScan 1.7.5 improves the in-app update handoff.
