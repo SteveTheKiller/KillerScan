@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://killerscan.net"><img src="docs/wordmark.png" width="640" alt="KillerScan - Free Network Scanner"></a>
+  <a href="https://killerscan.net"><img src="docs/wordmark.png" height="180" alt="KillerScan - Free Network Scanner"></a>
 </p>
 
 One-click, fast network scanner built for field techs.
