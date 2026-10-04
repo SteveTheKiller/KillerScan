@@ -18,6 +18,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 - Install and uninstall windows now show the film grain and the app icon in the title bar, and all four corners are rounded.
+- The uninstaller has its own taskbar button, labeled "Uninstall KillerScan", with the app icon.
 
 ## [1.7.5] - 2026-09-28
 

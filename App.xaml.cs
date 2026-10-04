@@ -96,6 +96,7 @@ namespace KillerScan
                     Services.ThemeManager.InitializeInstaller();
                     Services.LocaleManager.Initialize();
                 }
+                Controls.TaskbarIdentity.UseUninstall();
                 Uninstall(silent);
                 Shutdown();
                 return;

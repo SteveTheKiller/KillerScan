@@ -14,6 +14,7 @@ namespace KillerScan.Controls
         public ConfirmDialog()
         {
             InitializeComponent();
+            TaskbarIdentity.Track(this);
 
             // Already installed machine-wide (by an admin, winget, choco or an RMM)? Then the
             // only sane move is to update that copy in place: tick the box and lock it. Offering
