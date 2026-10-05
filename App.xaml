@@ -969,7 +969,9 @@
             <!-- The key WPF actually resolves for a Separator sitting in a menu. Same look as
                  above; registering it here is what stops the stock light-gray line. -->
             <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator"
-                   BasedOn="{StaticResource {x:Type Separator}}"/>
+                   BasedOn="{StaticResource {x:Type Separator}}">
+                <Setter Property="Background" Value="{DynamicResource MenuSeparatorBrush}"/>
+            </Style>
 
             <!-- Glyph for a MenuItem.Icon. Keeps the 30-odd icons in the context menus to one
                  line each and puts the size/color in one place. Every codepoint used with this

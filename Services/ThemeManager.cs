@@ -321,6 +321,7 @@ namespace KillerScan.Services
                 }
                 catch { /* overlay file not present yet - base theme stands */ }
             }
+            Complete("MenuSeparatorBrush", newDict["MenuBorderBrush"]);
             // The two window-like overlays follow the fully merged outer-window surface, including
             // gradients in the material palettes; they are not context menus.
             newDict["OverlayWindowBrush"] = newDict["BackgroundBrush"];
