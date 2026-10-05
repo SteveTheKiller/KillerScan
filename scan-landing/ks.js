@@ -105,7 +105,7 @@
     ['dark', 'light', 'hc'].forEach(function (neutralTheme) {
       var preview = ACCENTS[neutralTheme][name];
       if (preview) document.querySelectorAll('.sw-' + neutralTheme).forEach(function (dot) {
-        dot.style.setProperty('--sw-accent', preview[0]);
+        dot.style.setProperty('--sw-accent', neutralTheme === 'light' && name === 'yellow' ? 'linear-gradient(#FFF5A3, #FFD43B)' : preview[0]);
       });
     });
     curAccent = name;
