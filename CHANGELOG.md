@@ -27,7 +27,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Switching themes no longer pushes a toolbar view into the overflow menu.
 - The uninstaller has its own taskbar button, labeled "Uninstall KillerScan", with the app icon.
 - Selected language and theme rows keep the active accent on hover.
-- The title bar icon now uses a sharp size-matched image.
+- Main window and dialog title bar icons now use sharp size-matched images.
 
 ## [1.7.5] - 2026-09-28
 

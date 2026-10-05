@@ -45,7 +45,7 @@
                         <!-- The app icon leads the caption, as it does in the main title bar. -->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="14,0,0,0"
                                     Visibility="{DynamicResource InputDialogWordmarkVisibility}">
-                        <Image Source="pack://application:,,,/Resources/ks-icon.png" Width="27" Height="27"
+                        <Image x:Name="TitleIcon" Width="27" Height="27"
                                VerticalAlignment="Center" Margin="0,0,7,0"
                                RenderOptions.BitmapScalingMode="HighQuality"/>
                         <Grid VerticalAlignment="Center">
