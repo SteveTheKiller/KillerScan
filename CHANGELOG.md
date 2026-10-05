@@ -28,7 +28,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The uninstaller has its own taskbar button, labeled "Uninstall KillerScan", with the app icon.
 - Selected language and theme rows keep the active accent on hover.
 - Main window and dialog title bar icons now use sharp size-matched images.
-- Delirium context-menu dividers now use subtle gray.
+- Improved menu, selection, and footer text contrast, with subtle gray Delirium dividers.
 
 ## [1.7.5] - 2026-09-28
 

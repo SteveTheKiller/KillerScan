@@ -12,7 +12,7 @@
     <SolidColorBrush x:Key="TextFieldBrush" Color="#f0f0f0" po:Freeze="True"/>
     <!-- Overrides the Defaults layer's white: Light's hover wash is pale, so hovered menu
          text goes the accent green instead. -->
-    <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#1b5e20" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#1A1A1A" po:Freeze="True"/>
     <SolidColorBrush x:Key="PrimaryBrush" Color="#1b5e20" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="PrimaryHoverBrush" Color="#1b5e20" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#1b5e20" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
@@ -20,7 +20,7 @@
     <SolidColorBrush x:Key="OnPrimaryBrush" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="OutlineBtnBrush" Color="#1b5e20" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="InputHoverBrush" Color="#8a8a8a" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
-    <SolidColorBrush x:Key="TextFooter"          Color="#888888" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TextFooter"          Color="#5F5F5F" po:Freeze="True"/>
 
     <SolidColorBrush x:Key="BackgroundBrush" Color="#dcdcdc" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="SurfaceBrush" Color="#f0f0f0" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />

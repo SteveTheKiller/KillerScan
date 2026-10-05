@@ -17,4 +17,5 @@
   <SolidColorBrush x:Key="SelectionAccent" Color="#C69500"/>
   <SolidColorBrush x:Key="RadioAccent" Color="#C69500"/>
     <SolidColorBrush x:Key="AccentLogo" Color="#C69500" po:Freeze="True"/>
+    <StaticResource x:Key="ComboHighlightTextBrush" ResourceKey="PrimaryBrush"/>
 </ResourceDictionary>

@@ -153,6 +153,7 @@ namespace KillerScan.Services
                 Source = new Uri($"pack://application:,,,/Themes/{name}.xaml")
             };
             foreach (object key in palette.Keys) newDict[key] = palette[key];
+            bool hasExplicitComboHighlightText = palette.Contains("ComboHighlightTextBrush");
 
 
             // The outer window frame now uses KillerNotes' exact shared five-pixel geometry.
@@ -298,6 +299,7 @@ namespace KillerScan.Services
                     var target = newDict;
                     foreach (object key in accentDict.Keys)
                         target[key] = accentDict[key];
+                    if (accentDict.Contains("ComboHighlightTextBrush")) hasExplicitComboHighlightText = true;
                     if (!palette.Contains("RadioHoverFgBrush") && !accentDict.Contains("RadioHoverFgBrush"))
                         target["RadioHoverFgBrush"] = target["PrimaryBrush"];
                     // The picker caption follows the accent's title bar unless the overlay names
@@ -325,7 +327,7 @@ namespace KillerScan.Services
             // The two window-like overlays follow the fully merged outer-window surface, including
             // gradients in the material palettes; they are not context menus.
             newDict["OverlayWindowBrush"] = newDict["BackgroundBrush"];
-            if (theme != Theme.SE98 && theme != Theme.Mourning)
+            if (!hasExplicitComboHighlightText)
                 newDict["ComboHighlightTextBrush"] = newDict["PrimaryBrush"];
             Publish(newDict);
         }
