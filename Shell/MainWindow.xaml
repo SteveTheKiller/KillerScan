@@ -73,7 +73,7 @@
                     </Border.Background>
                 </Border>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="{DynamicResource ScanTitleBarPadding}">
-                    <Image x:Name="TitleIcon" Source="pack://application:,,,/Resources/ks-icon.png" Width="27" Height="27"
+                    <Image x:Name="TitleIcon" Width="27" Height="27"
                             VerticalAlignment="Center" Margin="0,0,7,0"
                             WindowChrome.IsHitTestVisibleInChrome="True"
                             MouseWheel="LogoBar_MouseWheel"

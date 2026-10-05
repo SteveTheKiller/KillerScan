@@ -24,6 +24,15 @@ namespace KillerScan.Shell
             _startupScanTarget = startupScanTarget;
             _startScanOnLoad = startScanOnLoad;
             InitializeComponent();
+            var titleFrames = System.Windows.Media.Imaging.BitmapDecoder.Create(
+                new System.Uri("pack://application:,,,/Resources/ks-icon.ico"),
+                System.Windows.Media.Imaging.BitmapCreateOptions.None,
+                System.Windows.Media.Imaging.BitmapCacheOption.OnLoad).Frames;
+            void RefreshTitleIcon() => TitleIcon.Source = titleFrames
+                .OrderBy(frame => System.Math.Abs(frame.PixelWidth - TitleIcon.ActualWidth * VisualTreeHelper.GetDpi(TitleIcon).DpiScaleX))
+                .First();
+            TitleIcon.Loaded += (_, _) => RefreshTitleIcon();
+            TitleIcon.SizeChanged += (_, _) => RefreshTitleIcon();
             // Family standard: rail flyouts hug the results pane's lower-left corner. That is
             // inside the window, above the footer, and just to the right of the icon rail.
             FlyoutPlacement.UsePane(DevicesPane, RootGrid);
