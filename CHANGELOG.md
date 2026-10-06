@@ -19,6 +19,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Selected states now use subtle gradients outside 98SE, Light buttons have softer gray borders, and yellow wordmarks match their accent.
 
 ### Fixed
+- Fixed picker corners and kept the close X white over its red hover background.
 - Install and uninstall windows now show the film grain and the app icon in the title bar, and all four corners are rounded.
 - On 98SE, Cancel and the other secondary dialog buttons are raised and sink when pressed, like the file picker's.
 - Topology boxes show an open hand on hover and a closed hand while they are dragged.
