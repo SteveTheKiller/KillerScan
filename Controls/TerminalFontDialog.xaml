@@ -1,6 +1,7 @@
 <Window x:Class="KillerScan.Controls.TerminalFontDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:kui="clr-namespace:KillerScan.Controls"
         Title="KillerScan"
         Width="440" SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
@@ -17,17 +18,17 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Border x:Name="RootBorder" Opacity="0"
+    <kui:PickerBorder x:Name="RootBorder" Opacity="0"
             Background="{StaticResource BackgroundBrush}"
             BorderBrush="{StaticResource CardBorderBrush}"
             BorderThickness="1"
             CornerRadius="{DynamicResource PanelCornerRadius}"
             Margin="{DynamicResource DialogHaloMargin}">
-        <Border.Effect>
+        <kui:PickerBorder.Effect>
             <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="3" Direction="270"
                               Opacity="{DynamicResource FlyoutShadowOpacity}"/>
-        </Border.Effect>
-        <Grid x:Name="DialogSurface" SizeChanged="DialogSurface_SizeChanged">
+        </kui:PickerBorder.Effect>
+        <Grid x:Name="DialogSurface">
             <Border IsHitTestVisible="False" Panel.ZIndex="8"
                     BorderBrush="{DynamicResource FrameOuterLightBrush}"
                     BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
@@ -106,5 +107,5 @@
                 </StackPanel>
             </Grid>
         </Grid>
-    </Border>
+    </kui:PickerBorder>
 </Window>

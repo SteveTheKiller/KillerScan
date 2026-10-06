@@ -64,11 +64,6 @@ namespace KillerScan.Controls
             e.Handled = true;
         }
 
-        private void DialogSurface_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            double radius = RootBorder.CornerRadius.TopLeft;
-            DialogSurface.Clip = new RectangleGeometry(new Rect(e.NewSize), radius, radius);
-        }
         private void UpdatePreview()
         {
             if (Preview == null || SizeBox == null) return;

@@ -1,6 +1,7 @@
 <Window x:Class="KillerScan.Controls.InputDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:kui="clr-namespace:KillerScan.Controls"
         Title="KillerScan"
         Width="360" SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
@@ -13,16 +14,16 @@
     <!-- One-line text prompt on the ConfirmDialog chrome: same border, shadow, grain, wordmark
          title bar and button row, with an entry field where that dialog has its checkbox. Built
          so the SSH username prompt did not have to invent a second dialog language. -->
-    <Border x:Name="RootBorder" Opacity="0"
+    <kui:PickerBorder x:Name="RootBorder" Opacity="0"
             Background="{StaticResource BackgroundBrush}"
             BorderBrush="{StaticResource CardBorderBrush}"
             BorderThickness="1"
-            CornerRadius="{DynamicResource FlyoutCornerRadius}"
+            CornerRadius="{DynamicResource PanelCornerRadius}"
             Margin="{DynamicResource DialogHaloMargin}">
-        <Border.Effect>
+        <kui:PickerBorder.Effect>
             <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="3" Direction="270"
                               Opacity="{DynamicResource FlyoutShadowOpacity}"/>
-        </Border.Effect>
+        </kui:PickerBorder.Effect>
         <Grid>
             <Border IsHitTestVisible="False" Panel.ZIndex="8"
                     BorderBrush="{DynamicResource FrameOuterLightBrush}"
@@ -32,7 +33,7 @@
                     BorderThickness="{DynamicResource FrameOuterDarkThickness}"/>
             <!-- Film grain over the whole dialog (behind content), so it reads as one continuous
                  surface like the main window chrome. -->
-            <Border IsHitTestVisible="False" CornerRadius="{DynamicResource FlyoutCornerRadius}"
+            <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}"
                     Opacity="{DynamicResource GrainOpacity}"
                     Background="{DynamicResource GrainTileBrush}"/>
 
@@ -103,5 +104,5 @@
                 </StackPanel>
             </Grid>
         </Grid>
-    </Border>
+    </kui:PickerBorder>
 </Window>
