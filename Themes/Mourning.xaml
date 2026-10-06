@@ -28,7 +28,7 @@
     <SolidColorBrush x:Key="OnPrimaryBrush" Color="#292c31" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="OutlineBtnBrush" Color="#ffb199" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="InputHoverBrush" Color="#f9f871" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
-    <SolidColorBrush x:Key="TextFooter"          Color="#b4b6b1" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TextFooter"          Color="#a9c6c3" po:Freeze="True"/>
 
     <!-- Surface tiers -->
     <SolidColorBrush x:Key="BackgroundBrush" Color="#3b3642" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
@@ -109,4 +109,5 @@
 
     <!-- File picker folder tree connecting lines, KillerPDF's value. -->
     <SolidColorBrush x:Key="TreeLineBrush" Color="#756b79" po:Freeze="True"/>
+  <SolidColorBrush x:Key="FooterBackgroundBrush" Color="#3b3642"/>
 </ResourceDictionary>

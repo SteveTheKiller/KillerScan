@@ -326,6 +326,8 @@ namespace KillerScan.Services
             Complete("MenuSeparatorBrush", newDict["MenuBorderBrush"]);
             // The two window-like overlays follow the fully merged outer-window surface, including
             // gradients in the material palettes; they are not context menus.
+            if (!newDict.Contains("FooterBackgroundBrush"))
+                newDict["FooterBackgroundBrush"] = newDict["BackgroundBrush"];
             newDict["OverlayWindowBrush"] = newDict["BackgroundBrush"];
             if (!hasExplicitComboHighlightText)
                 newDict["ComboHighlightTextBrush"] = newDict["PrimaryBrush"];

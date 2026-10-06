@@ -518,7 +518,7 @@
         <!-- ZIndex -1 so the content pane's shadow lands on the footer rather than being painted
              over by it. The footer is pushed down rather than the content row raised, which would
              also put it above the overlays declared later. -->
-        <Border x:Name="FooterBar" Grid.Row="3" Panel.ZIndex="-1" Background="{DynamicResource BackgroundBrush}">
+        <Border x:Name="FooterBar" Grid.Row="3" Panel.ZIndex="-1" Background="{DynamicResource FooterBackgroundBrush}">
           <Grid>
             <!-- FooterPadding: 16,0 on the flat themes (one continuous strip); 0 on 98SE, where
                  the strip breaks into sunken cells that run to the edges. -->
