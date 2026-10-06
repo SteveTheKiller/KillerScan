@@ -175,7 +175,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Billentyűparancsok</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LISTA</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">BILLENTYŰZET</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Online billentyűparancs-útmutató</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Teljes útmutató és leírás online</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">Tartsa lenyomva a Ctrl / Shift / Alt billentyűt egy réteg megtekintéséhez</sys:String>
     <sys:String x:Key="Str_KS_Views">NÉZETEK</sys:String>
     <sys:String x:Key="Str_KS_Scan">VIZSGÁLAT</sys:String>

@@ -175,7 +175,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Hurtigtaster</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LISTE</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">TASTATUR</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Nettveiledning for hurtigtaster</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Full veiledning &amp; fremgangsmåter på nett</sys:String>
     <sys:String x:Key="Str_KS_Views">VISNINGER</sys:String>
     <sys:String x:Key="Str_KS_Scan">SKANNING</sys:String>
     <sys:String x:Key="Str_KS_Device">ENHETER</sys:String>

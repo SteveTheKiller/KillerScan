@@ -157,7 +157,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Klavye kısayolları</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LİSTE</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">KLAVYE</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Çevrimiçi klavye kısayolu kılavuzu</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Tam kılavuz ve çevrimiçi rehber</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">Bir katmanı görmek için Ctrl / Shift / Alt tuşunu basılı tutun</sys:String>
     <sys:String x:Key="Str_KS_Views">GÖRÜNÜMLER</sys:String>
     <sys:String x:Key="Str_KS_Scan">TARAMA</sys:String>

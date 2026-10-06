@@ -175,7 +175,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Scorciatoie da tastiera</sys:String>
     <sys:String x:Key="Str_KS_ViewList">ELENCO</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">TASTIERA</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Guida online alle scorciatoie da tastiera</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Guida online completa e come-fare</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">Tieni premuto Ctrl / Shift / Alt per vedere un livello</sys:String>
     <sys:String x:Key="Str_KS_Views">VISTE</sys:String>
     <sys:String x:Key="Str_KS_Scan">SCANSIONE</sys:String>

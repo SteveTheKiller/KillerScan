@@ -157,7 +157,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">鍵盤快速鍵</sys:String>
     <sys:String x:Key="Str_KS_ViewList">清單</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">鍵盤</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">線上鍵盤快速鍵指南</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">完整指南與線上教學</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">按住 Ctrl / Shift / Alt 預覽層</sys:String>
     <sys:String x:Key="Str_KS_Views">檢視</sys:String>
     <sys:String x:Key="Str_KS_Scan">掃描</sys:String>

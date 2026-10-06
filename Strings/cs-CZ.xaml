@@ -155,7 +155,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Klávesové zkratky</sys:String>
     <sys:String x:Key="Str_KS_ViewList">SEZNAM</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">KLÁVESNICE</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Online průvodce klávesovými zkratkami</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Kompletní příručka &amp; návody online</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">Podržte Ctrl / Shift / Alt pro náhled vrstvy</sys:String>
     <sys:String x:Key="Str_KS_Views">ZOBRAZENÍ</sys:String>
     <sys:String x:Key="Str_KS_Scan">SKENOVÁNÍ</sys:String>

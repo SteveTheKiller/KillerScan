@@ -145,7 +145,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Phím tắt</sys:String>
     <sys:String x:Key="Str_KS_ViewList">DANH SÁCH</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">BÀN PHÍM</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Hướng dẫn phím tắt trực tuyến</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Hướng dẫn đầy đủ &amp; cách sử dụng trực tuyến</sys:String>
     <sys:String x:Key="Str_KS_Views">CHẾ ĐỘ XEM</sys:String>
     <sys:String x:Key="Str_KS_Scan">QUÉT</sys:String>
     <sys:String x:Key="Str_KS_Device">THIẾT BỊ</sys:String>

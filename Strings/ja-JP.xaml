@@ -168,7 +168,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">キーボードショートカット</sys:String>
     <sys:String x:Key="Str_KS_ViewList">リスト</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">キーボード</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">オンラインのキーボードショートカットガイド</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">完全ガイド &amp; 使い方 (オンライン)</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">Ctrl / Shift / Alt を押すとレイヤーを表示</sys:String>
     <sys:String x:Key="Str_KS_Views">ビュー</sys:String>
     <sys:String x:Key="Str_KS_Scan">スキャン</sys:String>

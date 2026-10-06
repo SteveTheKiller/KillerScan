@@ -175,7 +175,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Сочетания клавиш</sys:String>
     <sys:String x:Key="Str_KS_ViewList">СПИСОК</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">КЛАВИАТУРА</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Онлайн-руководство по сочетаниям клавиш</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Полное руководство &amp; инструкция по работе в Интернете</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">Удерживайте Ctrl / Shift / Alt, чтобы увидеть слой</sys:String>
     <sys:String x:Key="Str_KS_Views">ВИДЫ</sys:String>
     <sys:String x:Key="Str_KS_Scan">СКАНИРОВАНИЕ</sys:String>

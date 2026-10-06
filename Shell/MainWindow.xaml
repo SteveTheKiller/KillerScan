@@ -731,16 +731,17 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0" Margin="0,0,0,14">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
                                 <TextBlock x:Name="ShortcutsTitle" Text="Keyboard shortcuts"
                                            Foreground="{DynamicResource TextBrush}"
                                            FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                                 <!-- LIST / KEYBOARD, centered, active shown by foreground alone.
                                      KillerPDF's selector, not a pair of glyph buttons. -->
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="12,0"
                                             VerticalAlignment="Center">
                                     <Button x:Name="ShortcutListViewButton" Style="{StaticResource ViewTabButton}"
                                             Content="{DynamicResource Str_KS_ViewList}"
@@ -749,7 +750,8 @@
                                             Content="{DynamicResource Str_KS_ViewKeyboard}"
                                             Click="ShortcutMapView_Click"/>
                                 </StackPanel>
-                                <TextBlock Grid.Row="1" FontFamily="Consolas" FontSize="11" Margin="0,6,0,0">
+                                <TextBlock Grid.Column="2" FontFamily="Consolas" FontSize="11" Margin="12,0,0,0" MaxWidth="210"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap">
                                     <Hyperlink Click="OnlineHelp_Click" Focusable="True" Foreground="{DynamicResource PrimaryBrush}"
                                                ToolTip="https://killerscan.net/help.html#shortcuts"><Run Text="{DynamicResource Str_KS_OnlineHelp}"/></Hyperlink>
                                 </TextBlock>

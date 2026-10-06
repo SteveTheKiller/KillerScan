@@ -157,7 +157,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Atajos de teclado</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LISTA</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">TECLADO</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Guía de atajos de teclado en línea</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Guía completa y tutoriales en línea</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">Mantenga Ctrl / Shift / Alt para ver una capa</sys:String>
     <sys:String x:Key="Str_KS_Views">VISTAS</sys:String>
     <sys:String x:Key="Str_KS_Scan">ESCANEO</sys:String>
