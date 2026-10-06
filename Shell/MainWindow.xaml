@@ -750,7 +750,7 @@
                                             Content="{DynamicResource Str_KS_ViewKeyboard}"
                                             Click="ShortcutMapView_Click"/>
                                 </StackPanel>
-                                <TextBlock Grid.Column="2" FontFamily="Consolas" FontSize="11" Margin="12,0,0,0" MaxWidth="210"
+                                <TextBlock Grid.Column="2" FontFamily="Consolas" FontSize="11" Margin="12,0,24,0" MaxWidth="210"
                                            HorizontalAlignment="Right" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap">
                                     <Hyperlink Click="OnlineHelp_Click" Focusable="True" Foreground="{DynamicResource PrimaryBrush}"
                                                ToolTip="https://killerscan.net/help.html#shortcuts"><Run Text="{DynamicResource Str_KS_OnlineHelp}"/></Hyperlink>

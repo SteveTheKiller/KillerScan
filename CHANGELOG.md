@@ -16,7 +16,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Menu rows now show accent text and icons on the theme's hover color.
 - Scanning, discovery and device classification now live in KillerScan.Engine, a separate library the app, its command line and other programs share.
 - The language menu now shows its 19 languages in two columns, with a faint divider that fades at both ends.
-- Both shortcut views link to the full online guide from an aligned header.
+- Both shortcut views link to the full online guide from an aligned header, with more space beside the close button.
 - Improved menu and selection contrast, softened material-theme footers and 98SE footer text, and used subtle gray Delirium dividers.
 
 ### Fixed
