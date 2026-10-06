@@ -199,24 +199,5 @@ namespace KillerScan.Controls
             if (device != null) DeviceAction?.Invoke(this, new ScanDeviceActionEventArgs(device, action,
                 beside));
         }
-        private void HeaderStrip_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (sender is not Border border) return;
-            double w = border.ActualWidth, h = border.ActualHeight;
-            if (w <= 0 || h <= 0) { border.Clip = null; return; }
-            double r = Math.Min(6, Math.Min(w / 2, h));
-            var geometry = new StreamGeometry();
-            using (var context = geometry.Open())
-            {
-                context.BeginFigure(new Point(0, h), true, true);
-                context.LineTo(new Point(0, r), true, false);
-                context.ArcTo(new Point(r, 0), new Size(r, r), 0, false, SweepDirection.Clockwise, true, false);
-                context.LineTo(new Point(w - r, 0), true, false);
-                context.ArcTo(new Point(w, r), new Size(r, r), 0, false, SweepDirection.Clockwise, true, false);
-                context.LineTo(new Point(w, h), true, false);
-            }
-            geometry.Freeze();
-            border.Clip = geometry;
-        }
     }
 }

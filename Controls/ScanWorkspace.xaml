@@ -1,9 +1,6 @@
 <UserControl x:Class="KillerScan.Controls.ScanWorkspace" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:cm="clr-namespace:System.ComponentModel;assembly=System" Background="{DynamicResource BackgroundBrush}" UseLayoutRounding="True">
 <Grid>
 <Grid.Resources>
-    <Style x:Key="ScanGridHeaderStrip" TargetType="Border">
-        <EventSetter Event="SizeChanged" Handler="HeaderStrip_SizeChanged"/>
-    </Style>
     <!-- The type cell, shared by the Devices grid and the Services grid so one list of
          colors serves both. The triggers match the raw English type, which is why
          ServiceRow carries the raw value and localizes separately for its CSV. -->

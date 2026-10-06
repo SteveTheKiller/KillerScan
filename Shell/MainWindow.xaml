@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KillerScan.Shell"
+        xmlns:controls="clr-namespace:KillerScan.Controls"
         xmlns:cm="clr-namespace:System.ComponentModel;assembly=System"
         mc:Ignorable="d"
         Title="KillerScan"
@@ -482,13 +483,13 @@
                 Background="{DynamicResource ScanContentPaneBrush}"
                 CornerRadius="{DynamicResource PanelCornerRadius}"
                 Effect="{StaticResource PaneShadow}"/>
-        <Border x:Name="DevicesPane" Grid.Row="1" SnapsToDevicePixels="True" UseLayoutRounding="True"
+        <controls:PickerBorder x:Name="DevicesPane" Grid.Row="1" SnapsToDevicePixels="True" UseLayoutRounding="True"
                 Background="{DynamicResource ScanContentPaneBrush}"
                 BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1"
                 CornerRadius="{DynamicResource PanelCornerRadius}">
             <Grid x:Name="TerminalLayout" WindowChrome.IsHitTestVisibleInChrome="True">
             </Grid>
-        </Border>
+        </controls:PickerBorder>
         <!-- The sunken edge around the content pane, drawn as four layers over it rather than as
              one border, because Win32's EDGE_SUNKEN is two tones on each side: #808080 then
              #000000 down the top and left, #ffffff then the face gray up the bottom and right. A
