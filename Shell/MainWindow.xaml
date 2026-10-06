@@ -731,6 +731,10 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0" Margin="0,0,0,14">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
                                 <TextBlock x:Name="ShortcutsTitle" Text="Keyboard shortcuts"
                                            Foreground="{DynamicResource TextBrush}"
                                            FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
@@ -745,6 +749,10 @@
                                             Content="{DynamicResource Str_KS_ViewKeyboard}"
                                             Click="ShortcutMapView_Click"/>
                                 </StackPanel>
+                                <TextBlock Grid.Row="1" FontFamily="Consolas" FontSize="11" Margin="0,6,0,0">
+                                    <Hyperlink Click="OnlineHelp_Click" Focusable="True" Foreground="{DynamicResource PrimaryBrush}"
+                                               ToolTip="https://killerscan.net/help.html#shortcuts"><Run Text="{DynamicResource Str_KS_OnlineHelp}"/></Hyperlink>
+                                </TextBlock>
                             </Grid>
                             <ScrollViewer x:Name="ShortcutListHost" Grid.Row="1"
                                           VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -770,13 +778,6 @@
                                      HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <StackPanel x:Name="ShortcutMapRows"/>
                             </Viewbox>
-                            <!-- Sits outside both hosts so it stays put when the list and the map
-                                 swap places, and points at the same page the site navigation does. -->
-                            <TextBlock Grid.Row="2" HorizontalAlignment="Right" Margin="0,14,0,0"
-                                       FontFamily="Consolas" FontSize="11">
-                                <Hyperlink Click="OnlineHelp_Click" Foreground="{DynamicResource PrimaryBrush}"
-                                           ToolTip="https://killerscan.net/help.html"><Run Text="{DynamicResource Str_KS_OnlineHelp}"/></Hyperlink>
-                            </TextBlock>
                         </Grid>
                     </Grid>
                 </Border>

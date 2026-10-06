@@ -157,7 +157,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Raccourcis clavier</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LISTE</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">CLAVIER</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Guide complet et tutoriels en ligne</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Guide des raccourcis clavier en ligne</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">Maintenez Ctrl / Shift / Alt pour afficher une couche</sys:String>
     <sys:String x:Key="Str_KS_Views">VUES</sys:String>
     <sys:String x:Key="Str_KS_Scan">ANALYSE</sys:String>

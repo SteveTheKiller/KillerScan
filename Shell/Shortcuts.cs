@@ -334,7 +334,7 @@ namespace KillerScan.Shell
             try
             {
                 System.Diagnostics.Process.Start(
-                    new System.Diagnostics.ProcessStartInfo("https://killerscan.net/help.html") { UseShellExecute = true });
+                    new System.Diagnostics.ProcessStartInfo("https://killerscan.net/help.html#shortcuts") { UseShellExecute = true });
             }
             catch { }
         }

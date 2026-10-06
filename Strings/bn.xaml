@@ -157,7 +157,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">কীবোর্ড শর্টকাট</sys:String>
     <sys:String x:Key="Str_KS_ViewList">তালিকা</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">কীবোর্ড</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">সম্পূর্ণ গাইড ও অনলাইন নির্দেশিকা</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">অনলাইন কীবোর্ড শর্টকাট নির্দেশিকা</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">একটি লেয়ার দেখতে Ctrl / Shift / Alt চেপে ধরুন</sys:String>
     <sys:String x:Key="Str_KS_Views">ভিউ</sys:String>
     <sys:String x:Key="Str_KS_Scan">স্ক্যানিং</sys:String>

@@ -157,7 +157,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Tastenkürzel</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LISTE</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">TASTATUR</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Vollständige Anleitung &amp; Tutorials online</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Online-Anleitung zu Tastenkürzeln</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">Ctrl / Shift / Alt halten, um eine Ebene anzuzeigen</sys:String>
     <sys:String x:Key="Str_KS_Views">ANSICHTEN</sys:String>
     <sys:String x:Key="Str_KS_Scan">SCANNEN</sys:String>

@@ -142,7 +142,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Skróty klawiaturowe</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LISTA</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">KLAWIATURA</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Pełny przewodnik &amp; poradniki online</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Internetowy przewodnik po skrótach klawiaturowych</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">Przytrzymaj Ctrl / Shift / Alt, aby zobaczyć warstwę</sys:String>
     <sys:String x:Key="Str_KS_Views">WIDOKI</sys:String>
     <sys:String x:Key="Str_KS_Scan">SKANOWANIE</sys:String>

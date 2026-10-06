@@ -175,7 +175,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Сполучення клавіш</sys:String>
     <sys:String x:Key="Str_KS_ViewList">СПИСОК</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">КЛАВІАТУРА</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Повний посібник і поради онлайн</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Онлайн-посібник із клавіатурних скорочень</sys:String>
     <sys:String x:Key="Str_KS_Views">ВИГЛЯДИ</sys:String>
     <sys:String x:Key="Str_KS_Scan">СКАНУВАННЯ</sys:String>
     <sys:String x:Key="Str_KS_Device">ПРИСТРОЇ</sys:String>

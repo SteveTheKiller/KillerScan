@@ -175,7 +175,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Keyboard shortcuts</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LIST</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">KEYBOARD</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Full guide &amp; how-to online</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Online shortcut guide</sys:String>
     <sys:String x:Key="Str_KS_Views">VIEWS</sys:String>
     <sys:String x:Key="Str_KS_Scan">SCANNING</sys:String>
     <sys:String x:Key="Str_KS_Device">DEVICES</sys:String>

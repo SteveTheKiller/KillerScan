@@ -175,7 +175,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Atalhos de teclado</sys:String>
     <sys:String x:Key="Str_KS_ViewList">LISTA</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">TECLADO</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Guia completo e instruções online</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Guia online de atalhos de teclado</sys:String>
     <sys:String x:Key="Str_KS_Views">EXIBIÇÕES</sys:String>
     <sys:String x:Key="Str_KS_Scan">VERIFICAÇÃO</sys:String>
     <sys:String x:Key="Str_KS_Device">DISPOSITIVOS</sys:String>

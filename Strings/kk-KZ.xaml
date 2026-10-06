@@ -175,7 +175,7 @@
     <sys:String x:Key="Str_Shortcuts_Title">Пернелер тіркесімі</sys:String>
     <sys:String x:Key="Str_KS_ViewList">ТІЗІМ</sys:String>
     <sys:String x:Key="Str_KS_ViewKeyboard">ПЕРНЕТАҚТА</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Толық нұсқаулық пен онлайн көмек</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Пернетақта тіркесімдерінің онлайн нұсқаулығы</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">Қабатты көру үшін Ctrl / Shift / Alt басып тұрыңыз</sys:String>
     <sys:String x:Key="Str_KS_Views">КӨРІНІСТЕР</sys:String>
     <sys:String x:Key="Str_KS_Scan">СКАНЕРЛЕУ</sys:String>
