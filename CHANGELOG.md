@@ -20,6 +20,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Improved menu and selection contrast, softened material-theme footers and 98SE footer text, and used subtle gray Delirium dividers.
 
 ### Fixed
+- 98SE Red is a true maroon again, so it no longer looks like Magenta.
 - Ctrl+wheel changes picker views and icon sizes.
 - Table headers and content now follow the pane border's inner corners across themes and app sizes.
 - Fixed picker and dialog corners and kept the close X white over its red hover background.

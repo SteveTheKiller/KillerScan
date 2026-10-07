@@ -163,7 +163,7 @@ namespace KillerScan.Shell
             [(Accent.Red, "#FF2929"), (Accent.Orange, "#FF910A"), (Accent.Yellow, "#FFEB00"), (Accent.Green, "#00FF66"),
              (Accent.Teal, "#0AFFE7"), (Accent.Blue, "#298DFF"), (Accent.Purple, "#B829FF"), (Accent.Magenta, "#FF2BBD")];
         private static readonly (Accent Accent, string Hex)[] SE98StripColors =
-            [(Accent.Red, "#800040"), (Accent.Orange, "#A05000"), (Accent.Yellow, "#EAD900"), (Accent.Green, "#006000"),
+            [(Accent.Red, "#800000"), (Accent.Orange, "#A05000"), (Accent.Yellow, "#EAD900"), (Accent.Green, "#006000"),
              (Accent.Teal, "#008080"), (Accent.Blue, "#000080"), (Accent.Purple, "#5A376E"), (Accent.Magenta, "#750052")];
 
         private static (Accent Accent, string Hex)[] StripColorsFor(Theme family) => family switch

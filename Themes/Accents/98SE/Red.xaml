@@ -5,17 +5,17 @@
          period palette was that saturated. Values from KillerShell's Accents/98SE/Red.xaml. -->
     <!-- Caption gradient - see Blue.xaml. -->
     <LinearGradientBrush x:Key="TitleBarBrush" StartPoint="0,0" EndPoint="1,0" po:Freeze="True">
-        <GradientStop Color="#680030" Offset="0"/><GradientStop Color="#b05070" Offset="1"/>
+        <GradientStop Color="#700000" Offset="0"/><GradientStop Color="#B05050" Offset="1"/>
     </LinearGradientBrush>
-    <SolidColorBrush x:Key="PrimaryBrush"        Color="#700038" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#980050" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#500028" po:Freeze="True"/>
-    <SolidColorBrush x:Key="HeaderLineBrush"     Color="#700038" po:Freeze="True"/>
-    <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#700038" po:Freeze="True"/>
-    <SolidColorBrush x:Key="SelectionBg"         Color="#700038" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#700038" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowAltBrush"         Color="#ecd8df" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryBrush"        Color="#800000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#A00000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#580000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="HeaderLineBrush"     Color="#800000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#800000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionBg"         Color="#800000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#800000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowAltBrush"         Color="#ECD8D8" po:Freeze="True"/>
     <!-- Hovered row text. 98SE hovers a light gray row, so this is a dark accent tint rather than
          the pale one the dark families use. -->
-    <SolidColorBrush x:Key="TableHoverTextBrush" Color="#800020" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TableHoverTextBrush" Color="#800000" po:Freeze="True"/>
 </ResourceDictionary>
