@@ -16,4 +16,8 @@
     <SolidColorBrush x:Key="SelectionFg" Color="#1E1F22"/>
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#332208" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#88FF910A" po:Freeze="True"/>
+    <SolidColorBrush x:Key="AccentLogo"        Color="#FF910A" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionAccent" Color="#FF910A" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RadioAccent"     Color="#FF910A" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#FFFF910A" po:Freeze="True"/>
 </ResourceDictionary>

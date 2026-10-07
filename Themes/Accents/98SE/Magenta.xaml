@@ -12,7 +12,11 @@
     <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#750052" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionBg"         Color="#750052" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#750052" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowAltBrush"         Color="#F1D5E7" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowAltBrush" Color="#08000000" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
     <SolidColorBrush x:Key="TableHoverTextBrush" Color="#750052" po:Freeze="True"/>
+    <SolidColorBrush x:Key="AccentLogo" Color="#750052"/>
+    <SolidColorBrush x:Key="SelectionAccent" Color="#750052"/>
+    <SolidColorBrush x:Key="RadioAccent" Color="#750052"/>
+    <LinearGradientBrush x:Key="DialogTitleBarBrush" StartPoint="0,0" EndPoint="1,0" po:Freeze="True"><GradientStop Color="#750052" Offset="0"/><GradientStop Color="#A52A80" Offset="1"/></LinearGradientBrush>
 </ResourceDictionary>

@@ -152,7 +152,7 @@
 
     <!-- Grid rows. The hovered row is light gray, so hovered text is a dark version of the active
          accent, leaving the saturated accent itself for keyboard/current selection. -->
-    <SolidColorBrush x:Key="RowAltBrush" Color="#d9ead9" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <SolidColorBrush x:Key="RowAltBrush" Color="#08000000" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 <SolidColorBrush x:Key="RowHoverBrush" Color="#c0c0c0" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="TableHoverTextBrush" Color="#1c5527" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="RowSelectedBrush" Color="#004f00" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
@@ -573,4 +573,11 @@
     <SolidColorBrush x:Key="KsCatToolbar" Color="#0077b3" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="KsCatApp" Color="#cc6a00" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
+    <LinearGradientBrush x:Key="DialogTitleBarBrush" StartPoint="0,0" EndPoint="1,0" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"><GradientStop Color="#004000" Offset="0"/><GradientStop Color="#3a7d44" Offset="1"/></LinearGradientBrush>
+    <sys:Double x:Key="WordmarkShadowOpacity" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">0</sys:Double>
+    <SolidColorBrush x:Key="FooterBackgroundBrush" Color="#FFC0C0C0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuSeparatorBrush" Color="#FF808080" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RadioAccent" Color="#FF004F00" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionAccent" Color="#FF004F00" po:Freeze="True"/>
+    <SolidColorBrush x:Key="AccentLogo" Color="#FF004F00" po:Freeze="True"/>
 </ResourceDictionary>

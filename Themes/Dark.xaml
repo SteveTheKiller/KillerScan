@@ -79,7 +79,7 @@
 
     <CornerRadius x:Key="SmallCornerRadius" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">3</CornerRadius>
 
-    <CornerRadius x:Key="FlyoutCornerRadius" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">0,0,4,4</CornerRadius>
+    <CornerRadius x:Key="FlyoutCornerRadius">4</CornerRadius>
 
     <CornerRadius x:Key="AccentSwatchCornerRadius" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">9</CornerRadius>
 
@@ -99,4 +99,18 @@
     <!-- File picker folder tree connecting lines, KillerPDF's value. -->
     <SolidColorBrush x:Key="TreeLineBrush" Color="#3d3d3d" po:Freeze="True"/>
     <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#E0E0E0"/>
+    <SolidColorBrush x:Key="AccentLogo"     Color="#1ea54c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RadioAccent"    Color="#1ea54c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionAccent" Color="#1ea54c" po:Freeze="True"/>
+    <sys:Double x:Key="PaneShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.6</sys:Double>
+    <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#FF404040" po:Freeze="True"/>
+    <sys:Double x:Key="TitleBarHeight" xmlns:sys="clr-namespace:System;assembly=mscorlib">36</sys:Double>
+    <sys:Double x:Key="BarShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.38</sys:Double>
+    <SolidColorBrush x:Key="DialogTitleBarBrush" Color="#FF1C1C1C" po:Freeze="True"/>
+    <SolidColorBrush x:Key="FooterBackgroundBrush" Color="#FF1C1C1C" po:Freeze="True"/>
+    <sys:Double x:Key="FlyoutShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.55</sys:Double>
+    <sys:Double x:Key="WordmarkShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.45</sys:Double>
+    <SolidColorBrush x:Key="MenuSeparatorBrush" Color="#FF2E2E2E" po:Freeze="True"/>
+    <sys:Double x:Key="TitleWordmarkBoldSize" xmlns:sys="clr-namespace:System;assembly=mscorlib">21.45</sys:Double>
+    <sys:Double x:Key="TitleWordmarkSize" xmlns:sys="clr-namespace:System;assembly=mscorlib">16.5</sys:Double>
 </ResourceDictionary>

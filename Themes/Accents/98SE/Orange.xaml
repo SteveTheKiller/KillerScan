@@ -13,8 +13,12 @@
     <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#804000" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionBg"         Color="#804000" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#804000" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowAltBrush"         Color="#f0dfc7" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RowAltBrush" Color="#08000000" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <!-- Hovered row text. 98SE hovers a light gray row, so this is a dark accent tint rather than
          the pale one the dark families use. -->
     <SolidColorBrush x:Key="TableHoverTextBrush" Color="#7a3c00" po:Freeze="True"/>
+    <SolidColorBrush x:Key="AccentLogo" Color="#804000"/>
+    <SolidColorBrush x:Key="SelectionAccent" Color="#804000"/>
+    <SolidColorBrush x:Key="RadioAccent" Color="#804000"/>
+    <LinearGradientBrush x:Key="DialogTitleBarBrush" StartPoint="0,0" EndPoint="1,0" po:Freeze="True"><GradientStop Color="#804000" Offset="0"/><GradientStop Color="#c07828" Offset="1"/></LinearGradientBrush>
 </ResourceDictionary>
