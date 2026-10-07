@@ -109,5 +109,4 @@
     <!-- File picker folder tree connecting lines, KillerPDF's value. -->
     <SolidColorBrush x:Key="TreeLineBrush" Color="#096366" po:Freeze="True"/>
     <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#F4F4F0"/>
-  <LinearGradientBrush x:Key="FooterBackgroundBrush" StartPoint="0,0.5" EndPoint="1,0.5"><GradientStop Color="#38233b" Offset="0"/><GradientStop Color="#25232b" Offset="1"/></LinearGradientBrush>
 </ResourceDictionary>

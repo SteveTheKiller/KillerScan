@@ -21,6 +21,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 - 98SE Red is a true maroon again, so it no longer looks like Magenta.
+- Delirium, Ectoplasm and Sepulchre footers match the window background again.
 - Ctrl+wheel changes picker views and icon sizes.
 - Table headers and content now follow the pane border's inner corners across themes and app sizes.
 - Fixed picker and dialog corners and kept the close X white over its red hover background.
