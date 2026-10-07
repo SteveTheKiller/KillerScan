@@ -58,7 +58,7 @@
                                 <StackPanel.Effect><BlurEffect Radius="3"/></StackPanel.Effect>
                                 <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15"><Run Text="Killer" Foreground="#D8000000"/><Run Text="Scan" FontSize="19.5" FontWeight="Bold" Foreground="#D8000000"/></TextBlock>
                             </StackPanel>
-                            <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="19.5" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
+                            <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="19.5" FontWeight="Bold" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
                         </Grid>
                         <TextBlock Text="{DynamicResource Str_Ssh_Title}" Margin="6,0,0,0" VerticalAlignment="Center"
                                    Visibility="{DynamicResource InputDialogPlainTitleVisibility}"

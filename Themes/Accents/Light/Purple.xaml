@@ -12,5 +12,5 @@
     <LinearGradientBrush x:Key="SelectionBg"         po:Freeze="True" StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#7133A3" Offset="0"/><GradientStop Color="#4B0B7D" Offset="1"/></LinearGradientBrush>
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#e4d6f2" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#885A1690" po:Freeze="True"/>
-    <StaticResource x:Key="ComboHighlightTextBrush" ResourceKey="PrimaryBrush"/>
+    <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#5A1690" po:Freeze="True"/>
 </ResourceDictionary>

@@ -324,6 +324,10 @@ namespace KillerScan.Services
                 catch { /* overlay file not present yet - base theme stands */ }
             }
             Complete("MenuSeparatorBrush", newDict["MenuBorderBrush"]);
+            // The wordmark's bold run follows the accent unless a theme states its own
+            // (Light/Yellow: yellow text is unreadable, so its text accent is charcoal).
+            if (!newDict.Contains("AccentLogo"))
+                newDict["AccentLogo"] = newDict["PrimaryBrush"];
             // The two window-like overlays follow the fully merged outer-window surface, including
             // gradients in the material palettes; they are not context menus.
             if (!newDict.Contains("FooterBackgroundBrush"))
