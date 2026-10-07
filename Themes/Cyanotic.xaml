@@ -95,4 +95,5 @@
 
     <!-- File picker folder tree connecting lines, KillerPDF's value. -->
     <SolidColorBrush x:Key="TreeLineBrush" Color="#21466b" po:Freeze="True"/>
+    <SolidColorBrush x:Key="AccentLogo" Color="#e0d49a"/>
 </ResourceDictionary>
