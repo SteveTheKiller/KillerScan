@@ -21,6 +21,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Improved menu and selection contrast, softened material-theme footers and 98SE footer text, and used subtle gray Delirium dividers.
 
 ### Fixed
+- Stopping a deep scan no longer waits for stalled fingerprint requests.
 - Light/Yellow uses true yellow for the wordmark, accent lines and radio buttons, with neutral dark text instead of olive brown.
 - Dropdown highlight text uses the right color in Dark/Yellow, Light/Purple and Light/Yellow.
 - 98SE Red is a true maroon again, so it no longer looks like Magenta.

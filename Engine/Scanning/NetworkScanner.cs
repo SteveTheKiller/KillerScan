@@ -462,13 +462,14 @@ namespace KillerScan.Engine
             string ip, CancellationToken ct, int portConcurrency = 256,
             bool flushLocalDnsCache = true)
         {
+            ct.ThrowIfCancellationRequested();
             if (flushLocalDnsCache) FlushLocalDnsCache();
             var addr = IPAddress.Parse(ip);
             var device = new NetworkDevice
             {
                 IpAddress  = ip,
                 // Fresh MAC via ARP.
-                MacAddress = await Task.Run(() => GetMacAddress(addr), ct)
+                MacAddress = await AwaitWithCancellation(Task.Run(() => GetMacAddress(addr), ct), ct)
             };
 
             // Hostname + TTL alongside the port sweep.
@@ -503,9 +504,10 @@ namespace KillerScan.Engine
                 finally { gate.Release(); }
             });
             var results = await Task.WhenAll(portTasks);
+            ct.ThrowIfCancellationRequested();
             device.OpenPorts = [.. results.Where(p => p > 0).OrderBy(p => p)];
 
-            await Task.WhenAll(dnsTask, ttlTask);
+            await AwaitWithCancellation(Task.WhenAll(dnsTask, ttlTask), ct);
 
             if (!string.IsNullOrEmpty(device.MacAddress))
                 device.Vendor = ResolveVendor(device.MacAddress);
@@ -530,7 +532,8 @@ namespace KillerScan.Engine
             }
             if (device.OpenPorts.Contains(22))
                 fpTasks.Add(ProbeSshBannerAsync(device, addr));
-            await Task.WhenAll(fpTasks);
+            await AwaitWithCancellation(Task.WhenAll(fpTasks), ct);
+            ct.ThrowIfCancellationRequested();
 
             if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(device.NetbiosName))
                 device.Hostname = device.NetbiosName;

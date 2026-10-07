@@ -17,6 +17,8 @@ internal static class Program
             await Run("Status text is English, numeric and free of double hyphens", StatusText);
             await Run("Quick scan reports stages, devices and host hooks through a fake platform", QuickScan);
             await Run("A canceled token stops the scan", Canceled);
+            await Run("Full scan preserves HTTP results, manual classification and saved names", EngineBehaviorTests.FullScan);
+            await Run("Stop cancels deep fingerprinting before device completion", EngineBehaviorTests.DeepFingerprintCancellation);
             Console.WriteLine("PASS: " + _passed + " engine regression checks.");
             return 0;
         }
