@@ -22,6 +22,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 - Stopping a deep scan no longer waits for stalled fingerprint requests.
+- Startup content becomes visible even when its fade animation stalls.
 - Light/Yellow uses true yellow for the wordmark, accent lines and radio buttons, with neutral dark text instead of olive brown.
 - Dropdown highlight text uses the right color in Dark/Yellow, Light/Purple and Light/Yellow.
 - 98SE Red is a true maroon again, so it no longer looks like Magenta.

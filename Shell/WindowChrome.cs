@@ -205,7 +205,7 @@ namespace KillerScan.Shell
 
         // ---- Content fade-in on open ----
 
-        private void FadeInContent() => Anim.FadeIn(RootGrid);
+        private void FadeInContent() => StartupFade.In(RootGrid);
 
         private const int WM_GETMINMAXINFO    = 0x0024;
         private const int WM_ERASEBKGND       = 0x0014;

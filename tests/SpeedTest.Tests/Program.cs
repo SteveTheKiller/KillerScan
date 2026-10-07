@@ -32,8 +32,10 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--scan-presentation" })) { await ScanPresentation(); return 0; }
             if (args.SequenceEqual(new[] { "--terminal" })) { await View(); return 0; }
             if (args.SequenceEqual(new[] { "--menu-separators" })) { await MenuSeparatorThemeTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--startup-fade" })) { await StartupFadeTests.Run(); return 0; }
             Require(args.All(value => value == "--worker" || value == "--internet"), "Usage: SpeedTest.Tests.exe [--worker] [--internet]");
             await Run("Menu dividers use neutral gray only in Delirium", MenuSeparatorThemeTests.Run);
+            await Run("Startup content becomes visible when its animation stalls", StartupFadeTests.Run);
             await Run("Metric units, median, jitter and unavailable values", Metrics);
             await Run("Scan terminal progress stays on one line and results fit narrow widths", ScanPresentation);
             await Run("Terminal history survives resizing, clears and shell replacement", TerminalHistory);
