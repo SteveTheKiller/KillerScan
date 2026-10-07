@@ -20,7 +20,13 @@ internal static class MenuSeparatorThemeTests
                 Require((string?)divider?.Attribute("Color") == "#666666", "Delirium menu dividers must be neutral gray.");
             else
             {
-                Require(divider == null, "Non-Delirium menu dividers must keep their existing theme fallback.");
+                if (divider != null)
+                {
+                    Require(divider.Name == w + "SolidColorBrush", "Declared menu dividers must be solid brushes.");
+                    var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(
+                        (string?)divider.Attribute("Color") ?? throw new InvalidOperationException("Menu divider color is missing."));
+                    Require(color.A == 255, "Declared menu dividers must be opaque.");
+                }
                 Require(resources.Any(item => (string?)item.Attribute(x + "Key") == "MenuBorderBrush"),
                     "The existing menu border fallback must resolve.");
             }

@@ -33,8 +33,9 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--terminal" })) { await View(); return 0; }
             if (args.SequenceEqual(new[] { "--menu-separators" })) { await MenuSeparatorThemeTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--startup-fade" })) { await StartupFadeTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--release-ui" })) { await ReleaseUiTests.Run(); return 0; }
             Require(args.All(value => value == "--worker" || value == "--internet"), "Usage: SpeedTest.Tests.exe [--worker] [--internet]");
-            await Run("Menu dividers use neutral gray only in Delirium", MenuSeparatorThemeTests.Run);
+            await Run("Menu dividers resolve declared palettes and preserve the fallback", MenuSeparatorThemeTests.Run);
             await Run("Startup content becomes visible when its animation stalls", StartupFadeTests.Run);
             await Run("Metric units, median, jitter and unavailable values", Metrics);
             await Run("Scan terminal progress stays on one line and results fit narrow widths", ScanPresentation);
@@ -419,8 +420,9 @@ internal static class Program
                     { RoutedEvent = System.Windows.Input.Mouse.PreviewMouseWheelEvent });
                 Require(fontSelector.SelectedIndex == Math.Min(fontSelector.Items.Count - 1, priorFont + 1),
                     "Hover wheel changes font without keyboard focus");
-                var surface = (FrameworkElement)fontDialog.FindName("DialogSurface");
-                Require(surface.Clip is RectangleGeometry rounded && rounded.RadiusX > 0 &&
+                var clippedSurface = (FrameworkElement)((Border)fontRoot).Child;
+                Require(clippedSurface.Clip is Geometry rounded &&
+                    rounded.FillContains(new Point(clippedSurface.ActualWidth / 2, clippedSurface.ActualHeight / 2)) &&
                     !rounded.FillContains(new Point(0, 0)), "Dialog contents are clipped at the rounded corners");
                 var fontBitmap = new RenderTargetBitmap(420, 420, 96, 96, PixelFormats.Pbgra32);
                 fontBitmap.Render(fontRoot);
