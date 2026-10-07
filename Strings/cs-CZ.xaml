@@ -453,4 +453,17 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Výsledky nelze zkopírovat. Zkuste to znovu.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">V terminálu běží úloha. Zastavit ji a spustit test rychlosti?</sys:String>
     <sys:String x:Key="Str_Term_Font">Písmo a velikost</sys:String>
+    <sys:String x:Key="Str_Topology_Settings">Nastavení topologie</sys:String>
+    <sys:String x:Key="Str_Topology_Pattern">Uspořádání</sys:String>
+    <sys:String x:Key="Str_Topology_Orientation">Orientace</sys:String>
+    <sys:String x:Key="Str_Topology_NodeScale">Velikost polí</sys:String>
+    <sys:String x:Key="Str_Topology_Font">Písmo</sys:String>
+    <sys:String x:Key="Str_Topology_FontSize">Velikost písma</sys:String>
+    <sys:String x:Key="Str_Topology_Hierarchy">Hierarchie</sys:String>
+    <sys:String x:Key="Str_Topology_Radial">Radiální</sys:String>
+    <sys:String x:Key="Str_Topology_Vertical">Shora dolů</sys:String>
+    <sys:String x:Key="Str_Topology_Horizontal">Zleva doprava</sys:String>
+    <sys:String x:Key="Str_Topology_Default">Výchozí</sys:String>
+    <sys:String x:Key="Str_Topology_Links">Zobrazit spojení</sys:String>
+    <sys:String x:Key="Str_Topology_Reset">Obnovit nastavení topologie</sys:String>
 </ResourceDictionary>

@@ -161,14 +161,14 @@
                         </Grid>
                     </Border>
                     <Button x:Name="TopologyOrderButton" Visibility="Collapsed"
-                            HorizontalAlignment="Left" Margin="0,2,6,2" Width="26" Height="26"
-                            Padding="0" VerticalAlignment="Center" Cursor="Hand"
+                            HorizontalAlignment="Left" Margin="0,2,6,2" Height="26"
+                            Padding="6,0" VerticalAlignment="Center" Cursor="Hand"
                             Background="{DynamicResource TextFieldBrush}"
                             Foreground="{DynamicResource TextBrush}"
                             BorderBrush="{DynamicResource InputBorderBrush}" BorderThickness="1"
                             Click="TopologyOrderButton_Click">
                         <Button.ToolTip>
-                            <TextBlock><Run Text="{DynamicResource Str_TT_TopologyOrder}"/><Run Text=" (Ctrl+G)"/></TextBlock>
+                            <TextBlock Text="{DynamicResource Str_Topology_Settings}"/>
                         </Button.ToolTip>
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
@@ -191,18 +191,23 @@
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
                         </Button.Template>
-                        <TextBlock Text="&#xE8CB;" FontFamily="Segoe MDL2 Assets" FontSize="12"
-                                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                       VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <TextBlock Text="{DynamicResource Str_Topology_Settings}" VerticalAlignment="Center"/>
+                        </StackPanel>
                         <Button.ContextMenu>
                             <ContextMenu PreviewMouseWheel="Menu_ForwardWheelToGrid">
-                                <MenuItem x:Name="TopologyRoleItem" Header="{DynamicResource Str_Topology_Role}"
-                                          Tag="Role" InputGestureText="Ctrl+1" IsCheckable="True" Click="TopologyOrderItem_Click"/>
-                                <MenuItem x:Name="TopologyTypeItem" Header="{DynamicResource Str_Col_Type}"
-                                          Tag="Type" InputGestureText="Ctrl+2" IsCheckable="True" Click="TopologyOrderItem_Click"/>
-                                <MenuItem x:Name="TopologyIpItem" Header="{DynamicResource Str_Col_Ip}"
-                                          Tag="Ip" InputGestureText="Ctrl+3" IsCheckable="True" Click="TopologyOrderItem_Click"/>
-                                <MenuItem x:Name="TopologyVendorItem" Header="{DynamicResource Str_Col_Vendor}"
-                                          Tag="Vendor" InputGestureText="Ctrl+4" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                <MenuItem Header="{DynamicResource Str_TT_TopologyOrder}">
+                                    <MenuItem x:Name="TopologyRoleItem" Header="{DynamicResource Str_Topology_Role}"
+                                              Tag="Role" InputGestureText="Ctrl+1" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                    <MenuItem x:Name="TopologyTypeItem" Header="{DynamicResource Str_Col_Type}"
+                                              Tag="Type" InputGestureText="Ctrl+2" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                    <MenuItem x:Name="TopologyIpItem" Header="{DynamicResource Str_Col_Ip}"
+                                              Tag="Ip" InputGestureText="Ctrl+3" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                    <MenuItem x:Name="TopologyVendorItem" Header="{DynamicResource Str_Col_Vendor}"
+                                              Tag="Vendor" InputGestureText="Ctrl+4" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                </MenuItem>
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
@@ -661,9 +666,10 @@
 
                 <Grid Grid.Row="0" x:Name="TopologyPane" Visibility="Collapsed"
                       ClipToBounds="True" SizeChanged="TopologyPane_SizeChanged">
-                    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                                  VerticalScrollBarVisibility="Auto">
-                        <Canvas x:Name="TopologyCanvas" Background="Transparent"/>
+                    <ScrollViewer x:Name="TopologyScrollViewer" HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Auto" ScrollChanged="TopologyScrollViewer_ScrollChanged">
+                        <Canvas x:Name="TopologyCanvas" Background="Transparent"
+                                MouseRightButtonDown="TopologyBackground_RightClick"/>
                     </ScrollViewer>
                 </Grid>
             </Grid>

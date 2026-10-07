@@ -455,4 +455,17 @@
     <sys:String x:Key="Str_Speed_ClipboardFailed">無法複製結果。請再試一次。</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">終端機中有程式正在執行。要停止並改為執行速度測試嗎？</sys:String>
     <sys:String x:Key="Str_Term_Font">字型與大小</sys:String>
+    <sys:String x:Key="Str_Topology_Settings">拓撲設定</sys:String>
+    <sys:String x:Key="Str_Topology_Pattern">配置</sys:String>
+    <sys:String x:Key="Str_Topology_Orientation">方向</sys:String>
+    <sys:String x:Key="Str_Topology_NodeScale">方框大小</sys:String>
+    <sys:String x:Key="Str_Topology_Font">字型</sys:String>
+    <sys:String x:Key="Str_Topology_FontSize">字型大小</sys:String>
+    <sys:String x:Key="Str_Topology_Hierarchy">階層配置</sys:String>
+    <sys:String x:Key="Str_Topology_Radial">放射配置</sys:String>
+    <sys:String x:Key="Str_Topology_Vertical">由上到下</sys:String>
+    <sys:String x:Key="Str_Topology_Horizontal">由左到右</sys:String>
+    <sys:String x:Key="Str_Topology_Default">預設</sys:String>
+    <sys:String x:Key="Str_Topology_Links">顯示連線</sys:String>
+    <sys:String x:Key="Str_Topology_Reset">重設拓撲設定</sys:String>
 </ResourceDictionary>

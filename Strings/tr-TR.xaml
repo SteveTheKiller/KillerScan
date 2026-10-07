@@ -455,4 +455,17 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Sonuçlar kopyalanamadı. Tekrar deneyin.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Terminalde bir işlem çalışıyor. İşlemi durdurup hız testini çalıştırmak ister misiniz?</sys:String>
     <sys:String x:Key="Str_Term_Font">Yazı tipi ve boyutu</sys:String>
+    <sys:String x:Key="Str_Topology_Settings">Topoloji ayarları</sys:String>
+    <sys:String x:Key="Str_Topology_Pattern">Düzen</sys:String>
+    <sys:String x:Key="Str_Topology_Orientation">Yön</sys:String>
+    <sys:String x:Key="Str_Topology_NodeScale">Kutu boyutu</sys:String>
+    <sys:String x:Key="Str_Topology_Font">Yazı tipi</sys:String>
+    <sys:String x:Key="Str_Topology_FontSize">Yazı boyutu</sys:String>
+    <sys:String x:Key="Str_Topology_Hierarchy">Hiyerarşi</sys:String>
+    <sys:String x:Key="Str_Topology_Radial">Radyal</sys:String>
+    <sys:String x:Key="Str_Topology_Vertical">Yukarıdan aşağıya</sys:String>
+    <sys:String x:Key="Str_Topology_Horizontal">Soldan sağa</sys:String>
+    <sys:String x:Key="Str_Topology_Default">Varsayılan</sys:String>
+    <sys:String x:Key="Str_Topology_Links">Bağlantıları göster</sys:String>
+    <sys:String x:Key="Str_Topology_Reset">Topoloji ayarlarını sıfırla</sys:String>
 </ResourceDictionary>

@@ -466,4 +466,17 @@
     <sys:String x:Key="Str_Speed_ClipboardFailed">結果をコピーできませんでした。再試行してください。</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">ターミナルで処理が実行中です。停止して速度テストを実行しますか？</sys:String>
     <sys:String x:Key="Str_Term_Font">フォントとサイズ</sys:String>
+    <sys:String x:Key="Str_Topology_Settings">トポロジー設定</sys:String>
+    <sys:String x:Key="Str_Topology_Pattern">配置</sys:String>
+    <sys:String x:Key="Str_Topology_Orientation">方向</sys:String>
+    <sys:String x:Key="Str_Topology_NodeScale">ボックスのサイズ</sys:String>
+    <sys:String x:Key="Str_Topology_Font">フォント</sys:String>
+    <sys:String x:Key="Str_Topology_FontSize">フォントサイズ</sys:String>
+    <sys:String x:Key="Str_Topology_Hierarchy">階層</sys:String>
+    <sys:String x:Key="Str_Topology_Radial">放射状</sys:String>
+    <sys:String x:Key="Str_Topology_Vertical">上から下</sys:String>
+    <sys:String x:Key="Str_Topology_Horizontal">左から右</sys:String>
+    <sys:String x:Key="Str_Topology_Default">既定</sys:String>
+    <sys:String x:Key="Str_Topology_Links">接続を表示</sys:String>
+    <sys:String x:Key="Str_Topology_Reset">トポロジー設定をリセット</sys:String>
 </ResourceDictionary>

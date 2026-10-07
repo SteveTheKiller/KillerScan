@@ -12,8 +12,6 @@ namespace KillerScan.Controls
 {
     public partial class ScanWorkspace
     {
-        private const double TopologyNodeWidth = 126;
-        private const double TopologyNodeHeight = 40;
         private enum TopologyOrder { Role, Type, Ip, Vendor }
         private TopologyOrder _topologyOrder = TopologyOrder.Role;
         private bool _topologyOrderLoaded;
@@ -60,6 +58,7 @@ namespace KillerScan.Controls
         {
             if (_topologyOrderLoaded) return;
             _topologyOrderLoaded = true;
+            LoadTopologySettings();
             if (Enum.TryParse(App.GetSetting("TopologyOrder"), out TopologyOrder saved))
                 _topologyOrder = saved;
             UpdateTopologyOrderUi();
@@ -86,7 +85,7 @@ namespace KillerScan.Controls
         {
             _topologyOrder = order;
             _topologyPositions.Clear();
-            App.SetSetting("TopologyOrder", order.ToString());
+            if (!Services.DemoData.Enabled) App.SetSetting("TopologyOrder", order.ToString());
             UpdateTopologyOrderUi();
             RefreshTopology();
         }
@@ -97,6 +96,7 @@ namespace KillerScan.Controls
             TopologyTypeItem.IsChecked = _topologyOrder == TopologyOrder.Type;
             TopologyIpItem.IsChecked = _topologyOrder == TopologyOrder.Ip;
             TopologyVendorItem.IsChecked = _topologyOrder == TopologyOrder.Vendor;
+            UpdateTopologySettingsUi();
         }
 
         private void TopologyPane_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -104,11 +104,23 @@ namespace KillerScan.Controls
             if (_showTopology) RefreshTopology();
         }
 
+        private void TopologyScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (_showTopology && (e.ViewportWidthChange != 0 || e.ViewportHeightChange != 0)) RefreshTopology();
+        }
+
         private void RefreshTopology()
         {
             if (TopologyCanvas == null || TopologyPane == null || !_showTopology) return;
 
-            double width = Math.Max(TopologyPane.ActualWidth, 640);
+            double scale = TopologyScale;
+            double viewportWidth = TopologyScrollViewer.ViewportWidth > 0 ? TopologyScrollViewer.ViewportWidth : TopologyPane.ActualWidth;
+            double viewportHeight = TopologyScrollViewer.ViewportHeight > 0 ? TopologyScrollViewer.ViewportHeight : TopologyPane.ActualHeight;
+            double nodeCross = TopologyHorizontal ? TopologyNodeHeight : TopologyNodeWidth;
+            double nodeDepth = TopologyHorizontal ? TopologyNodeWidth : TopologyNodeHeight;
+            double cross = Math.Max(TopologyHorizontal ? viewportHeight : viewportWidth,
+                Math.Max(640 * scale, 3 * nodeCross + 154 * scale));
+            Point Orient(double across, double depth) => TopologyHorizontal ? new Point(depth, across) : new Point(across, depth);
             List<NetworkDevice> visible =
                 [.. (_filteredView?.Cast<object>().OfType<NetworkDevice>() ?? ActiveDevices)];
             string localIp = LocalIpLabel?.Text ?? string.Empty;
@@ -118,26 +130,47 @@ namespace KillerScan.Controls
             var regular = visible.Where(d => !SameIp(d.IpAddress, localIp)
                                           && !SameIp(d.IpAddress, gatewayIp)
                                           && !SameIp(d.IpAddress, dnsIp)).ToList();
-            int columns = Math.Max(1, (int)((width - 36) / (TopologyNodeWidth + 22)));
+            int columns = Math.Max(1, (int)((cross - 36 * scale) / (nodeCross + 22 * scale)));
             var deviceRows = BuildDeviceRows(regular, columns, _topologyOrder);
             int groupGaps = Math.Max(0, deviceRows.Count(r => r.StartsGroup) - 1);
-            double height = Math.Max(TopologyPane.ActualHeight,
-                218 + deviceRows.Count * 56 + groupGaps * 10);
+            double gatewayDepth = nodeDepth / 2 + 22 * scale;
+            double centerDepth = gatewayDepth + nodeDepth + 56 * scale;
+            double rowStart = centerDepth + nodeDepth + 40 * scale;
+            double depth = Math.Max(TopologyHorizontal ? viewportWidth : viewportHeight,
+                rowStart + deviceRows.Count * (nodeDepth + 16 * scale) + groupGaps * 10 * scale);
+            bool radial = _topologyOptions["Pattern"] == "Radial";
+            double diagonal = Math.Sqrt(TopologyNodeWidth * TopologyNodeWidth + TopologyNodeHeight * TopologyNodeHeight);
+            double radius = Math.Max(Math.Max(nodeCross + 64 * scale, nodeDepth + 56 * scale) + diagonal + 22 * scale,
+                regular.Count * (diagonal + 22 * scale) / (2 * Math.PI));
+            double width = TopologyHorizontal ? depth : cross;
+            double height = TopologyHorizontal ? cross : depth;
+            if (radial)
+            {
+                width = Math.Max(viewportWidth, 2 * radius + TopologyNodeWidth + 44 * scale);
+                height = Math.Max(viewportHeight, 2 * radius + TopologyNodeHeight + 44 * scale);
+            }
             TopologyCanvas.Width = width;
             TopologyCanvas.Height = height;
             TopologyCanvas.Children.Clear();
             _topologyLinks.Clear();
 
-            var center = new Point(width / 2, 138);
+            var center = radial ? new Point(width / 2, height / 2) : Orient(cross / 2, centerDepth);
+            Point RolePoint(double across, double relativeDepth) => radial
+                ? new Point(center.X + (TopologyHorizontal ? relativeDepth : across),
+                    center.Y + (TopologyHorizontal ? across : relativeDepth))
+                : Orient(cross / 2 + across, centerDepth + relativeDepth);
+            Point Positioned(NetworkDevice? device, Point point) =>
+                device != null && _topologyPositions.TryGetValue(device.IpAddress, out var saved)
+                    ? new Point(Math.Max(TopologyNodeWidth / 2, Math.Min(width - TopologyNodeWidth / 2, saved.X)),
+                        Math.Max(TopologyNodeHeight / 2, Math.Min(height - TopologyNodeHeight / 2, saved.Y)))
+                    : point;
 
-            var gateway = new Point(center.X, 42);
-            var local = new Point(Math.Max(76, center.X - 190), center.Y);
+            var gateway = RolePoint(0, -(nodeDepth + 56 * scale));
+            var local = RolePoint(-(nodeCross + 64 * scale), 0);
             var gatewayDevice = visible.FirstOrDefault(d => SameIp(d.IpAddress, gatewayIp));
             var localDevice = visible.FirstOrDefault(d => SameIp(d.IpAddress, localIp));
-            if (gatewayDevice != null && _topologyPositions.TryGetValue(gatewayDevice.IpAddress, out var savedGateway))
-                gateway = savedGateway;
-            if (localDevice != null && _topologyPositions.TryGetValue(localDevice.IpAddress, out var savedLocal))
-                local = savedLocal;
+            gateway = Positioned(gatewayDevice, gateway);
+            local = Positioned(localDevice, local);
             var gatewayLink = DrawInferredLink(center, gateway);
             var localLink = DrawInferredLink(center, local);
             AddRoleNode(gateway.X, gateway.Y, Loc("Str_Lbl_Gateway"), gatewayIp, "TypeRouter",
@@ -147,10 +180,9 @@ namespace KillerScan.Controls
 
             if (!string.IsNullOrWhiteSpace(dnsIp) && dnsIp != "--" && !SameIp(dnsIp, gatewayIp))
             {
-                var dns = new Point(Math.Min(width - 76, center.X + 190), center.Y);
+                var dns = RolePoint(nodeCross + 64 * scale, 0);
                 var dnsDevice = visible.FirstOrDefault(d => SameIp(d.IpAddress, dnsIp));
-                if (dnsDevice != null && _topologyPositions.TryGetValue(dnsDevice.IpAddress, out var savedDns))
-                    dns = savedDns;
+                dns = Positioned(dnsDevice, dns);
                 var dnsLink = DrawInferredLink(center, dns);
                 AddRoleNode(dns.X, dns.Y, Loc("Str_Lbl_Dns"), dnsIp, "TypeDns",
                     dnsDevice, dnsLink);
@@ -163,37 +195,48 @@ namespace KillerScan.Controls
                 var empty = new TextBlock
                 {
                     Text = Loc("Str_Topology_Empty"),
-                    FontSize = 12,
+                    FontSize = TopologyFontSize,
                     TextAlignment = TextAlignment.Center,
                     Width = 300
                 };
                 empty.SetResourceReference(TextBlock.ForegroundProperty, "MutedTextBrush");
                 Canvas.SetLeft(empty, center.X - 150);
-                Canvas.SetTop(empty, center.Y + 45);
+                Canvas.SetTop(empty, center.Y + TopologyNodeHeight / 2 + 10 * scale);
                 TopologyCanvas.Children.Add(empty);
                 return;
             }
 
-            double rowY = 218;
-            for (int rowIndex = 0; rowIndex < deviceRows.Count; rowIndex++)
+            if (radial)
             {
-                var (rowDevices, startsGroup) = deviceRows[rowIndex];
-                if (rowIndex > 0 && startsGroup) rowY += 10;
-                int rowCount = rowDevices.Count;
-                double rowWidth = rowCount * TopologyNodeWidth + (rowCount - 1) * 22;
-                double left = (width - rowWidth) / 2 + TopologyNodeWidth / 2;
-                for (int column = 0; column < rowCount; column++)
+                var ordered = deviceRows.SelectMany(row => row.Devices).ToList();
+                for (int index = 0; index < ordered.Count; index++)
                 {
-                    var point = new Point(left + column * (TopologyNodeWidth + 22), rowY);
-                    var device = rowDevices[column];
-                    if (_topologyPositions.TryGetValue(device.IpAddress, out var saved))
-                        point = new Point(
-                            Math.Max(TopologyNodeWidth / 2, Math.Min(width - TopologyNodeWidth / 2, saved.X)),
-                            Math.Max(TopologyNodeHeight / 2, Math.Min(height - TopologyNodeHeight / 2, saved.Y)));
+                    double angle = 2 * Math.PI * index / ordered.Count + (TopologyHorizontal ? 0 : Math.PI / 2);
+                    var device = ordered[index];
+                    var point = Positioned(device, new Point(center.X + radius * Math.Cos(angle), center.Y + radius * Math.Sin(angle)));
                     var link = DrawInferredLink(center, point);
                     AddDeviceNode(point.X, point.Y, device, link);
                 }
-                rowY += 56;
+                return;
+            }
+
+            double rowY = rowStart;
+            for (int rowIndex = 0; rowIndex < deviceRows.Count; rowIndex++)
+            {
+                var (rowDevices, startsGroup) = deviceRows[rowIndex];
+                if (rowIndex > 0 && startsGroup) rowY += 10 * scale;
+                int rowCount = rowDevices.Count;
+                double rowWidth = rowCount * nodeCross + (rowCount - 1) * 22 * scale;
+                double left = (cross - rowWidth) / 2 + nodeCross / 2;
+                for (int column = 0; column < rowCount; column++)
+                {
+                    var point = Orient(left + column * (nodeCross + 22 * scale), rowY);
+                    var device = rowDevices[column];
+                    point = Positioned(device, point);
+                    var link = DrawInferredLink(center, point);
+                    AddDeviceNode(point.X, point.Y, device, link);
+                }
+                rowY += nodeDepth + 16 * scale;
             }
         }
 
@@ -260,7 +303,7 @@ namespace KillerScan.Controls
                 Y2 = to.Y,
                 StrokeThickness = 1,
                 StrokeDashArray = [2, 4],
-                Opacity = 0.65,
+                Opacity = _topologyOptions["Links"] == "On" ? 0.65 : 0,
                 IsHitTestVisible = false
             };
             line.SetResourceReference(Shape.StrokeProperty, "MutedTextBrush");
@@ -304,7 +347,8 @@ namespace KillerScan.Controls
             var titleBlock = new TextBlock
             {
                 Text = title,
-                FontSize = 11,
+                FontSize = TopologyFontSize,
+                FontFamily = _topologyOptions["Font"] == "Default" ? FontFamily : new FontFamily(_topologyOptions["Font"]),
                 FontWeight = FontWeights.SemiBold,
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 Margin = new Thickness(6, 2, 6, 0)
@@ -314,8 +358,8 @@ namespace KillerScan.Controls
             var detailBlock = new TextBlock
             {
                 Text = detail,
-                FontFamily = new FontFamily("Consolas"),
-                FontSize = 10,
+                FontFamily = new FontFamily(_topologyOptions["Font"] == "Default" ? "Consolas" : _topologyOptions["Font"]),
+                FontSize = TopologyFontSize - 1,
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 Margin = new Thickness(6, 0, 6, 2)
             };

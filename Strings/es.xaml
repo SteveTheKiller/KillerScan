@@ -455,4 +455,17 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">No se pudieron copiar los resultados. Inténtelo de nuevo.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Hay una tarea en ejecución en el terminal. ¿Detenerla y ejecutar la prueba de velocidad?</sys:String>
     <sys:String x:Key="Str_Term_Font">Fuente y tamaño</sys:String>
+    <sys:String x:Key="Str_Topology_Settings">Ajustes de topología</sys:String>
+    <sys:String x:Key="Str_Topology_Pattern">Patrón</sys:String>
+    <sys:String x:Key="Str_Topology_Orientation">Orientación</sys:String>
+    <sys:String x:Key="Str_Topology_NodeScale">Tamaño de los cuadros</sys:String>
+    <sys:String x:Key="Str_Topology_Font">Fuente</sys:String>
+    <sys:String x:Key="Str_Topology_FontSize">Tamaño de fuente</sys:String>
+    <sys:String x:Key="Str_Topology_Hierarchy">Jerarquía</sys:String>
+    <sys:String x:Key="Str_Topology_Radial">Radial</sys:String>
+    <sys:String x:Key="Str_Topology_Vertical">De arriba abajo</sys:String>
+    <sys:String x:Key="Str_Topology_Horizontal">De izquierda a derecha</sys:String>
+    <sys:String x:Key="Str_Topology_Default">Predeterminado</sys:String>
+    <sys:String x:Key="Str_Topology_Links">Mostrar conexiones</sys:String>
+    <sys:String x:Key="Str_Topology_Reset">Restablecer ajustes de topología</sys:String>
 </ResourceDictionary>

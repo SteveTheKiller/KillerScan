@@ -481,4 +481,17 @@
     <sys:String x:Key="Str_Speed_ClipboardFailed">Не удалось скопировать результаты. Попробуйте ещё раз.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">В терминале выполняется задача. Остановить её и запустить тест скорости?</sys:String>
     <sys:String x:Key="Str_Term_Font">Шрифт и размер</sys:String>
+    <sys:String x:Key="Str_Topology_Settings">Настройки топологии</sys:String>
+    <sys:String x:Key="Str_Topology_Pattern">Схема</sys:String>
+    <sys:String x:Key="Str_Topology_Orientation">Ориентация</sys:String>
+    <sys:String x:Key="Str_Topology_NodeScale">Размер блоков</sys:String>
+    <sys:String x:Key="Str_Topology_Font">Шрифт</sys:String>
+    <sys:String x:Key="Str_Topology_FontSize">Размер шрифта</sys:String>
+    <sys:String x:Key="Str_Topology_Hierarchy">Иерархия</sys:String>
+    <sys:String x:Key="Str_Topology_Radial">Радиальная</sys:String>
+    <sys:String x:Key="Str_Topology_Vertical">Сверху вниз</sys:String>
+    <sys:String x:Key="Str_Topology_Horizontal">Слева направо</sys:String>
+    <sys:String x:Key="Str_Topology_Default">По умолчанию</sys:String>
+    <sys:String x:Key="Str_Topology_Links">Показывать соединения</sys:String>
+    <sys:String x:Key="Str_Topology_Reset">Сбросить настройки топологии</sys:String>
 </ResourceDictionary>

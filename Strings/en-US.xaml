@@ -497,4 +497,17 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Could not copy the results. Try again.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Something is running in the terminal. Stop it and run the speed test instead?</sys:String>
     <sys:String x:Key="Str_Term_Font">Font and size</sys:String>
+    <sys:String x:Key="Str_Topology_Settings">Topology settings</sys:String>
+    <sys:String x:Key="Str_Topology_Pattern">Pattern</sys:String>
+    <sys:String x:Key="Str_Topology_Orientation">Orientation</sys:String>
+    <sys:String x:Key="Str_Topology_NodeScale">Box size</sys:String>
+    <sys:String x:Key="Str_Topology_Font">Font</sys:String>
+    <sys:String x:Key="Str_Topology_FontSize">Font size</sys:String>
+    <sys:String x:Key="Str_Topology_Hierarchy">Hierarchy</sys:String>
+    <sys:String x:Key="Str_Topology_Radial">Radial</sys:String>
+    <sys:String x:Key="Str_Topology_Vertical">Top to bottom</sys:String>
+    <sys:String x:Key="Str_Topology_Horizontal">Left to right</sys:String>
+    <sys:String x:Key="Str_Topology_Default">Default</sys:String>
+    <sys:String x:Key="Str_Topology_Links">Show connections</sys:String>
+    <sys:String x:Key="Str_Topology_Reset">Reset topology settings</sys:String>
 </ResourceDictionary>

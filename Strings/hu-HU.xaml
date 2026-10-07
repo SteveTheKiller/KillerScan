@@ -471,4 +471,17 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Nem sikerült másolni az eredményeket. Próbálja újra.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">A terminálban egy feladat fut. Leállítja, és helyette elindítja a sebességtesztet?</sys:String>
     <sys:String x:Key="Str_Term_Font">Betűtípus és méret</sys:String>
+    <sys:String x:Key="Str_Topology_Settings">Topológia beállításai</sys:String>
+    <sys:String x:Key="Str_Topology_Pattern">Elrendezés</sys:String>
+    <sys:String x:Key="Str_Topology_Orientation">Tájolás</sys:String>
+    <sys:String x:Key="Str_Topology_NodeScale">Dobozméret</sys:String>
+    <sys:String x:Key="Str_Topology_Font">Betűtípus</sys:String>
+    <sys:String x:Key="Str_Topology_FontSize">Betűméret</sys:String>
+    <sys:String x:Key="Str_Topology_Hierarchy">Hierarchia</sys:String>
+    <sys:String x:Key="Str_Topology_Radial">Sugárirányú</sys:String>
+    <sys:String x:Key="Str_Topology_Vertical">Fentről lefelé</sys:String>
+    <sys:String x:Key="Str_Topology_Horizontal">Balról jobbra</sys:String>
+    <sys:String x:Key="Str_Topology_Default">Alapértelmezett</sys:String>
+    <sys:String x:Key="Str_Topology_Links">Kapcsolatok megjelenítése</sys:String>
+    <sys:String x:Key="Str_Topology_Reset">Topológia beállításainak visszaállítása</sys:String>
 </ResourceDictionary>

@@ -497,4 +497,17 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Kunne ikke kopiere resultatene. Prøv igjen.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Noe kjører i terminalen. Stoppe det og kjøre hastighetstesten i stedet?</sys:String>
     <sys:String x:Key="Str_Term_Font">Skrifttype og størrelse</sys:String>
+    <sys:String x:Key="Str_Topology_Settings">Topologiinnstillinger</sys:String>
+    <sys:String x:Key="Str_Topology_Pattern">Mønster</sys:String>
+    <sys:String x:Key="Str_Topology_Orientation">Retning</sys:String>
+    <sys:String x:Key="Str_Topology_NodeScale">Boksstørrelse</sys:String>
+    <sys:String x:Key="Str_Topology_Font">Skrifttype</sys:String>
+    <sys:String x:Key="Str_Topology_FontSize">Skriftstørrelse</sys:String>
+    <sys:String x:Key="Str_Topology_Hierarchy">Hierarki</sys:String>
+    <sys:String x:Key="Str_Topology_Radial">Radial</sys:String>
+    <sys:String x:Key="Str_Topology_Vertical">Ovenfra og ned</sys:String>
+    <sys:String x:Key="Str_Topology_Horizontal">Fra venstre mot høyre</sys:String>
+    <sys:String x:Key="Str_Topology_Default">Standard</sys:String>
+    <sys:String x:Key="Str_Topology_Links">Vis forbindelser</sys:String>
+    <sys:String x:Key="Str_Topology_Reset">Tilbakestill topologiinnstillinger</sys:String>
 </ResourceDictionary>

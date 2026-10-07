@@ -165,6 +165,7 @@ internal static class ReleaseUiTests
         Save(Render(root, 1200, 780), Path.Combine(output, "Topology.png"));
         var canvas = (Canvas)workspace.FindName("TopologyCanvas");
         Require(canvas.Width > 0 && canvas.Height > 0 && canvas.Children.Count > 0, "Topology has arranged device content.");
+        CheckTopologySettings(workspace, root, canvas, output, Locale);
         var formatType = workspace.GetType().GetNestedType("SnapshotFormat", BindingFlags.NonPublic)!;
         foreach (string format in new[] { "PngTransparent", "Jpeg" })
         {
@@ -193,6 +194,119 @@ internal static class ReleaseUiTests
         Save(sheet, Path.Combine(output, "ButtonStates.png"));
         Console.WriteLine("PASS: 45 theme/accent states, 19 locales, new-language scaling, services and topology rendered.");
         Console.WriteLine("Offscreen release UI: " + output);
+    }
+
+    private static void CheckTopologySettings(KillerScan.Controls.ScanWorkspace workspace, FrameworkElement root,
+        Canvas canvas, string output, Action<string> locale)
+    {
+        var type = workspace.GetType();
+        var options = (Dictionary<string, string>)type.GetField("_topologyOptions", Instance)!.GetValue(workspace)!;
+        var settings = ((Button)workspace.FindName("TopologyOrderButton")).ContextMenu;
+        var reset = type.GetMethod("TopologyReset_Click", Instance)!;
+        reset.Invoke(workspace, new object[] { workspace, new RoutedEventArgs() });
+        Require(settings.Items.Count == 10, "Topology settings expose grouping, appearance, reset and export.");
+        settings.Visibility = Visibility.Hidden;
+        try
+        {
+            var click = new System.Windows.Input.MouseButtonEventArgs(System.Windows.Input.Mouse.PrimaryDevice, 0,
+                System.Windows.Input.MouseButton.Right) { RoutedEvent = UIElement.MouseRightButtonDownEvent };
+            canvas.RaiseEvent(click);
+            Require(click.Handled && settings.IsOpen && settings.PlacementTarget == canvas && settings.Placement == PlacementMode.MousePoint,
+                "Right-clicking the topology background opens settings at the pointer.");
+        }
+        finally { settings.IsOpen = false; settings.Visibility = Visibility.Visible; }
+        var deviceNode = canvas.Children.OfType<Border>().First(node => node.Tag != null);
+        var deviceClick = new System.Windows.Input.MouseButtonEventArgs(System.Windows.Input.Mouse.PrimaryDevice, 0,
+            System.Windows.Input.MouseButton.Right) { RoutedEvent = UIElement.MouseRightButtonDownEvent, Source = deviceNode };
+        type.GetMethod("TopologyBackground_RightClick", Instance)!.Invoke(workspace, new object[] { canvas, deviceClick });
+        Require(!settings.IsOpen && !deviceClick.Handled, "Background settings leave device right-clicks to the device menu.");
+        var grouping = (MenuItem)settings.Items[0];
+        foreach (MenuItem item in grouping.Items)
+        {
+            item.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent, item));
+            Require(item.IsChecked && grouping.Items.Cast<MenuItem>().Count(choice => choice.IsChecked) == 1,
+                "Topology grouping choices apply independently of appearance settings.");
+        }
+        var optionItems = settings.Items.OfType<MenuItem>().SelectMany(group => group.Items.OfType<MenuItem>())
+            .Where(item => item.Tag is string tag && tag.Contains("=")).ToArray();
+        foreach (var item in optionItems)
+        {
+            item.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent, item));
+            string[] parts = ((string)item.Tag).Split('=');
+            Require(options[parts[0]] == parts[1] && item.IsChecked, "Topology choice applies and stays checked: " + item.Tag);
+            Require(optionItems.Count(other => ((string)other.Tag).StartsWith(parts[0] + "=") && other.IsChecked) == 1,
+                "Each topology setting has one selected choice.");
+        }
+        var links = settings.Items.OfType<MenuItem>().Single(item => Equals(item.Tag, "Links"));
+        var positions = (Dictionary<string, Point>)type.GetField("_topologyPositions", Instance)!.GetValue(workspace)!;
+        string ip = (string)deviceNode.Tag.GetType().GetProperty("IpAddress")!.GetValue(deviceNode.Tag)!;
+        positions[ip] = new Point(100, 100);
+        optionItems.Single(item => Equals(item.Tag, "Font=Segoe UI")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        Require(positions.ContainsKey(ip), "Changing font family preserves manually positioned devices.");
+        links.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent, links));
+        Require(canvas.Children.OfType<System.Windows.Shapes.Line>().All(line => line.Opacity == 0), "Connections can be hidden.");
+        links.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent, links));
+        Require(canvas.Children.OfType<System.Windows.Shapes.Line>().All(line => line.Opacity > 0), "Connections can be restored.");
+        Require(positions.ContainsKey(ip), "Toggling connections preserves manually positioned devices.");
+        reset.Invoke(workspace, new object[] { workspace, new RoutedEventArgs() });
+        int combinations = 0;
+        foreach (string pattern in new[] { "Hierarchy", "Radial" })
+            foreach (string orientation in new[] { "Vertical", "Horizontal" })
+                foreach (string scale in new[] { "75", "100", "125", "150", "200" })
+                    foreach (string size in new[] { "10", "11", "12", "14", "16", "18" })
+                    {
+                        options["Pattern"] = pattern;
+                        options["Orientation"] = orientation;
+                        options["NodeScale"] = scale;
+                        options["FontSize"] = size;
+                        type.GetMethod("RefreshTopology", Instance)!.Invoke(workspace, null);
+                        root.Measure(new Size(1200, 780));
+                        root.Arrange(new Rect(0, 0, 1200, 780));
+                        root.UpdateLayout();
+                        var bounds = canvas.Children.OfType<Border>()
+                            .Select(node => new Rect(Canvas.GetLeft(node), Canvas.GetTop(node), node.Width, node.Height)).ToArray();
+                        for (int i = 0; i < bounds.Length; i++)
+                        {
+                            Require(bounds[i].Left >= 0 && bounds[i].Top >= 0 && bounds[i].Right <= canvas.Width + 0.1 &&
+                                bounds[i].Bottom <= canvas.Height + 0.1, "All topology boxes stay within the canvas.");
+                            for (int j = i + 1; j < bounds.Length; j++)
+                                Require(!bounds[i].IntersectsWith(bounds[j]), "Automatic topology boxes do not overlap.");
+                        }
+                        foreach (var node in canvas.Children.OfType<Border>())
+                        {
+                            var content = (StackPanel)node.Child;
+                            Require(content.DesiredSize.Height <= node.Height, "Larger topology fonts fit inside the boxes.");
+                        }
+                        if (scale == "100" && size == "11")
+                            Save(Render(root, 1200, 780), Path.Combine(output, "Topology-" + pattern + "-" + orientation + ".png"));
+                        combinations++;
+                    }
+        foreach (string language in Enum.GetNames(typeof(KillerScan.App).Assembly.GetType("KillerScan.Services.Locale", true)!))
+        {
+            locale(language);
+            foreach (string key in new[] { "Settings", "Pattern", "Orientation", "NodeScale", "Font", "FontSize", "Hierarchy",
+                "Radial", "Vertical", "Horizontal", "Default", "Links", "Reset" })
+                Require(Application.Current.FindResource("Str_Topology_" + key) is string text && text.Length > 0,
+                    language + ": topology setting label resolves.");
+        }
+        locale("EnUS");
+        var surface = new StackPanel { Background = (Brush)Application.Current.FindResource("MenuBackgroundBrush") };
+        var entries = settings.Items.Cast<object>().ToArray();
+        settings.Items.Clear();
+        foreach (UIElement entry in entries) surface.Children.Add(entry);
+        Save(Render(surface, 300, 360), Path.Combine(output, "TopologySettings.png"));
+        surface.Children.Clear();
+        foreach (var entry in entries) settings.Items.Add(entry);
+        options["Font"] = "Consolas";
+        type.GetMethod("RefreshTopology", Instance)!.Invoke(workspace, null);
+        Render(root, 1200, 780);
+        string svg = (string)type.GetMethod("BuildTopologySvg", Instance)!.Invoke(workspace, null)!;
+        Require(svg.Contains("font-family=\"Consolas\"") && svg.Contains("font-size=\"18\""), "Topology SVG export follows the selected fonts.");
+        reset.Invoke(workspace, new object[] { workspace, new RoutedEventArgs() });
+        Require(options["Pattern"] == "Hierarchy" && options["Orientation"] == "Vertical" && options["Font"] == "Default" &&
+            options["FontSize"] == "11" && options["NodeScale"] == "100" && options["Links"] == "On", "Topology settings reset to the original appearance.");
+        Render(root, 1200, 780);
+        Console.WriteLine("PASS: " + combinations + " topology layout/size/font combinations and all menu choices.");
     }
 
     private static BitmapSource Render(FrameworkElement element, int width, int height)

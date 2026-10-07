@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ## [1.8.0] - Unreleased
 
 ### Added
+- Topology settings for box size, layout pattern, orientation, fonts and connection lines, available from the toolbar or by right-clicking the map background.
 - Added yellow and magenta accents to the neutral and 98SE themes.
 - Ukrainian localization.
 - Norwegian (Bokmål) localization.

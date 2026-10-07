@@ -440,4 +440,17 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Nie udało się skopiować wyników. Spróbuj ponownie.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">W terminalu trwa zadanie. Zatrzymać je i uruchomić test prędkości?</sys:String>
     <sys:String x:Key="Str_Term_Font">Czcionka i rozmiar</sys:String>
+    <sys:String x:Key="Str_Topology_Settings">Ustawienia topologii</sys:String>
+    <sys:String x:Key="Str_Topology_Pattern">Układ</sys:String>
+    <sys:String x:Key="Str_Topology_Orientation">Orientacja</sys:String>
+    <sys:String x:Key="Str_Topology_NodeScale">Rozmiar pól</sys:String>
+    <sys:String x:Key="Str_Topology_Font">Czcionka</sys:String>
+    <sys:String x:Key="Str_Topology_FontSize">Rozmiar czcionki</sys:String>
+    <sys:String x:Key="Str_Topology_Hierarchy">Hierarchia</sys:String>
+    <sys:String x:Key="Str_Topology_Radial">Promienisty</sys:String>
+    <sys:String x:Key="Str_Topology_Vertical">Od góry do dołu</sys:String>
+    <sys:String x:Key="Str_Topology_Horizontal">Od lewej do prawej</sys:String>
+    <sys:String x:Key="Str_Topology_Default">Domyślne</sys:String>
+    <sys:String x:Key="Str_Topology_Links">Pokaż połączenia</sys:String>
+    <sys:String x:Key="Str_Topology_Reset">Resetuj ustawienia topologii</sys:String>
 </ResourceDictionary>

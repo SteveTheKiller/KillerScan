@@ -497,4 +497,17 @@
     <sys:String x:Key="Str_Speed_ClipboardFailed">Нәтижелерді көшіру мүмкін болмады. Қайталап көріңіз.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Терминалда тапсырма орындалып жатыр. Оны тоқтатып, орнына жылдамдық сынағын іске қосу керек пе?</sys:String>
     <sys:String x:Key="Str_Term_Font">Қаріп және өлшем</sys:String>
+    <sys:String x:Key="Str_Topology_Settings">Топология параметрлері</sys:String>
+    <sys:String x:Key="Str_Topology_Pattern">Сұлба</sys:String>
+    <sys:String x:Key="Str_Topology_Orientation">Бағыт</sys:String>
+    <sys:String x:Key="Str_Topology_NodeScale">Блок өлшемі</sys:String>
+    <sys:String x:Key="Str_Topology_Font">Қаріп</sys:String>
+    <sys:String x:Key="Str_Topology_FontSize">Қаріп өлшемі</sys:String>
+    <sys:String x:Key="Str_Topology_Hierarchy">Иерархия</sys:String>
+    <sys:String x:Key="Str_Topology_Radial">Радиалды</sys:String>
+    <sys:String x:Key="Str_Topology_Vertical">Жоғарыдан төмен</sys:String>
+    <sys:String x:Key="Str_Topology_Horizontal">Солдан оңға</sys:String>
+    <sys:String x:Key="Str_Topology_Default">Әдепкі</sys:String>
+    <sys:String x:Key="Str_Topology_Links">Байланыстарды көрсету</sys:String>
+    <sys:String x:Key="Str_Topology_Reset">Топология параметрлерін қалпына келтіру</sys:String>
 </ResourceDictionary>

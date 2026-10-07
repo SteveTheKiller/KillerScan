@@ -455,4 +455,17 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Impossible de copier les résultats. Réessayez.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Une tâche est en cours dans le terminal. L’arrêter et lancer le test de vitesse à la place ?</sys:String>
     <sys:String x:Key="Str_Term_Font">Police et taille</sys:String>
+    <sys:String x:Key="Str_Topology_Settings">Paramètres de topologie</sys:String>
+    <sys:String x:Key="Str_Topology_Pattern">Disposition</sys:String>
+    <sys:String x:Key="Str_Topology_Orientation">Orientation</sys:String>
+    <sys:String x:Key="Str_Topology_NodeScale">Taille des cases</sys:String>
+    <sys:String x:Key="Str_Topology_Font">Police</sys:String>
+    <sys:String x:Key="Str_Topology_FontSize">Taille de police</sys:String>
+    <sys:String x:Key="Str_Topology_Hierarchy">Hiérarchie</sys:String>
+    <sys:String x:Key="Str_Topology_Radial">Radiale</sys:String>
+    <sys:String x:Key="Str_Topology_Vertical">De haut en bas</sys:String>
+    <sys:String x:Key="Str_Topology_Horizontal">De gauche à droite</sys:String>
+    <sys:String x:Key="Str_Topology_Default">Par défaut</sys:String>
+    <sys:String x:Key="Str_Topology_Links">Afficher les connexions</sys:String>
+    <sys:String x:Key="Str_Topology_Reset">Réinitialiser les paramètres de topologie</sys:String>
 </ResourceDictionary>

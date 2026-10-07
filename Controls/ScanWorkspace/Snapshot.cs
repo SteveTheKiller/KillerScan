@@ -170,17 +170,18 @@ namespace KillerScan.Controls
                            .Append("\" height=\"").Append(accent.Height.ToString("0.##", ci))
                            .Append("\" fill=\"").Append(Hex(accent.Background, "#808080")).Append("\"/>\n");
 
-                    double textY = y + 16;
+                    double textY = y + 4;
                     foreach (var text in stack.Children.OfType<TextBlock>())
                     {
+                        textY += text.Margin.Top + text.FontSize;
                         svg.Append("    <text x=\"").Append((x + 6).ToString("0.##", ci))
                            .Append("\" y=\"").Append(textY.ToString("0.##", ci))
-                           .Append("\" font-family=\"").Append(text.FontFamily?.Source ?? "Segoe UI")
+                           .Append("\" font-family=\"").Append(Escape(text.FontFamily?.Source ?? "Segoe UI"))
                            .Append("\" font-size=\"").Append(text.FontSize.ToString("0.##", ci))
                            .Append("\" fill=\"").Append(Hex(text.Foreground, "#e0e0e0"))
                            .Append("\" opacity=\"").Append(text.Opacity.ToString("0.##", ci))
                            .Append("\">").Append(Escape(text.Text)).Append("</text>\n");
-                        textY += text.FontSize + 4;
+                        textY += text.ActualHeight - text.FontSize + text.Margin.Bottom;
                     }
                 }
                 svg.Append("  </g>\n");

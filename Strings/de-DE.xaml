@@ -456,4 +456,17 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Die Ergebnisse konnten nicht kopiert werden. Versuchen Sie es erneut.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Im Terminal läuft bereits ein Vorgang. Diesen beenden und stattdessen den Geschwindigkeitstest starten?</sys:String>
     <sys:String x:Key="Str_Term_Font">Schriftart und Größe</sys:String>
+    <sys:String x:Key="Str_Topology_Settings">Topologieeinstellungen</sys:String>
+    <sys:String x:Key="Str_Topology_Pattern">Anordnung</sys:String>
+    <sys:String x:Key="Str_Topology_Orientation">Ausrichtung</sys:String>
+    <sys:String x:Key="Str_Topology_NodeScale">Kastengröße</sys:String>
+    <sys:String x:Key="Str_Topology_Font">Schriftart</sys:String>
+    <sys:String x:Key="Str_Topology_FontSize">Schriftgröße</sys:String>
+    <sys:String x:Key="Str_Topology_Hierarchy">Hierarchie</sys:String>
+    <sys:String x:Key="Str_Topology_Radial">Radial</sys:String>
+    <sys:String x:Key="Str_Topology_Vertical">Von oben nach unten</sys:String>
+    <sys:String x:Key="Str_Topology_Horizontal">Von links nach rechts</sys:String>
+    <sys:String x:Key="Str_Topology_Default">Standard</sys:String>
+    <sys:String x:Key="Str_Topology_Links">Verbindungen anzeigen</sys:String>
+    <sys:String x:Key="Str_Topology_Reset">Topologieeinstellungen zurücksetzen</sys:String>
 </ResourceDictionary>

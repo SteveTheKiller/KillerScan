@@ -436,4 +436,17 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Có tác vụ đang chạy trong terminal. Dừng tác vụ và chạy kiểm tra tốc độ thay thế?</sys:String>
     <sys:String x:Key="Str_Term_Font">Phông chữ và kích thước</sys:String>
 
+    <sys:String x:Key="Str_Topology_Settings">Cài đặt cấu trúc mạng</sys:String>
+    <sys:String x:Key="Str_Topology_Pattern">Bố cục</sys:String>
+    <sys:String x:Key="Str_Topology_Orientation">Hướng</sys:String>
+    <sys:String x:Key="Str_Topology_NodeScale">Kích thước ô</sys:String>
+    <sys:String x:Key="Str_Topology_Font">Phông chữ</sys:String>
+    <sys:String x:Key="Str_Topology_FontSize">Cỡ chữ</sys:String>
+    <sys:String x:Key="Str_Topology_Hierarchy">Phân cấp</sys:String>
+    <sys:String x:Key="Str_Topology_Radial">Tỏa tròn</sys:String>
+    <sys:String x:Key="Str_Topology_Vertical">Từ trên xuống dưới</sys:String>
+    <sys:String x:Key="Str_Topology_Horizontal">Từ trái sang phải</sys:String>
+    <sys:String x:Key="Str_Topology_Default">Mặc định</sys:String>
+    <sys:String x:Key="Str_Topology_Links">Hiện kết nối</sys:String>
+    <sys:String x:Key="Str_Topology_Reset">Đặt lại cài đặt cấu trúc mạng</sys:String>
 </ResourceDictionary>
