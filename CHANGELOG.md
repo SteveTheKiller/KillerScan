@@ -21,6 +21,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Improved menu and selection contrast, softened material-theme footers and 98SE footer text, and used subtle gray Delirium dividers.
 
 ### Fixed
+- Unsigned test builds can no longer push, tag or publish a release.
 - Stopping a deep scan no longer waits for stalled fingerprint requests.
 - Startup content becomes visible even when its fade animation stalls.
 - Light/Yellow uses true yellow for the wordmark, accent lines and radio buttons, with neutral dark text instead of olive brown. Only the yellow wordmark accent has a shadow.

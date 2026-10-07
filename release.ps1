@@ -6,7 +6,7 @@
 # Usage:
 #   .\release.ps1              # full release for the version in the csproj
 #   .\release.ps1 -DryRun      # everything except the site push, tag push and gh release
-#   .\release.ps1 -SkipSign    # local test build only - never release unsigned
+#   .\release.ps1 -SkipSign    # unsigned dry run; never push, tag or publish
 #   .\release.ps1 -Choco       # also pack/push the Chocolatey package after the release
 #
 # winget is NOT submitted from here. .github/workflows/winget-release.yml fires on
@@ -30,6 +30,12 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+
+# Unsigned builds always follow the dry-run path, including its no-write guards.
+if ($SkipSign) {
+    $DryRun = $true
+}
+
 Set-Location -Path $PSScriptRoot
 
 function Fail([string]$Message) {
