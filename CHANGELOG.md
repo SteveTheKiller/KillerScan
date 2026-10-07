@@ -40,7 +40,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The uninstaller has its own taskbar button, labeled "Uninstall KillerScan", with the app icon.
 - Selected language and theme rows keep the active accent on hover.
 - Main window and dialog title bar icons now use sharp size-matched images.
-- Menus open immediately and retain their existing closing fades.
 
 ## [1.7.5] - 2026-09-28
 
