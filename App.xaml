@@ -249,7 +249,7 @@
             <!-- Primary Button Style -->
             <Style x:Key="PrimaryButton" TargetType="Button">
                 <Setter Property="AutomationProperties.Name" Value="{Binding RelativeSource={RelativeSource Self}, Path=ToolTip}"/>
-                <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource PrimaryFillBrush}"/>
                 <Setter Property="Foreground" Value="{DynamicResource OnPrimaryBrush}"/>
                 <Setter Property="FontSize" Value="14"/>
                 <Setter Property="FontWeight" Value="Normal"/>

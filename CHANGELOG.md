@@ -13,6 +13,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Brazilian Portuguese localization.
 
 ### Changed
+- Filled buttons, hovered outline buttons and accent picker pills use gradients outside 98SE, and accent swatches lift on hover.
 - Menu rows now show accent text and icons on the theme's hover color.
 - Scanning, discovery and device classification now live in KillerScan.Engine, a separate library the app, its command line and other programs share.
 - The language menu now shows its 19 languages in two columns, with a faint divider that fades at both ends.
