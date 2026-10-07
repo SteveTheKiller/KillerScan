@@ -447,9 +447,10 @@ function Test-CountClaim {
         $text = [System.IO.File]::ReadAllText($p)
         $name = Split-Path $p -Leaf
         $num = '([0-9]+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen)'
+        $numAny = $num.Replace('(', '(?:')
         $patterns = @(
-            "(?i)\b$num\s+(?:killer\s+)?$Noun\b",
-            "(?i)\b$Noun\b\s*(?:</b>)?\s*[-:,：]\s*$num\b"
+            "(?i)(?<!\b(?:on|across|of|in)\s+)\b$num\s+(?:killer\s+)?$Noun\b",
+            "(?i)(?<!\b$numAny\s+)\b$Noun\b\s*(?:</b>)?\s*[-:,：]\s*$num\b"
         )
         foreach ($pat in $patterns) {
             foreach ($m in [regex]::Matches($text, $pat)) {
