@@ -151,7 +151,7 @@ namespace KillerScan.Shell
                 export.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, "Str_TT_Export");
                 RailButtons.Children.Insert(0, export);
                 ApplyToolbarAppearance();
-                _scanWorkspace.DeviceAction += (_, e) => WorkspaceDeviceAction(e.Device, e.Action);
+                _scanWorkspace.DeviceAction += (_, e) => WorkspaceDeviceAction(e.Device, e.Action, e.ServicePort);
                 _scanWorkspace.ShellExportRequested += ShellExport;
                 // Everything bound with DynamicResource follows a language change on its own. The
                 // status line and the device count do not: they are composed in code and stored,
@@ -424,20 +424,25 @@ namespace KillerScan.Shell
             UpdateWorkspaceStatus();
         }
 
-        private void WorkspaceDeviceAction(NetworkDevice device, string action)
+        private void WorkspaceDeviceAction(NetworkDevice device, string action, int? servicePort = null)
         {
-            try { RunWorkspaceDeviceAction(device, action); }
+            try { RunWorkspaceDeviceAction(device, action, servicePort); }
             catch (System.ComponentModel.Win32Exception ex) { StatusText.Text = ex.Message; }
             catch (InvalidOperationException ex) { StatusText.Text = ex.Message; }
         }
 
-        private void RunWorkspaceDeviceAction(NetworkDevice device, string action)
+        private void RunWorkspaceDeviceAction(NetworkDevice device, string action, int? servicePort = null)
         {
             if (!IPAddress.TryParse(device.IpAddress, out var address)) return;
             string ip = address.ToString();
             if (action == "Watch" || action == "Diagnose") { OpenNetworkTool(device, action == "Diagnose"); return; }
-            if (action == "Browser") { Process.Start(new ProcessStartInfo("http://" + ip) { UseShellExecute = true }); return; }
-            if (action == "Rdp") { Process.Start(new ProcessStartInfo("mstsc.exe", "/v:" + ip) { UseShellExecute = true }); return; }
+            if (action == "Browser")
+            {
+                string? url = servicePort.HasValue ? ScanWorkspace.ServiceBrowserUri(ip, servicePort.Value)?.AbsoluteUri : "http://" + ip;
+                if (url != null) Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                return;
+            }
+            if (action == "Rdp") { Process.Start(new ProcessStartInfo("mstsc.exe", "/v:" + (servicePort.HasValue ? ScanWorkspace.ServiceEndpoint(ip, servicePort.Value) : ip)) { UseShellExecute = true }); return; }
             string command;
             if (action.StartsWith("Ssh", StringComparison.Ordinal))
             {
@@ -449,7 +454,8 @@ namespace KillerScan.Shell
                     user = dialog.Value; DeviceLogins.Set(device.MacAddress, ip, user);
                 }
                 // Invoke the SSH client directly; user input never goes through a command shell.
-                command = "ssh.exe " + (string.IsNullOrWhiteSpace(user) ? "" : "-l " + QuoteArgument(user) + " ") + ip;
+                command = "ssh.exe " + (servicePort.HasValue ? "-p " + servicePort.Value + " " : "")
+                    + (string.IsNullOrWhiteSpace(user) ? "" : "-l " + QuoteArgument(user) + " ") + ip;
             }
             else if (action.StartsWith("Ping", StringComparison.Ordinal)) command = "ping.exe -t " + ip;
             else return;

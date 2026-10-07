@@ -468,4 +468,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Topology_Default">Varsayılan</sys:String>
     <sys:String x:Key="Str_Topology_Links">Bağlantıları göster</sys:String>
     <sys:String x:Key="Str_Topology_Reset">Topoloji ayarlarını sıfırla</sys:String>
+    <sys:String x:Key="Str_Services_CopyEndpoint">Adresi ve bağlantı noktasını kopyala</sys:String>
+    <sys:String x:Key="Str_Services_CopyName">Hizmet adını kopyala</sys:String>
+    <sys:String x:Key="Str_Services_CopyPort">Bağlantı noktasını kopyala</sys:String>
 </ResourceDictionary>

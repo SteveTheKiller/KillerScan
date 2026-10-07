@@ -469,4 +469,7 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Topology_Default">Standard</sys:String>
     <sys:String x:Key="Str_Topology_Links">Verbindungen anzeigen</sys:String>
     <sys:String x:Key="Str_Topology_Reset">Topologieeinstellungen zurücksetzen</sys:String>
+    <sys:String x:Key="Str_Services_CopyEndpoint">Adresse und Port kopieren</sys:String>
+    <sys:String x:Key="Str_Services_CopyName">Dienstnamen kopieren</sys:String>
+    <sys:String x:Key="Str_Services_CopyPort">Port kopieren</sys:String>
 </ResourceDictionary>

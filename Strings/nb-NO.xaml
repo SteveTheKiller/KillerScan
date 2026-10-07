@@ -510,4 +510,7 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Topology_Default">Standard</sys:String>
     <sys:String x:Key="Str_Topology_Links">Vis forbindelser</sys:String>
     <sys:String x:Key="Str_Topology_Reset">Tilbakestill topologiinnstillinger</sys:String>
+    <sys:String x:Key="Str_Services_CopyEndpoint">Kopier adresse og port</sys:String>
+    <sys:String x:Key="Str_Services_CopyName">Kopier tjenestenavn</sys:String>
+    <sys:String x:Key="Str_Services_CopyPort">Kopier port</sys:String>
 </ResourceDictionary>

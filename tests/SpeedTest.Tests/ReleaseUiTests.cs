@@ -157,6 +157,7 @@ internal static class ReleaseUiTests
         var workspace = (KillerScan.Controls.ScanWorkspace)window.GetType().GetField("_scanWorkspace", Instance)!.GetValue(window)!;
         workspace.SetView("services");
         Render(root, 1200, 780);
+        CheckServiceMenu(workspace, root, output);
         workspace.SetView("topology");
         Render(root, 1200, 780);
         string svg = (string)workspace.GetType().GetMethod("BuildTopologySvg", Instance)!.Invoke(workspace, null)!;
@@ -194,6 +195,121 @@ internal static class ReleaseUiTests
         Save(sheet, Path.Combine(output, "ButtonStates.png"));
         Console.WriteLine("PASS: 45 theme/accent states, 19 locales, new-language scaling, services and topology rendered.");
         Console.WriteLine("Offscreen release UI: " + output);
+    }
+
+    private static void CheckServiceMenu(KillerScan.Controls.ScanWorkspace workspace, FrameworkElement root, string output)
+    {
+        var type = workspace.GetType();
+        var grid = (DataGrid)workspace.FindName("ServicesGrid");
+        var devicesGrid = (DataGrid)workspace.FindName("ResultsGrid");
+        Require(!ReferenceEquals(grid.ContextMenu, devicesGrid.ContextMenu), "Services have their own context menu.");
+        var actions = grid.ContextMenu.Items.OfType<MenuItem>().ToDictionary(item => (string)item.Tag);
+        Require(actions.Keys.OrderBy(value => value).SequenceEqual(new[] { "Browser", "CopyEndpoint", "CopyHost", "CopyIp", "CopyPort",
+            "CopyService", "Export", "Rdp", "SelectAll", "Ssh", "SshAs" }.OrderBy(value => value)),
+            "The service menu contains service actions and excludes device trust, renaming, MAC copying and type overrides.");
+        var original = ((IEnumerable<KillerScan.Engine.NetworkDevice>)type.GetProperty("ScannedDevices", Instance)!.GetValue(workspace)!).ToArray();
+        string originalTarget = workspace.Targets;
+        var actionField = type.GetField("DeviceAction", Instance)!;
+        object? originalHandler = actionField.GetValue(workspace);
+        actionField.SetValue(workspace, null);
+        KillerScan.Controls.ScanDeviceActionEventArgs? raised = null;
+        workspace.DeviceAction += (_, e) => raised = e;
+        var host = new KillerScan.Engine.NetworkDevice
+        {
+            IpAddress = "192.0.2.40", Hostname = "service-test", DeviceType = "Server",
+            OpenPorts = new List<int> { 53, 80, 8443, 22, 3389 }
+        };
+        var unnamed = new KillerScan.Engine.NetworkDevice
+        {
+            IpAddress = "192.0.2.41", MacAddress = "00:11:22:33:44:55", OpenPorts = new List<int> { 53 }
+        };
+        var load = type.GetMethod("LoadSnapshot", Instance)!;
+        var refresh = type.GetMethod("RefreshServices", Instance)!;
+        var prepare = type.GetMethod("ServicesGrid_ContextMenuOpening", Instance)!;
+        var copy = type.GetMethod("ServiceCopyText", Instance)!;
+        object Row(int port, string ip = "192.0.2.40") => grid.Items.Cast<object>().Single(row =>
+            (int)row.GetType().GetProperty("Port")!.GetValue(row)! == port && (string)row.GetType().GetProperty("IpAddress")!.GetValue(row)! == ip);
+        void Select(object row)
+        {
+            grid.SelectedItems.Clear(); grid.SelectedItem = row; grid.CurrentItem = row;
+            prepare.Invoke(workspace, new object?[] { grid, null });
+        }
+        try
+        {
+            load.Invoke(workspace, new object[] { "192.0.2.0/24", new[] { host, unnamed } });
+            refresh.Invoke(workspace, null);
+            Render(root, 1200, 780);
+            void RightClick(object item)
+            {
+                var row = (DataGridRow)grid.ItemContainerGenerator.ContainerFromItem(item);
+                Require(row != null, "The service row is rendered for right-click selection checks.");
+                var click = new System.Windows.Input.MouseButtonEventArgs(System.Windows.Input.Mouse.PrimaryDevice, 0,
+                    System.Windows.Input.MouseButton.Right) { RoutedEvent = UIElement.PreviewMouseRightButtonDownEvent, Source = row };
+                type.GetMethod("ServicesGrid_RightClick", Instance)!.Invoke(workspace, new object[] { grid, click });
+            }
+            Select(Row(53));
+            grid.SelectedItems.Add(Row(8443));
+            RightClick(Row(8443));
+            Require(grid.SelectedItems.Count == 2 && ReferenceEquals(grid.CurrentItem, Row(8443)),
+                "Right-click preserves a selected group and targets the clicked service.");
+            RightClick(Row(22));
+            Require(grid.SelectedItems.Count == 1 && ReferenceEquals(grid.CurrentItem, Row(22)),
+                "Right-clicking a different service replaces the selection.");
+            Select(Row(53));
+            Require(new[] { "Browser", "Ssh", "SshAs", "Rdp" }.All(action => actions[action].Visibility == Visibility.Collapsed),
+                "DNS services do not show web, SSH or RDP actions.");
+            Require((string)copy.Invoke(workspace, new object[] { "CopyEndpoint" })! == "192.0.2.40:53" &&
+                (string)copy.Invoke(workspace, new object[] { "CopyService" })! == "DNS" &&
+                (string)copy.Invoke(workspace, new object[] { "CopyPort" })! == "53", "Copy actions use the selected service endpoint.");
+            grid.SelectedItems.Add(Row(53, "192.0.2.41"));
+            Require(((string)copy.Invoke(workspace, new object[] { "CopyEndpoint" })!).Split(new[] { Environment.NewLine }, StringSplitOptions.None).Length == 2,
+                "Copy endpoint includes all selected services.");
+            Select(Row(53, "192.0.2.41"));
+            Require(!actions["CopyHost"].IsEnabled && (string)copy.Invoke(workspace, new object[] { "CopyHost" })! == "",
+                "Copy hostname never substitutes a MAC address.");
+            foreach (var entry in new[] { (80, "Browser"), (8443, "Browser"), (22, "Ssh"), (3389, "Rdp") })
+            {
+                Select(Row(entry.Item1));
+                Require(actions[entry.Item2].Visibility == Visibility.Visible, "Matching connection action is visible.");
+                raised = null;
+                actions[entry.Item2].RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                Require(raised != null && raised.Device == host && raised.Action == entry.Item2 && raised.ServicePort == entry.Item1,
+                    "Connection actions carry the selected service's host and port.");
+            }
+            Select(Row(53));
+            raised = null;
+            type.GetMethod("RaiseDeviceAction", Instance)!.Invoke(workspace, new object[] { "Browser", false });
+            Require(raised == null, "The browser keyboard action cannot open an unrelated service or a stale selected device.");
+            Select(Row(8443));
+            type.GetMethod("RaiseDeviceAction", Instance)!.Invoke(workspace, new object[] { "Browser", false });
+            Require(raised?.ServicePort == 8443, "The browser keyboard action uses the selected service port.");
+            var browserUri = type.GetMethod("ServiceBrowserUri", Static)!;
+            var https = (Uri)browserUri.Invoke(null, new object[] { "192.0.2.40", 8443 })!;
+            var ipv6 = (Uri)browserUri.Invoke(null, new object[] { "2001:db8::40", 8080 })!;
+            Require(https.Scheme == "https" && https.Port == 8443 && ipv6.Scheme == "http" && ipv6.Port == 8080,
+                "Web service URLs preserve HTTP/HTTPS, alternate ports and IPv6 addresses.");
+            Require((string)type.GetMethod("ServiceEndpoint", Static)!.Invoke(null, new object[] { "2001:db8::40", 3389 })! == "[2001:db8::40]:3389",
+                "IPv6 service endpoints are unambiguous.");
+            grid.SelectedItems.Clear();
+            prepare.Invoke(workspace, new object?[] { grid, null });
+            Require(actions.Where(pair => pair.Key.StartsWith("Copy", StringComparison.Ordinal)).All(pair => !pair.Value.IsEnabled),
+                "Empty selections cannot copy a stale service.");
+            Select(Row(8443));
+            var surface = new StackPanel { Background = (Brush)Application.Current.FindResource("MenuBackgroundBrush") };
+            var entries = grid.ContextMenu.Items.Cast<UIElement>().ToArray();
+            grid.ContextMenu.Items.Clear();
+            foreach (var item in entries) surface.Children.Add(item);
+            Save(Render(surface, 350, 340), Path.Combine(output, "ServiceMenu.png"));
+            surface.Children.Clear();
+            foreach (var item in entries) grid.ContextMenu.Items.Add(item);
+            Console.WriteLine("PASS: service-specific menu, selection, copy data and protocol/port actions.");
+        }
+        finally
+        {
+            actionField.SetValue(workspace, originalHandler);
+            load.Invoke(workspace, new object[] { originalTarget, original });
+            refresh.Invoke(workspace, null);
+        }
     }
 
     private static void CheckTopologySettings(KillerScan.Controls.ScanWorkspace workspace, FrameworkElement root,

@@ -484,4 +484,7 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Topology_Default">Alapértelmezett</sys:String>
     <sys:String x:Key="Str_Topology_Links">Kapcsolatok megjelenítése</sys:String>
     <sys:String x:Key="Str_Topology_Reset">Topológia beállításainak visszaállítása</sys:String>
+    <sys:String x:Key="Str_Services_CopyEndpoint">Cím és port másolása</sys:String>
+    <sys:String x:Key="Str_Services_CopyName">Szolgáltatásnév másolása</sys:String>
+    <sys:String x:Key="Str_Services_CopyPort">Port másolása</sys:String>
 </ResourceDictionary>

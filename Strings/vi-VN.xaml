@@ -449,4 +449,7 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Topology_Default">Mặc định</sys:String>
     <sys:String x:Key="Str_Topology_Links">Hiện kết nối</sys:String>
     <sys:String x:Key="Str_Topology_Reset">Đặt lại cài đặt cấu trúc mạng</sys:String>
+    <sys:String x:Key="Str_Services_CopyEndpoint">Sao chép địa chỉ và cổng</sys:String>
+    <sys:String x:Key="Str_Services_CopyName">Sao chép tên dịch vụ</sys:String>
+    <sys:String x:Key="Str_Services_CopyPort">Sao chép cổng</sys:String>
 </ResourceDictionary>

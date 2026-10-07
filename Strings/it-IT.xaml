@@ -484,4 +484,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Topology_Default">Predefinito</sys:String>
     <sys:String x:Key="Str_Topology_Links">Mostra connessioni</sys:String>
     <sys:String x:Key="Str_Topology_Reset">Ripristina impostazioni topologia</sys:String>
+    <sys:String x:Key="Str_Services_CopyEndpoint">Copia indirizzo e porta</sys:String>
+    <sys:String x:Key="Str_Services_CopyName">Copia nome del servizio</sys:String>
+    <sys:String x:Key="Str_Services_CopyPort">Copia porta</sys:String>
 </ResourceDictionary>

@@ -468,4 +468,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Topology_Default">Par défaut</sys:String>
     <sys:String x:Key="Str_Topology_Links">Afficher les connexions</sys:String>
     <sys:String x:Key="Str_Topology_Reset">Réinitialiser les paramètres de topologie</sys:String>
+    <sys:String x:Key="Str_Services_CopyEndpoint">Copier l'adresse et le port</sys:String>
+    <sys:String x:Key="Str_Services_CopyName">Copier le nom du service</sys:String>
+    <sys:String x:Key="Str_Services_CopyPort">Copier le port</sys:String>
 </ResourceDictionary>

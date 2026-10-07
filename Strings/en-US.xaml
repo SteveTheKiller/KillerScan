@@ -510,4 +510,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Topology_Default">Default</sys:String>
     <sys:String x:Key="Str_Topology_Links">Show connections</sys:String>
     <sys:String x:Key="Str_Topology_Reset">Reset topology settings</sys:String>
+    <sys:String x:Key="Str_Services_CopyEndpoint">Copy endpoint</sys:String>
+    <sys:String x:Key="Str_Services_CopyName">Copy service name</sys:String>
+    <sys:String x:Key="Str_Services_CopyPort">Copy port</sys:String>
 </ResourceDictionary>

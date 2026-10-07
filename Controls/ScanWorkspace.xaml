@@ -645,6 +645,8 @@
                 </DataGrid>
 
                 <DataGrid Grid.Row="0" x:Name="ServicesGrid" Visibility="Collapsed"
+                          ContextMenuOpening="ServicesGrid_ContextMenuOpening"
+                          PreviewMouseRightButtonDown="ServicesGrid_RightClick"
                           AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent"
                           Foreground="{DynamicResource TextBrush}" BorderThickness="0"
                           GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{DynamicResource PaneBorderBrush}"
@@ -654,6 +656,33 @@
                           ColumnHeaderStyle="{StaticResource ThemedDataGridColumnHeader}"
                           Template="{Binding Template, ElementName=ResultsGrid}"
                           CellStyle="{StaticResource DarkDataGridCell}">
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="{DynamicResource Str_Services_CopyEndpoint}" Tag="CopyEndpoint" Click="ServiceMenu_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Services_CopyName}" Tag="CopyService" Click="ServiceMenu_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Services_CopyPort}" Tag="CopyPort" Click="ServiceMenu_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyIp}" Tag="CopyIp" InputGestureText="Ctrl+C" Click="ServiceMenu_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyHost}" Tag="CopyHost" InputGestureText="Ctrl+Alt+C" Click="ServiceMenu_Click"/>
+                            <Separator x:Name="ServiceConnectSeparator"/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_OpenBrowser}" Tag="Browser" InputGestureText="Enter" Click="ServiceMenu_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8A7;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_Ssh}" Tag="Ssh" InputGestureText="Ctrl+S" Click="ServiceMenu_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_SshAs}" Tag="SshAs" InputGestureText="Ctrl+Shift+S" Click="ServiceMenu_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_Rdp}" Tag="Rdp" InputGestureText="Ctrl+D" Click="ServiceMenu_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE7F4;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <Separator/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_SelectAll}" Tag="SelectAll" InputGestureText="Ctrl+A" Click="ServiceMenu_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Export_ServicesCsv}" Tag="Export" InputGestureText="Ctrl+E" Click="ServiceMenu_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE896;"/></MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{DynamicResource Str_Services_Service}" Binding="{Binding Service}" Width="160"/>
                         <DataGridTextColumn Header="{DynamicResource Str_Col_Ports}" Binding="{Binding Port}" Width="80"/>

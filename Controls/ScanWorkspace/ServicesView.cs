@@ -55,6 +55,7 @@ namespace KillerScan.Controls
             public string Service { get; init; } = string.Empty;
             public int Port { get; init; }
             public string DeviceName { get; init; } = string.Empty;
+            public string Hostname { get; init; } = string.Empty;
             public string IpAddress { get; init; } = string.Empty;
             /// <summary>
             /// The raw type, named to match <see cref="NetworkDevice.DeviceType"/> so both grids
@@ -71,6 +72,7 @@ namespace KillerScan.Controls
                 Service = Names.TryGetValue(port, out string? name) ? name : $"TCP {port}",
                 Port = port,
                 DeviceName = string.IsNullOrWhiteSpace(device.Hostname) ? device.MacAddress : device.Hostname,
+                Hostname = device.Hostname,
                 IpAddress = device.IpAddress,
                 DeviceType = device.DeviceType,
                 DeviceTypeDisplay = Controls.DeviceTypeConverter.Display(device.DeviceType),

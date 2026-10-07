@@ -12,13 +12,13 @@ namespace KillerScan.Controls
         private NetworkDevice? GetSelectedDevice() => ResultsGrid.SelectedItem as NetworkDevice;
 
         private void CopyIp_Click(object sender, RoutedEventArgs e)
-        { var d = GetSelectedDevice(); if (d != null) CopyDeviceText(d.IpAddress); }
+        { if (_showServices) { CopyServiceText("CopyIp"); return; } var d = GetSelectedDevice(); if (d != null) CopyDeviceText(d.IpAddress); }
 
         private void CopyMac_Click(object sender, RoutedEventArgs e)
-        { var d = GetSelectedDevice(); if (d != null) CopyDeviceText(d.MacAddress); }
+        { if (_showServices) return; var d = GetSelectedDevice(); if (d != null) CopyDeviceText(d.MacAddress); }
 
         private void CopyHostname_Click(object sender, RoutedEventArgs e)
-        { var d = GetSelectedDevice(); if (d != null) CopyDeviceText(d.Hostname); }
+        { if (_showServices) { CopyServiceText("CopyHost"); return; } var d = GetSelectedDevice(); if (d != null) CopyDeviceText(d.Hostname); }
 
         private async void CopyDeviceText(string? text)
         {

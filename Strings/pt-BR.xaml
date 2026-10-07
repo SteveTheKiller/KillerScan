@@ -510,4 +510,7 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Topology_Default">Padrão</sys:String>
     <sys:String x:Key="Str_Topology_Links">Mostrar conexões</sys:String>
     <sys:String x:Key="Str_Topology_Reset">Redefinir configurações de topologia</sys:String>
+    <sys:String x:Key="Str_Services_CopyEndpoint">Copiar endereço e porta</sys:String>
+    <sys:String x:Key="Str_Services_CopyName">Copiar nome do serviço</sys:String>
+    <sys:String x:Key="Str_Services_CopyPort">Copiar porta</sys:String>
 </ResourceDictionary>

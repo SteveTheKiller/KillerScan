@@ -10,11 +10,12 @@ using KillerScan.Services;
 
 namespace KillerScan.Controls
 {
-    public sealed class ScanDeviceActionEventArgs(NetworkDevice device, string action, bool beside) : EventArgs
+    public sealed class ScanDeviceActionEventArgs(NetworkDevice device, string action, bool beside, int? servicePort = null) : EventArgs
     {
         public NetworkDevice Device { get; } = device;
         public string Action { get; } = action;
         public bool Beside { get; } = beside;
+        public int? ServicePort { get; } = servicePort;
     }
 
     public partial class ScanWorkspace : UserControl, IDisposable
@@ -77,8 +78,6 @@ namespace KillerScan.Controls
                 if (ServicesGrid.SelectedItem is ServiceRow row)
                     ResultsGrid.SelectedItem = _active.Devices.FirstOrDefault(device => device.IpAddress == row.IpAddress);
             };
-            ServicesGrid.ContextMenu = ResultsGrid.ContextMenu;
-            ServicesGrid.ContextMenuOpening += ResultsGrid_ContextMenuOpening;
             ScanToolbar.SizeChanged += (_, _) => FitToolbarInputs();
             FilterBox.IsVisibleChanged += (_, _) => FitToolbarInputs();
             DeepScanAllButton.IsVisibleChanged += (_, _) => FitToolbarInputs();
@@ -195,6 +194,11 @@ namespace KillerScan.Controls
         }
         private void RaiseDeviceAction(string action, bool beside = false)
         {
+            if (_showServices && action is "Browser" or "Rdp" or "Ssh" or "SshAs")
+            {
+                RaiseServiceAction(action);
+                return;
+            }
             var device = SelectedDevice;
             if (device != null) DeviceAction?.Invoke(this, new ScanDeviceActionEventArgs(device, action,
                 beside));

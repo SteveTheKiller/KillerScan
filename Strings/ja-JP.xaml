@@ -479,4 +479,7 @@
     <sys:String x:Key="Str_Topology_Default">既定</sys:String>
     <sys:String x:Key="Str_Topology_Links">接続を表示</sys:String>
     <sys:String x:Key="Str_Topology_Reset">トポロジー設定をリセット</sys:String>
+    <sys:String x:Key="Str_Services_CopyEndpoint">アドレスとポートをコピー</sys:String>
+    <sys:String x:Key="Str_Services_CopyName">サービス名をコピー</sys:String>
+    <sys:String x:Key="Str_Services_CopyPort">ポートをコピー</sys:String>
 </ResourceDictionary>

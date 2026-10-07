@@ -453,4 +453,7 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Topology_Default">Domyślne</sys:String>
     <sys:String x:Key="Str_Topology_Links">Pokaż połączenia</sys:String>
     <sys:String x:Key="Str_Topology_Reset">Resetuj ustawienia topologii</sys:String>
+    <sys:String x:Key="Str_Services_CopyEndpoint">Kopiuj adres i port</sys:String>
+    <sys:String x:Key="Str_Services_CopyName">Kopiuj nazwę usługi</sys:String>
+    <sys:String x:Key="Str_Services_CopyPort">Kopiuj port</sys:String>
 </ResourceDictionary>

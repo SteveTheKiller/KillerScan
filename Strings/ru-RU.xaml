@@ -494,4 +494,7 @@
     <sys:String x:Key="Str_Topology_Default">По умолчанию</sys:String>
     <sys:String x:Key="Str_Topology_Links">Показывать соединения</sys:String>
     <sys:String x:Key="Str_Topology_Reset">Сбросить настройки топологии</sys:String>
+    <sys:String x:Key="Str_Services_CopyEndpoint">Копировать адрес и порт</sys:String>
+    <sys:String x:Key="Str_Services_CopyName">Копировать имя службы</sys:String>
+    <sys:String x:Key="Str_Services_CopyPort">Копировать порт</sys:String>
 </ResourceDictionary>

@@ -468,4 +468,7 @@
     <sys:String x:Key="Str_Topology_Default">ডিফল্ট</sys:String>
     <sys:String x:Key="Str_Topology_Links">সংযোগ দেখান</sys:String>
     <sys:String x:Key="Str_Topology_Reset">টপোলজি সেটিংস রিসেট করুন</sys:String>
+    <sys:String x:Key="Str_Services_CopyEndpoint">ঠিকানা ও পোর্ট কপি করুন</sys:String>
+    <sys:String x:Key="Str_Services_CopyName">সেবার নাম কপি করুন</sys:String>
+    <sys:String x:Key="Str_Services_CopyPort">পোর্ট কপি করুন</sys:String>
 </ResourceDictionary>

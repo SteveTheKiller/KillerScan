@@ -510,4 +510,7 @@
     <sys:String x:Key="Str_Topology_Default">Әдепкі</sys:String>
     <sys:String x:Key="Str_Topology_Links">Байланыстарды көрсету</sys:String>
     <sys:String x:Key="Str_Topology_Reset">Топология параметрлерін қалпына келтіру</sys:String>
+    <sys:String x:Key="Str_Services_CopyEndpoint">Мекенжай мен портты көшіру</sys:String>
+    <sys:String x:Key="Str_Services_CopyName">Қызмет атауын көшіру</sys:String>
+    <sys:String x:Key="Str_Services_CopyPort">Портты көшіру</sys:String>
 </ResourceDictionary>
