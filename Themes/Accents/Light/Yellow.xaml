@@ -18,4 +18,5 @@
   <SolidColorBrush x:Key="RadioAccent" Color="#F2C500"/>
     <SolidColorBrush x:Key="AccentLogo" Color="#F2C500" po:Freeze="True"/>
     <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#262626" po:Freeze="True"/>
+    <sys:Double x:Key="WordmarkAccentShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.9</sys:Double>
 </ResourceDictionary>

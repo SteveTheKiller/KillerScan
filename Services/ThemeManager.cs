@@ -348,6 +348,7 @@ namespace KillerScan.Services
             if (!newDict.Contains("FooterBackgroundBrush"))
                 newDict["FooterBackgroundBrush"] = newDict["BackgroundBrush"];
             newDict["OverlayWindowBrush"] = newDict["BackgroundBrush"];
+            if (!newDict.Contains("WordmarkAccentShadowOpacity")) newDict["WordmarkAccentShadowOpacity"] = 0.0;
             if (!hasExplicitComboHighlightText)
                 newDict["ComboHighlightTextBrush"] = newDict["PrimaryBrush"];
             newDict["PrimaryFillBrush"] = ButtonFill(newDict["PrimaryBrush"], theme == Theme.SE98);

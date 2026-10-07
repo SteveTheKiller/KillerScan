@@ -273,9 +273,9 @@
                                          light on top+left, dark on bottom+right. Both thicknesses
                                          are 0 and both brushes transparent on every theme but
                                          98SE, so this draws nothing and costs nothing elsewhere. -->
-                                    <Border BorderBrush="{DynamicResource BevelLightBrush}"
+                                    <Border x:Name="bevelLight" BorderBrush="{DynamicResource BevelLightBrush}"
                                             BorderThickness="{DynamicResource BevelLightThickness}"/>
-                                    <Border BorderBrush="{DynamicResource BevelDarkBrush}"
+                                    <Border x:Name="bevelDark" BorderBrush="{DynamicResource BevelDarkBrush}"
                                             BorderThickness="{DynamicResource BevelDarkThickness}"/>
                                     <ContentPresenter Margin="{TemplateBinding Padding}"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -287,6 +287,8 @@
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
                                     <Setter TargetName="tint" Property="Background" Value="#38000000"/>
+                                    <Setter TargetName="bevelLight" Property="BorderBrush" Value="{DynamicResource BevelDarkBrush}"/>
+                                    <Setter TargetName="bevelDark" Property="BorderBrush" Value="{DynamicResource BevelLightBrush}"/>
                                 </Trigger>
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter Property="Opacity" Value="0.5"/>
@@ -326,25 +328,27 @@
                                          off the Border and onto the content: a bevel belongs at the
                                          button's edge, and inside a padded Border it would be inset
                                          by the padding twice over. -->
-                                    <Border BorderBrush="{DynamicResource BevelLightBrush}"
+                                    <Border x:Name="bevelLight" BorderBrush="{DynamicResource BevelLightBrush}"
                                             BorderThickness="{DynamicResource BevelLightThickness}"/>
-                                    <Border BorderBrush="{DynamicResource BevelDarkBrush}"
+                                    <Border x:Name="bevelDark" BorderBrush="{DynamicResource BevelDarkBrush}"
                                             BorderThickness="{DynamicResource BevelDarkThickness}"/>
                                     <ContentPresenter Margin="{TemplateBinding Padding}"
                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Grid>
                             </Border>
                             <ControlTemplate.Triggers>
-                                <!-- Reactive toggle: hover FILLS with the outline color (contrast text);
-                                     mousedown REVERTS to the outline look; release returns to the fill.
+                                <!-- Hover fills with the outline color; press uses the matched
+                                     selection fill and foreground.
                                      Order matters - IsPressed must come after IsMouseOver to win. -->
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="border" Property="Background" Value="{DynamicResource OutlineHoverBrush}"/>
                                     <Setter Property="Foreground" Value="{DynamicResource OutlineHoverTextBrush}"/>
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource OutlinePressedBrush}"/>
-                                    <Setter Property="Foreground" Value="{DynamicResource OutlineTextBrush}"/>
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource SelectionBg}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                    <Setter TargetName="bevelLight" Property="BorderBrush" Value="{DynamicResource BevelDarkBrush}"/>
+                                    <Setter TargetName="bevelDark" Property="BorderBrush" Value="{DynamicResource BevelLightBrush}"/>
                                 </Trigger>
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter Property="Opacity" Value="0.5"/>

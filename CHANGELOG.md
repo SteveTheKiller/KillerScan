@@ -23,11 +23,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Fixed
 - Stopping a deep scan no longer waits for stalled fingerprint requests.
 - Startup content becomes visible even when its fade animation stalls.
-- Light/Yellow uses true yellow for the wordmark, accent lines and radio buttons, with neutral dark text instead of olive brown.
+- Light/Yellow uses true yellow for the wordmark, accent lines and radio buttons, with neutral dark text instead of olive brown. Only the yellow wordmark accent has a shadow.
 - Dropdown highlight text uses the right color in Dark/Yellow, Light/Purple and Light/Yellow.
 - 98SE Red is a true maroon again, so it no longer looks like Magenta.
 - Delirium, Ectoplasm and Sepulchre footers match the window background again.
-- Shared theme colors, control states, title styling and shadows match the family palette, including cream Blood, Greed and Cyanotic wordmarks.
+- Shared theme colors, control states, title styling and shadows match the family palette, including cream Blood, Greed and Cyanotic wordmarks. Rail flyouts sit 8 pixels from the rail and bottom content edges.
 - Ctrl+wheel changes picker views and icon sizes.
 - Table headers and content now follow the pane border's inner corners across themes and app sizes.
 - Fixed picker and dialog corners and kept the close X white over its red hover background.

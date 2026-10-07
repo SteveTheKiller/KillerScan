@@ -110,6 +110,11 @@
                             <StackPanel.Effect><BlurEffect Radius="3"/></StackPanel.Effect>
                             <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}"><Run Text="Killer" Foreground="#D8000000"/><Run Text="Scan" FontSize="{DynamicResource TitleWordmarkBoldSize}" FontWeight="Bold" Foreground="#D8000000"/></TextBlock>
                         </StackPanel>
+                        <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}"
+                                   Margin="1,2,0,0" Opacity="{DynamicResource WordmarkAccentShadowOpacity}" IsHitTestVisible="False">
+                            <TextBlock.Effect><BlurEffect Radius="3"/></TextBlock.Effect>
+                            <Run Text="Killer" Foreground="Transparent"/><Run Text="Scan" FontSize="{DynamicResource TitleWordmarkBoldSize}" FontWeight="Bold" Foreground="#D8000000"/>
+                        </TextBlock>
                         <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="{DynamicResource TitleWordmarkBoldSize}" FontWeight="Bold" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
                     </Grid>
                     <TextBlock x:Name="SubtitleText" Text="{DynamicResource Str_Subtitle}" Foreground="{DynamicResource MutedTextBrush}"
@@ -858,6 +863,8 @@
                                     <Grid Margin="0,0,0,4" HorizontalAlignment="Left">
                                         <TextBlock FontFamily="{DynamicResource WordmarkFont}" Margin="1,2,0,0" IsHitTestVisible="False"
                                                    Opacity="{DynamicResource IconShadowOpacity}"><TextBlock.Effect><BlurEffect Radius="2"/></TextBlock.Effect><Run Text="Killer" FontSize="22" Foreground="#C0000000"/><Run Text="Scan" FontSize="28.6" FontWeight="Bold" Foreground="#C0000000"/></TextBlock>
+                                        <TextBlock FontFamily="{DynamicResource WordmarkFont}" Margin="1,2,0,0" IsHitTestVisible="False"
+                                                   Opacity="{DynamicResource WordmarkAccentShadowOpacity}"><TextBlock.Effect><BlurEffect Radius="3"/></TextBlock.Effect><Run Text="Killer" FontSize="22" Foreground="Transparent"/><Run Text="Scan" FontSize="28.6" FontWeight="Bold" Foreground="#D8000000"/></TextBlock>
                                         <TextBlock FontFamily="{DynamicResource WordmarkFont}"><Run Text="Killer" FontSize="22" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="28.6" FontWeight="Bold" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
                                     </Grid>
                                     <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"><Run Text="{DynamicResource Str_About_DescA}"/><Run Text="GPLv3 "/><Hyperlink NavigateUri="https://killertools.net" RequestNavigate="AboutLink_Navigate" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None">Killer Tools</Hyperlink><Run Text="{DynamicResource Str_About_DescB}"/></TextBlock>
