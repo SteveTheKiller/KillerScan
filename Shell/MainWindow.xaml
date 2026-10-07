@@ -461,7 +461,7 @@
                     ToolTip="{DynamicResource Str_TT_Shortcuts}"/>
             <Button x:Name="LangButton" Style="{StaticResource RailButton}"
                     Content="&#xF2B7;" FontSize="15"
-                    Click="LangButton_Click" Margin="0,0,0,10"
+                    Click="LangButton_Click" ContextMenuOpening="RailLanguage_Opening" Margin="0,0,0,10"
                     ToolTip="{DynamicResource Str_TT_Language}">
                 <Button.ContextMenu>
                     <ContextMenu x:Name="LangMenu" PreviewMouseWheel="Menu_ForwardWheelToGrid"/>

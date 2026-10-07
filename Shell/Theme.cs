@@ -313,6 +313,12 @@ namespace KillerScan.Shell
 
         // ---- Language menu ----
 
+        private void RailLanguage_Opening(object sender, ContextMenuEventArgs e)
+        {
+            e.Handled = true;
+            LangButton_Click(sender, e);
+        }
+
         private void LangButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button b && b.ContextMenu != null)
