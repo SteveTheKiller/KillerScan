@@ -475,4 +475,15 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_History_CopyDetails">Kayıtlı cihaz ayrıntılarını kopyala</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Geçmiş görünümünü değiştir</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Bağlam menüsü</sys:String>
+    <sys:String x:Key="Str_History_Settings">Geçmiş ayarları</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Taramaları saklama süresi</sys:String>
+    <sys:String x:Key="Str_History_Days">gün</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">En son taramaları tut</sys:String>
+    <sys:String x:Key="Str_History_Scans">tarama</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Tüm taramaları kaydet</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">1-36500 gün veya pozitif bir tarama sayısı girin.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">Bu işlem {0} kayıtlı taramayı kalıcı olarak silecek. Ayarlar uygulansın mı?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">Geçmiş ayarları kaydedilemedi: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">Tarama karşılaştırması: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Taramaları sil</sys:String>
 </ResourceDictionary>

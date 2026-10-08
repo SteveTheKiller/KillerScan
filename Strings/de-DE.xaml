@@ -476,4 +476,15 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_History_CopyDetails">Gespeicherte Gerätedetails kopieren</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Verlaufsansicht wechseln</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Kontextmenü</sys:String>
+    <sys:String x:Key="Str_History_Settings">Verlaufseinstellungen</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Scans aufbewahren für</sys:String>
+    <sys:String x:Key="Str_History_Days">Tage</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">Neueste Scans behalten</sys:String>
+    <sys:String x:Key="Str_History_Scans">Scans</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Alle Scans speichern</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">Geben Sie 1-36500 Tage oder eine positive Anzahl von Scans ein.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">Dadurch werden {0} gespeicherte Scans dauerhaft gelöscht. Einstellungen anwenden?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">Verlaufseinstellungen konnten nicht gespeichert werden: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">Scanvergleich: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Scans löschen</sys:String>
 </ResourceDictionary>

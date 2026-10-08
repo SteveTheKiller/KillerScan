@@ -59,6 +59,7 @@ namespace KillerScan.Shell
             if (_historyWorkspace == null)
             {
                 _historyWorkspace = new HistoryWorkspace { LayoutTransform = new ScaleTransform(_appScale, _appScale) };
+                RegisterViewToolbar("history", _historyWorkspace.DetachToolbar());
                 _historyWorkspace.CurrentScanRequested += () => ShowScanView("devices");
                 _historyWorkspace.SidebarRequested += () => HistoryButton_Click(this, new RoutedEventArgs());
             }

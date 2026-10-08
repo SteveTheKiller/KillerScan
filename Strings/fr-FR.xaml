@@ -475,4 +475,15 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_History_CopyDetails">Copier les détails du périphérique enregistré</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Changer la vue de l’historique</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Menu contextuel</sys:String>
+    <sys:String x:Key="Str_History_Settings">Paramètres de l'historique</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Conserver les scans pendant</sys:String>
+    <sys:String x:Key="Str_History_Days">jours</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">Conserver les derniers</sys:String>
+    <sys:String x:Key="Str_History_Scans">scans</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Enregistrer tous les scans</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">Saisissez 1-36500 jours ou un nombre positif de scans.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">Cela supprimera définitivement {0} scans enregistrés. Appliquer ces paramètres ?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">Impossible d'enregistrer les paramètres de l'historique : {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">Comparaison des scans : {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Supprimer les scans</sys:String>
 </ResourceDictionary>

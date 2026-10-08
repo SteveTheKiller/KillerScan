@@ -517,4 +517,15 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_History_CopyDetails">Kopier lagrede enhetsdetaljer</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Bytt historikkvisning</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Kontekstmeny</sys:String>
+    <sys:String x:Key="Str_History_Settings">Historikkinnstillinger</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Behold skanninger i</sys:String>
+    <sys:String x:Key="Str_History_Days">dager</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">Behold de siste</sys:String>
+    <sys:String x:Key="Str_History_Scans">skanningene</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Lagre alle skanninger</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">Angi 1-36500 dager eller et positivt antall skanninger.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">Dette sletter {0} lagrede skanninger permanent. Bruke disse innstillingene?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">Kunne ikke lagre historikkinnstillingene: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">Skannesammenligning: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Slett skanninger</sys:String>
 </ResourceDictionary>

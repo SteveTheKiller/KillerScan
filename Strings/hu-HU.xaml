@@ -491,4 +491,15 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_History_CopyDetails">Mentett eszközadatok másolása</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Előzmények nézetének váltása</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Helyi menü</sys:String>
+    <sys:String x:Key="Str_History_Settings">Előzmények beállításai</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Vizsgálatok megőrzési ideje</sys:String>
+    <sys:String x:Key="Str_History_Days">nap</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">Legutóbbi vizsgálatok megőrzése</sys:String>
+    <sys:String x:Key="Str_History_Scans">vizsgálat</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Minden vizsgálat mentése</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">Adjon meg 1-36500 napot vagy pozitív vizsgálatszámot.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">Ez végleg töröl {0} mentett vizsgálatot. Alkalmazza a beállításokat?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">Az előzmények beállításait nem sikerült menteni: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">Vizsgálatok összehasonlítása: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Vizsgálatok törlése</sys:String>
 </ResourceDictionary>

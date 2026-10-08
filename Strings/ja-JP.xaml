@@ -486,4 +486,15 @@
     <sys:String x:Key="Str_History_CopyDetails">保存されたデバイス情報をコピー</sys:String>
     <sys:String x:Key="Str_History_ToggleView">履歴表示を切り替え</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">コンテキストメニュー</sys:String>
+    <sys:String x:Key="Str_History_Settings">履歴設定</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">スキャンの保持期間</sys:String>
+    <sys:String x:Key="Str_History_Days">日</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">最新のスキャンを保持</sys:String>
+    <sys:String x:Key="Str_History_Scans">件</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">すべてのスキャンを保存</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">1-36500日または正のスキャン件数を入力してください。</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">保存済みのスキャン{0}件が完全に削除されます。この設定を適用しますか？</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">履歴設定を保存できませんでした: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">スキャン比較: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">スキャンを削除</sys:String>
 </ResourceDictionary>

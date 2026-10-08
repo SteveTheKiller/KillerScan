@@ -517,4 +517,15 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_History_CopyDetails">Copy saved device details</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Switch history view</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Context menu</sys:String>
+    <sys:String x:Key="Str_History_Settings">History settings</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Keep scans for</sys:String>
+    <sys:String x:Key="Str_History_Days">days</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">Keep the latest</sys:String>
+    <sys:String x:Key="Str_History_Scans">scans</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Save all scans</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">Enter 1-36500 days or a positive scan count.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">This will permanently delete {0} saved scans. Apply these settings?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">Could not save history settings: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">Scan comparison: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Delete scans</sys:String>
 </ResourceDictionary>

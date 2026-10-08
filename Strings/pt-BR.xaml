@@ -517,4 +517,15 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_History_CopyDetails">Copiar detalhes do dispositivo salvo</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Alternar a visualização do histórico</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Menu de contexto</sys:String>
+    <sys:String x:Key="Str_History_Settings">Configurações do histórico</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Manter varreduras por</sys:String>
+    <sys:String x:Key="Str_History_Days">dias</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">Manter as últimas</sys:String>
+    <sys:String x:Key="Str_History_Scans">varreduras</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Salvar todas as varreduras</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">Digite 1-36500 dias ou um número positivo de varreduras.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">Isso excluirá permanentemente {0} varreduras salvas. Aplicar estas configurações?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">Não foi possível salvar as configurações do histórico: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">Comparação de varreduras: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Excluir varreduras</sys:String>
 </ResourceDictionary>

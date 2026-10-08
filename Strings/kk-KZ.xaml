@@ -517,4 +517,15 @@
     <sys:String x:Key="Str_History_CopyDetails">Сақталған құрылғы мәліметтерін көшіру</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Тарих көрінісін ауыстыру</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Контекстік мәзір</sys:String>
+    <sys:String x:Key="Str_History_Settings">Тарих параметрлері</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Сканерлеулерді сақтау мерзімі</sys:String>
+    <sys:String x:Key="Str_History_Days">күн</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">Соңғы сканерлеулерді сақтау</sys:String>
+    <sys:String x:Key="Str_History_Scans">сканерлеу</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Барлық сканерлеулерді сақтау</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">1-36500 күн немесе сканерлеулердің оң санын енгізіңіз.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">Бұл {0} сақталған сканерлеуді біржола жояды. Параметрлер қолданылсын ба?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">Тарих параметрлерін сақтау мүмкін болмады: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">Сканерлеулерді салыстыру: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Сканерлеулерді жою</sys:String>
 </ResourceDictionary>

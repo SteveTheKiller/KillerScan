@@ -473,4 +473,15 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_History_CopyDetails">Kopírovat uložené údaje zařízení</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Přepnout zobrazení historie</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Kontextová nabídka</sys:String>
+    <sys:String x:Key="Str_History_Settings">Nastavení historie</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Uchovávat skeny po dobu</sys:String>
+    <sys:String x:Key="Str_History_Days">dnů</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">Uchovávat poslední</sys:String>
+    <sys:String x:Key="Str_History_Scans">skeny</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Ukládat všechny skeny</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">Zadejte 1-36500 dnů nebo kladný počet skenů.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">Tím se trvale odstraní {0} uložených skenů. Použít toto nastavení?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">Nastavení historie nelze uložit: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">Porovnání skenů: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Odstranit skeny</sys:String>
 </ResourceDictionary>

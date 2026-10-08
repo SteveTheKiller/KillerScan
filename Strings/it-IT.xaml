@@ -491,4 +491,15 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_History_CopyDetails">Copia i dettagli del dispositivo salvato</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Cambia vista della cronologia</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Menu contestuale</sys:String>
+    <sys:String x:Key="Str_History_Settings">Impostazioni cronologia</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Conserva scansioni per</sys:String>
+    <sys:String x:Key="Str_History_Days">giorni</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">Conserva le ultime</sys:String>
+    <sys:String x:Key="Str_History_Scans">scansioni</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Salva tutte le scansioni</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">Inserisci 1-36500 giorni o un numero positivo di scansioni.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">Verranno eliminate definitivamente {0} scansioni salvate. Applicare le impostazioni?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">Impossibile salvare le impostazioni della cronologia: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">Confronto scansioni: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Elimina scansioni</sys:String>
 </ResourceDictionary>

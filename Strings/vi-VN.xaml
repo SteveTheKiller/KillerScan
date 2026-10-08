@@ -456,4 +456,15 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_History_CopyDetails">Sao chép chi tiết thiết bị đã lưu</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Chuyển chế độ xem lịch sử</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Menu ngữ cảnh</sys:String>
+    <sys:String x:Key="Str_History_Settings">Cài đặt lịch sử</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Giữ các lần quét trong</sys:String>
+    <sys:String x:Key="Str_History_Days">ngày</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">Giữ các lần quét mới nhất</sys:String>
+    <sys:String x:Key="Str_History_Scans">lần quét</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Lưu tất cả lần quét</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">Nhập 1-36500 ngày hoặc số lần quét dương.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">Thao tác này sẽ xóa vĩnh viễn {0} lần quét đã lưu. Áp dụng cài đặt này?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">Không thể lưu cài đặt lịch sử: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">So sánh lần quét: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Xóa lần quét</sys:String>
 </ResourceDictionary>

@@ -475,4 +475,15 @@
     <sys:String x:Key="Str_History_CopyDetails">সংরক্ষিত ডিভাইসের বিবরণ কপি করুন</sys:String>
     <sys:String x:Key="Str_History_ToggleView">ইতিহাসের দৃশ্য বদলান</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">প্রসঙ্গ মেনু</sys:String>
+    <sys:String x:Key="Str_History_Settings">ইতিহাসের সেটিংস</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">স্ক্যান রাখার সময়</sys:String>
+    <sys:String x:Key="Str_History_Days">দিন</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">সর্বশেষ স্ক্যান রাখুন</sys:String>
+    <sys:String x:Key="Str_History_Scans">স্ক্যান</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">সব স্ক্যান সংরক্ষণ করুন</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">1-36500 দিন বা স্ক্যানের একটি ধনাত্মক সংখ্যা লিখুন।</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">এতে {0}টি সংরক্ষিত স্ক্যান স্থায়ীভাবে মুছে যাবে। এই সেটিংস প্রয়োগ করবেন?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">ইতিহাসের সেটিংস সংরক্ষণ করা যায়নি: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">স্ক্যানের তুলনা: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">স্ক্যান মুছুন</sys:String>
 </ResourceDictionary>

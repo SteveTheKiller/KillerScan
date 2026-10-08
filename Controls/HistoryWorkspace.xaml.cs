@@ -39,6 +39,12 @@ namespace KillerScan.Controls
 
         private void HistoryChangesView_Click(object sender, RoutedEventArgs e) => SetView(false);
 
+        internal FrameworkElement DetachToolbar()
+        {
+            ((Panel)HistoryToolbar.Parent).Children.Remove(HistoryToolbar);
+            return HistoryToolbar;
+        }
+
         private void HistoryAllView_Click(object sender, RoutedEventArgs e) => SetView(true);
 
         private void SetView(bool showAll)
@@ -67,15 +73,21 @@ namespace KillerScan.Controls
             string[] devices = ["Str_Col_Ip", "Str_Col_Name", "Str_Col_Mac", "Str_Col_Vendor", "Str_Col_Type", "Str_Col_Ports"];
             for (int i = 0; i < changes.Length; i++) HistoryChangesGrid.Columns[i].Header = Loc(changes[i]);
             for (int i = 0; i < devices.Length; i++) HistoryAllGrid.Columns[i].Header = Loc(devices[i]);
-            HistoryEntryContext.Text = _entry == null ? string.Empty : $"{_entry.Target} · {_entry.ScannedAt.ToLocalTime():g}";
+            // Match the sidebar's saved timestamp, including archives recorded in another zone.
+            HistoryEntryContext.Text = _entry == null ? string.Empty : $"{_entry.Target} · {_entry.ScannedAt:g}";
             var comparison = _entry == null ? null : ScanHistory.Compare(_entry);
             HistoryComparisonContext.Text = comparison?.Previous == null ? string.Empty :
-                string.Format(Loc("Str_History_ComparedWith"), comparison.Previous.ScannedAt.ToLocalTime().ToString("g"));
+                string.Format(Loc("Str_History_ComparedWith"), comparison.Previous.ScannedAt.ToString("g"));
             if (_entry == null)
             {
+                HistoryIdentity.Text = Loc("Str_History_Empty");
                 HistorySummary.Text = Loc("Str_History_Empty");
                 return;
             }
+            HistoryIdentity.Text = !_showAll && comparison?.Previous != null
+                ? string.Format(Loc("Str_History_ComparisonIdentity"),
+                    comparison.Previous.ScannedAt.ToString("g"), _entry.ScannedAt.ToString("g"))
+                : HistoryEntryContext.Text;
             if (_showAll)
             {
                 foreach (var device in _entry.Devices)

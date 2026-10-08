@@ -501,4 +501,15 @@
     <sys:String x:Key="Str_History_CopyDetails">Копировать сохранённые сведения об устройстве</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Переключить вид истории</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Контекстное меню</sys:String>
+    <sys:String x:Key="Str_History_Settings">Настройки истории</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Хранить сканирования в течение</sys:String>
+    <sys:String x:Key="Str_History_Days">дней</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">Хранить последние</sys:String>
+    <sys:String x:Key="Str_History_Scans">сканирования</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Сохранять все сканирования</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">Введите 1-36500 дней или положительное число сканирований.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">Будет безвозвратно удалено {0} сохранённых сканирований. Применить настройки?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">Не удалось сохранить настройки истории: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">Сравнение сканирований: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Удалить сканирования</sys:String>
 </ResourceDictionary>

@@ -1,0 +1,112 @@
+<Window x:Class="KillerScan.Controls.HistorySettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:kui="clr-namespace:KillerScan.Controls"
+        Title="KillerScan"
+        Width="460" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        ShowInTaskbar="False">
+
+    <kui:PickerBorder x:Name="RootBorder" Opacity="0"
+            Background="{DynamicResource BackgroundBrush}"
+            BorderBrush="{DynamicResource CardBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="{DynamicResource PanelCornerRadius}"
+            Margin="{DynamicResource DialogHaloMargin}">
+        <kui:PickerBorder.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="18" ShadowDepth="3" Direction="270"
+                              Opacity="{DynamicResource FlyoutShadowOpacity}"/>
+        </kui:PickerBorder.Effect>
+        <Grid>
+            <Border IsHitTestVisible="False" Panel.ZIndex="8"
+                    BorderBrush="{DynamicResource FrameOuterLightBrush}"
+                    BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
+            <Border IsHitTestVisible="False" Panel.ZIndex="8"
+                    BorderBrush="{DynamicResource FrameOuterDarkBrush}"
+                    BorderThickness="{DynamicResource FrameOuterDarkThickness}"/>
+            <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}"
+                    Opacity="{DynamicResource GrainOpacity}"
+                    Background="{DynamicResource GrainTileBrush}"/>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Height="{DynamicResource DialogTitleBarHeight}"
+                        Background="{DynamicResource InputDialogTitleBrush}"
+                        MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                    <Grid>
+                        <!-- The app icon leads the caption, as it does in the main title bar. -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="14,0,0,0"
+                                    Visibility="{DynamicResource InputDialogWordmarkVisibility}">
+                        <Image x:Name="TitleIcon" Width="27" Height="27"
+                               VerticalAlignment="Center" Margin="0,0,7,0"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <Grid VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Margin="1,2,0,0"
+                                        Opacity="{DynamicResource IconShadowOpacity}">
+                                <StackPanel.Effect><BlurEffect Radius="3"/></StackPanel.Effect>
+                                <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15"><Run Text="Killer" Foreground="#D8000000"/><Run Text="Scan" FontSize="19.5" FontWeight="Bold" Foreground="#D8000000"/></TextBlock>
+                            </StackPanel>
+                            <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="15"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run Text="Scan" FontSize="19.5" FontWeight="Bold" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
+                        </Grid>
+                        </StackPanel>
+                        <TextBlock Text="KillerScan" Margin="6,0,0,0" VerticalAlignment="Center"
+                                   Visibility="{DynamicResource InputDialogPlainTitleVisibility}"
+                                   FontFamily="Tahoma" FontSize="11" FontWeight="Bold"
+                                   Foreground="{DynamicResource ChromeTextBrush}"/>
+                        <Button Content="{DynamicResource AboutCloseGlyph}" Click="Cancel_Click"
+                                Style="{StaticResource OverlayCloseButton}"
+                                HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Width="{DynamicResource AboutCloseWidth}" Height="{DynamicResource AboutCloseHeight}"
+                                Margin="{DynamicResource AboutCloseMargin}"/>
+                    </Grid>
+                </Border>
+
+                <!-- History retention: exactly one policy is active. -->
+                <StackPanel Grid.Row="1" Margin="{DynamicResource DialogContentMargin}">
+                    <TextBlock Text="{DynamicResource Str_History_Settings}" Foreground="{DynamicResource TextBrush}"
+                               FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                    <RadioButton x:Name="TimeMode" GroupName="Retention" Style="{StaticResource ThemeRadio}"
+                                 Content="{DynamicResource Str_History_KeepFor}" Checked="Mode_Changed"/>
+                    <StackPanel Orientation="Horizontal" Margin="24,0,0,12">
+                        <TextBox x:Name="DaysBox" Style="{StaticResource DarkTextBox}" MinWidth="80" Padding="9,4"
+                                 FontSize="12" Text="30" AutomationProperties.Name="{DynamicResource Str_History_Days}"/>
+                        <TextBlock Text="{DynamicResource Str_History_Days}" Foreground="{DynamicResource MutedTextBrush}"
+                                   VerticalAlignment="Center" Margin="8,0,0,0"/>
+                    </StackPanel>
+                    <RadioButton x:Name="CountMode" GroupName="Retention" Style="{StaticResource ThemeRadio}"
+                                 Content="{DynamicResource Str_History_KeepLatest}" Checked="Mode_Changed"/>
+                    <StackPanel Orientation="Horizontal" Margin="24,0,0,12">
+                        <TextBox x:Name="CountBox" Style="{StaticResource DarkTextBox}" Width="100" Padding="9,4"
+                                 FontSize="12" Text="100" AutomationProperties.Name="{DynamicResource Str_History_Scans}"/>
+                        <TextBlock Text="{DynamicResource Str_History_Scans}" Foreground="{DynamicResource MutedTextBrush}"
+                                   VerticalAlignment="Center" Margin="8,0,0,0"/>
+                    </StackPanel>
+                    <RadioButton x:Name="AllMode" GroupName="Retention" Style="{StaticResource ThemeRadio}"
+                                 Content="{DynamicResource Str_History_SaveAll}" Checked="Mode_Changed"/>
+                    <TextBlock x:Name="ValidationText" Foreground="{DynamicResource TextBrush}" FontSize="12"
+                               TextWrapping="Wrap" Visibility="Collapsed" Margin="0,12,0,0"/>
+                </StackPanel>
+
+                <!-- Buttons -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal"
+                            HorizontalAlignment="Right" Margin="{DynamicResource DialogButtonsMargin}">
+                    <Button x:Name="CancelButton" IsCancel="True" Content="{DynamicResource Str_Btn_Cancel}" Click="Cancel_Click"
+                            Style="{StaticResource SurfaceButton}"
+                            MinWidth="80" Margin="0,0,8,0"/>
+                    <Button x:Name="OkButton" IsDefault="True" Content="{DynamicResource Str_Btn_Save}" Click="OK_Click"
+                            Style="{StaticResource OutlineButton}"
+                            MinWidth="80"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </kui:PickerBorder>
+</Window>

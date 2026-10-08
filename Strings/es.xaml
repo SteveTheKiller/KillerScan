@@ -475,4 +475,15 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_History_CopyDetails">Copiar detalles del dispositivo guardado</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Cambiar vista del historial</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Menú contextual</sys:String>
+    <sys:String x:Key="Str_History_Settings">Configuración del historial</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Conservar escaneos durante</sys:String>
+    <sys:String x:Key="Str_History_Days">días</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">Conservar los últimos</sys:String>
+    <sys:String x:Key="Str_History_Scans">escaneos</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Guardar todos los escaneos</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">Introduzca 1-36500 días o una cantidad positiva de escaneos.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">Se eliminarán permanentemente {0} escaneos guardados. ¿Aplicar esta configuración?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">No se pudo guardar la configuración del historial: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">Comparación de escaneos: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Eliminar escaneos</sys:String>
 </ResourceDictionary>

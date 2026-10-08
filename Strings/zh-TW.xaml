@@ -475,4 +475,15 @@
     <sys:String x:Key="Str_History_CopyDetails">複製已儲存的裝置詳細資料</sys:String>
     <sys:String x:Key="Str_History_ToggleView">切換歷史記錄檢視</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">快顯功能表</sys:String>
+    <sys:String x:Key="Str_History_Settings">歷史設定</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">掃描保留時間</sys:String>
+    <sys:String x:Key="Str_History_Days">天</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">保留最近的掃描</sys:String>
+    <sys:String x:Key="Str_History_Scans">次</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">儲存所有掃描</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">請輸入1-36500天或正整數掃描次數。</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">這將永久刪除{0}次已儲存的掃描。是否套用這些設定？</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">無法儲存歷史設定：{0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">掃描比較：{0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">刪除掃描</sys:String>
 </ResourceDictionary>

@@ -31,29 +31,16 @@
         <Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
         <Grid Margin="12">
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-            <TextBlock Visibility="Collapsed"/>
-            <!-- The entry list moved to the window's history sidebar, so this pane is now just
-                 the selected snapshot's changes and reads like any other scan table. -->
-            <Grid Grid.Row="1">
-                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                <!-- Summary on the left, the two readings on the right. A comparison answers
-                     "what moved", but a run where nothing moved leaves an empty table that says
-                     nothing about what was actually on the network, so the snapshot itself is
-                     reachable from the same place. The selector matches the shortcuts overlay. -->
-                <Grid Margin="0,0,0,10">
-                    <TextBlock x:Name="HistoryHeader" Foreground="{DynamicResource MutedTextBrush}" FontSize="12"
-                               TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,0,150,0">
-                        <Run x:Name="HistoryTitle" Text="{DynamicResource Str_History_Title}" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
-                        <Run Text="  ·  "/>
-                        <Run x:Name="HistorySummary"/>
-                        <TextBlock.ToolTip>
-                            <StackPanel>
-                                <TextBlock x:Name="HistoryEntryContext" TextWrapping="Wrap"/>
-                                <TextBlock x:Name="HistoryComparisonContext" TextWrapping="Wrap"/>
-                            </StackPanel>
-                        </TextBlock.ToolTip>
-                    </TextBlock>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <Grid x:Name="HistoryToolbar" Margin="8,0,8,0" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <TextBlock x:Name="HistoryIdentity" Foreground="{DynamicResource TextBrush}" FontSize="12"
+                           FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,16,0">
+                    <TextBlock.ToolTip><StackPanel>
+                        <TextBlock x:Name="HistoryEntryContext" TextWrapping="Wrap"/>
+                        <TextBlock x:Name="HistoryComparisonContext" TextWrapping="Wrap"/>
+                    </StackPanel></TextBlock.ToolTip>
+                </TextBlock>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <Button x:Name="HistoryChangesViewButton" Style="{StaticResource ViewTabButton}"
                                 Content="{DynamicResource Str_History_ViewChanges}"
                                 Margin="0,0,12,0" ToolTip="Ctrl+Shift+H" Click="HistoryChangesView_Click"/>
@@ -61,6 +48,16 @@
                                 Content="{DynamicResource Str_History_ViewAll}"
                                 ToolTip="Ctrl+Shift+H" Click="HistoryAllView_Click"/>
                     </StackPanel>
+            </Grid>
+            <!-- The entry list moved to the window's history sidebar, so this pane is now just
+                 the selected snapshot's changes and reads like any other scan table. -->
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                <!-- Counts retain the original table geometry. Identity and view selection
+                     live in the window's outer toolbar, detached above. -->
+                <Grid Margin="0,0,0,10">
+                    <TextBlock x:Name="HistorySummary" Foreground="{DynamicResource MutedTextBrush}" FontSize="12"
+                               TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,150,0"/>
                 </Grid>
                 <DataGrid x:Name="HistoryChangesGrid" Grid.Row="1" Style="{StaticResource HistoryGrid}">
                     <DataGrid.Columns>

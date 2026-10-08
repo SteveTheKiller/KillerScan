@@ -136,21 +136,27 @@ internal static class HistoryUiTests
         Call(history, "SetView", false);
         var grid = (DataGrid)history.FindName("HistoryChangesGrid");
         var all = (DataGrid)history.FindName("HistoryAllGrid");
-        var title = (Run)history.FindName("HistoryTitle");
-        var header = (TextBlock)history.FindName("HistoryHeader");
+        var title = (TextBlock)history.FindName("HistoryIdentity");
+        var header = (TextBlock)history.FindName("HistorySummary");
         var metadata = (TextBlock)history.FindName("HistoryEntryContext");
         var comparison = (TextBlock)history.FindName("HistoryComparisonContext");
         var root = (FrameworkElement)window.Content;
+        BitmapSource RenderWindow(int width, int height)
+        {
+            Render(root, width, height);
+            Call(window, "FitToolbarViews");
+            return Render(root, width, height);
+        }
         root.Opacity = 1; ((UIElement)window.FindName("RootGrid")).Opacity = 1;
         string output = Path.Combine(Path.GetTempPath(), "KillerScan-history-ui-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(output);
         Require(grid.Items.Count == 3, "Added, missing and changed devices are shown.");
-        Require(title.Text == (string)app.FindResource("Str_History_Title") && header.Visibility == Visibility.Visible, "The existing header identifies the history workspace.");
-        Require(metadata.Text.Contains("192.0.2.0/24") && metadata.Text.Contains(time.AddHours(1).ToLocalTime().ToString("g")), "The target and saved timestamp are identified.");
-        Require(comparison.Text.Contains(time.ToLocalTime().ToString("g")), "The comparison names its previous scan timestamp.");
+        Require(title.Text == string.Format((string)app.FindResource("Str_History_ComparisonIdentity"), time.ToString("g"), time.AddHours(1).ToString("g")), "The outer toolbar identifies the compared scans.");
+        Require(metadata.Text.Contains("192.0.2.0/24") && metadata.Text.Contains(time.AddHours(1).ToString("g")), "The target and saved timestamp are identified.");
+        Require(comparison.Text.Contains(time.ToString("g")), "The comparison names its previous scan timestamp.");
         Call(window, "OpenSidebar"); Call(window, "ToggleSidebar"); Call(window, "ApplySidebarState", false);
         Render(root, 1200, 780);
         Require((bool)Field(window, "_sidebarCollapsed")! && history.Visibility == Visibility.Visible && header.ActualHeight > 0, "Closing the sidebar preserves the compact history title and snapshot.");
-        Require(header.ToolTip is StackPanel tooltip && tooltip.Children.Contains(metadata) && tooltip.Children.Contains(comparison), "Scan metadata belongs to the tooltip, not the header layout.");
+        Require(title.ToolTip is StackPanel tooltip && tooltip.Children.Contains(metadata) && tooltip.Children.Contains(comparison), "Scan metadata belongs to the outer toolbar tooltip.");
         CheckOriginalGeometry(window, history, root, directory.FullName, output);
         Require((string)Field(window, "_workspaceView")! == "history", "The selected snapshot remains active.");
         Require(((FrameworkElement)window.FindName("DeviceCountFooter")).Visibility == Visibility.Collapsed, "History does not show the hidden live scan's device count.");
@@ -166,7 +172,7 @@ internal static class HistoryUiTests
         Require(menu.Items.OfType<MenuItem>().Where(item => item.Tag is string action && new[] { "ip", "mac", "host", "details" }.Contains(action)).All(item => item.IsEnabled), "Saved row copy actions are available.");
         Require(menu.Items.OfType<MenuItem>().All(item => !string.IsNullOrWhiteSpace(item.InputGestureText)), "Every history menu action shows its shortcut.");
         Require(menu.Items.OfType<MenuItem>().All(item => !new[] { "Ping", "Ssh", "Rdp", "Rescan", "Trust" }.Contains(item.Tag as string)), "Historical menus contain no live commands.");
-        Save(Render(root, 1200, 780), Path.Combine(output, "History-Black-sidebar-closed.png"));
+        Save(RenderWindow(1200, 780), Path.Combine(output, "History-Black-sidebar-closed.png"));
         SaveMenu(menu, app, Path.Combine(output, "History-menu.png"));
         history.ContextMenu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
         Require(history.ContextMenu.Items.OfType<MenuItem>().Where(item => item.Tag is string action && new[] { "ip", "mac", "host", "details" }.Contains(action)).All(item => !item.IsEnabled), "Pane background cannot copy a previously selected row.");
@@ -179,7 +185,14 @@ internal static class HistoryUiTests
         foreach (var shortcut in new[] { (Key.F3, ModifierKeys.None), (Key.Enter, ModifierKeys.None), (Key.R, ModifierKeys.Control), (Key.S, ModifierKeys.Control), (Key.H, ModifierKeys.Control | ModifierKeys.Alt), (Key.G, ModifierKeys.Control | ModifierKeys.Shift) })
             Require(history.HandleShortcut(shortcut.Item1, shortcut.Item2), "Historical network or wrong-format shortcuts cannot fall through: " + shortcut.Item1);
         Require(!history.HandleShortcut(Key.C, ModifierKeys.Control, true), "Text inputs retain normal copy behavior.");
+        double comparisonTableY = grid.TranslatePoint(new Point(), root).Y;
         Require(history.HandleShortcut(Key.H, ModifierKeys.Control | ModifierKeys.Shift) && all.Visibility == Visibility.Visible && all.Items.Count == 2, "History's view shortcut shows the saved snapshot.");
+        RenderWindow(1200, 780);
+        Require(title.Text == metadata.Text && title.Text.Contains("192.0.2.0/24"),
+            "All devices identifies the selected scan target and saved date.");
+        Require(Math.Abs(all.TranslatePoint(new Point(), root).Y - comparisonTableY) <= 0.5,
+            "Switching to all devices preserves the whole-window table position.");
+        Save(RenderWindow(1200, 780), Path.Combine(output, "History-All-Black.png"));
         Require(!((string)Call(history, "BuildCsv")!).Contains("192.0.2.40"), "All-devices export excludes devices only present in the older snapshot.");
         history.HandleShortcut(Key.H, ModifierKeys.Control | ModifierKeys.Shift);
         foreach (string theme in Enum.GetNames(themeType))
@@ -192,7 +205,7 @@ internal static class HistoryUiTests
         foreach (string locale in Enum.GetNames(localeType))
         {
             Locale(locale); history.RefreshLocale(); menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
-            Require(title.Text == (string)app.FindResource("Str_History_Title") && !comparison.Text.StartsWith("Str_"), locale + ": history text is localized.");
+            Require(title.Text == string.Format((string)app.FindResource("Str_History_ComparisonIdentity"), time.ToString("g"), time.AddHours(1).ToString("g")) && !comparison.Text.StartsWith("Str_"), locale + ": comparison identity is localized.");
             Require(Equals(grid.Columns[0].Header, app.FindResource("Str_History_Change")) && Equals(all.Columns[0].Header, app.FindResource("Str_Col_Ip")), locale + ": both grid headings change language.");
             Require(menu.Items.OfType<MenuItem>().All(item => item.Header is string text && text.Length > 0 && !text.StartsWith("Str_")), locale + ": menu labels resolve.");
             foreach (double scale in new[] { 1.0, 1.5, 2.5 })
@@ -203,7 +216,7 @@ internal static class HistoryUiTests
             }
         }
         Locale("EnUS"); Call(window, "ApplyAppScale", 1.0, false);
-        Call(history, "ShowEntry", before); Require(((Run)history.FindName("HistorySummary")).Text == (string)app.FindResource("Str_History_FirstScan") && comparison.Text.Length == 0, "First snapshots have no invented comparison.");
+        Call(history, "ShowEntry", before); Require(((TextBlock)history.FindName("HistorySummary")).Text == (string)app.FindResource("Str_History_FirstScan") && comparison.Text.Length == 0, "First snapshots have no invented comparison.");
         Call(history, "ShowEntry", new object?[] { null }); menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
         Require(metadata.Text.Length == 0 && grid.Items.Count == 0 && !menu.Items.OfType<MenuItem>().Single(item => Equals(item.Tag, "export")).IsEnabled, "Empty history clears stale context and export availability.");
         CheckCatalog(window, app);
@@ -214,6 +227,7 @@ internal static class HistoryUiTests
         Save(Render(root, 1200, 780), Path.Combine(output, "Shortcut-map.png"));
         ((FrameworkElement)window.FindName("ShortcutsOverlay")).Visibility = Visibility.Collapsed;
         CheckServices(assembly);
+        CheckSettingsDialog(assembly, Theme, Locale, output);
         Console.WriteLine("RENDERED: " + output);
     }
 
@@ -229,11 +243,17 @@ internal static class HistoryUiTests
         baseline.FontSize = history.FontSize;
         TextOptions.SetTextFormattingMode(baseline, TextOptions.GetTextFormattingMode(history));
         TextOptions.SetTextRenderingMode(baseline, TextOptions.GetTextRenderingMode(history));
-        ((TextBlock)baseline.FindName("HistorySummary")).Text = ((Run)history.FindName("HistorySummary")).Text;
+        ((TextBlock)baseline.FindName("HistorySummary")).Text = ((TextBlock)history.FindName("HistorySummary")).Text;
         var grid = (DataGrid)history.FindName("HistoryChangesGrid");
         var oldGrid = (DataGrid)baseline.FindName("HistoryChangesGrid");
         oldGrid.ItemsSource = grid.ItemsSource;
-        var header = (TextBlock)history.FindName("HistoryHeader");
+        var header = (TextBlock)history.FindName("HistorySummary");
+        BitmapSource RenderWindow(int width, int height)
+        {
+            Render(root, width, height);
+            Call(window, "FitToolbarViews");
+            return Render(root, width, height);
+        }
         foreach (bool open in new[] { false, true })
         {
             if (open) Call(window, "OpenSidebar");
@@ -241,19 +261,149 @@ internal static class HistoryUiTests
             Call(window, "ApplySidebarState", false);
             foreach (int width in new[] { 1200, 800, 640 })
             {
-                Render(root, width, 780);
+                RenderWindow(width, 780);
                 Render(baseline, (int)Math.Round(history.ActualWidth), (int)Math.Round(history.ActualHeight));
                 double actual = grid.TranslatePoint(new Point(), history).Y;
                 double original = oldGrid.TranslatePoint(new Point(), baseline).Y;
                 Console.WriteLine("GEOMETRY: width=" + width + " sidebar=" + (open ? "open" : "closed") + " tableY=" + actual + " originalY=" + original + " headerHeight=" + header.ActualHeight + " oldHeaderHeight=" + ((TextBlock)baseline.FindName("HistorySummary")).ActualHeight);
-                Save(Render(root, width, 780), Path.Combine(output, "Compact-" + width + "-sidebar-" + (open ? "open" : "closed") + ".png"));
+                Save(RenderWindow(width, 780), Path.Combine(output, "Compact-" + width + "-sidebar-" + (open ? "open" : "closed") + ".png"));
                 Save(Render(baseline, (int)Math.Round(history.ActualWidth), (int)Math.Round(history.ActualHeight)), Path.Combine(output, "Original-pane-" + width + "-sidebar-" + (open ? "open" : "closed") + ".png"));
+                var identity = (TextBlock)history.FindName("HistoryIdentity");
+                var toggle = (Button)history.FindName("HistoryAllViewButton");
+                var bar = (FrameworkElement)history.FindName("HistoryToolbar");
+                var navigation = (FrameworkElement)Field(window, "_workspaceNavigation")!;
+                var paneTop = history.TranslatePoint(new Point(), root).Y;
+                Rect Bounds(FrameworkElement item) => new Rect(item.TranslatePoint(new Point(), root), item.RenderSize);
+                var identityBounds = Bounds(identity);
+                var toggleBounds = Bounds(toggle);
+                var navigationBounds = Bounds(navigation);
+                Require(identityBounds.Bottom <= paneTop && toggleBounds.Bottom <= paneTop,
+                    "Identity and toggle are outside and above the content panel: " + width + "/" + open);
+                Require(identityBounds.Right <= toggleBounds.Left && toggleBounds.Right <= navigationBounds.Left,
+                    "Identity, toggle and main navigation never overlap: " + width + "/" + open);
+                Require(identityBounds.Width > 0, "Scan identity remains readable at narrow widths: " + width + "/" + open);
+                double tableWindowY = grid.TranslatePoint(new Point(), root).Y;
+                var body = (Panel)Field(window, "_workspaceBody")!;
+                int childIndex = body.Children.IndexOf(history);
+                body.Children.Remove(history);
+                body.Children.Insert(childIndex, baseline);
+                baseline.Visibility = Visibility.Visible;
+                bar.Visibility = Visibility.Collapsed;
+                RenderWindow(width, 780);
+                double originalWindowY = oldGrid.TranslatePoint(new Point(), root).Y;
+                body.Children.Remove(baseline);
+                body.Children.Insert(childIndex, history);
+                bar.Visibility = Visibility.Visible;
+                RenderWindow(width, 780);
+                Require(Math.Abs(tableWindowY - originalWindowY) <= 0.5,
+                    "Whole-window table position matches the original pane and empty top area: " + width + "/" + open);
                 Require(actual <= original + 0.5, "The table never moves below the original position: " + width + "/" + open);
                 Require(Math.Abs(actual - original) <= 0.5, "Original table position is exact at normal and narrow widths: " + width + "/" + open);
                 Require(header.ActualHeight <= ((TextBlock)baseline.FindName("HistorySummary")).ActualHeight + 0.5, "The title adds no vertical header height.");
             }
         }
         Call(window, "ToggleSidebar"); Call(window, "ApplySidebarState", false); Render(root, 1200, 780);
+    }
+
+    private static int _settingsApplyCalls;
+    private static bool RejectSettings(object policy) { _settingsApplyCalls++; return false; }
+
+    private static void CheckSettingsDialog(Assembly assembly, Action<string> theme, Action<string> locale, string output)
+    {
+        var policyType = assembly.GetType("KillerScan.Services.HistoryRetention", true)!;
+        var modeType = assembly.GetType("KillerScan.Services.HistoryRetentionMode", true)!;
+        var dialogType = assembly.GetType("KillerScan.Controls.HistorySettingsDialog", true)!;
+        var policy = Activator.CreateInstance(policyType, Enum.Parse(modeType, "Count"), 100, 30)!;
+        var callback = Delegate.CreateDelegate(typeof(Func<,>).MakeGenericType(policyType, typeof(bool)),
+            typeof(HistoryUiTests).GetMethod(nameof(RejectSettings), Static)!);
+        Window NewDialog() => (Window)Activator.CreateInstance(dialogType, Instance, null, new object[] { policy, callback }, null)!;
+        BitmapSource Draw(Window dialog)
+        {
+            ((UIElement)dialog.FindName("RootBorder")).Opacity = 1;
+            var surface = (FrameworkElement)dialog.Content;
+            surface.Measure(new Size(460, double.PositiveInfinity));
+            return Render(surface, 460, (int)Math.Ceiling(surface.DesiredSize.Height));
+        }
+        // These dialog fixtures open no history files and write no settings.
+        var input = NewDialog();
+        var count = (RadioButton)input.FindName("CountMode");
+        var time = (RadioButton)input.FindName("TimeMode");
+        var all = (RadioButton)input.FindName("AllMode");
+        var countBox = (TextBox)input.FindName("CountBox");
+        var daysBox = (TextBox)input.FindName("DaysBox");
+        Require(count.IsChecked == true && countBox.Text == "100", "New-history dialog defaults to 100 scans.");
+        foreach (string value in new[] { "", "0", "-1", "word", "2147483648" })
+        {
+            countBox.Text = value;
+            Require(Call(input, "ReadPolicy") == null, "Invalid count is rejected: " + value);
+        }
+        foreach (string value in new[] { "1", "100", "2147483647" })
+        {
+            countBox.Text = value;
+            Require(Call(input, "ReadPolicy") != null, "Positive count boundary is accepted: " + value);
+        }
+        time.IsChecked = true;
+        Require(count.IsChecked == false && all.IsChecked == false && !countBox.IsEnabled && daysBox.IsEnabled,
+            "Time retention is mutually exclusive and enables only its duration.");
+        foreach (string value in new[] { "", "0", "-1", "36501", "1.5" })
+        {
+            daysBox.Text = value;
+            Require(Call(input, "ReadPolicy") == null, "Invalid duration is rejected: " + value);
+        }
+        foreach (string value in new[] { "1", "30", "36500" })
+        {
+            daysBox.Text = value;
+            Require(Call(input, "ReadPolicy") != null, "Duration boundary is accepted: " + value);
+        }
+        all.IsChecked = true;
+        Require(time.IsChecked == false && count.IsChecked == false && !daysBox.IsEnabled && !countBox.IsEnabled &&
+            Call(input, "ReadPolicy") != null, "Save all ignores inactive editor values.");
+        int calls = _settingsApplyCalls;
+        Call(input, "Cancel_Click", input, new RoutedEventArgs());
+        Require(_settingsApplyCalls == calls, "Cancel invokes no settings or history mutation.");
+        var entryType = assembly.GetType("KillerScan.Services.ScanHistoryEntry", true)!;
+        var fixture = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(entryType))!;
+        var now = new DateTimeOffset(2026, 10, 8, 12, 0, 0, TimeSpan.Zero);
+        foreach (var stamp in new[] { now.AddDays(1), now.AddDays(-30).AddTicks(-1), now.AddDays(-30), now.AddDays(-1) })
+        {
+            var entry = Activator.CreateInstance(entryType)!;
+            entryType.GetProperty("ScannedAt")!.SetValue(entry, stamp);
+            fixture.Add(entry);
+        }
+        object Policy(string mode, int countValue = 100, int daysValue = 30) =>
+            Activator.CreateInstance(policyType, Enum.Parse(modeType, mode), countValue, daysValue)!;
+        IList Plan(object selected) => (IList)Call(selected, "Retained", fixture, now)!;
+        var latest = Plan(Policy("Count", 2));
+        Require(latest.Count == 2 && ReferenceEquals(latest[0], fixture[0]) && ReferenceEquals(latest[1], fixture[3]),
+            "Count retention plans the latest timestamps while preserving archive order.");
+        var timed = Plan(Policy("Time"));
+        Require(timed.Count == 3 && ReferenceEquals(timed[1], fixture[2]),
+            "Time retention includes its exact boundary and future timestamps.");
+        Require(Plan(Policy("SaveAll")).Count == 4 && fixture.Count == 4,
+            "Save all preserves every scan and retention plans never mutate the source fixture.");
+        Require(Plan(Policy("Count", int.MaxValue)).Count == 4, "A count larger than history preserves the entire archive.");
+        foreach (string name in Enum.GetNames(assembly.GetType("KillerScan.Services.Theme", true)!))
+        {
+            theme(name);
+            var dialog = NewDialog();
+            Save(Draw(dialog), Path.Combine(output, "History-settings-" + name + ".png"));
+            Require(((TextBox)dialog.FindName("CountBox")).ActualHeight > 0, name + ": themed history settings render.");
+            dialog.Close();
+        }
+        theme("Black");
+        foreach (string name in Enum.GetNames(assembly.GetType("KillerScan.Services.Locale", true)!))
+        {
+            locale(name);
+            var dialog = NewDialog();
+            Draw(dialog);
+            Require(((RadioButton)dialog.FindName("AllMode")).Content is string label && !label.StartsWith("Str_"),
+                name + ": retention labels resolve.");
+            Require(((Button)dialog.FindName("OkButton")).Content is string text && !text.StartsWith("Str_"),
+                name + ": save label resolves.");
+            if (name == "UkUA") Save(Draw(dialog), Path.Combine(output, "History-settings-Ukrainian.png"));
+            dialog.Close();
+        }
+        locale("EnUS");
     }
 
     private static void CheckCatalog(MainWindow window, Application app)

@@ -460,4 +460,15 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_History_CopyDetails">Kopiuj zapisane dane urządzenia</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Przełącz widok historii</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Menu kontekstowe</sys:String>
+    <sys:String x:Key="Str_History_Settings">Ustawienia historii</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Zachowuj skany przez</sys:String>
+    <sys:String x:Key="Str_History_Days">dni</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">Zachowuj ostatnie</sys:String>
+    <sys:String x:Key="Str_History_Scans">skany</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Zapisuj wszystkie skany</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">Wpisz 1-36500 dni lub dodatnią liczbę skanów.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">Spowoduje to trwałe usunięcie {0} zapisanych skanów. Zastosować te ustawienia?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">Nie można zapisać ustawień historii: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">Porównanie skanów: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Usuń skany</sys:String>
 </ResourceDictionary>

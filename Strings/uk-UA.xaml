@@ -517,4 +517,15 @@
     <sys:String x:Key="Str_History_CopyDetails">Копіювати збережені відомості про пристрій</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Змінити вигляд історії</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Контекстне меню</sys:String>
+    <sys:String x:Key="Str_History_Settings">Налаштування історії</sys:String>
+    <sys:String x:Key="Str_History_KeepFor">Зберігати сканування протягом</sys:String>
+    <sys:String x:Key="Str_History_Days">днів</sys:String>
+    <sys:String x:Key="Str_History_KeepLatest">Зберігати останні</sys:String>
+    <sys:String x:Key="Str_History_Scans">сканування</sys:String>
+    <sys:String x:Key="Str_History_SaveAll">Зберігати всі сканування</sys:String>
+    <sys:String x:Key="Str_History_InvalidRetention">Введіть 1-36500 днів або додатну кількість сканувань.</sys:String>
+    <sys:String x:Key="Str_History_RemoveConfirm">Буде назавжди видалено {0} збережених сканувань. Застосувати налаштування?</sys:String>
+    <sys:String x:Key="Str_History_SaveFailed">Не вдалося зберегти налаштування історії: {0}</sys:String>
+    <sys:String x:Key="Str_History_ComparisonIdentity">Порівняння сканувань: {0} / {1}</sys:String>
+    <sys:String x:Key="Str_History_Delete">Видалити сканування</sys:String>
 </ResourceDictionary>
