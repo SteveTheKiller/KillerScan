@@ -1,0 +1,246 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+#if NET48
+using System.Web.Script.Serialization;
+#else
+using System.Text.Json;
+#endif
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using System.Xml.Linq;
+
+// Isolated live-template tests. No product startup, preferences, database or OS settings writes.
+internal static class Program
+{
+    static readonly XNamespace P = "http://schemas.microsoft.com/winfx/2006/xaml/presentation", X = "http://schemas.microsoft.com/winfx/2006/xaml";
+    static readonly string[] Themes = { "Dark", "Light", "Black", "Blood", "Greed", "Cyanotic", "Decay", "Delirium", "Ectoplasm", "Malaise", "Mourning", "Sepulchre", "98SE" };
+    static string Root = "", Source = "", Output = "";
+    static readonly List<object> Results = new();
+    [STAThread] static int Main(string[] args)
+    {
+        Root = Path.GetFullPath(args[0]); Output = Path.GetFullPath(args[1]);
+        var name = Path.GetFileName(Root);
+        Source = args.Length > 2 ? args[2] : Path.Combine(Root, name.StartsWith("KillerPDF") ? "MainWindow.xaml" : name == "KillerScan" ? "App.xaml" : "Controls/Controls.xaml");
+        Directory.CreateDirectory(Output);
+        var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+        // Only this fixture's cached WPF value is substituted, never SPI_SET or registry.
+        var alignment = typeof(SystemParameters).GetField("_menuDropAlignment", BindingFlags.Static | BindingFlags.NonPublic)!;
+        bool originalAlignment = SystemParameters.MenuDropAlignment;
+        int failures = 0;
+        try
+        {
+            bool smoke = args.Contains("--smoke");
+            bool windowless = args.Contains("--windowless");
+            foreach (var theme in smoke ? new[] { "Dark", "98SE" } : Themes)
+                foreach (double scale in new[] { 1d, 1.25, 1.5, 2d })
+                    if(windowless) RunWindowless(theme,scale); else Run(theme, scale, false, false, "center", false, theme is "Dark" or "98SE" && scale == 1);
+            foreach (var theme in smoke || windowless ? new string[0] : new[] { "Dark", "98SE" })
+                foreach (double scale in new[] { 1d, 1.25, 1.5, 2d })
+                    foreach (bool rtl in new[] { false, true })
+                        foreach (bool align in new[] { false, true })
+                            foreach (var edge in new[] { "center", "left", "right" })
+                                Run(theme, scale, rtl, align, edge, false, false);
+            if(!windowless) Run("Dark", 1, false, false, "center", true, false);
+        }
+        finally
+        {
+            alignment.SetValue(null, originalAlignment);
+            app.Shutdown();
+        }
+        string hash; using(var algorithm = SHA256.Create()) hash = BitConverter.ToString(algorithm.ComputeHash(File.ReadAllBytes(Source))).Replace("-","");
+        var report = new { repository = name, source = Source, sha256 = hash, runtime = Environment.Version.ToString(), cases = Results.Count, failures, osDpi = new { simulatedScales = new[] { 100,125,150,200 }, actualPerMonitorDpiChangesVerified = false, mixedMonitorVerified = false }, physicalPointerTravelVerified = false, hoverDelayVerified = false, results = Results };
+#if NET48
+        File.WriteAllText(Path.Combine(Output,"result.json"), new JavaScriptSerializer { MaxJsonLength = int.MaxValue }.Serialize(report));
+#else
+        File.WriteAllText(Path.Combine(Output,"result.json"), JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }));
+#endif
+        Console.WriteLine($"{name}: {Results.Count - failures}/{Results.Count} live-template cases passed; report: {Output}");
+        return failures == 0 ? 0 : 1;
+
+        void Run(string theme, double scale, bool rtl, bool align, string edge, bool inset, bool render)
+        {
+            alignment.SetValue(null, align);
+            try { Results.Add(Probe(theme,scale,rtl,align,edge,inset,render)); }
+            catch (Exception e) { failures++; Results.Add(new { theme, scale, rtl, align, edge, inset, pass = false, error = e.ToString() }); }
+        }
+        void RunWindowless(string theme,double scale)
+        {
+            try
+            {
+                var doc=XDocument.Load(Source);
+                var mi=doc.Descendants(P+"Style").Single(e => (string?)e.Attribute("TargetType") == "MenuItem" && e.Descendants(P+"Popup").Any());
+                var cm=doc.Descendants(P+"Style").Single(e => (string?)e.Attribute("TargetType") == "ContextMenu");
+                var resources=Resources(doc,mi,cm,theme);
+                var row=new MenuItem { Header="Opening row",Resources=resources,Style=(Style)resources[typeof(MenuItem)],LayoutTransform=new ScaleTransform(scale,scale) };
+                row.Items.Add(new MenuItem { Header="Leaf" });
+                row.ApplyTemplate();row.Measure(new Size(360,80));row.Arrange(new Rect(0,0,360,80));
+                var popup=PopupOf(row);
+                Check(ReferenceEquals(popup.PlacementTarget,row),"Loaded template targets the full row.");
+                Check(ReferenceEquals(typeof(MenuItem).GetField("_submenuPopup",BindingFlags.Instance|BindingFlags.NonPublic)!.GetValue(row),popup),"Native submenu part must be registered.");
+                Check(popup.Placement==PlacementMode.Right && popup.CustomPopupPlacementCallback==null,"Keep native placement.");
+                Near(popup.HorizontalOffset,-2,.001,"Loaded horizontal offset");Near(popup.VerticalOffset,-3,.001,"Loaded vertical offset");
+                Check(!popup.IsOpen && PresentationSource.FromVisual(row)==null,"Windowless test must not create a presented control or open a popup.");
+                Results.Add(new { theme,scale,pass=true,windowless=true,nativePlacementRuntimeVerified=false });
+            }
+            catch(Exception e) { failures++;Results.Add(new {theme,scale,pass=false,windowless=true,error=e.ToString()}); }
+        }
+    }
+    static object Probe(string theme, double scale, bool rtl, bool align, string edge, bool inset, bool render)
+    {
+        var doc = XDocument.Load(Source);
+        var menuStyle = doc.Descendants(P+"Style").Single(e => (string?)e.Attribute("TargetType") == "MenuItem" && e.Descendants(P+"Popup").Any());
+        var contextStyle = doc.Descendants(P+"Style").Single(e => (string?)e.Attribute("TargetType") == "ContextMenu");
+        var resources = Resources(doc,menuStyle,contextStyle,theme);
+        var work = SystemParameters.WorkArea;
+        var host = new Window { Title = "Owned submenu regression fixture", Left = work.Left+work.Width/2-180, Top = work.Top+work.Height/2-120, Width = 360, Height = 240, ShowInTaskbar = false, ShowActivated = false, Content = new Border(), Resources = resources };
+        // Keep this controlled fixture alive if desktop focus changes during synthetic input.
+        // Physical outside-click dismissal is a separate interactive check.
+        var menu = new ContextMenu { StaysOpen = true, Resources = resources, FlowDirection = rtl ? FlowDirection.RightToLeft : FlowDirection.LeftToRight, LayoutTransform = new ScaleTransform(scale,scale), Placement = PlacementMode.AbsolutePoint, HorizontalOffset = edge == "left" ? work.Left+30 : edge == "right" ? work.Right-220*scale : work.Left+work.Width/2-200, VerticalOffset = work.Top+work.Height/2 };
+        host.SourceInitialized += (_,_) => Cloak(host);
+        menu.Opened += (_,_) => Cloak(menu);
+        var first = new MenuItem { Header = "First submenu" };
+        var nested = new MenuItem { Header = "Nested submenu" };
+        var leaf = new MenuItem { Header = "Leaf action", InputGestureText = "Ctrl+L" };
+        if (inset) { first.Padding = new Thickness(24,14,34,12); nested.Padding = first.Padding; }
+        nested.Items.Add(leaf); first.Items.Add(nested); first.Items.Add(new MenuItem { Header = "Other action" }); menu.Items.Add(first); menu.Items.Add(new MenuItem { Header = "Root action" });
+        try
+        {
+            host.Show(); Pump(); menu.IsOpen = true; Pump();
+            var a = PopupOf(first); a.Opened += (_,_) => Cloak(a.Child);
+            first.IsSubmenuOpen = true; Pump();
+            var b = PopupOf(nested); b.Opened += (_,_) => Cloak(b.Child);
+            nested.IsSubmenuOpen = true; Pump();
+            var rootCard = Card(menu); var childCard = Card(a.Child); var nextCard = Card(b.Child);
+            Check(ReferenceEquals(a.PlacementTarget,first) && ReferenceEquals(b.PlacementTarget,nested),"Popup must target its opening row.");
+            var nativePopup = typeof(MenuItem).GetField("_submenuPopup",BindingFlags.Instance|BindingFlags.NonPublic)!;
+            Check(ReferenceEquals(nativePopup.GetValue(first),a) && ReferenceEquals(nativePopup.GetValue(nested),b),"WPF must recognize its submenu popup part for closure and cascade direction.");
+            Check(a.Placement == PlacementMode.Right && b.Placement == PlacementMode.Right && a.CustomPopupPlacementCallback == null,"Use native direction and edge placement.");
+            Check(a.PopupAnimation == PopupAnimation.Fade && !a.Focusable,"Keep family animation and focus behavior.");
+            var r = Bounds(rootCard); var c = Bounds(childCard); var n = Bounds(nextCard);
+            var opening = Bounds(first); var nextOpening = Bounds(nested);
+            double effectiveScale = opening.Width/first.ActualWidth;
+            bool left = c.Left < opening.Left;
+            Geometry(opening,c,effectiveScale,left,rtl,edge == "center");
+            Geometry(nextOpening,n,effectiveScale,n.Left < nextOpening.Left,rtl,edge == "center");
+            Check(c.Left >= work.Left-2 && c.Right <= work.Right+2 && n.Left >= work.Left-2 && n.Right <= work.Right+2,"Visible cards must stay in the monitor work area.");
+            if(edge == "center") Check(left == (rtl ^ align),"RTL and native menu alignment must both influence placement.");
+            if(edge == "right") Check(left,"Right edge must flip first submenu to the left.");
+            if(edge == "left") Check(!left,"Left edge must flip first submenu to the right.");
+            var dropOpposite = typeof(Popup).GetProperty("DropOpposite",BindingFlags.Instance|BindingFlags.NonPublic)!;
+            bool expectedNestedLeft = rtl ^ (align || (bool)dropOpposite.GetValue(a)!);
+            double nestedAnchor = expectedNestedLeft ? nextOpening.Left : nextOpening.Right;
+            if(expectedNestedLeft && nestedAnchor-n.Width < work.Left || !expectedNestedLeft && nestedAnchor+n.Width > work.Right) expectedNestedLeft = !expectedNestedLeft;
+            Check((n.Left < nextOpening.Left) == expectedNestedLeft,"Nested direction must match WPF's inherited edge preference and native alignment.");
+            // A corridor inside the opening row leads directly into the child's first row.
+            double y = Math.Max(opening.Top+opening.Height/2,c.Top+6*effectiveScale);
+            Check(y < Math.Min(opening.Bottom,c.Bottom),"Opening row must meet the submenu's visible vertical range.");
+            double gap = left ? opening.Left-c.Right : c.Left-opening.Right;
+            Check(gap <= 3*effectiveScale+2,"No wide pointer corridor gap.");
+            var rootVisual = (Visual)PresentationSource.FromVisual(a.Child)!.RootVisual;
+            var point = rootVisual.PointFromScreen(new Point(left ? c.Right-3 : c.Left+3,y));
+            Check(VisualTreeHelper.HitTest(rootVisual,point) != null,"Submenu entrance must be hit-testable.");
+            // Routed keys exercise WPF's normal menu navigation without global input injection.
+            var openKey = rtl ? Key.Left : Key.Right;
+            Closed(a,() => first.IsSubmenuOpen = false);
+            Send(first,openKey); Pump(); Check(first.IsSubmenuOpen,"Direction key opens first submenu.");
+            Send(nested,openKey); Pump(); Check(nested.IsSubmenuOpen,"Direction key opens nested submenu.");
+            Closed(b,() => Send(leaf,Key.Escape)); Check(!nested.IsSubmenuOpen && first.IsSubmenuOpen,"Escape closes only the nested submenu.");
+            nested.IsSubmenuOpen = true; Pump();
+            if(render)
+            {
+                Pump(250); Render(menu,a,b,Path.Combine(Output,theme+".png"));
+                Closed(a,() => first.IsSubmenuOpen = false);
+                first.RaiseEvent(new MouseEventArgs(Mouse.PrimaryDevice,Environment.TickCount) { RoutedEvent = Mouse.MouseEnterEvent });
+                var openTimer = (DispatcherTimer?)typeof(MenuItem).GetField("_openHierarchyTimer",BindingFlags.Instance|BindingFlags.NonPublic)!.GetValue(first);
+                Check(openTimer != null && openTimer.IsEnabled && openTimer.Interval.TotalMilliseconds == SystemParameters.MenuShowDelay,"Routed hover retains the native menu-show timer.");
+                if(SystemParameters.MenuShowDelay > 20) { Pump(10); Check(!first.IsSubmenuOpen,"Submenu must wait for the native hover delay."); }
+                Pump(SystemParameters.MenuShowDelay+60); Check(first.IsSubmenuOpen,"Routed hover opens after the native delay.");
+                first.RaiseEvent(new MouseEventArgs(Mouse.PrimaryDevice,Environment.TickCount) { RoutedEvent = Mouse.MouseLeaveEvent });
+                nested.RaiseEvent(new MouseEventArgs(Mouse.PrimaryDevice,Environment.TickCount) { RoutedEvent = Mouse.MouseEnterEvent });
+                Pump(20); Check(menu.IsOpen && first.IsSubmenuOpen,"Routed travel from opening row into submenu must retain the menu.");
+            }
+            return new { theme, scale, rtl, align, edge, inset, pass = true, actualDpi = VisualTreeHelper.GetDpi(host).DpiScaleX, effectiveScale, root = Box(r), first = Box(c), nested = Box(n), firstRow = Box(opening), nestedRow = Box(nextOpening), firstBorderGap = left ? r.Left-c.Right : c.Left-r.Right, nestedBorderGap = n.Left < nextOpening.Left ? c.Left-n.Right : n.Left-c.Right, keyboard = true, hitTestCorridor = true, routedHoverAndTravel = render };
+        }
+        finally { menu.IsOpen = false; host.Close(); Pump(); }
+    }
+    static ResourceDictionary Resources(XDocument doc,XElement mi,XElement cm,string theme)
+    {
+        var r = new ResourceDictionary();
+        foreach(var key in new[] { "TextBrush","MenuBackgroundBrush","MenuBorderBrush","PrimaryBrush","MutedTextBrush","DimTextBrush","MenuHoverBrush","ComboHighlightTextBrush","MenuBevelLightBrush","MenuBevelDarkBrush","MenuBevel2LightBrush","MenuBevel2DarkBrush" }) r[key] = Brushes.Gray;
+        foreach(var key in new[] { "ControlCornerRadius","SmallCornerRadius","FlyoutCornerRadius","PanelCornerRadius","PaneGrainCornerRadius" }) r[key] = new CornerRadius(6);
+        foreach(var key in new[] { "MenuBevelLightThickness","MenuBevelDarkThickness","MenuBevel2LightThickness","MenuBevel2DarkThickness","MenuBevelInnerMargin","BevelLightThickness","BevelDarkThickness" }) r[key] = new Thickness(0);
+        r["MenuItemPadding"] = new Thickness(8,6,10,6); r["MenuFontFamily"] = new FontFamily("Segoe UI"); r["MenuFontSize"] = 12d;
+        r["GrainOpacity"] = 0d; r["FlyoutShadowOpacity"] = .55d; r["GrainTileBrush"] = Brushes.Transparent; r["GrainBrushShared"] = Brushes.Transparent;
+        ResourceDictionary palette;
+        using(var stream = File.OpenRead(Path.Combine(Root,"Themes",theme+".xaml"))) palette = (ResourceDictionary)XamlReader.Load(stream);
+        foreach(var key in palette.Keys) r[key] = palette[key];
+        // ThemeManager's geometry fallback is FlyoutCornerRadius = 6 unless declared.
+        if(theme is "98SE" or "Mourning") { foreach(var key in new[] { "ControlCornerRadius","SmallCornerRadius","FlyoutCornerRadius","PanelCornerRadius","PaneGrainCornerRadius" }) if(!palette.Contains(key)) r[key] = new CornerRadius(0); }
+        var dependencies = doc.Descendants().Where(e => (string?)e.Attribute(X+"Key") is "FlyoutCard" or "FlyoutGrain" or "MenuHaloMargin").Select(e => new XElement(e));
+        var xml = new XElement(P+"ResourceDictionary",new XAttribute(XNamespace.Xmlns+"x",X.NamespaceName),dependencies,new XElement(mi),new XElement(cm));
+        mi = xml.Elements(P+"Style").Single(e => (string?)e.Attribute("TargetType") == "MenuItem"); mi.Attribute(X+"Key")?.Remove();
+        cm = xml.Elements(P+"Style").Single(e => (string?)e.Attribute("TargetType") == "ContextMenu"); cm.Attribute(X+"Key")?.Remove();
+        var styles = (ResourceDictionary)XamlReader.Parse(xml.ToString()); foreach(var key in styles.Keys) r[key] = styles[key];
+        return r;
+    }
+    static void Geometry(Rect row,Rect card,double scale,bool left,bool rtl,bool vertical)
+    {
+        double offset = (rtl ? 2 : -2)*scale;
+        double expected = left ? row.Left+offset : row.Right+offset;
+        // Edge placement can nudge a card away from the row while retaining its shadow room.
+        Near(left ? card.Right : card.Left,expected,vertical ? 2 : 22*scale+2,"Row-relative horizontal attachment");
+        if(vertical) Near(card.Top,row.Top-3*scale,2,"Row-relative vertical attachment");
+    }
+    static Popup PopupOf(MenuItem row) => Descendants(row).OfType<Popup>().Single();
+    static Border Card(DependencyObject root) => Descendants(root).Prepend(root).OfType<Border>().First(b => b.BorderThickness.Left == 1 && b.Background != null);
+    static IEnumerable<DependencyObject> Descendants(DependencyObject root) { for(int i=0;i<VisualTreeHelper.GetChildrenCount(root);i++) { var c=VisualTreeHelper.GetChild(root,i); yield return c; foreach(var d in Descendants(c)) yield return d; } }
+    static Rect Bounds(FrameworkElement e) { var a=e.PointToScreen(new Point()); var b=e.PointToScreen(new Point(e.ActualWidth,e.ActualHeight)); return new Rect(a,b); }
+    static object Box(Rect r) => new { x=r.X,y=r.Y,w=r.Width,h=r.Height };
+    static void Check(bool ok,string message) { if(!ok) throw new InvalidOperationException(message); }
+    static void Near(double a,double b,double tolerance,string message) => Check(Math.Abs(a-b)<=tolerance,$"{message}: observed {a}, expected {b}");
+    static void Send(UIElement e,Key key) => e.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,PresentationSource.FromVisual(e),Environment.TickCount,key) { RoutedEvent=Keyboard.KeyDownEvent });
+    [DllImport("dwmapi.dll")] static extern int DwmSetWindowAttribute(IntPtr window,int attribute,ref int value,int size);
+    static void Cloak(Visual visual)
+    {
+        // Only handles obtained from our newly constructed fixture controls are accepted.
+        var source = (HwndSource?)PresentationSource.FromVisual(visual);
+        Check(source != null,"Owned fixture must have a native source before cloaking.");
+        int enabled = 1;
+        Check(DwmSetWindowAttribute(source!.Handle,13,ref enabled,sizeof(int)) == 0,"Cloak the owned fixture before desktop composition.");
+    }
+    static void Closed(Popup popup,Action close)
+    {
+        bool closed = false;
+        EventHandler handler = (_,_) => closed = true;
+        popup.Closed += handler;
+        try
+        {
+            close();
+            var deadline = DateTime.UtcNow.AddSeconds(1);
+            while(!closed && DateTime.UtcNow < deadline) Pump();
+            Check(closed,"Await the popup's actual Closed event before reopening during keyboard checks.");
+        }
+        finally { popup.Closed -= handler; }
+    }
+    static void Pump(int delay=8) { var f=new DispatcherFrame(); var t=new DispatcherTimer(DispatcherPriority.Background) { Interval=TimeSpan.FromMilliseconds(delay) }; t.Tick+=(_,_)=>{t.Stop();f.Continue=false;};t.Start();Dispatcher.PushFrame(f); }
+    static void Render(ContextMenu menu,Popup a,Popup b,string path)
+    {
+        var controls = new[] { (FrameworkElement)PresentationSource.FromVisual(menu)!.RootVisual,(FrameworkElement)PresentationSource.FromVisual(a.Child)!.RootVisual,(FrameworkElement)PresentationSource.FromVisual(b.Child)!.RootVisual };
+        var boxes = controls.Select(Bounds).ToArray(); var all=boxes.Aggregate(Rect.Union); all.Inflate(28,28);
+        var drawing=new DrawingVisual(); using(var dc=drawing.RenderOpen()) { dc.DrawRectangle(Brushes.DimGray,null,new Rect(0,0,all.Width,all.Height)); for(int i=0;i<controls.Length;i++) dc.DrawRectangle(new VisualBrush(controls[i]),null,new Rect(boxes[i].X-all.X,boxes[i].Y-all.Y,boxes[i].Width,boxes[i].Height)); }
+        var bitmap=new RenderTargetBitmap((int)Math.Ceiling(all.Width),(int)Math.Ceiling(all.Height),96,96,PixelFormats.Pbgra32);bitmap.Render(drawing);
+        var encoder=new PngBitmapEncoder();encoder.Frames.Add(BitmapFrame.Create(bitmap)); using(var stream=File.Create(path))encoder.Save(stream);
+    }
+}

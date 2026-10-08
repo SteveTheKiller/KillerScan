@@ -875,15 +875,14 @@
                                                Margin="18,0,0,0" VerticalAlignment="Center"
                                                Visibility="Collapsed"
                                                Foreground="{DynamicResource MutedTextBrush}"/>
-                                    <Popup x:Name="sub" Grid.Column="2"
-                                           Placement="Right" HorizontalOffset="-18" VerticalOffset="-22"
+                                    <Popup x:Name="PART_Popup" Grid.Column="2"
+                                           Placement="Right"
+                                           PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" HorizontalOffset="-2" VerticalOffset="-3"
                                            IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                            AllowsTransparency="True" Focusable="False"
                                            PopupAnimation="Fade">
-                                        <!-- Same chrome as the ContextMenu template: halo sized to the
-                                             22/4 shadow, rounded, grain overlay. The offsets above
-                                             carry the -16,-12 compensation on top of this popup's
-                                             own -2,-10 placement. -->
+                                        <!-- Keep the family shadow halo. WPF places the child render bounds
+                                              relative to the opening row and handles monitor edge flipping. -->
                                         <Border Margin="22,18,22,26" CornerRadius="{DynamicResource PanelCornerRadius}"
                                                 Background="{DynamicResource MenuBackgroundBrush}"
                                                 BorderBrush="{DynamicResource MenuBorderBrush}"
