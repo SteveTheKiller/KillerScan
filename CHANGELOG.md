@@ -7,46 +7,26 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ## [1.8.0] - Unreleased
 
 ### Added
-- Topology settings for box size, layout pattern, orientation, fonts and connection lines, with Ctrl+wheel zoom and zoom presets, available from the toolbar or by right-clicking the map background.
-- Ukrainian localization.
-- Norwegian (Bokmål) localization.
-- Brazilian Portuguese localization.
+- Topology settings for box size, layout, orientation, fonts and connection lines, with Ctrl+wheel zoom, zoom presets, compact radial layouts and hand cursors for dragging. Open settings from the toolbar or the map's right-click menu.
+- A Services context menu for copying service details and connecting with the selected service's protocol and port.
+- Ukrainian, Norwegian (Bokmål) and Brazilian Portuguese localization, with a two-column language menu.
+- Drag pinned file-picker places into a new order, and use Ctrl+wheel to change picker views and icon sizes.
 - Added yellow and magenta accents to the neutral and 98SE themes.
 
 ### Changed
 - Scanning, discovery and device classification now live in KillerScan.Engine, a separate library the app, its command line and other programs share.
-- Radial topology uses staggered arm lengths and the available space to keep device boxes apart on a smaller canvas.
-- Improved menu and selection contrast, softened material-theme footers and 98SE footer text, and used subtle gray Delirium dividers.
-- The language menu now shows its 19 languages in two columns, with a faint divider that fades at both ends.
-- Both shortcut views link to the full online guide from an aligned header, with more space beside the close button.
-- Menu rows now show accent text and icons on the theme's hover color.
-- Filled buttons, hovered outline buttons and accent picker pills use gradients outside 98SE, and accent swatches lift on hover.
+- Both shortcut views link to the full online guide.
+- Refined theme colors, wordmarks, button gradients, footers and menu styling to match the family palette.
+- Refined file-picker and dialog frames, added sharper title bar icons, and gave the uninstaller its own labeled taskbar button.
 
 ### Fixed
 - Unsigned test builds can no longer push, tag or publish a release.
 - Stopping a deep scan no longer waits for stalled fingerprint requests.
 - Startup content becomes visible even when its fade animation stalls.
-- Services now have their own context menu, and connections use the selected service's protocol and port.
 - Text stays sharp at app sizes other than 100% again.
 - Switching themes no longer pushes a toolbar view into the overflow menu.
-- Pinned places in the file picker can be dragged into a new order.
-- Ctrl+wheel changes picker views and icon sizes.
 - Submenus attach consistently to their opening rows, with native direction and screen-edge placement.
-- Shared theme colors, control states, title styling and shadows match the family palette, including cream Blood, Greed and Cyanotic wordmarks. Rail flyouts sit 8 pixels from the rail and bottom content edges.
-- Dropdown highlight text uses the right color in Dark/Yellow, Light/Purple and Light/Yellow.
-- Selected language and theme rows keep the active accent on hover.
-- The uninstaller has its own taskbar button, labeled "Uninstall KillerScan", with the app icon.
-- Light/Yellow uses true yellow for the wordmark, accent lines and radio buttons, with neutral dark text instead of olive brown. Only the yellow wordmark accent has a shadow.
-- 98SE Red is a true maroon again, so it no longer looks like Magenta.
-- Delirium, Ectoplasm and Sepulchre footers match the window background again.
-- Table headers and content now follow the pane border's inner corners across themes and app sizes.
-- Fixed picker and dialog corners and kept the close X white over its red hover background.
-- Install and uninstall windows now show the film grain and the app icon in the title bar, and all four corners are rounded.
-- On 98SE, Cancel and the other secondary dialog buttons are raised and sink when pressed, like the file picker's.
-- Topology boxes show an open hand on hover and a closed hand while they are dragged.
-- Main window and dialog title bar icons now use sharp size-matched images.
-- Rail right-click menus align 8 pixels from the side and bottom content edges.
-- More space between the footer IP address and version text in every theme.
+- Corrected menu and selection contrast, including Light/Purple dropdown text, active language and theme highlights, and the 98SE Red accent.
 
 ## [1.7.5] - 2026-09-28
 
