@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -135,19 +136,22 @@ internal static class HistoryUiTests
         Call(history, "SetView", false);
         var grid = (DataGrid)history.FindName("HistoryChangesGrid");
         var all = (DataGrid)history.FindName("HistoryAllGrid");
-        var title = (TextBlock)history.FindName("HistoryTitle");
+        var title = (Run)history.FindName("HistoryTitle");
+        var header = (TextBlock)history.FindName("HistoryHeader");
         var metadata = (TextBlock)history.FindName("HistoryEntryContext");
         var comparison = (TextBlock)history.FindName("HistoryComparisonContext");
         var root = (FrameworkElement)window.Content;
         root.Opacity = 1; ((UIElement)window.FindName("RootGrid")).Opacity = 1;
         string output = Path.Combine(Path.GetTempPath(), "KillerScan-history-ui-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(output);
         Require(grid.Items.Count == 3, "Added, missing and changed devices are shown.");
-        Require(title.Text == (string)app.FindResource("Str_History_Title") && title.Visibility == Visibility.Visible, "The history heading identifies the workspace.");
+        Require(title.Text == (string)app.FindResource("Str_History_Title") && header.Visibility == Visibility.Visible, "The existing header identifies the history workspace.");
         Require(metadata.Text.Contains("192.0.2.0/24") && metadata.Text.Contains(time.AddHours(1).ToLocalTime().ToString("g")), "The target and saved timestamp are identified.");
         Require(comparison.Text.Contains(time.ToLocalTime().ToString("g")), "The comparison names its previous scan timestamp.");
         Call(window, "OpenSidebar"); Call(window, "ToggleSidebar"); Call(window, "ApplySidebarState", false);
         Render(root, 1200, 780);
-        Require((bool)Field(window, "_sidebarCollapsed")! && history.Visibility == Visibility.Visible && title.ActualHeight > 0, "Closing the sidebar preserves the history heading and snapshot.");
+        Require((bool)Field(window, "_sidebarCollapsed")! && history.Visibility == Visibility.Visible && header.ActualHeight > 0, "Closing the sidebar preserves the compact history title and snapshot.");
+        Require(header.ToolTip is StackPanel tooltip && tooltip.Children.Contains(metadata) && tooltip.Children.Contains(comparison), "Scan metadata belongs to the tooltip, not the header layout.");
+        CheckOriginalGeometry(window, history, root, directory.FullName, output);
         Require((string)Field(window, "_workspaceView")! == "history", "The selected snapshot remains active.");
         Require(((FrameworkElement)window.FindName("DeviceCountFooter")).Visibility == Visibility.Collapsed, "History does not show the hidden live scan's device count.");
         Require(Call(window, "GetSelectedDevice") == null, "History cannot act on a hidden live selection.");
@@ -182,7 +186,7 @@ internal static class HistoryUiTests
         {
             Theme(theme); Call(window, "ApplyFlatChrome");
             Save(Render(root, 1200, 780), Path.Combine(output, "History-" + theme + ".png"));
-            Require(title.ActualHeight > 0 && metadata.ActualHeight > 0 && grid.ActualHeight > 0, theme + ": history header and rows render.");
+            Require(header.ActualHeight > 0 && grid.ActualHeight > 0, theme + ": compact history title and rows render.");
         }
         Theme("Black");
         foreach (string locale in Enum.GetNames(localeType))
@@ -194,12 +198,12 @@ internal static class HistoryUiTests
             foreach (double scale in new[] { 1.0, 1.5, 2.5 })
             {
                 Call(window, "ApplyAppScale", scale, false); Render(root, 1200, 780);
-                Require(title.ActualHeight > 0 && metadata.ActualHeight > 0, locale + ": heading survives app scaling.");
+                Require(header.ActualHeight > 0, locale + ": compact title survives app scaling.");
                 if (locale == "UkUA" && scale == 1.5) Save(Render(root, 1200, 780), Path.Combine(output, "History-Ukrainian-150.png"));
             }
         }
         Locale("EnUS"); Call(window, "ApplyAppScale", 1.0, false);
-        Call(history, "ShowEntry", before); Require(((TextBlock)history.FindName("HistorySummary")).Text == (string)app.FindResource("Str_History_FirstScan") && comparison.Text.Length == 0, "First snapshots have no invented comparison.");
+        Call(history, "ShowEntry", before); Require(((Run)history.FindName("HistorySummary")).Text == (string)app.FindResource("Str_History_FirstScan") && comparison.Text.Length == 0, "First snapshots have no invented comparison.");
         Call(history, "ShowEntry", new object?[] { null }); menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
         Require(metadata.Text.Length == 0 && grid.Items.Count == 0 && !menu.Items.OfType<MenuItem>().Single(item => Equals(item.Tag, "export")).IsEnabled, "Empty history clears stale context and export availability.");
         CheckCatalog(window, app);
@@ -211,6 +215,45 @@ internal static class HistoryUiTests
         ((FrameworkElement)window.FindName("ShortcutsOverlay")).Visibility = Visibility.Collapsed;
         CheckServices(assembly);
         Console.WriteLine("RENDERED: " + output);
+    }
+
+    private static void CheckOriginalGeometry(MainWindow window, HistoryWorkspace history, FrameworkElement root, string repo, string output)
+    {
+        // Exact XAML from fe699c3's parent, with code-behind hooks removed for loose loading.
+        var xml = new XmlDocument();
+        xml.Load(Path.Combine(repo, "tests", "SpeedTest.Tests", "Fixtures", "HistoryWorkspace-before-header.xml"));
+        xml.DocumentElement!.RemoveAttribute("Class", "http://schemas.microsoft.com/winfx/2006/xaml");
+        foreach (XmlElement element in xml.SelectNodes("//*")!) element.RemoveAttribute("Click");
+        var baseline = (UserControl)XamlReader.Parse(xml.OuterXml);
+        baseline.FontFamily = history.FontFamily;
+        baseline.FontSize = history.FontSize;
+        TextOptions.SetTextFormattingMode(baseline, TextOptions.GetTextFormattingMode(history));
+        TextOptions.SetTextRenderingMode(baseline, TextOptions.GetTextRenderingMode(history));
+        ((TextBlock)baseline.FindName("HistorySummary")).Text = ((Run)history.FindName("HistorySummary")).Text;
+        var grid = (DataGrid)history.FindName("HistoryChangesGrid");
+        var oldGrid = (DataGrid)baseline.FindName("HistoryChangesGrid");
+        oldGrid.ItemsSource = grid.ItemsSource;
+        var header = (TextBlock)history.FindName("HistoryHeader");
+        foreach (bool open in new[] { false, true })
+        {
+            if (open) Call(window, "OpenSidebar");
+            else if (!(bool)Field(window, "_sidebarCollapsed")!) Call(window, "ToggleSidebar");
+            Call(window, "ApplySidebarState", false);
+            foreach (int width in new[] { 1200, 800, 640 })
+            {
+                Render(root, width, 780);
+                Render(baseline, (int)Math.Round(history.ActualWidth), (int)Math.Round(history.ActualHeight));
+                double actual = grid.TranslatePoint(new Point(), history).Y;
+                double original = oldGrid.TranslatePoint(new Point(), baseline).Y;
+                Console.WriteLine("GEOMETRY: width=" + width + " sidebar=" + (open ? "open" : "closed") + " tableY=" + actual + " originalY=" + original + " headerHeight=" + header.ActualHeight + " oldHeaderHeight=" + ((TextBlock)baseline.FindName("HistorySummary")).ActualHeight);
+                Save(Render(root, width, 780), Path.Combine(output, "Compact-" + width + "-sidebar-" + (open ? "open" : "closed") + ".png"));
+                Save(Render(baseline, (int)Math.Round(history.ActualWidth), (int)Math.Round(history.ActualHeight)), Path.Combine(output, "Original-pane-" + width + "-sidebar-" + (open ? "open" : "closed") + ".png"));
+                Require(actual <= original + 0.5, "The table never moves below the original position: " + width + "/" + open);
+                Require(Math.Abs(actual - original) <= 0.5, "Original table position is exact at normal and narrow widths: " + width + "/" + open);
+                Require(header.ActualHeight <= ((TextBlock)baseline.FindName("HistorySummary")).ActualHeight + 0.5, "The title adds no vertical header height.");
+            }
+        }
+        Call(window, "ToggleSidebar"); Call(window, "ApplySidebarState", false); Render(root, 1200, 780);
     }
 
     private static void CheckCatalog(MainWindow window, Application app)

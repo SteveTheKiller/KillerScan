@@ -24,7 +24,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Unsigned test builds can no longer push, tag or publish a release.
 - Stopping a deep scan no longer waits for stalled fingerprint requests.
 - Startup content becomes visible even when its fade animation stalls.
-- Scan history keeps its title, target and timestamps visible when the sidebar closes, refreshes column headings after a language change, and cannot act on a hidden live scan.
+- Scan history keeps a compact title when the sidebar closes, shows scan details in its tooltip, refreshes column headings after a language change, and cannot act on a hidden live scan.
 - Text stays sharp at app sizes other than 100% again.
 - Switching themes no longer pushes a toolbar view into the overflow menu.
 - Submenus attach consistently to their opening rows, with native direction and screen-edge placement.

@@ -31,6 +31,8 @@
         <Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
         <Grid Margin="12">
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+            <!-- The sidebar carries the title now, so the pane opens straight into the table
+                 and reads like any other scan view. -->
             <TextBlock Visibility="Collapsed"/>
             <!-- The entry list moved to the window's history sidebar, so this pane is now just
                  the selected snapshot's changes and reads like any other scan table. -->
@@ -41,25 +43,15 @@
                      nothing about what was actually on the network, so the snapshot itself is
                      reachable from the same place. The selector matches the shortcuts overlay. -->
                 <Grid Margin="0,0,0,10">
-                    <TextBlock x:Name="HistoryHeader" Foreground="{DynamicResource MutedTextBrush}" FontSize="12"
-                               TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,0,150,0">
-                        <Run x:Name="HistoryTitle" Text="{DynamicResource Str_History_Title}" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
-                        <Run Text="  ·  "/>
-                        <Run x:Name="HistorySummary"/>
-                        <TextBlock.ToolTip>
-                            <StackPanel>
-                                <TextBlock x:Name="HistoryEntryContext" TextWrapping="Wrap"/>
-                                <TextBlock x:Name="HistoryComparisonContext" TextWrapping="Wrap"/>
-                            </StackPanel>
-                        </TextBlock.ToolTip>
-                    </TextBlock>
+                    <TextBlock x:Name="HistorySummary" Foreground="{DynamicResource MutedTextBrush}" FontSize="12"
+                               TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,150,0"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <Button x:Name="HistoryChangesViewButton" Style="{StaticResource ViewTabButton}"
                                 Content="{DynamicResource Str_History_ViewChanges}"
-                                Margin="0,0,12,0" ToolTip="Ctrl+Shift+H" Click="HistoryChangesView_Click"/>
+                                Margin="0,0,12,0" Click="HistoryChangesView_Click"/>
                         <Button x:Name="HistoryAllViewButton" Style="{StaticResource ViewTabButton}"
                                 Content="{DynamicResource Str_History_ViewAll}"
-                                ToolTip="Ctrl+Shift+H" Click="HistoryAllView_Click"/>
+                                Click="HistoryAllView_Click"/>
                     </StackPanel>
                 </Grid>
                 <DataGrid x:Name="HistoryChangesGrid" Grid.Row="1" Style="{StaticResource HistoryGrid}">
