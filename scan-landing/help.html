@@ -408,56 +408,23 @@ html[data-theme="light"] .kbmap { --kc-scan:#d1105a; --kc-view:#a316b5; --kc-dev
 <div class="kbmap-scroll"><div class="kbmap-board" id="kbmapBoard"></div></div>
 <div class="kbmap-detail" id="kbmapDetail">&nbsp;</div>
 </div>
+<script src="shortcuts.generated.js?v=1"></script>
 <script>
 (function(){
-var KBL = {
-base: { F1:['file','Open or close the shortcut overlay'], F3:['tools','Show the selected device in Keep Alive'],
-  F4:['tools','Run KillerSpeed in the terminal'], F5:['scan','Start or stop a scan'],
-  F6:['view','Show the devices view'], F7:['view','Show the services view'], F8:['view','Show the topology view'],
-  F9:['view','Open Keep Alive'], F10:['view','Open a terminal'], F12:['file','Open the About window'],
-  Esc:['edit','Close an overlay or filter, stop terminal ping, or cancel scanning'], Enter:['device','Open the selected device in a browser'] },
-ctrl: { T:['view','Return to the existing Devices view'], A:['edit','Select every device'], C:['device','Copy the selected IP address'], D:['device','Open Remote Desktop to the selected device'],
-  E:['file','Save the device list as CSV'], F:['search','Jump to the subnet box'], G:['view','Cycle the topology arrangement'],
-  H:['view','Open scan history'], P:['device','Ping the selected device'], R:['scan','Deep rescan the selected hosts'],
-  S:['device','Connect to the selected device over SSH'],
-  D1:['view','Arrange topology by Role, Type, IP, or Vendor'], D2:['view','Arrange topology by Role, Type, IP, or Vendor'],
-  D3:['view','Arrange topology by Role, Type, IP, or Vendor'], D4:['view','Arrange topology by Role, Type, IP, or Vendor'] },
-ctrlshift: { F:['search','Show or focus the results filter'], T:['view','Show the terminal, starting one if needed'],
-  D1:['tools','Small toolbar icons'],
-  D2:['tools','Large toolbar icons'],
-  D3:['tools','Hide toolbar captions'],
-  D4:['tools','Toolbar captions beside icons'],
-  D5:['tools','Toolbar captions below icons'],
-  D6:['tools','Text-only toolbar buttons'], C:['device','Copy the selected MAC address'], P:['view','Open scan profiles'], S:['device','Choose an SSH account and connect'],
-  Equals:['view','Make the app bigger'], Minus:['view','Make the app smaller'], D0:['view','Reset the app size'] },
-shift: { F10:['device','Open every action for the selected device'] },
-ctrlalt: { C:['device','Copy the selected hostname'] } };
+var KBL = {base:{},ctrl:{},ctrlshift:{},shift:{},ctrlalt:{}};
+var categoryIds={Views:'view',Scan:'scan',Device:'device',Topology:'view',Toolbar:'tools',App:'file'};
+KS_SHORTCUTS.forEach(function(row,index){
+  var parts=row.gesture.replace(/ /g,'').split('+'), key=parts.pop(), layer='base';
+  if(!key){ key='Equals'; parts.pop(); }
+  if(key==='-') key='Minus';
+  if(/^[0-9]$/.test(key)) key='D'+key;
+  if(parts.indexOf('Ctrl')>=0) layer=parts.indexOf('Shift')>=0?'ctrlshift':parts.indexOf('Alt')>=0?'ctrlalt':'ctrl';
+  else if(parts.indexOf('Shift')>=0) layer='shift';
+  var existing=KBL[layer][key];
+  if(existing) existing[1].push(index); else KBL[layer][key]=[categoryIds[row.category],[index]];
+});
 var CATNAME = { scan:['SCANNING','tk_kb_cat_scan'], view:['VIEWS','tk_kb_cat_views'], device:['DEVICE','tk_kb_cat_device'],
   tools:['TOOLBAR','tk_kb_cat_toolbar'], edit:['EDITING','tk_kb_cat_edit'], search:['SEARCH','tk_kb_cat_search'], file:['APP','tk_kb_cat_app'] };
-var KBT = {
-  'Show or focus the results filter':'help_filter_key',
-  'Return to the existing Devices view':'help_devices_key',
-  'Show the terminal, starting one if needed':'help_terminal_key',
-  'Small toolbar icons':'help_toolbar_small',
-  'Large toolbar icons':'help_toolbar_large',
-  'Hide toolbar captions':'help_toolbar_none',
-  'Toolbar captions beside icons':'help_toolbar_beside',
-  'Toolbar captions below icons':'help_toolbar_under',
-  'Text-only toolbar buttons':'help_toolbar_text',
-  'Open or close the shortcut overlay':'tk_196', 'Show the selected device in Keep Alive':'tk_ks_f3',
-  'Run KillerSpeed in the terminal':'tk_ks_f4', 'Start or stop a scan':'tk_187',
-  'Show the devices view':'tk_ks_devices', 'Show the services view':'tk_ks_f8', 'Show the topology view':'tk_ks_f9',
-  'Open Keep Alive':'tk_ks_f2', 'Open a terminal':'tk_ks_terminal',
-  'Open the About window':'tk_207', 'Close an overlay or filter, stop terminal ping, or cancel scanning':'tk_188',
-  'Open the selected device in a browser':'tk_198', 'Select every device':'tk_191',
-  'Copy the selected IP address':'tk_203', 'Open Remote Desktop to the selected device':'tk_200',
-  'Save the device list as CSV':'tk_192', 'Jump to the subnet box':'tk_190', 'Cycle the topology arrangement':'tk_ks_f7',
-  'Open scan history':'tk_ks_f6', 'Ping the selected device':'tk_199', 'Deep rescan the selected hosts':'tk_189',
-  'Connect to the selected device over SSH':'tk_201', 'Arrange topology by Role, Type, IP, or Vendor':'tk_ks_ctrl14',
-  'Copy the selected MAC address':'tk_204', 'Open scan profiles':'tk_ks_f10',
-  'Choose an SSH account and connect':'tk_202', 'Make the app bigger':'tk_193', 'Make the app smaller':'tk_194',
-  'Reset the app size':'tk_195', 'Open every action for the selected device':'tk_206',
-  'Copy the selected hostname':'tk_205' };
 function kbText(fallback, key){
   var lang=document.documentElement.getAttribute('lang')||'en';
   if(lang.indexOf('zh-Hant')===0) lang='zh'; else if(lang.indexOf('zh-Hans')===0) lang='zh-cn'; else lang=lang.split('-')[0];
@@ -465,12 +432,30 @@ function kbText(fallback, key){
   if(raw==null) return fallback;
   var tmp=document.createElement('div'); tmp.innerHTML=raw; return tmp.textContent || fallback;
 }
-function kbAction(s){ return kbText(s,KBT[s]); }
+function shortcutLocale(){
+  var lang=document.documentElement.getAttribute('lang')||'en';
+  var aliases={en:'en-US',pt:'pt-BR',fr:'fr-FR',de:'de-DE',no:'nb-NO',nb:'nb-NO',uk:'uk-UA',ru:'ru-RU',it:'it-IT',cs:'cs-CZ',pl:'pl-PL',hu:'hu-HU',tr:'tr-TR',kk:'kk-KZ',ja:'ja-JP',vi:'vi-VN'};
+  if(/^zh-Hant/i.test(lang)||lang==='zh'||lang==='zh-TW') return 'zh-TW';
+  if(/^zh-Hans/i.test(lang)||/^zh-CN/i.test(lang)) return 'zh-CN';
+  return aliases[lang.split('-')[0]]||lang.split('-')[0];
+}
+function shortcutLabel(row){ return row.labels[shortcutLocale()]||row.labels['en-US']; }
+function kbAction(indices){ return indices.map(function(index){return shortcutLabel(KS_SHORTCUTS[index]);}).join(' / '); }
+function paintCatalog(){
+  var body=document.getElementById('shortcutCatalogBody');
+  if(!body) return;
+  body.replaceChildren();
+  KS_SHORTCUTS.forEach(function(row){
+    var tr=document.createElement('tr'), gesture=document.createElement('td'), action=document.createElement('td');
+    gesture.textContent=row.gesture; action.textContent=shortcutLabel(row);
+    tr.appendChild(gesture); tr.appendChild(action); body.appendChild(tr);
+  });
+}
 function kbCategory(c){ var v=CATNAME[c]; return kbText(v[0],v[1]); }
 var KBROWS = [
 [['Esc','Esc',1],['',0.8],['F1','F1',1],['F2','F2',1],['F3','F3',1],['F4','F4',1],['',0.6],['F5','F5',1],['F6','F6',1],['F7','F7',1],['F8','F8',1],['',0.6],['F9','F9',1],['F10','F10',1],['F11','F11',1],['F12','F12',1]],
 [['Grave','`',1],['D1','1',1],['D2','2',1],['D3','3',1],['D4','4',1],['D5','5',1],['D6','6',1],['D7','7',1],['D8','8',1],['D9','9',1],['D0','0',1],['Minus','-',1],['Equals','=',1],['Back','⌫',2],['',0.6],['Ins','Ins',1],['Home','Home',1],['PgUp','PgUp',1]],
-[['Tab','Tab',1.5],['Q','Q',1],['W','W',1],['E','E',1],['R','R',1],['T','T',1],['Y','Y',1],['U','U',1],['I','I',1],['O','O',1],['P','P',1],['LBr','[',1],['RBr',']',1],['Bslash','\\\\',1.5],['',0.6],['Del','Del',1],['End','End',1],['PgDn','PgDn',1]],
+[['Tab','Tab',1.5],['Q','Q',1],['W','W',1],['E','E',1],['R','R',1],['T','T',1],['Y','Y',1],['U','U',1],['I','I',1],['O','O',1],['P','P',1],['LBr','[',1],['RBr',']',1],['Bslash','\\\\',1.5],['',0.6],['Delete','Del',1],['End','End',1],['PgDn','PgDn',1]],
 [['Caps','Caps',1.8],['A','A',1],['S','S',1],['D','D',1],['F','F',1],['G','G',1],['H','H',1],['J','J',1],['K','K',1],['L','L',1],['Semi',';',1],['Quote','\'',1],['Enter','Enter',2.2]],
 [['Shift','Shift',2.3],['Z','Z',1],['X','X',1],['C','C',1],['V','V',1],['B','B',1],['N','N',1],['M','M',1],['Comma',',',1],['Period','.',1],['Slash','/',1],['RShift','Shift',2.7],['',1.6],['Up','↑',1]],
 [['Ctrl','Ctrl',1.5],['Win','Win',1.2],['Alt','Alt',1.5],['Space','',6.8],['RAlt','Alt',1.5],['Menu','☰',1],['RCtrl','Ctrl',1.5],['',0.6],['Left','←',1],['Down','↓',1],['Right','→',1]]];
@@ -537,7 +522,8 @@ function sync(e){
 }
 window.addEventListener('keydown', sync);
 window.addEventListener('keyup', sync);
-document.addEventListener('kscan-languagechange', paint);
+document.addEventListener('kscan-languagechange', function(){paint();paintCatalog();});
+document.addEventListener('DOMContentLoaded',paintCatalog);
 paint();
 // Scale the board down to the column width instead of scrolling, like the app's Viewbox.
 function fit(){
@@ -555,53 +541,7 @@ window.addEventListener('resize', fit);
 <p data-i18n="tk_kb_layers_p2">A key with nothing bound in the layer you are looking at is dimmed, so what is available reads at a glance rather than needing to be searched for.</p>
 <p data-i18n="tk_184">Press <b>F1</b> to open or close the shortcut overlay. Use its List and Keyboard map buttons to choose a view; the app remembers that choice.</p>
 <p data-i18n="tk_184_p2">Shortcuts depend on focus. In scan views, Ctrl+F focuses targets and Ctrl+Shift+F focuses the filter. Text boxes keep normal selection and copy behavior. A focused terminal receives most keys itself; click outside it before using the app's F-key shortcuts.</p>
-<table class="spec-table"><tr><th data-i18n="tk_185">Shortcut</th><th data-i18n="tk_186">What it does</th></tr>
-<tr><td>Ctrl + Shift + F</td><td data-i18n="help_filter_key">Show or focus the results filter</td></tr>
-<tr><td>Ctrl + T</td><td data-i18n="help_devices_key">Return to the existing Devices view</td></tr>
-<tr><td>Ctrl + Shift + T</td><td data-i18n="help_terminal_key">Show the terminal, starting one if needed</td></tr>
-<tr><td>Ctrl + Shift + 1</td><td data-i18n="help_toolbar_small">Small toolbar icons</td></tr>
-<tr><td>Ctrl + Shift + 2</td><td data-i18n="help_toolbar_large">Large toolbar icons</td></tr>
-<tr><td>Ctrl + Shift + 3</td><td data-i18n="help_toolbar_none">Hide toolbar captions</td></tr>
-<tr><td>Ctrl + Shift + 4</td><td data-i18n="help_toolbar_beside">Toolbar captions beside icons</td></tr>
-<tr><td>Ctrl + Shift + 5</td><td data-i18n="help_toolbar_under">Toolbar captions below icons</td></tr>
-<tr><td>Ctrl + Shift + 6</td><td data-i18n="help_toolbar_text">Text-only toolbar buttons</td></tr>
-<tr><td>F5</td><td data-i18n="tk_187">Start or stop a scan</td></tr>
-<tr><td>Esc</td><td data-i18n="tk_188">Close an overlay or filter, stop terminal ping, or cancel scanning</td></tr>
-<tr><td>Ctrl + R</td><td data-i18n="tk_189">Deep rescan the selected hosts</td></tr>
-<tr><td>Ctrl + F</td><td data-i18n="tk_190">Jump to the subnet box</td></tr>
-<tr><td>Ctrl + A</td><td data-i18n="tk_191">Select every device</td></tr>
-<tr><td>Ctrl + E</td><td data-i18n="tk_192">Save the device list as CSV</td></tr>
-<tr><td>Ctrl + Shift + E</td><td><code>HTML</code></td></tr>
-<tr><td>Ctrl + Shift + X</td><td><code>TXT</code></td></tr>
-<tr><td>Ctrl + Shift + G</td><td><code>PNG</code></td></tr>
-<tr><td>Ctrl + Shift + J</td><td><code>JPG</code></td></tr>
-<tr><td>Ctrl + Alt + H</td><td><code>HTML</code> + <code>SVG</code></td></tr>
-<tr><td>F6</td><td data-i18n="tk_ks_devices">Show the devices view</td></tr>
-<tr><td>F10</td><td data-i18n="tk_ks_terminal">Open a terminal</td></tr>
-<tr><td>F9</td><td data-i18n="tk_ks_f2">Open Keep Alive</td></tr>
-<tr><td>F3</td><td data-i18n="tk_ks_f3">Show the selected device in Keep Alive</td></tr>
-<tr><td>F4</td><td data-i18n="tk_ks_f4">Run KillerSpeed in the terminal</td></tr>
-<tr><td>Ctrl + H</td><td data-i18n="tk_ks_f6">Open scan history</td></tr>
-<tr><td>Ctrl + G</td><td data-i18n="tk_ks_f7">Cycle the topology arrangement</td></tr>
-<tr><td>Ctrl + 1 ... Ctrl + 4</td><td data-i18n="tk_ks_ctrl14">Arrange topology by Role, Type, IP, or Vendor</td></tr>
-<tr><td>F7</td><td data-i18n="tk_ks_f8">Show the services view</td></tr>
-<tr><td>F8</td><td data-i18n="tk_ks_f9">Show the topology view</td></tr>
-<tr><td>Ctrl + Shift + P</td><td data-i18n="tk_ks_f10">Open scan profiles</td></tr>
-<tr><td>Enter</td><td data-i18n="tk_198">Open the selected device in a browser</td></tr>
-<tr><td>Ctrl + P</td><td data-i18n="tk_199">Ping the selected device</td></tr>
-<tr><td>Ctrl + D</td><td data-i18n="tk_200">Open Remote Desktop to the selected device</td></tr>
-<tr><td>Ctrl + S</td><td data-i18n="tk_201">Connect to the selected device over SSH</td></tr>
-<tr><td>Ctrl + Shift + S</td><td data-i18n="tk_202">Choose an SSH account and connect</td></tr>
-<tr><td>Ctrl + C</td><td data-i18n="tk_203">Copy the selected IP address</td></tr>
-<tr><td>Ctrl + Shift + C</td><td data-i18n="tk_204">Copy the selected MAC address</td></tr>
-<tr><td>Ctrl + Alt + C</td><td data-i18n="tk_205">Copy the selected hostname</td></tr>
-<tr><td>Shift + F10</td><td data-i18n="tk_206">Open every action for the selected device</td></tr>
-<tr><td>Ctrl + Shift + +</td><td data-i18n="tk_193">Make the app bigger</td></tr>
-<tr><td>Ctrl + Shift + -</td><td data-i18n="tk_194">Make the app smaller</td></tr>
-<tr><td>Ctrl + Shift + 0</td><td data-i18n="tk_195">Reset the app size</td></tr>
-<tr><td>F1</td><td data-i18n="tk_196">Open or close the shortcut overlay</td></tr>
-<tr><td>F12</td><td data-i18n="tk_207">Open the About window</td></tr>
-</table>
+<table class="spec-table"><thead><tr><th data-i18n="tk_185">Shortcut</th><th data-i18n="tk_186">What it does</th></tr></thead><tbody id="shortcutCatalogBody"></tbody></table>
 <h3 data-i18n="help_terminal_keys">When the terminal has focus</h3>
 <table class="spec-table">
 <tr><td>Ctrl + Shift + C</td><td data-i18n="help_term_copy">Copy selected terminal text</td></tr>

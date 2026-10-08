@@ -497,4 +497,8 @@
     <sys:String x:Key="Str_Services_CopyEndpoint">Копировать адрес и порт</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Копировать имя службы</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Копировать порт</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">В сравнении с {0}</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Копировать сохранённые сведения об устройстве</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Переключить вид истории</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Контекстное меню</sys:String>
 </ResourceDictionary>

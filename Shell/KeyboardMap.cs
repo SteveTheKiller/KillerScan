@@ -54,7 +54,7 @@ namespace KillerScan.Shell
              ("B", "B", 1), ("N", "N", 1), ("M", "M", 1), ("Comma", ",", 1), ("Period", ".", 1),
              ("Slash", "/", 1), ("RShift", "Shift", 2.7)],
             [("Ctrl", "Ctrl", 1.5), ("Win", "Win", 1.2), ("Alt", "Alt", 1.5), ("Space", "", 6.8),
-             ("RAlt", "Alt", 1.5), ("Menu", "Menu", 1), ("RCtrl", "Ctrl", 1.5)]
+             ("RAlt", "Alt", 1.5), ("Delete", "Del", 1), ("Menu", "Menu", 1), ("RCtrl", "Ctrl", 1.5)]
         ];
 
         private const double KeyboardUnit = 42;
@@ -132,6 +132,8 @@ namespace KillerScan.Shell
             "Esc" => "Esc",
             "Enter" => "Enter",
             "Tab" => "Tab",
+            "Menu" => "Menu",
+            "Delete" => "Delete",
             "\\" => "BSl",
             _ when key.Length == 1 && char.IsDigit(key[0]) => "D" + key,
             _ when key.Length == 1 => key.ToUpperInvariant(),

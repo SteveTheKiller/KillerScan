@@ -513,4 +513,8 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Services_CopyEndpoint">Copiar endereço e porta</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Copiar nome do serviço</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Copiar porta</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">Comparado com {0}</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Copiar detalhes do dispositivo salvo</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Alternar a visualização do histórico</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Menu de contexto</sys:String>
 </ResourceDictionary>

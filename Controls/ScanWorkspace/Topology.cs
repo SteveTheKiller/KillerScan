@@ -495,6 +495,8 @@ namespace KillerScan.Controls
                 UpdateTopologySelectionVisuals();
             }
             ResultsGrid.ScrollIntoView(device);
+            ResultsGrid.CurrentItem = device;
+            TopologyCanvas.Focus();
             PrepareDeviceContextMenu();
             if (ResultsGrid.ContextMenu != null)
             {

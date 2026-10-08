@@ -482,4 +482,8 @@
     <sys:String x:Key="Str_Services_CopyEndpoint">アドレスとポートをコピー</sys:String>
     <sys:String x:Key="Str_Services_CopyName">サービス名をコピー</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">ポートをコピー</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">{0} と比較</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">保存されたデバイス情報をコピー</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">履歴表示を切り替え</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">コンテキストメニュー</sys:String>
 </ResourceDictionary>

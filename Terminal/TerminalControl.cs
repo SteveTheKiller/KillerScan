@@ -749,6 +749,13 @@ namespace KillerScan.Terminal
 
         private bool HandleTerminalChord(Key key, bool ctrl, bool shift, bool alt)
         {
+            if (!ctrl && !alt && (key == Key.Apps && !shift || key == Key.F10 && shift))
+            {
+                ContextMenu.PlacementTarget = this;
+                ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+                ContextMenu.IsOpen = true;
+                return true;
+            }
             if (alt) return false;
 
             if (ctrl && shift)
@@ -758,6 +765,8 @@ namespace KillerScan.Terminal
                     case Key.C: CopySelection(); ClearSelection(); return true;
                     case Key.V: Paste(); return true;
                     case Key.A: SelectAll(); return true;
+                    case Key.Y: CopyAll(); return true;
+                    case Key.L: ClearScreen(); return true;
 
                     case Key.Up:       ScrollBy(1); return true;
                     case Key.Down:     ScrollBy(-1); return true;

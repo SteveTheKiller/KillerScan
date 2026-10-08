@@ -6,7 +6,8 @@
         <!-- One Keep Alive target. Fixed width so the sparkline geometry stays honest and
              the wrap panel makes tidy columns instead of ragged full-width rows. -->
         <DataTemplate x:Key="WatchCardTemplate">
-            <Border Width="264" Margin="0,0,8,8" VerticalAlignment="Top">
+            <Border Width="264" Margin="0,0,8,8" VerticalAlignment="Top" Focusable="True"
+                    PreviewMouseLeftButtonDown="WatchCard_Focus" PreviewMouseRightButtonDown="WatchCard_Focus">
                 <Border.Style>
                     <Style TargetType="Border" BasedOn="{StaticResource Card}">
                         <Style.Triggers>
@@ -22,11 +23,11 @@
                      item here already carries this card and the handlers can read it back. -->
                 <Border.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="{DynamicResource Str_Watch_CopyAddress}" Click="CardCopy_Click"/>
-                        <MenuItem Header="{DynamicResource Str_Diag_Refresh}" Click="CardDiagnose_Click"/>
+                        <MenuItem Header="{DynamicResource Str_Watch_CopyAddress}" InputGestureText="Ctrl+C" Click="CardCopy_Click"/>
+                        <MenuItem Header="{DynamicResource Str_Diag_Refresh}" InputGestureText="F3" Click="CardDiagnose_Click"/>
                         <Separator/>
-                        <MenuItem Header="{DynamicResource Str_Watch_ResetStats}" Click="CardReset_Click"/>
-                        <MenuItem Header="{DynamicResource Str_Watch_Remove}" Click="CardRemove_Click"/>
+                        <MenuItem Header="{DynamicResource Str_Watch_ResetStats}" InputGestureText="Ctrl+R" Click="CardReset_Click"/>
+                        <MenuItem Header="{DynamicResource Str_Watch_Remove}" InputGestureText="Delete" Click="CardRemove_Click"/>
                     </ContextMenu>
                 </Border.ContextMenu>
                 <Grid>

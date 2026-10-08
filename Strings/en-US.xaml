@@ -513,4 +513,8 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Services_CopyEndpoint">Copy endpoint</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Copy service name</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Copy port</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">Compared with {0}</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Copy saved device details</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Switch history view</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Context menu</sys:String>
 </ResourceDictionary>

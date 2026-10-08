@@ -48,7 +48,31 @@ namespace KillerScan.Shell
             ("Ctrl + C",        "Str_Sc_CopyIp",            "Device"),
             ("Ctrl + Shift + C", "Str_Sc_CopyMac",          "Device"),
             ("Ctrl + Alt + C",  "Str_Sc_CopyHost",          "Device"),
-            ("Shift + F10",     "Str_Sc_DeviceMenu",        "Device"),
+            ("Shift + F10",     "Str_Sc_ContextMenu",       "Device"),
+            ("Menu",            "Str_Sc_ContextMenu",       "Device"),
+            ("F2",              "Str_Rename_Title",         "Device"),
+            ("Ctrl + Alt + N",   "Str_Rename_Clear",         "Device"),
+            ("Ctrl + Alt + T",   "Str_Ctx_ClearOverride",    "Device"),
+            ("Ctrl + Shift + B", "Str_Trust_Device",         "Device"),
+            ("Ctrl + Shift + C", "Str_Services_CopyEndpoint", "Device"),
+            ("Ctrl + Shift + Y", "Str_Services_CopyName",    "Device"),
+            ("Ctrl + Alt + P",   "Str_Services_CopyPort",    "Device"),
+            ("Ctrl + Shift + H", "Str_History_ToggleView",   "Views"),
+            ("Ctrl + Shift + Y", "Str_History_CopyDetails",  "Device"),
+            ("Enter",           "Str_Profiles_Run",         "Views"),
+            ("Ctrl + L",        "Str_Profiles_Load",        "Views"),
+            ("Delete",          "Str_Profiles_Delete",      "Views"),
+            ("Ctrl + Alt + D",   "Str_Profiles_Deep",        "Views"),
+            ("Ctrl + Alt + S",   "Str_Profiles_Save",        "Views"),
+            ("Ctrl + C",        "Str_Watch_CopyAddress",    "Device"),
+            ("F3",              "Str_Diag_Refresh",          "Device"),
+            ("Ctrl + R",        "Str_Watch_ResetStats",     "Device"),
+            ("Delete",          "Str_Watch_Remove",         "Device"),
+            ("Ctrl + Shift + C", "Str_Term_Copy",            "App"),
+            ("Ctrl + Shift + V", "Str_Term_Paste",           "App"),
+            ("Ctrl + Shift + A", "Str_Term_SelectAll",       "App"),
+            ("Ctrl + Shift + Y", "Str_Term_CopyAll",         "App"),
+            ("Ctrl + Shift + L", "Str_Term_Clear",           "App"),
 
             ("Ctrl + G",              "Str_Sc_CycleTopologyOrder", "Topology"),
             ("Ctrl + 1",        "Str_Topology_Role",        "Topology"),
@@ -94,31 +118,39 @@ namespace KillerScan.Shell
         // focus is, including inside the results grid.
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Handled) return;
             var modifiers = Keyboard.Modifiers;
+            Key key = e.Key == Key.System ? e.SystemKey : e.Key;
+            if (HandleProfileShortcut(e, modifiers)) return;
+            if (_workspaceView == "history" && _historyWorkspace?.HandleShortcut(
+                key, modifiers, Keyboard.FocusedElement is TextBox) == true)
+            { e.Handled = true; return; }
+            if (_workspaceView == "watch" && _watchWorkspace?.HandleShortcut(key, modifiers) == true)
+            { e.Handled = true; return; }
             bool ctrl = modifiers.HasFlag(ModifierKeys.Control);
             bool shift = modifiers.HasFlag(ModifierKeys.Shift);
             bool alt = modifiers.HasFlag(ModifierKeys.Alt);
             if (ctrl && !alt)
             {
-                if (shift && e.Key >= Key.D1 && e.Key <= Key.D6)
+                if (shift && key >= Key.D1 && key <= Key.D6)
                 {
-                    SelectToolbarAppearance((int)e.Key - (int)Key.D1 + 1);
+                    SelectToolbarAppearance((int)key - (int)Key.D1 + 1);
                     e.Handled = true; return;
                 }
-                if (e.Key == Key.T)
+                if (key == Key.T)
                 {
                     if (shift) ToggleTerminalPanel(); else NewScan();
                     e.Handled = true; return;
                 }
             }
-            if (ctrl && !shift && !alt && e.Key == Key.E)
+            if (ctrl && !shift && !alt && key == Key.E)
             {
                 _scanWorkspace?.Export("csv");
                 e.Handled = true; return;
             }
             if (ctrl && shift && !alt)
             {
-                string? format = e.Key switch
+                string? format = key switch
                 {
                     Key.E => "html",
                     Key.X => "txt",
@@ -132,12 +164,12 @@ namespace KillerScan.Shell
                     e.Handled = true; return;
                 }
             }
-            if (ctrl && alt && !shift && e.Key == Key.H)
+            if (ctrl && alt && !shift && key == Key.H)
             {
                 _scanWorkspace?.Export("svg");
                 e.Handled = true; return;
             }
-            if (e.Key == Key.Escape)
+            if (key == Key.Escape)
             {
                 if (ShortcutsOverlay.Visibility == Visibility.Visible) { HideShortcuts(); e.Handled = true; return; }
                 if (AboutOverlay.Visibility == Visibility.Visible) { AboutClose_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
@@ -149,13 +181,13 @@ namespace KillerScan.Shell
             }
             if (modifiers == ModifierKeys.None && Keyboard.FocusedElement is KillerScan.Terminal.TerminalControl)
             {
-                if (e.Key == Key.F4) { SpeedTestButton_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
-                if (e.Key == Key.F10) { NewTerminal(); e.Handled = true; return; }
+                if (key == Key.F4) { SpeedTestButton_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
+                if (key == Key.F10) { NewTerminal(); e.Handled = true; return; }
             }
             if (Keyboard.FocusedElement is KillerScan.Terminal.TerminalControl) return;
             if (modifiers == ModifierKeys.None)
             {
-                switch (e.Key)
+                switch (key)
                 {
                     case Key.F1: ToggleShortcuts(); e.Handled = true; return;
                     case Key.F3: Diagnose_Click(this, new RoutedEventArgs()); e.Handled = true; return;
@@ -164,7 +196,9 @@ namespace KillerScan.Shell
                     case Key.F6: ShowScanView("devices"); e.Handled = true; return;
                     case Key.F7: ServicesButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
                     case Key.F8: TopologyButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
-                    case Key.F9: Watch_Click(this, new RoutedEventArgs()); e.Handled = true; return;
+                    case Key.F9:
+                        if (ActiveScan?.SelectedDevice != null) ActiveScan.WatchSelected(); else Watch_Click(this, new RoutedEventArgs());
+                        e.Handled = true; return;
                     case Key.F10: NewTerminal(); e.Handled = true; return;
                     case Key.F12:
                         if (AboutOverlay.Visibility == Visibility.Visible) FadeOverlayOut(AboutOverlay);
@@ -174,7 +208,7 @@ namespace KillerScan.Shell
             }
             if (ctrl && !shift && !alt)
             {
-                switch (e.Key)
+                switch (key)
                 {
                     // Ctrl+H rather than an F key: history is a panel you open beside your work,
                     // like the profiles list, not a view you switch to. Terminals never see this,
@@ -184,7 +218,7 @@ namespace KillerScan.Shell
             }
             if (ctrl && shift && !alt)
             {
-                switch (e.Key)
+                switch (key)
                 {
                     // Profiles gave up F10 to the Terminal view. It sits with history
                     // instead: both are panels beside your work rather than views.
@@ -325,7 +359,12 @@ namespace KillerScan.Shell
             if (keys.StartsWith("Ctrl + ", StringComparison.Ordinal) &&
                 keys.Length == 8 && keys[^1] is >= '1' and <= '4')
                 return $"{Loc("Str_TT_TopologyOrder")} {Loc(descriptionKey)}";
-            return Loc(descriptionKey);
+            string? scope = descriptionKey.StartsWith("Str_Term_", StringComparison.Ordinal) ? "Str_Workspace_Terminal"
+                : descriptionKey.StartsWith("Str_Services_Copy", StringComparison.Ordinal) ? "Str_Services_Title"
+                : descriptionKey.StartsWith("Str_Profiles_", StringComparison.Ordinal) && descriptionKey != "Str_Profiles_Title" ? "Str_Profiles_Title"
+                : descriptionKey.StartsWith("Str_Watch_", StringComparison.Ordinal) || descriptionKey == "Str_Diag_Refresh" ? "Str_View_KeepAlive"
+                : descriptionKey is "Str_History_CopyDetails" or "Str_History_ToggleView" ? "Str_History_Title" : null;
+            return scope == null ? Loc(descriptionKey) : Loc(scope) + ": " + Loc(descriptionKey);
         }
 
         // Opens the online help / how-to page in the user's default browser.

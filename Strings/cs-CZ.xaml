@@ -469,4 +469,8 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Services_CopyEndpoint">Kopírovat adresu a port</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Kopírovat název služby</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Kopírovat port</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">Porovnáno s {0}</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Kopírovat uložené údaje zařízení</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Přepnout zobrazení historie</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Kontextová nabídka</sys:String>
 </ResourceDictionary>

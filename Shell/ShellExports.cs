@@ -20,6 +20,11 @@ namespace KillerScan.Shell
         {
             switch (kind)
             {
+                case "history-csv": _historyWorkspace?.ExportCsv(); break;
+                case "history-menu":
+                    if (_scanWorkspace?.FindName("ExportButton") is FrameworkElement target)
+                        _historyWorkspace?.ShowExportMenu(target);
+                    break;
                 case "watch-csv":  SaveWatch("csv"); break;
                 case "watch-html": SaveWatch("html"); break;
                 case "watch-txt":  SaveWatch("txt"); break;

@@ -452,4 +452,8 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Services_CopyEndpoint">Sao chép địa chỉ và cổng</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Sao chép tên dịch vụ</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Sao chép cổng</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">So sánh với {0}</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Sao chép chi tiết thiết bị đã lưu</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Chuyển chế độ xem lịch sử</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Menu ngữ cảnh</sys:String>
 </ResourceDictionary>

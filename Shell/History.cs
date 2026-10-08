@@ -11,7 +11,7 @@ namespace KillerScan.Shell
         private HistoryWorkspace? _historyWorkspace;
 
         /// <summary>
-        /// F6 and the rail button open the history sidebar and show the selected snapshot.
+        /// Ctrl+H and the rail button open the history sidebar and show the selected snapshot.
         /// Pressing it again with the sidebar already open closes it, so the one control both
         /// reveals and dismisses the panel.
         /// </summary>
@@ -56,7 +56,12 @@ namespace KillerScan.Shell
 
         private void ShowHistoryEntry()
         {
-            _historyWorkspace ??= new HistoryWorkspace { LayoutTransform = new ScaleTransform(_appScale, _appScale) };
+            if (_historyWorkspace == null)
+            {
+                _historyWorkspace = new HistoryWorkspace { LayoutTransform = new ScaleTransform(_appScale, _appScale) };
+                _historyWorkspace.CurrentScanRequested += () => ShowScanView("devices");
+                _historyWorkspace.SidebarRequested += () => HistoryButton_Click(this, new RoutedEventArgs());
+            }
             _historyWorkspace.ShowEntry(HistoryList.SelectedItem as ScanHistoryEntry);
             ShowWorkspaceContent(_historyWorkspace, "history");
         }

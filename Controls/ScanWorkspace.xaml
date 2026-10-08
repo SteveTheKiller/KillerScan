@@ -364,6 +364,7 @@
                           CanUserResizeColumns="True"
                           VirtualizingPanel.ScrollUnit="Pixel"
                           SelectionMode="Extended"
+                          PreviewMouseRightButtonDown="ResultsGrid_RightClick"
                           ContextMenuOpening="ResultsGrid_ContextMenuOpening"
                           ColumnHeaderHeight="28"
                           RowHeight="28"
@@ -429,13 +430,13 @@
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
                             </MenuItem>
                             <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
-                            <MenuItem Header="{DynamicResource Str_Rename_Title}" Click="RenameDevice_Click">
+                            <MenuItem Header="{DynamicResource Str_Rename_Title}" InputGestureText="F2" Click="RenameDevice_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE70F;"/></MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Rename_Clear}" Click="ClearDeviceName_Click">
+                            <MenuItem Header="{DynamicResource Str_Rename_Clear}" InputGestureText="Ctrl+Alt+N" Click="ClearDeviceName_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE894;"/></MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem x:Name="TrustDeviceMenuItem" Header="{DynamicResource Str_Trust_Device}"
+                            <MenuItem x:Name="TrustDeviceMenuItem" Header="{DynamicResource Str_Trust_Device}" InputGestureText="Ctrl+Shift+B"
                                       Click="TrustDevice_Click">
                                 <MenuItem.Icon><Ellipse Width="10" Height="10"/></MenuItem.Icon>
                             </MenuItem>
@@ -508,7 +509,7 @@
                                     <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9CE;"/></MenuItem.Icon>
                                 </MenuItem>
                             </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_ClearOverride}" Click="ClearOverride_Click">
+                            <MenuItem Header="{DynamicResource Str_Ctx_ClearOverride}" InputGestureText="Ctrl+Alt+T" Click="ClearOverride_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE894;"/></MenuItem.Icon>
                             </MenuItem>
                         </ContextMenu>
@@ -658,11 +659,11 @@
                           CellStyle="{StaticResource DarkDataGridCell}">
                     <DataGrid.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="{DynamicResource Str_Services_CopyEndpoint}" Tag="CopyEndpoint" Click="ServiceMenu_Click">
+                            <MenuItem Header="{DynamicResource Str_Services_CopyEndpoint}" InputGestureText="Ctrl+Shift+C" Tag="CopyEndpoint" Click="ServiceMenu_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Services_CopyName}" Tag="CopyService" Click="ServiceMenu_Click"/>
-                            <MenuItem Header="{DynamicResource Str_Services_CopyPort}" Tag="CopyPort" Click="ServiceMenu_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Services_CopyName}" InputGestureText="Ctrl+Shift+Y" Tag="CopyService" Click="ServiceMenu_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Services_CopyPort}" InputGestureText="Ctrl+Alt+P" Tag="CopyPort" Click="ServiceMenu_Click"/>
                             <MenuItem Header="{DynamicResource Str_Ctx_CopyIp}" Tag="CopyIp" InputGestureText="Ctrl+C" Click="ServiceMenu_Click"/>
                             <MenuItem Header="{DynamicResource Str_Ctx_CopyHost}" Tag="CopyHost" InputGestureText="Ctrl+Alt+C" Click="ServiceMenu_Click"/>
                             <Separator x:Name="ServiceConnectSeparator"/>
@@ -698,7 +699,7 @@
                     <ScrollViewer x:Name="TopologyScrollViewer" HorizontalScrollBarVisibility="Auto"
                                   VerticalScrollBarVisibility="Auto" PreviewMouseWheel="TopologyScrollViewer_PreviewMouseWheel">
                         <Grid x:Name="TopologyZoomHost">
-                            <Canvas x:Name="TopologyCanvas" Background="Transparent"
+                            <Canvas x:Name="TopologyCanvas" Background="Transparent" Focusable="True"
                                     MouseRightButtonDown="TopologyBackground_RightClick"/>
                         </Grid>
                     </ScrollViewer>

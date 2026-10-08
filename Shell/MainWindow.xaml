@@ -354,6 +354,7 @@
                 <!-- Second section, sharing the row so the two cross-fade in place. -->
                 <ListBox x:Name="ProfilesList" Grid.Row="1" Background="Transparent" BorderThickness="0"
                          Margin="0,0,8,0" HorizontalContentAlignment="Stretch" Visibility="Collapsed"
+                         PreviewMouseRightButtonDown="ProfileList_RightClick"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ItemContainerStyle="{Binding ItemContainerStyle, ElementName=HistoryList}">
                     <ListBox.ItemTemplate>
@@ -361,12 +362,12 @@
                             <StackPanel>
                                 <StackPanel.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="{DynamicResource Str_Profiles_Run}" Click="ProfileRun_Click"/>
-                                        <MenuItem Header="{DynamicResource Str_Profiles_Load}" Click="ProfileLoad_Click"/>
+                                        <MenuItem Header="{DynamicResource Str_Profiles_Run}" InputGestureText="Enter" Click="ProfileRun_Click"/>
+                                        <MenuItem Header="{DynamicResource Str_Profiles_Load}" InputGestureText="Ctrl+L" Click="ProfileLoad_Click"/>
                                         <MenuItem Header="{DynamicResource Str_Profiles_Deep}" IsCheckable="True"
-                                                  IsChecked="{Binding DeepScanAfter, Mode=OneWay}" Click="ProfileDeep_Click"/>
+                                                  InputGestureText="Ctrl+Alt+D" IsChecked="{Binding DeepScanAfter, Mode=OneWay}" Click="ProfileDeep_Click"/>
                                         <Separator/>
-                                        <MenuItem Header="{DynamicResource Str_Profiles_Delete}" Click="ProfileDelete_Click"/>
+                                        <MenuItem Header="{DynamicResource Str_Profiles_Delete}" InputGestureText="Delete" Click="ProfileDelete_Click"/>
                                     </ContextMenu>
                                 </StackPanel.ContextMenu>
                                 <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold"
@@ -404,7 +405,7 @@
 
                 <Button x:Name="SaveProfileButton" Grid.Row="2" Content="{DynamicResource Str_Profiles_Save}"
                         HorizontalAlignment="Left" Margin="9,8,0,0" FontSize="11" Visibility="Collapsed"
-                        Style="{StaticResource LinkButton}" Click="SaveProfile_Click"/>
+                        Style="{StaticResource LinkButton}" ToolTip="Ctrl+Alt+S" Click="SaveProfile_Click"/>
             </Grid>
         </Grid>
 

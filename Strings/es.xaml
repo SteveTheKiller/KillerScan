@@ -471,4 +471,8 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Services_CopyEndpoint">Copiar dirección y puerto</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Copiar nombre del servicio</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Copiar puerto</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">Comparado con {0}</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Copiar detalles del dispositivo guardado</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Cambiar vista del historial</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Menú contextual</sys:String>
 </ResourceDictionary>

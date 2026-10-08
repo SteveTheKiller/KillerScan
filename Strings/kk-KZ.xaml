@@ -513,4 +513,8 @@
     <sys:String x:Key="Str_Services_CopyEndpoint">Мекенжай мен портты көшіру</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Қызмет атауын көшіру</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Портты көшіру</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">{0} сканерлеуімен салыстырылды</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Сақталған құрылғы мәліметтерін көшіру</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Тарих көрінісін ауыстыру</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Контекстік мәзір</sys:String>
 </ResourceDictionary>

@@ -34,11 +34,13 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--menu-separators" })) { await MenuSeparatorThemeTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--startup-fade" })) { await StartupFadeTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--release-ui" })) { await ReleaseUiTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--history-ui" })) { await HistoryUiTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--topology" })) { await TopologyTests.Run(); return 0; }
             Require(args.All(value => value == "--worker" || value == "--internet"), "Usage: SpeedTest.Tests.exe [--worker] [--internet]");
             await Run("Menu dividers resolve declared palettes and preserve the fallback", MenuSeparatorThemeTests.Run);
             await Run("Startup content becomes visible when its animation stalls", StartupFadeTests.Run);
             await Run("Topology radial geometry, zoom and rendered interactions", TopologyTests.RunIsolated);
+            await Run("History identity, saved-data menus and contextual shortcuts", HistoryUiTests.RunIsolated);
             await Run("Metric units, median, jitter and unavailable values", Metrics);
             await Run("Scan terminal progress stays on one line and results fit narrow widths", ScanPresentation);
             await Run("Terminal history survives resizing, clears and shell replacement", TerminalHistory);

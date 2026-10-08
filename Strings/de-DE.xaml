@@ -472,4 +472,8 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Services_CopyEndpoint">Adresse und Port kopieren</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Dienstnamen kopieren</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Port kopieren</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">Verglichen mit {0}</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Gespeicherte Gerätedetails kopieren</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Verlaufsansicht wechseln</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Kontextmenü</sys:String>
 </ResourceDictionary>

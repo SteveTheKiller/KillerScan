@@ -8,6 +8,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Added
 - Topology settings for box size, layout, orientation, fonts and connection lines, with Ctrl+wheel zoom, zoom presets, compact radial layouts and hand cursors for dragging. Open settings from the toolbar or the map's right-click menu.
+- Read-only scan history menus for copying saved device details, switching views and exporting snapshots.
 - A Services context menu for copying service details and connecting with the selected service's protocol and port.
 - Ukrainian, Norwegian (Bokmål) and Brazilian Portuguese localization, with a two-column language menu.
 - Drag pinned file-picker places into a new order, and use Ctrl+wheel to change picker views and icon sizes.
@@ -15,7 +16,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Changed
 - Scanning, discovery and device classification now live in KillerScan.Engine, a separate library the app, its command line and other programs share.
-- Both shortcut views link to the full online guide.
+- Context actions show their keyboard shortcuts in menus, both F1 help views and the online guide, with additional shortcuts for Services, profiles, Keep Alive and the terminal.
 - Refined theme colors, wordmarks, button gradients, footers and menu styling to match the family palette.
 - Refined file-picker and dialog frames, added sharper title bar icons, and gave the uninstaller its own labeled taskbar button.
 
@@ -23,6 +24,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Unsigned test builds can no longer push, tag or publish a release.
 - Stopping a deep scan no longer waits for stalled fingerprint requests.
 - Startup content becomes visible even when its fade animation stalls.
+- Scan history keeps its title, target and timestamps visible when the sidebar closes, refreshes column headings after a language change, and cannot act on a hidden live scan.
 - Text stays sharp at app sizes other than 100% again.
 - Switching themes no longer pushes a toolbar view into the overflow menu.
 - Submenus attach consistently to their opening rows, with native direction and screen-edge placement.

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using KillerScan.Controls;
 using KillerScan.Models;
 using KillerScan.Services;
@@ -10,6 +11,21 @@ namespace KillerScan.Controls
     public partial class ScanWorkspace
     {
         private NetworkDevice? GetSelectedDevice() => ResultsGrid.SelectedItem as NetworkDevice;
+
+        private void ResultsGrid_RightClick(object sender, MouseButtonEventArgs e)
+        {
+            var row = ItemsControl.ContainerFromElement(ResultsGrid, e.OriginalSource as DependencyObject) as DataGridRow;
+            if (row?.Item is not NetworkDevice device) { ResultsGrid.UnselectAll(); return; }
+            if (!ResultsGrid.SelectedItems.Contains(device))
+            {
+                ResultsGrid.SelectedItems.Clear();
+                ResultsGrid.SelectedItem = device;
+            }
+            ResultsGrid.CurrentItem = device;
+            ResultsGrid.Focus();
+        }
+
+        public void WatchSelected() => Watch_Click(this, new RoutedEventArgs());
 
         private void CopyIp_Click(object sender, RoutedEventArgs e)
         { if (_showServices) { CopyServiceText("CopyIp"); return; } var d = GetSelectedDevice(); if (d != null) CopyDeviceText(d.IpAddress); }

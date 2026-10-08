@@ -513,4 +513,8 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Services_CopyEndpoint">Kopier adresse og port</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Kopier tjenestenavn</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Kopier port</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">Sammenlignet med {0}</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Kopier lagrede enhetsdetaljer</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Bytt historikkvisning</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Kontekstmeny</sys:String>
 </ResourceDictionary>

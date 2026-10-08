@@ -471,4 +471,8 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Services_CopyEndpoint">Copier l'adresse et le port</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Copier le nom du service</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Copier le port</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">Comparé à {0}</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Copier les détails du périphérique enregistré</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Changer la vue de l’historique</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Menu contextuel</sys:String>
 </ResourceDictionary>

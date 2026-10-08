@@ -23,11 +23,9 @@ namespace KillerScan.Terminal
             menu.Items.Add(Entry("Str_Term_Paste", "Ctrl+Shift+V", Paste));
             menu.Items.Add(new Separator());
             menu.Items.Add(Entry("Str_Term_SelectAll", "Ctrl+Shift+A", SelectAll));
-            // No chord: every Ctrl+Shift letter that would suit it is either taken or worth
-            // leaving to the shell, and this is a menu-shaped action rather than a typing one.
-            menu.Items.Add(Entry("Str_Term_CopyAll", null, CopyAll));
+            menu.Items.Add(Entry("Str_Term_CopyAll", "Ctrl+Shift+Y", CopyAll));
             menu.Items.Add(new Separator());
-            menu.Items.Add(Entry("Str_Term_Clear", null, ClearScreen));
+            menu.Items.Add(Entry("Str_Term_Clear", "Ctrl+Shift+L", ClearScreen));
             menu.Items.Add(Entry("Str_Term_Font", null, ChooseFont));
 
             // Copy is only meaningful with a selection, and Paste only with text on the clipboard,

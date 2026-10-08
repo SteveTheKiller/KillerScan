@@ -471,4 +471,8 @@
     <sys:String x:Key="Str_Services_CopyEndpoint">复制地址和端口</sys:String>
     <sys:String x:Key="Str_Services_CopyName">复制服务名称</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">复制端口</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">与 {0} 比较</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">复制已保存的设备详情</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">切换历史记录视图</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">上下文菜单</sys:String>
 </ResourceDictionary>

@@ -513,4 +513,8 @@
     <sys:String x:Key="Str_Services_CopyEndpoint">Копіювати адресу й порт</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Копіювати назву служби</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Копіювати порт</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">Порівняно з {0}</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Копіювати збережені відомості про пристрій</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Змінити вигляд історії</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Контекстне меню</sys:String>
 </ResourceDictionary>

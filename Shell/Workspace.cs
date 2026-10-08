@@ -77,7 +77,7 @@ namespace KillerScan.Shell
             _workspaceView = view;
             // The export menu lives on the rail whatever is in front, so it is told which view it
             // is acting for. Anything built on the scan workspace resolves itself.
-            _scanWorkspace?.ExportContext = view is "watch" or "terminal" ? view : "scan";
+            _scanWorkspace?.ExportContext = view is "watch" or "terminal" or "history" ? view : "scan";
             foreach (FrameworkElement child in _workspaceBody.Children)
                 child.Visibility = child == content ? Visibility.Visible : Visibility.Collapsed;
             UpdateViewToolbar();
@@ -311,6 +311,7 @@ namespace KillerScan.Shell
         private void OnShellLocaleChanged()
         {
             _scanWorkspace?.RefreshLocalizedText();
+            _historyWorkspace?.RefreshLocale();
             UpdateWorkspaceStatus();
             UpdateScanLight();
         }
@@ -329,7 +330,7 @@ namespace KillerScan.Shell
             // the cell would otherwise contribute its margin to a bar that has nothing in it.
             if (_scanWorkspace?.FindName("DeviceCount") is TextBlock count)
             {
-                bool hide = _workspaceView == "terminal" || string.IsNullOrEmpty(count.Text) || StatusText.Text.Contains(count.Text);
+                bool hide = _workspaceView is "terminal" or "history" || string.IsNullOrEmpty(count.Text) || StatusText.Text.Contains(count.Text);
                 count.Visibility = hide ? Visibility.Collapsed : Visibility.Visible;
                 DeviceCountFooter.Visibility = hide ? Visibility.Collapsed : Visibility.Visible;
             }

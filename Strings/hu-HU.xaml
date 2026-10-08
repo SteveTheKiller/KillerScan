@@ -487,4 +487,8 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Services_CopyEndpoint">Cím és port másolása</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Szolgáltatásnév másolása</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Port másolása</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">Összehasonlítva ezzel: {0}</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Mentett eszközadatok másolása</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Előzmények nézetének váltása</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Helyi menü</sys:String>
 </ResourceDictionary>

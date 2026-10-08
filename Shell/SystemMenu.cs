@@ -144,7 +144,7 @@ namespace KillerScan.Shell
             Add("Str_Sys_Minimize", "Minimize", SC_MINIMIZE, 0xE921);
             Add("Str_Sys_Maximize", "Maximize", SC_MAXIMIZE, 0xE922);
             menu.Items.Add(new Separator());
-            Add("Str_Sys_Close",    "Close",    SC_CLOSE,    0xE8BB, danger: true);
+            Add("Str_Sys_Close",    "Close",    SC_CLOSE,    0xE8BB, danger: true).InputGestureText = "Alt+F4";
             return menu;
         }
 

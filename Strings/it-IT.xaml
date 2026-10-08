@@ -487,4 +487,8 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Services_CopyEndpoint">Copia indirizzo e porta</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Copia nome del servizio</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Copia porta</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">Confrontato con {0}</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Copia i dettagli del dispositivo salvato</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Cambia vista della cronologia</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Menu contestuale</sys:String>
 </ResourceDictionary>

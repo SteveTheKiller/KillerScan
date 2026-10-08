@@ -456,4 +456,8 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Services_CopyEndpoint">Kopiuj adres i port</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Kopiuj nazwę usługi</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Kopiuj port</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">Porównano z {0}</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Kopiuj zapisane dane urządzenia</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Przełącz widok historii</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Menu kontekstowe</sys:String>
 </ResourceDictionary>

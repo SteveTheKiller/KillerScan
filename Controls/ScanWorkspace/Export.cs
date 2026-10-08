@@ -29,7 +29,7 @@ namespace KillerScan.Controls
         }
 
         private void UpdateExportButtonAvailability() =>
-            ExportButton.IsEnabled = _exportContext is "watch" or "terminal" || ActiveDevices.Count > 0;
+            ExportButton.IsEnabled = _exportContext is "watch" or "terminal" or "history" || ActiveDevices.Count > 0;
 
         private string CurrentExportContext() => _exportContext == "scan"
             ? (_showTopology ? "topology" : _showServices ? "services" : "devices")
@@ -52,6 +52,7 @@ namespace KillerScan.Controls
             {
                 case ("devices", "csv"): ExportCsv_Click(this, new RoutedEventArgs()); break;
                 case ("services", "csv"): ExportServicesCsv_Click(this, new RoutedEventArgs()); break;
+                case ("history", "csv"): ShellExportRequested?.Invoke(this, "history-csv"); break;
                 case ("watch", "csv"): ExportWatchCsv_Click(this, new RoutedEventArgs()); break;
                 case ("devices", "html"): ExportHtml_Click(this, new RoutedEventArgs()); break;
                 case ("watch", "html"): ExportWatchHtml_Click(this, new RoutedEventArgs()); break;
@@ -67,6 +68,7 @@ namespace KillerScan.Controls
         private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
             if (ExportButton.ContextMenu is null) return;
+            if (_exportContext == "history") { ShellExportRequested?.Invoke(this, "history-menu"); return; }
             // Keep Alive and the terminal have something to export with no scan behind them, so the
             // empty-results guard applies only to the views built on the device list.
             if (ActiveDevices.Count == 0 && _exportContext is "scan") return;
@@ -91,7 +93,6 @@ namespace KillerScan.Controls
             ExportWatchTxtItem.Visibility     = When(context == "watch");
             ExportWatchPngItem.Visibility     = When(context == "watch");
             ExportTerminalTextItem.Visibility = When(context == "terminal");
-            ExportServicesCsvItem.Visibility = _showServices ? Visibility.Visible : Visibility.Collapsed;
             // The button now sits on the rail down the left, so the flyout opens beside it rather
             // than below it, anchored to the button itself.
             ExportButton.ContextMenu.PlacementTarget = ExportButton;

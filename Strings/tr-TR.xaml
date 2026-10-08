@@ -471,4 +471,8 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Services_CopyEndpoint">Adresi ve bağlantı noktasını kopyala</sys:String>
     <sys:String x:Key="Str_Services_CopyName">Hizmet adını kopyala</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">Bağlantı noktasını kopyala</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">{0} ile karşılaştırıldı</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">Kayıtlı cihaz ayrıntılarını kopyala</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">Geçmiş görünümünü değiştir</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">Bağlam menüsü</sys:String>
 </ResourceDictionary>

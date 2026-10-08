@@ -34,13 +34,14 @@ namespace KillerScan.Controls
         private void ServicesGrid_RightClick(object sender, MouseButtonEventArgs e)
         {
             var row = ItemsControl.ContainerFromElement(ServicesGrid, e.OriginalSource as DependencyObject) as DataGridRow;
-            if (row?.Item is not ServiceRow service) return;
+            if (row?.Item is not ServiceRow service) { ServicesGrid.UnselectAll(); return; }
             if (!ServicesGrid.SelectedItems.Contains(service))
             {
                 ServicesGrid.SelectedItems.Clear();
                 ServicesGrid.SelectedItem = service;
             }
             ServicesGrid.CurrentItem = service;
+            ServicesGrid.Focus();
         }
 
         private void ServicesGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -80,6 +81,38 @@ namespace KillerScan.Controls
             else if (action == "SelectAll") ServicesGrid.SelectAll();
             else if (action == "Export") ExportServicesCsv_Click(sender, e);
             else RaiseServiceAction(action);
+        }
+
+        public bool HandleServiceShortcut(Key key, ModifierKeys modifiers)
+        {
+            string? action = (key, modifiers) switch
+            {
+                (Key.Enter, ModifierKeys.None) => "Browser",
+                (Key.S, ModifierKeys.Control) => "Ssh",
+                (Key.S, ModifierKeys.Control | ModifierKeys.Shift) => "SshAs",
+                (Key.D, ModifierKeys.Control) => "Rdp",
+                (Key.C, ModifierKeys.Control) => "CopyIp",
+                (Key.C, ModifierKeys.Control | ModifierKeys.Shift) => "CopyEndpoint",
+                (Key.C, ModifierKeys.Control | ModifierKeys.Alt) => "CopyHost",
+                (Key.Y, ModifierKeys.Control | ModifierKeys.Shift) => "CopyService",
+                (Key.P, ModifierKeys.Control | ModifierKeys.Alt) => "CopyPort",
+                _ => null
+            };
+            if (action != null)
+            {
+                if (action.StartsWith("Copy", StringComparison.Ordinal)) CopyServiceText(action);
+                else RaiseServiceAction(action);
+                return true;
+            }
+            if (key == Key.Apps && modifiers == ModifierKeys.None || key == Key.F10 && modifiers == ModifierKeys.Shift)
+            {
+                ServicesGrid_ContextMenuOpening(ServicesGrid, null!);
+                ServicesGrid.ContextMenu.PlacementTarget = (ServicesGrid.SelectedItem == null ? null :
+                    ServicesGrid.ItemContainerGenerator.ContainerFromItem(ServicesGrid.SelectedItem)) as UIElement ?? ServicesGrid;
+                ServicesGrid.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+                ServicesGrid.ContextMenu.IsOpen = true; return true;
+            }
+            return false;
         }
 
         private void RaiseServiceAction(string action)

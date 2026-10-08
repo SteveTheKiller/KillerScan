@@ -471,4 +471,8 @@
     <sys:String x:Key="Str_Services_CopyEndpoint">ঠিকানা ও পোর্ট কপি করুন</sys:String>
     <sys:String x:Key="Str_Services_CopyName">সেবার নাম কপি করুন</sys:String>
     <sys:String x:Key="Str_Services_CopyPort">পোর্ট কপি করুন</sys:String>
+    <sys:String x:Key="Str_History_ComparedWith">{0}-এর সঙ্গে তুলনা</sys:String>
+    <sys:String x:Key="Str_History_CopyDetails">সংরক্ষিত ডিভাইসের বিবরণ কপি করুন</sys:String>
+    <sys:String x:Key="Str_History_ToggleView">ইতিহাসের দৃশ্য বদলান</sys:String>
+    <sys:String x:Key="Str_Sc_ContextMenu">প্রসঙ্গ মেনু</sys:String>
 </ResourceDictionary>

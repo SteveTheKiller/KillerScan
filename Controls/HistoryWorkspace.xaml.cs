@@ -28,6 +28,7 @@ namespace KillerScan.Controls
             HistoryChangesGrid.ItemsSource = _changes;
             HistoryAllGrid.ItemsSource = _devices;
             ApplyView();
+            ConfigureActions();
         }
 
         internal void ShowEntry(ScanHistoryEntry? entry)
@@ -44,7 +45,7 @@ namespace KillerScan.Controls
         {
             if (_showAll == showAll) return;
             _showAll = showAll;
-            App.SetSetting("HistoryShowAll", showAll ? "1" : "0");
+            if (!DemoData.Enabled) App.SetSetting("HistoryShowAll", showAll ? "1" : "0");
             ApplyView();
             RefreshLocale();
         }
@@ -62,6 +63,14 @@ namespace KillerScan.Controls
         {
             _changes.Clear();
             _devices.Clear();
+            string[] changes = ["Str_History_Change", "Str_Col_Name", "Str_Col_Ip", "Str_Col_Type"];
+            string[] devices = ["Str_Col_Ip", "Str_Col_Name", "Str_Col_Mac", "Str_Col_Vendor", "Str_Col_Type", "Str_Col_Ports"];
+            for (int i = 0; i < changes.Length; i++) HistoryChangesGrid.Columns[i].Header = Loc(changes[i]);
+            for (int i = 0; i < devices.Length; i++) HistoryAllGrid.Columns[i].Header = Loc(devices[i]);
+            HistoryEntryContext.Text = _entry == null ? string.Empty : $"{_entry.Target} · {_entry.ScannedAt.ToLocalTime():g}";
+            var comparison = _entry == null ? null : ScanHistory.Compare(_entry);
+            HistoryComparisonContext.Text = comparison?.Previous == null ? string.Empty :
+                string.Format(Loc("Str_History_ComparedWith"), comparison.Previous.ScannedAt.ToLocalTime().ToString("g"));
             if (_entry == null)
             {
                 HistorySummary.Text = Loc("Str_History_Empty");
@@ -74,8 +83,7 @@ namespace KillerScan.Controls
                 HistorySummary.Text = string.Format(Loc("Str_History_AllSummary"), _entry.Devices.Count);
                 return;
             }
-            var comparison = ScanHistory.Compare(_entry);
-            foreach (var device in comparison.Added)
+            foreach (var device in comparison!.Added)
                 _changes.Add(HistoryChangeRow.From(Loc("Str_History_Added"), device));
             foreach (var device in comparison.Removed)
                 _changes.Add(HistoryChangeRow.From(Loc("Str_History_Removed"), device));
@@ -83,7 +91,7 @@ namespace KillerScan.Controls
                 _changes.Add(HistoryChangeRow.From(Loc("Str_History_Changed"), device));
             HistorySummary.Text = comparison.Previous == null
                 ? Loc("Str_History_FirstScan")
-                : string.Format(Loc("Str_History_Summary"), comparison.Added.Count,
+                : string.Format(Loc("Str_History_Summary"), comparison!.Added.Count,
                     comparison.Removed.Count, comparison.Changed.Count);
         }
 
@@ -91,11 +99,13 @@ namespace KillerScan.Controls
         {
             public string Change { get; init; } = string.Empty;
             public string Name { get; init; } = string.Empty;
+            public HistoricalDevice Device { get; init; } = new();
             public string IpAddress { get; init; } = string.Empty;
             public string DeviceType { get; init; } = string.Empty;
 
             public static HistoryChangeRow From(string change, HistoricalDevice device) => new()
             {
+                Device = device,
                 Change = change,
                 Name = string.IsNullOrWhiteSpace(device.Hostname) ? device.MacAddress : device.Hostname,
                 IpAddress = device.IpAddress,
@@ -105,6 +115,7 @@ namespace KillerScan.Controls
 
         private sealed class HistoryDeviceRow
         {
+            public HistoricalDevice Device { get; init; } = new();
             public string IpAddress { get; init; } = string.Empty;
             public string Name { get; init; } = string.Empty;
             public string MacAddress { get; init; } = string.Empty;
@@ -114,6 +125,7 @@ namespace KillerScan.Controls
 
             public static HistoryDeviceRow From(HistoricalDevice device) => new()
             {
+                Device = device,
                 IpAddress = device.IpAddress,
                 Name = device.Hostname,
                 MacAddress = device.MacAddress,

@@ -145,6 +145,9 @@ namespace KillerScan.Controls
                 if (source is Border { Tag: NetworkDevice }) return;
                 source = VisualTreeHelper.GetParent(source);
             }
+            ResultsGrid.UnselectAll();
+            UpdateTopologySelectionVisuals();
+            TopologyCanvas.Focus();
             UpdateTopologyOrderUi();
             var menu = TopologyOrderButton.ContextMenu;
             menu.PlacementTarget = TopologyCanvas;
