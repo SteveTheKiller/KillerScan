@@ -266,7 +266,7 @@ namespace KillerScan.Shell
         }
 
         /// <summary>Padding and cell margins the budget above cannot measure directly.</summary>
-        private const double FooterNetworkGap = 48;
+        private const double FooterNetworkGap = 52;
 
         /// <summary>
         /// The same problem on the left of the bar. The status line had a fixed 230px cap so it

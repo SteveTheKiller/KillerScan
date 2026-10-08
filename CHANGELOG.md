@@ -44,6 +44,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Selected language and theme rows keep the active accent on hover.
 - Main window and dialog title bar icons now use sharp size-matched images.
 - Rail right-click menus align 8 pixels from the side and bottom content edges.
+- More space between the footer IP address and version text in every theme.
 
 ## [1.7.5] - 2026-09-28
 

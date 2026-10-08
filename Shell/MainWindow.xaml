@@ -606,7 +606,7 @@
                          Transparent background rather than none, so the whole strip is hit-testable
                          and not just the glyphs themselves. -->
                     <Border x:Name="NetworkFooterGroup" Background="Transparent" Cursor="Hand"
-                            Margin="0,0,12,0" VerticalAlignment="Center"
+                            Margin="0,0,16,0" VerticalAlignment="Center"
                             MouseLeftButtonUp="NetworkFooter_Click"
                             ToolTip="{DynamicResource Str_TT_FooterNetwork}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
