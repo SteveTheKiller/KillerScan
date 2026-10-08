@@ -320,7 +320,8 @@ internal static class ReleaseUiTests
         var settings = ((Button)workspace.FindName("TopologyOrderButton")).ContextMenu;
         var reset = type.GetMethod("TopologyReset_Click", Instance)!;
         reset.Invoke(workspace, new object[] { workspace, new RoutedEventArgs() });
-        Require(settings.Items.Count == 10, "Topology settings expose grouping, appearance, reset and export.");
+        Require(settings.Items.Count == 11 && settings.Items.OfType<MenuItem>().Any(item => item.InputGestureText == "Ctrl+Wheel"),
+            "Topology settings expose grouping, appearance, zoom, reset and export.");
         settings.Visibility = Visibility.Hidden;
         try
         {

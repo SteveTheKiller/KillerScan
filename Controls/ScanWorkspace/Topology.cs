@@ -104,18 +104,13 @@ namespace KillerScan.Controls
             if (_showTopology) RefreshTopology();
         }
 
-        private void TopologyScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
-        {
-            if (_showTopology && (e.ViewportWidthChange != 0 || e.ViewportHeightChange != 0)) RefreshTopology();
-        }
-
         private void RefreshTopology()
         {
             if (TopologyCanvas == null || TopologyPane == null || !_showTopology) return;
 
             double scale = TopologyScale;
-            double viewportWidth = TopologyScrollViewer.ViewportWidth > 0 ? TopologyScrollViewer.ViewportWidth : TopologyPane.ActualWidth;
-            double viewportHeight = TopologyScrollViewer.ViewportHeight > 0 ? TopologyScrollViewer.ViewportHeight : TopologyPane.ActualHeight;
+            double viewportWidth = Math.Max(1, TopologyPane.ActualWidth - SystemParameters.VerticalScrollBarWidth);
+            double viewportHeight = Math.Max(1, TopologyPane.ActualHeight - SystemParameters.HorizontalScrollBarHeight);
             double nodeCross = TopologyHorizontal ? TopologyNodeHeight : TopologyNodeWidth;
             double nodeDepth = TopologyHorizontal ? TopologyNodeWidth : TopologyNodeHeight;
             double cross = Math.Max(TopologyHorizontal ? viewportHeight : viewportWidth,
@@ -139,22 +134,36 @@ namespace KillerScan.Controls
             double depth = Math.Max(TopologyHorizontal ? viewportWidth : viewportHeight,
                 rowStart + deviceRows.Count * (nodeDepth + 16 * scale) + groupGaps * 10 * scale);
             bool radial = _topologyOptions["Pattern"] == "Radial";
-            double diagonal = Math.Sqrt(TopologyNodeWidth * TopologyNodeWidth + TopologyNodeHeight * TopologyNodeHeight);
-            double radius = Math.Max(Math.Max(nodeCross + 64 * scale, nodeDepth + 56 * scale) + diagonal + 22 * scale,
-                regular.Count * (diagonal + 22 * scale) / (2 * Math.PI));
             double width = TopologyHorizontal ? depth : cross;
             double height = TopologyHorizontal ? cross : depth;
+            Point[] radialPoints = [];
+            var center = Orient(cross / 2, centerDepth);
             if (radial)
             {
-                width = Math.Max(viewportWidth, 2 * radius + TopologyNodeWidth + 44 * scale);
-                height = Math.Max(viewportHeight, 2 * radius + TopologyNodeHeight + 44 * scale);
+                Point RelativeRole(double across, double along) => TopologyHorizontal
+                    ? new Point(along, across) : new Point(across, along);
+                Rect Box(Point p) => new Rect(p.X - TopologyNodeWidth / 2, p.Y - TopologyNodeHeight / 2,
+                    TopologyNodeWidth, TopologyNodeHeight);
+                var reserved = new List<Rect>
+                {
+                    Box(new Point()), Box(RelativeRole(0, -(nodeDepth + 56 * scale))),
+                    Box(RelativeRole(-(nodeCross + 64 * scale), 0))
+                };
+                if (!string.IsNullOrWhiteSpace(dnsIp) && dnsIp != "--" && !SameIp(dnsIp, gatewayIp))
+                    reserved.Add(Box(RelativeRole(nodeCross + 64 * scale, 0)));
+                radialPoints = TopologyGeometry.Radial(regular.Select(_ => new Size(TopologyNodeWidth, TopologyNodeHeight)).ToArray(),
+                    reserved, viewportWidth, viewportHeight, 12 * scale, TopologyHorizontal);
+                var bounds = reserved[0];
+                foreach (var box in reserved.Skip(1).Concat(radialPoints.Select(Box))) bounds.Union(box);
+                width = Math.Max(viewportWidth, bounds.Width + 44 * scale);
+                height = Math.Max(viewportHeight, bounds.Height + 44 * scale);
+                center = new Point((width - bounds.Width) / 2 - bounds.Left, (height - bounds.Height) / 2 - bounds.Top);
             }
             TopologyCanvas.Width = width;
             TopologyCanvas.Height = height;
             TopologyCanvas.Children.Clear();
             _topologyLinks.Clear();
 
-            var center = radial ? new Point(width / 2, height / 2) : Orient(cross / 2, centerDepth);
             Point RolePoint(double across, double relativeDepth) => radial
                 ? new Point(center.X + (TopologyHorizontal ? relativeDepth : across),
                     center.Y + (TopologyHorizontal ? across : relativeDepth))
@@ -211,9 +220,8 @@ namespace KillerScan.Controls
                 var ordered = deviceRows.SelectMany(row => row.Devices).ToList();
                 for (int index = 0; index < ordered.Count; index++)
                 {
-                    double angle = 2 * Math.PI * index / ordered.Count + (TopologyHorizontal ? 0 : Math.PI / 2);
                     var device = ordered[index];
-                    var point = Positioned(device, new Point(center.X + radius * Math.Cos(angle), center.Y + radius * Math.Sin(angle)));
+                    var point = Positioned(device, new Point(center.X + radialPoints[index].X, center.Y + radialPoints[index].Y));
                     var link = DrawInferredLink(center, point);
                     AddDeviceNode(point.X, point.Y, device, link);
                 }
@@ -443,6 +451,12 @@ namespace KillerScan.Controls
 
             Point now = e.GetPosition(TopologyCanvas);
             Vector delta = now - _topologyDragMouseStart;
+            MoveTopologyNodes(delta);
+            e.Handled = true;
+        }
+
+        private void MoveTopologyNodes(Vector delta)
+        {
             foreach (var item in _topologyDragStarts)
             {
                 double left = Math.Max(0, Math.Min(TopologyCanvas.Width - TopologyNodeWidth,
@@ -461,7 +475,6 @@ namespace KillerScan.Controls
                     link.Y2 = center.Y;
                 }
             }
-            e.Handled = true;
         }
 
         private void TopologyNode_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)

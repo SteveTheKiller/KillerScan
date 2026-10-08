@@ -56,6 +56,7 @@ namespace KillerScan.Controls
                 }
                 menu.Items.Add(group);
             }
+            AddTopologyZoomMenu(menu);
             var links = new MenuItem { Tag = "Links", IsCheckable = true };
             links.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Topology_Links");
             links.Click += TopologySetting_Click;
@@ -103,6 +104,9 @@ namespace KillerScan.Controls
             _topologyOptions["NodeScale"] = "100";
             _topologyOptions["FontSize"] = "11";
             SaveTopologySettings(true);
+            SetTopologyZoom(1, new Point());
+            TopologyScrollViewer.ScrollToHorizontalOffset(0);
+            TopologyScrollViewer.ScrollToVerticalOffset(0);
         }
 
         private void SaveTopologySettings(bool resetPositions)

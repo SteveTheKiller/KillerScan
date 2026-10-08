@@ -696,9 +696,11 @@
                 <Grid Grid.Row="0" x:Name="TopologyPane" Visibility="Collapsed"
                       ClipToBounds="True" SizeChanged="TopologyPane_SizeChanged">
                     <ScrollViewer x:Name="TopologyScrollViewer" HorizontalScrollBarVisibility="Auto"
-                                  VerticalScrollBarVisibility="Auto" ScrollChanged="TopologyScrollViewer_ScrollChanged">
-                        <Canvas x:Name="TopologyCanvas" Background="Transparent"
-                                MouseRightButtonDown="TopologyBackground_RightClick"/>
+                                  VerticalScrollBarVisibility="Auto" PreviewMouseWheel="TopologyScrollViewer_PreviewMouseWheel">
+                        <Grid x:Name="TopologyZoomHost">
+                            <Canvas x:Name="TopologyCanvas" Background="Transparent"
+                                    MouseRightButtonDown="TopologyBackground_RightClick"/>
+                        </Grid>
                     </ScrollViewer>
                 </Grid>
             </Grid>
