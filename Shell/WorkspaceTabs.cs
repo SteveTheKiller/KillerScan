@@ -49,6 +49,9 @@ namespace KillerScan.Shell
             // the overflow). Refit once the new theme has laid out.
             Services.ThemeManager.ThemeChanged += () => Dispatcher.BeginInvoke(
                 new Action(FitToolbarViews), System.Windows.Threading.DispatcherPriority.Loaded);
+            // A language switch changes every caption and the Scan button's width, also without
+            // resizing the bar.
+            Services.LocaleManager.LocaleChanged += QueueToolbarFit;
         }
 
         private void AddViewButton(string view, string key, string shortcut, Action action)
@@ -233,45 +236,93 @@ namespace KillerScan.Shell
         /// width rather than being squeezed until they wrap. Scan's bar and Keep Alive's are
         /// different widths, so the budget is measured from whichever is showing.
         /// </remarks>
-        private const double ScanTargetGive = 60;
+        private const double TargetPreferredWidth = 220;
+        private const double TargetGive = 60;
+        private const double TargetFloor = 40;
 
+        /// <summary>
+        /// The address box of each view bar that has one. Its width is set by the fit, so the
+        /// fit measures the bar as if the box were at its preferred width; measuring it at the
+        /// width the last fit left it made every squeeze compound on the one before.
+        /// </summary>
+        private readonly Dictionary<string, FrameworkElement> _viewToolbarTargets = [];
+
+        private bool _toolbarFitQueued;
+
+        /// <summary>
+        /// Runs the fit once the current change has laid out. A language or theme switch changes
+        /// caption widths without resizing the bar, so a fit run inside the switch measured the
+        /// previous language's text and kept that language's decisions.
+        /// </summary>
+        private void QueueToolbarFit()
+        {
+            if (_toolbarFitQueued) return;
+            _toolbarFitQueued = true;
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                _toolbarFitQueued = false;
+                FitToolbarViews();
+            }), System.Windows.Threading.DispatcherPriority.Loaded);
+        }
+
+        private static TextBlock? ViewCaption(Button button) =>
+            button.Content is Panel panel && panel.Children.Count > 1
+                ? panel.Children[panel.Children.Count - 1] as TextBlock : null;
+
+        /// <summary>
+        /// KillerPDF's order: views move into the overflow menu first, captions stay on what is
+        /// left, and only when the bar still does not fit do the remaining buttons drop their
+        /// captions to icons. Every pass starts fully expanded, so widening the window or
+        /// switching to a shorter language always brings everything back.
+        /// </summary>
         private void FitToolbarViews()
         {
             if (_workspaceToolbar.ActualWidth <= 0) return;
+            var unbounded = new Size(double.PositiveInfinity, double.PositiveInfinity);
 
             // The overflow button lives in this strip too, so it has to be kept out of the list of
             // things that can be pushed into the overflow.
             var buttons = _workspaceNavigation.Children.OfType<Button>()
                 .Where(b => b != _toolbarOverflow).ToList();
+            bool shedCaptions = _toolbarLabelMode is ToolbarLabelMode.Beside or ToolbarLabelMode.Under;
             foreach (var button in buttons)
             {
                 button.Visibility = Visibility.Visible;
-                button.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                if (shedCaptions && ViewCaption(button) is { } caption) caption.Visibility = Visibility.Visible;
+                button.InvalidateMeasure();
+                button.Measure(unbounded);
             }
 
             double reserved = _workspaceNavigation.Margin.Left + _workspaceNavigation.Margin.Right;
             string key = _viewToolbars.ContainsKey(_workspaceView) ? _workspaceView : "scan";
+            _viewToolbarTargets.TryGetValue(key, out var target);
+            double toolbarOthers = 0;
             if (_viewToolbars.TryGetValue(key, out var toolbar))
             {
-                toolbar.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-                reserved += toolbar.DesiredSize.Width + toolbar.Margin.Left + toolbar.Margin.Right;
-                // The scan bar's address box narrows a little when the bar is tight (layout
-                // squeezes it), and a slightly narrower box beats a view going missing. Count that
-                // give before pushing views into the overflow.
-                if (key == "scan") reserved -= ScanTargetGive;
+                toolbar.InvalidateMeasure();
+                toolbar.Measure(unbounded);
+                double measured = toolbar.DesiredSize.Width + toolbar.Margin.Left + toolbar.Margin.Right;
+                if (target != null && !double.IsNaN(target.Width))
+                {
+                    // Everything on the bar except the address box, and the box counted at its
+                    // preferred width less the give it may take before a view goes missing.
+                    toolbarOthers = measured - target.Width;
+                    measured = toolbarOthers + TargetPreferredWidth - TargetGive;
+                }
+                reserved += measured;
             }
 
-            _toolbarOverflow.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            _toolbarOverflow.Measure(unbounded);
             double available = _workspaceToolbar.ActualWidth - reserved;
             double total = buttons.Sum(b => b.DesiredSize.Width);
 
             _overflowedViews.Clear();
+            _viewButtons.TryGetValue(_workspaceView, out var active);
             if (total > available)
             {
                 // The overflow button is about to appear, so it has to come out of the same
                 // budget. Drop buttons from the left until what is left fits beside it.
                 available -= _toolbarOverflow.DesiredSize.Width;
-                _viewButtons.TryGetValue(_workspaceView, out var active);
                 var order = buttons
                     .OrderBy(b => Array.IndexOf(ToolbarDropOrder,
                         _viewAppearance.TryGetValue(b, out var look) ? look.Key : string.Empty) is var i && i < 0
@@ -287,9 +338,36 @@ namespace KillerScan.Shell
                     button.Visibility = Visibility.Collapsed;
                     _overflowedViews.Add(button);
                 }
+
+                // Last resort: what is still on the bar drops its captions, the active view last.
+                // The tooltip still names each button.
+                if (shedCaptions && total > available)
+                {
+                    foreach (var button in buttons.Where(b => b.Visibility == Visibility.Visible)
+                        .OrderBy(b => b == active ? 1 : 0))
+                    {
+                        if (total <= available) break;
+                        if (ViewCaption(button) is not { } caption) continue;
+                        double before = button.DesiredSize.Width;
+                        caption.Visibility = Visibility.Collapsed;
+                        button.InvalidateMeasure();
+                        button.Measure(unbounded);
+                        total -= before - button.DesiredSize.Width;
+                    }
+                }
             }
 
             _toolbarOverflow.Visibility = _overflowedViews.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            // Give the address box whatever the views left, between its floor and its preferred
+            // width. The scan bar also fits its filter box, so it finishes that itself.
+            if (target != null && key != "scan")
+            {
+                double navigation = _workspaceNavigation.Margin.Left + _workspaceNavigation.Margin.Right + total
+                    + (_toolbarOverflow.Visibility == Visibility.Visible ? _toolbarOverflow.DesiredSize.Width : 0);
+                target.Width = Math.Max(TargetFloor, Math.Min(TargetPreferredWidth,
+                    _workspaceToolbar.ActualWidth - navigation - toolbarOthers));
+            }
         }
 
         private void OpenToolbarOverflow()

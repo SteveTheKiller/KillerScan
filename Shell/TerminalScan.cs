@@ -52,6 +52,7 @@ namespace KillerScan.Shell
             };
             bar.Children.Add(target);
             bar.Children.Add(button);
+            _viewToolbarTargets["terminal"] = target;
             RegisterViewToolbar("terminal", bar);
         }
 

@@ -81,6 +81,10 @@ namespace KillerScan.Controls
             ScanToolbar.SizeChanged += (_, _) => FitToolbarInputs();
             FilterBox.IsVisibleChanged += (_, _) => FitToolbarInputs();
             DeepScanAllButton.IsVisibleChanged += (_, _) => FitToolbarInputs();
+            // A language switch changes these buttons' widths without resizing the bar.
+            ScanBtn.SizeChanged += (_, _) => FitToolbarInputs();
+            DeepScanAllButton.SizeChanged += (_, _) => FitToolbarInputs();
+            TopologyOrderButton.IsVisibleChanged += (_, _) => FitToolbarInputs();
             SubnetInput.TextChanged += (_, _) => { _active.SubnetText = Targets; StateChanged?.Invoke(this, EventArgs.Empty); };
             SubnetInput.KeyDown += (_, e) => { if (e.Key == Key.Enter) { Scan(); e.Handled = true; } };
             Loaded += (_, _) =>

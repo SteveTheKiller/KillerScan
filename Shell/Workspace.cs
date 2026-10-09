@@ -101,6 +101,7 @@ namespace KillerScan.Shell
                 _scanWorkspace = new ScanWorkspace(target, DemoMode);
                 var scanToolbar = _scanWorkspace.DetachToolbar();
                 scanToolbar.Margin = new Thickness(8, 0, 0, 0);
+                _viewToolbarTargets["scan"] = (FrameworkElement)_scanWorkspace.FindName("SubnetInput");
                 RegisterViewToolbar("scan", scanToolbar);
                 InitializeTerminalScanToolbar((TextBox)_scanWorkspace.FindName("SubnetInput"));
                 var networkDetails = new StackPanel();
