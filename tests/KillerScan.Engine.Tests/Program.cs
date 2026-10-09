@@ -18,6 +18,7 @@ internal static class Program
             await Run("Quick scan reports stages, devices and host hooks through a fake platform", QuickScan);
             await Run("A canceled token stops the scan", Canceled);
             await Run("Full scan preserves HTTP results, manual classification and saved names", EngineBehaviorTests.FullScan);
+            await Run("HTTP fingerprint extracts the controlled title and Server header", EngineBehaviorTests.HttpFingerprintResults);
             await Run("Stop cancels a deep probe before device completion", EngineBehaviorTests.DeepProbeCancellation);
             await Run("Stop cancels the wait for a stalled HTTP fingerprint", EngineBehaviorTests.HttpFingerprintCancellation);
             await Run("Stop cancels the wait for a stalled TLS fingerprint", EngineBehaviorTests.TlsFingerprintCancellation);

@@ -27,7 +27,12 @@ internal static class EngineBehaviorTests
         {
             NetworkPlatform.Current = new LoopbackPlatform();
             NetworkScanner.ManualTypeLookup = _ => "Printer";
-            NetworkScanner.DeviceCompleted = device => device.Hostname = "Saved device name";
+            (string Title, string Server)? fingerprintAtCompletion = null;
+            NetworkScanner.DeviceCompleted = device =>
+            {
+                fingerprintAtCompletion = (device.HttpTitle, device.HttpServer);
+                device.Hostname = "Saved device name";
+            };
             var scanner = new NetworkScanner();
             NetworkDevice? reported = null;
             scanner.DeviceFound += device => reported = device;
@@ -36,7 +41,12 @@ internal static class EngineBehaviorTests
             Require(devices.Count == 1, "Full loopback scan returns one device.");
             var result = devices.Single();
             Require(result.OpenPorts.Contains(server.Port), "Full scan discovers the controlled HTTP port.");
-            Require(result.HttpTitle == "KillerScan loopback fixture", "Full scan extracts the real HTTP title.");
+            // A runner may also serve HTTP on port 80, which correctly wins over this fixture.
+            // Exact title/header extraction is checked separately with a controlled port list.
+            Require(result.HttpTitle.Length > 0 || result.HttpServer.Length > 0,
+                "Full scan retains a real HTTP fingerprint from the first responsive web port.");
+            Require(fingerprintAtCompletion == (result.HttpTitle, result.HttpServer),
+                "HTTP fingerprinting finishes before the completion hook and survives device reporting.");
             Require(result.DeviceType == "Printer" && result.Hostname == "Saved device name",
                 "Manual classification and the saved-name hook survive the full probe.");
             Require(ReferenceEquals(result, reported), "The UI receives the completed device with host preferences applied.");
@@ -47,6 +57,16 @@ internal static class EngineBehaviorTests
             NetworkScanner.ManualTypeLookup = manualType;
             NetworkScanner.DeviceCompleted = completed;
         }
+    }
+
+    public static async Task HttpFingerprintResults()
+    {
+        using var server = new LoopbackHttpServer(stall: false, ephemeral: true);
+        var device = new NetworkDevice { IpAddress = "127.0.0.1", OpenPorts = [server.Port] };
+        await StartFingerprint("ProbeHttpAsync", device);
+        Require(server.RequestReceived.IsCompleted, "The HTTP fingerprint reaches the controlled fixture.");
+        Require(device.HttpTitle == "KillerScan loopback fixture", "The real HTTP probe extracts the exact title.");
+        Require(device.HttpServer == "KillerScan-Test", "The real HTTP probe extracts the exact Server header.");
     }
 
     public static async Task DeepProbeCancellation()
@@ -100,8 +120,7 @@ internal static class EngineBehaviorTests
         var device = new NetworkDevice { IpAddress = "127.0.0.1", OpenPorts = [server.Port] };
         // Exercise the released private probes and the exact cancellation wait used by the deep
         // fingerprint pass. An explicit port list isolates real HTTP/TLS I/O from runner services.
-        var probe = (Task)typeof(NetworkScanner).GetMethod(probeName, BindingFlags.NonPublic | BindingFlags.Static)!
-            .Invoke(null, new object[] { device, IPAddress.Loopback, true })!;
+        var probe = StartFingerprint(probeName, device);
         var wait = typeof(NetworkScanner).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
             .Single(method => method.Name == "AwaitWithCancellation" && !method.IsGenericMethod);
         var scan = (Task)wait.Invoke(null, new object[] { Task.WhenAll(probe), cancel.Token })!;
@@ -123,6 +142,10 @@ internal static class EngineBehaviorTests
             try { await scan; } catch (OperationCanceledException) { }
         }
     }
+
+    private static Task StartFingerprint(string probeName, NetworkDevice device) =>
+        (Task)typeof(NetworkScanner).GetMethod(probeName, BindingFlags.NonPublic | BindingFlags.Static)!
+            .Invoke(null, new object[] { device, IPAddress.Loopback, true })!;
 
     private static async Task RequirePromptCancellation(Task scan, CancellationTokenSource cancel)
     {
