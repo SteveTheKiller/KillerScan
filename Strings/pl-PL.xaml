@@ -275,6 +275,7 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Btn_Save">Zapisz</sys:String>
     <sys:String x:Key="Str_Col_Modified">zmodyfikowano</sys:String>
     <sys:String x:Key="Str_Col_Name">nazwa</sys:String>
+    <sys:String x:Key="Str_Col_DeviceName">Nazwa</sys:String>
     <sys:String x:Key="Str_Col_Size">rozmiar</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Wszystkie pliki</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Nazwa pliku:</sys:String>

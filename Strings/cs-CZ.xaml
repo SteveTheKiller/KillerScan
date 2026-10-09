@@ -288,6 +288,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Btn_Save">Uložit</sys:String>
     <sys:String x:Key="Str_Col_Modified">změněno</sys:String>
     <sys:String x:Key="Str_Col_Name">název</sys:String>
+    <sys:String x:Key="Str_Col_DeviceName">Název</sys:String>
     <sys:String x:Key="Str_Col_Size">velikost</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Všechny soubory</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Název souboru:</sys:String>

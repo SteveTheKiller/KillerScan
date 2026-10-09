@@ -332,6 +332,7 @@
     <sys:String x:Key="Str_Btn_Save">Зберегти</sys:String>
     <sys:String x:Key="Str_Col_Modified">змінено</sys:String>
     <sys:String x:Key="Str_Col_Name">ім'я</sys:String>
+    <sys:String x:Key="Str_Col_DeviceName">Ім'я</sys:String>
     <sys:String x:Key="Str_Col_Size">розмір</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Усі файли</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Ім'я файлу:</sys:String>

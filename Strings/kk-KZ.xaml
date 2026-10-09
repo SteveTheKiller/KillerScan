@@ -332,6 +332,7 @@
     <sys:String x:Key="Str_Btn_Save">Сақтау</sys:String>
     <sys:String x:Key="Str_Col_Modified">өзгертілген</sys:String>
     <sys:String x:Key="Str_Col_Name">атауы</sys:String>
+    <sys:String x:Key="Str_Col_DeviceName">Атауы</sys:String>
     <sys:String x:Key="Str_Col_Size">өлшемі</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Барлық файлдар</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Файл атауы:</sys:String>

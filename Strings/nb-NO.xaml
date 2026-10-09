@@ -332,6 +332,7 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Btn_Save">Lagre</sys:String>
     <sys:String x:Key="Str_Col_Modified">endret</sys:String>
     <sys:String x:Key="Str_Col_Name">navn</sys:String>
+    <sys:String x:Key="Str_Col_DeviceName">Navn</sys:String>
     <sys:String x:Key="Str_Col_Size">størrelse</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Alle filer</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Filnavn:</sys:String>

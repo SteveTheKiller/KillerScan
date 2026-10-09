@@ -118,7 +118,7 @@ namespace KillerScan.Controls
         private string BuildCsv()
         {
             static string Cell(string value) => "\"" + value.Replace("\"", "\"\"") + "\"";
-            var lines = new List<string> { string.Join(",", new[] { "Str_History_Change", "Str_Col_Ip", "Str_Col_Name",
+            var lines = new List<string> { string.Join(",", new[] { "Str_History_Change", "Str_Col_Ip", "Str_Col_DeviceName",
                 "Str_Col_Mac", "Str_Col_Vendor", "Str_Col_Type", "Str_Col_Ports" }.Select(key => Cell(Loc(key)))) };
             foreach (object row in VisibleGrid.Items)
             {

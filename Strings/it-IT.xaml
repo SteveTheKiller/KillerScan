@@ -306,6 +306,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Btn_Save">Salva</sys:String>
     <sys:String x:Key="Str_Col_Modified">modificato</sys:String>
     <sys:String x:Key="Str_Col_Name">nome</sys:String>
+    <sys:String x:Key="Str_Col_DeviceName">Nome</sys:String>
     <sys:String x:Key="Str_Col_Size">dimensione</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Tutti i file</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Nome file:</sys:String>

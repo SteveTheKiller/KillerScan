@@ -306,6 +306,7 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Btn_Save">Mentés</sys:String>
     <sys:String x:Key="Str_Col_Modified">módosított</sys:String>
     <sys:String x:Key="Str_Col_Name">nevet</sys:String>
+    <sys:String x:Key="Str_Col_DeviceName">Név</sys:String>
     <sys:String x:Key="Str_Col_Size">méretet</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Minden fájl</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Fájlnév:</sys:String>

@@ -81,8 +81,8 @@ namespace KillerScan.Controls
         {
             _changes.Clear();
             _devices.Clear();
-            string[] changes = ["Str_History_Change", "Str_Col_Name", "Str_Col_Ip", "Str_Col_Type"];
-            string[] devices = ["Str_Col_Ip", "Str_Col_Name", "Str_Col_Mac", "Str_Col_Vendor", "Str_Col_Type", "Str_Col_Ports"];
+            string[] changes = ["Str_History_Change", "Str_Col_DeviceName", "Str_Col_Ip", "Str_Col_Type"];
+            string[] devices = ["Str_Col_Ip", "Str_Col_DeviceName", "Str_Col_Mac", "Str_Col_Vendor", "Str_Col_Type", "Str_Col_Ports"];
             for (int i = 0; i < changes.Length; i++) HistoryChangesGrid.Columns[i].Header = Loc(changes[i]);
             for (int i = 0; i < devices.Length; i++) HistoryAllGrid.Columns[i].Header = Loc(devices[i]);
             // Match the sidebar's saved timestamp, including archives recorded in another zone.

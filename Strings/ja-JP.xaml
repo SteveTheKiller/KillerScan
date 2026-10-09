@@ -301,6 +301,7 @@
     <sys:String x:Key="Str_Btn_Save">保存</sys:String>
     <sys:String x:Key="Str_Col_Modified">更新日時</sys:String>
     <sys:String x:Key="Str_Col_Name">名前</sys:String>
+    <sys:String x:Key="Str_Col_DeviceName">名前</sys:String>
     <sys:String x:Key="Str_Col_Size">サイズ</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">すべてのファイル</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">ファイル名:</sys:String>

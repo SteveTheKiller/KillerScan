@@ -290,6 +290,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Btn_Save">Kaydet</sys:String>
     <sys:String x:Key="Str_Col_Modified">değiştirilme</sys:String>
     <sys:String x:Key="Str_Col_Name">ad</sys:String>
+    <sys:String x:Key="Str_Col_DeviceName">Ad</sys:String>
     <sys:String x:Key="Str_Col_Size">boyut</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Tüm dosyalar</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Dosya adı:</sys:String>

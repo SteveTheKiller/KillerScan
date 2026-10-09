@@ -290,6 +290,7 @@
     <sys:String x:Key="Str_Btn_Save">সংরক্ষণ</sys:String>
     <sys:String x:Key="Str_Col_Modified">পরিবর্তিত</sys:String>
     <sys:String x:Key="Str_Col_Name">নাম</sys:String>
+    <sys:String x:Key="Str_Col_DeviceName">নাম</sys:String>
     <sys:String x:Key="Str_Col_Size">আকার</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">সব ফাইল</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">ফাইলের নাম:</sys:String>

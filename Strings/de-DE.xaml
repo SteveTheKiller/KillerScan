@@ -291,6 +291,7 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Btn_Save">Speichern</sys:String>
     <sys:String x:Key="Str_Col_Modified">geändert</sys:String>
     <sys:String x:Key="Str_Col_Name">Name</sys:String>
+    <sys:String x:Key="Str_Col_DeviceName">Name</sys:String>
     <sys:String x:Key="Str_Col_Size">größe</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Alle Dateien</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Dateiname:</sys:String>

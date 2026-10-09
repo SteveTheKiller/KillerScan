@@ -290,6 +290,7 @@
     <sys:String x:Key="Str_Btn_Save">儲存</sys:String>
     <sys:String x:Key="Str_Col_Modified">修改時間</sys:String>
     <sys:String x:Key="Str_Col_Name">名稱</sys:String>
+    <sys:String x:Key="Str_Col_DeviceName">名稱</sys:String>
     <sys:String x:Key="Str_Col_Size">大小</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">所有檔案</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">檔案名稱:</sys:String>

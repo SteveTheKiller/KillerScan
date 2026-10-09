@@ -676,7 +676,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{DynamicResource Str_Services_Service}" Binding="{Binding Service}" Width="160"/>
                         <DataGridTextColumn Header="{DynamicResource Str_Col_Ports}" Binding="{Binding Port}" Width="80"/>
-                        <DataGridTextColumn Header="{DynamicResource Str_Col_Name}" Binding="{Binding DeviceName}" Width="*"/>
+                        <DataGridTextColumn Header="{DynamicResource Str_Col_DeviceName}" Binding="{Binding DeviceName}" Width="*"/>
                         <DataGridTextColumn Header="{DynamicResource Str_Col_Ip}" Binding="{Binding IpAddress}" Width="130"/>
                         <DataGridTemplateColumn Header="{DynamicResource Str_Col_Type}" Width="150" SortMemberPath="DeviceTypeDisplay" CellTemplate="{StaticResource DeviceTypeCell}"/>
                     </DataGrid.Columns>

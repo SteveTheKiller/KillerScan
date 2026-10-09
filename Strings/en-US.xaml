@@ -332,6 +332,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Btn_Save">Save</sys:String>
     <sys:String x:Key="Str_Col_Modified">modified</sys:String>
     <sys:String x:Key="Str_Col_Name">name</sys:String>
+    <sys:String x:Key="Str_Col_DeviceName">Name</sys:String>
     <sys:String x:Key="Str_Col_Size">size</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">All files</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">File name:</sys:String>

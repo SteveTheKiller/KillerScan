@@ -290,6 +290,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Btn_Save">Enregistrer</sys:String>
     <sys:String x:Key="Str_Col_Modified">modifié</sys:String>
     <sys:String x:Key="Str_Col_Name">nom</sys:String>
+    <sys:String x:Key="Str_Col_DeviceName">Nom</sys:String>
     <sys:String x:Key="Str_Col_Size">taille</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Tous les fichiers</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Nom du fichier :</sys:String>
