@@ -21,7 +21,7 @@ using Microsoft.Win32;
 using KillerScan.Controls;
 using KillerScan.Shell;
 
-internal static class HistoryUiTests
+internal static partial class HistoryUiTests
 {
     private const BindingFlags Instance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
     private const BindingFlags Static = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
@@ -32,12 +32,12 @@ internal static class HistoryUiTests
     private static object? Field(object target, string name) => target.GetType().GetField(name, Instance)!.GetValue(target);
     private static void Require(bool condition, string message) { _checks++; if (!condition) throw new InvalidOperationException(message); }
 
-    public static Task Run(bool settingsOnly = false, bool tableOnly = false, bool profilesOnly = false)
+    public static Task Run(bool settingsOnly = false, bool tableOnly = false, bool profilesOnly = false, bool menusOnly = false)
     {
         Exception? failure = null;
         var thread = new Thread(() =>
         {
-            try { CheckUi(settingsOnly, tableOnly, profilesOnly); } catch (Exception ex) { failure = ex; }
+            try { CheckUi(settingsOnly, tableOnly, profilesOnly, menusOnly); } catch (Exception ex) { failure = ex; }
             finally { Dispatcher.CurrentDispatcher.InvokeShutdown(); }
         });
         thread.SetApartmentState(ApartmentState.STA); thread.Start();
@@ -56,14 +56,14 @@ internal static class HistoryUiTests
         Console.Write(await output); Require(process.ExitCode == 0, "Isolated history suite: " + await error);
     }
 
-    private static void CheckUi(bool settingsOnly, bool tableOnly, bool profilesOnly)
+    private static void CheckUi(bool settingsOnly, bool tableOnly, bool profilesOnly, bool menusOnly)
     {
         // Settings writes are redirected for this isolated test process, never to the user's app key.
         string scratch = "Software\\KillerScan-HistoryTests-" + Guid.NewGuid().ToString("N");
         using var registry = Registry.CurrentUser.CreateSubKey(scratch);
         var currentUser = new IntPtr(unchecked((int)0x80000001));
         Require(RegOverridePredefKey(currentUser, registry.Handle.DangerousGetHandle()) == 0, "Isolate registry settings.");
-        try { Capture(settingsOnly, tableOnly, profilesOnly); }
+        try { Capture(settingsOnly, tableOnly, profilesOnly, menusOnly); }
         finally
         {
             RegOverridePredefKey(currentUser, IntPtr.Zero);
@@ -71,7 +71,7 @@ internal static class HistoryUiTests
         }
     }
 
-    private static void Capture(bool settingsOnly, bool tableOnly, bool profilesOnly)
+    private static void Capture(bool settingsOnly, bool tableOnly, bool profilesOnly, bool menusOnly)
     {
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", Static)!.SetValue(null, assembly);
@@ -87,7 +87,7 @@ internal static class HistoryUiTests
         context.XmlnsDictionary.Add("", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
         context.XmlnsDictionary.Add("x", "http://schemas.microsoft.com/winfx/2006/xaml");
         context.XmlnsDictionary.Add("controls", "clr-namespace:KillerScan.Controls;assembly=KillerScan");
-        app.Resources = (ResourceDictionary)XamlReader.Parse(dictionary, context);
+        app.Resources = (ResourceDictionary)XamlReader.Parse(PreserveMenuGlyphReferences(dictionary), context);
         assembly.GetType("KillerScan.Services.DemoData", true)!.GetField("Enabled", Static)!.SetValue(null, true);
         var themeManager = assembly.GetType("KillerScan.Services.ThemeManager", true)!;
         var themeType = assembly.GetType("KillerScan.Services.Theme", true)!;
@@ -117,6 +117,7 @@ internal static class HistoryUiTests
             return;
         }
         var window = new MainWindow();
+        if (menusOnly) { CheckMenuIcons(window, assembly, directory.FullName, Theme); return; }
         if (profilesOnly) { CheckProfiles(window, assembly, Theme, Locale); return; }
         var historyType = assembly.GetType("KillerScan.Services.ScanHistory", true)!;
         var entryType = assembly.GetType("KillerScan.Services.ScanHistoryEntry", true)!;

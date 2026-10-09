@@ -38,24 +38,24 @@ namespace KillerScan.Controls
         private ContextMenu BuildHistoryMenu(DataGrid? grid)
         {
             var menu = new ContextMenu();
-            void Add(string key, string gesture, string action)
+            void Add(string key, string gesture, string action, int glyph)
             {
-                var item = new MenuItem { InputGestureText = gesture, Tag = action };
+                var item = new MenuItem { InputGestureText = gesture, Tag = action, Icon = MenuGlyph.Create(glyph) };
                 item.SetResourceReference(MenuItem.HeaderProperty, key);
                 item.Click += (_, _) => ExecuteAction(action);
                 menu.Items.Add(item);
             }
-            Add("Str_Ctx_CopyIp", "Ctrl+C", "ip");
-            Add("Str_Ctx_CopyMac", "Ctrl+Shift+C", "mac");
-            Add("Str_Ctx_CopyHost", "Ctrl+Alt+C", "host");
-            Add("Str_History_CopyDetails", "Ctrl+Shift+Y", "details");
+            Add("Str_Ctx_CopyIp", "Ctrl+C", "ip", 0xE8C8);
+            Add("Str_Ctx_CopyMac", "Ctrl+Shift+C", "mac", 0xE8C8);
+            Add("Str_Ctx_CopyHost", "Ctrl+Alt+C", "host", 0xE8C8);
+            Add("Str_History_CopyDetails", "Ctrl+Shift+Y", "details", 0xE8C8);
             menu.Items.Add(new Separator());
-            Add("Str_Export_Csv", "Ctrl+E", "export");
-            Add("Str_History_ViewChanges", "Ctrl+Shift+H", "changes");
-            Add("Str_History_ViewAll", "Ctrl+Shift+H", "all");
+            Add("Str_Export_Csv", "Ctrl+E", "export", 0xE896);
+            Add("Str_History_ViewChanges", "Ctrl+Shift+H", "changes", 0xE8FD);
+            Add("Str_History_ViewAll", "Ctrl+Shift+H", "all", 0xE772);
             menu.Items.Add(new Separator());
-            Add("Str_History_Title", "Ctrl+H", "sidebar");
-            Add("Str_View_Devices", "F6", "current");
+            Add("Str_History_Title", "Ctrl+H", "sidebar", 0xE81C);
+            Add("Str_View_Devices", "F6", "current", 0xE772);
             menu.Opened += (_, _) =>
             {
                 foreach (var item in menu.Items.OfType<MenuItem>())
@@ -131,13 +131,16 @@ namespace KillerScan.Controls
         }
 
         internal void ShowExportMenu(FrameworkElement target)
+            => CreateExportMenu(target).IsOpen = true;
+
+        private ContextMenu CreateExportMenu(FrameworkElement target)
         {
-            var item = new MenuItem { InputGestureText = "Ctrl+E", IsEnabled = _entry != null && VisibleGrid.Items.Count > 0 };
+            var item = new MenuItem { InputGestureText = "Ctrl+E", Icon = MenuGlyph.Create(0xE896), IsEnabled = _entry != null && VisibleGrid.Items.Count > 0 };
             item.SetResourceReference(MenuItem.HeaderProperty, "Str_Export_Csv");
             item.Click += (_, _) => ExportCsv();
             var menu = new ContextMenu { PlacementTarget = target, Placement = PlacementMode.Right };
             menu.Items.Add(item);
-            menu.IsOpen = true;
+            return menu;
         }
 
         internal void ExportCsv()

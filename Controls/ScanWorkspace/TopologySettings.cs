@@ -43,11 +43,12 @@ namespace KillerScan.Controls
             var menu = TopologyOrderButton.ContextMenu;
             foreach (string name in TopologyChoices.Keys.Where(name => name != "Links"))
             {
-                var group = new MenuItem();
+                int glyph = name switch { "Pattern" => 0xE968, "Orientation" => 0xE7AD, "NodeScale" => 0xE799, "FontSize" => 0xE8E9, _ => 0xE8D2 };
+                var group = new MenuItem { Icon = MenuGlyph.Create(glyph) };
                 group.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Topology_" + name);
                 foreach (string value in TopologyChoices[name])
                 {
-                    var item = new MenuItem { Tag = name + "=" + value, IsCheckable = true };
+                    var item = new MenuItem { Tag = name + "=" + value, IsCheckable = true, Icon = MenuGlyph.Create(glyph) };
                     if (name is "Pattern" or "Orientation" || value == "Default")
                         item.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Topology_" + value);
                     else item.Header = name == "NodeScale" ? value + "%" : value;
@@ -57,16 +58,16 @@ namespace KillerScan.Controls
                 menu.Items.Add(group);
             }
             AddTopologyZoomMenu(menu);
-            var links = new MenuItem { Tag = "Links", IsCheckable = true };
+            var links = new MenuItem { Tag = "Links", IsCheckable = true, Icon = MenuGlyph.Create(0xE71B) };
             links.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Topology_Links");
             links.Click += TopologySetting_Click;
             menu.Items.Add(links);
-            var reset = new MenuItem();
+            var reset = new MenuItem { Icon = MenuGlyph.Create(0xE72C) };
             reset.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Topology_Reset");
             reset.Click += TopologyReset_Click;
             menu.Items.Add(reset);
             menu.Items.Add(new Separator());
-            var export = new MenuItem();
+            var export = new MenuItem { Icon = MenuGlyph.Create(0xE896) };
             export.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_TT_Export");
             foreach (var entry in new (string Key, RoutedEventHandler Handler)[]
             {
@@ -75,7 +76,7 @@ namespace KillerScan.Controls
                 ("Str_Export_SnapSvg", ExportSnapshotSvg_Click)
             })
             {
-                var item = new MenuItem();
+                var item = new MenuItem { Icon = MenuGlyph.Create(entry.Key == "Str_Export_SnapSvg" ? 0xEB9F : 0xE91B) };
                 item.SetResourceReference(HeaderedItemsControl.HeaderProperty, entry.Key);
                 item.Click += entry.Handler;
                 export.Items.Add(item);

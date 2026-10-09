@@ -23,11 +23,19 @@
                      item here already carries this card and the handlers can read it back. -->
                 <Border.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="{DynamicResource Str_Watch_CopyAddress}" InputGestureText="Ctrl+C" Click="CardCopy_Click"/>
-                        <MenuItem Header="{DynamicResource Str_Diag_Refresh}" InputGestureText="F3" Click="CardDiagnose_Click"/>
+                        <MenuItem Header="{DynamicResource Str_Watch_CopyAddress}" InputGestureText="Ctrl+C" Click="CardCopy_Click">
+                            <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{DynamicResource Str_Diag_Refresh}" InputGestureText="F3" Click="CardDiagnose_Click">
+                            <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE9D9;"/></MenuItem.Icon>
+                        </MenuItem>
                         <Separator/>
-                        <MenuItem Header="{DynamicResource Str_Watch_ResetStats}" InputGestureText="Ctrl+R" Click="CardReset_Click"/>
-                        <MenuItem Header="{DynamicResource Str_Watch_Remove}" InputGestureText="Delete" Click="CardRemove_Click"/>
+                        <MenuItem Header="{DynamicResource Str_Watch_ResetStats}" InputGestureText="Ctrl+R" Click="CardReset_Click">
+                            <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE72C;"/></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{DynamicResource Str_Watch_Remove}" InputGestureText="Delete" Click="CardRemove_Click">
+                            <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE74D;"/></MenuItem.Icon>
+                        </MenuItem>
                     </ContextMenu>
                 </Border.ContextMenu>
                 <Grid>

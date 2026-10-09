@@ -196,11 +196,17 @@
                             <ContextMenu x:Name="SortMenu" Style="{StaticResource PickerContextMenu}"
                                          ItemContainerStyle="{StaticResource PickerMenuItem}">
                                 <MenuItem x:Name="SortNameItem" Header="{DynamicResource Str_Col_Name}"
-                                          IsCheckable="True" Click="SortName_Click"/>
+                                          IsCheckable="True" Click="SortName_Click">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8CB;"/></MenuItem.Icon>
+                                </MenuItem>
                                 <MenuItem x:Name="SortSizeItem" Header="{DynamicResource Str_Col_Size}"
-                                          IsCheckable="True" Click="SortSize_Click"/>
+                                          IsCheckable="True" Click="SortSize_Click">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE799;"/></MenuItem.Icon>
+                                </MenuItem>
                                 <MenuItem x:Name="SortModifiedItem" Header="{DynamicResource Str_Col_Modified}"
-                                          IsCheckable="True" Click="SortModified_Click"/>
+                                          IsCheckable="True" Click="SortModified_Click">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE787;"/></MenuItem.Icon>
+                                </MenuItem>
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>

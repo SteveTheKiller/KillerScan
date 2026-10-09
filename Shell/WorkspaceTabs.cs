@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using KillerScan.Controls;
 
 namespace KillerScan.Shell
 {
@@ -123,7 +124,7 @@ namespace KillerScan.Shell
 
         private void BuildToolbarMenu()
         {
-            var heading = new MenuItem { IsEnabled = false };
+            var heading = new MenuItem { IsEnabled = false, Icon = MenuGlyph.Create(0xE713) };
             heading.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Toolbar_Header");
             _toolbarMenu.Items.Add(heading);
             _toolbarMenu.Items.Add(new Separator());
@@ -139,7 +140,7 @@ namespace KillerScan.Shell
         private void AddToolbarChoice(object value, string key, int shortcut)
         {
             var item = new MenuItem { Tag = value, IsCheckable = true, StaysOpenOnClick = true,
-                InputGestureText = "Ctrl+Shift+" + shortcut };
+                InputGestureText = "Ctrl+Shift+" + shortcut, Icon = MenuGlyph.Create(shortcut <= 2 ? 0xE80A : 0xE8D2) };
             item.SetResourceReference(HeaderedItemsControl.HeaderProperty, key);
             item.Click += (_, _) => SelectToolbarAppearance(shortcut);
             _toolbarMenu.Items.Add(item);
@@ -292,6 +293,9 @@ namespace KillerScan.Shell
         }
 
         private void OpenToolbarOverflow()
+            => CreateToolbarOverflowMenu().IsOpen = true;
+
+        private ContextMenu CreateToolbarOverflowMenu()
         {
             var menu = new ContextMenu { PlacementTarget = _toolbarOverflow,
                 Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom };
@@ -299,7 +303,7 @@ namespace KillerScan.Shell
             // toolbar rather than as a list of casualties.
             foreach (var button in _workspaceNavigation.Children.OfType<Button>().Where(_overflowedViews.Contains))
             {
-                var item = new MenuItem { IsEnabled = button.IsEnabled };
+                var item = new MenuItem { IsEnabled = button.IsEnabled, Icon = MenuGlyph.Create(char.ConvertToUtf32(_viewAppearance[button].Glyph, 0)) };
                 item.SetResourceReference(HeaderedItemsControl.HeaderProperty, _viewAppearance[button].Key);
                 item.InputGestureText = _viewAppearance[button].Key switch
                 {
@@ -318,7 +322,7 @@ namespace KillerScan.Shell
                 };
                 menu.Items.Add(item);
             }
-            menu.IsOpen = true;
+            return menu;
         }
 
         private void NewTerminalView()

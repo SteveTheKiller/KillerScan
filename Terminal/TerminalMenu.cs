@@ -2,6 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using KillerScan.Controls;
 
 namespace KillerScan.Terminal
 {
@@ -18,15 +19,15 @@ namespace KillerScan.Terminal
         {
             var menu = new ContextMenu();
 
-            _copyItem = Entry("Str_Term_Copy", "Ctrl+Shift+C", () => { CopySelection(); ClearSelection(); });
+            _copyItem = Entry("Str_Term_Copy", "Ctrl+Shift+C", 0xE8C8, () => { CopySelection(); ClearSelection(); });
             menu.Items.Add(_copyItem);
-            menu.Items.Add(Entry("Str_Term_Paste", "Ctrl+Shift+V", Paste));
+            menu.Items.Add(Entry("Str_Term_Paste", "Ctrl+Shift+V", 0xE77F, Paste));
             menu.Items.Add(new Separator());
-            menu.Items.Add(Entry("Str_Term_SelectAll", "Ctrl+Shift+A", SelectAll));
-            menu.Items.Add(Entry("Str_Term_CopyAll", "Ctrl+Shift+Y", CopyAll));
+            menu.Items.Add(Entry("Str_Term_SelectAll", "Ctrl+Shift+A", 0xE8B3, SelectAll));
+            menu.Items.Add(Entry("Str_Term_CopyAll", "Ctrl+Shift+Y", 0xE8C8, CopyAll));
             menu.Items.Add(new Separator());
-            menu.Items.Add(Entry("Str_Term_Clear", "Ctrl+Shift+L", ClearScreen));
-            menu.Items.Add(Entry("Str_Term_Font", null, ChooseFont));
+            menu.Items.Add(Entry("Str_Term_Clear", "Ctrl+Shift+L", 0xE894, ClearScreen));
+            menu.Items.Add(Entry("Str_Term_Font", null, 0xE8D2, ChooseFont));
 
             // Copy is only meaningful with a selection, and Paste only with text on the clipboard,
             // so both are settled as the menu opens rather than left permanently enabled.
@@ -37,9 +38,9 @@ namespace KillerScan.Terminal
             ContextMenu = menu;
         }
 
-        private static MenuItem Entry(string key, string? gesture, Action action)
+        private static MenuItem Entry(string key, string? gesture, int glyph, Action action)
         {
-            var item = new MenuItem { InputGestureText = gesture ?? string.Empty };
+            var item = new MenuItem { InputGestureText = gesture ?? string.Empty, Icon = MenuGlyph.Create(glyph) };
             item.SetResourceReference(HeaderedItemsControl.HeaderProperty, key);
             item.Click += (_, _) => action();
             return item;

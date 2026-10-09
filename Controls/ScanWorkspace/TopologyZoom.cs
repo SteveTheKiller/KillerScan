@@ -13,10 +13,10 @@ namespace KillerScan.Controls
 
         private void AddTopologyZoomMenu(ContextMenu menu)
         {
-            _topologyZoomMenu = new MenuItem { Header = "100%", InputGestureText = "Ctrl+Wheel" };
+            _topologyZoomMenu = new MenuItem { Header = "100%", InputGestureText = "Ctrl+Wheel", Icon = MenuGlyph.Create(0xE71E) };
             foreach (double zoom in new[] { 0.25, 0.5, 0.75, 1, 1.5, 2, 3 })
             {
-                var item = new MenuItem { Header = zoom.ToString("P0"), Tag = zoom, IsCheckable = true };
+                var item = new MenuItem { Header = zoom.ToString("P0"), Tag = zoom, IsCheckable = true, Icon = MenuGlyph.Create(0xE71E) };
                 item.Click += (_, _) => SetTopologyZoom(zoom,
                     new Point(TopologyScrollViewer.ViewportWidth / 2, TopologyScrollViewer.ViewportHeight / 2));
                 _topologyZoomMenu.Items.Add(item);

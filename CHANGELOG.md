@@ -16,7 +16,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Changed
 - Scanning, discovery and device classification now live in KillerScan.Engine, a separate library the app, its command line and other programs share.
-- Context actions show their keyboard shortcuts in menus, both F1 help views and the online guide, with additional shortcuts for Services, profiles, Keep Alive and the terminal.
+- Context actions show consistent glyphs and keyboard shortcuts in menus, with shortcuts also listed in both F1 help views and the online guide. Additional shortcuts cover Services, profiles, Keep Alive and the terminal.
 - Refined theme colors, wordmarks, button gradients, footers and menu styling to match the family palette.
 - Refined file-picker and dialog frames, added sharper title bar icons, and gave the uninstaller its own labeled taskbar button.
 

@@ -199,14 +199,23 @@
                         <Button.ContextMenu>
                             <ContextMenu PreviewMouseWheel="Menu_ForwardWheelToGrid">
                                 <MenuItem Header="{DynamicResource Str_TT_TopologyOrder}">
+                                    <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8CB;"/></MenuItem.Icon>
                                     <MenuItem x:Name="TopologyRoleItem" Header="{DynamicResource Str_Topology_Role}"
-                                              Tag="Role" InputGestureText="Ctrl+1" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                              Tag="Role" InputGestureText="Ctrl+1" IsCheckable="True" Click="TopologyOrderItem_Click">
+                                        <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE902;"/></MenuItem.Icon>
+                                    </MenuItem>
                                     <MenuItem x:Name="TopologyTypeItem" Header="{DynamicResource Str_Col_Type}"
-                                              Tag="Type" InputGestureText="Ctrl+2" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                              Tag="Type" InputGestureText="Ctrl+2" IsCheckable="True" Click="TopologyOrderItem_Click">
+                                        <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8EC;"/></MenuItem.Icon>
+                                    </MenuItem>
                                     <MenuItem x:Name="TopologyIpItem" Header="{DynamicResource Str_Col_Ip}"
-                                              Tag="Ip" InputGestureText="Ctrl+3" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                              Tag="Ip" InputGestureText="Ctrl+3" IsCheckable="True" Click="TopologyOrderItem_Click">
+                                        <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE774;"/></MenuItem.Icon>
+                                    </MenuItem>
                                     <MenuItem x:Name="TopologyVendorItem" Header="{DynamicResource Str_Col_Vendor}"
-                                              Tag="Vendor" InputGestureText="Ctrl+4" IsCheckable="True" Click="TopologyOrderItem_Click"/>
+                                              Tag="Vendor" InputGestureText="Ctrl+4" IsCheckable="True" Click="TopologyOrderItem_Click">
+                                        <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8EC;"/></MenuItem.Icon>
+                                    </MenuItem>
                                 </MenuItem>
                             </ContextMenu>
                         </Button.ContextMenu>
@@ -662,10 +671,18 @@
                             <MenuItem Header="{DynamicResource Str_Services_CopyEndpoint}" InputGestureText="Ctrl+Shift+C" Tag="CopyEndpoint" Click="ServiceMenu_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Services_CopyName}" InputGestureText="Ctrl+Shift+Y" Tag="CopyService" Click="ServiceMenu_Click"/>
-                            <MenuItem Header="{DynamicResource Str_Services_CopyPort}" InputGestureText="Ctrl+Alt+P" Tag="CopyPort" Click="ServiceMenu_Click"/>
-                            <MenuItem Header="{DynamicResource Str_Ctx_CopyIp}" Tag="CopyIp" InputGestureText="Ctrl+C" Click="ServiceMenu_Click"/>
-                            <MenuItem Header="{DynamicResource Str_Ctx_CopyHost}" Tag="CopyHost" InputGestureText="Ctrl+Alt+C" Click="ServiceMenu_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Services_CopyName}" InputGestureText="Ctrl+Shift+Y" Tag="CopyService" Click="ServiceMenu_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Services_CopyPort}" InputGestureText="Ctrl+Alt+P" Tag="CopyPort" Click="ServiceMenu_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyIp}" Tag="CopyIp" InputGestureText="Ctrl+C" Click="ServiceMenu_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{DynamicResource Str_Ctx_CopyHost}" Tag="CopyHost" InputGestureText="Ctrl+Alt+C" Click="ServiceMenu_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                            </MenuItem>
                             <Separator x:Name="ServiceConnectSeparator"/>
                             <MenuItem Header="{DynamicResource Str_Ctx_OpenBrowser}" Tag="Browser" InputGestureText="Enter" Click="ServiceMenu_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8A7;"/></MenuItem.Icon>
@@ -673,12 +690,16 @@
                             <MenuItem Header="{DynamicResource Str_Ctx_Ssh}" Tag="Ssh" InputGestureText="Ctrl+S" Click="ServiceMenu_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_SshAs}" Tag="SshAs" InputGestureText="Ctrl+Shift+S" Click="ServiceMenu_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_SshAs}" Tag="SshAs" InputGestureText="Ctrl+Shift+S" Click="ServiceMenu_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
+                            </MenuItem>
                             <MenuItem Header="{DynamicResource Str_Ctx_Rdp}" Tag="Rdp" InputGestureText="Ctrl+D" Click="ServiceMenu_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE7F4;"/></MenuItem.Icon>
                             </MenuItem>
                             <Separator/>
-                            <MenuItem Header="{DynamicResource Str_Ctx_SelectAll}" Tag="SelectAll" InputGestureText="Ctrl+A" Click="ServiceMenu_Click"/>
+                            <MenuItem Header="{DynamicResource Str_Ctx_SelectAll}" Tag="SelectAll" InputGestureText="Ctrl+A" Click="ServiceMenu_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE8B3;"/></MenuItem.Icon>
+                            </MenuItem>
                             <MenuItem Header="{DynamicResource Str_Export_ServicesCsv}" Tag="Export" InputGestureText="Ctrl+E" Click="ServiceMenu_Click">
                                 <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE896;"/></MenuItem.Icon>
                             </MenuItem>

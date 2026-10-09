@@ -232,6 +232,9 @@
                                 <ColumnDefinition Width="18"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
+                            <ContentPresenter x:Name="IconPresenter" Grid.Column="0" ContentSource="Icon"
+                                              TextElement.Foreground="{TemplateBinding Foreground}"
+                                              VerticalAlignment="Center" HorizontalAlignment="Left"/>
                             <TextBlock x:Name="CheckGlyph" Text="&#xE73E;"
                                        FontFamily="Segoe MDL2 Assets" FontSize="11"
                                        Foreground="{DynamicResource PrimaryBrush}"
@@ -247,6 +250,7 @@
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="CheckGlyph" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="IconPresenter" Property="Visibility" Value="Collapsed"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.45"/>
