@@ -77,7 +77,7 @@
 
 
                                 <StackPanel Grid.Row="1" Margin="{DynamicResource DialogContentMargin}">
-                    <TextBlock Text="{DynamicResource Str_Term_Font}" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+                    <TextBlock Text="{DynamicResource Str_Topology_Font}" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
                     <ComboBox Style="{StaticResource DarkComboBox}" x:Name="FontBox" SelectionChanged="PreviewChanged" PreviewMouseWheel="Selector_MouseWheel" Margin="0,0,0,12"/>
                     <TextBlock Text="{DynamicResource Str_Sys_Size}" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
                     <ComboBox Style="{StaticResource DarkComboBox}" x:Name="SizeBox" SelectionChanged="PreviewChanged" PreviewMouseWheel="Selector_MouseWheel" Margin="0,0,0,12"/>
