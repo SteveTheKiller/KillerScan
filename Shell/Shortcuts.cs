@@ -23,6 +23,7 @@ namespace KillerScan.Shell
             ("Ctrl + T",        "Str_Sc_Devices",          "Views"),
             ("Ctrl + Shift + T", "Str_Sc_Terminal",        "Views"),
             ("Ctrl + H",        "Str_History_Title",        "Views"),
+            ("Ctrl + Alt + R",  "Str_History_Settings",     "Views"),
             ("Ctrl + Shift + P", "Str_Profiles_Title",      "Views"),
             ("F4",              "Str_TT_SpeedTest",         "Views"),
 
@@ -121,6 +122,11 @@ namespace KillerScan.Shell
             if (e.Handled) return;
             var modifiers = Keyboard.Modifiers;
             Key key = e.Key == Key.System ? e.SystemKey : e.Key;
+            if (HandleHistorySettingsShortcut(key, modifiers)) { e.Handled = true; return; }
+            // Let WPF open the focused rail icon's own menu before history's table
+            // shortcut handler can redirect Menu / Shift+F10 into the saved rows.
+            if (HistoryButton.IsKeyboardFocusWithin &&
+                (key == Key.Apps || (key == Key.F10 && modifiers == ModifierKeys.Shift))) return;
             if (HandleProfileShortcut(e, modifiers)) return;
             if (_workspaceView == "history" && _historyWorkspace?.HandleShortcut(
                 key, modifiers, Keyboard.FocusedElement is TextBox) == true)

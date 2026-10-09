@@ -8,7 +8,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Added
 - Topology settings for box size, layout, orientation, fonts and connection lines, with Ctrl+wheel zoom, zoom presets, compact radial layouts and hand cursors for dragging. Open settings from the toolbar or the map's right-click menu.
-- Read-only scan history menus for copying saved device details, switching views and exporting snapshots.
+- Scan history settings for retaining scans by age, entry count or without a limit, with confirmation before a changed policy removes saved scans. History menus also copy saved device details, switch views and export snapshots.
 - A Services context menu for copying service details and connecting with the selected service's protocol and port.
 - Ukrainian, Norwegian (Bokmål) and Brazilian Portuguese localization, with a two-column language menu.
 - Drag pinned file-picker places into a new order, and use Ctrl+wheel to change picker views and icon sizes.

@@ -33,4 +33,7 @@ for (const [site, app] of Object.entries({en:'en-US',es:'es',pt:'pt-BR',fr:'fr-F
 }
 assert(context.KBL.ctrlshift.Y[1].length === 3, 'Services, history and terminal share their scoped chord in the map.');
 assert(context.KBL.ctrlshift.G && context.KBL.ctrlalt.H && context.KBL.base.Menu && context.KBL.base.Delete);
+assert(context.KBL.ctrlalt.R && context.KBL.ctrlalt.R[1].some(index =>
+  context.KS_SHORTCUTS[index].labels['en-US'] === 'History settings'),
+  'The history settings shortcut reaches the online keyboard map.');
 console.log(`PASS: website scripts parse, all ${context.KS_SHORTCUTS.length} bindings reach list/map, and 19 locale mappings display their app labels.`);

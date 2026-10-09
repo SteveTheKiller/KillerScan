@@ -1,5 +1,4 @@
 using System.IO;
-using System.Text.Json;
 using KillerScan.Models;
 
 namespace KillerScan.Services
@@ -31,14 +30,34 @@ namespace KillerScan.Services
 
     internal static class ScanHistory
     {
-        private const int MaximumEntries = 50;
         private static readonly string FilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "KillerScan", "history.json");
-        private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
+        private static HistoryArchive _archive = new(FilePath);
         private static List<ScanHistoryEntry> _entries = [];
+        private static HistoryRetention _demoRetention = new(HistoryRetentionMode.Count);
 
         public static IReadOnlyList<ScanHistoryEntry> Entries => _entries;
+
+        internal static HistoryRetention Retention => DemoData.Enabled ? _demoRetention : _archive.Policy;
+
+        internal static bool ApplyRetention(HistoryRetention policy, Func<int, bool> confirmRemoval)
+        {
+            if (DemoData.Enabled)
+            {
+                var original = _entries;
+                var kept = policy.Retained(original, DateTimeOffset.Now);
+                int removed = original.Count - kept.Count;
+                if (removed > 0 && !confirmRemoval(removed)) return false;
+                if (!ReferenceEquals(original, _entries)) return ApplyRetention(policy, confirmRemoval);
+                _entries = kept;
+                _demoRetention = policy;
+                return true;
+            }
+            bool applied = _archive.Apply(policy, DateTimeOffset.Now, confirmRemoval);
+            if (applied) _entries = _archive.Entries;
+            return applied;
+        }
 
         public static ScanComparison Compare(ScanHistoryEntry entry)
         {
@@ -54,25 +73,10 @@ namespace KillerScan.Services
         {
             // Demo mode never reads or writes the real history. It is a screenshot build running
             // on somebody's actual machine, so the fabricated network must not touch their file.
-            if (DemoData.Enabled) { _entries = []; return; }
-            try
-            {
-                if (!File.Exists(FilePath)) return;
-                _entries = JsonSerializer.Deserialize<List<ScanHistoryEntry>>(
-                    File.ReadAllText(FilePath)) ?? [];
-                _entries.RemoveAll(entry => entry == null);
-                foreach (var entry in _entries)
-                {
-                    entry.Target ??= string.Empty;
-                    entry.Devices ??= [];
-                    entry.Devices.RemoveAll(device => device == null || string.IsNullOrWhiteSpace(device.Identity));
-                    foreach (var device in entry.Devices) device.OpenPorts ??= [];
-                }
-            }
-            catch
-            {
-                _entries = [];
-            }
+            if (DemoData.Enabled) { _entries = []; _demoRetention = new(HistoryRetentionMode.Count); return; }
+            _archive = new(FilePath);
+            _archive.Load(DateTimeOffset.Now);
+            _entries = _archive.Entries;
         }
 
         /// <summary>Demo mode only: seeds fabricated history without going near the real file.</summary>
@@ -80,6 +84,7 @@ namespace KillerScan.Services
         {
             if (!DemoData.Enabled) return;
             _entries = [.. entries];
+            _demoRetention = new(HistoryRetentionMode.SaveAll);
         }
 
         public static ScanComparison Record(string target, IEnumerable<NetworkDevice> devices)
@@ -93,10 +98,12 @@ namespace KillerScan.Services
             var previous = _entries.LastOrDefault(entry =>
                 string.Equals(entry.Target, target, StringComparison.OrdinalIgnoreCase));
             var comparison = Compare(current, previous);
-            _entries.Add(current);
-            if (_entries.Count > MaximumEntries)
-                _entries.RemoveRange(0, _entries.Count - MaximumEntries);
-            Save();
+            if (DemoData.Enabled) _entries = _demoRetention.Retained(_entries.Concat(new[] { current }), current.ScannedAt);
+            else
+            {
+                _archive.Append(current, current.ScannedAt);
+                _entries = _archive.Entries;
+            }
             return comparison;
         }
 
@@ -134,17 +141,6 @@ namespace KillerScan.Services
             OpenPorts = [.. device.OpenPorts.OrderBy(port => port)]
         };
 
-        private static void Save()
-        {
-            if (DemoData.Enabled) return;
-            try
-            {
-                string directory = Path.GetDirectoryName(FilePath)!;
-                Directory.CreateDirectory(directory);
-                File.WriteAllText(FilePath, JsonSerializer.Serialize(_entries, JsonOptions));
-            }
-            catch { }
-        }
     }
 
     internal static class DeviceIdentity

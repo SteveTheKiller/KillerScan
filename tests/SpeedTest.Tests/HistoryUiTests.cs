@@ -228,6 +228,8 @@ internal static class HistoryUiTests
         ((FrameworkElement)window.FindName("ShortcutsOverlay")).Visibility = Visibility.Collapsed;
         CheckServices(assembly);
         CheckSettingsDialog(assembly, Theme, Locale, output);
+        HistoryRetentionTests.Run();
+        CheckHistorySettingsMenu(window, app, output);
         Console.WriteLine("RENDERED: " + output);
     }
 
@@ -359,6 +361,12 @@ internal static class HistoryUiTests
         Require(time.IsChecked == false && count.IsChecked == false && !daysBox.IsEnabled && !countBox.IsEnabled &&
             Call(input, "ReadPolicy") != null, "Save all ignores inactive editor values.");
         int calls = _settingsApplyCalls;
+        var save = (Button)input.FindName("OkButton");
+        var cancel = (Button)input.FindName("CancelButton");
+        Require(save.IsDefault && cancel.IsCancel, "Enter saves and Escape cancels through the dialog's keyboard buttons.");
+        save.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Require(_settingsApplyCalls == calls + 1, "The actual Save button passes the selected policy to its application callback.");
+        calls = _settingsApplyCalls;
         Call(input, "Cancel_Click", input, new RoutedEventArgs());
         Require(_settingsApplyCalls == calls, "Cancel invokes no settings or history mutation.");
         var entryType = assembly.GetType("KillerScan.Services.ScanHistoryEntry", true)!;
@@ -420,6 +428,44 @@ internal static class HistoryUiTests
         Call(window, "BuildShortcutRows"); Call(window, "BuildKeyboardMap");
         Require(rows.Length >= 70, "The list and map include the added contextual shortcuts.");
     }
+
+    private static void CheckHistorySettingsMenu(MainWindow window, Application app, string output)
+    {
+        var icon = (Button)window.FindName("HistoryButton");
+        var menu = icon.ContextMenu;
+        var item = menu.Items.OfType<MenuItem>().Single();
+        Require(Equals(item.Header, app.FindResource("Str_History_Settings")) && item.InputGestureText == "Ctrl+Alt+R",
+            "The history icon offers localized settings with its visible shortcut.");
+        Require(item.Icon is TextBlock clock && clock.Text == (string)icon.Content,
+            "History settings carries the same clock glyph as the history icon.");
+        var rows = (Array)typeof(MainWindow).GetField("ShortcutRows", Static)!.GetValue(null)!;
+        Require(rows.Cast<object>().Count(row => ((string)row.GetType().GetField("Item1")!.GetValue(row)!).Replace(" ", "") == item.InputGestureText) == 1,
+            "The new gesture is unique in the app catalogue.");
+        var match = typeof(MainWindow).GetMethod("IsHistorySettingsShortcut", Static)!;
+        Require((bool)match.Invoke(null, new object[] { Key.R, ModifierKeys.Control | ModifierKeys.Alt })!,
+            "The bound chord is recognized by the live shortcut handler.");
+        foreach (var modifiers in new[] { ModifierKeys.None, ModifierKeys.Control, ModifierKeys.Control | ModifierKeys.Shift, ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift })
+            Require(!(bool)match.Invoke(null, new object[] { Key.R, modifiers })!, "Other R chords retain their existing scope.");
+        var eventStore = typeof(UIElement).GetProperty("EventHandlersStore", Instance)!.GetValue(item)!;
+        var handlers = (Array)eventStore.GetType().GetMethod("GetRoutedEventHandlers", Instance)!.Invoke(eventStore, new object[] { MenuItem.ClickEvent })!;
+        Require(handlers.Cast<object>().Any(info => ((Delegate)info.GetType().GetProperty("Handler", Instance)!.GetValue(info)!).Method.Name == "HistorySettings_Click"),
+            "The actual history menu click is wired to the settings-dialog handler.");
+        SaveMenu(menu, app, Path.Combine(output, "History-settings-menu.png"));
+        var confirmation = (Window)Call(window, "CreateHistoryRemovalConfirmation", 7, null)!;
+        Require(((TextBlock)confirmation.FindName("DetailText")).Text == string.Format((string)app.FindResource("Str_History_RemoveConfirm"), 7),
+            "The actual removal dialog names its deletion count and permanent effect.");
+        ((UIElement)confirmation.FindName("RootBorder")).Opacity = 1;
+        var surface = (FrameworkElement)confirmation.Content;
+        surface.Measure(new Size(400, double.PositiveInfinity));
+        Save(Render(surface, 400, (int)Math.Ceiling(surface.DesiredSize.Height)), Path.Combine(output, "History-removal-confirmation.png"));
+        ((Button)confirmation.FindName("CancelButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Require(!(bool)Property(confirmation, "Confirmed")!, "The actual confirmation Cancel declines deletion.");
+        var accepted = (Window)Call(window, "CreateHistoryRemovalConfirmation", 7, null)!;
+        ((Button)accepted.FindName("OkButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Require((bool)Property(accepted, "Confirmed")!, "The actual Delete scans button explicitly confirms.");
+    }
+
+    private static object? Property(object value, string name) => value.GetType().GetProperty(name, Instance)!.GetValue(value);
 
     private static void CheckServices(Assembly assembly)
     {

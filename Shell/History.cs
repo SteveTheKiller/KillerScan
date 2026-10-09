@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Input;
 using KillerScan.Controls;
 using KillerScan.Services;
 
@@ -9,6 +10,51 @@ namespace KillerScan.Shell
     public partial class MainWindow
     {
         private HistoryWorkspace? _historyWorkspace;
+
+        private bool HandleHistorySettingsShortcut(Key key, ModifierKeys modifiers)
+        {
+            if (!IsHistorySettingsShortcut(key, modifiers)) return false;
+            HistorySettings_Click(this, new RoutedEventArgs());
+            return true;
+        }
+
+        private static bool IsHistorySettingsShortcut(Key key, ModifierKeys modifiers) =>
+            key == Key.R && modifiers == (ModifierKeys.Control | ModifierKeys.Alt);
+
+        private void HistorySettings_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new HistorySettingsDialog(ScanHistory.Retention, ApplyHistoryRetention) { Owner = this };
+            dialog.ShowDialog();
+        }
+
+        private bool ApplyHistoryRetention(HistoryRetention policy)
+        {
+            bool applied = ScanHistory.ApplyRetention(policy, removed =>
+            {
+                var confirmation = CreateHistoryRemovalConfirmation(removed,
+                    OwnedWindows.OfType<HistorySettingsDialog>().FirstOrDefault() ?? (Window)this);
+                confirmation.ShowDialog();
+                return confirmation.Confirmed;
+            });
+            if (applied)
+            {
+                RefreshHistoryList();
+                if (_workspaceView == "history") ShowHistoryEntry();
+            }
+            return applied;
+        }
+
+        private ConfirmDialog CreateHistoryRemovalConfirmation(int removed, Window? owner = null)
+        {
+            var dialog = new ConfirmDialog(Loc("Str_History_Settings"),
+                string.Format(Loc("Str_History_RemoveConfirm"), removed),
+                Loc("Str_History_Delete"), Loc("Str_Btn_Cancel"));
+            if (owner != null) dialog.Owner = owner;
+            var button = (Button)dialog.FindName("OkButton");
+            button.Width = double.NaN;
+            button.MinWidth = 80;
+            return dialog;
+        }
 
         /// <summary>
         /// Ctrl+H and the rail button open the history sidebar and show the selected snapshot.

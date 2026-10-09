@@ -457,6 +457,14 @@
             <Button x:Name="HistoryButton" Style="{StaticResource RailButton}"
                     Content="&#xE81C;" FontSize="15"
                     Click="HistoryButton_Click" Margin="0,0,0,10">
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="{DynamicResource Str_History_Settings}" InputGestureText="Ctrl+Alt+R"
+                                  Click="HistorySettings_Click">
+                            <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE81C;"/></MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </Button.ContextMenu>
                 <Button.ToolTip>
                     <TextBlock><Run Text="{DynamicResource Str_History_Title}"/><Run Text=" (Ctrl+H)"/></TextBlock>
                 </Button.ToolTip>
