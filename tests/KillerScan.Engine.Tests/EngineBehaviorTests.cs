@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using KillerScan.Engine;
 
@@ -9,8 +10,9 @@ internal static class EngineBehaviorTests
 {
     private sealed class LoopbackPlatform : INetworkPlatform
     {
+        public Func<string>? MacLookup { get; set; }
         public IReadOnlyDictionary<string, string> ReadNeighborCache() => new Dictionary<string, string>();
-        public string ResolveMac(IPAddress address) => "00:00:0C:12:34:56";
+        public string ResolveMac(IPAddress address) => MacLookup?.Invoke() ?? "00:00:0C:12:34:56";
         public void FlushDnsCache() { }
         public (string Interface, string NextHop)? BestRoute(IPAddress address) => ("Loopback", "");
     }
@@ -47,48 +49,94 @@ internal static class EngineBehaviorTests
         }
     }
 
-    public static async Task DeepFingerprintCancellation()
+    public static async Task DeepProbeCancellation()
     {
         var platform = NetworkPlatform.Current;
         var completed = NetworkScanner.DeviceCompleted;
-        using var server = new LoopbackHttpServer(stall: true);
-        using var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(90));
+        var started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var finished = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         Task<NetworkDevice>? scan = null;
         int completionHooks = 0;
         try
         {
-            NetworkPlatform.Current = new LoopbackPlatform();
+            NetworkPlatform.Current = new LoopbackPlatform
+            {
+                MacLookup = () =>
+                {
+                    started.TrySetResult(true);
+                    try { return release.Task.GetAwaiter().GetResult(); }
+                    finally { finished.TrySetResult(true); }
+                }
+            };
             NetworkScanner.DeviceCompleted = _ => Interlocked.Increment(ref completionHooks);
             scan = new NetworkScanner().DeepProbeHostAsync("127.0.0.1", cancel.Token);
-            if (await Task.WhenAny(server.HttpRequested, Task.Delay(60000)) != server.HttpRequested)
-            {
-                string state = scan.Status.ToString();
-                if (scan.Status == TaskStatus.RanToCompletion)
-                    state += ", open ports " + string.Join(",", scan.Result.OpenPorts) + ", fixture port " + server.Port;
-                else if (scan.IsFaulted)
-                    state += ", " + scan.Exception!.GetBaseException().Message;
-                throw new InvalidOperationException("Deep probe reaches a controlled stalled HTTP response. Scan state: " + state + ".");
-            }
-            var elapsed = Stopwatch.StartNew();
-            cancel.Cancel();
-            Require(await Task.WhenAny(scan, Task.Delay(500)) == scan, "Stop returns promptly during deep fingerprinting.");
-            try
-            {
-                await scan;
-                throw new InvalidOperationException("Canceled deep fingerprinting must not return a finished device.");
-            }
-            catch (OperationCanceledException) { }
-            Require(elapsed.ElapsedMilliseconds < 500 && completionHooks == 0,
+            Require(await Task.WhenAny(started.Task, Task.Delay(5000)) == started.Task,
+                "Deep probe reaches the controlled MAC lookup.");
+            await RequirePromptCancellation(scan, cancel);
+            Require(!finished.Task.IsCompleted && completionHooks == 0,
                 "Canceled deep probes never apply completion hooks or return stale results.");
         }
         finally
         {
             cancel.Cancel();
-            server.Dispose();
+            release.TrySetResult("00:00:0C:12:34:56");
             if (scan != null) try { await scan; } catch { }
+            if (started.Task.IsCompleted) await finished.Task;
             NetworkPlatform.Current = platform;
             NetworkScanner.DeviceCompleted = completed;
         }
+        Require(completionHooks == 0, "Releasing the canceled lookup cannot complete a stale device.");
+    }
+
+    public static Task HttpFingerprintCancellation() => FingerprintCancellation("ProbeHttpAsync", tls: false);
+    public static Task TlsFingerprintCancellation() => FingerprintCancellation("ProbeTlsCertAsync", tls: true);
+
+    private static async Task FingerprintCancellation(string probeName, bool tls)
+    {
+        using var server = new LoopbackHttpServer(stall: true, ephemeral: true, tls: tls);
+        using var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        var device = new NetworkDevice { IpAddress = "127.0.0.1", OpenPorts = [server.Port] };
+        // Exercise the released private probes and the exact cancellation wait used by the deep
+        // fingerprint pass. An explicit port list isolates real HTTP/TLS I/O from runner services.
+        var probe = (Task)typeof(NetworkScanner).GetMethod(probeName, BindingFlags.NonPublic | BindingFlags.Static)!
+            .Invoke(null, new object[] { device, IPAddress.Loopback, true })!;
+        var wait = typeof(NetworkScanner).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(method => method.Name == "AwaitWithCancellation" && !method.IsGenericMethod);
+        var scan = (Task)wait.Invoke(null, new object[] { Task.WhenAll(probe), cancel.Token })!;
+        try
+        {
+            Require(await Task.WhenAny(server.RequestReceived, scan, Task.Delay(5000)) == server.RequestReceived,
+                "The real " + (tls ? "TLS ClientHello" : "HTTP GET") + " reaches the stalled fixture.");
+            Require(!probe.IsCompleted && !scan.IsCompleted, "Fingerprinting is still waiting for the fixture response.");
+            await RequirePromptCancellation(scan, cancel);
+            Require(!probe.IsCompleted, "Stop returns before the fingerprint request times out.");
+            Require(device.HttpTitle.Length == 0 && device.HttpServer.Length == 0 && device.TlsSubject.Length == 0,
+                "The stalled fingerprint has no completed HTTP or TLS result.");
+        }
+        finally
+        {
+            cancel.Cancel();
+            server.Dispose();
+            await probe;
+            try { await scan; } catch (OperationCanceledException) { }
+        }
+    }
+
+    private static async Task RequirePromptCancellation(Task scan, CancellationTokenSource cancel)
+    {
+        Require(!scan.IsCompleted, "The operation is pending before Stop.");
+        var elapsed = Stopwatch.StartNew();
+        cancel.Cancel();
+        Require(await Task.WhenAny(scan, Task.Delay(500)) == scan, "Stop returns within 500 ms.");
+        try
+        {
+            await scan;
+            throw new InvalidOperationException("Cancellation must throw instead of returning a completed result.");
+        }
+        catch (OperationCanceledException) { }
+        Require(scan.IsCanceled && elapsed.ElapsedMilliseconds < 500, "The operation is canceled promptly.");
     }
 
     private sealed class LoopbackHttpServer : IDisposable
@@ -98,16 +146,18 @@ internal static class EngineBehaviorTests
         private readonly ConcurrentBag<TcpClient> _clients = new();
         private readonly TaskCompletionSource<bool> _requested = new(TaskCreationOptions.RunContinuationsAsynchronously);
         private readonly bool _stall;
+        private readonly bool _tls;
         public int Port { get; }
-        public Task HttpRequested => _requested.Task;
+        public Task RequestReceived => _requested.Task;
 
-        public LoopbackHttpServer(bool stall)
+        public LoopbackHttpServer(bool stall, bool ephemeral = false, bool tls = false)
         {
             _stall = stall;
-            foreach (int port in new[] { 8080, 5000, 8123 })
+            _tls = tls;
+            foreach (int port in ephemeral ? new[] { 0 } : new[] { 8080, 5000, 8123 })
             {
                 var candidate = new TcpListener(IPAddress.Loopback, port);
-                try { candidate.Start(); _listener = candidate; Port = port; break; }
+                try { candidate.Start(); _listener = candidate; Port = ((IPEndPoint)candidate.LocalEndpoint).Port; break; }
                 catch (SocketException) { candidate.Stop(); }
             }
             if (_listener == null) throw new InvalidOperationException("No loopback fixture port is available.");
@@ -136,17 +186,22 @@ internal static class EngineBehaviorTests
                 {
                     var stream = client.GetStream();
                     var input = new byte[4096];
-                    int count = await stream.ReadAsync(input, 0, input.Length, _stop.Token);
-                    // The stalled fixture holds any fingerprint probe that sends data, HTTP or a TLS
-                    // handshake. A host that already serves a page on port 80 (GitHub's runners do)
-                    // satisfies the HTTP probe there, so the deep probe reaches this port through TLS.
-                    if (_stall && count > 0)
+                    int count = 0;
+                    while (count < 5)
+                    {
+                        int read = await stream.ReadAsync(input, count, input.Length - count, _stop.Token);
+                        if (read == 0) return;
+                        count += read;
+                    }
+                    bool http = Encoding.ASCII.GetString(input, 0, count).StartsWith("GET ", StringComparison.Ordinal);
+                    bool tls = input[0] == 0x16 && input[1] == 0x03;
+                    if (_stall && (_tls ? tls : http))
                     {
                         _requested.TrySetResult(true);
                         await Task.Delay(Timeout.Infinite, _stop.Token);
                         return;
                     }
-                    if (!Encoding.ASCII.GetString(input, 0, count).StartsWith("GET ", StringComparison.Ordinal)) return;
+                    if (!http) return;
                     _requested.TrySetResult(true);
                     const string body = "<html><title>KillerScan loopback fixture</title></html>";
                     byte[] response = Encoding.ASCII.GetBytes("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + body.Length +
