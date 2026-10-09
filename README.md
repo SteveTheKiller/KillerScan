@@ -45,12 +45,8 @@ Part of [killertools.net](https://killertools.net).
 
 <table>
 <tr>
-<td width="50%"><img src="docs/main-window.png" alt="KillerScan showing a completed network scan with the theme picker open"><br><sub>A completed scan with IP addresses, hostnames, MAC vendors, device classifications and open ports in one sortable view, with the theme picker open.</sub></td>
-<td width="50%"><img src="docs/topology.png" alt="KillerScan network topology with the export menu open"><br><sub>Topology draws the same devices as a picture you can rearrange, and exports the arranged view as a full-resolution PNG.</sub></td>
-</tr>
-<tr>
-<td width="50%"><img src="docs/keep-alive.png" alt="KillerScan Keep Alive watching four devices"><br><sub>Keep Alive watches devices continuously: a latency graph, packet loss, per-device checks and an event log of exactly when each one dropped and came back.</sub></td>
-<td width="50%"><img src="docs/terminal.png" alt="KillerScan terminal beside the scan profiles sidebar"><br><sub>A real terminal inside the app, running PowerShell with KillerShell's prompt, beside the saved scan profiles that can load or run a remembered target.</sub></td>
+<td width="50%"><img src="scan-landing/screenshots/01.png" alt="KillerScan device list with the scan history sidebar and the theme picker open"><br><sub>A completed scan with IP addresses, hostnames, MAC vendors, device classifications and open ports in one sortable view, beside the scan history and the theme picker.</sub></td>
+<td width="50%"><img src="scan-landing/screenshots/07.png" alt="KillerScan network topology with its settings and export menus open"><br><sub>Topology draws the same devices as a map you can rearrange and tune, and exports the arranged view as a transparent PNG, a JPG or an HTML page with SVG.</sub></td>
 </tr>
 </table>
 
