@@ -287,6 +287,8 @@
     <sys:String x:Key="Str_Accent_Teal">Көкшіл жасыл</sys:String>
     <sys:String x:Key="Str_Accent_Blue">Көк</sys:String>
     <sys:String x:Key="Str_Accent_Purple">Күлгін</sys:String>
+    <sys:String x:Key="Str_Accent_Yellow">Сары</sys:String>
+    <sys:String x:Key="Str_Accent_Magenta">Қызғылт күлгін</sys:String>
 
     <!-- ==== DEVICE TYPES ====================================================================
          DISPLAY LABELS ONLY. The stored value stays English in every locale - it is written to

@@ -225,6 +225,8 @@
     <sys:String x:Key="Str_Accent_Teal">Türkiz</sys:String>
     <sys:String x:Key="Str_Accent_Blue">Kék</sys:String>
     <sys:String x:Key="Str_Accent_Purple">Lila</sys:String>
+    <sys:String x:Key="Str_Accent_Yellow">Sárga</sys:String>
+    <sys:String x:Key="Str_Accent_Magenta">Bíbor</sys:String>
 
     <!-- Dialogs, updates and errors -->
     <sys:String x:Key="Str_About_Title">A KillerScan névjegye</sys:String>

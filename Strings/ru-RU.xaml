@@ -282,6 +282,8 @@
     <sys:String x:Key="Str_Accent_Teal">Бирюзовый</sys:String>
     <sys:String x:Key="Str_Accent_Blue">Синий</sys:String>
     <sys:String x:Key="Str_Accent_Purple">Фиолетовый</sys:String>
+    <sys:String x:Key="Str_Accent_Yellow">Жёлтый</sys:String>
+    <sys:String x:Key="Str_Accent_Magenta">Пурпурный</sys:String>
 
     <!-- Device types. Display labels only; the stored value stays English (see en-US.xaml). -->
     <sys:String x:Key="Str_Dev_Router">Маршрутизатор</sys:String>

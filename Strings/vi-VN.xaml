@@ -238,6 +238,8 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Accent_Teal">Xanh mòng két</sys:String>
     <sys:String x:Key="Str_Accent_Blue">Xanh dương</sys:String>
     <sys:String x:Key="Str_Accent_Purple">Tím</sys:String>
+    <sys:String x:Key="Str_Accent_Yellow">Vàng</sys:String>
+    <sys:String x:Key="Str_Accent_Magenta">Đỏ tươi</sys:String>
 
     <sys:String x:Key="Str_Dev_Router">Bộ định tuyến</sys:String>
     <sys:String x:Key="Str_Dev_RouterDNS">Bộ định tuyến/DNS</sys:String>

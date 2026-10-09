@@ -183,6 +183,8 @@
     <sys:String x:Key="Str_Accent_Teal">Turkusowy</sys:String>
     <sys:String x:Key="Str_Accent_Blue">Niebieski</sys:String>
     <sys:String x:Key="Str_Accent_Purple">Fioletowy</sys:String>
+    <sys:String x:Key="Str_Accent_Yellow">Żółty</sys:String>
+    <sys:String x:Key="Str_Accent_Magenta">Purpurowy</sys:String>
 
     <!-- Dialogs, updates and errors -->
     <sys:String x:Key="Str_About_Title">O programie KillerScan</sys:String>

@@ -198,6 +198,8 @@
     <sys:String x:Key="Str_Accent_Teal">নীলাভ সবুজ</sys:String>
     <sys:String x:Key="Str_Accent_Blue">নীল</sys:String>
     <sys:String x:Key="Str_Accent_Purple">বেগুনি</sys:String>
+    <sys:String x:Key="Str_Accent_Yellow">হলুদ</sys:String>
+    <sys:String x:Key="Str_Accent_Magenta">ম্যাজেন্টা</sys:String>
 
     <!-- Dialogs, updates and errors -->
     <sys:String x:Key="Str_About_Title">KillerScan সম্পর্কে</sys:String>

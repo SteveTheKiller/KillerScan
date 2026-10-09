@@ -225,6 +225,8 @@
     <sys:String x:Key="Str_Accent_Teal">Verde acqua</sys:String>
     <sys:String x:Key="Str_Accent_Blue">Blu</sys:String>
     <sys:String x:Key="Str_Accent_Purple">Viola</sys:String>
+    <sys:String x:Key="Str_Accent_Yellow">Giallo</sys:String>
+    <sys:String x:Key="Str_Accent_Magenta">Magenta</sys:String>
 
     <!-- Dialogs, updates and errors -->
     <sys:String x:Key="Str_About_Title">Informazioni su KillerScan</sys:String>

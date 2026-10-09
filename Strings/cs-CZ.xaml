@@ -196,6 +196,8 @@
     <sys:String x:Key="Str_Accent_Teal">Tyrkysová</sys:String>
     <sys:String x:Key="Str_Accent_Blue">Modrá</sys:String>
     <sys:String x:Key="Str_Accent_Purple">Fialová</sys:String>
+    <sys:String x:Key="Str_Accent_Yellow">Žlutá</sys:String>
+    <sys:String x:Key="Str_Accent_Magenta">Purpurová</sys:String>
 
     <!-- Dialogs, updates and errors -->
     <sys:String x:Key="Str_About_Title">O aplikaci KillerScan</sys:String>

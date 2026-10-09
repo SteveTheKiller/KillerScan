@@ -198,6 +198,8 @@
     <sys:String x:Key="Str_Accent_Teal">青色</sys:String>
     <sys:String x:Key="Str_Accent_Blue">蓝色</sys:String>
     <sys:String x:Key="Str_Accent_Purple">紫色</sys:String>
+    <sys:String x:Key="Str_Accent_Yellow">黄色</sys:String>
+    <sys:String x:Key="Str_Accent_Magenta">品红色</sys:String>
 
     <!-- Dialogs, updates and errors -->
     <sys:String x:Key="Str_About_Title">关于 KillerScan</sys:String>

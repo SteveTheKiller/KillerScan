@@ -209,6 +209,8 @@
     <sys:String x:Key="Str_Accent_Teal">ティール</sys:String>
     <sys:String x:Key="Str_Accent_Blue">ブルー</sys:String>
     <sys:String x:Key="Str_Accent_Purple">パープル</sys:String>
+    <sys:String x:Key="Str_Accent_Yellow">イエロー</sys:String>
+    <sys:String x:Key="Str_Accent_Magenta">マゼンタ</sys:String>
 
     <!-- Dialogs, updates and errors -->
     <sys:String x:Key="Str_About_Title">KillerScan について</sys:String>

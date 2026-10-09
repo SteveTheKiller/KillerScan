@@ -198,6 +198,8 @@
     <sys:String x:Key="Str_Accent_Teal">Turkuaz</sys:String>
     <sys:String x:Key="Str_Accent_Blue">Mavi</sys:String>
     <sys:String x:Key="Str_Accent_Purple">Mor</sys:String>
+    <sys:String x:Key="Str_Accent_Yellow">Sarı</sys:String>
+    <sys:String x:Key="Str_Accent_Magenta">Macenta</sys:String>
 
     <!-- Dialogs, updates and errors -->
     <sys:String x:Key="Str_About_Title">KillerScan hakkında</sys:String>

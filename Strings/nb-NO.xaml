@@ -287,6 +287,8 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Accent_Teal">Blågrønn</sys:String>
     <sys:String x:Key="Str_Accent_Blue">Blå</sys:String>
     <sys:String x:Key="Str_Accent_Purple">Lilla</sys:String>
+    <sys:String x:Key="Str_Accent_Yellow">Gul</sys:String>
+    <sys:String x:Key="Str_Accent_Magenta">Magenta</sys:String>
 
     <!-- ==== DEVICE TYPES ====================================================================
          DISPLAY LABELS ONLY. The stored value stays English in every locale - it is written to

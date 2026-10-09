@@ -191,10 +191,12 @@ namespace KillerScan.Services
             [
                 $"['#DD504B','{Ljs("Str_Accent_Red", "Red")}']",
                 $"['#E8962C','{Ljs("Str_Accent_Orange", "Orange")}']",
+                $"['#EAD900','{Ljs("Str_Accent_Yellow", "Yellow")}']",
                 $"['#1ea54c','{Ljs("Str_Accent_Green", "Green")}']",
                 $"['#1FB8A8','{Ljs("Str_Accent_Teal", "Teal")}']",
                 $"['#50AEE8','{Ljs("Str_Accent_Blue", "Blue")}']",
                 $"['#B982E3','{Ljs("Str_Accent_Purple", "Purple")}']",
+                $"['#FF52C9','{Ljs("Str_Accent_Magenta", "Magenta")}']",
             ]) + "];");
             sb.AppendLine("var asw=document.getElementById('accentsw');");
             sb.AppendLine("function setAccent(c){if(c){document.documentElement.style.setProperty('--accent',c);try{localStorage.setItem('ksAccent',c)}catch(e){}}var k=asw.children;for(var i=0;i<k.length;i++)k[i].className=(k[i].getAttribute('data-c')===c)?'active':'';}");
