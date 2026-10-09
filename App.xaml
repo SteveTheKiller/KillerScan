@@ -193,7 +193,7 @@
                                 <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
                                     Grid.Row="0" Grid.Column="0" Margin="{TemplateBinding Padding}"
                                     CanContentScroll="{TemplateBinding CanContentScroll}"/>
-                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ScrollTopCue}">
+                                <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ScrollTopCue}">
                                     <Border.Visibility>
                                         <MultiBinding Converter="{StaticResource ScrollEdgeVisibility}" ConverterParameter="Start">
                                             <Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}"/>
@@ -201,7 +201,7 @@
                                         </MultiBinding>
                                     </Border.Visibility>
                                 </Border>
-                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ScrollBottomCue}">
+                                <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource ScrollBottomCue}">
                                     <Border.Visibility>
                                         <MultiBinding Converter="{StaticResource ScrollEdgeVisibility}" ConverterParameter="End">
                                             <Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}"/>
@@ -209,7 +209,7 @@
                                         </MultiBinding>
                                     </Border.Visibility>
                                 </Border>
-                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ScrollLeftCue}">
+                                <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Style="{StaticResource ScrollLeftCue}">
                                     <Border.Visibility>
                                         <MultiBinding Converter="{StaticResource ScrollEdgeVisibility}" ConverterParameter="Start">
                                             <Binding Path="HorizontalOffset" RelativeSource="{RelativeSource TemplatedParent}"/>
@@ -217,7 +217,7 @@
                                         </MultiBinding>
                                     </Border.Visibility>
                                 </Border>
-                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ScrollRightCue}">
+                                <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource ScrollRightCue}">
                                     <Border.Visibility>
                                         <MultiBinding Converter="{StaticResource ScrollEdgeVisibility}" ConverterParameter="End">
                                             <Binding Path="HorizontalOffset" RelativeSource="{RelativeSource TemplatedParent}"/>
@@ -225,13 +225,13 @@
                                         </MultiBinding>
                                     </Border.Visibility>
                                 </Border>
-                                <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Row="0" Grid.Column="1"
+                                <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Row="0" Grid.Column="1" Panel.ZIndex="100"
                                     Orientation="Vertical" Cursor="Arrow"
                                     Maximum="{TemplateBinding ScrollableHeight}"
                                     ViewportSize="{TemplateBinding ViewportHeight}"
                                     Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
                                     Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
-                                <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Row="1" Grid.Column="0"
+                                <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Row="1" Grid.Column="0" Panel.ZIndex="100"
                                     Orientation="Horizontal" Cursor="Arrow"
                                     Maximum="{TemplateBinding ScrollableWidth}"
                                     ViewportSize="{TemplateBinding ViewportWidth}"
@@ -275,7 +275,7 @@
                                     <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
                                         Grid.Row="1" Grid.Column="0"
                                         CanContentScroll="{TemplateBinding CanContentScroll}"/>
-                                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ScrollTopCue}">
+                                    <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ScrollTopCue}">
                                         <Border.Visibility>
                                             <MultiBinding Converter="{StaticResource ScrollEdgeVisibility}" ConverterParameter="Start">
                                                 <Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}"/>
@@ -283,7 +283,7 @@
                                             </MultiBinding>
                                         </Border.Visibility>
                                     </Border>
-                                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ScrollBottomCue}">
+                                    <Border Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource ScrollBottomCue}">
                                         <Border.Visibility>
                                             <MultiBinding Converter="{StaticResource ScrollEdgeVisibility}" ConverterParameter="End">
                                                 <Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}"/>
@@ -291,14 +291,14 @@
                                             </MultiBinding>
                                         </Border.Visibility>
                                     </Border>
-                                    <ScrollBar x:Name="PART_VerticalScrollBar"
+                                    <ScrollBar x:Name="PART_VerticalScrollBar" Panel.ZIndex="100"
                                         Grid.Row="1" Grid.Column="1"
                                         Orientation="Vertical"
                                         Maximum="{TemplateBinding ScrollableHeight}"
                                         ViewportSize="{TemplateBinding ViewportHeight}"
                                         Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
                                         Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
-                                    <ScrollBar x:Name="PART_HorizontalScrollBar"
+                                    <ScrollBar x:Name="PART_HorizontalScrollBar" Panel.ZIndex="100"
                                         Grid.Row="2" Grid.Column="0" Orientation="Horizontal"
                                         Maximum="{TemplateBinding ScrollableWidth}"
                                         ViewportSize="{TemplateBinding ViewportWidth}"
