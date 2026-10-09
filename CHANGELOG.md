@@ -12,7 +12,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - A Services context menu for copying service details and connecting with the selected service's protocol and port.
 - Ukrainian, Norwegian (Bokmål) and Brazilian Portuguese localization, with a two-column language menu.
 - Drag pinned file-picker places into a new order, and use Ctrl+wheel to change picker views and icon sizes.
-- Added yellow and magenta accents to the neutral and 98SE themes.
+- Added yellow and magenta accents to the neutral and 98SE themes and to the HTML export.
 
 ### Changed
 - Scanning, discovery and device classification now live in KillerScan.Engine, a separate library the app, its command line and other programs share.
@@ -24,13 +24,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Kept app icons sharp at fractional display DPI and app zoom by caching exact pixel sizes from a covering source and aligning the final draw to device pixels.
 - Unsigned test builds can no longer push, tag or publish a release.
 - Stopping a deep scan no longer waits for stalled fingerprint requests.
+- Switching themes or languages no longer leaves toolbar views stuck in the overflow menu or covers the Scan button. A tight toolbar moves views into the overflow menu first, then drops their captions.
 - Startup content becomes visible even when its fade animation stalls.
 - Scan history uses the Devices table's rounded frame, with its target, accented dates, counts and view switch above the table. Sidebar and settings layouts stay compact, text is sharper, and menus anchor correctly. Localized headings refresh correctly, and history cannot act on a hidden live scan.
 - Clicking a saved scan profile loads its target and shows the device list. The Profiles sidebar uses the same compact formatting as Scan History, with a clearer icon in its heading and rail.
 - Text stays sharp at app sizes other than 100% again.
-- Switching themes no longer pushes a toolbar view into the overflow menu.
 - Submenus attach consistently to their opening rows, with native direction and screen-edge placement.
 - Corrected menu and selection contrast, including Light/Purple dropdown text, active language and theme highlights, and the 98SE Red accent.
+- Lots of various theme and UI fixes, including a Topology settings icon button that matches the filter button, scroll shadows under the scrollbars of tables, topology and Keep Alive, a themed corner between the topology scrollbars, the shortcut list scrollbar on the card edge, and corrected Font and Name labels.
 
 ## [1.7.5] - 2026-09-28
 
