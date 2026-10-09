@@ -137,9 +137,17 @@ internal static class EngineBehaviorTests
                     var stream = client.GetStream();
                     var input = new byte[4096];
                     int count = await stream.ReadAsync(input, 0, input.Length, _stop.Token);
+                    // The stalled fixture holds any fingerprint probe that sends data, HTTP or a TLS
+                    // handshake. A host that already serves a page on port 80 (GitHub's runners do)
+                    // satisfies the HTTP probe there, so the deep probe reaches this port through TLS.
+                    if (_stall && count > 0)
+                    {
+                        _requested.TrySetResult(true);
+                        await Task.Delay(Timeout.Infinite, _stop.Token);
+                        return;
+                    }
                     if (!Encoding.ASCII.GetString(input, 0, count).StartsWith("GET ", StringComparison.Ordinal)) return;
                     _requested.TrySetResult(true);
-                    if (_stall) { await Task.Delay(Timeout.Infinite, _stop.Token); return; }
                     const string body = "<html><title>KillerScan loopback fixture</title></html>";
                     byte[] response = Encoding.ASCII.GetBytes("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + body.Length +
                         "\r\nConnection: close\r\nServer: KillerScan-Test\r\n\r\n" + body);
