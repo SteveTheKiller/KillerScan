@@ -160,42 +160,10 @@
                             </Grid>
                         </Grid>
                     </Border>
-                    <Button x:Name="TopologyOrderButton" Visibility="Collapsed"
-                            HorizontalAlignment="Left" Margin="0,2,6,2" Height="26"
-                            Padding="6,0" VerticalAlignment="Center" Cursor="Hand"
-                            Background="{DynamicResource TextFieldBrush}"
-                            Foreground="{DynamicResource TextBrush}"
-                            BorderBrush="{DynamicResource InputBorderBrush}" BorderThickness="1"
-                            Click="TopologyOrderButton_Click">
-                        <Button.ToolTip>
-                            <TextBlock Text="{DynamicResource Str_Topology_Settings}"/>
-                        </Button.ToolTip>
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="OrderBorder"
-                                        Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                                        Padding="{TemplateBinding Padding}">
-                                    <ContentPresenter HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="OrderBorder" Property="Background"
-                                                Value="{DynamicResource OutlineHoverBrush}"/>
-                                        <Setter Property="Foreground"
-                                                Value="{DynamicResource OutlineHoverTextBrush}"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="12"
-                                       VerticalAlignment="Center" Margin="0,0,5,0"/>
-                            <TextBlock Text="{DynamicResource Str_Topology_Settings}" VerticalAlignment="Center"/>
-                        </StackPanel>
+                    <Button x:Name="TopologyOrderButton" Visibility="Collapsed" Style="{StaticResource OutlineButton}"
+                            FontFamily="Segoe MDL2 Assets" Content="&#xE713;" Width="26" Height="26" Padding="0"
+                            Margin="0,2,6,2" Click="TopologyOrderButton_Click">
+                        <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Topology_Settings}"/><Run Text=" (Shift+F10)"/></TextBlock></Button.ToolTip>
                         <Button.ContextMenu>
                             <ContextMenu PreviewMouseWheel="Menu_ForwardWheelToGrid">
                                 <MenuItem Header="{DynamicResource Str_TT_TopologyOrder}">
