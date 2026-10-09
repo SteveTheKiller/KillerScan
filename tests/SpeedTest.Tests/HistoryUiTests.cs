@@ -78,6 +78,8 @@ internal static class HistoryUiTests
         var app = new TestApplication();
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
         while (directory != null && !File.Exists(Path.Combine(directory.FullName, "KillerScan.csproj"))) directory = directory.Parent;
+        if (directory == null && Environment.GetEnvironmentVariable("KILLERSCAN_TEST_ROOT") is string sourceRoot)
+            directory = new DirectoryInfo(sourceRoot);
         Require(directory != null, "Application resource source exists.");
         var xml = new XmlDocument(); xml.Load(Path.Combine(directory!.FullName, "App.xaml"));
         var dictionary = xml.DocumentElement!.FirstChild!.FirstChild!.OuterXml.Replace("clr-namespace:KillerScan.Controls", "clr-namespace:KillerScan.Controls;assembly=KillerScan");
@@ -137,6 +139,7 @@ internal static class HistoryUiTests
         var grid = (DataGrid)history.FindName("HistoryChangesGrid");
         var all = (DataGrid)history.FindName("HistoryAllGrid");
         var title = (TextBlock)history.FindName("HistoryIdentity");
+        string Identity() => string.Concat(title.Inlines.OfType<Run>().Select(run => run.Text));
         var header = (TextBlock)history.FindName("HistorySummary");
         var metadata = (TextBlock)history.FindName("HistoryEntryContext");
         var comparison = (TextBlock)history.FindName("HistoryComparisonContext");
@@ -150,7 +153,7 @@ internal static class HistoryUiTests
         root.Opacity = 1; ((UIElement)window.FindName("RootGrid")).Opacity = 1;
         string output = Path.Combine(Path.GetTempPath(), "KillerScan-history-ui-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(output);
         Require(grid.Items.Count == 3, "Added, missing and changed devices are shown.");
-        Require(title.Text == string.Format((string)app.FindResource("Str_History_ComparisonIdentity"), time.ToString("g"), time.AddHours(1).ToString("g")), "The outer toolbar identifies the compared scans.");
+        Require(Identity().Contains("192.0.2.0/24") && Identity().Contains(time.ToString("g")) && Identity().Contains(time.AddHours(1).ToString("g")), "The outer toolbar retains the target and both compared timestamps.");
         Require(metadata.Text.Contains("192.0.2.0/24") && metadata.Text.Contains(time.AddHours(1).ToString("g")), "The target and saved timestamp are identified.");
         Require(comparison.Text.Contains(time.ToString("g")), "The comparison names its previous scan timestamp.");
         Call(window, "OpenSidebar"); Call(window, "ToggleSidebar"); Call(window, "ApplySidebarState", false);
@@ -188,7 +191,7 @@ internal static class HistoryUiTests
         double comparisonTableY = grid.TranslatePoint(new Point(), root).Y;
         Require(history.HandleShortcut(Key.H, ModifierKeys.Control | ModifierKeys.Shift) && all.Visibility == Visibility.Visible && all.Items.Count == 2, "History's view shortcut shows the saved snapshot.");
         RenderWindow(1200, 780);
-        Require(title.Text == metadata.Text && title.Text.Contains("192.0.2.0/24"),
+        Require(Identity() == metadata.Text && Identity().Contains("192.0.2.0/24"),
             "All devices identifies the selected scan target and saved date.");
         Require(Math.Abs(all.TranslatePoint(new Point(), root).Y - comparisonTableY) <= 0.5,
             "Switching to all devices preserves the whole-window table position.");
@@ -200,12 +203,25 @@ internal static class HistoryUiTests
             Theme(theme); Call(window, "ApplyFlatChrome");
             Save(Render(root, 1200, 780), Path.Combine(output, "History-" + theme + ".png"));
             Require(header.ActualHeight > 0 && grid.ActualHeight > 0, theme + ": compact history title and rows render.");
+            Require(Equals(((Run)history.FindName("HistoryCurrentTimestamp")).Foreground, app.FindResource("PrimaryBrush")) &&
+                Equals(((Run)history.FindName("HistoryPreviousTimestamp")).Foreground, app.FindResource("PrimaryBrush")), theme + ": both outer timestamps use the current accent.");
+            Require(Equals(((Button)history.FindName("HistoryChangesViewButton")).Foreground, app.FindResource("PrimaryBrush")) &&
+                ((Button)history.FindName("HistoryChangesViewButton")).Opacity == 1, theme + ": selected view is fully visible in the accent.");
+        }
+        Theme("Black");
+        foreach (string accent in Enum.GetNames(accentType))
+        {
+            themeManager.GetMethod("LoadDict", Static)!.Invoke(null, new[] { Enum.Parse(themeType, "Black"), Enum.Parse(accentType, accent) });
+            Render(root, 1200, 780);
+            Require(Equals(((Run)history.FindName("HistoryCurrentTimestamp")).Foreground, app.FindResource("PrimaryBrush")) &&
+                Equals(((Button)history.FindName("HistoryChangesViewButton")).Foreground, app.FindResource("PrimaryBrush")),
+                accent + ": timestamps and selected view follow an accent change.");
         }
         Theme("Black");
         foreach (string locale in Enum.GetNames(localeType))
         {
             Locale(locale); history.RefreshLocale(); menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
-            Require(title.Text == string.Format((string)app.FindResource("Str_History_ComparisonIdentity"), time.ToString("g"), time.AddHours(1).ToString("g")) && !comparison.Text.StartsWith("Str_"), locale + ": comparison identity is localized.");
+            Require(Identity().Contains("192.0.2.0/24") && Identity().Contains(time.ToString("g")) && Identity().Contains(time.AddHours(1).ToString("g")) && !comparison.Text.StartsWith("Str_"), locale + ": target and both dates remain identified.");
             Require(Equals(grid.Columns[0].Header, app.FindResource("Str_History_Change")) && Equals(all.Columns[0].Header, app.FindResource("Str_Col_Ip")), locale + ": both grid headings change language.");
             Require(menu.Items.OfType<MenuItem>().All(item => item.Header is string text && text.Length > 0 && !text.StartsWith("Str_")), locale + ": menu labels resolve.");
             foreach (double scale in new[] { 1.0, 1.5, 2.5 })
@@ -230,6 +246,42 @@ internal static class HistoryUiTests
         CheckSettingsDialog(assembly, Theme, Locale, output);
         HistoryRetentionTests.Run();
         CheckHistorySettingsMenu(window, app, output);
+        Call(history, "ShowEntry", after);
+        Call(window, "OpenSidebar"); Call(window, "ApplySidebarState", false);
+        var dense = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(entryType))!;
+        for (int i = 0; i < 30; i++) dense.Add(Entry(time.AddHours(i)));
+        historyType.GetMethod("SeedDemo", Static)!.Invoke(null, new object[] { dense });
+        Call(window, "RefreshHistoryList"); Call(window, "ShowHistoryEntry");
+        Save(RenderWindow(1200, 780), Path.Combine(output, "History-compact-sidebar.png"));
+        var heading = (TextBlock)window.FindName("SidebarHeading");
+        var sidebar = (FrameworkElement)window.FindName("HistorySidebar");
+        var sidebarParent = (FrameworkElement)sidebar.Parent;
+        Require(heading.Text == "Scan History" && heading.TextAlignment == TextAlignment.Center,
+            "The English sidebar heading is capitalized and centered.");
+        var headingGroup = (StackPanel)window.FindName("HistorySidebarHeader");
+        Require(Math.Abs(headingGroup.TranslatePoint(new Point(), sidebarParent).X + headingGroup.ActualWidth / 2 - sidebarParent.ActualWidth / 2) < 1,
+            "The glyph and heading are centered together across the sidebar.");
+        Require(headingGroup.Children[0] is TextBlock glyph && glyph.Text == (string)((Button)window.FindName("HistoryButton")).Content,
+            "The centered heading has the existing history glyph immediately to its left.");
+        var historyList = (ListBox)window.FindName("HistoryList");
+        var firstRow = (ListBoxItem)historyList.ItemContainerGenerator.ContainerFromIndex(0);
+        Require(firstRow.ActualHeight <= 38 && firstRow.ActualHeight >= 32,
+            "Date-first rows have small padding and readable spacing.");
+        var texts = new List<TextBlock>();
+        void Collect(DependencyObject parent)
+        {
+            if (parent is TextBlock text) texts.Add(text);
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++) Collect(VisualTreeHelper.GetChild(parent, i));
+        }
+        var secondRow = (ListBoxItem)historyList.ItemContainerGenerator.ContainerFromIndex(1);
+        Collect(secondRow);
+        Require(texts.Count == 2 && texts[0].Text.Contains(":") && texts[0].FontSize == 13 &&
+            Equals(texts[0].Foreground, app.FindResource("PrimaryBrush")) && texts[1].Text == "192.0.2.0/24" && texts[1].FontSize == 11 &&
+            Equals(texts[1].Foreground, app.FindResource("MutedTextBrush")),
+            "The larger accented date is first and the smaller muted target is below it.");
+        Console.WriteLine("SIDEBAR: rowHeight=" + firstRow.ActualHeight + " visibleRows=" + Math.Floor(historyList.ActualHeight / firstRow.ActualHeight));
+        historyType.GetMethod("SeedDemo", Static)!.Invoke(null, new object[] { entries });
+        Call(window, "RefreshHistoryList"); Call(window, "ShowHistoryEntry");
         Console.WriteLine("RENDERED: " + output);
     }
 
@@ -279,10 +331,10 @@ internal static class HistoryUiTests
                 var identityBounds = Bounds(identity);
                 var toggleBounds = Bounds(toggle);
                 var navigationBounds = Bounds(navigation);
-                Require(identityBounds.Bottom <= paneTop && toggleBounds.Bottom <= paneTop,
-                    "Identity and toggle are outside and above the content panel: " + width + "/" + open);
-                Require(identityBounds.Right <= toggleBounds.Left && toggleBounds.Right <= navigationBounds.Left,
-                    "Identity, toggle and main navigation never overlap: " + width + "/" + open);
+                Require(identityBounds.Bottom <= paneTop && toggleBounds.Top >= paneTop && toggleBounds.Bottom <= grid.TranslatePoint(new Point(), root).Y,
+                    "Identity is above the panel and the toggle is inside its original summary row: " + width + "/" + open);
+                Require(identityBounds.Right <= navigationBounds.Left && Math.Abs(toggleBounds.Right - history.TranslatePoint(new Point(history.ActualWidth - 12, 0), root).X) < 1,
+                    "Identity clears navigation and the view switch stays at the panel's right inset: " + width + "/" + open);
                 Require(identityBounds.Width > 0, "Scan identity remains readable at narrow widths: " + width + "/" + open);
                 double tableWindowY = grid.TranslatePoint(new Point(), root).Y;
                 var body = (Panel)Field(window, "_workspaceBody")!;
@@ -433,6 +485,21 @@ internal static class HistoryUiTests
     {
         var icon = (Button)window.FindName("HistoryButton");
         var menu = icon.ContextMenu;
+        Call(window, "HistorySettingsMenu_Opening", icon, null);
+        Require(ReferenceEquals(menu.PlacementTarget, icon) && menu.CustomPopupPlacementCallback != null && menu.HorizontalOffset == 0 && menu.VerticalOffset == 0,
+            "Mouse and native keyboard menu opening use the history button anchor, never the pointer.");
+        var placement = typeof(MainWindow).Assembly.GetType("KillerScan.Shell.FlyoutPlacement", true)!.GetMethod("PlaceBesideButton", Static)!;
+        foreach (double dpi in new[] { 1.0, 1.5, 2.0 })
+        foreach (double zoom in new[] { 1.0, 1.5, 2.5 })
+        {
+            double scale = dpi * zoom;
+            var candidates = (System.Windows.Controls.Primitives.CustomPopupPlacement[])placement.Invoke(null,
+                new object[] { new Size(320 * scale, 80 * scale), new Size(24 * scale, 24 * scale), new Thickness(22, 18, 22, 26), scale, scale, dpi })!;
+            Require(candidates.Length == 2 && candidates.All(candidate => Math.Abs(candidate.Point.X + 22 * scale - 24 * scale - 8 * dpi) < 0.01),
+                "Visible menu card stays eight logical pixels right of the rail button at DPI=" + dpi + " zoom=" + zoom);
+            Require(Math.Abs(candidates[0].Point.Y + 18 * scale) < 0.01 && Math.Abs(candidates[1].Point.Y + 80 * scale - 26 * scale - 24 * scale) < 0.01,
+                "Top and bottom candidates let WPF fit screen edges without covering the rail.");
+        }
         var item = menu.Items.OfType<MenuItem>().Single();
         Require(Equals(item.Header, app.FindResource("Str_History_Settings")) && item.InputGestureText == "Ctrl+Alt+R",
             "The history icon offers localized settings with its visible shortcut.");

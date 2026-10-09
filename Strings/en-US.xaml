@@ -43,7 +43,7 @@
     <sys:String x:Key="Str_Topology_Role">Role</sys:String>
     <sys:String x:Key="Str_TT_TopologyOrder">Arrange topology by</sys:String>
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Cycle topology arrangement</sys:String>
-    <sys:String x:Key="Str_History_Title">Scan history</sys:String>
+    <sys:String x:Key="Str_History_Title">Scan History</sys:String>
     <sys:String x:Key="Str_History_Empty">No completed scans yet.</sys:String>
     <sys:String x:Key="Str_History_Change">Change</sys:String>
     <sys:String x:Key="Str_History_Added">Added</sys:String>

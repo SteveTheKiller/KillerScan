@@ -78,16 +78,17 @@ namespace KillerScan.Controls
             var comparison = _entry == null ? null : ScanHistory.Compare(_entry);
             HistoryComparisonContext.Text = comparison?.Previous == null ? string.Empty :
                 string.Format(Loc("Str_History_ComparedWith"), comparison.Previous.ScannedAt.ToString("g"));
+            bool comparing = !_showAll && comparison?.Previous != null;
+            HistoryTarget.Text = _entry?.Target ?? Loc("Str_History_Empty");
+            HistoryDateSeparator.Text = _entry == null ? string.Empty : " · ";
+            HistoryPreviousTimestamp.Text = comparing ? comparison!.Previous!.ScannedAt.ToString("g") : string.Empty;
+            HistoryComparisonSeparator.Text = comparing ? " / " : string.Empty;
+            HistoryCurrentTimestamp.Text = _entry?.ScannedAt.ToString("g") ?? string.Empty;
             if (_entry == null)
             {
-                HistoryIdentity.Text = Loc("Str_History_Empty");
                 HistorySummary.Text = Loc("Str_History_Empty");
                 return;
             }
-            HistoryIdentity.Text = !_showAll && comparison?.Previous != null
-                ? string.Format(Loc("Str_History_ComparisonIdentity"),
-                    comparison.Previous.ScannedAt.ToString("g"), _entry.ScannedAt.ToString("g"))
-                : HistoryEntryContext.Text;
             if (_showAll)
             {
                 foreach (var device in _entry.Devices)

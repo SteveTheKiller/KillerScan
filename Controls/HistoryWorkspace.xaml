@@ -4,6 +4,14 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              Background="{DynamicResource ScanContentPaneBrush}" UseLayoutRounding="True">
     <UserControl.Resources>
+        <Style x:Key="HistoryViewButton" TargetType="Button" BasedOn="{StaticResource ViewTabButton}">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+                    <Setter Property="Opacity" Value="1"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
         <Style x:Key="HistoryGrid" TargetType="DataGrid">
             <Setter Property="Template" Value="{StaticResource ScanDataGridTemplate}"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
@@ -35,29 +43,29 @@
                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                 <TextBlock x:Name="HistoryIdentity" Foreground="{DynamicResource TextBrush}" FontSize="12"
                            FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,16,0">
+                    <Run x:Name="HistoryTarget"/><Run x:Name="HistoryDateSeparator"/><Run x:Name="HistoryPreviousTimestamp" Foreground="{DynamicResource PrimaryBrush}"/><Run x:Name="HistoryComparisonSeparator"/><Run x:Name="HistoryCurrentTimestamp" Foreground="{DynamicResource PrimaryBrush}"/>
                     <TextBlock.ToolTip><StackPanel>
                         <TextBlock x:Name="HistoryEntryContext" TextWrapping="Wrap"/>
                         <TextBlock x:Name="HistoryComparisonContext" TextWrapping="Wrap"/>
                     </StackPanel></TextBlock.ToolTip>
                 </TextBlock>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                        <Button x:Name="HistoryChangesViewButton" Style="{StaticResource ViewTabButton}"
-                                Content="{DynamicResource Str_History_ViewChanges}"
-                                Margin="0,0,12,0" ToolTip="Ctrl+Shift+H" Click="HistoryChangesView_Click"/>
-                        <Button x:Name="HistoryAllViewButton" Style="{StaticResource ViewTabButton}"
-                                Content="{DynamicResource Str_History_ViewAll}"
-                                ToolTip="Ctrl+Shift+H" Click="HistoryAllView_Click"/>
-                    </StackPanel>
             </Grid>
             <!-- The entry list moved to the window's history sidebar, so this pane is now just
                  the selected snapshot's changes and reads like any other scan table. -->
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                <!-- Counts retain the original table geometry. Identity and view selection
-                     live in the window's outer toolbar, detached above. -->
+                <!-- Counts and view selection retain the original table geometry. -->
                 <Grid Margin="0,0,0,10">
                     <TextBlock x:Name="HistorySummary" Foreground="{DynamicResource MutedTextBrush}" FontSize="12"
                                TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,150,0"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Button x:Name="HistoryChangesViewButton" Style="{StaticResource HistoryViewButton}"
+                                Content="{DynamicResource Str_History_ViewChanges}"
+                                Margin="0,0,12,0" ToolTip="Ctrl+Shift+H" Click="HistoryChangesView_Click"/>
+                        <Button x:Name="HistoryAllViewButton" Style="{StaticResource HistoryViewButton}"
+                                Content="{DynamicResource Str_History_ViewAll}"
+                                ToolTip="Ctrl+Shift+H" Click="HistoryAllView_Click"/>
+                    </StackPanel>
                 </Grid>
                 <DataGrid x:Name="HistoryChangesGrid" Grid.Row="1" Style="{StaticResource HistoryGrid}">
                     <DataGrid.Columns>

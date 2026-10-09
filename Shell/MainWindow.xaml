@@ -260,40 +260,44 @@
              Clipped so the panel can be frozen at full width and wiped by the column tween
              rather than reflowing to nothing as it closes. -->
         <Grid Grid.Row="1" Grid.Column="0" Margin="0,0,24,0" ClipToBounds="True">
-            <Grid x:Name="HistorySidebar" Margin="14,14,0,10" Visibility="Collapsed">
+            <Grid x:Name="HistorySidebar" Margin="0,4,0,4" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- The panel's own surface. Transparent on the flat themes, which paint nothing
                      here and let the window through, and the white well on 98SE, where a panel
                      with no surface of its own is just an empty gray strip. -->
-                <!-- Cancels the panel's 14,14,0,10 inset so the well spans the same row height as
+                <!-- Cancels the panel's inset so the well spans the same row height as
                      the content pane, then carries the same four-layer sunken edge. -->
-                <Border Grid.RowSpan="3" Margin="-14,-14,2,-10" Panel.ZIndex="-1"
+                <Border Grid.RowSpan="3" Margin="0,-4,2,-4" Panel.ZIndex="-1"
                         Background="{DynamicResource SidebarPaneBrush}"/>
-                <Border Grid.RowSpan="3" Margin="-14,-14,2,-10" Panel.ZIndex="5" IsHitTestVisible="False"
+                <Border Grid.RowSpan="3" Margin="0,-4,2,-4" Panel.ZIndex="5" IsHitTestVisible="False"
                         BorderBrush="{DynamicResource PaneBevelDarkBrush}" BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
-                <Border Grid.RowSpan="3" Margin="-14,-14,2,-10" Panel.ZIndex="5" IsHitTestVisible="False"
+                <Border Grid.RowSpan="3" Margin="0,-4,2,-4" Panel.ZIndex="5" IsHitTestVisible="False"
                         BorderBrush="{DynamicResource PaneBevelLightBrush}" BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
-                <Border Grid.RowSpan="3" Margin="-13,-13,3,-9" Panel.ZIndex="5" IsHitTestVisible="False"
+                <Border Grid.RowSpan="3" Margin="1,-3,3,-3" Panel.ZIndex="5" IsHitTestVisible="False"
                         BorderBrush="{DynamicResource PaneBevelDark2Brush}" BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
-                <Border Grid.RowSpan="3" Margin="-13,-13,3,-9" Panel.ZIndex="5" IsHitTestVisible="False"
+                <Border Grid.RowSpan="3" Margin="1,-3,3,-3" Panel.ZIndex="5" IsHitTestVisible="False"
                         BorderBrush="{DynamicResource PaneBevelLight2Brush}" BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
-                <TextBlock x:Name="SidebarHeading" Grid.Row="0" Text="{DynamicResource Str_History_Title}" Margin="1,0,8,12"
-                           Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource WordmarkFont}"
-                           FontSize="20" TextTrimming="CharacterEllipsis"/>
+                <StackPanel x:Name="HistorySidebarHeader" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,6">
+                    <TextBlock Text="&#xE81C;" FontFamily="Segoe MDL2 Assets" FontSize="16" Margin="0,0,6,0" Visibility="{Binding Visibility, ElementName=HistoryList}"
+                               Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="SidebarHeading" Text="{DynamicResource Str_History_Title}" TextAlignment="Center"
+                               Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource WordmarkFont}"
+                               FontSize="20" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
                 <ListBox x:Name="HistoryList" Grid.Row="1" Background="Transparent" BorderThickness="0"
-                         Margin="0,0,8,0" HorizontalContentAlignment="Stretch"
+                         Margin="14,0,8,0" HorizontalContentAlignment="Stretch"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          SelectionChanged="HistoryList_SelectionChanged">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
-                            <Setter Property="Padding" Value="9,7"/>
+                            <Setter Property="Padding" Value="9,1"/>
                             <Setter Property="SnapsToDevicePixels" Value="True"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListBoxItem">
-                                        <Border x:Name="bg" Background="Transparent" Margin="0,0,0,3"
+                                        <Border x:Name="bg" Background="Transparent" Margin="0,0,0,2"
                                                 CornerRadius="{DynamicResource ControlCornerRadius}">
                                             <ContentPresenter Margin="{TemplateBinding Padding}"/>
                                         </Border>
@@ -313,9 +317,8 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <!-- The target carries the accent: it is the identity of the entry,
-                                     and the timestamp under it is the supporting detail. -->
-                                <TextBlock Text="{Binding Target}" FontSize="14" FontWeight="SemiBold"
+                                <!-- The saved date identifies the entry; the target is supporting detail. -->
+                                <TextBlock Text="{Binding ScannedAt, StringFormat={}{0:g}}" FontSize="13" FontWeight="SemiBold"
                                            TextTrimming="CharacterEllipsis">
                                     <TextBlock.Style>
                                         <!-- Resting colour is a Setter, not an attribute on the
@@ -332,7 +335,7 @@
                                         </Style>
                                     </TextBlock.Style>
                                 </TextBlock>
-                                <TextBlock Text="{Binding ScannedAt, StringFormat={}{0:g}}" FontSize="12" Margin="0,2,0,0"
+                                <TextBlock Text="{Binding Target}" FontSize="11"
                                            TextTrimming="CharacterEllipsis">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
@@ -353,7 +356,7 @@
 
                 <!-- Second section, sharing the row so the two cross-fade in place. -->
                 <ListBox x:Name="ProfilesList" Grid.Row="1" Background="Transparent" BorderThickness="0"
-                         Margin="0,0,8,0" HorizontalContentAlignment="Stretch" Visibility="Collapsed"
+                         Margin="14,0,8,0" HorizontalContentAlignment="Stretch" Visibility="Collapsed"
                          PreviewMouseRightButtonDown="ProfileList_RightClick"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ItemContainerStyle="{Binding ItemContainerStyle, ElementName=HistoryList}">
@@ -456,7 +459,7 @@
             </Button>
             <Button x:Name="HistoryButton" Style="{StaticResource RailButton}"
                     Content="&#xE81C;" FontSize="15"
-                    Click="HistoryButton_Click" Margin="0,0,0,10">
+                    Click="HistoryButton_Click" ContextMenuOpening="HistorySettingsMenu_Opening" Margin="0,0,0,10">
                 <Button.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="{DynamicResource Str_History_Settings}" InputGestureText="Ctrl+Alt+R"

@@ -11,6 +11,9 @@ namespace KillerScan.Shell
     {
         private HistoryWorkspace? _historyWorkspace;
 
+        private void HistorySettingsMenu_Opening(object sender, ContextMenuEventArgs e) =>
+            FlyoutPlacement.Attach(HistoryButton.ContextMenu, HistoryButton);
+
         private bool HandleHistorySettingsShortcut(Key key, ModifierKeys modifiers)
         {
             if (!IsHistorySettingsShortcut(key, modifiers)) return false;

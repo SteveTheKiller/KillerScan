@@ -1,10 +1,11 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace KillerScan.Shell
 {
-    /// <summary>Anchors every rail flyout to the content pane's lower-left corner.</summary>
+    /// <summary>Shared popup placement for pane flyouts and button-anchored rail menus.</summary>
     internal static class FlyoutPlacement
     {
         private static FrameworkElement? _pane;
@@ -39,6 +40,35 @@ namespace KillerScan.Shell
                 ? card.Margin : DefaultCardHalo;
             menu.CustomPopupPlacementCallback =
                 (popupSize, targetSize, _) => Place(popupSize, targetSize, halo);
+        }
+
+        internal static void Attach(ContextMenu menu, FrameworkElement button)
+        {
+            menu.PlacementTarget = button;
+            menu.Placement = PlacementMode.Custom;
+            menu.HorizontalOffset = menu.VerticalOffset = 0;
+            menu.ApplyTemplate();
+            Thickness halo = menu.Template?.FindName("MenuRoot", menu) is FrameworkElement card
+                ? card.Margin : DefaultCardHalo;
+            menu.CustomPopupPlacementCallback = (popupSize, targetSize, _) =>
+            {
+                var dpi = VisualTreeHelper.GetDpi(button);
+                double sx = menu.ActualWidth > 0 ? popupSize.Width / menu.ActualWidth : dpi.DpiScaleX;
+                double sy = menu.ActualHeight > 0 ? popupSize.Height / menu.ActualHeight : dpi.DpiScaleY;
+                return PlaceBesideButton(popupSize, targetSize, halo, sx, sy, dpi.DpiScaleX);
+            };
+        }
+
+        internal static CustomPopupPlacement[] PlaceBesideButton(Size popupSize, Size targetSize,
+            Thickness halo, double popupScaleX, double popupScaleY, double dpiScaleX)
+        {
+            // Callback sizes are screen pixels. Remove the transparent shadow halo so the
+            // visible card has an eight-DIP gap, independent of app zoom. WPF fits the edge.
+            double x = targetSize.Width + 8 * dpiScaleX - halo.Left * popupScaleX;
+            return [
+                new CustomPopupPlacement(new Point(x, -halo.Top * popupScaleY), PopupPrimaryAxis.Vertical),
+                new CustomPopupPlacement(new Point(x, targetSize.Height - popupSize.Height + halo.Bottom * popupScaleY), PopupPrimaryAxis.Vertical)
+            ];
         }
 
         private static CustomPopupPlacement[] Place(Size popupSize, Size targetSize, Thickness halo)
