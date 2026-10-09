@@ -783,9 +783,9 @@
                                                ToolTip="https://killerscan.net/help.html#shortcuts"><Run Text="{DynamicResource Str_KS_OnlineHelp}"/></Hyperlink>
                                 </TextBlock>
                             </Grid>
-                            <ScrollViewer x:Name="ShortcutListHost" Grid.Row="1"
+                            <ScrollViewer x:Name="ShortcutListHost" Grid.Row="1" Margin="{DynamicResource ShortcutsScrollBleed}"
                                           VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                                <StackPanel>
+                                <StackPanel Margin="{DynamicResource ShortcutsScrollInset}">
                                     <!-- Two authored columns with a fixed gutter, as in KillerPDF.
                                          Which category lands where is declared in the table, not
                                          balanced at runtime, so the grouping stays predictable. -->

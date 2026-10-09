@@ -118,6 +118,11 @@
     <Thickness x:Key="AboutCaptionMargin">0</Thickness>
     <Thickness x:Key="ScanAboutContentMargin">18,10,18,18</Thickness>
     <Thickness x:Key="ShortcutsContentMargin">24,18,24,18</Thickness>
+    <!-- The shortcut list's scroll viewer reaches past the content margin so its scrollbar sits
+         on the card edge; the bottom stops at the 6px corner radius. The inset puts the list
+         itself back where the content margin had it. -->
+    <Thickness x:Key="ShortcutsScrollBleed">0,0,-24,-12</Thickness>
+    <Thickness x:Key="ShortcutsScrollInset">0,0,24,12</Thickness>
     <sys:Double x:Key="AboutCloseWidth">28</sys:Double>
     <sys:Double x:Key="AboutCloseHeight">26</sys:Double>
     <Thickness x:Key="AboutCloseMargin">0,6,6,0</Thickness>
