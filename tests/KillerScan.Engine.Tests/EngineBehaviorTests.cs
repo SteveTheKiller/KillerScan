@@ -60,8 +60,15 @@ internal static class EngineBehaviorTests
             NetworkPlatform.Current = new LoopbackPlatform();
             NetworkScanner.DeviceCompleted = _ => Interlocked.Increment(ref completionHooks);
             scan = new NetworkScanner().DeepProbeHostAsync("127.0.0.1", cancel.Token);
-            Require(await Task.WhenAny(server.HttpRequested, Task.Delay(60000)) == server.HttpRequested,
-                "Deep probe reaches a controlled stalled HTTP response.");
+            if (await Task.WhenAny(server.HttpRequested, Task.Delay(60000)) != server.HttpRequested)
+            {
+                string state = scan.Status.ToString();
+                if (scan.Status == TaskStatus.RanToCompletion)
+                    state += ", open ports " + string.Join(",", scan.Result.OpenPorts) + ", fixture port " + server.Port;
+                else if (scan.IsFaulted)
+                    state += ", " + scan.Exception!.GetBaseException().Message;
+                throw new InvalidOperationException("Deep probe reaches a controlled stalled HTTP response. Scan state: " + state + ".");
+            }
             var elapsed = Stopwatch.StartNew();
             cancel.Cancel();
             Require(await Task.WhenAny(scan, Task.Delay(500)) == scan, "Stop returns promptly during deep fingerprinting.");
