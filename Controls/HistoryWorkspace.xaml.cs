@@ -45,6 +45,18 @@ namespace KillerScan.Controls
             return HistoryToolbar;
         }
 
+        internal FrameworkElement DetachSummary()
+        {
+            ((Panel)HistoryDetails.Parent).Children.Remove(HistoryDetails);
+            return HistoryDetails;
+        }
+
+        internal void UseTableHeaderStyle(Style style)
+        {
+            HistoryChangesGrid.ColumnHeaderStyle = style;
+            HistoryAllGrid.ColumnHeaderStyle = style;
+        }
+
         private void HistoryAllView_Click(object sender, RoutedEventArgs e) => SetView(true);
 
         private void SetView(bool showAll)

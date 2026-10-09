@@ -14,6 +14,7 @@ namespace KillerScan.Shell
         private readonly Grid _workspaceBody = new();
         private readonly StackPanel _workspaceNavigation = new() { Orientation = Orientation.Horizontal };
         private readonly Grid _workspaceToolbar = new();
+        private readonly Grid _workspaceSummary = new() { Visibility = Visibility.Collapsed, UseLayoutRounding = true };
         private readonly Dictionary<string, Button> _viewButtons = [];
         private ScanWorkspace? _scanWorkspace;
         private FrameworkElement? _selectedWorkspace;
@@ -23,7 +24,13 @@ namespace KillerScan.Shell
         private void InitializeWorkspace()
         {
             WorkspaceHost.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            WorkspaceHost.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             WorkspaceHost.RowDefinitions.Add(new RowDefinition());
+            // Supplemental view information sits above the existing table frame.
+            foreach (UIElement child in WorkspaceHost.Children)
+                if (Grid.GetRow(child) == 1) Grid.SetRow(child, 2);
+            Grid.SetRow(_workspaceSummary, 1);
+            WorkspaceHost.Children.Add(_workspaceSummary);
             BuildWorkspaceNavigation();
             _workspaceToolbar.ColumnDefinitions.Add(new ColumnDefinition());
             _workspaceToolbar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -75,6 +82,7 @@ namespace KillerScan.Shell
             if (!_workspaceBody.Children.Contains(content)) _workspaceBody.Children.Add(content);
             _selectedWorkspace = content;
             _workspaceView = view;
+            _workspaceSummary.Visibility = view == "history" ? Visibility.Visible : Visibility.Collapsed;
             // The export menu lives on the rail whatever is in front, so it is told which view it
             // is acting for. Anything built on the scan workspace resolves itself.
             _scanWorkspace?.ExportContext = view is "watch" or "terminal" or "history" ? view : "scan";
@@ -408,6 +416,7 @@ namespace KillerScan.Shell
         private void ApplyWorkspaceScale(double scale)
         {
             _workspaceToolbar.LayoutTransform = new ScaleTransform(scale, scale);
+            _workspaceSummary.LayoutTransform = new ScaleTransform(scale, scale);
             foreach (var content in _workspaceBody.Children.OfType<FrameworkElement>())
                 if (content is ScanWorkspace scan) scan.ApplyScale(scale);
                 else if (content is NetworkToolsWindow tools) tools.ApplyScale(scale);

@@ -108,7 +108,10 @@ namespace KillerScan.Shell
             if (_historyWorkspace == null)
             {
                 _historyWorkspace = new HistoryWorkspace { LayoutTransform = new ScaleTransform(_appScale, _appScale) };
+                _historyWorkspace.UseTableHeaderStyle(((DataGrid)_scanWorkspace!.FindName("ResultsGrid")).ColumnHeaderStyle);
                 RegisterViewToolbar("history", _historyWorkspace.DetachToolbar());
+                _workspaceSummary.Children.Add(_historyWorkspace.DetachSummary());
+                _workspaceSummary.LayoutTransform = new ScaleTransform(_appScale, _appScale);
                 _historyWorkspace.CurrentScanRequested += () => ShowScanView("devices");
                 _historyWorkspace.SidebarRequested += () => HistoryButton_Click(this, new RoutedEventArgs());
             }

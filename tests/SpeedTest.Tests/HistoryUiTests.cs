@@ -32,12 +32,12 @@ internal static class HistoryUiTests
     private static object? Field(object target, string name) => target.GetType().GetField(name, Instance)!.GetValue(target);
     private static void Require(bool condition, string message) { _checks++; if (!condition) throw new InvalidOperationException(message); }
 
-    public static Task Run(bool settingsOnly = false)
+    public static Task Run(bool settingsOnly = false, bool tableOnly = false)
     {
         Exception? failure = null;
         var thread = new Thread(() =>
         {
-            try { CheckUi(settingsOnly); } catch (Exception ex) { failure = ex; }
+            try { CheckUi(settingsOnly, tableOnly); } catch (Exception ex) { failure = ex; }
             finally { Dispatcher.CurrentDispatcher.InvokeShutdown(); }
         });
         thread.SetApartmentState(ApartmentState.STA); thread.Start();
@@ -56,14 +56,14 @@ internal static class HistoryUiTests
         Console.Write(await output); Require(process.ExitCode == 0, "Isolated history suite: " + await error);
     }
 
-    private static void CheckUi(bool settingsOnly)
+    private static void CheckUi(bool settingsOnly, bool tableOnly)
     {
         // Settings writes are redirected for this isolated test process, never to the user's app key.
         string scratch = "Software\\KillerScan-HistoryTests-" + Guid.NewGuid().ToString("N");
         using var registry = Registry.CurrentUser.CreateSubKey(scratch);
         var currentUser = new IntPtr(unchecked((int)0x80000001));
         Require(RegOverridePredefKey(currentUser, registry.Handle.DangerousGetHandle()) == 0, "Isolate registry settings.");
-        try { Capture(settingsOnly); }
+        try { Capture(settingsOnly, tableOnly); }
         finally
         {
             RegOverridePredefKey(currentUser, IntPtr.Zero);
@@ -71,7 +71,7 @@ internal static class HistoryUiTests
         }
     }
 
-    private static void Capture(bool settingsOnly)
+    private static void Capture(bool settingsOnly, bool tableOnly)
     {
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", Static)!.SetValue(null, assembly);
@@ -170,7 +170,8 @@ internal static class HistoryUiTests
         Render(root, 1200, 780);
         Require((bool)Field(window, "_sidebarCollapsed")! && history.Visibility == Visibility.Visible && header.ActualHeight > 0, "Closing the sidebar preserves the compact history title and snapshot.");
         Require(title.ToolTip is StackPanel tooltip && tooltip.Children.Contains(metadata) && tooltip.Children.Contains(comparison), "Scan metadata belongs to the outer toolbar tooltip.");
-        CheckOriginalGeometry(window, history, root, directory.FullName, output);
+        CheckStandardTables(window, history, root, output, Theme);
+        if (tableOnly) { Console.WriteLine("RENDERED: " + output); return; }
         Require((string)Field(window, "_workspaceView")! == "history", "The selected snapshot remains active.");
         Require(((FrameworkElement)window.FindName("DeviceCountFooter")).Visibility == Visibility.Collapsed, "History does not show the hidden live scan's device count.");
         Require(Call(window, "GetSelectedDevice") == null, "History cannot act on a hidden live selection.");
@@ -295,78 +296,95 @@ internal static class HistoryUiTests
         Console.WriteLine("RENDERED: " + output);
     }
 
-    private static void CheckOriginalGeometry(MainWindow window, HistoryWorkspace history, FrameworkElement root, string repo, string output)
+    private static IEnumerable<T> VisualChildren<T>(DependencyObject parent) where T : DependencyObject
     {
-        // Exact XAML from fe699c3's parent, with code-behind hooks removed for loose loading.
-        var xml = new XmlDocument();
-        xml.Load(Path.Combine(repo, "tests", "SpeedTest.Tests", "Fixtures", "HistoryWorkspace-before-header.xml"));
-        xml.DocumentElement!.RemoveAttribute("Class", "http://schemas.microsoft.com/winfx/2006/xaml");
-        foreach (XmlElement element in xml.SelectNodes("//*")!) element.RemoveAttribute("Click");
-        var baseline = (UserControl)XamlReader.Parse(xml.OuterXml);
-        baseline.FontFamily = history.FontFamily;
-        baseline.FontSize = history.FontSize;
-        TextOptions.SetTextFormattingMode(baseline, TextOptions.GetTextFormattingMode(history));
-        TextOptions.SetTextRenderingMode(baseline, TextOptions.GetTextRenderingMode(history));
-        ((TextBlock)baseline.FindName("HistorySummary")).Text = ((TextBlock)history.FindName("HistorySummary")).Text;
-        var grid = (DataGrid)history.FindName("HistoryChangesGrid");
-        var oldGrid = (DataGrid)baseline.FindName("HistoryChangesGrid");
-        oldGrid.ItemsSource = grid.ItemsSource;
-        var header = (TextBlock)history.FindName("HistorySummary");
-        BitmapSource RenderWindow(int width, int height)
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
         {
-            Render(root, width, height);
-            Call(window, "FitToolbarViews");
-            return Render(root, width, height);
+            var child = VisualTreeHelper.GetChild(parent, i);
+            if (child is T match) yield return match;
+            foreach (var descendant in VisualChildren<T>(child)) yield return descendant;
         }
-        foreach (bool open in new[] { false, true })
+    }
+
+    private static void CheckStandardTables(MainWindow window, HistoryWorkspace history, FrameworkElement root, string output, Action<string> theme)
+    {
+        var scan = (ScanWorkspace)Field(window, "_scanWorkspace")!;
+        var standard = (DataGrid)scan.FindName("ResultsGrid");
+        var surface = (Grid)window.FindName("TerminalLayout");
+        var frame = (Border)window.FindName("DevicesPane");
+        var summary = (TextBlock)history.FindName("HistorySummary");
+        var toggle = (Button)history.FindName("HistoryAllViewButton");
+        var identity = (TextBlock)history.FindName("HistoryIdentity");
+        var supplemental = (FrameworkElement)Field(window, "_workspaceSummary")!;
+        Rect Bounds(FrameworkElement element) => new Rect(element.TranslatePoint(new Point(), root), element.RenderSize);
+        BitmapSource Draw(int width)
         {
-            if (open) Call(window, "OpenSidebar");
-            else if (!(bool)Field(window, "_sidebarCollapsed")!) Call(window, "ToggleSidebar");
+            Render(root, width, 780); Call(window, "FitToolbarViews");
+            return Render(root, width, 780);
+        }
+        void Compare(string name, int width, bool open)
+        {
+            if (open && (bool)Field(window, "_sidebarCollapsed")!) Call(window, "OpenSidebar");
+            else if (!open && !(bool)Field(window, "_sidebarCollapsed")!) Call(window, "ToggleSidebar");
             Call(window, "ApplySidebarState", false);
-            foreach (int width in new[] { 1200, 800, 640 })
+            Call(window, "ShowScanView", "devices");
+            Save(Draw(width), Path.Combine(output, "Devices-" + name + "-" + width + "-" + open + ".png"));
+            var standardBounds = Bounds(standard);
+            var standardInset = standard.TranslatePoint(new Point(), surface);
+            var standardHeader = VisualChildren<System.Windows.Controls.Primitives.DataGridColumnHeader>(standard)
+                .First(header => header.Column != null && Equals(header.Column.Header, Application.Current.FindResource("Str_Col_Ip")));
+            var headerTemplate = standardHeader.Template;
+            var headerBackground = standardHeader.Background;
+            var headerForeground = standardHeader.Foreground;
+            var clipAtCorner = surface.Clip.FillContains(new Point(0, 0));
+            var radius = frame.CornerRadius;
+            Require(supplemental.Visibility == Visibility.Collapsed, name + ": normal Devices has no supplemental row.");
+            foreach (bool all in new[] { false, true })
             {
-                RenderWindow(width, 780);
-                Render(baseline, (int)Math.Round(history.ActualWidth), (int)Math.Round(history.ActualHeight));
-                double actual = grid.TranslatePoint(new Point(), history).Y;
-                double original = oldGrid.TranslatePoint(new Point(), baseline).Y;
-                Console.WriteLine("GEOMETRY: width=" + width + " sidebar=" + (open ? "open" : "closed") + " tableY=" + actual + " originalY=" + original + " headerHeight=" + header.ActualHeight + " oldHeaderHeight=" + ((TextBlock)baseline.FindName("HistorySummary")).ActualHeight);
-                Save(RenderWindow(width, 780), Path.Combine(output, "Compact-" + width + "-sidebar-" + (open ? "open" : "closed") + ".png"));
-                Save(Render(baseline, (int)Math.Round(history.ActualWidth), (int)Math.Round(history.ActualHeight)), Path.Combine(output, "Original-pane-" + width + "-sidebar-" + (open ? "open" : "closed") + ".png"));
-                var identity = (TextBlock)history.FindName("HistoryIdentity");
-                var toggle = (Button)history.FindName("HistoryAllViewButton");
-                var bar = (FrameworkElement)history.FindName("HistoryToolbar");
-                var navigation = (FrameworkElement)Field(window, "_workspaceNavigation")!;
-                var paneTop = history.TranslatePoint(new Point(), root).Y;
-                Rect Bounds(FrameworkElement item) => new Rect(item.TranslatePoint(new Point(), root), item.RenderSize);
-                var identityBounds = Bounds(identity);
-                var toggleBounds = Bounds(toggle);
-                var navigationBounds = Bounds(navigation);
-                Require(identityBounds.Bottom <= paneTop && toggleBounds.Top >= paneTop && toggleBounds.Bottom <= grid.TranslatePoint(new Point(), root).Y,
-                    "Identity is above the panel and the toggle is inside its original summary row: " + width + "/" + open);
-                Require(identityBounds.Right <= navigationBounds.Left && Math.Abs(toggleBounds.Right - history.TranslatePoint(new Point(history.ActualWidth - 12, 0), root).X) < 1,
-                    "Identity clears navigation and the view switch stays at the panel's right inset: " + width + "/" + open);
-                Require(identityBounds.Width > 0, "Scan identity remains readable at narrow widths: " + width + "/" + open);
-                double tableWindowY = grid.TranslatePoint(new Point(), root).Y;
-                var body = (Panel)Field(window, "_workspaceBody")!;
-                int childIndex = body.Children.IndexOf(history);
-                body.Children.Remove(history);
-                body.Children.Insert(childIndex, baseline);
-                baseline.Visibility = Visibility.Visible;
-                bar.Visibility = Visibility.Collapsed;
-                RenderWindow(width, 780);
-                double originalWindowY = oldGrid.TranslatePoint(new Point(), root).Y;
-                body.Children.Remove(baseline);
-                body.Children.Insert(childIndex, history);
-                bar.Visibility = Visibility.Visible;
-                RenderWindow(width, 780);
-                Require(Math.Abs(tableWindowY - originalWindowY) <= 0.5,
-                    "Whole-window table position matches the original pane and empty top area: " + width + "/" + open);
-                Require(actual <= original + 0.5, "The table never moves below the original position: " + width + "/" + open);
-                Require(Math.Abs(actual - original) <= 0.5, "Original table position is exact at normal and narrow widths: " + width + "/" + open);
-                Require(header.ActualHeight <= ((TextBlock)baseline.FindName("HistorySummary")).ActualHeight + 0.5, "The title adds no vertical header height.");
+                Call(window, "ShowHistoryEntry"); Call(history, "SetView", all);
+                var grid = (DataGrid)history.FindName(all ? "HistoryAllGrid" : "HistoryChangesGrid");
+                Save(Draw(width), Path.Combine(output, "History-" + (all ? "All-" : "Changes-") + name + "-" + width + "-" + open + ".png"));
+                string context = name + "/" + width + "/" + open + "/" + all;
+                var inset = grid.TranslatePoint(new Point(), surface);
+                Require(Math.Abs(inset.X - standardInset.X) < 0.5 && Math.Abs(inset.Y - standardInset.Y) < 0.5 &&
+                    Math.Abs(Bounds(grid).Left - standardBounds.Left) < 0.5 && Math.Abs(grid.ActualWidth - standardBounds.Width) < 0.5,
+                    context + ": table starts at the same frame edge and fills the standard Devices width.");
+                Require(ReferenceEquals(grid.Template, standard.Template) && ReferenceEquals(grid.RowStyle, standard.RowStyle) &&
+                    ReferenceEquals(grid.CellStyle, standard.CellStyle) && grid.ColumnHeaderHeight == standard.ColumnHeaderHeight &&
+                    grid.RowHeight == standard.RowHeight && grid.BorderThickness == standard.BorderThickness &&
+                    Equals(grid.Background, standard.Background) && Equals(grid.HorizontalGridLinesBrush, standard.HorizontalGridLinesBrush),
+                    context + ": shared table template, rows, cells, header height, fill and borders match Devices.");
+                var heading = VisualChildren<System.Windows.Controls.Primitives.DataGridColumnHeader>(grid).First(header => header.Column != null);
+                Require(ReferenceEquals(heading.Template, headerTemplate) && Equals(heading.Background, headerBackground) &&
+                    Equals(heading.Foreground, headerForeground) && heading.Padding == standardHeader.Padding,
+                    context + ": actual rendered column headers use the standard Devices style.");
+                Require(frame.CornerRadius == radius && surface.Clip.FillContains(new Point(0, 0)) == clipAtCorner &&
+                    ReferenceEquals(surface, frame.Child) && ReferenceEquals(history.Parent, Field(window, "_workspaceBody")),
+                    context + ": history uses the same rounded table frame and clipping as Devices.");
+                Require(supplemental.Visibility == Visibility.Visible && Bounds(summary).Bottom <= Bounds(frame).Top &&
+                    Bounds(toggle).Bottom <= Bounds(frame).Top && Bounds(identity).Bottom <= Bounds(summary).Top &&
+                    Bounds(summary).Right <= Bounds(toggle).Left && !frame.IsAncestorOf(summary) && !frame.IsAncestorOf(toggle),
+                    context + ": identity, counts and view switch are above the table without an enclosing panel.");
             }
+            Call(window, "ShowScanView", "devices"); Draw(width);
+            Require(Math.Abs(Bounds(standard).Y - standardBounds.Y) < 0.5 && supplemental.Visibility == Visibility.Collapsed,
+                name + ": returning to Devices restores its original whole-window geometry.");
         }
-        Call(window, "ToggleSidebar"); Call(window, "ApplySidebarState", false); Render(root, 1200, 780);
+        theme("Black"); Call(window, "ApplyFlatChrome");
+        foreach (bool open in new[] { false, true })
+            foreach (int width in new[] { 1200, 800, 640 }) Compare("Black", width, open);
+        foreach (string name in Enum.GetNames(typeof(KillerScan.App).Assembly.GetType("KillerScan.Services.Theme", true)!))
+        {
+            if (name == "Black") continue;
+            theme(name); Call(window, "ApplyFlatChrome"); Compare(name, 1200, false);
+        }
+        theme("Black"); Call(window, "ApplyFlatChrome");
+        foreach (double scale in new[] { 1.5, 2.5 })
+        {
+            Call(window, "ApplyAppScale", scale, false); Compare("Black-scale-" + scale, 1200, false);
+        }
+        Call(window, "ApplyAppScale", 1.0, false);
+        Call(window, "ShowHistoryEntry"); Call(history, "SetView", false); Draw(1200);
     }
 
     private static int _settingsApplyCalls;
