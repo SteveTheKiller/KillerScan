@@ -194,6 +194,17 @@
                                  Background="Transparent" BorderThickness="0" Foreground="{DynamicResource TextBrush}"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListBox.Template>
+                                <ControlTemplate TargetType="ListBox">
+                                    <ScrollViewer Style="{StaticResource ShadowScrollViewer}" Focusable="False"
+                                                  Padding="{TemplateBinding Padding}"
+                                                  HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                                  VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                                  CanContentScroll="{TemplateBinding ScrollViewer.CanContentScroll}">
+                                        <ItemsPresenter/>
+                                    </ScrollViewer>
+                                </ControlTemplate>
+                            </ListBox.Template>
                             <ListBox.ItemsPanel>
                                 <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
                             </ListBox.ItemsPanel>

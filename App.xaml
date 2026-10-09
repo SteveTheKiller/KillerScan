@@ -113,6 +113,136 @@
                 </Style.Triggers>
             </Style>
 
+            <!-- Scroll edge shadows, KillerShell's cue: a dark gradient at an edge only while more
+                 content lies past it. EdgeFadeOpacity is 0 on 98SE, which has no shadows. -->
+            <controls:ScrollEdgeVisibilityConverter x:Key="ScrollEdgeVisibility"/>
+            <Style x:Key="ScrollCueBase" TargetType="Border">
+                <Setter Property="IsHitTestVisible" Value="False"/>
+                <Setter Property="Opacity" Value="{DynamicResource EdgeFadeOpacity}"/>
+                <Setter Property="Panel.ZIndex" Value="99"/>
+            </Style>
+            <Style x:Key="ScrollTopCue" TargetType="Border" BasedOn="{StaticResource ScrollCueBase}">
+                <Setter Property="Height" Value="28"/>
+                <Setter Property="VerticalAlignment" Value="Top"/>
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0,1" EndPoint="0,0">
+                            <GradientStop Color="#00000000" Offset="0"/>
+                            <GradientStop Color="#22000000" Offset="0.65"/>
+                            <GradientStop Color="#50000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="ScrollBottomCue" TargetType="Border" BasedOn="{StaticResource ScrollCueBase}">
+                <Setter Property="Height" Value="28"/>
+                <Setter Property="VerticalAlignment" Value="Bottom"/>
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#00000000" Offset="0"/>
+                            <GradientStop Color="#22000000" Offset="0.65"/>
+                            <GradientStop Color="#50000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="ScrollLeftCue" TargetType="Border" BasedOn="{StaticResource ScrollCueBase}">
+                <Setter Property="Width" Value="28"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
+                            <GradientStop Color="#00000000" Offset="0"/>
+                            <GradientStop Color="#22000000" Offset="0.65"/>
+                            <GradientStop Color="#50000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="ScrollRightCue" TargetType="Border" BasedOn="{StaticResource ScrollCueBase}">
+                <Setter Property="Width" Value="28"/>
+                <Setter Property="HorizontalAlignment" Value="Right"/>
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#00000000" Offset="0"/>
+                            <GradientStop Color="#22000000" Offset="0.65"/>
+                            <GradientStop Color="#50000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- A themed ScrollViewer for views that scroll content of their own (topology, Keep
+                 Alive). The corner between the two bars is transparent; the stock template fills
+                 it with the system control colour, which showed as a white square. -->
+            <Style x:Key="ShadowScrollViewer" TargetType="ScrollViewer">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollViewer">
+                            <Grid Background="{TemplateBinding Background}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
+                                    Grid.Row="0" Grid.Column="0" Margin="{TemplateBinding Padding}"
+                                    CanContentScroll="{TemplateBinding CanContentScroll}"/>
+                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ScrollTopCue}">
+                                    <Border.Visibility>
+                                        <MultiBinding Converter="{StaticResource ScrollEdgeVisibility}" ConverterParameter="Start">
+                                            <Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                            <Binding Path="ScrollableHeight" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                        </MultiBinding>
+                                    </Border.Visibility>
+                                </Border>
+                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ScrollBottomCue}">
+                                    <Border.Visibility>
+                                        <MultiBinding Converter="{StaticResource ScrollEdgeVisibility}" ConverterParameter="End">
+                                            <Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                            <Binding Path="ScrollableHeight" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                        </MultiBinding>
+                                    </Border.Visibility>
+                                </Border>
+                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ScrollLeftCue}">
+                                    <Border.Visibility>
+                                        <MultiBinding Converter="{StaticResource ScrollEdgeVisibility}" ConverterParameter="Start">
+                                            <Binding Path="HorizontalOffset" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                            <Binding Path="ScrollableWidth" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                        </MultiBinding>
+                                    </Border.Visibility>
+                                </Border>
+                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ScrollRightCue}">
+                                    <Border.Visibility>
+                                        <MultiBinding Converter="{StaticResource ScrollEdgeVisibility}" ConverterParameter="End">
+                                            <Binding Path="HorizontalOffset" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                            <Binding Path="ScrollableWidth" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                        </MultiBinding>
+                                    </Border.Visibility>
+                                </Border>
+                                <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Row="0" Grid.Column="1"
+                                    Orientation="Vertical" Cursor="Arrow"
+                                    Maximum="{TemplateBinding ScrollableHeight}"
+                                    ViewportSize="{TemplateBinding ViewportHeight}"
+                                    Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                    Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                                <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Row="1" Grid.Column="0"
+                                    Orientation="Horizontal" Cursor="Arrow"
+                                    Maximum="{TemplateBinding ScrollableWidth}"
+                                    ViewportSize="{TemplateBinding ViewportWidth}"
+                                    Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                    Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <Style x:Key="ScanGridHeaderStrip" TargetType="Border"/>
             <ControlTemplate x:Key="ScanDataGridTemplate" TargetType="DataGrid">
                 <Border Background="{TemplateBinding Background}"
@@ -145,6 +275,22 @@
                                     <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
                                         Grid.Row="1" Grid.Column="0"
                                         CanContentScroll="{TemplateBinding CanContentScroll}"/>
+                                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ScrollTopCue}">
+                                        <Border.Visibility>
+                                            <MultiBinding Converter="{StaticResource ScrollEdgeVisibility}" ConverterParameter="Start">
+                                                <Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                                <Binding Path="ScrollableHeight" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                            </MultiBinding>
+                                        </Border.Visibility>
+                                    </Border>
+                                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ScrollBottomCue}">
+                                        <Border.Visibility>
+                                            <MultiBinding Converter="{StaticResource ScrollEdgeVisibility}" ConverterParameter="End">
+                                                <Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                                <Binding Path="ScrollableHeight" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                            </MultiBinding>
+                                        </Border.Visibility>
+                                    </Border>
                                     <ScrollBar x:Name="PART_VerticalScrollBar"
                                         Grid.Row="1" Grid.Column="1"
                                         Orientation="Vertical"
