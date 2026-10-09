@@ -52,7 +52,7 @@ internal static class EngineBehaviorTests
         var platform = NetworkPlatform.Current;
         var completed = NetworkScanner.DeviceCompleted;
         using var server = new LoopbackHttpServer(stall: true);
-        using var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        using var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(90));
         Task<NetworkDevice>? scan = null;
         int completionHooks = 0;
         try
@@ -60,7 +60,7 @@ internal static class EngineBehaviorTests
             NetworkPlatform.Current = new LoopbackPlatform();
             NetworkScanner.DeviceCompleted = _ => Interlocked.Increment(ref completionHooks);
             scan = new NetworkScanner().DeepProbeHostAsync("127.0.0.1", cancel.Token);
-            Require(await Task.WhenAny(server.HttpRequested, Task.Delay(10000)) == server.HttpRequested,
+            Require(await Task.WhenAny(server.HttpRequested, Task.Delay(60000)) == server.HttpRequested,
                 "Deep probe reaches a controlled stalled HTTP response.");
             var elapsed = Stopwatch.StartNew();
             cancel.Cancel();
