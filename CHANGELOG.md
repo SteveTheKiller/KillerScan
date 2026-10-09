@@ -4,7 +4,7 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.8.0] - Unreleased
+## [1.8.0] - 2026-10-08
 
 ### Added
 - Topology settings for box size, layout, orientation, fonts and connection lines, with Ctrl+wheel zoom, zoom presets, compact radial layouts and hand cursors for dragging. Open settings from the toolbar or the map's right-click menu.
