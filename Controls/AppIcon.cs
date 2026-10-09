@@ -15,12 +15,12 @@ namespace KillerScan.Controls
         private const string MasterUri = "pack://application:,,,/Resources/app-icon-master.png";
         private static BitmapSource? master;
         private static readonly ConditionalWeakTable<BitmapSource, RasterCache> rasters =
-            new ConditionalWeakTable<BitmapSource, RasterCache>();
+            new();
         private Rect lastPixels = Rect.Empty;
 
         private sealed class RasterCache
         {
-            internal readonly Dictionary<long, BitmapSource> Images = new Dictionary<long, BitmapSource>();
+            internal readonly Dictionary<long, BitmapSource> Images = [];
         }
 
         public AppIcon()
@@ -34,10 +34,7 @@ namespace KillerScan.Controls
 
         private void OnLayoutUpdated(object? sender, EventArgs e)
         {
-            Rect pixels;
-            double sx, sy;
-            Point origin;
-            GetFootprint(out pixels, out origin, out sx, out sy);
+            GetFootprint(out Rect pixels, out _, out _, out _);
             if (pixels != lastPixels) InvalidateVisual();
         }
 
@@ -75,15 +72,12 @@ namespace KillerScan.Controls
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            Rect pixels;
-            double sx, sy;
-            Point origin;
-            GetFootprint(out pixels, out origin, out sx, out sy);
+            GetFootprint(out Rect pixels, out Point origin, out double sx, out double sy);
             lastPixels = pixels;
-            if (pixels.IsEmpty || !(Source is BitmapSource original)) return;
+            if (pixels.IsEmpty || Source is not BitmapSource original) return;
             int width = (int)pixels.Width, height = (int)pixels.Height;
             var candidates = original is BitmapFrame frame && frame.Decoder != null
-                ? frame.Decoder.Frames.Cast<BitmapSource>() : new[] { original };
+                ? frame.Decoder.Frames.Cast<BitmapSource>() : [original];
             var input = SelectSource(candidates, width, height);
             if (input == null && MasterUri.Length > 0)
             {
@@ -92,7 +86,7 @@ namespace KillerScan.Controls
                     master = BitmapFrame.Create(new Uri(MasterUri), BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
                     master.Freeze();
                 }
-                input = SelectSource(new[] { master }, width, height);
+                input = SelectSource([master], width, height);
             }
             // Beyond the supplied artwork's resolution, keep its pixels native rather than enlarge them.
             if (input == null)
@@ -106,7 +100,7 @@ namespace KillerScan.Controls
             var rectangle = new Rect((pixels.X - origin.X) / sx, (pixels.Y - origin.Y) / sy,
                 width / sx, height / sy);
             drawingContext.PushGuidelineSet(new GuidelineSet(
-                new[] { rectangle.Left, rectangle.Right }, new[] { rectangle.Top, rectangle.Bottom }));
+                [rectangle.Left, rectangle.Right], [rectangle.Top, rectangle.Bottom]));
             drawingContext.DrawImage(bitmap, rectangle);
             drawingContext.Pop();
         }
