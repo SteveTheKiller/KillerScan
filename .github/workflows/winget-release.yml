@@ -49,17 +49,32 @@ jobs:
           # Let the release settle before asking GitHub for a branch. See the header note.
           if ("${{ github.event_name }}" -eq "release") { Start-Sleep -Seconds 90 }
 
+          # Write the manifests locally first. komac cannot read the version an exe installer
+          # registers, so it copies DisplayVersion from the previous manifest, and winget
+          # validation rejects the PR. Set it to this release's version before submitting.
+          $out = Join-Path $env:RUNNER_TEMP 'winget-manifests'
+          if (Test-Path $out) { Remove-Item $out -Recurse -Force }
+          komac update SteveTheKiller.KillerScan --version $version --urls $url --dry-run --output $out
+          if ($LASTEXITCODE -ne 0) { Write-Error "komac update failed with exit $LASTEXITCODE"; exit 1 }
+          $dir = Join-Path $out "manifests/s/SteveTheKiller/KillerScan/$version"
+          $installer = Join-Path $dir 'SteveTheKiller.KillerScan.installer.yaml'
+          if (-not (Test-Path $installer)) { Write-Error "komac did not write $installer"; exit 1 }
+          $text = Get-Content $installer -Raw
+          $text = $text -replace '(?m)^([ \t]*DisplayVersion:[ \t]*)[^\r\n]*', "`${1}$version"
+          Set-Content $installer $text -NoNewline -Encoding utf8
+          Select-String -Path $installer -Pattern 'DisplayVersion'
+
           # komac picks a fresh GUID for its branch name every run, so a retry never collides
           # with a half-finished attempt.
           $delays = @(60, 150, 300)
           for ($i = 0; $i -le $delays.Count; $i++) {
-              komac update SteveTheKiller.KillerScan --version $version --urls $url --submit
+              komac submit $dir --yes
               if ($LASTEXITCODE -eq 0) { exit 0 }
               if ($i -eq $delays.Count) { break }
               Write-Host "Submit failed with exit $LASTEXITCODE. Retrying in $($delays[$i])s."
               Start-Sleep -Seconds $delays[$i]
           }
-          Write-Error "komac update failed after $($delays.Count + 1) attempts"
+          Write-Error "komac submit failed after $($delays.Count + 1) attempts"
           exit 1
         env:
           GITHUB_TOKEN: ${{ secrets.WINGET_TOKEN }}
