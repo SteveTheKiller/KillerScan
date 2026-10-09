@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -17,6 +18,12 @@ namespace KillerScan.Controls
         internal HistorySettingsDialog(HistoryRetention initial, Func<HistoryRetention, bool> apply)
         {
             InitializeComponent();
+            // Reuse the family radio template without rasterizing its label through an effect.
+            foreach (var selection in new[] { TimeMode, CountMode, AllMode })
+            {
+                selection.ApplyTemplate();
+                if (selection.Template.FindName("label", selection) is ContentPresenter label) label.Effect = null;
+            }
             _initial = initial;
             _apply = apply;
             CountBox.Text = initial.Count.ToString(CultureInfo.CurrentCulture);

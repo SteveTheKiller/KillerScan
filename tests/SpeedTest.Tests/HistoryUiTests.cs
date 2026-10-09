@@ -32,12 +32,12 @@ internal static class HistoryUiTests
     private static object? Field(object target, string name) => target.GetType().GetField(name, Instance)!.GetValue(target);
     private static void Require(bool condition, string message) { _checks++; if (!condition) throw new InvalidOperationException(message); }
 
-    public static Task Run()
+    public static Task Run(bool settingsOnly = false)
     {
         Exception? failure = null;
         var thread = new Thread(() =>
         {
-            try { CheckUi(); } catch (Exception ex) { failure = ex; }
+            try { CheckUi(settingsOnly); } catch (Exception ex) { failure = ex; }
             finally { Dispatcher.CurrentDispatcher.InvokeShutdown(); }
         });
         thread.SetApartmentState(ApartmentState.STA); thread.Start();
@@ -56,14 +56,14 @@ internal static class HistoryUiTests
         Console.Write(await output); Require(process.ExitCode == 0, "Isolated history suite: " + await error);
     }
 
-    private static void CheckUi()
+    private static void CheckUi(bool settingsOnly)
     {
         // Settings writes are redirected for this isolated test process, never to the user's app key.
         string scratch = "Software\\KillerScan-HistoryTests-" + Guid.NewGuid().ToString("N");
         using var registry = Registry.CurrentUser.CreateSubKey(scratch);
         var currentUser = new IntPtr(unchecked((int)0x80000001));
         Require(RegOverridePredefKey(currentUser, registry.Handle.DangerousGetHandle()) == 0, "Isolate registry settings.");
-        try { Capture(); }
+        try { Capture(settingsOnly); }
         finally
         {
             RegOverridePredefKey(currentUser, IntPtr.Zero);
@@ -71,7 +71,7 @@ internal static class HistoryUiTests
         }
     }
 
-    private static void Capture()
+    private static void Capture(bool settingsOnly)
     {
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", Static)!.SetValue(null, assembly);
@@ -106,6 +106,16 @@ internal static class HistoryUiTests
             ((Action?)localeManager.GetField("LocaleChanged", Static)!.GetValue(null))?.Invoke();
         }
         Theme("Black"); Locale("EnUS");
+        if (settingsOnly)
+        {
+            typeof(MainWindow).GetMethod("PublishGrainTile", Static)!.Invoke(null, null);
+            string dialogOutput = Path.Combine(Path.GetTempPath(), "KillerScan-history-dialog-" + Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(dialogOutput);
+            CheckSettingsDialog(assembly, Theme, Locale, dialogOutput);
+            HistoryRetentionTests.Run();
+            Console.WriteLine("RENDERED: " + dialogOutput);
+            return;
+        }
         var window = new MainWindow();
         var historyType = assembly.GetType("KillerScan.Services.ScanHistory", true)!;
         var entryType = assembly.GetType("KillerScan.Services.ScanHistoryEntry", true)!;
@@ -375,8 +385,44 @@ internal static class HistoryUiTests
         {
             ((UIElement)dialog.FindName("RootBorder")).Opacity = 1;
             var surface = (FrameworkElement)dialog.Content;
-            surface.Measure(new Size(460, double.PositiveInfinity));
-            return Render(surface, 460, (int)Math.Ceiling(surface.DesiredSize.Height));
+            surface.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            int width = (int)Math.Ceiling(Math.Max(dialog.MinWidth, surface.DesiredSize.Width));
+            surface.Measure(new Size(width, double.PositiveInfinity));
+            return Render(surface, width, (int)Math.Ceiling(surface.DesiredSize.Height));
+        }
+        void CheckLayout(Window dialog, string context)
+        {
+            var surface = (FrameworkElement)dialog.Content;
+            var caption = (TextBlock)dialog.FindName("SettingsCaption");
+            var rows = (Grid)dialog.FindName("RetentionRows");
+            var days = (TextBox)dialog.FindName("DaysBox");
+            var countField = (TextBox)dialog.FindName("CountBox");
+            var timeOption = (RadioButton)dialog.FindName("TimeMode");
+            var countOption = (RadioButton)dialog.FindName("CountMode");
+            Rect Bounds(FrameworkElement item) => new Rect(item.TranslatePoint(new Point(), surface), item.RenderSize);
+            Require(caption.FontFamily.Equals((FontFamily)dialog.FindResource("WordmarkFont")) && caption.FontSize == 18,
+                context + ": the caption uses the family typewriter font beside the wordmark.");
+            Require(Math.Abs(Bounds(days).X - Bounds(countField).X) < 0.5 &&
+                Math.Abs(Bounds(days).Top + days.ActualHeight / 2 - Bounds(timeOption).Top - timeOption.ActualHeight / 2) <= 0.5 &&
+                Math.Abs(Bounds(countField).Top + countField.ActualHeight / 2 - Bounds(countOption).Top - countOption.ActualHeight / 2) <= 0.5,
+                context + ": options, values and units share aligned rows.");
+            Require(Bounds(days).Right <= Bounds(rows).Right && Bounds(countField).Right <= Bounds(rows).Right &&
+                Bounds(rows).Bottom <= Bounds((Button)dialog.FindName("OkButton")).Top,
+                context + ": content stays within the compact card without overlapping buttons.");
+            foreach (var selection in new[] { timeOption, countOption, (RadioButton)dialog.FindName("AllMode") })
+            {
+                Require(ReferenceEquals(selection.Style, dialog.FindResource("ThemeRadio")) &&
+                    selection.Template.FindName("label", selection) is ContentPresenter label && label.Effect == null,
+                    context + ": selection uses the existing family template without a label bitmap effect.");
+            }
+            Require(dialog.UseLayoutRounding && dialog.SnapsToDevicePixels &&
+                TextOptions.GetTextFormattingMode(dialog) == TextFormattingMode.Display &&
+                TextOptions.GetTextRenderingMode(dialog) == TextRenderingMode.ClearType &&
+                ((UIElement)dialog.FindName("DialogCard")).Effect == null,
+                context + ": sharp family text configuration is local to the dialog and the shadow is a sibling.");
+            if (Equals(dialog.FindResource("InputDialogWordmarkVisibility"), Visibility.Visible))
+                Require(Bounds(caption).Bottom <= Bounds(rows).Top && Bounds(caption).Right <= Bounds((Button)dialog.FindName("CaptionCloseButton")).Left,
+                    context + ": the localized inline caption clears the close control and body.");
         }
         // These dialog fixtures open no history files and write no settings.
         var input = NewDialog();
@@ -447,6 +493,7 @@ internal static class HistoryUiTests
             theme(name);
             var dialog = NewDialog();
             Save(Draw(dialog), Path.Combine(output, "History-settings-" + name + ".png"));
+            CheckLayout(dialog, name);
             Require(((TextBox)dialog.FindName("CountBox")).ActualHeight > 0, name + ": themed history settings render.");
             dialog.Close();
         }
@@ -456,6 +503,7 @@ internal static class HistoryUiTests
             locale(name);
             var dialog = NewDialog();
             Draw(dialog);
+            CheckLayout(dialog, name);
             Require(((RadioButton)dialog.FindName("AllMode")).Content is string label && !label.StartsWith("Str_"),
                 name + ": retention labels resolve.");
             Require(((Button)dialog.FindName("OkButton")).Content is string text && !text.StartsWith("Str_"),
@@ -464,6 +512,20 @@ internal static class HistoryUiTests
             dialog.Close();
         }
         locale("EnUS");
+        foreach (double scale in new[] { 1.0, 1.25, 1.5, 2.0 })
+        {
+            var dialog = NewDialog();
+            var image = Draw(dialog);
+            Require(image.PixelHeight <= 250 && image.PixelWidth <= 440,
+                "English settings uses a compact whole-window footprint.");
+            var surface = (FrameworkElement)dialog.Content;
+            var scaled = new RenderTargetBitmap((int)Math.Ceiling(image.PixelWidth * scale),
+                (int)Math.Ceiling(image.PixelHeight * scale), 96 * scale, 96 * scale, PixelFormats.Pbgra32);
+            scaled.Render(surface);
+            Save(scaled, Path.Combine(output, "History-settings-Black-" + (int)(scale * 100) + ".png"));
+            CheckLayout(dialog, "Scale " + scale);
+            dialog.Close();
+        }
     }
 
     private static void CheckCatalog(MainWindow window, Application app)

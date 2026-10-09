@@ -35,6 +35,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--startup-fade" })) { await StartupFadeTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--release-ui" })) { await ReleaseUiTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--history-ui" })) { await HistoryUiTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--history-settings-ui" })) { await HistoryUiTests.Run(true); return 0; }
             if (args.SequenceEqual(new[] { "--topology" })) { await TopologyTests.Run(); return 0; }
             Require(args.All(value => value == "--worker" || value == "--internet"), "Usage: SpeedTest.Tests.exe [--worker] [--internet]");
             await Run("Menu dividers resolve declared palettes and preserve the fallback", MenuSeparatorThemeTests.Run);
