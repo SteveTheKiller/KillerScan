@@ -15,6 +15,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Added yellow and magenta accents to the neutral and 98SE themes and to the HTML export.
 
 ### Changed
+- Refreshed the bundled MAC vendor database to 58,482 assignments.
 - Scanning, discovery and device classification now live in KillerScan.Engine, a separate library the app, its command line and other programs share.
 - Context actions show consistent glyphs and keyboard shortcuts in menus, with shortcuts also listed in both F1 help views and the online guide. Additional shortcuts cover Services, profiles, Keep Alive and the terminal.
 - Refined theme colors, wordmarks, button gradients, footers and menu styling to match the family palette.
