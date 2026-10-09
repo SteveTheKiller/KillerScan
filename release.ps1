@@ -11,6 +11,9 @@
 #
 # winget is NOT submitted from here. .github/workflows/winget-release.yml fires on
 # "release: published" and runs komac itself, so doing it here too would double-submit.
+# KillerScan.Engine reaches NuGet the same way: .github/workflows/nuget-engine-release.yml
+# packs and publishes it at this version when the release is published. Step 3 packs it here
+# too, so a packaging error stops the release before anything is tagged.
 #
 # The site is NOT deployed from here either. killerscan.net is a manual Cloudflare Pages
 # drop, so this script rewrites scan-landing/ with the real release facts and commits it;
@@ -251,6 +254,16 @@ foreach ($tfm in 'net48', 'net10.0') {
     dotnet run --project tests\KillerScan.Engine.Tests\KillerScan.Engine.Tests.csproj -c Release -f $tfm --no-build
     if ($LASTEXITCODE -ne 0) { Fail "Engine regression tests failed on $tfm" }
 }
+
+Step "Packing KillerScan.Engine for NuGet"
+$enginePack = Join-Path $env:TEMP "KillerScan.Engine-$Version-pack"
+if (Test-Path $enginePack) { Remove-Item $enginePack -Recurse -Force }
+dotnet pack Engine\KillerScan.Engine.csproj -c Release -o $enginePack -v:minimal
+if ($LASTEXITCODE -ne 0) { Fail 'Engine NuGet pack failed' }
+foreach ($package in "KillerScan.Engine.$Version.nupkg", "KillerScan.Engine.$Version.snupkg") {
+    if (-not (Test-Path (Join-Path $enginePack $package))) { Fail "Engine NuGet pack did not produce $package" }
+}
+Write-Host "Packed KillerScan.Engine $Version (published by nuget-engine-release.yml when the release goes out)"
 
 # --- 4. Clean Release publish (FolderProfile1: net48, win-x64, Costura single exe) ---
 Step "Building Release (publish)"

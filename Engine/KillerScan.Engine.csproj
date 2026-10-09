@@ -19,6 +19,34 @@
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 
+  <!-- NuGet package. Published by .github/workflows/nuget-engine-release.yml when a KillerScan
+       release is published, at the app's version. -->
+  <PropertyGroup>
+    <PackageId>KillerScan.Engine</PackageId>
+    <Title>KillerScan.Engine</Title>
+    <Authors>Steve the Killer</Authors>
+    <Copyright>Copyright (c) 2026 Steve the Killer</Copyright>
+    <Description>The network scanning engine behind KillerScan: local network detection, ARP and ping discovery, port scanning, service fingerprinting, mDNS and SSDP discovery, device classification, offline MAC vendor lookup, and a speed test client, for .NET Framework 4.8 and .NET 10.</Description>
+    <PackageTags>network;network-scanner;lan;arp;port-scan;device-discovery;fingerprinting;mac-vendor;oui;mdns;ssdp;speed-test;csharp</PackageTags>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    <PackageProjectUrl>https://killerscan.net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SteveTheKiller/KillerScan</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>https://github.com/SteveTheKiller/KillerScan/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+    <None Include="..\LICENSE" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
     <Reference Include="System.Net.Http" />
     <!-- Same transitive pin as the app: System.Text.Json brings in packages whose old
