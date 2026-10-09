@@ -50,8 +50,8 @@ namespace KillerScan.Shell
 
         private void ProfileList_RightClick(object sender, MouseButtonEventArgs e)
         {
-            var item = ItemsControl.ContainerFromElement(ProfilesList, e.OriginalSource as DependencyObject) as ListBoxItem;
-            if (item == null) { ProfilesList.SelectedItem = null; return; }
+            if (ItemsControl.ContainerFromElement(ProfilesList, e.OriginalSource as DependencyObject) is not ListBoxItem item)
+            { ProfilesList.SelectedItem = null; return; }
             ProfilesList.SelectedItem = item.DataContext;
             item.Focus();
         }

@@ -142,7 +142,7 @@ namespace KillerScan.Controls
             {
                 Point RelativeRole(double across, double along) => TopologyHorizontal
                     ? new Point(along, across) : new Point(across, along);
-                Rect Box(Point p) => new Rect(p.X - TopologyNodeWidth / 2, p.Y - TopologyNodeHeight / 2,
+                Rect Box(Point p) => new(p.X - TopologyNodeWidth / 2, p.Y - TopologyNodeHeight / 2,
                     TopologyNodeWidth, TopologyNodeHeight);
                 var reserved = new List<Rect>
                 {
@@ -151,7 +151,7 @@ namespace KillerScan.Controls
                 };
                 if (!string.IsNullOrWhiteSpace(dnsIp) && dnsIp != "--" && !SameIp(dnsIp, gatewayIp))
                     reserved.Add(Box(RelativeRole(nodeCross + 64 * scale, 0)));
-                radialPoints = TopologyGeometry.Radial(regular.Select(_ => new Size(TopologyNodeWidth, TopologyNodeHeight)).ToArray(),
+                radialPoints = TopologyGeometry.Radial([.. regular.Select(_ => new Size(TopologyNodeWidth, TopologyNodeHeight))],
                     reserved, viewportWidth, viewportHeight, 12 * scale, TopologyHorizontal);
                 var bounds = reserved[0];
                 foreach (var box in reserved.Skip(1).Concat(radialPoints.Select(Box))) bounds.Union(box);

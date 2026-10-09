@@ -267,7 +267,7 @@ namespace KillerScan.Shell
 
         private static TextBlock? ViewCaption(Button button) =>
             button.Content is Panel panel && panel.Children.Count > 1
-                ? panel.Children[panel.Children.Count - 1] as TextBlock : null;
+                ? panel.Children[^1] as TextBlock : null;
 
         /// <summary>
         /// KillerPDF's order: views move into the overflow menu first, captions stay on what is

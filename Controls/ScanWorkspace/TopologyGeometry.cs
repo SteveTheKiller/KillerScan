@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
+// The folder holds ScanWorkspace partials, and a KillerScan.Controls.ScanWorkspace namespace would
+// collide with the ScanWorkspace class, so this file keeps the namespace of the code that uses it.
+#pragma warning disable IDE0130
 namespace KillerScan.Controls
+#pragma warning restore IDE0130
 {
     internal static class TopologyGeometry
     {

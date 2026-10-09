@@ -125,7 +125,7 @@ namespace KillerScan.Controls
         private void UpdateTopologySettingsUi()
         {
             foreach (var group in TopologyOrderButton.ContextMenu.Items.OfType<MenuItem>())
-                foreach (var item in group.Items.OfType<MenuItem>().Concat(new[] { group }))
+                foreach (var item in group.Items.OfType<MenuItem>().Concat([group]))
                     if (item.Tag is string tag)
                     {
                         if (tag == "Links") item.IsChecked = _topologyOptions["Links"] == "On";

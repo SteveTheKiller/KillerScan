@@ -83,7 +83,7 @@ namespace KillerScan.Services
 
         internal void Append(ScanHistoryEntry entry, DateTimeOffset now)
         {
-            var kept = Policy.Retained(Entries.Concat(new[] { entry }), now);
+            var kept = Policy.Retained(Entries.Concat([entry]), now);
             // A scan result still belongs in this session if its disk write fails.
             Entries = kept;
             try { Persist(kept, Policy); } catch (IOException) { }

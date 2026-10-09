@@ -15,10 +15,10 @@ namespace KillerScan.Services
             if (Mode == HistoryRetentionMode.Time)
             {
                 long cutoff = Math.Max(0, now.UtcDateTime.Ticks - (long)Days * TimeSpan.TicksPerDay);
-                return source.Where(entry => entry.ScannedAt.UtcDateTime.Ticks >= cutoff).ToList();
+                return [.. source.Where(entry => entry.ScannedAt.UtcDateTime.Ticks >= cutoff)];
             }
             var latest = new HashSet<ScanHistoryEntry>(source.OrderByDescending(entry => entry.ScannedAt).Take(Count));
-            return source.Where(latest.Contains).ToList();
+            return [.. source.Where(latest.Contains)];
         }
     }
 }

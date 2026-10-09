@@ -98,7 +98,7 @@ namespace KillerScan.Services
             var previous = _entries.LastOrDefault(entry =>
                 string.Equals(entry.Target, target, StringComparison.OrdinalIgnoreCase));
             var comparison = Compare(current, previous);
-            if (DemoData.Enabled) _entries = _demoRetention.Retained(_entries.Concat(new[] { current }), current.ScannedAt);
+            if (DemoData.Enabled) _entries = _demoRetention.Retained(_entries.Concat([current]), current.ScannedAt);
             else
             {
                 _archive.Append(current, current.ScannedAt);

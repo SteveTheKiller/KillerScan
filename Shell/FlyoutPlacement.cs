@@ -26,7 +26,7 @@ namespace KillerScan.Shell
             popup.VerticalOffset = 0;
             Thickness halo = popup.Child is FrameworkElement card ? card.Margin : DefaultCardHalo;
             popup.CustomPopupPlacementCallback =
-                (popupSize, targetSize, _) => Place(popupSize, targetSize, halo);
+                (popupSize, _, _) => Place(popupSize, halo);
         }
 
         internal static void Attach(ContextMenu menu)
@@ -39,7 +39,7 @@ namespace KillerScan.Shell
             Thickness halo = menu.Template?.FindName("MenuRoot", menu) is FrameworkElement card
                 ? card.Margin : DefaultCardHalo;
             menu.CustomPopupPlacementCallback =
-                (popupSize, targetSize, _) => Place(popupSize, targetSize, halo);
+                (popupSize, _, _) => Place(popupSize, halo);
         }
 
         internal static void Attach(ContextMenu menu, FrameworkElement button)
@@ -71,7 +71,7 @@ namespace KillerScan.Shell
             ];
         }
 
-        private static CustomPopupPlacement[] Place(Size popupSize, Size targetSize, Thickness halo)
+        private static CustomPopupPlacement[] Place(Size popupSize, Thickness halo)
         {
             if (_pane == null || _root == null)
                 return [new CustomPopupPlacement(new Point(0, 0), PopupPrimaryAxis.None)];
