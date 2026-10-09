@@ -25,6 +25,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Stopping a deep scan no longer waits for stalled fingerprint requests.
 - Startup content becomes visible even when its fade animation stalls.
 - Scan history uses the Devices table's rounded frame, with its target, accented dates, counts and view switch above the table. Sidebar and settings layouts stay compact, text is sharper, and menus anchor correctly. Localized headings refresh correctly, and history cannot act on a hidden live scan.
+- Clicking a saved scan profile loads its target and shows the device list. The Profiles sidebar uses the same compact formatting as Scan History, with a clearer icon in its heading and rail.
 - Text stays sharp at app sizes other than 100% again.
 - Switching themes no longer pushes a toolbar view into the overflow menu.
 - Submenus attach consistently to their opening rows, with native direction and screen-edge placement.

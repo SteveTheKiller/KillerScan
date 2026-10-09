@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using KillerScan.Controls;
 using KillerScan.Services;
 
@@ -50,9 +51,16 @@ namespace KillerScan.Shell
         private void ProfileLoad_Click(object sender, RoutedEventArgs e)
         {
             if (ProfileFor(sender) is not { } profile) return;
-            var scan = ActiveScan;
-            if (scan == null || scan.IsScanning) NewScan(profile.Target);
-            else scan.Targets = profile.Target;
+            // Loading a saved target also reveals its input without starting a scan.
+            NewScan(profile.Target);
+        }
+
+        private void ProfileList_Activate(object sender, MouseButtonEventArgs e)
+        {
+            var row = ItemsControl.ContainerFromElement(ProfilesList, e.OriginalSource as DependencyObject) as ListBoxItem;
+            if (row?.DataContext is not ScanProfile) return;
+            ProfilesList.SelectedItem = row.DataContext;
+            ProfileLoad_Click(row, new RoutedEventArgs());
         }
 
         private void ProfileRun_Click(object sender, RoutedEventArgs e)

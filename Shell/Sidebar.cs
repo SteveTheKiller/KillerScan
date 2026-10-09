@@ -63,6 +63,7 @@ namespace KillerScan.Shell
             var incoming = section == "profiles" ? (FrameworkElement)ProfilesList : HistoryList;
             var outgoing = section == "profiles" ? (FrameworkElement)HistoryList : ProfilesList;
             _sidebarSection = section;
+            SidebarSectionIcon.Text = ((char)(section == "profiles" ? 0xE728 : 0xE81C)).ToString();
             SidebarHeading.SetResourceReference(TextBlock.TextProperty,
                 section == "profiles" ? "Str_Profiles_Title" : "Str_History_Title");
             SaveProfileButton.Visibility = section == "profiles" ? Visibility.Visible : Visibility.Collapsed;

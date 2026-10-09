@@ -16,7 +16,6 @@ namespace KillerScan.Shell
             if (key == Key.S && modifiers == (ModifierKeys.Control | ModifierKeys.Alt) && ActiveScan != null)
             { SaveProfile_Click(this, new RoutedEventArgs()); e.Handled = true; return true; }
             if (!ProfilesList.IsKeyboardFocusWithin || ProfilesList.SelectedItem is not ScanProfile profile) return false;
-            var source = new MenuItem { DataContext = profile };
             if (key == Key.Apps && modifiers == ModifierKeys.None || key == Key.F10 && modifiers == ModifierKeys.Shift)
             {
                 var item = ProfilesList.ItemContainerGenerator.ContainerFromItem(profile) as DependencyObject;
@@ -28,6 +27,14 @@ namespace KillerScan.Shell
                 e.Handled = true;
                 return true;
             }
+            if (!ExecuteProfileShortcut(key, modifiers, profile)) return false;
+            e.Handled = true;
+            return true;
+        }
+
+        private bool ExecuteProfileShortcut(Key key, ModifierKeys modifiers, ScanProfile profile)
+        {
+            var source = new MenuItem { DataContext = profile };
             Action? action = (key, modifiers) switch
             {
                 (Key.Enter, ModifierKeys.None) => () => ProfileRun_Click(source, new RoutedEventArgs()),
@@ -38,7 +45,7 @@ namespace KillerScan.Shell
                 _ => null
             };
             if (action == null) return false;
-            action(); e.Handled = true; return true;
+            action(); return true;
         }
 
         private void ProfileList_RightClick(object sender, MouseButtonEventArgs e)

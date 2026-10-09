@@ -373,7 +373,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Tip_History">{0} at {1}, {2} devices recorded</sys:String>
     <sys:String x:Key="Str_Services_Title">Services</sys:String>
     <sys:String x:Key="Str_Services_Service">Service</sys:String>
-    <sys:String x:Key="Str_Profiles_Title">Scan profiles</sys:String>
+    <sys:String x:Key="Str_Profiles_Title">Scan Profiles</sys:String>
     <sys:String x:Key="Str_Profiles_Save">Save current profile</sys:String>
     <sys:String x:Key="Str_Profiles_Run">Run profile</sys:String>
     <sys:String x:Key="Str_Profiles_Load">Load target</sys:String>
