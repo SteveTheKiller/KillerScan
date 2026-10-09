@@ -137,8 +137,10 @@
             </Border>
         </DataTemplate>
     </UserControl.Resources>
+    <!-- No border of its own: the shell's content pane already draws the one-pixel edge, as it
+         does for the Devices view. A second one here doubled it. -->
     <Border Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
-            BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
+            BorderThickness="0" CornerRadius="{DynamicResource PanelCornerRadius}">
         <Grid>
             <Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}"
                     Opacity="{DynamicResource GrainOpacity}" CornerRadius="{DynamicResource PanelCornerRadius}"/>
