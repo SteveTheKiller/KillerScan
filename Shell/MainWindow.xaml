@@ -1,6 +1,7 @@
 <Window x:Class="KillerScan.Shell.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:icons="clr-namespace:KillerScan.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KillerScan.Shell"
@@ -74,13 +75,13 @@
                     </Border.Background>
                 </Border>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="{DynamicResource ScanTitleBarPadding}">
-                    <Image x:Name="TitleIcon" Width="27" Height="27"
+                    <icons:AppIcon x:Name="TitleIcon" Width="27" Height="27"
                             VerticalAlignment="Center" Margin="0,0,7,0"
                             WindowChrome.IsHitTestVisibleInChrome="True"
                             MouseWheel="LogoBar_MouseWheel"
                             MouseLeftButtonDown="LogoBar_MouseLeftButtonDown"
                             ToolTip="{DynamicResource Str_TT_AppSize}"
-                            RenderOptions.BitmapScalingMode="HighQuality"/>
+                            RenderOptions.BitmapScalingMode="NearestNeighbor"/>
 
                     <!-- The 98SE caption title. A Win98 caption carries the window's name in plain
                          bold, not a logotype, so this shows only there and the wordmark collapses.
@@ -866,12 +867,12 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Image Grid.Column="0" Source="pack://application:,,,/Resources/ks-icon.png" Width="58" Height="58"
-                                       Margin="0,0,15,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality">
-                                    <Image.Effect>
+                                <icons:AppIcon Grid.Column="0" Source="pack://application:,,,/Resources/ks-icon.ico" Width="58" Height="58"
+                                       Margin="0,0,15,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="NearestNeighbor">
+                                    <icons:AppIcon.Effect>
                                         <DropShadowEffect Color="Black" BlurRadius="12" ShadowDepth="3" Direction="270" Opacity="0.55"/>
-                                    </Image.Effect>
-                                </Image>
+                                    </icons:AppIcon.Effect>
+                                </icons:AppIcon>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                     <Grid Margin="0,0,0,4" HorizontalAlignment="Left">
                                         <TextBlock FontFamily="{DynamicResource WordmarkFont}" Margin="1,2,0,0" IsHitTestVisible="False"

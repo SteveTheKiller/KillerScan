@@ -33,10 +33,7 @@ namespace KillerScan.Controls
             AllMode.IsChecked = initial.Mode == HistoryRetentionMode.SaveAll;
             var frames = BitmapDecoder.Create(new Uri("pack://application:,,,/Resources/ks-icon.ico"),
                 BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames;
-            void RefreshIcon() => TitleIcon.Source = frames.OrderBy(frame =>
-                Math.Abs(frame.PixelWidth - TitleIcon.ActualWidth * VisualTreeHelper.GetDpi(TitleIcon).DpiScaleX)).First();
-            TitleIcon.Loaded += (_, _) => RefreshIcon();
-            TitleIcon.SizeChanged += (_, _) => RefreshIcon();
+            TitleIcon.Source = frames[0];
             TaskbarIdentity.Track(this);
             Loaded += (_, _) => Anim.FadeIn(RootBorder);
         }

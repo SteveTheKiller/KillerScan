@@ -21,6 +21,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Refined file-picker and dialog frames, added sharper title bar icons, and gave the uninstaller its own labeled taskbar button.
 
 ### Fixed
+- Kept app icons sharp at fractional display DPI and app zoom by caching exact pixel sizes from a covering source and aligning the final draw to device pixels.
 - Unsigned test builds can no longer push, tag or publish a release.
 - Stopping a deep scan no longer waits for stalled fingerprint requests.
 - Startup content becomes visible even when its fade animation stalls.

@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ks-icon.ico" />
+    <Resource Include="Resources\app-icon-master.png" />
     <Resource Include="Resources\ks-icon.png" />
     <Resource Include="Fonts\KillerScan.ttf" />
     <!-- The family grab cursors (Controls\DragCursors.cs): open hand on a draggable surface,

@@ -1,6 +1,7 @@
 <Window x:Class="KillerScan.Controls.ConfirmDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:icons="clr-namespace:KillerScan.Controls"
         xmlns:kui="clr-namespace:KillerScan.Controls"
         Title="KillerScan"
         Width="360" SizeToContent="Height"
@@ -46,9 +47,9 @@
                         <!-- The app icon leads the caption, as it does in the main title bar. -->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="14,0,0,0"
                                     Visibility="{DynamicResource InputDialogWordmarkVisibility}">
-                        <Image x:Name="TitleIcon" Width="27" Height="27"
+                        <icons:AppIcon x:Name="TitleIcon" Width="27" Height="27"
                                VerticalAlignment="Center" Margin="0,0,7,0"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                         <Grid VerticalAlignment="Center">
                             <StackPanel Orientation="Horizontal" Margin="1,2,0,0"
                                         Opacity="{DynamicResource IconShadowOpacity}">
