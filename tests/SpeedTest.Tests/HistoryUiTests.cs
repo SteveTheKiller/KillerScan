@@ -271,11 +271,19 @@ internal static partial class HistoryUiTests
         var sidebarParent = (FrameworkElement)sidebar.Parent;
         Require(heading.Text == "Scan History" && heading.TextAlignment == TextAlignment.Center,
             "The English sidebar heading is capitalized and centered.");
-        var headingGroup = (StackPanel)window.FindName("HistorySidebarHeader");
+        var headingGroup = (Panel)window.FindName("HistorySidebarHeader");
         Require(Math.Abs(headingGroup.TranslatePoint(new Point(), sidebarParent).X + headingGroup.ActualWidth / 2 - sidebarParent.ActualWidth / 2) < 1,
             "The glyph and heading are centered together across the sidebar.");
         Require(headingGroup.Children[0] is TextBlock glyph && glyph.Text == (string)((Button)window.FindName("HistoryButton")).Content,
             "The centered heading has the existing history glyph immediately to its left.");
+        foreach (string locale in Enum.GetNames(localeType))
+        {
+            Locale(locale); Render(root, 1200, 780);
+            double headingLeft = heading.TranslatePoint(new Point(), sidebarParent).X;
+            Require(headingLeft >= 0 && headingLeft + heading.ActualWidth <= sidebarParent.ActualWidth + 0.5,
+                locale + ": the sidebar heading wraps inside the sidebar instead of running past its edges.");
+        }
+        Locale("EnUS"); Render(root, 1200, 780);
         var historyList = (ListBox)window.FindName("HistoryList");
         var firstRow = (ListBoxItem)historyList.ItemContainerGenerator.ContainerFromIndex(0);
         Require(firstRow.ActualHeight <= 38 && firstRow.ActualHeight >= 32,
@@ -322,7 +330,7 @@ internal static partial class HistoryUiTests
         var historyList = (ListBox)window.FindName("HistoryList");
         var heading = (TextBlock)window.FindName("SidebarHeading");
         var icon = (TextBlock)window.FindName("SidebarSectionIcon");
-        var group = (StackPanel)window.FindName("HistorySidebarHeader");
+        var group = (Panel)window.FindName("HistorySidebarHeader");
         var button = (Button)window.FindName("ProfilesButton");
         string output = Path.Combine(Path.GetTempPath(), "KillerScan-profiles-ui-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(output);

@@ -280,13 +280,17 @@
                         BorderBrush="{DynamicResource PaneBevelDark2Brush}" BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
                 <Border Grid.RowSpan="3" Margin="1,-3,3,-3" Panel.ZIndex="5" IsHitTestVisible="False"
                         BorderBrush="{DynamicResource PaneBevelLight2Brush}" BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
-                <StackPanel x:Name="HistorySidebarHeader" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,6">
-                    <TextBlock x:Name="SidebarSectionIcon" Text="&#xE81C;" FontFamily="Segoe MDL2 Assets" FontSize="16" Margin="0,0,6,0"
+                <!-- A DockPanel, not a horizontal StackPanel: the StackPanel gave the title unlimited
+                     width, so a long translation ran off both sides of the sidebar. Here the title
+                     gets the width beside the glyph and wraps to a second centered line when the
+                     language needs it; short titles still size to their text and stay centered. -->
+                <DockPanel x:Name="HistorySidebarHeader" Grid.Row="0" HorizontalAlignment="Center" Margin="8,0,8,6">
+                    <TextBlock x:Name="SidebarSectionIcon" DockPanel.Dock="Left" Text="&#xE81C;" FontFamily="Segoe MDL2 Assets" FontSize="16" Margin="0,0,6,0"
                                Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
                     <TextBlock x:Name="SidebarHeading" Text="{DynamicResource Str_History_Title}" TextAlignment="Center"
                                Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource WordmarkFont}"
-                               FontSize="20" TextTrimming="CharacterEllipsis"/>
-                </StackPanel>
+                               FontSize="20" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                </DockPanel>
                 <ListBox x:Name="HistoryList" Grid.Row="1" Background="Transparent" BorderThickness="0"
                          Margin="14,0,8,0" HorizontalContentAlignment="Stretch"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
