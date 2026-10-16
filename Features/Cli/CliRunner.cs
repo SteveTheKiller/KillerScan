@@ -138,7 +138,7 @@ namespace KillerScan.Features.Cli
             "/sort", "--sort", "/filter", "--filter", "/type", "--type",
             "/vendor-filter", "--vendor-filter", "/ports", "--ports", "/limit", "--limit",
             "/timeout", "--timeout", "/theme", "--theme", "/count", "--count",
-            "/interval", "--interval", "/max-hops", "--max-hops"
+            "/interval", "--interval", "/max-hops", "--max-hops", "/skip", "--skip"
         ];
 
         private static readonly string[] FlagOptions =
@@ -395,6 +395,13 @@ namespace KillerScan.Features.Cli
             bool terminalProgress = Has(options, "/terminal-progress");
             bool noHeader = Has(options, "/no-header", "--no-header");
             bool failEmpty = Has(options, "/fail-empty", "--fail-empty");
+            var scanOptions = new ScanOptions();
+            string? skip = Value(options, "/skip", "--skip");
+            if (skip != null)
+            {
+                try { scanOptions = scanOptions.Without(skip); }
+                catch (ArgumentException) { return Usage(err, "/skip needs comma-separated names: " + string.Join(", ", ScanOptions.Features) + "."); }
+            }
             string? exportPath = Value(options, "/export", "--export", "/output", "--output");
             var (format, formatFromExtension) = ResolveFormat(options, Value(options, "/format", "--format"), exportPath);
             if (format.Length == 0) return Usage(err, "format must be table, csv, json, or html, with only one format selected.");
@@ -496,8 +503,8 @@ namespace KillerScan.Features.Cli
             try
             {
                 Task<List<NetworkDevice>> operation = probe
-                    ? ProbeAsListAsync(scanner, probeIp!.ToString(), cts.Token)
-                    : scanner.ScanSubnetAsync(targetText, cts.Token, fullScan: !quick);
+                    ? ProbeAsListAsync(scanner, probeIp!.ToString(), cts.Token, scanOptions)
+                    : scanner.ScanSubnetAsync(targetText, cts.Token, scanOptions, fullScan: !quick);
                 if (timeout > 0)
                 {
                     var deadline = Task.Delay(TimeSpan.FromSeconds(timeout));
@@ -563,9 +570,9 @@ namespace KillerScan.Features.Cli
         }
 
         private static async Task<List<NetworkDevice>> ProbeAsListAsync(
-            NetworkScanner scanner, string ip, CancellationToken cancellationToken)
+            NetworkScanner scanner, string ip, CancellationToken cancellationToken, ScanOptions options)
         {
-            return [await scanner.DeepProbeHostAsync(ip, cancellationToken)];
+            return [await scanner.DeepProbeHostAsync(ip, cancellationToken, options)];
         }
 
         private static List<NetworkDevice> ApplyFilters(List<NetworkDevice> devices,
@@ -699,6 +706,8 @@ namespace KillerScan.Features.Cli
             "  /version               print the version             /help  show this text", "",
             "SCAN AND PROBE OPTIONS",
             "  /quick                 discovery only; skip fingerprinting and the full port pass",
+            "  /skip <name,name,...>  disable scan/probe operations (also accepts --skip)",
+            "                         " + string.Join(", ", ScanOptions.Features),
             "  /progress              write status and progress every 5% to stderr",
             "  /timeout <seconds>     cancel the operation after a deadline",
             "  /filter <text>         keep rows matching any displayed or fingerprint field",
@@ -743,7 +752,13 @@ namespace KillerScan.Features.Cli
                 if (a.StartsWith("/", StringComparison.Ordinal) || a.StartsWith("-", StringComparison.Ordinal))
                 {
                     if (ValueOptions.Any(o => Eq(o, a)))
-                    { if (i + 1 >= args.Length) return (positionals, options, a + " needs a value."); options[a] = args[++i]; }
+                    {
+                        if (i + 1 >= args.Length) return (positionals, options, a + " needs a value.");
+                        string value = args[++i];
+                        if (Eq(a, "/skip") || Eq(a, "--skip"))
+                            options["/skip"] = options.TryGetValue("/skip", out var skipped) ? skipped + "," + value : value;
+                        else options[a] = value;
+                    }
                     else if (FlagOptions.Any(o => Eq(o, a))) options[a] = "";
                     else return (positionals, options, "unknown option " + a + ".");
                 }

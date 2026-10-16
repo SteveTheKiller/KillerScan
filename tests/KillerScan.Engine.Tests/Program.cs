@@ -17,6 +17,9 @@ internal static class Program
             await Run("Status text is English, numeric and free of double hyphens", StatusText);
             await Run("Quick scan reports stages, devices and host hooks through a fake platform", QuickScan);
             await Run("A canceled token stops the scan", Canceled);
+            await Run("Disabled probes start no I/O in full, quick or deep mode", ScanOptionsTests.DisabledProbes);
+            await Run("Default API behavior and per-scan enrichment isolation", ScanOptionsTests.CompatibilityAndIsolation);
+            await Run("Scan options preserve old JSON defaults and immutable choices", ScanOptionsTests.ProfileSerialization);
             await Run("Full scan preserves HTTP results, manual classification and saved names", EngineBehaviorTests.FullScan);
             await Run("HTTP fingerprint extracts the controlled title and Server header", EngineBehaviorTests.HttpFingerprintResults);
             await Run("Stop cancels a deep probe before device completion", EngineBehaviorTests.DeepProbeCancellation);
@@ -175,7 +178,8 @@ internal static class Program
             scanner.ProgressChanged += p => lastProgress = p;
 
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60));
-            var devices = await scanner.ScanSubnetAsync("127.0.0.1", cts.Token, fullScan: false);
+            var devices = await scanner.ScanSubnetAsync("127.0.0.1", cts.Token,
+                new ScanOptions().Without("mdns,ssdp"), fullScan: false);
 
             Require(fake.Flushes == 1, "Scan should flush the DNS cache once");
             Require(devices.Count == 1 && found.Count == 1, "Loopback should be found once, got " + devices.Count);

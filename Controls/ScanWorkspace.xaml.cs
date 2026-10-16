@@ -35,6 +35,7 @@ namespace KillerScan.Controls
         /// <summary>Raised once a finished scan has been written to the history store.</summary>
         public event EventHandler? HistoryRecorded;
         internal ScanSession Session => _active;
+        internal ScanOptions Options => _active.Options;
         public NetworkDevice? SelectedDevice => GetSelectedDevice();
         public string Targets { get => SubnetInput.Text; set => SubnetInput.Text = value; }
         public bool IsScanning => _active.IsScanning || _rescanCts != null;
@@ -69,6 +70,8 @@ namespace KillerScan.Controls
             _active = new ScanSession(SubnetInput.Text)
             { Status = string.Format(Loc("Str_Status_Ready"), OuiLookup.Count.ToString("N0")) };
             WireSession(_active);
+            ScanOptionsMenu.Attach(ScanOptionsButton, () => _active.Options,
+                value => { if (!IsScanning) _active.Options = value; });
             ActivateSession();
             StartVendorNoticeTimer();
             RestoreColumnLayout();
@@ -181,9 +184,15 @@ namespace KillerScan.Controls
         internal void RunProfile(ScanProfile profile)
         {
             if (_disposed || IsScanning) return;
-            Targets = profile.Target;
+            LoadProfile(profile);
             _runDeepAfterScan = profile.DeepScanAfter;
             Scan();
+        }
+        internal void LoadProfile(ScanProfile profile)
+        {
+            if (_disposed || IsScanning) return;
+            Targets = profile.Target;
+            _active.Options = profile.Options ?? new ScanOptions();
         }
         internal void LoadSnapshot(string target, IEnumerable<NetworkDevice> devices)
         {

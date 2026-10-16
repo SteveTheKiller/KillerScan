@@ -86,6 +86,9 @@
 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Btn_Scan}"/><Run Text=" (F5)"/></TextBlock></Button.ToolTip>
 </Button>
 <Button x:Name="DeepScanAllButton" Content="{DynamicResource Str_Btn_DeepScanAll}" Style="{StaticResource OutlineButton}" Click="DeepScanAll_Click" Visibility="Collapsed" FontSize="12" Padding="8,3" Margin="0,2,10,2"/>
+<Button x:Name="ScanOptionsButton" Content="&#xE713;" FontFamily="Segoe MDL2 Assets"
+        AutomationProperties.Name="{DynamicResource Str_Options_Title}" ToolTip="{DynamicResource Str_Options_Title}"
+        Style="{StaticResource OutlineButton}" Padding="6,3" Margin="0,2,6,2"/>
 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,8,2">
 <TextBlock Text="{DynamicResource Str_Lbl_Local}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,0,5,0"/>
 <TextBlock x:Name="LocalIpLabel" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11"/>

@@ -156,6 +156,20 @@ internal static class ReleaseUiTests
         var menuSurface = new Border { Child = columnsPanel, Background = (Brush)app.FindResource("MenuBackgroundBrush") };
         Save(Render(menuSurface, 450, 420), Path.Combine(output, "LanguageMenu.png"));
         var workspace = (KillerScan.Controls.ScanWorkspace)window.GetType().GetField("_scanWorkspace", Instance)!.GetValue(window)!;
+        ScanOptionsUiChecks.Run(workspace);
+        Locale("EnUS");
+        var scanOptions = ((Button)workspace.FindName("ScanOptionsButton")).ContextMenu;
+        foreach (var item in scanOptions.Items.OfType<MenuItem>())
+            if (item.Tag is string) item.IsChecked = true;
+        var optionEntries = scanOptions.Items.Cast<UIElement>().ToArray();
+        scanOptions.Items.Clear();
+        var optionSurface = new StackPanel { Background = (Brush)app.FindResource("MenuBackgroundBrush") };
+        foreach (var entry in optionEntries) optionSurface.Children.Add(entry);
+        Save(Render(optionSurface, 570, 720), Path.Combine(output, "ScanOptions.png"));
+        Require(optionSurface.Children.Cast<FrameworkElement>().All(entry => entry.ActualHeight + entry.TranslatePoint(new Point(), optionSurface).Y <= 720),
+            "Every scan option fits the rendered menu.");
+        optionSurface.Children.Clear();
+        foreach (var entry in optionEntries) scanOptions.Items.Add(entry);
         workspace.SetView("services");
         Render(root, 1200, 780);
         CheckServiceMenu(workspace, root, output);

@@ -9,6 +9,7 @@ namespace KillerScan.Models
     {
         public ObservableCollection<NetworkDevice> Devices { get; } = [];
         public NetworkScanner Scanner { get; } = new();
+        public ScanOptions Options { get; set; } = new();
         public CancellationTokenSource? Cts { get; set; }
 
         public string SubnetText { get; set; } = subnet;
