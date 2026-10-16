@@ -357,6 +357,7 @@ namespace KillerScan.Shell
             (Services.Locale.PlPL, "Polski",      "pl-PL"),
             (Services.Locale.PtBR, "Português (Brasil)",    "pt-BR"),
             (Services.Locale.RuRU, "Русский",    "ru-RU"),
+            (Services.Locale.SlSI, "Slovenščina", "sl-SI"),
             (Services.Locale.TrTR, "Türkçe",     "tr-TR"),
             (Services.Locale.UkUA, "Українська", "uk-UA"),
             (Services.Locale.ViVN, "Tiếng Việt", "vi-VN"),

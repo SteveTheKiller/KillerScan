@@ -61,9 +61,9 @@ namespace KillerScan.Services
             var sb = new StringBuilder();
 
             sb.AppendLine("<!DOCTYPE html>");
-            sb.AppendLine($"<html lang='en' class='theme-{current}'><head><meta charset='utf-8'/>");
+            sb.AppendLine($"<html lang='{Esc(LocaleManager.LanguageTag)}' class='theme-{current}'><head><meta charset='utf-8'/>");
             sb.AppendLine("<meta name='viewport' content='width=device-width, initial-scale=1'/>");
-            sb.AppendLine("<title>KillerScan Report</title>");
+            sb.AppendLine($"<title>KillerScan - {Esc(L("Str_Filter_Html", "HTML Report"))}</title>");
             sb.AppendLine("<style>");
 
             // Per-theme variable blocks (built without string interpolation to avoid brace escaping).
@@ -128,7 +128,7 @@ namespace KillerScan.Services
 
             // Three separate words rather than one sentence with the values substituted in: the
             // bold values sit between them, so a language that reorders the clause still gets to.
-            sb.AppendLine($"<p class='meta'>{Esc(L("Str_Rep_Subnet", "Subnet"))} <b>{Esc(subnetText)}</b> &middot; {Esc(L("Str_Rep_Scanned", "Scanned"))} <b>{DateTime.Now:yyyy-MM-dd HH:mm}</b> &middot; <b>{list.Count}</b> {Esc(L("Str_Rep_Devices", "devices"))}</p>");
+            sb.AppendLine($"<p class='meta'>{Esc(L("Str_Rep_Subnet", "Subnet"))} <b>{Esc(subnetText)}</b> &middot; {Esc(L("Str_Rep_Scanned", "Scanned"))} <b>{DateTime.Now:yyyy-MM-dd HH:mm}</b> &middot; {Esc(L("Str_View_Devices", "Devices"))}: <b>{list.Count}</b></p>");
 
             // The report's headers reuse the grid's own column keys, so the two never disagree.
             sb.AppendLine("<div class='tablewrap'><table id='tbl'><thead><tr>");

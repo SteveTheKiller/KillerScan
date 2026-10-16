@@ -73,6 +73,7 @@ namespace KillerScan.Controls
             StartVendorNoticeTimer();
             RestoreColumnLayout();
             AddWorkspaceDeviceMenus();
+            RefreshColumnHeaders();
             ServicesGrid.SelectionChanged += (_, _) =>
             {
                 if (ServicesGrid.SelectedItem is ServiceRow row)
@@ -159,6 +160,7 @@ namespace KillerScan.Controls
         public void Export() => ExportButton_Click(ExportButton, new RoutedEventArgs());
         public void RefreshLocale()
         {
+            RefreshColumnHeaders();
             _filteredView?.Refresh();
             RefreshDeviceCount();
             UpdateDeepScanButton();
@@ -166,6 +168,18 @@ namespace KillerScan.Controls
             PaneTitle.Text = Loc(_showTopology ? "Str_Topology_Title" : _showServices ? "Str_Services_Title" : "Str_DiscoveredDevices");
             if (_showTopology) RefreshTopology();
             if (_showServices) RefreshServices();
+        }
+        private void RefreshColumnHeaders()
+        {
+            // DataGrid columns are outside the visual tree, so refresh their resources explicitly.
+            ColIp.Header = Loc("Str_Col_Ip");
+            ColHost.Header = Loc("Str_Col_Host");
+            ColMac.Header = Loc("Str_Col_Mac");
+            ColVendor.Header = Loc("Str_Col_Vendor");
+            ColType.Header = Loc("Str_Col_Type");
+            ColPorts.Header = Loc("Str_Col_Ports");
+            string[] services = ["Str_Services_Service", "Str_Col_Ports", "Str_Col_DeviceName", "Str_Col_Ip", "Str_Col_Type"];
+            for (int i = 0; i < services.Length; i++) ServicesGrid.Columns[i].Header = Loc(services[i]);
         }
         public void ApplyScale(double scale) => LayoutTransform = new ScaleTransform(scale, scale);
         public void Dispose()

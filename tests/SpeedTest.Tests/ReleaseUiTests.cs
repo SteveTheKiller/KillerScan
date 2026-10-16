@@ -129,12 +129,35 @@ internal static class ReleaseUiTests
         }
         Require(states == 45, "All 45 default and explicit theme/accent states render.");
         Theme("Black", "Orange");
+        var workspace = (KillerScan.Controls.ScanWorkspace)window.GetType().GetField("_scanWorkspace", Instance)!.GetValue(window)!;
         foreach (string locale in Enum.GetNames(localeType))
         {
             Locale(locale);
             window.GetType().GetMethod("RefreshWorkspaceLocale", Instance)!.Invoke(window, null);
             Require(app.FindResource("Str_Btn_Scan") is string text && text.Length > 0, locale + ": scan label resolves.");
-            if (locale is "UkUA" or "NbNO" or "PtBR")
+            foreach (var (gridName, keys) in new[]
+            {
+                ("ResultsGrid", new[] { "Str_Col_Ip", "Str_Col_Host", "Str_Col_Mac", "Str_Col_Vendor", "Str_Col_Type", "Str_Col_Ports" }),
+                ("ServicesGrid", new[] { "Str_Services_Service", "Str_Col_Ports", "Str_Col_DeviceName", "Str_Col_Ip", "Str_Col_Type" })
+            })
+            {
+                var grid = (DataGrid)workspace.FindName(gridName);
+                Require(grid.Columns.Select(column => column.Header).SequenceEqual(keys.Select(key => app.FindResource(key))),
+                    locale + ": " + gridName + " headers follow the selected locale.");
+            }
+            if (locale == "SlSI")
+            {
+                Require(Equals(localeManager.GetMethod("LocaleForCulture", Static)!.Invoke(null,
+                    new object[] { System.Globalization.CultureInfo.GetCultureInfo("sl-SI") }), Enum.Parse(localeType, "SlSI")),
+                    "Slovenian Windows UI culture selects Slovenian.");
+                var reports = assembly.GetType("KillerScan.Services.ReportExport", true)!;
+                string html = (string)reports.GetMethod("BuildHtml", Static)!.Invoke(null,
+                    new object[] { Array.Empty<KillerScan.Engine.NetworkDevice>(), "192.0.2.0/24", "black" })!;
+                Require(html.Contains("<html lang='sl-SI'") && System.Net.WebUtility.HtmlDecode(html).Contains(
+                    "<title>KillerScan - " + app.FindResource("Str_Filter_Html") + "</title>"),
+                    "Slovenian HTML reports declare their language and translate the document title.");
+            }
+            if (locale is "UkUA" or "NbNO" or "PtBR" or "SlSI")
                 foreach (double scale in new[] { 1.0, 1.5 })
                 {
                     window.GetType().GetMethod("ApplyAppScale", Instance)!.Invoke(window, new object[] { scale, false });
@@ -148,14 +171,14 @@ internal static class ReleaseUiTests
         var leftColumn = (StackPanel)columnsPanel.Children[0];
         var rightColumn = (StackPanel)columnsPanel.Children[2];
         var languages = leftColumn.Children.Cast<RadioButton>().Concat(rightColumn.Children.Cast<RadioButton>()).ToArray();
-        Require(leftColumn.Children.Count == 10 && rightColumn.Children.Count == 9, "Language menu has two balanced columns.");
-        foreach (string locale in new[] { "UkUA", "NbNO", "PtBR" })
+        int localeCount = Enum.GetNames(localeType).Length;
+        Require(languages.Length == localeCount && leftColumn.Children.Count == (localeCount + 1) / 2 && rightColumn.Children.Count == localeCount / 2, "Language menu includes every locale in two balanced columns.");
+        foreach (string locale in new[] { "UkUA", "NbNO", "PtBR", "SlSI" })
             Require(languages.Any(radio => Equals(radio.Tag, locale)), locale + ": language is selectable in the menu.");
         Require(languages.Count(radio => radio.IsChecked == true) == 1, "Language menu marks exactly one current locale.");
         menu.Items.Clear();
         var menuSurface = new Border { Child = columnsPanel, Background = (Brush)app.FindResource("MenuBackgroundBrush") };
         Save(Render(menuSurface, 450, 420), Path.Combine(output, "LanguageMenu.png"));
-        var workspace = (KillerScan.Controls.ScanWorkspace)window.GetType().GetField("_scanWorkspace", Instance)!.GetValue(window)!;
         workspace.SetView("services");
         Render(root, 1200, 780);
         CheckServiceMenu(workspace, root, output);
@@ -194,7 +217,7 @@ internal static class ReleaseUiTests
         var sheet = new RenderTargetBitmap(columns * 370, rows * 370, 96, 96, PixelFormats.Pbgra32);
         sheet.Render(drawing);
         Save(sheet, Path.Combine(output, "ButtonStates.png"));
-        Console.WriteLine("PASS: 45 theme/accent states, 19 locales, new-language scaling, services and topology rendered.");
+        Console.WriteLine($"PASS: 45 theme/accent states, {localeCount} locales, new-language scaling, services and topology rendered.");
         Console.WriteLine("Offscreen release UI: " + output);
     }
 
