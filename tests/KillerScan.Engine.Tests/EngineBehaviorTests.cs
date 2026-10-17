@@ -37,7 +37,8 @@ internal static class EngineBehaviorTests
             NetworkDevice? reported = null;
             scanner.DeviceFound += device => reported = device;
             using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(20));
-            var devices = await scanner.ScanSubnetAsync("127.0.0.1", deadline.Token);
+            var devices = await scanner.ScanSubnetAsync("127.0.0.1", deadline.Token,
+                new ScanOptions().Without("mdns,ssdp"));
             Require(devices.Count == 1, "Full loopback scan returns one device.");
             var result = devices.Single();
             Require(result.OpenPorts.Contains(server.Port), "Full scan discovers the controlled HTTP port.");
