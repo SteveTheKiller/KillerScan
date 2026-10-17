@@ -23,6 +23,7 @@ namespace KillerScan.Shell
         {
             _startupScanTarget = startupScanTarget;
             _startScanOnLoad = startScanOnLoad;
+            _ = Locations.Current;
             InitializeComponent();
             var titleFrames = System.Windows.Media.Imaging.BitmapDecoder.Create(
                 new System.Uri("pack://application:,,,/Resources/ks-icon.ico"),
@@ -36,17 +37,14 @@ namespace KillerScan.Shell
             _grainBrush    = (ImageBrush)FindName("GrainBrush")!;
 
             OuiLookup.Load();
-            DeviceOverrides.Load();
-            DeviceLogins.Load();
-            DevicePreferences.Load();
-            ScanHistory.Load();
-            ScanProfiles.Load();
+            Locations.LoadData();
 
             _about = new AboutController(this);
 
             VersionLabel.Text = $"v{AppInfo.Version}";
 
             InitializeWorkspace();
+            InitializeLocations();
             InitSidebar();
             InitSidebarFades();
 
@@ -58,7 +56,7 @@ namespace KillerScan.Shell
 
             Loaded += (_, _) =>
             {
-                if (App.IsPortable() && !DemoMode)
+                if (App.IsPortable() && !DemoMode && !IsolatedSettings.Enabled)
                     _portableBadge.Visibility = Visibility.Visible;
                 UpdateThemeSwatchSelection();                       // Theme.cs
                 UpdateAccentStrip(animate: false);                  // Theme.cs
@@ -96,6 +94,7 @@ namespace KillerScan.Shell
         // Portable-mode install button
         private void Install_Click(object sender, RoutedEventArgs e)
         {
+            if (IsolatedSettings.Enabled) return;
             var dlg = new ConfirmDialog { Owner = this };
             dlg.ShowDialog();
             if (!dlg.Confirmed) return;
@@ -184,6 +183,7 @@ namespace KillerScan.Shell
         {
             SaveWindowPlacement();
             DisposeWorkspace();
+            LocaleManager.LocaleChanged -= RefreshLocationLabel;
             base.OnClosed(e);
         }
 

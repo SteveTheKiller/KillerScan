@@ -18,8 +18,8 @@ namespace KillerScan.Engine
 
         /// <summary>Writable copy that overrides the embedded list once the user refreshes it.</summary>
         public static string ExternalFilePath => Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "KillerScan", "oui.txt");
+            Environment.GetEnvironmentVariable("KILLERSCAN_DATA_ROOT") ?? Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerScan"), "oui.txt");
 
         /// <summary>When the external list was last written; null when running on the bundled copy.</summary>
         public static DateTime? LastRefreshed { get; private set; }

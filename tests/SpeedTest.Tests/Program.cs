@@ -29,6 +29,7 @@ internal static class Program
     {
         try
         {
+            if (args.SequenceEqual(new[] { "--locations" })) { LocationTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--scan-presentation" })) { await ScanPresentation(); return 0; }
             if (args.SequenceEqual(new[] { "--terminal" })) { await View(); return 0; }
             if (args.SequenceEqual(new[] { "--menu-separators" })) { await MenuSeparatorThemeTests.Run(); return 0; }
@@ -41,6 +42,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--menu-icons-ui" })) { await HistoryUiTests.Run(menusOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--topology" })) { await TopologyTests.Run(); return 0; }
             Require(args.All(value => value == "--worker" || value == "--internet"), "Usage: SpeedTest.Tests.exe [--worker] [--internet]");
+            await Run("Location identities, legacy migration and cross-location data isolation", LocationTests.RunIsolated);
             await Run("Menu dividers resolve declared palettes and preserve the fallback", MenuSeparatorThemeTests.Run);
             await Run("Startup content becomes visible when its animation stalls", StartupFadeTests.Run);
             await Run("Topology radial geometry, zoom and rendered interactions", TopologyTests.RunIsolated);

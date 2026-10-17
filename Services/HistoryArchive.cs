@@ -9,13 +9,16 @@ namespace KillerScan.Services
     {
         private readonly string _path;
         private bool _readable = true;
+        internal bool IsReadable => _readable;
         private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
         internal List<ScanHistoryEntry> Entries { get; private set; } = [];
         internal HistoryRetention Policy { get; private set; } = new(HistoryRetentionMode.Count);
 
         internal HistoryArchive(string path) => _path = path;
 
-        internal void Load(DateTimeOffset now)
+        internal void Load(DateTimeOffset now) => LoadForLocation(now, null);
+
+        internal void LoadForLocation(DateTimeOffset now, string? locationId)
         {
             _readable = true;
             Entries = [];
@@ -40,6 +43,8 @@ namespace KillerScan.Services
                     Policy = saved.Policy;
                 }
                 Entries.RemoveAll(entry => entry == null);
+                if (locationId != null && Entries.Any(entry => entry.LocationId != locationId))
+                    throw new InvalidDataException("History belongs to a different location.");
                 foreach (var entry in Entries)
                 {
                     entry.Target ??= string.Empty;

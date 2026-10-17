@@ -480,15 +480,15 @@ namespace KillerScan.Controls
 
             var csv = new System.Text.StringBuilder();
             csv.AppendLine(string.Join(",", Cell(L("Str_Watch_Targets")), Cell(L("Str_Diag_Result")),
-                Cell(L("Str_Watch_Latency")), Cell(L("Str_Watch_Loss")), Cell(L("Str_Watch_Sent"))));
+                Cell(L("Str_Watch_Latency")), Cell(L("Str_Watch_Loss")), Cell(L("Str_Watch_Sent")), "Location ID", "Location"));
             foreach (var card in _cards)
             {
                 csv.AppendLine(string.Join(",", Cell(card.Address), Cell(card.State),
-                    Cell(card.Latest + " / " + card.Average), Cell(card.Loss), Cell(card.Sent)));
+                    Cell(card.Latest + " / " + card.Average), Cell(card.Loss), Cell(card.Sent), Cell(Locations.Current.Id), Cell(Locations.Current.Name)));
                 foreach (var check in card.Checks)
-                    csv.AppendLine(string.Join(",", Cell(card.Address), Cell(check.Check), Cell(check.Result), "", ""));
+                    csv.AppendLine(string.Join(",", Cell(card.Address), Cell(check.Check), Cell(check.Result), "", "", Cell(Locations.Current.Id), Cell(Locations.Current.Name)));
                 foreach (var entry in card.Events)
-                    csv.AppendLine(string.Join(",", Cell(card.Address), Cell(entry.Time), Cell(entry.State), "", ""));
+                    csv.AppendLine(string.Join(",", Cell(card.Address), Cell(entry.Time), Cell(entry.State), "", "", Cell(Locations.Current.Id), Cell(Locations.Current.Name)));
             }
             return csv.ToString();
         }

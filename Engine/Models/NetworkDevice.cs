@@ -9,6 +9,10 @@ namespace KillerScan.Engine
         public string MacAddress { get; set; } = string.Empty;
         public string Vendor { get; set; } = string.Empty;
         public string DeviceType { get; set; } = "Unknown";
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public string? LocationId { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public string? LocationName { get; set; }
 
         /// <summary>
         /// The type as it appears on screen. Sorting the Type column reads this rather than the

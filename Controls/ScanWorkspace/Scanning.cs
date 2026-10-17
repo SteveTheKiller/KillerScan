@@ -14,7 +14,7 @@ namespace KillerScan.Controls
         {
             session.Scanner.StatusChanged += scanStatus => Dispatcher.Invoke(() =>
             {
-                if (_disposed) return;
+                if (_disposed || session.LocationId != Locations.Current.Id) return;
                 string status = ScanStatusText.Format(scanStatus, Loc);
                 session.Status = status;
                 StatusText.Text = status;
@@ -22,13 +22,13 @@ namespace KillerScan.Controls
             });
             session.Scanner.ProgressChanged += progress => Dispatcher.Invoke(() =>
             {
-                if (_disposed) return;
+                if (_disposed || session.LocationId != Locations.Current.Id) return;
                 session.Progress = progress;
                 ScanProgress.Value = progress;
             });
             session.Scanner.DeviceFound += device => Dispatcher.Invoke(() =>
             {
-                if (_disposed) return;
+                if (_disposed || session.LocationId != Locations.Current.Id) return;
                 session.Devices.Add(device);
                 RefreshDeviceCount();
             });
@@ -40,6 +40,9 @@ namespace KillerScan.Controls
             if (_active.Cts != null) { Stop(); return; }
             if (_rescanCts != null) return;
             if (DemoMode) { GenerateDemoScan(); return; }
+            using var locationRun = Locations.BeginRun();
+            try { PrepareScanner(); }
+            catch (NetworkBindingException ex) { StatusText.Text = ex.Message; return; }
             var targets = ScanTargets.Parse(Targets);
             if (!targets.Ok)
             {
@@ -70,9 +73,10 @@ namespace KillerScan.Controls
             RefreshDeviceCount();
             StateChanged?.Invoke(this, EventArgs.Empty);
             bool completed = false;
+            var options = _active.Options;
             try
             {
-                await _active.Scanner.ScanSubnetAsync(_active.SubnetText, cts.Token, fullScan: true);
+                await _active.Scanner.ScanSubnetAsync(_active.SubnetText, cts.Token, options, fullScan: true);
                 completed = !cts.IsCancellationRequested && !_disposed;
                 if (completed && _active.Devices.Count > 0)
                 {

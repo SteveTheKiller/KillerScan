@@ -536,4 +536,34 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Scroll down</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Scroll left</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Scroll right</sys:String>
+
+    <!-- Per-scan probe choices; stable feature IDs also serve CLI /skip. -->
+    <sys:String x:Key="Str_Options_Title">Scan options</sys:String>
+    <sys:String x:Key="Str_Options_Detail">Per tab; saved with profiles. Fewer probes may reduce results. HTTP/TLS/SSH need port scanning; SNMP/NetBIOS are independent.</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">Restore defaults (all enabled)</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">Read neighbor cache</sys:String>
+    <sys:String x:Key="Str_Options_arp">Resolve MAC via ARP</sys:String>
+    <sys:String x:Key="Str_Options_icmp">ICMP discovery and TTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">TCP discovery fallback</sys:String>
+    <sys:String x:Key="Str_Options_dns">Verified reverse DNS (and flush local DNS cache)</sys:String>
+    <sys:String x:Key="Str_Options_mdns">mDNS enrichment</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">SSDP enrichment</sys:String>
+    <sys:String x:Key="Str_Options_ports">TCP port scanning</sys:String>
+    <sys:String x:Key="Str_Options_http">HTTP/HTTPS title and server</sys:String>
+    <sys:String x:Key="Str_Options_tls">TLS certificate details</sys:String>
+    <sys:String x:Key="Str_Options_ssh">SSH banner</sys:String>
+    <sys:String x:Key="Str_Options_snmp">SNMP description</sys:String>
+    <sys:String x:Key="Str_Options_netbios">NetBIOS name</sys:String>
+    <sys:String x:Key="Str_Interface_Title">Network interface</sys:String>
+    <sys:String x:Key="Str_Interface_Auto">Automatic (system routing)</sys:String>
+    <sys:String x:Key="Str_Interface_Unavailable">Selected interface/address is unavailable. Choose an interface again.</sys:String>
+    <sys:String x:Key="Str_Interface_WifiIdentity">Wi-Fi network identity is unavailable. Windows must allow reading the connected Wi-Fi identity for explicit binding.</sys:String>
+    <sys:String x:Key="Str_Location_Title">Location</sys:String>
+    <sys:String x:Key="Str_Location_Busy">Stop the current scan or terminal command before changing location.</sys:String>
+    <sys:String x:Key="Str_Location_Legacy">Legacy data (unassigned)</sys:String>
+    <sys:String x:Key="Str_Location_New">New location...</sys:String>
+    <sys:String x:Key="Str_Location_Rename">Rename location...</sys:String>
+    <sys:String x:Key="Str_Location_Switch">Change location</sys:String>
+    <sys:String x:Key="Str_Location_Explicit">Choose a name yourself. Locations are never inferred from IP ranges or Wi-Fi names.</sys:String>
+    <sys:String x:Key="Str_Location_Clear">Changing location clears current results and closes the idle terminal and monitoring views. Saved data stays in its original location.</sys:String>
 </ResourceDictionary>

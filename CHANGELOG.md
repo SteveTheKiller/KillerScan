@@ -4,6 +4,13 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Explicit location identities, per-location device data/history/profiles, safe copy-and-backup migration of legacy files, location-aware CLI/PowerShell and export metadata. Changing location clears transient results and is locked during scans.
+- Explicit Windows IPv4 interface selection for scan tabs, profiles, CLI and the terminal toolbar, with pinned TCP/UDP/multicast, source-aware ARP/ICMP/DNS, per-interface classification and cancellation on link changes. Missing selections never fall back to a different adapter.
+- Per-tab scan options for neighbor cache, explicit ARP, ICMP, TCP discovery, DNS, mDNS, SSDP, port scanning and individual HTTP/TLS/SSH/SNMP/NetBIOS fingerprints. Profiles save the choices; scan, quick and deep paths enforce them in the engine. CLI `/skip` and PowerShell `-Skip` provide the same choices. Existing profiles and API calls keep their defaults.
+
 ## [1.8.1] - 2026-10-14
 
 ### Added

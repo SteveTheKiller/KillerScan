@@ -110,7 +110,7 @@ namespace KillerScan.Controls
             if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
             try
             {
-                File.WriteAllText(dlg.FileName, ReportExport.BuildCsv(ActiveDevices), Encoding.UTF8);
+                File.WriteAllText(dlg.FileName, ReportExport.BuildLocationCsv(ActiveDevices, Locations.Current), Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }
             catch (Exception ex)
@@ -134,10 +134,11 @@ namespace KillerScan.Controls
                 // English headers and blanket quoting, matching ReportExport.BuildCsv so both
                 // exports open the same way in a spreadsheet.
                 var text = new StringBuilder();
-                text.AppendLine("Service,Port,Name,IP Address,Type");
+                text.AppendLine("Service,Port,Name,IP Address,Type,Location ID,Location");
                 foreach (var row in ServicesGrid.Items.OfType<ServiceRow>())
                     text.AppendLine(string.Join(",", ReportExport.CsvField(row.Service), ReportExport.CsvField(row.Port.ToString()),
-                        ReportExport.CsvField(row.DeviceName), ReportExport.CsvField(row.IpAddress), ReportExport.CsvField(row.DeviceTypeDisplay)));
+                        ReportExport.CsvField(row.DeviceName), ReportExport.CsvField(row.IpAddress), ReportExport.CsvField(row.DeviceTypeDisplay),
+                        ReportExport.CsvField(Locations.Current.Id), ReportExport.CsvField(Locations.Current.Name)));
                 File.WriteAllText(dlg.FileName, text.ToString(), Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }
@@ -155,8 +156,8 @@ namespace KillerScan.Controls
             if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
             try
             {
-                string html = ReportExport.BuildHtml(
-                    ActiveDevices, SubnetInput.Text, ThemeManager.Current.ToString().ToLowerInvariant());
+                string html = ReportExport.BuildLocationHtml(
+                    ActiveDevices, SubnetInput.Text, ThemeManager.Current.ToString().ToLowerInvariant(), Locations.Current);
                 File.WriteAllText(dlg.FileName, html, Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }
