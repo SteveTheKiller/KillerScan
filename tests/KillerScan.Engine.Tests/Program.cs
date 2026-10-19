@@ -11,6 +11,7 @@ internal static class Program
         {
             await Run("Targets parse ranges, de-duplicate overlaps and refuse bad input", Targets);
             await Run("CIDR expansion excludes the network and broadcast addresses", Subnet);
+            await Run("Subnet expansion preserves its default and rejects oversized ranges", SubnetBounds);
             await Run("ARP output parsing keeps IPv4 entries with full MAC addresses", ArpParsing);
             await Run("Classifier honors manual types, the gateway, DNS and hostname rules", Classifier);
             await Run("Bundled vendor database loads from the engine assembly", Vendors);
@@ -66,6 +67,31 @@ internal static class Program
         var list = NetworkScanner.GetAddressesInSubnet("10.0.0.0/30");
         Require(list.Count == 2, "A /30 has two hosts, got " + list.Count);
         Require(list[0].ToString() == "10.0.0.1" && list[1].ToString() == "10.0.0.2", "Unexpected hosts");
+        return Task.CompletedTask;
+    }
+
+    private static Task SubnetBounds()
+    {
+        var defaultSubnet = NetworkScanner.GetAddressesInSubnet("10.0.0.0");
+        Require(defaultSubnet.Count == 254, "An omitted prefix keeps the /24 default, got " + defaultSubnet.Count);
+        Require(defaultSubnet[0].ToString() == "10.0.0.1" && defaultSubnet[defaultSubnet.Count - 1].ToString() == "10.0.0.254",
+            "The default /24 keeps the expected first and last host addresses");
+
+        foreach (string cidr in new[] { "10.0.0.0/8", "0.0.0.0/0" })
+        {
+            try
+            {
+                _ = NetworkScanner.GetAddressesInSubnet(cidr);
+                throw new InvalidOperationException("An oversized subnet should be rejected before expansion: " + cidr);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Require(ex.ParamName == "cidr", "The size error identifies the subnet argument");
+            }
+        }
+
+        var singleAddressPrefix = NetworkScanner.GetAddressesInSubnet("255.255.255.255/32");
+        Require(singleAddressPrefix.Count == 0, "A /32 keeps the helper's existing empty host list without wrapping");
         return Task.CompletedTask;
     }
 

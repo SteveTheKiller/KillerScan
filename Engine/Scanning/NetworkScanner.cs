@@ -91,9 +91,19 @@ namespace KillerScan.Engine
         /// </summary>
         public static List<IPAddress> GetAddressesInSubnet(string cidr)
         {
+            if (string.IsNullOrWhiteSpace(cidr))
+                throw new ArgumentException("A subnet CIDR is required.", nameof(cidr));
+
             var parts = cidr.Trim().Split('/');
+            if (parts.Length > 2)
+                throw new ArgumentException("A subnet CIDR may contain only one prefix separator.", nameof(cidr));
+
             var ip = IPAddress.Parse(parts[0]);
             int prefixLen = parts.Length > 1 ? int.Parse(parts[1]) : 24;
+            if (ip.AddressFamily != AddressFamily.InterNetwork)
+                throw new ArgumentException("Subnet expansion requires an IPv4 address.", nameof(cidr));
+            if (prefixLen < 0 || prefixLen > 32)
+                throw new ArgumentOutOfRangeException(nameof(cidr), prefixLen, "The IPv4 prefix must be between 0 and 32.");
 
             byte[] ipBytes = ip.GetAddressBytes();
             uint ipUint = (uint)(ipBytes[0] << 24 | ipBytes[1] << 16 | ipBytes[2] << 8 | ipBytes[3]);
@@ -101,6 +111,12 @@ namespace KillerScan.Engine
             uint mask = prefixLen == 0 ? 0 : uint.MaxValue << (32 - prefixLen);
             uint network = ipUint & mask;
             uint broadcast = network | ~mask;
+
+            long hostCount = (long)broadcast - network - 1;
+            if (hostCount <= 0) return new List<IPAddress>();
+            if (hostCount > ScanTargets.MaxAddresses)
+                throw new ArgumentOutOfRangeException(nameof(cidr), cidr,
+                    $"Subnet expands to {hostCount} host addresses, exceeding the maximum of {ScanTargets.MaxAddresses}.");
 
             var addresses = new List<IPAddress>();
             for (uint addr = network + 1; addr < broadcast; addr++)
