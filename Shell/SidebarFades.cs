@@ -44,14 +44,16 @@ namespace KillerScan.Shell
 
         private static void UpdateSidebarFade(ListBox list)
         {
+            list.OpacityMask = null;
             if (FindDescendant<ScrollViewer>(list) is not ScrollViewer scroll || list.ActualHeight <= 0)
             {
-                list.OpacityMask = null;
                 return;
             }
+            if (scroll.Template.FindName("PART_ScrollContentPresenter", scroll)
+                    is not ScrollContentPresenter viewport) return;
             if (Application.Current?.TryFindResource("EdgeFadeOpacity") is double themeFade && themeFade <= 0)
             {
-                list.OpacityMask = null;
+                viewport.OpacityMask = null;
                 return;
             }
 
@@ -60,12 +62,17 @@ namespace KillerScan.Shell
             bool fadeBottom = overflow && scroll.VerticalOffset < scroll.ScrollableHeight - 0.5;
             if (!fadeTop && !fadeBottom)
             {
-                list.OpacityMask = null;
+                viewport.OpacityMask = null;
                 return;
             }
 
-            double edge = Math.Min(0.45, SidebarFadePx / list.ActualHeight);
-            var mask = new LinearGradientBrush { StartPoint = new Point(0, 0), EndPoint = new Point(0, 1) };
+            double edge = Math.Min(0.45, SidebarFadePx / Math.Max(1, viewport.ActualHeight));
+            var mask = new LinearGradientBrush
+            {
+                MappingMode = BrushMappingMode.Absolute,
+                StartPoint = new Point(0, 0),
+                EndPoint = new Point(0, viewport.ActualHeight)
+            };
             if (fadeTop)
             {
                 mask.GradientStops.Add(new GradientStop(Colors.Transparent, 0));
@@ -79,7 +86,7 @@ namespace KillerScan.Shell
             }
             else mask.GradientStops.Add(new GradientStop(Colors.Black, 1));
             mask.Freeze();
-            list.OpacityMask = mask;
+            viewport.OpacityMask = mask;
         }
     }
 }
