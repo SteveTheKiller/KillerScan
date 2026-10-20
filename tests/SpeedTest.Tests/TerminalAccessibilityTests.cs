@@ -45,6 +45,15 @@ internal static class TerminalAccessibilityTests
                 Require(terminal.GetText().Contains("\u4e2d e\u0301 \U0001f469\u200d\U0001f4bb"), "Transcript preserves complete Unicode clusters without continuation spaces.");
                 provider.DocumentRange.FindText("\u4e2d e\u0301 \U0001f469\u200d\U0001f4bb", false, false)!.Select();
                 Require(terminal.GetSelectionText() == "\u4e2d e\u0301 \U0001f469\u200d\U0001f4bb", "Copy text and UIA selection use the same cluster mapping.");
+                using var mouse = new TerminalControl();
+                mouse.ShowScript("\u4e2dX");
+                mouse.SelectCells(0, 1, 0, 2);
+                var mousePeer = UIElementAutomationPeer.CreatePeerForElement(mouse)!;
+                var mouseProvider = (ITextProvider)mousePeer.GetPattern(PatternInterface.Text);
+                Require(mouse.GetSelectionText() == "\u4e2d" && mouseProvider.GetSelection()[0].GetText(-1) == "\u4e2d",
+                    "Mouse-origin continuation selection agrees with copied and accessible text.");
+                mouse.SelectCells(0, 2, 0, 1);
+                Require(mouseProvider.GetSelection()[0].GetText(-1) == "\u4e2d", "Reverse mouse selection uses the same cluster boundaries.");
                 string? renderRoot = Environment.GetEnvironmentVariable("KILLERSCAN_RENDER_ROOT");
                 if (!string.IsNullOrEmpty(renderRoot))
                 {

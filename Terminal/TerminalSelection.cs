@@ -45,7 +45,16 @@ namespace KillerScan.Terminal
         {
             if (!_selecting || e.LeftButton != MouseButtonState.Pressed) return;
 
-            CellAt(e.GetPosition(this), out _selHeadLine, out _selHeadCol);
+            CellAt(e.GetPosition(this), out int line, out int column);
+            SelectCells(_selAnchorLine, _selAnchorCol, line, column);
+        }
+
+        internal void SelectCells(int anchorLine, int anchorColumn, int headLine, int headColumn)
+        {
+            _selAnchorLine = Math.Max(0, Math.Min(_buf.TotalLines - 1, anchorLine));
+            _selHeadLine = Math.Max(0, Math.Min(_buf.TotalLines - 1, headLine));
+            _selAnchorCol = Math.Max(0, Math.Min(_buf.LineAt(_selAnchorLine).Length, anchorColumn));
+            _selHeadCol = Math.Max(0, Math.Min(_buf.LineAt(_selHeadLine).Length, headColumn));
             _hasSelection = _selHeadLine != _selAnchorLine || _selHeadCol != _selAnchorCol;
             InvalidateVisual();
         }
@@ -128,6 +137,10 @@ namespace KillerScan.Terminal
                 l1 = _selHeadLine;   c1 = _selHeadCol;
                 l2 = _selAnchorLine; c2 = _selAnchorCol;
             }
+            var first = _buf.LineAt(l1);
+            var last = _buf.LineAt(l2);
+            if (c1 > 0 && c1 < first.Length && first[c1].Ch < 0) c1--;
+            if (c2 > 0 && c2 < last.Length && last[c2].Ch < 0) c2++;
         }
 
         private void DrawSelection(DrawingContext dc, int firstVisible)
