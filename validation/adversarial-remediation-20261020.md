@@ -136,6 +136,14 @@ Green: the actual browser tree excludes closed accent controls, and the same two
 
 ## Current evidence
 
+## Dependency compatibility inventory
+
+System.Text.Json 10.0.13 is already applied to app/engine. Official repository release/tag API checks on October 20 identified checkout v7.0.1 (3d3c42e5aac5ba805825da76410c181273ba90b1), setup-dotnet v6.0.0 (a98b56852c35b8e3190ac28c8c2271da59106c68), upload-artifact v7.0.2 (cf430e030ddbb5b0abf93d22962f4752f3646cd9) and NuGet/login v1.2.0 (8d196754b4036150537f80ac539e15c2f1028841). Every workflow reference is pinned to its verified commit.
+
+All four actions use Node 24. These workflows use GitHub-hosted Windows 2025, windows-latest or ubuntu-latest runners. The upstream Node 24 minimum is runner 2.327.1; checkout's newer Docker-auth path requires 2.329.0, and these workflows do not use that path. Checkout v7's restricted fork behavior applies to pull_request_target/workflow_run; the PR workflow uses pull_request. Existing input/output names were verified against each pinned action.yml. Artifact ZIP behavior stays at its default and NuGet retains user/NUGET_API_KEY. No workflow was dispatched and no release was published.
+
+Primary references: [checkout](https://github.com/actions/checkout/releases/tag/v7.0.1), [setup-dotnet](https://github.com/actions/setup-dotnet/releases/tag/v6.0.0), [upload-artifact](https://github.com/actions/upload-artifact/releases/tag/v7.0.2), [NuGet login](https://github.com/NuGet/login/releases/tag/v1.2.0). Hosted workflow execution remains unverified until separately authorized push/CI.
+
 ## UI-009 measurement protocol
 
 The approved unlimited-retention policy is unchanged. Ranked questions before measurement: (1) retained cells dominate steady private memory, (2) cloning on shell replacement creates the practical peak, (3) repeated replacement or resize retains obsolete copies. A child waits on stdin until assigned to a Windows job with a 384 MiB committed-memory ceiling and kill-on-close. No allocation workload starts if the job assignment fails. Presets are 20,000 x 80, 50,000 x 80 and 25,000 x 160 output cells, not an allocation-until-failure stress test. Each includes three replacements, width changes and an alternate-screen round trip with full row-content verification.

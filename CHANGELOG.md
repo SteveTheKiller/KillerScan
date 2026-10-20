@@ -8,6 +8,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Changed
 - Updated the app and engine JSON dependency to 10.0.13.
+- Updated and pinned the build/release actions to current compatible stable versions.
 - Clarified upload throughput as sent payload, including in-flight requests, with a valid acknowledgment required.
 
 ### Fixed
