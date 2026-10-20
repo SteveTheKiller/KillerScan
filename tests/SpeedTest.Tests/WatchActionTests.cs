@@ -41,7 +41,47 @@ internal static class WatchActionTests
         stop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         PumpUntil(() => start.IsEnabled, TimeSpan.FromSeconds(1));
         Require(!stop.IsEnabled, "Stop ends the updated watch run.");
+        CheckShellCommands();
         Console.WriteLine("PASS: active Keep Alive and Diagnose requests add targets without resetting existing counters.");
+    }
+    private static void CheckShellCommands()
+    {
+        var previous = DemoData.Current;
+        DemoData.Generate(new Random(1729));
+        var shell = new KillerScan.Shell.MainWindow();
+        try
+        {
+            var added = new KillerScan.Engine.NetworkDevice { IpAddress = "192.0.2.200" };
+            shell.OpenNetworkTool(added, false);
+            var watch = Descendants((DependencyObject)shell.Content).OfType<NetworkToolsWindow>().Single();
+            var cards = (ListBox)watch.FindName("Cards");
+            PumpUntil(() => cards.Items.Count > 0, TimeSpan.FromSeconds(1));
+            var first = cards.Items.OfType<WatchCard>().First();
+            PumpUntil(() => int.Parse(first.Sent) >= 2, TimeSpan.FromSeconds(4));
+            int samples = int.Parse(first.Sent);
+            shell.OpenNetworkTool(new KillerScan.Engine.NetworkDevice { IpAddress = "192.0.2.201", OpenPorts = [8443] }, true);
+            PumpUntil(() => ((Button)watch.FindName("StartButton")).IsEnabled == false &&
+                cards.Items.OfType<WatchCard>().Any(card => card.Address == "192.0.2.201" && card.Sent != "0"), TimeSpan.FromSeconds(4));
+            Require(cards.Items.OfType<WatchCard>().Any(card => ReferenceEquals(card, first)) && int.Parse(first.Sent) >= samples,
+                "The shell Diagnose command preserves existing card identity and samples.");
+            Require(cards.Items.OfType<WatchCard>().Any(card => card.Address == added.IpAddress),
+                "The shell Diagnose command preserves a previously added Keep Alive target.");
+            var diagnosed = cards.Items.OfType<WatchCard>().Single(card => card.Address == "192.0.2.201");
+            Require(ReferenceEquals(cards.SelectedItem, diagnosed) && diagnosed.Checks.Any(row => row.Check == "TCP 8443"),
+                "The shell Diagnose command selects and checks the new target.");
+            shell.OpenNetworkTool(added, false);
+            Require(cards.Items.OfType<WatchCard>().Any(card => ReferenceEquals(card, first)) &&
+                cards.Items.OfType<WatchCard>().Count(card => card.Address == added.IpAddress) == 1 &&
+                cards.Items.OfType<WatchCard>().Any(card => ReferenceEquals(card, diagnosed)),
+                "Repeated shell Keep Alive commands preserve all cards without duplication.");
+        }
+        finally { shell.Close(); DemoData.Current = previous; }
+    }
+    private static System.Collections.Generic.IEnumerable<DependencyObject> Descendants(DependencyObject root)
+    {
+        yield return root;
+        foreach (var child in LogicalTreeHelper.GetChildren(root).OfType<DependencyObject>())
+            foreach (var descendant in Descendants(child)) yield return descendant;
     }
     private static void PumpUntil(Func<bool> condition, TimeSpan timeout)
     {

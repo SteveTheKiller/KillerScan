@@ -29,11 +29,10 @@ namespace KillerScan.Shell
                 var bar = _watchWorkspace.DetachToolbar();
                 bar.Margin = new Thickness(8, 0, 0, 0);
                 RegisterViewToolbar("watch", bar);
+                // Start the first demo visit automatically; later visits preserve its samples.
+                if (DemoData.Enabled) _watchWorkspace.RestartWith(DemoWatchTargets());
             }
             ShowWorkspaceContent(_watchWorkspace, "watch");
-            // Demo mode watches straight away rather than waiting for Start, so the view is never
-            // an empty pane in a screenshot.
-            if (DemoData.Enabled) _watchWorkspace.RestartWith(DemoWatchTargets());
         }
 
         /// <summary>
@@ -57,7 +56,7 @@ namespace KillerScan.Shell
             OpenNetworkTool(device, true);
         }
 
-        private void OpenNetworkTool(NetworkDevice device, bool diagnostics)
+        internal void OpenNetworkTool(NetworkDevice device, bool diagnostics)
         {
             Watch_Click(this, new RoutedEventArgs());
             if (diagnostics) _watchWorkspace!.ShowDetails(device.IpAddress, device.OpenPorts.Concat(CommonPorts));
