@@ -489,4 +489,5 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Strona w lewo</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Strona w prawo</sys:String>
     <sys:String x:Key="Str_SaveFailed">Nie udało się zapisać zmian. Nadal są dostępne w tej sesji. Spróbować zapisać ponownie?&#10;&#10;{0}</sys:String>
+    <sys:String x:Key="Str_History_Partial">Skanowanie częściowe</sys:String>
 </ResourceDictionary>

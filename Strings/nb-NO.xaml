@@ -546,4 +546,5 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Side til venstre</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Side til høyre</sys:String>
     <sys:String x:Key="Str_SaveFailed">Kunne ikke lagre endringene. De er fortsatt tilgjengelige i denne økten. Prøve å lagre på nytt?&#10;&#10;{0}</sys:String>
+    <sys:String x:Key="Str_History_Partial">Delvis skanning</sys:String>
 </ResourceDictionary>

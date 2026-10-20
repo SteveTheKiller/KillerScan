@@ -100,6 +100,9 @@ namespace KillerScan.Controls
         }
 
         private async void DeepScanAll_Click(object sender, RoutedEventArgs e)
+            => await DeepScanAllAsync();
+
+        private async Task DeepScanAllAsync(bool recordProfile = false)
         {
             if (_rescanCts != null)
             {
@@ -116,16 +119,16 @@ namespace KillerScan.Controls
             using var hostGate = new SemaphoreSlim(8);
             int done = 0;
             int refreshed = 0;
+            var completion = ScanCompletion.Partial;
 
             ScanBtn.IsEnabled = false;
             ScanProgress.Value = 0;
             ScanProgress.Visibility = Visibility.Visible;
             UpdateDeepScanButton();
             StateChanged?.Invoke(this, EventArgs.Empty);
-            NetworkScanner.FlushLocalDnsCache();
-
             try
             {
+                NetworkScanner.FlushLocalDnsCache();
                 var tasks = targets.Select(async old =>
                 {
                     await hostGate.WaitAsync(ct);
@@ -157,17 +160,34 @@ namespace KillerScan.Controls
                 });
 
                 await Task.WhenAll(tasks);
+                completion = refreshed == targets.Count ? ScanCompletion.Complete : ScanCompletion.Partial;
                 if (!_disposed) StatusText.Text = string.Format(Loc("Str_St_RescanDone"), refreshed);
             }
             catch (OperationCanceledException)
             {
+                completion = ScanCompletion.Canceled;
                 if (!_disposed) StatusText.Text = Loc("Str_St_ScanCanceled");
+            }
+            catch (Exception ex)
+            {
+                if (!_disposed) StatusText.Text = string.Format(Loc("Str_Err_Scan"), ex.Message);
             }
             finally
             {
-                _rescanCts.Dispose();
-                _rescanCts = null;
-                FinishRescanUi();
+                try
+                {
+                    if (recordProfile)
+                    {
+                        _scanCompleted = completion == ScanCompletion.Complete;
+                        RecordCompletedRun(completion);
+                    }
+                }
+                finally
+                {
+                    _rescanCts.Dispose();
+                    _rescanCts = null;
+                    FinishRescanUi();
+                }
             }
         }
 

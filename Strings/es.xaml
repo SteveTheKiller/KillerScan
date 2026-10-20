@@ -504,4 +504,5 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Una página hacia la izquierda</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Una página hacia la derecha</sys:String>
     <sys:String x:Key="Str_SaveFailed">No se pudieron guardar los cambios. Siguen disponibles durante esta sesión. ¿Intentar guardarlos de nuevo?&#10;&#10;{0}</sys:String>
+    <sys:String x:Key="Str_History_Partial">Escaneo parcial</sys:String>
 </ResourceDictionary>

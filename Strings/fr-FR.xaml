@@ -504,4 +504,5 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Page vers la gauche</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Page vers la droite</sys:String>
     <sys:String x:Key="Str_SaveFailed">Impossible d’enregistrer les modifications. Elles restent disponibles pendant cette session. Réessayer de les enregistrer ?&#10;&#10;{0}</sys:String>
+    <sys:String x:Key="Str_History_Partial">Analyse partielle</sys:String>
 </ResourceDictionary>

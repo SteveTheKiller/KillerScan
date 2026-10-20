@@ -546,4 +546,5 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Page left</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Page right</sys:String>
     <sys:String x:Key="Str_SaveFailed">Could not save changes. They are still available for this session. Try saving again?&#10;&#10;{0}</sys:String>
+    <sys:String x:Key="Str_History_Partial">Partial scan</sys:String>
 </ResourceDictionary>

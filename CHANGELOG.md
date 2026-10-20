@@ -12,7 +12,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Fixed
 - Preference and history saves preserve existing files on failure, keep unsaved edits for retry, and report when changes could not be saved.
 - Concurrent app instances preserve saved scans and retention changes instead of overwriting newer history.
-- Successful scans with no devices are saved in history and show devices that disappeared.
+- Scan history includes empty results and final automatic deep-profile results, with canceled or partial runs labeled.
 - Executable installation verifies the complete copy and preserves recovery files if replacement fails.
 - Window resize minimums stay within the current monitor's work area on small or scaled displays.
 - Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.

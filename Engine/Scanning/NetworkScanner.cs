@@ -466,7 +466,7 @@ namespace KillerScan.Engine
         // per host) on purpose - it targets one host on demand, not a whole /24.
         // Reuses the last full scan's multicast (mDNS/SSDP) results for naming.
         // -------------------------------------------------------------------
-        public async Task<NetworkDevice> DeepProbeHostAsync(
+        public virtual async Task<NetworkDevice> DeepProbeHostAsync(
             string ip, CancellationToken ct, int portConcurrency = 256,
             bool flushLocalDnsCache = true)
         {

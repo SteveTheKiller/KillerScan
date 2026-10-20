@@ -76,11 +76,7 @@ namespace KillerScan.Controls
                 completed = !cts.IsCancellationRequested && !_disposed;
                 if (completed)
                 {
-                    var recorded = ScanHistory.Record(_active.ScannedSubnet, _active.Devices);
-                    // Tell the shell so the history sidebar picks up the new entry rather than
-                    // showing a stale list until it is next reopened.
-                    if (PersistenceFeedback.Check(recorded.Saved, ScanHistory.Retry, () => ScanHistory.SaveError))
-                        HistoryRecorded?.Invoke(this, EventArgs.Empty);
+                    if (!_runDeepAfterScan || _active.Devices.Count == 0) RecordCompletedRun();
                     if (_active.Devices.Count > 0 && !DevicePreferences.HasTrustedDevices)
                     {
                         PersistenceFeedback.Check(DevicePreferences.TrustAll(_active.Devices), DevicePreferences.Retry, () => DevicePreferences.SaveError);
@@ -99,7 +95,7 @@ namespace KillerScan.Controls
             {
                 _active.Cts = null;
                 cts.Dispose();
-                bool deep = completed && _runDeepAfterScan && !_disposed;
+                bool deep = completed && _runDeepAfterScan && _active.Devices.Count > 0 && !_disposed;
                 _runDeepAfterScan = false;
                 _scanCompleted = completed;
                 if (!_disposed)
@@ -111,8 +107,16 @@ namespace KillerScan.Controls
                     UpdateDeepScanButton();
                     StateChanged?.Invoke(this, EventArgs.Empty);
                 }
-                if (deep) DeepScan();
+                if (deep) await DeepScanAllAsync(recordProfile: true);
             }
+        }
+
+        private void RecordCompletedRun(ScanCompletion completion = ScanCompletion.Complete)
+        {
+            var recorded = ScanHistory.Record(_active.ScannedSubnet, _active.Devices, completion);
+            if (_disposed) return;
+            if (PersistenceFeedback.Check(recorded.Saved, ScanHistory.Retry, () => ScanHistory.SaveError))
+                HistoryRecorded?.Invoke(this, EventArgs.Empty);
         }
     }
 }

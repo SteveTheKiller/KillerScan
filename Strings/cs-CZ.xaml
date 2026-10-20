@@ -502,4 +502,5 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">O stránku doleva</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">O stránku doprava</sys:String>
     <sys:String x:Key="Str_SaveFailed">Změny se nepodařilo uložit. V této relaci jsou stále dostupné. Zkusit uložit znovu?&#10;&#10;{0}</sys:String>
+    <sys:String x:Key="Str_History_Partial">Částečné skenování</sys:String>
 </ResourceDictionary>

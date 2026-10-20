@@ -82,6 +82,15 @@ internal static class HistoryRetentionTests
             var freshReload = Archive("new.json"); Load(freshReload, now);
             Require(Entries(freshReload).Count == 100 && Mode(freshReload) == "Count", "Default policy and history survive reload.");
 
+            var partialArchive = Archive("completion.json");
+            var partialEntry = Entry("partial", now);
+            var completionProperty = entryType.GetProperty("Completion")!;
+            completionProperty.SetValue(partialEntry, Enum.Parse(completionProperty.PropertyType, "Partial"));
+            Append(partialArchive, partialEntry, now);
+            var completionReload = Archive("completion.json"); Load(completionReload, now);
+            Require(Property(Entries(completionReload)[0]!, "Completion")!.ToString() == "Partial",
+                "Incomplete scan status survives actual archive publication and reload.");
+
             var writerA = Archive("concurrent.json");
             var writerB = Archive("concurrent.json");
             Load(writerA, now); Load(writerB, now);

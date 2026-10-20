@@ -504,4 +504,5 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Bir sayfa sola</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Bir sayfa sağa</sys:String>
     <sys:String x:Key="Str_SaveFailed">Değişiklikler kaydedilemedi. Bu oturumda kullanılabilir olmaya devam ederler. Yeniden kaydetmek ister misiniz?&#10;&#10;{0}</sys:String>
+    <sys:String x:Key="Str_History_Partial">Kısmi tarama</sys:String>
 </ResourceDictionary>

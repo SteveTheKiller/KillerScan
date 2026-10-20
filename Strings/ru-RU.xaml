@@ -530,4 +530,5 @@
     <sys:String x:Key="Str_Scroll_PageLeft">На страницу влево</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">На страницу вправо</sys:String>
     <sys:String x:Key="Str_SaveFailed">Не удалось сохранить изменения. Они остаются доступны в этом сеансе. Попробовать сохранить снова?&#10;&#10;{0}</sys:String>
+    <sys:String x:Key="Str_History_Partial">Неполное сканирование</sys:String>
 </ResourceDictionary>

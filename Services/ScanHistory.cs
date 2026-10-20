@@ -3,15 +3,23 @@ using KillerScan.Models;
 
 namespace KillerScan.Services
 {
+    internal enum ScanCompletion { Complete, Partial, Canceled }
+
     internal sealed class ScanHistoryEntry
     {
         public DateTimeOffset ScannedAt { get; set; }
         public string Target { get; set; } = string.Empty;
         public List<HistoricalDevice> Devices { get; set; } = [];
+        public ScanCompletion Completion { get; set; }
 
         /// <summary>What a screen reader announces for the entry's row in the history list.</summary>
-        public override string ToString() =>
-            ScannedAt.ToString("g", System.Globalization.CultureInfo.CurrentCulture) + ", " + Target;
+        public override string ToString()
+        {
+            string text = ScannedAt.ToString("g", System.Globalization.CultureInfo.CurrentCulture) + ", " + Target;
+            if (Completion == ScanCompletion.Complete) return text;
+            string key = Completion == ScanCompletion.Canceled ? "Str_St_ScanCanceled" : "Str_History_Partial";
+            return text + ", " + (System.Windows.Application.Current?.TryFindResource(key) as string ?? Completion.ToString());
+        }
     }
 
     internal sealed class HistoricalDevice
@@ -101,12 +109,13 @@ namespace KillerScan.Services
             _demoRetention = new(HistoryRetentionMode.SaveAll);
         }
 
-        public static ScanComparison Record(string target, IEnumerable<NetworkDevice> devices)
+        public static ScanComparison Record(string target, IEnumerable<NetworkDevice> devices, ScanCompletion completion = ScanCompletion.Complete)
         {
             var current = new ScanHistoryEntry
             {
                 ScannedAt = DateTimeOffset.Now,
                 Target = target,
+                Completion = completion,
                 Devices = [.. devices.Select(ToHistorical).OrderBy(device => device.IpAddress)]
             };
             var previous = _entries.LastOrDefault(entry =>
