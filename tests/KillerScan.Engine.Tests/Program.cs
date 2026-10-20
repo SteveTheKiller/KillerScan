@@ -5,10 +5,11 @@ internal static class Program
 {
     private static int _passed;
 
-    private static async Task<int> Main()
+    private static async Task<int> Main(string[] args)
     {
         try
         {
+            if (args.SequenceEqual(new[] { "--vendor-db" })) { await VendorDatabaseTests.Run(); return 0; }
             await Run("Targets parse ranges, de-duplicate overlaps and refuse bad input", Targets);
             await Run("The address ceiling counts unique addresses and keeps first-seen order", TargetCeiling);
             await Run("CIDR expansion excludes the network and broadcast addresses", Subnet);

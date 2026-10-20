@@ -12,6 +12,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Fixed
 - Preference and history saves preserve existing files on failure, keep unsaved edits for retry, and report when changes could not be saved.
 - Concurrent app instances preserve saved scans and retention changes instead of overwriting newer history.
+- Vendor database updates preserve the prior complete file when writing or replacement fails.
 - Scan history includes empty results and final automatic deep-profile results, with canceled or partial runs labeled.
 - Reports keep the scanned target, timestamp and captured results when pending input or live results change during export.
 - Executable installation verifies the complete copy and preserves recovery files if replacement fails.

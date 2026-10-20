@@ -90,7 +90,7 @@ namespace KillerScan.Engine
             {
                 var dir = Path.GetDirectoryName(path);
                 if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
-                File.WriteAllText(path, newContent, new UTF8Encoding(false));
+                PublishDatabase(path, newContent);
                 OuiLookup.Reload();
             }
             catch (Exception ex)
@@ -99,6 +99,43 @@ namespace KillerScan.Engine
             }
 
             return (true, OuiLookup.Count, new Status("Str_Db_Updated", OuiLookup.Count));
+        }
+
+        internal static void PublishDatabase(string path, string content, Action<Stream, byte[]>? write = null)
+        {
+            path = Path.GetFullPath(path);
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            byte[] bytes = new UTF8Encoding(false).GetBytes(content);
+            string temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
+            string backup = temporary + ".original";
+            try
+            {
+                using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None, 4096, FileOptions.WriteThrough))
+                {
+                    if (write == null) stream.Write(bytes, 0, bytes.Length);
+                    else write(stream, bytes);
+                    stream.Flush(true);
+                }
+                if (!File.ReadAllBytes(temporary).SequenceEqual(bytes))
+                    throw new IOException("The staged vendor database did not match the complete download.");
+                if (File.Exists(path))
+                {
+                    try { File.Replace(temporary, path, backup); }
+                    catch
+                    {
+                        if (!File.Exists(path) && File.Exists(backup)) File.Move(backup, path);
+                        throw;
+                    }
+                    TryDelete(backup);
+                }
+                else File.Move(temporary, path);
+            }
+            finally { TryDelete(temporary); }
+        }
+
+        private static void TryDelete(string path)
+        {
+            try { File.Delete(path); } catch (IOException) { } catch (UnauthorizedAccessException) { }
         }
 
         private static async Task<string> DownloadTextAsync(string url)
