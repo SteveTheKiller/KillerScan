@@ -136,6 +136,23 @@ Green: the actual browser tree excludes closed accent controls, and the same two
 
 ## Current evidence
 
+## UI-009 measurement protocol
+
+The approved unlimited-retention policy is unchanged. Ranked questions before measurement: (1) retained cells dominate steady private memory, (2) cloning on shell replacement creates the practical peak, (3) repeated replacement or resize retains obsolete copies. A child waits on stdin until assigned to a Windows job with a 384 MiB committed-memory ceiling and kill-on-close. No allocation workload starts if the job assignment fails. Presets are 20,000 x 80, 50,000 x 80 and 25,000 x 160 output cells, not an allocation-until-failure stress test. Each includes three replacements, width changes and an alternate-screen round trip with full row-content verification.
+
+Investigation budgets are 256 MiB steady private memory, 384 MiB replacement peak and 1,000 ms per replacement. They are local diagnostic thresholds, not a new product retention limit. The parent stops its owned child after 30 seconds. Measurements report process private bytes, job peak committed bytes, managed retained bytes and copy pauses. Results determine whether a follow-up storage-policy decision is needed.
+
+The actual terminal-control preset additionally reads its complete transcript through TextPattern after each replacement. All four capped subprocesses completed with every expected row intact. Representative final run:
+
+| Preset | Private MiB after output | Private MiB after third replacement | Job peak MiB | Replacement pause ms |
+| --- | --- | --- | --- | --- |
+| 20,000 rows x 80 | 71.6 | 65.7 | 108.1 | 43-88 |
+| 50,000 rows x 80 | 134.8 | 122.0 | 238.2 | 161-204 |
+| 25,000 rows x 160 | 130.5 | 120.8 | 233.4 | 142-252 |
+| Actual control, 20,000 x 80, full UIA reads | 92.4 | 130.2 | 180.9 | 74-145 |
+
+Resize and alternate-screen round trips preserved every row in the buffer presets. Three replacements did not produce continuing retained growth. These measured workloads stay within the stated budgets and do not establish a practical defect requiring a retention/storage change. Memory still grows with transcript length by design; this is not an unlimited-duration guarantee. Native shell/SSH throughput and very large UIA histories beyond these presets remain unmeasured.
+
 ## UI-012 diagnosis
 
 Ranked hypotheses before the parser regression:

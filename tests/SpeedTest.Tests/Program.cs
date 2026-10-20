@@ -29,6 +29,8 @@ internal static class Program
     {
         try
         {
+            if (args.SequenceEqual(new[] { "--terminal-memory" })) { TerminalMemoryTests.Run(); return 0; }
+            if (args.Length == 2 && args[0] == "--terminal-memory-child") { TerminalMemoryTests.Child(args[1]); return 0; }
             if (args.SequenceEqual(new[] { "--terminal-unicode" })) { TerminalUnicodeTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--terminal-accessibility" })) { TerminalAccessibilityTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--history-retention" })) { HistoryRetentionTests.Run(); return 0; }
