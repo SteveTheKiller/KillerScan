@@ -18,8 +18,15 @@ namespace KillerScan.Services
         private static readonly string FilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "KillerScan", "profiles.json");
-        private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
-        private static List<ScanProfile> _items = [];
+        private static JsonPreferenceFile<List<ScanProfile>> _store = CreateStore();
+        private static List<ScanProfile> _items => _store.Value;
+        public static string? SaveError => _store.Error;
+        private static JsonPreferenceFile<List<ScanProfile>> CreateStore() => new(FilePath, () => [], items =>
+        {
+            items.RemoveAll(item => item == null);
+            foreach (var item in items) { item.Name ??= string.Empty; item.Target ??= string.Empty; }
+            return items;
+        });
 
         public static IReadOnlyList<ScanProfile> Items => _items;
 
@@ -27,45 +34,25 @@ namespace KillerScan.Services
         {
             // Demo mode keeps its profiles in memory: a screenshot build must not add fabricated
             // profiles to whatever the person running it has saved.
-            if (DemoData.Enabled) { _items = [.. DemoData.Profiles()]; return; }
-            try
+            _store = CreateStore();
+            if (DemoData.Enabled) { _items.AddRange(DemoData.Profiles()); return; }
+            _store.Load();
+        }
+
+        public static bool Save(ScanProfile profile)
+        {
+            var saved = new ScanProfile { Name = profile.Name, Target = profile.Target, DeepScanAfter = profile.DeepScanAfter };
+            return _store.Change(items =>
             {
-                if (!File.Exists(FilePath)) return;
-                _items = JsonSerializer.Deserialize<List<ScanProfile>>(File.ReadAllText(FilePath)) ?? [];
-                _items.RemoveAll(item => item == null);
-                foreach (var item in _items)
-                {
-                    item.Name ??= string.Empty;
-                    item.Target ??= string.Empty;
-                }
-            }
-            catch { _items = []; }
+                items.RemoveAll(item => string.Equals(item.Name, saved.Name, StringComparison.OrdinalIgnoreCase));
+                items.Add(saved);
+            }, DemoData.Enabled);
         }
 
-        public static void Save(ScanProfile profile)
-        {
-            _items.RemoveAll(item => string.Equals(item.Name, profile.Name, StringComparison.OrdinalIgnoreCase));
-            _items.Add(profile);
-            Persist();
-        }
+        public static bool Delete(ScanProfile profile) => _store.Change(items =>
+            items.RemoveAll(item => string.Equals(item.Name, profile.Name, StringComparison.OrdinalIgnoreCase)), DemoData.Enabled);
 
-        public static void Delete(ScanProfile profile)
-        {
-            _items.Remove(profile);
-            Persist();
-        }
-
-        public static void Update() => Persist();
-
-        private static void Persist()
-        {
-            if (DemoData.Enabled) return;
-            try
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
-                File.WriteAllText(FilePath, JsonSerializer.Serialize(_items, JsonOptions));
-            }
-            catch { }
-        }
+        public static bool Update(ScanProfile profile) => Save(profile);
+        public static bool Retry() => DemoData.Enabled || _store.Save();
     }
 }

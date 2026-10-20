@@ -127,7 +127,8 @@ namespace KillerScan.Shell
                     _terminalScanCount = devices.Count;
                     if (!Services.DevicePreferences.HasTrustedDevices)
                     {
-                        Services.DevicePreferences.TrustAll(devices);
+                        Controls.PersistenceFeedback.Check(Services.DevicePreferences.TrustAll(devices),
+                            Services.DevicePreferences.Retry, () => Services.DevicePreferences.SaveError);
                         _terminalStatusKey = "Str_St_TrustedBaseline";
                         _terminalStatusArgument = devices.Count;
                     }

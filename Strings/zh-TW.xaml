@@ -503,4 +503,5 @@
     <sys:String x:Key="Str_Scroll_PageDown">向下翻頁</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">向左翻頁</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">向右翻頁</sys:String>
+    <sys:String x:Key="Str_SaveFailed">無法儲存變更。這些變更在目前工作階段中仍可使用。是否重新嘗試儲存？&#10;&#10;{0}</sys:String>
 </ResourceDictionary>

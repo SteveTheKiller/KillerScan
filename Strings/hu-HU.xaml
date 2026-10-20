@@ -519,4 +519,5 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Scroll_PageDown">Egy oldallal lejjebb</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Egy oldallal balra</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Egy oldallal jobbra</sys:String>
+    <sys:String x:Key="Str_SaveFailed">A módosításokat nem sikerült menteni. Ebben a munkamenetben továbbra is elérhetők. Megpróbálja újra menteni?&#10;&#10;{0}</sys:String>
 </ResourceDictionary>

@@ -10,6 +10,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Updated the app and engine JSON dependency to 10.0.13.
 
 ### Fixed
+- Preference and history saves preserve existing files on failure, keep unsaved edits for retry, and report when changes could not be saved.
 - Concurrent app instances preserve saved scans and retention changes instead of overwriting newer history.
 - Executable installation verifies the complete copy and preserves recovery files if replacement fails.
 - Window resize minimums stay within the current monitor's work area on small or scaled displays.

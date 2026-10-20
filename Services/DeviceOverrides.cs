@@ -12,46 +12,32 @@ namespace KillerScan.Services
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "KillerScan", "overrides.json");
 
-        private static Dictionary<string, string> _overrides = new(StringComparer.OrdinalIgnoreCase);
+        private static JsonPreferenceFile<Dictionary<string, string>> _store = CreateStore();
+        private static Dictionary<string, string> _overrides => _store.Value;
+        public static string? SaveError => _store.Error;
+        private static JsonPreferenceFile<Dictionary<string, string>> CreateStore() => new(FilePath,
+            () => new(StringComparer.OrdinalIgnoreCase), value => new(value, StringComparer.OrdinalIgnoreCase));
 
         public static void Load()
         {
-            try
-            {
-                if (!File.Exists(FilePath)) return;
-                string json = File.ReadAllText(FilePath);
-                var loaded = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-                if (loaded != null)
-                    _overrides = new Dictionary<string, string>(loaded, StringComparer.OrdinalIgnoreCase);
-            }
-            catch { }
+            _store = CreateStore();
+            _store.Load();
         }
 
-        public static void Save()
-        {
-            try
-            {
-                var dir = Path.GetDirectoryName(FilePath)!;
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                File.WriteAllText(FilePath, JsonSerializer.Serialize(_overrides, options));
-            }
-            catch { }
-        }
+        public static bool Save() => _store.Save();
 
         /// <summary>
         /// Set a manual override for a device by MAC address. Pass null to remove.
         /// </summary>
-        public static void Set(string mac, string? deviceType)
+        public static bool Set(string mac, string? deviceType)
         {
-            if (string.IsNullOrEmpty(mac)) return;
+            if (string.IsNullOrEmpty(mac)) return true;
             string key = mac.ToUpperInvariant();
-            if (deviceType == null)
-                _overrides.Remove(key);
-            else
-                _overrides[key] = deviceType;
-            Save();
+            return _store.Change(values =>
+            {
+                if (deviceType == null) values.Remove(key);
+                else values[key] = deviceType;
+            });
         }
 
         /// <summary>

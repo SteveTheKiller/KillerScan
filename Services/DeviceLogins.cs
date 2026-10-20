@@ -26,33 +26,19 @@ namespace KillerScan.Services
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "KillerScan", "logins.json");
 
-        private static Dictionary<string, string> _logins = new(StringComparer.OrdinalIgnoreCase);
+        private static JsonPreferenceFile<Dictionary<string, string>> _store = CreateStore();
+        private static Dictionary<string, string> _logins => _store.Value;
+        public static string? SaveError => _store.Error;
+        private static JsonPreferenceFile<Dictionary<string, string>> CreateStore() => new(FilePath,
+            () => new(StringComparer.OrdinalIgnoreCase), value => new(value, StringComparer.OrdinalIgnoreCase));
 
         public static void Load()
         {
-            try
-            {
-                if (!File.Exists(FilePath)) return;
-                string json = File.ReadAllText(FilePath);
-                var loaded = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-                if (loaded != null)
-                    _logins = new Dictionary<string, string>(loaded, StringComparer.OrdinalIgnoreCase);
-            }
-            catch { }
+            _store = CreateStore();
+            _store.Load();
         }
 
-        public static void Save()
-        {
-            try
-            {
-                var dir = Path.GetDirectoryName(FilePath)!;
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                File.WriteAllText(FilePath, JsonSerializer.Serialize(_logins, options));
-            }
-            catch { }
-        }
+        public static bool Save() => _store.Save();
 
         /// <summary>MAC when there is one, otherwise the IP. Empty when neither is known, which the
         /// callers treat as "do not remember this one".</summary>
@@ -72,13 +58,15 @@ namespace KillerScan.Services
         /// <summary>Remembers a username for the device. An empty or null username REMOVES the entry,
         /// so clearing the box in the prompt goes back to plain `ssh &lt;ip&gt;` rather than storing a
         /// blank that would look like a remembered answer.</summary>
-        public static void Set(string? mac, string? ip, string? user)
+        public static bool Set(string? mac, string? ip, string? user)
         {
             string key = KeyFor(mac, ip);
-            if (key.Length == 0) return;
-            if (string.IsNullOrWhiteSpace(user)) _logins.Remove(key);
-            else _logins[key] = user!.Trim();
-            Save();
+            if (key.Length == 0) return true;
+            return _store.Change(values =>
+            {
+                if (string.IsNullOrWhiteSpace(user)) values.Remove(key);
+                else values[key] = user!.Trim();
+            });
         }
     }
 }

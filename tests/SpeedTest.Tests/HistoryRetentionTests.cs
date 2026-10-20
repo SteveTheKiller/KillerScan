@@ -213,7 +213,8 @@ internal static class HistoryRetentionTests
             File.WriteAllText(malformed, "{broken");
             var unreadable = Archive("malformed.json"); Load(unreadable, now);
             Fails(() => Apply(unreadable, Policy("Count"), _ => true), "An unreadable archive cannot be overwritten by settings.");
-            Append(unreadable, Entry("session-only", now), now);
+            Require(Call(unreadable, "Append", Entry("session-only", now), now) is false,
+                "An unreadable archive reports that the session result was not saved.");
             Require(File.ReadAllText(malformed) == "{broken", "An unreadable archive also survives future recording intact.");
             string futurePath = Path.Combine(scratch, "future-version.json");
             File.WriteAllText(futurePath, "{\"Version\":99,\"Entries\":[],\"Policy\":{\"Mode\":0,\"Count\":100,\"Days\":30}}");

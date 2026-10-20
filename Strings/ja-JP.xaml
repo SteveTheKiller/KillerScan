@@ -514,4 +514,5 @@
     <sys:String x:Key="Str_Scroll_PageDown">1 ページ下へ</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">1 ページ左へ</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">1 ページ右へ</sys:String>
+    <sys:String x:Key="Str_SaveFailed">変更を保存できませんでした。このセッションでは引き続き利用できます。もう一度保存しますか？&#10;&#10;{0}</sys:String>
 </ResourceDictionary>

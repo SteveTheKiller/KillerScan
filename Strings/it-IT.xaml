@@ -519,4 +519,5 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Scroll_PageDown">Pagina giù</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Pagina a sinistra</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Pagina a destra</sys:String>
+    <sys:String x:Key="Str_SaveFailed">Impossibile salvare le modifiche. Restano disponibili per questa sessione. Riprovare a salvarle?&#10;&#10;{0}</sys:String>
 </ResourceDictionary>

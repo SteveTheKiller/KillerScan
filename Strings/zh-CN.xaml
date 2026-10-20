@@ -503,4 +503,5 @@
     <sys:String x:Key="Str_Scroll_PageDown">向下翻页</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">向左翻页</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">向右翻页</sys:String>
+    <sys:String x:Key="Str_SaveFailed">无法保存更改。这些更改在当前会话中仍然可用。是否重新尝试保存？&#10;&#10;{0}</sys:String>
 </ResourceDictionary>

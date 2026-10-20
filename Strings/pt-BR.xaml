@@ -545,4 +545,5 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Scroll_PageDown">Uma página abaixo</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Uma página à esquerda</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Uma página à direita</sys:String>
+    <sys:String x:Key="Str_SaveFailed">Não foi possível salvar as alterações. Elas continuam disponíveis nesta sessão. Tentar salvar novamente?&#10;&#10;{0}</sys:String>
 </ResourceDictionary>

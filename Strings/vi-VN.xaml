@@ -484,4 +484,5 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Scroll_PageDown">Xuống một trang</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Sang trái một trang</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Sang phải một trang</sys:String>
+    <sys:String x:Key="Str_SaveFailed">Không thể lưu thay đổi. Các thay đổi vẫn có sẵn trong phiên này. Thử lưu lại?&#10;&#10;{0}</sys:String>
 </ResourceDictionary>

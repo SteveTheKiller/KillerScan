@@ -504,4 +504,5 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Scroll_PageDown">Seite nach unten</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Seite nach links</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Seite nach rechts</sys:String>
+    <sys:String x:Key="Str_SaveFailed">Die Änderungen konnten nicht gespeichert werden. Sie bleiben für diese Sitzung verfügbar. Erneut speichern?&#10;&#10;{0}</sys:String>
 </ResourceDictionary>

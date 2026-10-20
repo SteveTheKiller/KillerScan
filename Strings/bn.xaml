@@ -503,4 +503,5 @@
     <sys:String x:Key="Str_Scroll_PageDown">এক পৃষ্ঠা নিচে</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">এক পৃষ্ঠা বাঁয়ে</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">এক পৃষ্ঠা ডানে</sys:String>
+    <sys:String x:Key="Str_SaveFailed">পরিবর্তনগুলো সংরক্ষণ করা যায়নি। এই সেশনে সেগুলো এখনও উপলভ্য আছে। আবার সংরক্ষণ করার চেষ্টা করবেন?&#10;&#10;{0}</sys:String>
 </ResourceDictionary>

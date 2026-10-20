@@ -17,6 +17,7 @@ namespace KillerScan.Services
         private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
         internal List<ScanHistoryEntry> Entries { get; private set; } = [];
         internal HistoryRetention Policy { get; private set; } = new(HistoryRetentionMode.Count);
+        internal string? SaveError { get; private set; }
 
         internal HistoryArchive(string path) => _path = Path.GetFullPath(path);
 
@@ -30,7 +31,7 @@ namespace KillerScan.Services
                     if (_readable && Policy.Mode == HistoryRetentionMode.Time)
                     {
                         var kept = Policy.Retained(Entries, now);
-                        if (kept.Count != Entries.Count) { Persist(kept, Policy); Entries = kept; }
+                        if (kept.Count != Entries.Count) { Persist(kept, Policy); Entries = kept; _pending.Clear(); }
                     }
                     return true;
                 });
@@ -110,23 +111,34 @@ namespace KillerScan.Services
             }
         }
 
-        internal void Append(ScanHistoryEntry entry, DateTimeOffset now)
+        internal bool Append(ScanHistoryEntry entry, DateTimeOffset now)
         {
             _pending.Add(entry);
+            return Retry(now);
+        }
+
+        internal bool Retry(DateTimeOffset now)
+        {
+            var session = Entries;
             try
             {
-                Locked(() =>
+                return Locked(() =>
                 {
                     ReadCurrent(); EnsureReadable();
                     var kept = Policy.Retained(Entries, now);
                     Persist(kept, Policy);
                     Entries = kept;
                     _pending.Clear();
+                    SaveError = null;
                     return true;
                 });
             }
-            catch (IOException) { Entries = Policy.Retained(Entries.Concat(_pending).Distinct(), now); }
-            catch (UnauthorizedAccessException) { }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                Entries = Policy.Retained(session.Concat(_pending).Distinct(), now);
+                SaveError = ex.Message;
+                return false;
+            }
         }
 
         private void EnsureReadable()
@@ -153,16 +165,8 @@ namespace KillerScan.Services
         private void Persist(List<ScanHistoryEntry> entries, HistoryRetention policy)
         {
             EnsureReadable();
-            string directory = Path.GetDirectoryName(_path)!;
-            Directory.CreateDirectory(directory);
-            string temporary = _path + "." + Guid.NewGuid().ToString("N") + ".tmp";
-            try
-            {
-                File.WriteAllText(temporary, JsonSerializer.Serialize(new HistoryFile { Entries = entries, Policy = policy }, JsonOptions));
-                if (File.Exists(_path)) File.Replace(temporary, _path, null);
-                else File.Move(temporary, _path);
-            }
-            finally { if (File.Exists(temporary)) File.Delete(temporary); }
+            JsonPreferenceFile<HistoryFile>.Publish(_path, Encoding.UTF8.GetBytes(
+                JsonSerializer.Serialize(new HistoryFile { Entries = entries, Policy = policy }, JsonOptions)));
         }
 
         private sealed class HistoryFile

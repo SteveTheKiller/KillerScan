@@ -44,7 +44,8 @@ namespace KillerScan.Shell
                 Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
             dialog.ShowDialog();
             if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return;
-            ScanProfiles.Save(new ScanProfile { Name = dialog.Value, Target = scan.Targets.Trim() });
+            PersistenceFeedback.Check(ScanProfiles.Save(new ScanProfile { Name = dialog.Value, Target = scan.Targets.Trim() }),
+                ScanProfiles.Retry, () => ScanProfiles.SaveError);
             RefreshProfilesList();
         }
 
@@ -75,13 +76,13 @@ namespace KillerScan.Shell
         {
             if (sender is not MenuItem item || ProfileFor(sender) is not { } profile) return;
             profile.DeepScanAfter = item.IsChecked;
-            ScanProfiles.Update();
+            PersistenceFeedback.Check(ScanProfiles.Update(profile), ScanProfiles.Retry, () => ScanProfiles.SaveError);
         }
 
         private void ProfileDelete_Click(object sender, RoutedEventArgs e)
         {
             if (ProfileFor(sender) is not { } profile) return;
-            ScanProfiles.Delete(profile);
+            PersistenceFeedback.Check(ScanProfiles.Delete(profile), ScanProfiles.Retry, () => ScanProfiles.SaveError);
             RefreshProfilesList();
         }
     }

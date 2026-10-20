@@ -474,7 +474,8 @@ namespace KillerScan.Shell
                 {
                     var dialog = new InputDialog(string.Format(Loc("Str_Ssh_Head"), ip), Loc("Str_Ssh_Detail"), Loc("Str_Ssh_User"), user ?? "", Loc("Str_Ssh_Connect"), Loc("Str_Btn_Cancel")) { Owner = this };
                     dialog.ShowDialog(); if (!dialog.Confirmed) return;
-                    user = dialog.Value; DeviceLogins.Set(device.MacAddress, ip, user);
+                    user = dialog.Value;
+                    PersistenceFeedback.Check(DeviceLogins.Set(device.MacAddress, ip, user), DeviceLogins.Save, () => DeviceLogins.SaveError);
                 }
                 // Invoke the SSH client directly; user input never goes through a command shell.
                 command = "ssh.exe " + (servicePort.HasValue ? "-p " + servicePort.Value + " " : "")

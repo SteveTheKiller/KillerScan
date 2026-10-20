@@ -545,4 +545,5 @@
     <sys:String x:Key="Str_Scroll_PageDown">На сторінку вниз</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">На сторінку ліворуч</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">На сторінку праворуч</sys:String>
+    <sys:String x:Key="Str_SaveFailed">Не вдалося зберегти зміни. Вони залишаються доступними в цьому сеансі. Спробувати зберегти ще раз?&#10;&#10;{0}</sys:String>
 </ResourceDictionary>

@@ -86,7 +86,7 @@ namespace KillerScan.Controls
             var d = GetSelectedDevice(); if (d == null || string.IsNullOrEmpty(d.MacAddress)) return;
             if (sender is MenuItem mi && mi.Tag is string type)
             {
-                DeviceOverrides.Set(d.MacAddress, type);
+                PersistenceFeedback.Check(DeviceOverrides.Set(d.MacAddress, type), DeviceOverrides.Save, () => DeviceOverrides.SaveError);
                 d.DeviceType = type;
                 _filteredView?.Refresh();
                 if (_showTopology) RefreshTopology();
@@ -97,7 +97,7 @@ namespace KillerScan.Controls
         private void ClearOverride_Click(object sender, RoutedEventArgs e)
         {
             var d = GetSelectedDevice(); if (d == null || string.IsNullOrEmpty(d.MacAddress)) return;
-            DeviceOverrides.Set(d.MacAddress, null);
+            PersistenceFeedback.Check(DeviceOverrides.Set(d.MacAddress, null), DeviceOverrides.Save, () => DeviceOverrides.SaveError);
             d.DeviceType = NetworkScanner.ClassifyDevice(d);
             _filteredView?.Refresh();
             if (_showTopology) RefreshTopology();
@@ -116,7 +116,7 @@ namespace KillerScan.Controls
                 Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
             dlg.ShowDialog();
             if (!dlg.Confirmed) return;
-            DevicePreferences.SetName(d, dlg.Value);
+            PersistenceFeedback.Check(DevicePreferences.SetName(d, dlg.Value), DevicePreferences.Retry, () => DevicePreferences.SaveError);
             if (!string.IsNullOrWhiteSpace(dlg.Value)) d.Hostname = dlg.Value.Trim();
             _filteredView?.Refresh();
             if (_showTopology) RefreshTopology();
@@ -125,7 +125,7 @@ namespace KillerScan.Controls
         private void ClearDeviceName_Click(object sender, RoutedEventArgs e)
         {
             var d = GetSelectedDevice(); if (d == null) return;
-            DevicePreferences.SetName(d, null);
+            PersistenceFeedback.Check(DevicePreferences.SetName(d, null), DevicePreferences.Retry, () => DevicePreferences.SaveError);
             d.Hostname = string.IsNullOrWhiteSpace(d.NetbiosName) ? string.Empty : d.NetbiosName;
             _filteredView?.Refresh();
             if (_showTopology) RefreshTopology();
@@ -134,7 +134,7 @@ namespace KillerScan.Controls
         private void TrustDevice_Click(object sender, RoutedEventArgs e)
         {
             var d = GetSelectedDevice(); if (d == null) return;
-            DevicePreferences.SetTrusted(d, !DevicePreferences.IsTrusted(d));
+            PersistenceFeedback.Check(DevicePreferences.SetTrusted(d, !DevicePreferences.IsTrusted(d)), DevicePreferences.Retry, () => DevicePreferences.SaveError);
             ((System.Windows.Shapes.Ellipse)TrustDeviceMenuItem.Icon).Fill = (System.Windows.Media.Brush)new TrustMarkConverter().Convert(
                 d, typeof(System.Windows.Media.Brush), null!, System.Globalization.CultureInfo.CurrentCulture);
             // Trust is not a property of the device, so nothing notifies the row that its gutter

@@ -30,7 +30,8 @@ namespace KillerScan.Services
         ScanHistoryEntry? Previous,
         IReadOnlyList<HistoricalDevice> Added,
         IReadOnlyList<HistoricalDevice> Removed,
-        IReadOnlyList<HistoricalDevice> Changed);
+        IReadOnlyList<HistoricalDevice> Changed,
+        bool Saved = true);
 
     internal static class ScanHistory
     {
@@ -42,6 +43,15 @@ namespace KillerScan.Services
         private static HistoryRetention _demoRetention = new(HistoryRetentionMode.Count);
 
         public static IReadOnlyList<ScanHistoryEntry> Entries => _entries;
+        public static string? SaveError => _archive.SaveError;
+
+        public static bool Retry()
+        {
+            if (DemoData.Enabled) return true;
+            bool saved = _archive.Retry(DateTimeOffset.Now);
+            _entries = _archive.Entries;
+            return saved;
+        }
 
         internal static HistoryRetention Retention => DemoData.Enabled ? _demoRetention : _archive.Policy;
 
@@ -105,7 +115,7 @@ namespace KillerScan.Services
             if (DemoData.Enabled) _entries = _demoRetention.Retained(_entries.Concat([current]), current.ScannedAt);
             else
             {
-                _archive.Append(current, current.ScannedAt);
+                comparison = comparison with { Saved = _archive.Append(current, current.ScannedAt) };
                 _entries = _archive.Entries;
             }
             return comparison;

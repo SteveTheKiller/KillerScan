@@ -9,8 +9,11 @@ namespace KillerScan.Services
         private static readonly string FilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "KillerScan", "devices.json");
-        private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
-        private static DevicePreferenceData _data = new();
+        private static JsonPreferenceFile<DevicePreferenceData> _store = CreateStore();
+        private static DevicePreferenceData _data => _store.Value;
+        public static string? SaveError => _store.Error;
+        private static JsonPreferenceFile<DevicePreferenceData> CreateStore() => new(FilePath,
+            () => new(), value => { value.Normalize(); return value; });
 
         public static bool HasTrustedDevices => _data.Trusted.Count > 0;
 
@@ -18,17 +21,8 @@ namespace KillerScan.Services
         {
             // Demo mode starts from nothing and stays in memory, so the fabricated network cannot
             // trust, rename, or otherwise disturb the real devices on the machine it runs on.
-            if (DemoData.Enabled) { _data = new DevicePreferenceData(); return; }
-            try
-            {
-                if (!File.Exists(FilePath)) return;
-                _data = JsonSerializer.Deserialize<DevicePreferenceData>(File.ReadAllText(FilePath)) ?? new();
-                _data.Normalize();
-            }
-            catch
-            {
-                _data = new DevicePreferenceData();
-            }
+            _store = CreateStore();
+            if (!DemoData.Enabled) _store.Load();
         }
 
         public static void Apply(NetworkDevice device)
@@ -41,40 +35,38 @@ namespace KillerScan.Services
         public static string? GetName(NetworkDevice device) =>
             _data.Names.TryGetValue(DeviceIdentity.For(device), out string? name) ? name : null;
 
-        public static void SetName(NetworkDevice device, string? name)
+        public static bool SetName(NetworkDevice device, string? name)
         {
             string identity = DeviceIdentity.For(device);
-            if (string.IsNullOrWhiteSpace(name)) _data.Names.Remove(identity);
-            else _data.Names[identity] = name!.Trim();
-            Save();
+            return _store.Change(value =>
+            {
+                if (string.IsNullOrWhiteSpace(name)) value.Names.Remove(identity);
+                else value.Names[identity] = name!.Trim();
+            }, DemoData.Enabled);
         }
 
         public static bool IsTrusted(NetworkDevice device) => _data.Trusted.Contains(DeviceIdentity.For(device));
 
-        public static void SetTrusted(NetworkDevice device, bool trusted)
+        public static bool SetTrusted(NetworkDevice device, bool trusted)
         {
             string identity = DeviceIdentity.For(device);
-            if (trusted) _data.Trusted.Add(identity);
-            else _data.Trusted.Remove(identity);
-            Save();
-        }
-
-        public static void TrustAll(IEnumerable<NetworkDevice> devices)
-        {
-            foreach (var device in devices) _data.Trusted.Add(DeviceIdentity.For(device));
-            Save();
-        }
-
-        private static void Save()
-        {
-            if (DemoData.Enabled) return;
-            try
+            return _store.Change(value =>
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
-                File.WriteAllText(FilePath, JsonSerializer.Serialize(_data, JsonOptions));
-            }
-            catch { }
+                if (trusted) value.Trusted.Add(identity);
+                else value.Trusted.Remove(identity);
+            }, DemoData.Enabled);
         }
+
+        public static bool TrustAll(IEnumerable<NetworkDevice> devices)
+        {
+            var identities = devices.Select(DeviceIdentity.For).ToArray();
+            return _store.Change(value =>
+            {
+                foreach (string identity in identities) value.Trusted.Add(identity);
+            }, DemoData.Enabled);
+        }
+
+        public static bool Retry() => DemoData.Enabled || _store.Save();
 
         private sealed class DevicePreferenceData
         {
