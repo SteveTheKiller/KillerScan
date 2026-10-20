@@ -238,12 +238,53 @@ Write-Host 'Punctuation OK'
 
 # --- 3. Vulnerable package scan (required at every release) ---
 Step "Scanning for vulnerable packages"
-dotnet restore | Out-Null
-$scan = dotnet list package --vulnerable --include-transitive 2>&1 | Out-String
+$auditDirectory = Join-Path (Get-Location).Path 'obj/release-validation'
+$null = New-Item -ItemType Directory -Path $auditDirectory -Force
+$priorErrorPreference = $ErrorActionPreference
+try {
+    $ErrorActionPreference = 'Continue'
+    $restore = dotnet restore KillerScan.sln 2>&1 | Out-String
+    $restoreExit = $LASTEXITCODE
+} finally { $ErrorActionPreference = $priorErrorPreference }
+[IO.File]::WriteAllText((Join-Path $auditDirectory 'restore.txt'), $restore)
+if ($restoreExit -ne 0) { Fail "Dependency restore failed with exit $restoreExit. See $auditDirectory/restore.txt" }
+try {
+    $ErrorActionPreference = 'Continue'
+    $scan = dotnet list KillerScan.sln package --vulnerable --include-transitive --format json 2>&1 | Out-String
+    $auditExit = $LASTEXITCODE
+} finally { $ErrorActionPreference = $priorErrorPreference }
+[IO.File]::WriteAllText((Join-Path $auditDirectory 'dependency-audit.json'), $scan)
 Write-Host $scan
-if ($scan -match 'has the following vulnerable packages') {
-    Fail 'Vulnerable packages found. Resolve before releasing.'
+if ($auditExit -ne 0) { Fail "Dependency audit failed with exit $auditExit. See $auditDirectory/dependency-audit.json" }
+try { $audit = $scan | ConvertFrom-Json -ErrorAction Stop }
+catch { Fail "Dependency audit returned malformed JSON. See $auditDirectory/dependency-audit.json" }
+if ($audit.version -ne 1 -or -not $audit.projects -or -not $audit.sources -or $audit.problems) {
+    Fail 'Dependency audit is incomplete or reports an audit problem. Resolve before releasing.'
 }
+$auditedProjects = @($audit.projects | ForEach-Object {
+    if (-not $_.path) { Fail 'Dependency audit contains a project without a path.' }
+    $projectPath = if ([IO.Path]::IsPathRooted($_.path)) { $_.path } else { Join-Path (Get-Location).Path $_.path }
+    [IO.Path]::GetFullPath($projectPath)
+})
+foreach ($required in @('KillerScan.csproj', 'Engine/KillerScan.Engine.csproj')) {
+    if ([IO.Path]::GetFullPath((Join-Path (Get-Location).Path $required)) -notin $auditedProjects) {
+        Fail "Dependency audit omitted $required. Resolve before releasing."
+    }
+}
+foreach ($project in $audit.projects) {
+    foreach ($framework in $project.frameworks) {
+        if (-not $framework.framework) { Fail 'Dependency audit contains an invalid target framework.' }
+        $packages = @($framework.topLevelPackages) + @($framework.transitivePackages)
+        foreach ($package in $packages) {
+            if ($null -eq $package) { continue }
+            if (-not $package.id -or -not $package.PSObject.Properties['vulnerabilities']) {
+                Fail 'Dependency audit contains incomplete package data.'
+            }
+            if ($package.vulnerabilities) { Fail "Vulnerable package $($package.id) found. Resolve before releasing." }
+        }
+    }
+}
+Write-Host 'Dependency audit completed with no known vulnerable packages.'
 
 Step "Testing the native speed-test engine and endpoint"
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) { Fail 'Node.js 22 or newer is required to test the speed-test endpoint' }

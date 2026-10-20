@@ -80,6 +80,20 @@ The loopback fixture separately records the engine's serialized payload result, 
 
 Both targets reported 131,072 serialized bytes and 65,536 acknowledged bytes. The fully received stalled-request case also recorded 131,072 received bytes. The partial-reader case recorded 69,632 bytes at phase completion and 131,072 after draining the buffered tail. Measured intervals were approximately 508 to 546 ms for a 500 ms phase. No-ack rejection, normal exact byte budgets and cancellation all passed on both targets. The result remained frozen after draining. This confirms the chosen sent-byte contract and its buffering limitation; no algorithm change was made. The class summary, app README and engine README now agree.
 
+## FAM-001 diagnosis
+
+Ranked hypotheses before the extracted release-gate fixture:
+
+1. Native restore/audit failures are overwritten by later commands because their exits are unchecked.
+2. English text matching accepts a failed or malformed audit as clean.
+3. A structured result can omit an intended project or report a feed problem without findings.
+
+The fixture executes only the actual dependency-gate source block with the dotnet process boundary replaced. Restore/audit failures, malformed/missing project data, audit problems, vulnerabilities and clean output are tested in unique scratch directories. It cannot reach build, signing or publication.
+
+Red: the actual release gate continued after simulated restore exit 42. The repair captures each native exit immediately, saves raw diagnostics, requires structured audit schema and app/engine coverage, and rejects audit problems or vulnerable packages before later release steps.
+
+The extracted-gate cases pass under Windows PowerShell 5.1 and PowerShell 7 with rejection reasons verified, including transitive vulnerabilities, unsupported schema and incomplete package data. Actual native stderr/exit fixtures verify diagnostic preservation and error-preference restoration for both commands. The real extracted gate also completed a fresh solution restore and structured audit covering the app, engine, engine tests and sample, with no known vulnerabilities reported. Diagnostics are retained in obj/release-validation. No later release steps ran. The existing five unsigned/dry-run publication-guard fixtures also pass without reaching real publication.
+
 ## Current evidence
 
 | Finding | Local commit | Focused evidence |
