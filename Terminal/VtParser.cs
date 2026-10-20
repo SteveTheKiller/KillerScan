@@ -24,7 +24,7 @@ namespace KillerScan.Terminal
         {
             Ground, Escape, EscInt,
             CsiEntry, CsiParam, CsiInt, CsiIgnore,
-            OscString,
+            OscString, OscEscape,
             DcsEntry, DcsParam, DcsInt, DcsPass, DcsIgnore,
             SosPmApc,
         }
@@ -38,7 +38,8 @@ namespace KillerScan.Terminal
         private bool _parSeen;          // distinguishes "CSI m" from "CSI 0 m"
         private char _prefix, _inter;
 
-        private readonly StringBuilder _osc = new();
+        private readonly byte[] _osc = new byte[4096];
+        private int _oscLength;
         private int _oscCmd;
         private bool _oscCmdDone;
 
@@ -72,7 +73,12 @@ namespace KillerScan.Terminal
 
             }
 
-            if (b == 0x1B) { Clear(); _state = S.Escape; return; }
+            if (_state == S.OscEscape)
+            {
+                if (b == '\\') { FlushOsc(); return; }
+                _state = S.Escape;
+            }
+            if (b == 0x1B) { Clear(); _state = _state == S.OscString ? S.OscEscape : S.Escape; return; }
             if (b == 0x18 || b == 0x1A) { _state = S.Ground; _h.Execute(b); return; }
 
             switch (_state)
@@ -85,7 +91,7 @@ namespace KillerScan.Terminal
                     switch (b)
                     {
                         case (byte)'[': _state = S.CsiEntry; break;
-                        case (byte)']': _oscCmd = 0; _oscCmdDone = false; _osc.Clear(); _state = S.OscString; break;
+                        case (byte)']': _oscCmd = 0; _oscCmdDone = false; _oscLength = 0; _state = S.OscString; break;
                         case (byte)'P': _state = S.DcsEntry; break;
                         case (byte)'X': case (byte)'^': case (byte)'_': _state = S.SosPmApc; break;
                         default: _h.EscDispatch((char)b, '\0'); _state = S.Ground; break;
@@ -136,7 +142,7 @@ namespace KillerScan.Terminal
                         if (b == ';') { _oscCmdDone = true; break; }
                         _oscCmdDone = true;   // no numeric command, treat the rest as data
                     }
-                    if (_osc.Length < 4096) _osc.Append((char)b);
+                    if (_oscLength < _osc.Length) _osc[_oscLength++] = b;
                     break;
 
                 case S.DcsEntry:
@@ -198,8 +204,8 @@ namespace KillerScan.Terminal
 
         private void FlushOsc()
         {
-            _h.OscDispatch(_oscCmd, _osc.ToString());
-            _osc.Clear();
+            _h.OscDispatch(_oscCmd, Encoding.UTF8.GetString(_osc, 0, _oscLength));
+            _oscLength = 0;
             _state = S.Ground;
         }
 
