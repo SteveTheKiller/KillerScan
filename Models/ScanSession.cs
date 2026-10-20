@@ -5,10 +5,10 @@ using KillerScan.Services;
 namespace KillerScan.Models
 {
     // Each scan tab owns its targets, results, scanner, and cancellation lifetime.
-    internal sealed class ScanSession(string subnet)
+    internal sealed class ScanSession(string subnet, NetworkScanner? scanner = null)
     {
         public ObservableCollection<NetworkDevice> Devices { get; } = [];
-        public NetworkScanner Scanner { get; } = new();
+        public NetworkScanner Scanner { get; } = scanner ?? new();
         public CancellationTokenSource? Cts { get; set; }
 
         public string SubnetText { get; set; } = subnet;

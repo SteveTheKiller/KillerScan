@@ -58,6 +58,9 @@ namespace KillerScan.Controls
         public double Progress => ScanProgress.Value;
         public bool IsProgressVisible => ScanProgress.Visibility == Visibility.Visible;
         public ScanWorkspace(string initialTarget = "", bool demo = false)
+            : this(initialTarget, demo, new NetworkScanner()) { }
+
+        internal ScanWorkspace(string initialTarget, bool demo, NetworkScanner scanner)
         {
             DemoMode = demo;
             InitializeComponent();
@@ -66,7 +69,7 @@ namespace KillerScan.Controls
             ProgressVisibilityDescriptor.AddValueChanged(ScanProgress, NotifyFooterChanged);
             PopulateNetworkInfo();
             if (!string.IsNullOrWhiteSpace(initialTarget)) SubnetInput.Text = initialTarget;
-            _active = new ScanSession(SubnetInput.Text)
+            _active = new ScanSession(SubnetInput.Text, scanner)
             { Status = string.Format(Loc("Str_Status_Ready"), OuiLookup.Count.ToString("N0")) };
             WireSession(_active);
             ActivateSession();

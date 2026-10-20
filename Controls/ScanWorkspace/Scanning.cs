@@ -74,14 +74,14 @@ namespace KillerScan.Controls
             {
                 await _active.Scanner.ScanSubnetAsync(_active.SubnetText, cts.Token, fullScan: true);
                 completed = !cts.IsCancellationRequested && !_disposed;
-                if (completed && _active.Devices.Count > 0)
+                if (completed)
                 {
                     var recorded = ScanHistory.Record(_active.ScannedSubnet, _active.Devices);
                     // Tell the shell so the history sidebar picks up the new entry rather than
                     // showing a stale list until it is next reopened.
                     if (PersistenceFeedback.Check(recorded.Saved, ScanHistory.Retry, () => ScanHistory.SaveError))
                         HistoryRecorded?.Invoke(this, EventArgs.Empty);
-                    if (!DevicePreferences.HasTrustedDevices)
+                    if (_active.Devices.Count > 0 && !DevicePreferences.HasTrustedDevices)
                     {
                         PersistenceFeedback.Check(DevicePreferences.TrustAll(_active.Devices), DevicePreferences.Retry, () => DevicePreferences.SaveError);
                         StatusText.Text = string.Format(Loc("Str_St_TrustedBaseline"), _active.Devices.Count);

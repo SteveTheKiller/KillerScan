@@ -69,6 +69,7 @@ namespace KillerScan.Engine
         public event Action<ScanStatus>? StatusChanged;
         public event Action<int>? ProgressChanged;
         public event Action<NetworkDevice>? DeviceFound;
+        protected void ReportDeviceFound(NetworkDevice device) => DeviceFound?.Invoke(device);
 
         /// <summary>
         /// A manual device type keyed by MAC address. When it returns a value, that type wins over
@@ -123,7 +124,7 @@ namespace KillerScan.Engine
         /// <summary>
         /// Scan all hosts in the given subnet using ARP + ping combined approach.
         /// </summary>
-        public async Task<List<NetworkDevice>> ScanSubnetAsync(string cidr, CancellationToken ct, bool fullScan = true)
+        public virtual async Task<List<NetworkDevice>> ScanSubnetAsync(string cidr, CancellationToken ct, bool fullScan = true)
         {
             FlushLocalDnsCache();
             // ScanTargets handles one or many comma-separated targets (CIDR, single host, or a
@@ -262,7 +263,7 @@ namespace KillerScan.Engine
                     {
                         var device = await ProbeHostAsync(entry.Addr, entry.Mac, ct);
                         ct.ThrowIfCancellationRequested();
-                        DeviceFound?.Invoke(device);
+                        ReportDeviceFound(device);
                         int done = Interlocked.Increment(ref completed);
                         ProgressChanged?.Invoke(40 + (int)(done * 60.0 / total));
                         return device;
@@ -299,7 +300,7 @@ namespace KillerScan.Engine
                         device.DeviceType = ClassifyDevice(device);
                         DeviceCompleted?.Invoke(device);
 
-                        DeviceFound?.Invoke(device);
+                        ReportDeviceFound(device);
                         int done = Interlocked.Increment(ref completed);
                         ProgressChanged?.Invoke(40 + (int)(done * 60.0 / total));
                         return device;

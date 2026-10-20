@@ -32,18 +32,19 @@ internal static partial class HistoryUiTests
     private static object? Field(object target, string name) => target.GetType().GetField(name, Instance)!.GetValue(target);
     private static void Require(bool condition, string message) { _checks++; if (!condition) throw new InvalidOperationException(message); }
 
-    public static Task Run(bool settingsOnly = false, bool tableOnly = false, bool profilesOnly = false, bool menusOnly = false)
+    public static Task Run(bool settingsOnly = false, bool tableOnly = false, bool profilesOnly = false, bool menusOnly = false, bool lifecycleOnly = false)
     {
         Exception? failure = null;
         var thread = new Thread(() =>
         {
-            try { CheckUi(settingsOnly, tableOnly, profilesOnly, menusOnly); } catch (Exception ex) { failure = ex; }
+            try { CheckUi(settingsOnly, tableOnly, profilesOnly, menusOnly, lifecycleOnly); } catch (Exception ex) { failure = ex; }
             finally { Dispatcher.CurrentDispatcher.InvokeShutdown(); }
         });
         thread.SetApartmentState(ApartmentState.STA); thread.Start();
         Require(thread.Join(TimeSpan.FromSeconds(120)), "History checks finish within two minutes.");
         if (failure != null) throw new InvalidOperationException("History UI regression failed.", failure);
-        Console.WriteLine("PASS: " + _checks + " history, context-menu, shortcut and rendering assertions.");
+        Console.WriteLine(lifecycleOnly ? "PASS: controlled workspace lifecycle setup."
+            : "PASS: " + _checks + " history, context-menu, shortcut and rendering assertions.");
         return Task.CompletedTask;
     }
 
@@ -56,14 +57,14 @@ internal static partial class HistoryUiTests
         Console.Write(await output); Require(process.ExitCode == 0, "Isolated history suite: " + await error);
     }
 
-    private static void CheckUi(bool settingsOnly, bool tableOnly, bool profilesOnly, bool menusOnly)
+    private static void CheckUi(bool settingsOnly, bool tableOnly, bool profilesOnly, bool menusOnly, bool lifecycleOnly)
     {
         // Settings writes are redirected for this isolated test process, never to the user's app key.
         string scratch = "Software\\KillerScan-HistoryTests-" + Guid.NewGuid().ToString("N");
         using var registry = Registry.CurrentUser.CreateSubKey(scratch);
         var currentUser = new IntPtr(unchecked((int)0x80000001));
         Require(RegOverridePredefKey(currentUser, registry.Handle.DangerousGetHandle()) == 0, "Isolate registry settings.");
-        try { Capture(settingsOnly, tableOnly, profilesOnly, menusOnly); }
+        try { Capture(settingsOnly, tableOnly, profilesOnly, menusOnly, lifecycleOnly); }
         finally
         {
             RegOverridePredefKey(currentUser, IntPtr.Zero);
@@ -71,7 +72,7 @@ internal static partial class HistoryUiTests
         }
     }
 
-    private static void Capture(bool settingsOnly, bool tableOnly, bool profilesOnly, bool menusOnly)
+    private static void Capture(bool settingsOnly, bool tableOnly, bool profilesOnly, bool menusOnly, bool lifecycleOnly)
     {
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", Static)!.SetValue(null, assembly);
@@ -109,6 +110,7 @@ internal static partial class HistoryUiTests
             ((Action?)localeManager.GetField("LocaleChanged", Static)!.GetValue(null))?.Invoke();
         }
         Theme("Black"); Locale("EnUS");
+        if (lifecycleOnly) { ScanLifecycleTests.Run(); return; }
         if (settingsOnly)
         {
             typeof(MainWindow).GetMethod("PublishGrainTile", Static)!.Invoke(null, null);
