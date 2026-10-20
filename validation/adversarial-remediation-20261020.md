@@ -72,6 +72,14 @@ Red: Services offered two visible Ctrl+E entries. Generic menu handlers bypassed
 
 Green: the actual Services menu and keyboard command produce identical filtered service CSV with one row per visible port. Unsupported service HTML opens no dialog, and the tooltip lists only CSV. Devices still exports the device schema; Topology exposes its three snapshot actions; Watch, Terminal and History route to their own shell writers. The integrated scan lifecycle, export-provenance and watch-action fixtures pass. Rendered menu/tooltip inspection remains separate acceptance evidence.
 
+## ENG-001 investigation
+
+The approved contract retains sent-byte throughput with a valid acknowledgment required. The engine summary must describe that same contract. This is a documentation repair and controlled investigation, not an acknowledged-only algorithm change.
+
+The loopback fixture separately records the engine's serialized payload result, receiver-observed bytes and acknowledged bytes. One exact acknowledgment is followed by either a fully received unacknowledged request or a partially read request with a stalled receiver. It captures phase-end counts and drains buffered tails afterward. Separate cases retain no-ack rejection, normal budget behavior and user cancellation on both target frameworks.
+
+Both targets reported 131,072 serialized bytes and 65,536 acknowledged bytes. The fully received stalled-request case also recorded 131,072 received bytes. The partial-reader case recorded 69,632 bytes at phase completion and 131,072 after draining the buffered tail. Measured intervals were approximately 508 to 546 ms for a 500 ms phase. No-ack rejection, normal exact byte budgets and cancellation all passed on both targets. The result remained frozen after draining. This confirms the chosen sent-byte contract and its buffering limitation; no algorithm change was made. The class summary, app README and engine README now agree.
+
 ## Current evidence
 
 | Finding | Local commit | Focused evidence |

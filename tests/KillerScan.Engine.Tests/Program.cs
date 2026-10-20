@@ -16,6 +16,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--http-redirects" })) { await HttpRedirectTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--mac-cancellation" })) { await MacCancellationTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--snmp" })) { await SnmpTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--upload-accounting" })) { await UploadAccountingTests.Run(); return 0; }
             await Run("Targets parse ranges, de-duplicate overlaps and refuse bad input", Targets);
             await Run("The address ceiling counts unique addresses and keeps first-seen order", TargetCeiling);
             await Run("CIDR expansion excludes the network and broadcast addresses", Subnet);

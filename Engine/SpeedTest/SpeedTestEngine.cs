@@ -15,8 +15,9 @@ using System.Threading.Tasks;
 namespace KillerScan.Engine.SpeedTest
 {
     /// <summary>A bounded HTTP throughput test against a compatible endpoint. Download counts
-    /// bytes read from the response stream; upload counts only bytes acknowledged by the server.
-    /// Neither number includes HTTP headers, TLS framing, or unfinished upload requests.</summary>
+    /// bytes read from the response stream. Upload counts payload written to the HTTP transport
+    /// during the timed phase, including in-flight requests, and requires a valid server acknowledgment.
+    /// These payload counts exclude HTTP headers and TLS framing. Written upload bytes may still be buffered.</summary>
     public sealed class SpeedTestEngine
     {
         private const int BufferSize = 64 * 1024;
@@ -330,9 +331,8 @@ namespace KillerScan.Engine.SpeedTest
             token.ThrowIfCancellationRequested();
             if (counters.Failure != null) throw Normalize(counters.Failure);
             var (finalBytes, finalScheduled, finalElapsed) = counters.Snapshot();
-            // Upload bytes are counted as they leave the socket, so a stalled endpoint that
-            // never acknowledges any request would still register serialized bytes. Fail on
-            // the ack count instead of the sent count so a broken endpoint cannot fake a rate.
+            // Serialized payload can exist without a successful server exchange. Require an
+            // acknowledgment to establish endpoint validity while retaining sent-byte throughput.
             if (!warmup && (upload ? counters.Acknowledgments == 0 : finalBytes == 0))
                 throw new SpeedTestException(SpeedTestFailureKind.TransferFailed,
                     upload ? "No upload payload was acknowledged before the measurement ended."
@@ -555,8 +555,8 @@ namespace KillerScan.Engine.SpeedTest
                     int size = Math.Min(_buffer.Length, _length - sent);
                     await stream.WriteAsync(_buffer, 0, size, _token).ConfigureAwait(false);
                     Interlocked.Add(ref _serialized, size);
-                    // Count bytes as they leave the socket so in-flight uploads cut short by
-                    // the phase-end cancellation are still reflected in the measured rate.
+                    // Count successful HTTP transport writes before cutoff, including buffered
+                    // payload in requests that are still in flight when the phase ends.
                     _count(size);
                     sent += size;
                 }

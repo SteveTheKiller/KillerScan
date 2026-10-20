@@ -57,6 +57,12 @@ These are static and set once at startup.
 
 ARP and route lookups, plus the DNS cache flush, go through `INetworkPlatform`. `NetworkPlatform.Current` picks `WindowsNetworkPlatform` on Windows. On other systems it uses `UnsupportedNetworkPlatform`, so discovery relies on ping and TCP liveness and devices have no MAC address. Tests and other hosts can assign their own implementation.
 
+## Speed-test byte counts
+
+`SpeedTestPhaseResult.BytesTransferred` counts payload read during download and payload written to the HTTP transport during upload. The upload rate includes in-flight requests and buffered payload at the measurement cutoff. At least one valid exact-size upload acknowledgment is required during measurement. Sent, receiver-observed and acknowledged byte totals can differ.
+
+Warmup bytes are separate from measured bytes. Neither direction's payload count includes HTTP headers or TLS framing. The result's `Elapsed` is the measured interval used to calculate `Mbps`.
+
 ## Example and tests
 
 - `samples/KillerScan.Engine.Example` scans a target and prints JSON: `dotnet run --project samples/KillerScan.Engine.Example -- 192.168.1.0/24 --quick`
