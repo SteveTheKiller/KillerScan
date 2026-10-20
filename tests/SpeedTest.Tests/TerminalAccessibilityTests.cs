@@ -41,6 +41,27 @@ internal static class TerminalAccessibilityTests
                 Require(copy.GetText(-1) == "transcrip", "Endpoint movement updates only the requested endpoint.");
                 Require(provider.DocumentRange.GetText(5) == "known", "Bounded text reads honor their maximum length.");
                 Require(provider.GetVisibleRanges().Length == 1, "Viewport exposes a text range.");
+                terminal.ShowScript("\r\n\u4e2d e\u0301 \U0001f469\u200d\U0001f4bb");
+                Require(terminal.GetText().Contains("\u4e2d e\u0301 \U0001f469\u200d\U0001f4bb"), "Transcript preserves complete Unicode clusters without continuation spaces.");
+                provider.DocumentRange.FindText("\u4e2d e\u0301 \U0001f469\u200d\U0001f4bb", false, false)!.Select();
+                Require(terminal.GetSelectionText() == "\u4e2d e\u0301 \U0001f469\u200d\U0001f4bb", "Copy text and UIA selection use the same cluster mapping.");
+                string? renderRoot = Environment.GetEnvironmentVariable("KILLERSCAN_RENDER_ROOT");
+                if (!string.IsNullOrEmpty(renderRoot))
+                {
+                    using var preview = new TerminalControl();
+                    preview.SetFontSize(20);
+                    preview.Measure(new System.Windows.Size(1100, 260));
+                    preview.Arrange(new System.Windows.Rect(0, 0, 1100, 260));
+                    preview.ShowScript("ASCII  | X\r\nCafe\u0301   | X\r\n\u4e2d\u6587   | X\r\n\U0001f680     | X\r\n\u2764\ufe0f     | X\r\n\U0001f469\u200d\U0001f4bb     | X");
+                    preview.UpdateLayout();
+                    var image = new System.Windows.Media.Imaging.RenderTargetBitmap(1100, 260, 96, 96, System.Windows.Media.PixelFormats.Pbgra32);
+                    image.Render(preview);
+                    var encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
+                    encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(image));
+                    System.IO.Directory.CreateDirectory(renderRoot);
+                    using var stream = System.IO.File.Create(System.IO.Path.Combine(renderRoot, "terminal-unicode.png"));
+                    encoder.Save(stream);
+                }
                 Console.WriteLine("PASS: terminal TextPattern reads live output, searches and follows selection/caret.");
             }
             catch (Exception ex) { failure = ex; }

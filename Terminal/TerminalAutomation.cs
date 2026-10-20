@@ -54,10 +54,10 @@ namespace KillerScan.Terminal
             for (int r = 0; r <= row && r < _buf.TotalLines; r++)
             {
                 var cells = _buf.LineAt(r);
-                string text = string.Concat(cells.Select(c => c.Ch == 0 ? " " : char.ConvertFromUtf32(c.Ch))).TrimEnd();
+                string text = string.Concat(cells.Select(c => c.Text)).TrimEnd();
                 if (r == row)
                 {
-                    string prefix = string.Concat(cells.Take(Math.Max(0, col)).Select(c => c.Ch == 0 ? " " : char.ConvertFromUtf32(c.Ch)));
+                    string prefix = string.Concat(cells.Take(Math.Max(0, col)).Select(c => c.Text));
                     return offset + Math.Min(prefix.Length, text.Length);
                 }
                 offset += text.Length + Environment.NewLine.Length;
@@ -71,7 +71,7 @@ namespace KillerScan.Terminal
             {
                 if (!_hasSelection)
                 {
-                    int caret = TextOffset(_buf.ScrollbackCount + _buf.CursorRow, _buf.CursorCol);
+                    int caret = TextOffset(_buf.ScrollbackCount + _buf.CursorRow, _buf.InsertionCol);
                     return (caret, caret);
                 }
                 Ordered(out int a, out int b, out int c, out int d);
@@ -85,14 +85,15 @@ namespace KillerScan.Terminal
             for (int r = 0; r < _buf.TotalLines; r++)
             {
                 var cells = _buf.LineAt(r);
-                int length = string.Concat(cells.Select(c => c.Ch == 0 ? " " : char.ConvertFromUtf32(c.Ch))).TrimEnd().Length + Environment.NewLine.Length;
+                int length = string.Concat(cells.Select(c => c.Text)).TrimEnd().Length + Environment.NewLine.Length;
                 if (offset < length || r == _buf.TotalLines - 1)
                 {
                     int used = 0;
                     for (int c = 0; c < cells.Length; c++)
                     {
+                        if (cells[c].Ch < 0) continue;
                         if (used >= offset) return (r, c);
-                        used += cells[c].Ch > 0xffff ? 2 : 1;
+                        used += cells[c].Text.Length;
                     }
                     return (r, cells.Length);
                 }
@@ -151,6 +152,28 @@ namespace KillerScan.Terminal
                 return (TextOffset(first, 0), TextOffset(Math.Min(_buf.TotalLines, first + _buf.Rows), 0));
             }
         }
+
+        internal HashSet<int> CharacterStarts(int length)
+        {
+            var starts = new HashSet<int> { 0 };
+            int offset = 0;
+            for (int row = 0; row < _buf.TotalLines && offset < length; row++)
+            {
+                var cells = _buf.LineAt(row);
+                int content = string.Concat(cells.Select(cell => cell.Text)).TrimEnd().Length;
+                int used = 0;
+                foreach (var cell in cells)
+                {
+                    if (cell.Ch < 0) continue;
+                    if (used >= content) break;
+                    starts.Add(offset + used); used += cell.Text.Length;
+                }
+                if (offset + content < length) starts.Add(offset + content);
+                offset += content + Environment.NewLine.Length;
+            }
+            starts.Add(length);
+            return starts;
+        }
     }
 
     internal sealed class TerminalAutomationPeer(TerminalControl terminal) : FrameworkElementAutomationPeer(terminal), ITextProvider
@@ -205,9 +228,10 @@ namespace KillerScan.Terminal
                 if (unit == TextUnit.Format) unit = TextUnit.Word;
                 string text = peer.Text;
                 var result = new List<int> { 0 };
+                var elements = unit == TextUnit.Character ? peer.Terminal.CharacterStarts(text.Length) : null;
                 for (int i = 1; i < text.Length; i++)
                 {
-                    bool boundary = unit == TextUnit.Character ? !char.IsLowSurrogate(text[i]) :
+                    bool boundary = unit == TextUnit.Character ? elements!.Contains(i) :
                         unit == TextUnit.Word ? char.IsWhiteSpace(text[i - 1]) != char.IsWhiteSpace(text[i]) :
                         unit == TextUnit.Line || unit == TextUnit.Paragraph ? text[i - 1] == '\n' : false;
                     if (boundary) result.Add(i);

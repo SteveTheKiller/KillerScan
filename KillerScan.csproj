@@ -80,6 +80,7 @@
        run off a USB stick on a customer's machine has to bring these with it. -->
   <ItemGroup>
     <EmbeddedResource Include="Modules\**\*" />
+    <EmbeddedResource Include="Terminal\Unicode-LICENSE.txt" />
     <EmbeddedResource Include="Terminal\KillerPrompt.ps1" />
   </ItemGroup>
   <ItemGroup>

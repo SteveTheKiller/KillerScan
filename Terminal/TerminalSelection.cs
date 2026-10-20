@@ -79,6 +79,7 @@ namespace KillerScan.Terminal
 
         private static bool IsWordChar(int cp)
         {
+            if (cp < 0) return true;
             if (cp == 0 || cp == ' ') return false;
             char c = (char)cp;
             return char.IsLetterOrDigit(c) || "_-.\\/:~@+=%#".IndexOf(c) >= 0;
@@ -145,6 +146,9 @@ namespace KillerScan.Terminal
 
                 int from = line == l1 ? c1 : 0;
                 int to   = line == l2 ? c2 : _buf.Cols;
+                var cells = _buf.LineAt(line);
+                if (from > 0 && from < cells.Length && cells[from].Ch < 0) from--;
+                if (to > 0 && to < cells.Length && cells[to].Ch < 0) to++;
                 if (to <= from) continue;
 
                 dc.DrawRectangle(brush, null,
@@ -156,6 +160,17 @@ namespace KillerScan.Terminal
         {
             if (!_hasSelection) return false;
 
+            string text = GetSelectionText();
+            if (text.Length == 0) return false;
+            try { Clipboard.SetText(text); }
+            catch { return false; }
+            return true;
+        }
+
+        internal string GetSelectionText()
+        {
+            if (!_hasSelection) return string.Empty;
+
             Ordered(out int l1, out int c1, out int l2, out int c2);
             var sb = new StringBuilder();
 
@@ -164,22 +179,17 @@ namespace KillerScan.Terminal
                 var cells = _buf.LineAt(line);
                 int from = line == l1 ? c1 : 0;
                 int to   = Math.Min(line == l2 ? c2 : cells.Length, cells.Length);
+                if (from > 0 && from < cells.Length && cells[from].Ch < 0) from--;
 
                 var row = new StringBuilder();
                 for (int c = from; c < to; c++)
-                    row.Append(cells[c].Ch == 0 ? ' ' : (char)cells[c].Ch);
+                    row.Append(cells[c].Text);
 
                 sb.Append(row.ToString().TrimEnd());
                 if (line < l2) sb.Append("\r\n");
             }
 
-            string text = sb.ToString();
-            if (text.Length == 0) return false;
-
-            try { Clipboard.SetText(text); }
-            catch { return false; }        // another app holding the clipboard
-
-            return true;
+            return sb.ToString();
         }
     }
 }

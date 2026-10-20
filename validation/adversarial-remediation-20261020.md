@@ -136,6 +136,20 @@ Green: the actual browser tree excludes closed accent controls, and the same two
 
 ## Current evidence
 
+## UI-012 diagnosis
+
+Ranked hypotheses before the parser regression:
+
+1. Print advances once per scalar instead of by terminal cluster width.
+2. Rendering and copying independently assume one scalar per column.
+3. Erase/insert/delete can leave partial wide characters unless both cells are normalized.
+
+KillerShell has the same scalar-per-cell pattern and offers no compatible width implementation to reuse. Tests cover ASCII, decomposed accents, CJK, supplementary symbols, variation selectors, emoji modifiers, regional pairs and ZWJ clusters, including byte-split input and line edges. Width policy must be explicit because Unicode East Asian Width alone does not define terminal grapheme rendering.
+
+Red: the actual UTF-8 parser advanced three columns for decomposed e + acute + X. The repair stores a cluster on its leading cell and reserves continuation cells for width two. Unicode 17.0 W/F properties define wide scalars; ambiguous scalars stay narrow. Combining marks attach, emoji VS16 promotes eligible bases, regional pairs and common emoji modifier/ZWJ sequences retain a two-column cluster. VS15 preserves the base's intrinsic width. This is an explicit terminal policy, not a claim of complete Unicode grapheme-conformance or color-emoji rendering.
+
+Green: byte-split parser cases, edge wrapping/promotion, insertion, overwrite, erase, repeat, resize and shell-replacement fixtures pass. Selection copying and UIA use the same cell text; character navigation uses stored cluster boundaries. The actual control rendered decomposed accents, CJK, supplementary rocket, VS16 heart and a ZWJ emoji with aligned columns; its PNG was inspected. Full supported-font and live shell/SSH keyboard-editing acceptance remain open. Retention is unchanged. Fresh isolated builds are used when a source edit overlaps compilation, since incremental timestamps can otherwise hide the edit.
+
 ## UI-008 diagnosis
 
 Ranked hypotheses before the UIA regression:
