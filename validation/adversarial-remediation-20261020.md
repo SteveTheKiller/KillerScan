@@ -136,6 +136,18 @@ Green: the actual browser tree excludes closed accent controls, and the same two
 
 ## Current evidence
 
+## UI-008 diagnosis
+
+Ranked hypotheses before the UIA regression:
+
+1. The custom FrameworkElement has no automation peer, so no transcript provider can be obtained.
+2. The audit's Control-only filter hides the missing peer.
+3. Selection and caret changes lack automation notifications even when the visual output updates.
+
+The approved boundary is the actual terminal control and its UI Automation provider, without starting a shell or sending host input. Manual Narrator acceptance remains separate.
+
+Red: CreatePeerForElement returned null for the actual terminal. Green: the peer exposes Document TextPattern, live output, text search, actual selection and the insertion caret. Text ranges support bounded reads, endpoint movement, cloning, viewport ranges, screen bounds and scrolling. Output/selection notifications coalesce over 200 ms and stop on disposal. The audit includes custom focusable FrameworkElements and records MISSING_PEER. A localized existing Terminal resource supplies the name. Narrator announcements, native UIA client behavior and focus rendering remain acceptance gates.
+
 | Finding | Local commit | Focused evidence |
 | --- | --- | --- |
 | ENG-002 | d68f0f7 | Concurrent first load, six reloads with MA-L/MA-M/MA-S readers, failed-reload preservation on net48/net10 |

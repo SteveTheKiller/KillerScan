@@ -29,6 +29,7 @@ internal static class Program
     {
         try
         {
+            if (args.SequenceEqual(new[] { "--terminal-accessibility" })) { TerminalAccessibilityTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--history-retention" })) { HistoryRetentionTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--preference-persistence" })) { PreferencePersistenceTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--demo-stores" })) { DemoStoreTests.Run(); return 0; }
