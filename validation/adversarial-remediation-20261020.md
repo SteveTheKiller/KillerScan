@@ -30,6 +30,20 @@ Red: both targets failed exact preservation of a valid 128-byte description. The
 
 Green: both targets preserve lengths 0, 1, 3, 4, 33, 127, 128, 188, 255 and 256, a description equal to the community and embedded tag-like bytes. Eleven malformed/identity variants are rejected. A forged response from a different UDP source port is ignored before the legitimate source responds. The full 14-check suite passes on both targets after the repair.
 
+## ENG-008 diagnosis
+
+Ranked hypotheses before the presentation fixture:
+
+1. CLI table cells carry network-supplied controls directly to the terminal.
+2. ANSI coloring wraps untrusted content without escaping it first.
+3. Embedded presentation follows a separate sanitation path, so fixing one sink leaves inconsistent evidence in the other.
+
+The fixture supplies clear-screen, cursor, OSC, BEL, CR/LF, tab and C1 bytes as device fields to the actual table/presentation APIs. It checks the allowed application ANSI sequences, row counts, visible escaped evidence and raw JSON round trips.
+
+Red: the CLI table emitted untrusted control bytes in both the interactive and redirected presentation route. The repair visibly encodes C0, DEL and C1 before measuring or clipping cells, shares the same escape function with embedded presentation and leaves structured data unchanged. Terminal parsing checks also verify that network text cannot change the title or dispatch the application's speed-test OSC command.
+
+Green: terminal-safety, narrow/wide scan-presentation and CSV-export regressions pass. Both ANSI and plain CLI tables retain their expected row count. Feeding CLI and embedded output through the real terminal parser leaves the existing title unchanged and dispatches no application command. JSON retains the exact hostile input string.
+
 ## Current evidence
 
 | Finding | Local commit | Focused evidence |

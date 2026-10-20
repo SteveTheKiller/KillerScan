@@ -88,7 +88,7 @@ namespace KillerScan.Features.Cli
             catch { return false; }
         }
 
-        private static string PaintErr(string text, string code) => _errAnsi ? code + text + AnsiReset : text;
+        private static string PaintErr(string text, string code) => _errAnsi ? code + TerminalText.Escape(text) + AnsiReset : TerminalText.Escape(text);
 
         /// <summary>Little stderr spinner shown while a scan or probe runs on an interactive
         /// console. Skipped when stderr is redirected (a \r animation would be garbage in a log),
@@ -216,7 +216,7 @@ namespace KillerScan.Features.Cli
             if (positionals.Count > 0 || options.Count > 0) return Usage(err, "/network takes no options or targets.");
             var net = LocalNetwork.Detect();
             if (net is null) return Usage(err, "no active IPv4 network was found.", 1);
-            @out.WriteLine("INTERFACE  " + net.InterfaceLabel);
+            @out.WriteLine("INTERFACE  " + TerminalText.Escape(net.InterfaceLabel));
             @out.WriteLine("LOCAL IP   " + net.LocalIp);
             @out.WriteLine("SUBNET     " + net.Subnet);
             @out.WriteLine("GATEWAY    " + (net.Gateway.Length == 0 ? "-" : net.Gateway));
@@ -232,7 +232,7 @@ namespace KillerScan.Features.Cli
             if (normalized.Length != 12) return Usage(err, "the MAC address must contain 12 hex digits.");
             OuiLookup.Load();
             string vendor = OuiLookup.GetVendor(positionals[0]);
-            @out.WriteLine(vendor.Length == 0 ? "Unknown" : vendor);
+            @out.WriteLine(vendor.Length == 0 ? "Unknown" : TerminalText.Escape(vendor));
             return vendor.Length == 0 ? 3 : 0;
         }
 
@@ -317,9 +317,9 @@ namespace KillerScan.Features.Cli
             else
             {
                 @out.WriteLine("ADDRESS     " + address);
-                @out.WriteLine("REVERSE DNS " + (reverse.Length == 0 ? "-" : reverse));
+                @out.WriteLine("REVERSE DNS " + (reverse.Length == 0 ? "-" : TerminalText.Escape(reverse)));
                 @out.WriteLine("PING        " + (ping.HasValue ? ping + " ms" : "no reply"));
-                @out.WriteLine("ROUTE       " + (route?.Interface ?? "-") + (string.IsNullOrEmpty(route?.NextHop) ? "" : " via " + route?.NextHop));
+                @out.WriteLine("ROUTE       " + TerminalText.Escape((route?.Interface ?? "-") + (string.IsNullOrEmpty(route?.NextHop) ? "" : " via " + route?.NextHop)));
                 foreach (var check in checks) @out.WriteLine($"TCP {check.port,-5} {(check.open ? "open" : "closed")}");
             }
             return ping.HasValue || checks.Any(check => check.open) ? 0 : 3;
@@ -598,7 +598,7 @@ namespace KillerScan.Features.Cli
             return descending ? [.. devices.OrderByDescending(key)] : [.. devices.OrderBy(key)];
         }
 
-        private static string Render(string format, List<NetworkDevice> devices, string label,
+        internal static string Render(string format, List<NetworkDevice> devices, string label,
                                      string theme, bool noHeader) => format switch
         {
             "csv" => Csv(devices, !noHeader),
@@ -607,10 +607,12 @@ namespace KillerScan.Features.Cli
             _ => Table(devices, !noHeader),
         };
 
-        private static string Table(List<NetworkDevice> devices, bool header, bool ansi = false)
+        internal static string Table(List<NetworkDevice> devices, bool header, bool ansi = false)
         {
             string[] headers = ["IP ADDRESS", "HOSTNAME", "MAC ADDRESS", "VENDOR", "TYPE", "OPEN PORTS"];
-            var rows = devices.Select(d => new[] { d.IpAddress, d.Hostname, d.MacAddress, Clip(d.Vendor, 32), d.DeviceType, d.OpenPortsDisplay }).ToList();
+            var rows = devices.Select(d => new[] { d.IpAddress, d.Hostname, d.MacAddress, d.Vendor, d.DeviceType, d.OpenPortsDisplay }
+                .Select(TerminalText.Escape).ToArray()).ToList();
+            foreach (var row in rows) row[3] = Clip(row[3], 32);
             var width = new int[headers.Length];
             for (int c = 0; c < headers.Length; c++)
             { width[c] = header ? headers[c].Length : 0; foreach (var row in rows) width[c] = Math.Max(width[c], (row[c] ?? "").Length); }
@@ -763,7 +765,7 @@ namespace KillerScan.Features.Cli
         private static bool IsHelp(string a) => Eq(a, "/help") || Eq(a, "--help") || Eq(a, "-h") || Eq(a, "/?") || Eq(a, "-?");
         private static bool IsVersion(string a) => Eq(a, "/version") || Eq(a, "--version") || Eq(a, "-v");
         private static string Clip(string? value, int max) => (value ?? "").Length <= max ? value ?? "" : value![..(max - 3)] + "...";
-        private static string Flatten(string? value) => (value ?? "").Replace("\r", " ").Replace("\n", " ").Trim();
+        private static string Flatten(string? value) => TerminalText.Escape(value).Trim();
 
         private static (TextWriter, TextWriter) OpenConsole()
         {

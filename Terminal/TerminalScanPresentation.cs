@@ -1,12 +1,13 @@
 using System.Text;
 using KillerScan.Models;
+using KillerScan.Services;
 
 namespace KillerScan.Terminal
 {
     internal sealed class TerminalScanPresentation(Func<string, string> loc, Func<int> columns)
     {
         private int Width => Math.Max(12, columns() - 2);
-        private static string Clean(string text) => new([.. text.Where(c => !char.IsControl(c))]);
+        private static string Clean(string text) => TerminalText.Escape(text);
 
         public string Progress(string status)
         {

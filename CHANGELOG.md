@@ -23,6 +23,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Stopping during MAC resolution returns promptly, skips queued lookups and keeps native work bounded across scans.
 - The public subnet helper rejects IPv6 addresses and malformed CIDR suffixes before expanding hosts.
 - Terminal title sequences accept BEL and ESC-backslash terminators across split reads and preserve UTF-8 titles.
+- Terminal tables display escaped network control characters without changing raw scan data or JSON exports.
 - A silent install or update that finds KillerScan running exits with 1618, which Intune, Configuration Manager and RMM tools retry, instead of a general failure.
 - Chocolatey publishing reports failure when validation is still failing after a retry.
 - Window resize minimums stay within the current monitor's work area on small or scaled displays.
