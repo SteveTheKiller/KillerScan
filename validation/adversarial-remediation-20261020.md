@@ -58,6 +58,10 @@ Red: a started watch silently ignored IncludeTarget and created no requested car
 
 Initial green: the controlled run adds and diagnoses new targets, retains existing card identity and growing counters, deduplicates repeat requests and stops through the actual button command. The integrated scan lifecycle/export fixture also passes. Extended checks cover the 16-target limit and visible rejection without changing accepted targets.
 
+Final Spec review found that the demo shell route still called RestartWith on every visit before forwarding Keep Alive or Diagnose. Ranked hypotheses: unconditional view-entry restart, target insertion failure, or queued-start timing. The expanded approved command fixture constructs the actual shell without showing it or starting a native shell, finds its watch through the content tree, and drives OpenNetworkTool. Settings remain redirected by the existing process fixture and all network replies remain fabricated.
+
+Observed red: after a second shell Diagnose command the requested target never receives a sample within four seconds. The earlier standalone insertion checks pass. Restricting automatic demo startup to initial workspace creation preserves subsequent cards, counters and added targets; the separate explicit demo-reroll restart is unchanged. Green: the same actual shell route preserves object identity and sample counts, retains the earlier Keep Alive target, selects/checks the new Diagnose target, and deduplicates another Keep Alive request. The complete controlled scan-lifecycle/export suite passes. The fresh isolated source snapshot is committed source at 09cfb71 plus the owned runner/watch changes, excluding concurrent deployment/theme work, and builds with zero warnings/errors.
+
 ## UI-006 diagnosis
 
 Ranked hypotheses before the export-action fixture:
@@ -75,6 +79,8 @@ Green: the actual Services menu and keyboard command produce identical filtered 
 ## ENG-001 investigation
 
 The approved contract retains sent-byte throughput with a valid acknowledgment required. The engine summary must describe that same contract. This is a documentation repair and controlled investigation, not an acknowledged-only algorithm change.
+
+The later rendered Technical-page check exposed the same stale acknowledged-only claim in its English paragraph and all 18 translated versions. Those existing paragraphs now describe sent transport payload, including buffered/in-flight bytes at cutoff, with at least one valid acknowledgment during measurement. No runtime algorithm changed. The Technical page's translation cache version advanced. JavaScript syntax, the KillerScan locale-key/placeholder comparison and all 18 changed paragraph keys pass; unrelated family-site coverage findings remain outside this app scope.
 
 The loopback fixture separately records the engine's serialized payload result, receiver-observed bytes and acknowledged bytes. One exact acknowledgment is followed by either a fully received unacknowledged request or a partially read request with a stalled receiver. It captures phase-end counts and drains buffered tails afterward. Separate cases retain no-ack rejection, normal budget behavior and user cancellation on both target frameworks.
 
@@ -136,11 +142,69 @@ Green: the actual browser tree excludes closed accent controls, and the same two
 
 ## Current evidence
 
+Final reconciliation distinguishes source/component acceptance from native or release acceptance:
+
+| Finding | Local source repair | Acceptance boundary and remaining gate |
+| --- | --- | --- |
+| UI-001 | 221959a | Real archive transaction/reload and controlled cross-process writers pass |
+| UI-002 | 1a721df | Preference failure/retry and persistence fixtures pass |
+| UI-003 | bca4a05 | Successful empty run saved; canceled/failed runs excluded |
+| UI-004 | 9b924cd | Automatic deep final snapshot and explicit completion statuses pass |
+| UI-005 | 3fa88a3, 8d853bd | Active standalone and actual demo shell command fixtures pass |
+| UI-006 | 6576252 | Context menu/shortcut export files pass; native rendered menu acceptance separate |
+| UI-007 | 6122f52 | Frozen target/input/provenance export fixture passes |
+| UI-008 | 4a3d805, 4ad6ccb | Actual TextPattern peer and mouse range checks pass; Narrator/native client gate open |
+| UI-009 | 3d28c13 | Bounded memory investigation resolved for measured presets; unlimited-duration behavior unmeasured |
+| UI-010 | 1fe1723 | BEL/ST and split UTF-8 parser/integration fixtures pass |
+| UI-011 | 8b2fffd | Demo store isolation and normal persistence checks pass |
+| UI-012 | 3c51238, 4508270 | Cluster/parser/render checks pass; supported-font/live shell/SSH acceptance open |
+| ENG-001 | d2f2c17, 09cfb71 | Chosen sent-byte contract verified with buffering limits; app/engine/site descriptions agree |
+| ENG-002 | d68f0f7 | Atomic OUI snapshot readers/reloads pass on both targets |
+| ENG-003 | 26ceb19 | Bounded BER, exact identity and source checks pass on both targets |
+| ENG-004 | affd6ad | Shared bounded native slots and prompt caller cancellation pass on both targets |
+| ENG-005 | f8634b9 | Active HTTP/TLS cancellation loopbacks pass on both targets |
+| ENG-006 | 09e6dd9 | Same-IP redirect and rejection cases pass on both targets |
+| ENG-007 | 62128dc | IPv4 CIDR and documented /31-/32 behavior pass on both targets |
+| ENG-008 | 5bf587b | CLI/embedded terminal control escaping preserves raw structured data |
+| ENG-009 | a44a41e | Atomic vendor publication/fault fixtures pass on both targets |
+| DEP-001 | Owner 2892599 | Bounded updater recovery source/component packet accepted; native interruption gate open |
+| DEP-002 | Owner work in progress | Silent completion implementation not yet committed/accepted; native lifecycle open |
+| DEP-003 | Owner work in progress | Cleanup fixture checkpoint passes; final source/native lifecycle acceptance open |
+| DEP-004 | Owner work in progress | Immutable elevated execution implementation/review and native acceptance open |
+| FAM-001 | ff760ae | Thirteen audit rejection/clean cases pass under PowerShell 5.1/7 |
+| FAM-002 | 137dd1b | Six monitor cases pass under PowerShell 5.1/7 |
+| FAM-003 | 53a68f2 | Actual disposable Publish freshness/lock/Unicode fixtures pass under both hosts |
+| FAM-004 | a51c409 | All five navigation pages browser-verified; landing parity passes |
+
+The fresh solution build at b2ea71f completed with zero warnings/errors. Both complete 14-check engine suites passed from that output. Final solution vulnerability and direct-outdated queries covered four projects and reported no known vulnerable or outdated direct packages. These are checkpoint results, not acceptance of later concurrent deployment changes.
+
+The requested Technical layout adjustment is committed as 87a2c23. Moving the entire Glossary section left reduced the original 4330/9858 pixel column imbalance to 7013/7162. After correcting the existing upload paragraph, the final browser measurements are 7013/7210 at the same viewport. Existing page geometry/styles are unchanged. The preserved screenshot is C:/Users/steve/.codex/visualizations/2026/10/20/01a15b1f-63bf-7282-aa9a-5bdafad13939/technical-balanced-final.png.
+
+Deployment coordination is explicitly authorized. KillerShell owns its App.xaml.cs, update/removal helpers, Chocolatey script and focused deployment tests; no competing implementation is made here. Its intermediate missing-report compile error was reported and the owner confirmed correction. The watch regression uses an isolated committed-source snapshot, so its passing build does not accept owner WIP. All VM operations remain with the Bench-coordinated exclusive windows; this chat has made no guest changes.
+
 ## Final-review follow-ups
+
+The integrated runner first failed before any full-suite check because source-resource lookup only searched ancestors of its executable. Isolated artifacts are outside the checkout. The test-only lookup now shares the existing explicit KILLERSCAN_TEST_ROOT boundary across all source-dependent fixtures, validates its project marker and retains ancestor discovery for normal in-repository builds. Product source, runtime paths and test assertions are unchanged by this runner correction.
+
+The next full-run attempt passed menu/startup checks, then exposed a legacy reflection call to LoadSnapshot that did not supply the new optional timestamp parameter. Topology now calls the actual workspace API directly, preserving the existing assertions and synthetic inputs.
+
+The subsequent integrated run passed 78,454 topology assertions, 1,197 history assertions and the next controlled protocol checks, then the existing NoPayload fixture returned Timeout instead of expected TransferFailed. Ranked hypotheses before focused rerun: (1) stalled fixture I/O delays the short phase cancellation, (2) warmup and measurement share lingering server connections, (3) the fixture reaches request timeout rather than its intended zero-byte phase cutoff. Isolated empty-transfer and actual Worker entry points preserve the original assertions and allow independent diagnosis without repeating rendered suites.
+
+Both focused empty-transfer cases and the actual Node Worker loopback passed in fresh processes. A subsequent full --worker attempt again passed the 78,454 topology and 1,197 history assertions but stopped earlier at AdaptiveCancel's latency preflight with request Timeout. This is a distinct observed failure; it does not establish that NoPayload is fixed. Phase/request diagnostics were retained in Reject for a subsequent discriminating run. Full app integration remains open and no timeout or assertion was weakened. Runner corrections are committed as 1fefa5d.
+
+The minimized five-check --transfer-sequence passed both adaptive modes, adaptive cancellation, empty download and no-ack upload in one process. The broader --speed-loopback --worker then passed all 28 existing speed/Worker checks in one process without the preceding rendered UI groups. Both runs used the isolated committed-source snapshot plus owned runner/watch changes. This narrows the failure to a condition absent from those runs; it does not prove which UI state, resource pressure or timing caused the full-run timeouts. The test selector preserves default ordering/coverage and unchanged assertions/time limits; independent Standards source comparison found no orchestration regression. Full combined acceptance remains open pending a reproducible diagnosis and final owner-source integration.
 
 The independent Standards review traced a right-edge VS16 promotion when DECAWM is disabled. Ranked causes before reproduction: (1) promotion clamps to total columns instead of remaining columns, (2) wrapping-disabled output still tries to allocate a continuation, (3) promotion loses the cluster. The focused parser regression uses four columns, ESC[?7l and abc + heart + VS16. The intended bounded fix preserves the cluster in the remaining cell without wrapping or writing outside the row.
 
 Observed red: the exact parser input threw IndexOutOfRangeException. Promotion now clamps to columns remaining after its leading cell. Green: the complete cluster remains at the right edge without wrapping; the complete Unicode, UIA and OSC focused suites pass. This is a review-discovered regression in the new width model, corrected before final acceptance.
+
+The Spec review found a mouse-origin selection discrepancy at a wide character's continuation cell. Ranked causes before reproduction: (1) clipboard expands to cluster boundaries while UIA uses raw endpoints, (2) reverse selections normalize differently, (3) drawing and copying disagree on selected width. SelectCells is the real mouse-drag cell-selection operation; the fixture selects the continuation half of CJK text and compares clipboard-source text with TextPattern. No host input or clipboard write is used.
+
+Observed red: continuation-origin selection copied the CJK character while TextPattern returned an empty range. Ordered selection endpoints now expand to complete clusters before rendering, copying or UIA mapping. Forward and reverse selection use the same normalization.
+
+Green: the actual terminal TextPattern fixture passes both forward and reverse continuation-origin selections, with copied text matching the accessible range. Unicode/parser neighbors also pass.
+
+Standards source re-review reports no remaining hard finding after the right-edge repair. Spec source re-review reports no remaining concrete gap in the mouse-range or demo shell-watch fixes after 4ad6ccb and 8d853bd. These independent source reviews did not rerun the fixtures or provide native mouse, Narrator, live shell or installer acceptance.
 
 ## Dependency compatibility inventory
 

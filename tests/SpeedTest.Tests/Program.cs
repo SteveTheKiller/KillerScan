@@ -29,6 +29,15 @@ internal static class Program
     {
         try
         {
+            if (args.SequenceEqual(new[] { "--transfer-sequence" }))
+            {
+                await Run("Adaptive per-connection warmup", () => Adaptive(Mode.SlowDownload, 8));
+                await Run("Adaptive shared-bandwidth warmup", () => Adaptive(Mode.SharedDownload, 8));
+                await Run("Adaptive warmup cancellation", AdaptiveCancel);
+                await Run("Empty download rejection", () => Reject(Mode.NoPayload, SpeedTestFailureKind.TransferFailed));
+                await Run("Unacknowledged upload rejection", () => Reject(Mode.NoAck, SpeedTestFailureKind.TransferFailed));
+                return 0;
+            }
             if (args.SequenceEqual(new[] { "--worker-loopback" })) { await Worker(); Console.WriteLine("PASS: actual Worker loopback exchange."); return 0; }
             if (args.SequenceEqual(new[] { "--empty-transfers" }))
             {
@@ -68,22 +77,26 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--outline-hover-ui" })) { await OutlineHoverThemeTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--radio-center-ui" })) { await RadioCenterUiTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--shrink-to-fit" })) { await ShrinkToFitTests.Run(); return 0; }
-            Require(args.All(value => value == "--worker" || value == "--internet"), "Usage: SpeedTest.Tests.exe [--worker] [--internet]");
-            await Run("Menu dividers resolve declared palettes and preserve the fallback", MenuSeparatorThemeTests.Run);
-            await Run("Startup content becomes visible when its animation stalls", StartupFadeTests.Run);
-            await Run("Topology radial geometry, zoom and rendered interactions", TopologyTests.RunIsolated);
-            await Run("History identity, saved-data menus and contextual shortcuts", HistoryUiTests.RunIsolated);
-            await Run("CSV exports keep spreadsheet formulas inert", CsvExportTests.Run);
-            await Run("HTML report columns sort from the keyboard and expose aria-sort", ReportSortTests.Run);
-            await Run("PATH registration adds and removes only the install folder", CommandLinePathTests.Run);
-            await Run("Executable deployment verifies staging and preserves recovery files", ExecutableDeploymentTests.Run);
-            await Run("HTML report logo returns after a theme without one", ReportLogoTests.Run);
-            await Run("Outline button hover text stays readable in every accent", OutlineHoverThemeTests.RunIsolated);
-            await Run("Radio and checkbox indicators sit on the middle of their labels", RadioCenterUiTests.RunIsolated);
-            await Run("Sidebar text shrinks a little before it is trimmed", ShrinkToFitTests.Run);
-            await Run("Metric units, median, jitter and unavailable values", Metrics);
-            await Run("Scan terminal progress stays on one line and results fit narrow widths", ScanPresentation);
-            await Run("Terminal history survives resizing, clears and shell replacement", TerminalHistory);
+            Require(args.All(value => value == "--worker" || value == "--internet" || value == "--speed-loopback"),
+                "Usage: SpeedTest.Tests.exe [--speed-loopback] [--worker] [--internet]");
+            if (!args.Contains("--speed-loopback"))
+            {
+                await Run("Menu dividers resolve declared palettes and preserve the fallback", MenuSeparatorThemeTests.Run);
+                await Run("Startup content becomes visible when its animation stalls", StartupFadeTests.Run);
+                await Run("Topology radial geometry, zoom and rendered interactions", TopologyTests.RunIsolated);
+                await Run("History identity, saved-data menus and contextual shortcuts", HistoryUiTests.RunIsolated);
+                await Run("CSV exports keep spreadsheet formulas inert", CsvExportTests.Run);
+                await Run("HTML report columns sort from the keyboard and expose aria-sort", ReportSortTests.Run);
+                await Run("PATH registration adds and removes only the install folder", CommandLinePathTests.Run);
+                await Run("Executable deployment verifies staging and preserves recovery files", ExecutableDeploymentTests.Run);
+                await Run("HTML report logo returns after a theme without one", ReportLogoTests.Run);
+                await Run("Outline button hover text stays readable in every accent", OutlineHoverThemeTests.RunIsolated);
+                await Run("Radio and checkbox indicators sit on the middle of their labels", RadioCenterUiTests.RunIsolated);
+                await Run("Sidebar text shrinks a little before it is trimmed", ShrinkToFitTests.Run);
+                await Run("Metric units, median, jitter and unavailable values", Metrics);
+                await Run("Scan terminal progress stays on one line and results fit narrow widths", ScanPresentation);
+                await Run("Terminal history survives resizing, clears and shell replacement", TerminalHistory);
+            }
             await Run("Cloudflare upload response is accepted only for the exact official endpoint", CloudflareAcknowledgment);
             await Run("Public endpoint profile reduces request pressure without shortening the test", PublicProfile);
             await Run("Adaptive warmup adds streams on a per-connection bottleneck", () => Adaptive(Mode.SlowDownload, 8));
@@ -115,7 +128,8 @@ internal static class Program
                 await Run("Compiled engine exchanges exact payloads with the real Worker", Worker);
             if (args.Contains("--internet"))
                 await Run("Live KillerScan endpoint completes native measurements", Internet);
-            await Run("Themed terminal renders managed output and routes cancel, rerun and disposal", View);
+            if (!args.Contains("--speed-loopback"))
+                await Run("Themed terminal renders managed output and routes cancel, rerun and disposal", View);
             Console.WriteLine("PASS: " + _passed + " speed-test regression checks.");
             return 0;
         }
