@@ -10,6 +10,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.
 - The shortcuts card shows shadows at its edges when more content is out of view.
 - A silent install or update that finds KillerScan running exits with 1618, which Intune, Configuration Manager and RMM tools retry, instead of a general failure.
+- Chocolatey publishing reports failure when validation is still failing after a retry.
 
 ## [1.8.3] - 2026-10-19
 

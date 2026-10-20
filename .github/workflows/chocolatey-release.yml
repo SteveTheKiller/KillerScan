@@ -99,6 +99,7 @@ jobs:
           $feed = "https://community.chocolatey.org/api/v2/Packages(Id='killerscan',Version='$env:CHOCO_VERSION')"
           $repushed = $false
           $pendingSinceRepush = $false
+          $lastKnownState = ''
           $deadline = (Get-Date).AddMinutes(160)
           while ((Get-Date) -lt $deadline) {
               Start-Sleep -Seconds 300
@@ -109,6 +110,7 @@ jobs:
                   continue
               }
               $state = [regex]::Match($entry, '<d:PackageValidationResultStatus>(\w+)</d:PackageValidationResultStatus>').Groups[1].Value
+              if ($state) { $lastKnownState = $state }
               Write-Host "$(Get-Date -Format HH:mm:ss) validation: $(if ($state) { $state } else { 'not shown' })"
               if ($state -like 'Pass*') { exit 0 }
               if ($repushed -and $state -and $state -notlike 'Fail*') { $pendingSinceRepush = $true }
@@ -121,6 +123,9 @@ jobs:
               } elseif ($pendingSinceRepush) {
                   throw "Chocolatey validation failed twice. See $page"
               }
+          }
+          if ($lastKnownState -like 'Fail*') {
+              throw "Chocolatey validation remained failed after re-push. See $page"
           }
           # Chocolatey's queue often takes longer than this. The package is already pushed, so a
           # validation that is still pending is a warning, not a failed release.
