@@ -29,6 +29,13 @@ internal static class Program
     {
         try
         {
+            if (args.SequenceEqual(new[] { "--worker-loopback" })) { await Worker(); Console.WriteLine("PASS: actual Worker loopback exchange."); return 0; }
+            if (args.SequenceEqual(new[] { "--empty-transfers" }))
+            {
+                await Reject(Mode.NoPayload, SpeedTestFailureKind.TransferFailed);
+                await Reject(Mode.NoAck, SpeedTestFailureKind.TransferFailed);
+                Console.WriteLine("PASS: empty download and unacknowledged upload rejection."); return 0;
+            }
             if (args.SequenceEqual(new[] { "--terminal-memory" })) { TerminalMemoryTests.Run(); return 0; }
             if (args.Length == 2 && args[0] == "--terminal-memory-child") { TerminalMemoryTests.Child(args[1]); return 0; }
             if (args.SequenceEqual(new[] { "--terminal-unicode" })) { TerminalUnicodeTests.Run(); return 0; }
@@ -328,8 +335,7 @@ internal static class Program
 
     private static async Task Worker()
     {
-        var directory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-        while (directory != null && !File.Exists(Path.Combine(directory.FullName, "KillerScan.csproj"))) directory = directory.Parent;
+        var directory = TestRepository.Find();
         Require(directory != null, "Repository containing the real Worker found");
         string script = Path.Combine(directory!.FullName, "server", "speedtest", "loopback.mjs");
         Require(File.Exists(script), "Worker loopback adapter exists");
@@ -406,8 +412,7 @@ internal static class Program
         {
             try
             {
-                var directory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-                while (directory != null && !File.Exists(Path.Combine(directory.FullName, "KillerScan.csproj"))) directory = directory.Parent;
+                var directory = TestRepository.Find();
                 Require(directory != null, "Repository app resources found");
                 // WPF has already inferred the console entry assembly. Redirect only this test
                 // process before any pack resources load, so the real theme loader resolves them.
@@ -968,6 +973,9 @@ internal static class Program
     {
         using var server = new LoopbackServer(mode);
         var options = Options(server);
+        var clock = Stopwatch.StartNew();
+        var phases = new ConcurrentDictionary<SpeedTestPhase, long>();
+        var progress = new CallbackProgress(value => phases.TryAdd(value.Phase, clock.ElapsedMilliseconds));
         if (mode == Mode.LoadedRate)
         {
             options.ByteBudgetPerPhase = 16 * 1024 * 1024;
@@ -975,10 +983,16 @@ internal static class Program
         }
         try
         {
-            await new SpeedTestEngine().RunAsync(options, null, CancellationToken.None);
+            await new SpeedTestEngine().RunAsync(options, progress, CancellationToken.None);
             throw new InvalidOperationException("Invalid endpoint response was accepted: " + mode);
         }
-        catch (SpeedTestException ex) { Require(ex.Kind == expected, mode + " returned " + ex.Kind + " instead of " + expected); }
+        catch (SpeedTestException ex)
+        {
+            Require(ex.Kind == expected, mode + " returned " + ex.Kind + " instead of " + expected
+                + "; elapsedMs=" + clock.ElapsedMilliseconds + "; phases="
+                + string.Join(",", phases.OrderBy(pair => pair.Value).Select(pair => pair.Key + "@" + pair.Value))
+                + "; requests=" + string.Join(",", server.Requests));
+        }
     }
 
     private static async Task Timeout()

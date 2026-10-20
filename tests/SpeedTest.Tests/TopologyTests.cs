@@ -103,8 +103,7 @@ internal static class TopologyTests
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", Static)!.SetValue(null, assembly);
         var app = new TestApplication();
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory != null && !File.Exists(System.IO.Path.Combine(directory.FullName, "KillerScan.csproj"))) directory = directory.Parent;
+        var directory = TestRepository.Find();
         Require(directory != null, "Resource source is available.");
         var xml = new XmlDocument();
         xml.Load(System.IO.Path.Combine(directory!.FullName, "App.xaml"));
@@ -132,7 +131,7 @@ internal static class TopologyTests
         locales.GetMethod("ApplyInternal", Static)!.Invoke(null, new[] { Enum.Parse(localeType, "EnUS") });
         Theme("Black", "Orange");
         using var workspace = new ScanWorkspace("192.0.2.0/24", demo: true);
-        Call(workspace, "LoadSnapshot", "192.0.2.0/24", Enumerable.Range(1, 31).Select(i => new NetworkDevice
+        workspace.LoadSnapshot("192.0.2.0/24", Enumerable.Range(1, 31).Select(i => new NetworkDevice
         {
             IpAddress = "192.0.2." + i, Hostname = i % 3 == 0 ? "synthetic-server-with-a-long-label-" + i : "device-" + i,
             DeviceType = i == 1 ? "Router" : i % 2 == 0 ? "Windows" : "Printer"

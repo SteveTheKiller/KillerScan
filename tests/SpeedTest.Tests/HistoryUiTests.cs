@@ -77,10 +77,7 @@ internal static partial class HistoryUiTests
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", Static)!.SetValue(null, assembly);
         var app = new TestApplication();
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory != null && !File.Exists(Path.Combine(directory.FullName, "KillerScan.csproj"))) directory = directory.Parent;
-        if (directory == null && Environment.GetEnvironmentVariable("KILLERSCAN_TEST_ROOT") is string sourceRoot)
-            directory = new DirectoryInfo(sourceRoot);
+        var directory = TestRepository.Find();
         Require(directory != null, "Application resource source exists.");
         var xml = new XmlDocument(); xml.Load(Path.Combine(directory!.FullName, "App.xaml"));
         var dictionary = xml.DocumentElement!.FirstChild!.FirstChild!.OuterXml.Replace("clr-namespace:KillerScan.Controls", "clr-namespace:KillerScan.Controls;assembly=KillerScan")
@@ -860,7 +857,7 @@ internal static partial class HistoryUiTests
     {
         var workspace = new ScanWorkspace("192.0.2.0/24", true);
         var host = new KillerScan.Engine.NetworkDevice { IpAddress = "192.0.2.40", Hostname = "service-fixture", DeviceType = "Server", OpenPorts = new List<int> { 22, 53, 3389, 8443 } };
-        Call(workspace, "LoadSnapshot", "192.0.2.0/24", new[] { host });
+        workspace.LoadSnapshot("192.0.2.0/24", new[] { host });
         Call(workspace, "RefreshServices");
         var grid = (DataGrid)workspace.FindName("ServicesGrid");
         var rows = grid.Items.Cast<object>().ToArray();

@@ -44,8 +44,7 @@ internal static class RadioCenterUiTests
 
     private static void Check()
     {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory != null && !File.Exists(Path.Combine(directory.FullName, "KillerScan.csproj"))) directory = directory.Parent;
+        var directory = TestRepository.Find();
         if (directory == null) throw new InvalidOperationException("Repository app resources found.");
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", BindingFlags.NonPublic | BindingFlags.Static)!.SetValue(null, assembly);

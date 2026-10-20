@@ -45,8 +45,7 @@ internal static class ReleaseUiTests
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", Static)!.SetValue(null, assembly);
         var app = new TestApplication();
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory != null && !File.Exists(Path.Combine(directory.FullName, "KillerScan.csproj"))) directory = directory.Parent;
+        var directory = TestRepository.Find();
         Require(directory != null, "App resource source exists.");
         var xml = new XmlDocument();
         xml.Load(Path.Combine(directory!.FullName, "App.xaml"));
