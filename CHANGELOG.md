@@ -12,6 +12,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Clarified upload throughput as sent payload, including in-flight requests, with a valid acknowledgment required.
 
 ### Fixed
+- Balanced the Technical page columns by moving the glossary to the left.
 - Terminal combining marks, wide characters and common emoji clusters keep consistent columns through drawing, editing, copying and resizing.
 - Terminal output exposes readable text, selection and caret ranges to accessibility tools, with a visible keyboard focus outline.
 - Closed website accent pickers stay out of keyboard and accessibility navigation, and return focus to their trigger when dismissed.

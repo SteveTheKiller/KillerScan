@@ -308,6 +308,41 @@
 </figure>
 </div>
 
+<div class="tech-sec" id="glossary">
+<h2 data-i18n="tk_104">Glossary</h2>
+<p data-i18n="tk_105">Plain-language definitions of the networking terms and abbreviations used on this page, in alphabetical order.</p>
+<table class="spec-table"><tr><th data-i18n="tk_106">Term</th><th data-i18n="tk_107">What it means</th></tr>
+<tr><td data-i18n="tk_108">ARP (Address Resolution Protocol)</td><td data-i18n="tk_109">How a computer finds the hardware ID (MAC) of another device on the same local network. Windows keeps a short-lived table of these, which KillerScan reads for an instant device list.</td></tr>
+<tr><td data-i18n="tk_110">DNS (Domain Name System)</td><td data-i18n="tk_111">The system that turns names into addresses and back. KillerScan asks it for the name attached to each address.</td></tr>
+<tr><td data-i18n="tk_112">Fingerprint probe</td><td data-i18n="tk_113">A small, targeted request that gets a device to reveal something identifying, such as a web page title, an SSH greeting, a certificate name, or an SNMP description.</td></tr>
+<tr><td data-i18n="tk_114">Gateway</td><td data-i18n="tk_115">The address of your router, the device that links your local network to the internet.</td></tr>
+<tr><td data-i18n="tk_116">Hostname</td><td data-i18n="tk_117">The human-readable name a device goes by on the network, such as "living-room-tv".</td></tr>
+<tr><td data-i18n="tk_118">HTTP / HTTPS</td><td data-i18n="tk_119">The protocol web pages use (HTTPS is the encrypted version). An admin web page is a strong clue to what a device is.</td></tr>
+<tr><td data-i18n="tk_120">ICMP / ping</td><td data-i18n="tk_121">ICMP is a low-level messaging protocol; a "ping" is its "are you there?" message, used to see whether an address answers.</td></tr>
+<tr><td data-i18n="tk_122">IEEE</td><td data-i18n="tk_123">The standards body that hands out MAC address ranges to manufacturers.</td></tr>
+<tr><td data-i18n="tk_124">MAC address</td><td data-i18n="tk_125">A hardware ID built into every network device by its maker. The first half identifies the manufacturer.</td></tr>
+<tr><td data-i18n="tk_126">MA-L / MA-M / MA-S</td><td data-i18n="tk_127">The three sizes of MAC address block the IEEE assigns (large, medium, small). A smaller block points to a more specific maker.</td></tr>
+<tr><td data-i18n="tk_128">mDNS (Bonjour)</td><td data-i18n="tk_129">A way devices announce their name and services on the local network with no central server. Used by Apple devices, printers, and Chromecasts.</td></tr>
+<tr><td data-i18n="tk_130">NetBIOS</td><td data-i18n="tk_131">An older Windows naming service. KillerScan uses it as a last resort to get a machine's name.</td></tr>
+<tr><td data-i18n="tk_132">Next-hop</td><td data-i18n="tk_133">The next device your traffic passes through toward a destination (your router, or a VPN's gateway). Its MAC is what you get back for anything beyond your local segment.</td></tr>
+<tr><td data-i18n="tk_134">OUI (Organizationally Unique Identifier)</td><td data-i18n="tk_135">The manufacturer-specific front part of a MAC address. Looking it up gives the maker's name.</td></tr>
+<tr><td data-i18n="tk_136">Ping sweep</td><td data-i18n="tk_137">Pinging every address in a range at once to see which ones are alive.</td></tr>
+<tr><td data-i18n="tk_138">Port</td><td data-i18n="tk_139">A numbered "door" on a device. Each common service (web, file sharing, remote desktop) listens on a known port number.</td></tr>
+<tr><td data-i18n="tk_140">Randomized MAC</td><td data-i18n="tk_141">A fake, temporary MAC address a phone invents for privacy, so it cannot be tracked by hardware ID.</td></tr>
+<tr><td data-i18n="tk_142">RDP (Remote Desktop Protocol)</td><td data-i18n="tk_143">The Windows remote-desktop service (port 3389). Its presence is a sign of a Windows machine.</td></tr>
+<tr><td data-i18n="tk_144">SMB (Server Message Block)</td><td data-i18n="tk_145">Windows file-and-printer sharing (port 445). Common on PCs and NAS boxes.</td></tr>
+<tr><td data-i18n="tk_146">SNMP (Simple Network Management Protocol)</td><td data-i18n="tk_147">A standard way network gear and printers report "what I am". KillerScan reads the description line.</td></tr>
+<tr><td data-i18n="tk_148">SSDP (part of UPnP)</td><td data-i18n="tk_149">A discovery broadcast used by smart TVs, media players, and similar gear to announce themselves.</td></tr>
+<tr><td data-i18n="tk_150">SSH (Secure Shell)</td><td data-i18n="tk_151">A secure remote-login service (port 22), common on Linux hosts and network gear. Its greeting text names the software.</td></tr>
+<tr><td data-i18n="tk_152">Subnet</td><td data-i18n="tk_153">A block of addresses on one local network, written like 192.168.50.0/24 (the "/24" meaning 256 addresses).</td></tr>
+<tr><td data-i18n="tk_154">TCP</td><td data-i18n="tk_155">The connection-based part of internet traffic. KillerScan opens TCP connections to test ports and to check whether a silent host is alive.</td></tr>
+<tr><td data-i18n="tk_156">TLS</td><td data-i18n="tk_157">The encryption behind HTTPS. The certificate it presents often carries the device's name.</td></tr>
+<tr><td data-i18n="tk_158">TTL (time to live)</td><td data-i18n="tk_159">A small countdown number attached to network replies. Its starting value hints at the operating system.</td></tr>
+<tr><td data-i18n="tk_160">UPnP (Universal Plug and Play)</td><td data-i18n="tk_161">The family of protocols (including SSDP) that lets home devices discover each other.</td></tr>
+<tr><td data-i18n="tk_162">VPN (Virtual Private Network)</td><td data-i18n="tk_163">An encrypted tunnel that places you on a remote network. Because it is routed, local tricks like ARP cannot reach the devices on the far side.</td></tr>
+</table>
+</div>
+
 </div>
 <div class="tech-column">
 
@@ -443,41 +478,6 @@
 </details>
 <p data-i18n="tk_103">The one thing you may notice the first time you scan is a <b>Windows Firewall prompt</b>. That is the mDNS and SSDP discovery asking to listen for replies, which it has to do in order to hear Chromecasts, printers, and similar devices.</p>
 <p data-i18n="tk_103_p2">Allow it on private networks and you will not be asked again. Deny it and those two discovery methods simply find nothing, while the rest of the scan carries on as normal.</p>
-</div>
-
-<div class="tech-sec" id="glossary">
-<h2 data-i18n="tk_104">Glossary</h2>
-<p data-i18n="tk_105">Plain-language definitions of the networking terms and abbreviations used on this page, in alphabetical order.</p>
-<table class="spec-table"><tr><th data-i18n="tk_106">Term</th><th data-i18n="tk_107">What it means</th></tr>
-<tr><td data-i18n="tk_108">ARP (Address Resolution Protocol)</td><td data-i18n="tk_109">How a computer finds the hardware ID (MAC) of another device on the same local network. Windows keeps a short-lived table of these, which KillerScan reads for an instant device list.</td></tr>
-<tr><td data-i18n="tk_110">DNS (Domain Name System)</td><td data-i18n="tk_111">The system that turns names into addresses and back. KillerScan asks it for the name attached to each address.</td></tr>
-<tr><td data-i18n="tk_112">Fingerprint probe</td><td data-i18n="tk_113">A small, targeted request that gets a device to reveal something identifying, such as a web page title, an SSH greeting, a certificate name, or an SNMP description.</td></tr>
-<tr><td data-i18n="tk_114">Gateway</td><td data-i18n="tk_115">The address of your router, the device that links your local network to the internet.</td></tr>
-<tr><td data-i18n="tk_116">Hostname</td><td data-i18n="tk_117">The human-readable name a device goes by on the network, such as "living-room-tv".</td></tr>
-<tr><td data-i18n="tk_118">HTTP / HTTPS</td><td data-i18n="tk_119">The protocol web pages use (HTTPS is the encrypted version). An admin web page is a strong clue to what a device is.</td></tr>
-<tr><td data-i18n="tk_120">ICMP / ping</td><td data-i18n="tk_121">ICMP is a low-level messaging protocol; a "ping" is its "are you there?" message, used to see whether an address answers.</td></tr>
-<tr><td data-i18n="tk_122">IEEE</td><td data-i18n="tk_123">The standards body that hands out MAC address ranges to manufacturers.</td></tr>
-<tr><td data-i18n="tk_124">MAC address</td><td data-i18n="tk_125">A hardware ID built into every network device by its maker. The first half identifies the manufacturer.</td></tr>
-<tr><td data-i18n="tk_126">MA-L / MA-M / MA-S</td><td data-i18n="tk_127">The three sizes of MAC address block the IEEE assigns (large, medium, small). A smaller block points to a more specific maker.</td></tr>
-<tr><td data-i18n="tk_128">mDNS (Bonjour)</td><td data-i18n="tk_129">A way devices announce their name and services on the local network with no central server. Used by Apple devices, printers, and Chromecasts.</td></tr>
-<tr><td data-i18n="tk_130">NetBIOS</td><td data-i18n="tk_131">An older Windows naming service. KillerScan uses it as a last resort to get a machine's name.</td></tr>
-<tr><td data-i18n="tk_132">Next-hop</td><td data-i18n="tk_133">The next device your traffic passes through toward a destination (your router, or a VPN's gateway). Its MAC is what you get back for anything beyond your local segment.</td></tr>
-<tr><td data-i18n="tk_134">OUI (Organizationally Unique Identifier)</td><td data-i18n="tk_135">The manufacturer-specific front part of a MAC address. Looking it up gives the maker's name.</td></tr>
-<tr><td data-i18n="tk_136">Ping sweep</td><td data-i18n="tk_137">Pinging every address in a range at once to see which ones are alive.</td></tr>
-<tr><td data-i18n="tk_138">Port</td><td data-i18n="tk_139">A numbered "door" on a device. Each common service (web, file sharing, remote desktop) listens on a known port number.</td></tr>
-<tr><td data-i18n="tk_140">Randomized MAC</td><td data-i18n="tk_141">A fake, temporary MAC address a phone invents for privacy, so it cannot be tracked by hardware ID.</td></tr>
-<tr><td data-i18n="tk_142">RDP (Remote Desktop Protocol)</td><td data-i18n="tk_143">The Windows remote-desktop service (port 3389). Its presence is a sign of a Windows machine.</td></tr>
-<tr><td data-i18n="tk_144">SMB (Server Message Block)</td><td data-i18n="tk_145">Windows file-and-printer sharing (port 445). Common on PCs and NAS boxes.</td></tr>
-<tr><td data-i18n="tk_146">SNMP (Simple Network Management Protocol)</td><td data-i18n="tk_147">A standard way network gear and printers report "what I am". KillerScan reads the description line.</td></tr>
-<tr><td data-i18n="tk_148">SSDP (part of UPnP)</td><td data-i18n="tk_149">A discovery broadcast used by smart TVs, media players, and similar gear to announce themselves.</td></tr>
-<tr><td data-i18n="tk_150">SSH (Secure Shell)</td><td data-i18n="tk_151">A secure remote-login service (port 22), common on Linux hosts and network gear. Its greeting text names the software.</td></tr>
-<tr><td data-i18n="tk_152">Subnet</td><td data-i18n="tk_153">A block of addresses on one local network, written like 192.168.50.0/24 (the "/24" meaning 256 addresses).</td></tr>
-<tr><td data-i18n="tk_154">TCP</td><td data-i18n="tk_155">The connection-based part of internet traffic. KillerScan opens TCP connections to test ports and to check whether a silent host is alive.</td></tr>
-<tr><td data-i18n="tk_156">TLS</td><td data-i18n="tk_157">The encryption behind HTTPS. The certificate it presents often carries the device's name.</td></tr>
-<tr><td data-i18n="tk_158">TTL (time to live)</td><td data-i18n="tk_159">A small countdown number attached to network replies. Its starting value hints at the operating system.</td></tr>
-<tr><td data-i18n="tk_160">UPnP (Universal Plug and Play)</td><td data-i18n="tk_161">The family of protocols (including SSDP) that lets home devices discover each other.</td></tr>
-<tr><td data-i18n="tk_162">VPN (Virtual Private Network)</td><td data-i18n="tk_163">An encrypted tunnel that places you on a remote network. Because it is routed, local tricks like ARP cannot reach the devices on the far side.</td></tr>
-</table>
 </div>
 
 </div>
