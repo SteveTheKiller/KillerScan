@@ -12,19 +12,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Fixed
 - Preference and history saves preserve existing files on failure, keep unsaved edits for retry, and report when changes could not be saved.
 - Concurrent app instances preserve saved scans and retention changes instead of overwriting newer history.
-- Vendor database updates preserve the prior complete file on failure and keep lookups available throughout reloads.
-- Scan history includes empty results and final automatic deep-profile results, with canceled or partial runs labeled.
-- Reports keep the scanned target, timestamp and captured results when pending input or live results change during export.
 - Demo device types and SSH usernames stay in memory without reading or changing saved real-device values.
-- The public subnet helper rejects IPv6 addresses and malformed CIDR suffixes before expanding hosts.
-- Terminal title sequences accept BEL and ESC-backslash terminators across split reads and preserve UTF-8 titles.
-- Stopping a scan cancels active HTTP and TLS fingerprint connections and prevents probes of later ports.
+- Vendor database updates preserve the prior complete file on failure and keep lookups available throughout reloads.
 - Executable installation verifies the complete copy and preserves recovery files if replacement fails.
-- Window resize minimums stay within the current monitor's work area on small or scaled displays.
-- Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.
-- The shortcuts card shows shadows at its edges when more content is out of view.
+- Reports keep the scanned target, timestamp and captured results when pending input or live results change during export.
+- Scan history includes empty results and final automatic deep-profile results, with canceled or partial runs labeled.
+- The public subnet helper rejects IPv6 addresses and malformed CIDR suffixes before expanding hosts.
 - A silent install or update that finds KillerScan running exits with 1618, which Intune, Configuration Manager and RMM tools retry, instead of a general failure.
 - Chocolatey publishing reports failure when validation is still failing after a retry.
+- Window resize minimums stay within the current monitor's work area on small or scaled displays.
+- The shortcuts card shows shadows at its edges when more content is out of view.
+- Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.
+- Terminal title sequences accept BEL and ESC-backslash terminators across split reads and preserve UTF-8 titles.
+- Stopping a scan cancels active HTTP and TLS fingerprint connections and prevents probes of later ports.
+- HTTP fingerprints follow bounded redirects only on the scanned IP, preserving local panels without contacting or labeling another device.
 
 ## [1.8.3] - 2026-10-19
 

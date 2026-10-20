@@ -967,8 +967,7 @@ namespace KillerScan.Engine
             using var handler = new HttpClientHandler
             {
                 ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
-                AllowAutoRedirect = true,
-                MaxAutomaticRedirections = 2,
+                AllowAutoRedirect = false,
             };
             using var client = new HttpClient(handler)
             {
@@ -983,7 +982,8 @@ namespace KillerScan.Engine
                 try
                 {
                     var scheme = https ? "https" : "http";
-                    using var resp = await client.GetAsync($"{scheme}://{addr}:{port}/", ct);
+                    using var resp = await GetDeviceResponseAsync(client, new Uri($"{scheme}://{addr}:{port}/"), addr, ct);
+                    if (resp == null) continue;
                     var body = await resp.Content.ReadAsStringAsync();
                     ct.ThrowIfCancellationRequested();
                     if (resp.Headers.TryGetValues("Server", out var serverVals))
@@ -999,6 +999,26 @@ namespace KillerScan.Engine
                 catch { }
             }
             ct.ThrowIfCancellationRequested();
+        }
+
+        private static async Task<HttpResponseMessage?> GetDeviceResponseAsync(HttpClient client, Uri uri, IPAddress address, CancellationToken ct)
+        {
+            for (int hop = 0; hop <= 2; hop++)
+            {
+                ct.ThrowIfCancellationRequested();
+                var response = await client.GetAsync(uri, ct);
+                int status = (int)response.StatusCode;
+                if (status < 300 || status >= 400) return response;
+                Uri? location = response.Headers.Location;
+                response.Dispose();
+                if (hop == 2 || status is not (301 or 302 or 303 or 307 or 308) || location == null ||
+                    !Uri.TryCreate(uri, location, out var next) ||
+                    (next.Scheme != Uri.UriSchemeHttp && next.Scheme != Uri.UriSchemeHttps) ||
+                    next.UserInfo.Length != 0 || !IPAddress.TryParse(next.Host, out var target) || !target.Equals(address))
+                    return null;
+                uri = next;
+            }
+            return null;
         }
 
         /// <summary>
