@@ -88,10 +88,14 @@ namespace KillerScan.Engine
 
             try
             {
-                var dir = Path.GetDirectoryName(path);
-                if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
-                PublishDatabase(path, newContent);
-                OuiLookup.Reload();
+                lock (OuiLookup.PublicationGate)
+                {
+                    current = OuiLookup.Count;
+                    if (bestCount < current)
+                        return (false, current, new Status("Str_Db_Smaller", bestCount, current));
+                    PublishDatabase(path, newContent);
+                    if (!OuiLookup.ReloadFrom(path)) throw new IOException("The saved vendor database could not be loaded. The prior lookup table is still active.");
+                }
             }
             catch (Exception ex)
             {

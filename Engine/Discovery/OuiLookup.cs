@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 
 namespace KillerScan.Engine
 {
@@ -13,8 +14,35 @@ namespace KillerScan.Engine
     /// </summary>
     public static class OuiLookup
     {
-        private static readonly Dictionary<string, string> OuiTable = new(StringComparer.OrdinalIgnoreCase);
-        private static bool _loaded;
+        internal static readonly object PublicationGate = new();
+        private static Snapshot? _snapshot;
+
+        private sealed class Snapshot(Dictionary<string, string> table, bool external, DateTime? refreshed, bool failed)
+        {
+            internal readonly Dictionary<string, string> Table = table;
+            internal readonly bool External = external;
+            internal readonly DateTime? Refreshed = refreshed;
+            internal readonly bool Failed = failed;
+        }
+
+        private static Snapshot Current
+        {
+            get
+            {
+                var snapshot = Volatile.Read(ref _snapshot);
+                if (snapshot != null) return snapshot;
+                lock (PublicationGate)
+                {
+                    snapshot = _snapshot;
+                    if (snapshot == null)
+                    {
+                        snapshot = LoadCore(ExternalFilePath);
+                        Volatile.Write(ref _snapshot, snapshot);
+                    }
+                    return snapshot;
+                }
+            }
+        }
 
         /// <summary>Writable copy that overrides the embedded list once the user refreshes it.</summary>
         public static string ExternalFilePath => Path.Combine(
@@ -22,44 +50,57 @@ namespace KillerScan.Engine
             "KillerScan", "oui.txt");
 
         /// <summary>When the external list was last written; null when running on the bundled copy.</summary>
-        public static DateTime? LastRefreshed { get; private set; }
+        public static DateTime? LastRefreshed => Current.Refreshed;
 
         /// <summary>True when the loaded list is the user-refreshed external file rather than the bundled one.</summary>
-        public static bool UsingExternal { get; private set; }
+        public static bool UsingExternal => Current.External;
 
         /// <summary>Human-readable provenance for the About screen.</summary>
-        public static string LastRefreshedDisplay =>
-            LastRefreshed.HasValue ? $"refreshed {LastRefreshed.Value:yyyy-MM-dd}" : "bundled with the app";
-
-        public static void Load()
+        public static string LastRefreshedDisplay
         {
-            if (_loaded) return;
-            LoadCore();
-            _loaded = true;
+            get
+            {
+                var snapshot = Current;
+                return snapshot.Refreshed.HasValue ? $"refreshed {snapshot.Refreshed.Value:yyyy-MM-dd}" : "bundled with the app";
+            }
         }
+
+        public static void Load() => _ = Current;
 
         /// <summary>Re-reads the database from disk (used after an in-app refresh).</summary>
-        public static void Reload()
+        public static void Reload() => ReloadFrom(ExternalFilePath);
+
+        internal static bool ReloadFrom(string externalPath)
         {
-            OuiTable.Clear();
-            LoadCore();
-            _loaded = true;
+            lock (PublicationGate)
+            {
+                var snapshot = LoadCore(externalPath);
+                // A failed refresh never withdraws a complete table already serving readers.
+                if (snapshot.Failed && _snapshot != null) return false;
+                Volatile.Write(ref _snapshot, snapshot);
+                return !snapshot.Failed;
+            }
         }
 
-        private static void LoadCore()
+        private static Snapshot LoadCore(string externalPath)
         {
             // Load whichever list is LARGER. A new app version can bundle a fresher database than
             // the user's last in-app refresh, and an upgrade should never keep serving older data
             // just because an external copy exists. A tie goes to the external copy, so a user
             // refresh that matches the bundle keeps its provenance and refresh date in About.
             var external = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            bool failed = false;
+            DateTime? refreshed = null;
             try
             {
-                if (File.Exists(ExternalFilePath))
-                    using (var r = new StreamReader(ExternalFilePath))
-                        LoadFrom(r, external);
+                using var r = new StreamReader(externalPath);
+                LoadFrom(r, external);
+                refreshed = File.GetLastWriteTime(externalPath);
+                if (external.Count == 0) failed = true;
             }
-            catch { external.Clear(); }
+            catch (FileNotFoundException) { }
+            catch (DirectoryNotFoundException) { }
+            catch { external.Clear(); failed = true; }
 
             var bundled = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             try
@@ -67,21 +108,21 @@ namespace KillerScan.Engine
                 var assembly = Assembly.GetExecutingAssembly();
                 var resourceName = assembly.GetManifestResourceNames()
                     .FirstOrDefault(n => n.EndsWith("oui.txt"));
-                if (resourceName != null)
+                if (resourceName == null) failed = true;
+                else
                 {
                     using var stream = assembly.GetManifestResourceStream(resourceName);
                     if (stream != null)
                         using (var reader = new StreamReader(stream))
                             LoadFrom(reader, bundled);
+                    else failed = true;
                 }
             }
-            catch { bundled.Clear(); }
+            catch { bundled.Clear(); failed = true; }
 
             bool useExternal = external.Count > 0 && external.Count >= bundled.Count;
             var chosen = useExternal ? external : bundled;
-            foreach (var kv in chosen) OuiTable[kv.Key] = kv.Value;
-            UsingExternal = useExternal;
-            LastRefreshed = useExternal ? File.GetLastWriteTime(ExternalFilePath) : (DateTime?)null;
+            return new Snapshot(chosen, useExternal, useExternal ? refreshed : null, failed);
         }
 
         private static void LoadFrom(StreamReader reader, Dictionary<string, string> table)
@@ -102,18 +143,18 @@ namespace KillerScan.Engine
 
         public static string GetVendor(string macAddress)
         {
-            if (!_loaded) Load();
+            var table = Current.Table;
             if (string.IsNullOrEmpty(macAddress)) return string.Empty;
 
             // Normalize the MAC to raw uppercase hex, then try the most specific block first:
             // MA-S (36-bit / 9 hex) -> MA-M (28-bit / 7 hex) -> MA-L (24-bit / 6 hex).
             var hex = new string([.. macAddress.Where(Uri.IsHexDigit)]).ToUpperInvariant();
             if (hex.Length < 6) return string.Empty;
-            if (hex.Length >= 9 && OuiTable.TryGetValue(hex[..9], out var v9)) return v9;
-            if (hex.Length >= 7 && OuiTable.TryGetValue(hex[..7], out var v7)) return v7;
-            return OuiTable.TryGetValue(hex[..6], out var v6) ? v6 : string.Empty;
+            if (hex.Length >= 9 && table.TryGetValue(hex[..9], out var v9)) return v9;
+            if (hex.Length >= 7 && table.TryGetValue(hex[..7], out var v7)) return v7;
+            return table.TryGetValue(hex[..6], out var v6) ? v6 : string.Empty;
         }
 
-        public static int Count => OuiTable.Count;
+        public static int Count => Current.Table.Count;
     }
 }
