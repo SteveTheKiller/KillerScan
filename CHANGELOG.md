@@ -25,6 +25,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.
 - Terminal title sequences accept BEL and ESC-backslash terminators across split reads and preserve UTF-8 titles.
 - Stopping a scan cancels active HTTP and TLS fingerprint connections and prevents probes of later ports.
+- Stopping during MAC resolution returns promptly, skips queued lookups and keeps native work bounded across scans.
 - HTTP fingerprints follow bounded redirects only on the scanned IP, preserving local panels without contacting or labeling another device.
 
 ## [1.8.3] - 2026-10-19

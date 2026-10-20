@@ -15,6 +15,7 @@ namespace KillerScan.Engine
         private readonly IScanDiscovery _discovery;
         public NetworkScanner() : this(new MulticastScanDiscovery()) { }
         public NetworkScanner(IScanDiscovery discovery) => _discovery = discovery ?? throw new ArgumentNullException(nameof(discovery));
+        private static readonly SemaphoreSlim NativeMacSlots = new(8);
 
         // Common ports to probe for device type detection
         private static readonly int[] ProbePorts = [
@@ -135,6 +136,7 @@ namespace KillerScan.Engine
         /// </summary>
         public virtual async Task<List<NetworkDevice>> ScanSubnetAsync(string cidr, CancellationToken ct, bool fullScan = true)
         {
+            ct.ThrowIfCancellationRequested();
             FlushLocalDnsCache();
             // ScanTargets handles one or many comma-separated targets (CIDR, single host, or a
             // range) and de-duplicates overlaps. The UI validates the same string before getting
@@ -217,7 +219,8 @@ namespace KillerScan.Engine
                 var addr = IPAddress.Parse(ip);
                 string mac = discoveredHosts[ip].Mac;
                 if (string.IsNullOrEmpty(mac))
-                    mac = await Task.Run(() => GetMacAddress(addr));
+                    mac = await ResolveMacAsync(addr, ct);
+                ct.ThrowIfCancellationRequested();
                 discoveredHosts[ip] = (addr, mac);
             });
             await Task.WhenAll(macTasks);
@@ -350,6 +353,19 @@ namespace KillerScan.Engine
             {
                 return string.Empty;
             }
+        }
+
+        private static async Task<string> ResolveMacAsync(IPAddress address, CancellationToken ct)
+        {
+            await NativeMacSlots.WaitAsync(ct);
+            // A started native call owns its slot until it actually returns, even when the
+            // caller has canceled and a later scan is waiting for the same capacity.
+            var lookup = Task.Run(() =>
+            {
+                try { ct.ThrowIfCancellationRequested(); return GetMacAddress(address); }
+                finally { NativeMacSlots.Release(); }
+            });
+            return await AwaitWithCancellation(lookup, ct);
         }
 
         private static async Task AwaitWithCancellation(Task task, CancellationToken token)
@@ -486,7 +502,7 @@ namespace KillerScan.Engine
             {
                 IpAddress  = ip,
                 // Fresh MAC via ARP.
-                MacAddress = await AwaitWithCancellation(Task.Run(() => GetMacAddress(addr), ct), ct)
+                MacAddress = await ResolveMacAsync(addr, ct)
             };
 
             // Hostname + TTL alongside the port sweep.
