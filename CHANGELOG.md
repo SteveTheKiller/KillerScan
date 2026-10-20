@@ -8,6 +8,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 - The shortcuts card shows shadows at its edges when more content is out of view.
+- A silent install or update that finds KillerScan running exits with 1618, which Intune, Configuration Manager and RMM tools retry, instead of a general failure.
 
 ## [1.8.3] - 2026-10-19
 

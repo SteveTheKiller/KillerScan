@@ -35,6 +35,9 @@ namespace KillerFamily.Deployment
                 int code = current is Win32Exception native ? native.NativeErrorCode :
                     current is IOException ? current.HResult & 0xffff : 0;
                 if (code == 39 || code == DiskFull) return DiskFull;
+                // Sharing or lock violation: the copy being replaced is running. Report it as busy
+                // so Intune, Configuration Manager and RMM tools retry instead of failing.
+                if (code == 32 || code == 33) return Busy;
                 if (code == AccessDenied || code == Cancelled || code == Busy || code == SecurityRejected)
                     return code;
             }
