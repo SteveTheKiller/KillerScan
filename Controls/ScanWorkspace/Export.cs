@@ -12,6 +12,9 @@ namespace KillerScan.Controls
     public partial class ScanWorkspace
     {
         private string _exportContext = "scan";
+        internal Func<FileDialog, bool?>? ExportDialog { get; set; }
+        private bool? ShowExportDialog(FileDialog dialog) => ExportDialog is { } select
+            ? select(dialog) : dialog.ShowDialog(Window.GetWindow(this));
 
         /// <summary>
         /// Which view the export button is acting for. "scan" means one of this control's own
@@ -107,10 +110,11 @@ namespace KillerScan.Controls
                 Filter = Loc("Str_Filter_Csv") + "|*.csv",
                 FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
             };
-            if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
             try
             {
-                File.WriteAllText(dlg.FileName, ReportExport.BuildCsv(ActiveDevices), Encoding.UTF8);
+                string csv = ReportExport.BuildCsv(ActiveDevices);
+                if (ShowExportDialog(dlg) != true) return;
+                File.WriteAllText(dlg.FileName, csv, Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }
             catch (Exception ex)
@@ -128,7 +132,6 @@ namespace KillerScan.Controls
                 Filter = Loc("Str_Filter_Csv") + "|*.csv",
                 FileName = $"KillerScan_Services_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
             };
-            if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
             try
             {
                 // English headers and blanket quoting, matching ReportExport.BuildCsv so both
@@ -138,6 +141,7 @@ namespace KillerScan.Controls
                 foreach (var row in ServicesGrid.Items.OfType<ServiceRow>())
                     text.AppendLine(string.Join(",", ReportExport.CsvField(row.Service), ReportExport.CsvField(row.Port.ToString()),
                         ReportExport.CsvField(row.DeviceName), ReportExport.CsvField(row.IpAddress), ReportExport.CsvField(row.DeviceTypeDisplay)));
+                if (ShowExportDialog(dlg) != true) return;
                 File.WriteAllText(dlg.FileName, text.ToString(), Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }
@@ -152,11 +156,12 @@ namespace KillerScan.Controls
                 Filter = Loc("Str_Filter_Html") + "|*.html",
                 FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.html"
             };
-            if (dlg.ShowDialog(Window.GetWindow(this)) != true) return;
             try
             {
-                string html = ReportExport.BuildHtml(
-                    ActiveDevices, SubnetInput.Text, ThemeManager.Current.ToString().ToLowerInvariant());
+                string html = ReportExport.BuildSnapshotHtml(
+                    ActiveDevices, _active.ScannedSubnet, ThemeManager.Current.ToString().ToLowerInvariant(),
+                    _active.ScannedAt, _active.Completion);
+                if (ShowExportDialog(dlg) != true) return;
                 File.WriteAllText(dlg.FileName, html, Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }

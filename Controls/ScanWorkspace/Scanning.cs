@@ -55,6 +55,8 @@ namespace KillerScan.Controls
             }
             _active.SubnetText = Targets;
             _active.ScannedSubnet = targets.Summary;
+            _active.ScannedAt = DateTimeOffset.Now;
+            _active.Completion = ScanCompletion.Partial;
             _active.Devices.Clear();
             _topologyPositions.Clear();
             var cts = new CancellationTokenSource();
@@ -89,7 +91,11 @@ namespace KillerScan.Controls
                     }
                 }
             }
-            catch (OperationCanceledException) { if (!_disposed) StatusText.Text = Loc("Str_St_ScanCanceled"); }
+            catch (OperationCanceledException)
+            {
+                _active.Completion = ScanCompletion.Canceled;
+                if (!_disposed) StatusText.Text = Loc("Str_St_ScanCanceled");
+            }
             catch (Exception ex) { if (!_disposed) StatusText.Text = string.Format(Loc("Str_Err_Scan"), ex.Message); }
             finally
             {
@@ -114,6 +120,8 @@ namespace KillerScan.Controls
         private void RecordCompletedRun(ScanCompletion completion = ScanCompletion.Complete)
         {
             var recorded = ScanHistory.Record(_active.ScannedSubnet, _active.Devices, completion);
+            _active.ScannedAt = recorded.Current.ScannedAt;
+            _active.Completion = completion;
             if (_disposed) return;
             if (PersistenceFeedback.Check(recorded.Saved, ScanHistory.Retry, () => ScanHistory.SaveError))
                 HistoryRecorded?.Invoke(this, EventArgs.Empty);

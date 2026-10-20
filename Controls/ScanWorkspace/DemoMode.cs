@@ -31,6 +31,8 @@ namespace KillerScan.Controls
             foreach (var d in demo.Devices) _active.Devices.Add(d);
 
             _active.ScannedSubnet = demo.Subnet;
+            _active.ScannedAt = DateTimeOffset.Now;
+            _active.Completion = ScanCompletion.Complete;
             RefreshDeviceCount();
 
             // Everything the other views read comes from the same fabricated network, so Topology,

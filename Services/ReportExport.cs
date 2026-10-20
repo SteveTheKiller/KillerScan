@@ -71,6 +71,10 @@ namespace KillerScan.Services
         /// lower-case ("dark", "black", ...); every app palette is embedded either way.
         /// </summary>
         internal static string BuildHtml(IEnumerable<NetworkDevice> devices, string subnetText, string themeKey)
+            => BuildSnapshotHtml(devices, subnetText, themeKey, DateTimeOffset.Now, ScanCompletion.Complete);
+
+        internal static string BuildSnapshotHtml(IEnumerable<NetworkDevice> devices, string subnetText, string themeKey,
+            DateTimeOffset scannedAt, ScanCompletion completion)
         {
             string current = string.IsNullOrEmpty(themeKey) ? "dark" : themeKey.ToLowerInvariant();
             var list = devices.OrderBy(d => d.IpSortKey).ToList();
@@ -146,7 +150,14 @@ namespace KillerScan.Services
 
             // Three separate words rather than one sentence with the values substituted in: the
             // bold values sit between them, so a language that reorders the clause still gets to.
-            sb.AppendLine($"<p class='meta'>{Esc(L("Str_Rep_Subnet", "Subnet"))} <b>{Esc(subnetText)}</b> &middot; {Esc(L("Str_Rep_Scanned", "Scanned"))} <b>{DateTime.Now:yyyy-MM-dd HH:mm}</b> &middot; <b>{list.Count}</b> {Esc(L("Str_Rep_Devices", "devices"))}</p>");
+            string state = completion switch
+            {
+                ScanCompletion.Canceled => L("Str_St_ScanCanceled", "Scan canceled"),
+                ScanCompletion.Partial => L("Str_History_Partial", "Partial scan"),
+                _ => string.Empty
+            };
+            string status = state.Length == 0 ? string.Empty : " &middot; <b>" + Esc(state) + "</b>";
+            sb.AppendLine($"<p class='meta'>{Esc(L("Str_Rep_Subnet", "Subnet"))} <b>{Esc(subnetText)}</b> &middot; {Esc(L("Str_Rep_Scanned", "Scanned"))} <b>{scannedAt:yyyy-MM-dd HH:mm}</b> &middot; <b>{list.Count}</b> {Esc(L("Str_Rep_Devices", "devices"))}{status}</p>");
 
             // The report's headers reuse the grid's own column keys, so the two never disagree.
             sb.AppendLine("<div class='tablewrap'><table id='tbl'><thead><tr>");

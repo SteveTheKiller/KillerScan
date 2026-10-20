@@ -18,5 +18,7 @@ namespace KillerScan.Models
         public bool IsScanning => Cts != null;
 
         public string ScannedSubnet { get; set; } = "";
+        public DateTimeOffset ScannedAt { get; set; } = DateTimeOffset.Now;
+        public ScanCompletion Completion { get; set; } = ScanCompletion.Partial;
     }
 }

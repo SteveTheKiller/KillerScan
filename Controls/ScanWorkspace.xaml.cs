@@ -187,11 +187,13 @@ namespace KillerScan.Controls
             _runDeepAfterScan = profile.DeepScanAfter;
             Scan();
         }
-        internal void LoadSnapshot(string target, IEnumerable<NetworkDevice> devices)
+        internal void LoadSnapshot(string target, IEnumerable<NetworkDevice> devices, DateTimeOffset? scannedAt = null)
         {
             if (_disposed || IsScanning) return;
             Targets = target;
             _active.ScannedSubnet = target;
+            _active.ScannedAt = scannedAt ?? DateTimeOffset.Now;
+            _active.Completion = ScanCompletion.Complete;
             _active.Devices.Clear();
             foreach (var device in devices) _active.Devices.Add(device);
             RefreshDeviceCount();

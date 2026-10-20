@@ -57,6 +57,7 @@ internal static class ScanLifecycleTests
         Require(ScanHistory.Entries.Count == 1 && !DevicePreferences.HasTrustedDevices,
             "A first empty scan is recorded without creating a trusted-device baseline.");
         CheckDeepProfile();
+        ExportSnapshotTests.Run();
         Console.WriteLine("PASS: populated, empty, canceled and failed scan history through the workspace command.");
     }
 
@@ -116,6 +117,7 @@ internal static class ScanLifecycleTests
                 { new() { IpAddress = "192.0.2.1", OpenPorts = [80] } }));
             workspace.RunProfile(new ScanProfile { Target = "192.0.2.1", DeepScanAfter = true });
             Require(workspace.IsScanning && ScanHistory.Entries.Count == 4, "An automatic profile remains active and unsaved while its deep phase is pending.");
+            ExportSnapshotTests.CheckPartial(workspace);
             workspace.RunProfile(new ScanProfile { Target = "192.0.2.1", DeepScanAfter = true });
             workspace.Stop();
             PumpUntil(() => !workspace.IsScanning);
