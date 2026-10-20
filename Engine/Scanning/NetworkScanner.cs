@@ -943,7 +943,7 @@ namespace KillerScan.Engine
         // a web service on a non-standard port.
         private static readonly int[] TlsLikelyPorts = [443, 8443, 8006, 902, 5001, 9443, 4443, 10000, 8834];
 
-        private static async Task ProbeHttpAsync(NetworkDevice device, IPAddress addr, bool deep = false, CancellationToken ct = default)
+        public static async Task ProbeHttpAsync(NetworkDevice device, IPAddress addr, bool deep = false, CancellationToken ct = default)
         {
             (int port, bool https)[] standard =
             [
@@ -1053,7 +1053,7 @@ namespace KillerScan.Engine
         /// <summary>
         /// Pull TLS certificate Subject from the first responsive TLS port.
         /// </summary>
-        private static async Task ProbeTlsCertAsync(NetworkDevice device, IPAddress addr, bool deep = false, CancellationToken ct = default)
+        public static async Task ProbeTlsCertAsync(NetworkDevice device, IPAddress addr, bool deep = false, CancellationToken ct = default)
         {
             int[] standardTls = [443, 8443, 8006, 902, 5001];
 

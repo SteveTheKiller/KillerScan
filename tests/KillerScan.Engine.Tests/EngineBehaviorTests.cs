@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Text;
 using KillerScan.Engine;
 
@@ -119,12 +118,9 @@ internal static class EngineBehaviorTests
         using var later = new LoopbackHttpServer(stall: false, ephemeral: true);
         using var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         var device = new NetworkDevice { IpAddress = "127.0.0.1", OpenPorts = [server.Port, later.Port] };
-        // Exercise the released private probes and the exact cancellation wait used by the deep
-        // fingerprint pass. An explicit port list isolates real HTTP/TLS I/O from runner services.
+        // An explicit port list isolates real HTTP/TLS I/O from runner services.
         var probe = StartFingerprint(probeName, device, cancel.Token);
-        var wait = typeof(NetworkScanner).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
-            .Single(method => method.Name == "AwaitWithCancellation" && !method.IsGenericMethod);
-        var scan = (Task)wait.Invoke(null, new object[] { Task.WhenAll(probe), cancel.Token })!;
+        var scan = probe;
         try
         {
             Require(await Task.WhenAny(server.RequestReceived, scan, Task.Delay(5000)) == server.RequestReceived,
@@ -149,8 +145,8 @@ internal static class EngineBehaviorTests
     }
 
     private static Task StartFingerprint(string probeName, NetworkDevice device, CancellationToken ct = default) =>
-        (Task)typeof(NetworkScanner).GetMethod(probeName, BindingFlags.NonPublic | BindingFlags.Static)!
-            .Invoke(null, new object[] { device, IPAddress.Loopback, true, ct })!;
+        probeName == "ProbeHttpAsync" ? NetworkScanner.ProbeHttpAsync(device, IPAddress.Loopback, true, ct)
+            : NetworkScanner.ProbeTlsCertAsync(device, IPAddress.Loopback, true, ct);
 
     private static async Task RequirePromptCancellation(Task scan, CancellationTokenSource cancel)
     {

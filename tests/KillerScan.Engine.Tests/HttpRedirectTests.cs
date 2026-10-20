@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.Security;
-using System.Reflection;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -56,8 +55,7 @@ internal static class HttpRedirectTests
     private static async Task<NetworkDevice> Probe(int port)
     {
         var device = new NetworkDevice { IpAddress = "127.0.0.1", OpenPorts = [port] };
-        await (Task)typeof(NetworkScanner).GetMethod("ProbeHttpAsync", BindingFlags.Static | BindingFlags.NonPublic)!
-            .Invoke(null, new object[] { device, IPAddress.Loopback, true, CancellationToken.None })!;
+        await NetworkScanner.ProbeHttpAsync(device, IPAddress.Loopback, deep: true);
         return device;
     }
     private static string Redirect(string location) => "HTTP/1.1 302 Found\r\nLocation: " + location + "\r\nServer: Redirect-Fixture\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
