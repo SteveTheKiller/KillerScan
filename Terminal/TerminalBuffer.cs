@@ -201,7 +201,7 @@ namespace KillerScan.Terminal
                             CursorCol = 0; _pendingWrap = false; LineFeed();
                             previousLine = _screen[CursorRow]; previous = 0;
                         }
-                        width = Math.Min(width, Cols);
+                        width = Math.Min(width, Cols - previous);
                         if (width == 2)
                         {
                             ClearCluster(previousLine, previous + 1);

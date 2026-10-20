@@ -47,6 +47,9 @@ internal static class TerminalUnicodeTests
         var repeat = new TerminalBuffer(8, 2); var repeatFeed = new VtParser(repeat);
         Write(repeatFeed, "\u4e2d\u001b[2b");
         Require(repeat.CursorCol == 6 && repeat.LineAt(0)[4].Text == "\u4e2d", "Repeat emits complete wide clusters.");
+        var noWrap = new TerminalBuffer(4, 2); var noWrapFeed = new VtParser(noWrap);
+        Write(noWrapFeed, "\u001b[?7labc\u2764\ufe0f");
+        Require(noWrap.CursorRow == 0 && noWrap.CursorCol == 3 && noWrap.LineAt(0)[3].Text == "\u2764\ufe0f", "Disabled wrapping preserves an edge emoji cluster safely.");
         Console.WriteLine("PASS: UTF-8 parser preserves terminal widths for accents, CJK, supplementary and emoji clusters.");
     }
     private static void Write(VtParser parser, string text)

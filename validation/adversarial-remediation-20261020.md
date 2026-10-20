@@ -136,6 +136,12 @@ Green: the actual browser tree excludes closed accent controls, and the same two
 
 ## Current evidence
 
+## Final-review follow-ups
+
+The independent Standards review traced a right-edge VS16 promotion when DECAWM is disabled. Ranked causes before reproduction: (1) promotion clamps to total columns instead of remaining columns, (2) wrapping-disabled output still tries to allocate a continuation, (3) promotion loses the cluster. The focused parser regression uses four columns, ESC[?7l and abc + heart + VS16. The intended bounded fix preserves the cluster in the remaining cell without wrapping or writing outside the row.
+
+Observed red: the exact parser input threw IndexOutOfRangeException. Promotion now clamps to columns remaining after its leading cell. Green: the complete cluster remains at the right edge without wrapping; the complete Unicode, UIA and OSC focused suites pass. This is a review-discovered regression in the new width model, corrected before final acceptance.
+
 ## Dependency compatibility inventory
 
 System.Text.Json 10.0.13 is already applied to app/engine. Official repository release/tag API checks on October 20 identified checkout v7.0.1 (3d3c42e5aac5ba805825da76410c181273ba90b1), setup-dotnet v6.0.0 (a98b56852c35b8e3190ac28c8c2271da59106c68), upload-artifact v7.0.2 (cf430e030ddbb5b0abf93d22962f4752f3646cd9) and NuGet/login v1.2.0 (8d196754b4036150537f80ac539e15c2f1028841). Every workflow reference is pinned to its verified commit.
