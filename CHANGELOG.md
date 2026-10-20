@@ -6,6 +6,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.8.4] - Unreleased
 
+### Changed
+- Updated the app and engine JSON dependency to 10.0.13.
+
 ### Fixed
 - Concurrent app instances preserve saved scans and retention changes instead of overwriting newer history.
 - Window resize minimums stay within the current monitor's work area on small or scaled displays.
