@@ -11,6 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 - Concurrent app instances preserve saved scans and retention changes instead of overwriting newer history.
+- Executable installation verifies the complete copy and preserves recovery files if replacement fails.
 - Window resize minimums stay within the current monitor's work area on small or scaled displays.
 - Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.
 - The shortcuts card shows shadows at its edges when more content is out of view.
