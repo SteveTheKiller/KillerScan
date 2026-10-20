@@ -11,6 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Clarified upload throughput as sent payload, including in-flight requests, with a valid acknowledgment required.
 
 ### Fixed
+- Closed website accent pickers stay out of keyboard and accessibility navigation, and return focus to their trigger when dismissed.
 - Repeated same-version Publish refreshes the source ZIP and fails clearly if the archive cannot be replaced.
 - Release monitoring includes KillerScan.Engine on NuGet and reports missing or failed publication.
 - Release dependency checks stop on restore or audit failure, malformed results, missing engine coverage and vulnerable packages.

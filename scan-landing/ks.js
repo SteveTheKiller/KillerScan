@@ -176,7 +176,11 @@
   var topbarEl = document.querySelector('.topbar');
   if (topbarEl && accDots.length) {
     accentBar = document.createElement('div');
+    accentBar.id = 'accentBar';
     accentBar.className = 'accent-bar';
+    accentBar.inert = true;
+    accentBar.setAttribute('aria-hidden', 'true');
+    if (accToggle) accToggle.setAttribute('aria-controls', accentBar.id);
     var pill = document.createElement('div'); pill.className = 'pill';
     var grip = document.createElement('span'); grip.className = 'grip'; grip.setAttribute('aria-hidden', 'true');
     pill.appendChild(grip);
@@ -221,13 +225,14 @@
     // Default position: top-right corner, nearest the theme picker (still draggable from there).
     requestAnimationFrame(function () { dragDx = dragClamp(1e6); pill.style.transform = 'translateX(' + dragDx + 'px)'; });
   }
-  function showAccentBar() { if (accentBar && NEUTRAL.indexOf(root.getAttribute('data-theme')) >= 0) { var contentPane = document.querySelector('.content'); if (contentPane) accentBar.style.top = Math.round(contentPane.getBoundingClientRect().top) + 'px'; accentBar.classList.add('show'); if (accToggle) accToggle.setAttribute('aria-expanded', 'true'); } }
-  function hideAccentBar() { if (accentBar) { accentBar.classList.remove('show'); if (accToggle) accToggle.setAttribute('aria-expanded', 'false'); } }
+  function showAccentBar() { if (accentBar && NEUTRAL.indexOf(root.getAttribute('data-theme')) >= 0) { var contentPane = document.querySelector('.content'); if (contentPane) accentBar.style.top = Math.round(contentPane.getBoundingClientRect().top) + 'px'; accentBar.inert = false; accentBar.setAttribute('aria-hidden', 'false'); accentBar.classList.add('show'); if (accToggle) accToggle.setAttribute('aria-expanded', 'true'); } }
+  function hideAccentBar() { if (accentBar) { if (accentBar.contains(document.activeElement) && accToggle) accToggle.focus(); accentBar.inert = true; accentBar.setAttribute('aria-hidden', 'true'); accentBar.classList.remove('show'); if (accToggle) accToggle.setAttribute('aria-expanded', 'false'); } }
   accDots.forEach(function (d) { d.addEventListener('click', function () { applyAccent(d.dataset.accent); }); });
   if (accToggle) {
     accToggle.addEventListener('click', function (e) { e.stopPropagation(); if (accentBar && accentBar.classList.contains('show')) hideAccentBar(); else showAccentBar(); });
   }
   document.addEventListener('click', function (e) { if (accentBar && accentBar.classList.contains('show') && !e.target.closest('.accent-bar') && !e.target.closest('#accentToggle')) hideAccentBar(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && accentBar && accentBar.classList.contains('show')) { hideAccentBar(); e.preventDefault(); } });
 
   // Localized visible text, accessible names, metadata, and generated controls.
   var I18N = (typeof window !== 'undefined' && window.I18N) ? window.I18N : {};

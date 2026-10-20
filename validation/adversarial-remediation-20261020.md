@@ -122,6 +122,18 @@ Red: the second same-version Publish copied the changed source into its build ar
 
 Initial green: actual repeated Publish refreshes both fixture build and source content. A locked destination makes MSBuild return failure while the prior ZIP hash remains unchanged; retry succeeds after the lock is released. Tracked Unicode filenames survive, neighboring output artifacts remain intact and an empty tracked-source set fails explicitly. Native interruption behavior beyond the controlled lock case remains a separate lab gate.
 
+## FAM-004 diagnosis
+
+Ranked hypotheses before the actual browser check:
+
+1. Opacity and pointer-events hide the strip visually while leaving its buttons in keyboard navigation.
+2. The closed strip remains in the accessibility tree because no inert or hidden state is set.
+3. Closing while focused inside leaves focus stranded on an invisible control.
+
+Red: on the local index page, the browser accessibility tree exposed all eight accent controls while the trigger was collapsed. Two Tab presses from the accent trigger moved focus to the invisible Red control. The repair makes the strip inert and aria-hidden at initialization and close, restores trigger focus when closing from inside, and removes inert state only when opening. Existing CSS geometry and transitions are unchanged.
+
+Green: the actual browser tree excludes closed accent controls, and the same two Tab presses now reach the visible Download link. Opening exposes all eight choices. Escape from Red closes the strip and focuses its trigger. On Help, Technical, About and MCP, initial closed state excludes the choices, opening exposes them, and Close returns trigger focus. The open picker was visually inspected. All five page references received a cache-version update. The required landing-page parity script passes for five sites and four shared carousel copies. Other app sites were not changed.
+
 ## Current evidence
 
 | Finding | Local commit | Focused evidence |
