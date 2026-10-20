@@ -108,6 +108,20 @@ Red: the published-package fixture generated a table without any NuGet row. Sett
 
 The six monitor scenarios pass under PowerShell 7. Cross-version fixture execution also exposed PowerShell 5.1's different empty-JSON-array pipeline behavior; the fallback now keeps only entries with a run status before deciding pending versus missing. A real MSBuild property evaluation confirms the engine version resolves to 1.8.4, matching the current app version.
 
+## FAM-003 diagnosis
+
+Ranked hypotheses before the disposable Publish fixture:
+
+1. The bundler returns early when a versioned archive already exists.
+2. Publish ignores bundler failures and can report success with an incomplete source deliverable.
+3. Native file replacement or source discovery can fail after damaging the previous archive.
+
+The fixture clones the actual BundleSource target into a minimal disposable MSBuild project and uses the actual bundler. Its build artifact copies a tracked input, making paired binary/source freshness directly observable across same-version Publish runs. It also tests destination locks and tracked Unicode paths without publishing the app.
+
+Red: the second same-version Publish copied the changed source into its build artifact while the ZIP retained the first source. An adjacent fixture also showed quoted Unicode git paths could prevent the first archive from being created while Publish still returned success. The repair always creates a fresh staged archive, publishes it atomically, reports source-discovery failures and lets bundler failure fail the actual Publish target.
+
+Initial green: actual repeated Publish refreshes both fixture build and source content. A locked destination makes MSBuild return failure while the prior ZIP hash remains unchanged; retry succeeds after the lock is released. Tracked Unicode filenames survive, neighboring output artifacts remain intact and an empty tracked-source set fails explicitly. Native interruption behavior beyond the controlled lock case remains a separate lab gate.
+
 ## Current evidence
 
 | Finding | Local commit | Focused evidence |
