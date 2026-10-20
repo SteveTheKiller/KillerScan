@@ -18,6 +18,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Demo device types and SSH usernames stay in memory without reading or changing saved real-device values.
 - The public subnet helper rejects IPv6 addresses and malformed CIDR suffixes before expanding hosts.
 - Terminal title sequences accept BEL and ESC-backslash terminators across split reads and preserve UTF-8 titles.
+- Stopping a scan cancels active HTTP and TLS fingerprint connections and prevents probes of later ports.
 - Executable installation verifies the complete copy and preserves recovery files if replacement fails.
 - Window resize minimums stay within the current monitor's work area on small or scaled displays.
 - Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.

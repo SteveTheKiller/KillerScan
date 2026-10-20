@@ -116,11 +116,12 @@ internal static class EngineBehaviorTests
     private static async Task FingerprintCancellation(string probeName, bool tls)
     {
         using var server = new LoopbackHttpServer(stall: true, ephemeral: true, tls: tls);
+        using var later = new LoopbackHttpServer(stall: false, ephemeral: true);
         using var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-        var device = new NetworkDevice { IpAddress = "127.0.0.1", OpenPorts = [server.Port] };
+        var device = new NetworkDevice { IpAddress = "127.0.0.1", OpenPorts = [server.Port, later.Port] };
         // Exercise the released private probes and the exact cancellation wait used by the deep
         // fingerprint pass. An explicit port list isolates real HTTP/TLS I/O from runner services.
-        var probe = StartFingerprint(probeName, device);
+        var probe = StartFingerprint(probeName, device, cancel.Token);
         var wait = typeof(NetworkScanner).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
             .Single(method => method.Name == "AwaitWithCancellation" && !method.IsGenericMethod);
         var scan = (Task)wait.Invoke(null, new object[] { Task.WhenAll(probe), cancel.Token })!;
@@ -130,7 +131,11 @@ internal static class EngineBehaviorTests
                 "The real " + (tls ? "TLS ClientHello" : "HTTP GET") + " reaches the stalled fixture.");
             Require(!probe.IsCompleted && !scan.IsCompleted, "Fingerprinting is still waiting for the fixture response.");
             await RequirePromptCancellation(scan, cancel);
-            Require(!probe.IsCompleted, "Stop returns before the fingerprint request times out.");
+            Require(await Task.WhenAny(probe, Task.Delay(500)) == probe, "Stop must terminate the active fingerprint, not only its outer wait.");
+            Require(await Task.WhenAny(server.Disconnected, Task.Delay(500)) == server.Disconnected,
+                "Stop closes the active HTTP/TLS connection within 500 ms.");
+            await Task.Delay(100);
+            Require(!later.RequestReceived.IsCompleted, "Stop prevents requests to later fingerprint ports.");
             Require(device.HttpTitle.Length == 0 && device.HttpServer.Length == 0 && device.TlsSubject.Length == 0,
                 "The stalled fingerprint has no completed HTTP or TLS result.");
         }
@@ -138,14 +143,14 @@ internal static class EngineBehaviorTests
         {
             cancel.Cancel();
             server.Dispose();
-            await probe;
+            try { await probe; } catch (OperationCanceledException) { }
             try { await scan; } catch (OperationCanceledException) { }
         }
     }
 
-    private static Task StartFingerprint(string probeName, NetworkDevice device) =>
+    private static Task StartFingerprint(string probeName, NetworkDevice device, CancellationToken ct = default) =>
         (Task)typeof(NetworkScanner).GetMethod(probeName, BindingFlags.NonPublic | BindingFlags.Static)!
-            .Invoke(null, new object[] { device, IPAddress.Loopback, true })!;
+            .Invoke(null, new object[] { device, IPAddress.Loopback, true, ct })!;
 
     private static async Task RequirePromptCancellation(Task scan, CancellationTokenSource cancel)
     {
@@ -168,10 +173,12 @@ internal static class EngineBehaviorTests
         private readonly CancellationTokenSource _stop = new();
         private readonly ConcurrentBag<TcpClient> _clients = new();
         private readonly TaskCompletionSource<bool> _requested = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource<bool> _disconnected = new(TaskCreationOptions.RunContinuationsAsynchronously);
         private readonly bool _stall;
         private readonly bool _tls;
         public int Port { get; }
         public Task RequestReceived => _requested.Task;
+        public Task Disconnected => _disconnected.Task;
 
         public LoopbackHttpServer(bool stall, bool ephemeral = false, bool tls = false)
         {
@@ -221,7 +228,8 @@ internal static class EngineBehaviorTests
                     if (_stall && (_tls ? tls : http))
                     {
                         _requested.TrySetResult(true);
-                        await Task.Delay(Timeout.Infinite, _stop.Token);
+                        while (await stream.ReadAsync(input, 0, input.Length, _stop.Token) > 0) { }
+                        _disconnected.TrySetResult(true);
                         return;
                     }
                     if (!http) return;

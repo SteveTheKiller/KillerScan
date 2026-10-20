@@ -441,11 +441,11 @@ namespace KillerScan.Engine
             // -- Fingerprint probes: run in parallel, each is gated on relevant open ports --
             var fpTasks = new List<Task>();
             if (device.OpenPorts.Any(p => p == 80 || p == 443 || p == 8006 || p == 8080 || p == 8443 || p == 5000 || p == 5001 || p == 8123))
-                fpTasks.Add(ProbeHttpAsync(device, addr));
+                fpTasks.Add(ProbeHttpAsync(device, addr, ct: token));
             if (device.OpenPorts.Contains(22))
                 fpTasks.Add(ProbeSshBannerAsync(device, addr));
             if (device.OpenPorts.Any(p => p == 443 || p == 8443 || p == 8006 || p == 902))
-                fpTasks.Add(ProbeTlsCertAsync(device, addr));
+                fpTasks.Add(ProbeTlsCertAsync(device, addr, ct: token));
             // NetBIOS + SNMP are UDP -- we probe regardless of TCP state (ports 137/161 UDP).
             fpTasks.Add(ProbeNetbiosAsync(device, addr));
             fpTasks.Add(ProbeSnmpAsync(device, addr));
@@ -540,8 +540,8 @@ namespace KillerScan.Engine
             var fpTasks = new List<Task> { ProbeNetbiosAsync(device, addr), ProbeSnmpAsync(device, addr) };
             if (device.OpenPorts.Count > 0)
             {
-                fpTasks.Add(ProbeHttpAsync(device, addr, deep: true));
-                fpTasks.Add(ProbeTlsCertAsync(device, addr, deep: true));
+                fpTasks.Add(ProbeHttpAsync(device, addr, deep: true, ct: ct));
+                fpTasks.Add(ProbeTlsCertAsync(device, addr, deep: true, ct: ct));
             }
             if (device.OpenPorts.Contains(22))
                 fpTasks.Add(ProbeSshBannerAsync(device, addr));
@@ -943,7 +943,7 @@ namespace KillerScan.Engine
         // a web service on a non-standard port.
         private static readonly int[] TlsLikelyPorts = [443, 8443, 8006, 902, 5001, 9443, 4443, 10000, 8834];
 
-        private static async Task ProbeHttpAsync(NetworkDevice device, IPAddress addr, bool deep = false)
+        private static async Task ProbeHttpAsync(NetworkDevice device, IPAddress addr, bool deep = false, CancellationToken ct = default)
         {
             (int port, bool https)[] standard =
             [
@@ -979,15 +979,15 @@ namespace KillerScan.Engine
 
             foreach (var (port, https) in candidates)
             {
+                ct.ThrowIfCancellationRequested();
                 try
                 {
                     var scheme = https ? "https" : "http";
-                    using var resp = await client.GetAsync($"{scheme}://{addr}:{port}/");
-
+                    using var resp = await client.GetAsync($"{scheme}://{addr}:{port}/", ct);
+                    var body = await resp.Content.ReadAsStringAsync();
+                    ct.ThrowIfCancellationRequested();
                     if (resp.Headers.TryGetValues("Server", out var serverVals))
                         device.HttpServer = string.Join(", ", serverVals).Trim();
-
-                    var body = await resp.Content.ReadAsStringAsync();
                     var m = Regex.Match(body, @"<title[^>]*>([^<]+)</title>", RegexOptions.IgnoreCase);
                     if (m.Success)
                         device.HttpTitle = WebUtility.HtmlDecode(m.Groups[1].Value).Trim();
@@ -995,8 +995,10 @@ namespace KillerScan.Engine
                     if (device.HttpTitle.Length > 0 || device.HttpServer.Length > 0)
                         return;
                 }
+                catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
                 catch { }
             }
+            ct.ThrowIfCancellationRequested();
         }
 
         /// <summary>
@@ -1031,7 +1033,7 @@ namespace KillerScan.Engine
         /// <summary>
         /// Pull TLS certificate Subject from the first responsive TLS port.
         /// </summary>
-        private static async Task ProbeTlsCertAsync(NetworkDevice device, IPAddress addr, bool deep = false)
+        private static async Task ProbeTlsCertAsync(NetworkDevice device, IPAddress addr, bool deep = false, CancellationToken ct = default)
         {
             int[] standardTls = [443, 8443, 8006, 902, 5001];
 
@@ -1043,24 +1045,32 @@ namespace KillerScan.Engine
                 : standardTls;
             foreach (var port in tlsPorts)
             {
+                ct.ThrowIfCancellationRequested();
                 if (!device.OpenPorts.Contains(port)) continue;
                 try
                 {
                     using var tcp = new TcpClient();
+                    using var cancellation = ct.Register(() => tcp.Dispose());
                     var connect = tcp.ConnectAsync(addr, port);
-                    if (await Task.WhenAny(connect, Task.Delay(1500)) != connect || !tcp.Connected)
+                    if (await AwaitWithCancellation(Task.WhenAny(connect, Task.Delay(1500, ct)), ct) != connect)
                         continue;
+                    await connect;
+                    ct.ThrowIfCancellationRequested();
                     using var ssl = new SslStream(tcp.GetStream(), false, (_, _, _, _) => true);
                     var auth = ssl.AuthenticateAsClientAsync(addr.ToString(), null, SslProtocols.None, false);
-                    if (await Task.WhenAny(auth, Task.Delay(1500)) != auth) continue;
+                    if (await AwaitWithCancellation(Task.WhenAny(auth, Task.Delay(1500, ct)), ct) != auth) continue;
+                    await auth;
+                    ct.ThrowIfCancellationRequested();
                     if (ssl.RemoteCertificate != null)
                     {
                         device.TlsSubject = ssl.RemoteCertificate.Subject;
                         return;
                     }
                 }
+                catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
                 catch { }
             }
+            ct.ThrowIfCancellationRequested();
         }
 
         /// <summary>
