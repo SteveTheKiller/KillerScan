@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Diagnostics;
+using System.Threading;
 
 internal static class HistoryRetentionTests
 {
@@ -13,6 +15,23 @@ internal static class HistoryRetentionTests
     private static object? Call(object value, string name, params object[] args) => value.GetType().GetMethod(name, Instance)!.Invoke(value, args);
     private static object? Property(object value, string name) => value.GetType().GetProperty(name, Instance)!.GetValue(value);
     private static void Require(bool condition, string message) { _checks++; if (!condition) throw new InvalidOperationException(message); }
+
+    internal static void WriteConcurrent(string path, string target, string gate)
+    {
+        var assembly = typeof(KillerScan.App).Assembly;
+        var type = assembly.GetType("KillerScan.Services.HistoryArchive", true)!;
+        var archive = Activator.CreateInstance(type, Instance, null, new object[] { path }, null)!;
+        var now = DateTimeOffset.Now;
+        Call(archive, "Load", now);
+        using var ready = EventWaitHandle.OpenExisting(gate + "." + target);
+        using var start = EventWaitHandle.OpenExisting(gate);
+        ready.Set();
+        Require(start.WaitOne(15000), "Concurrent writer receives its start signal.");
+        var entry = Activator.CreateInstance(assembly.GetType("KillerScan.Services.ScanHistoryEntry", true)!)!;
+        entry.GetType().GetProperty("Target")!.SetValue(entry, target);
+        entry.GetType().GetProperty("ScannedAt")!.SetValue(entry, now);
+        Call(archive, "Append", entry, now);
+    }
 
     internal static void Run()
     {
@@ -62,6 +81,57 @@ internal static class HistoryRetentionTests
                 "The new default retains the latest 100 future scans.");
             var freshReload = Archive("new.json"); Load(freshReload, now);
             Require(Entries(freshReload).Count == 100 && Mode(freshReload) == "Count", "Default policy and history survive reload.");
+
+            var writerA = Archive("concurrent.json");
+            var writerB = Archive("concurrent.json");
+            Load(writerA, now); Load(writerB, now);
+            Append(writerA, Entry("writer-A", now), now);
+            Append(writerB, Entry("writer-B", now.AddMinutes(1)), now);
+            var merged = Archive("concurrent.json"); Load(merged, now);
+            Require(Entries(merged).Count == 2 &&
+                (string)Property(Entries(merged)[0]!, "Target")! == "writer-A" &&
+                (string)Property(Entries(merged)[1]!, "Target")! == "writer-B",
+                "Stale archive instances preserve both committed scans.");
+
+            string gateName = "Local\\KillerScan.HistoryTest." + Guid.NewGuid().ToString("N");
+            using (var start = new EventWaitHandle(false, EventResetMode.ManualReset, gateName))
+            using (var readyA = new EventWaitHandle(false, EventResetMode.ManualReset, gateName + ".A"))
+            using (var readyB = new EventWaitHandle(false, EventResetMode.ManualReset, gateName + ".B"))
+            {
+                Process Writer(string target) => Process.Start(new ProcessStartInfo(typeof(HistoryRetentionTests).Assembly.Location,
+                    "--history-writer \"" + Path.Combine(scratch, "processes.json") + "\" " + target + " " + gateName)
+                    { UseShellExecute = false, CreateNoWindow = true })!;
+                using var processA = Writer("A");
+                using var processB = Writer("B");
+                try
+                {
+                    Require(readyA.WaitOne(15000) && readyB.WaitOne(15000), "Two separate processes load the same stale archive.");
+                    start.Set();
+                    Require(processA.WaitForExit(15000) && processB.WaitForExit(15000) && processA.ExitCode == 0 && processB.ExitCode == 0,
+                        "Concurrent process writers finish successfully.");
+                }
+                finally
+                {
+                    start.Set();
+                    if (!processA.HasExited) { processA.Kill(); processA.WaitForExit(); }
+                    if (!processB.HasExited) { processB.Kill(); processB.WaitForExit(); }
+                }
+            }
+            var processes = Archive("processes.json"); Load(processes, now);
+            Require(Entries(processes).Cast<object>().Select(e => (string)Property(e, "Target")!).OrderBy(t => t).SequenceEqual(new[] { "A", "B" }),
+                "Both separate-process concurrent appends survive reload.");
+
+            Require(Apply(writerA, Policy("SaveAll"), _ => true), "A stale retention editor preserves concurrent entries.");
+            Append(writerB, Entry("after-policy", now.AddMinutes(2)), now);
+            Load(merged, now);
+            Require(Entries(merged).Count == 3 && Mode(merged) == "SaveAll", "A stale writer honors the latest committed retention policy.");
+            byte[] beforeDenied = File.ReadAllBytes(Path.Combine(scratch, "concurrent.json"));
+            using (var denied = new FileStream(Path.Combine(scratch, "concurrent.json"), FileMode.Open, FileAccess.Read, FileShare.None))
+                Append(writerB, Entry("retry-me", now.AddMinutes(3)), now);
+            Require(File.ReadAllBytes(Path.Combine(scratch, "concurrent.json")).SequenceEqual(beforeDenied), "Denied access preserves prior archive bytes.");
+            Append(writerB, Entry("after-retry", now.AddMinutes(4)), now);
+            Load(merged, now);
+            Require(Entries(merged).Count == 5, "A later successful append retries unsaved session entries without losing committed scans.");
 
             var legacy = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(entryType))!;
             for (int i = 0; i < 150; i++) legacy.Add(Entry("legacy-" + i, now.AddDays(i - 150)));

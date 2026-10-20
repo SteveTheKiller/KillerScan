@@ -29,6 +29,8 @@ internal static class Program
     {
         try
         {
+            if (args.SequenceEqual(new[] { "--history-retention" })) { HistoryRetentionTests.Run(); return 0; }
+            if (args.Length == 4 && args[0] == "--history-writer") { HistoryRetentionTests.WriteConcurrent(args[1], args[2], args[3]); return 0; }
             if (args.SequenceEqual(new[] { "--scan-presentation" })) { await ScanPresentation(); return 0; }
             if (args.SequenceEqual(new[] { "--terminal" })) { await View(); return 0; }
             if (args.SequenceEqual(new[] { "--menu-separators" })) { await MenuSeparatorThemeTests.Run(); return 0; }
