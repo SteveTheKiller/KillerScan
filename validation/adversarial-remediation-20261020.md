@@ -16,6 +16,20 @@ Red: both target frameworks failed the 500 ms caller-completion check while nati
 
 Green: the blocked-native fixture passes on net48 and net10. Caller cancellation finishes within 500 ms, at most eight native lookups remain active, a second canceled scan starts no extra calls, releasing native work does not launch canceled queued calls, no late completion events appear, and a fresh scan succeeds. The full 14-check suite also passes on both targets after this repair.
 
+## ENG-003 diagnosis
+
+Ranked hypotheses before the controlled UDP test:
+
+1. The backward tag search interprets a long-form BER length byte as the payload length.
+2. A byte pattern inside a valid description is mistaken for a later OCTET STRING.
+3. The response belongs to another request or OID, but the parser never checks that identity.
+
+The fixture owns loopback UDP port 161, reads the real query and replies with bounded SNMPv1 sysDescr responses. It tests the engine probe API with distinct request IDs, OIDs, error states and malformed BER containers. No real SNMP service is queried.
+
+Red: both targets failed exact preservation of a valid 128-byte description. The backward search treated the long-form length marker as a payload length. The decoder now validates every definite-length container, the SNMPv1 version/community, response PDU, fresh request ID, zero error/index, single sysDescr OID and OCTET STRING, with no trailing bytes. The connected UDP socket accepts only the queried source endpoint.
+
+Green: both targets preserve lengths 0, 1, 3, 4, 33, 127, 128, 188, 255 and 256, a description equal to the community and embedded tag-like bytes. Eleven malformed/identity variants are rejected. A forged response from a different UDP source port is ignored before the legitimate source responds. The full 14-check suite passes on both targets after the repair.
+
 ## Current evidence
 
 | Finding | Local commit | Focused evidence |

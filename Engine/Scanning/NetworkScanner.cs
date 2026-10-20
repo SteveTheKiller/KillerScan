@@ -5,6 +5,7 @@ using System.Net.NetworkInformation;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -1166,9 +1167,9 @@ namespace KillerScan.Engine
         /// SNMPv1 GET of sysDescr.0 (1.3.6.1.2.1.1.1.0) with community "public".
         /// Works on most network gear, printers, and UPSes that expose SNMP.
         /// </summary>
-        private static async Task ProbeSnmpAsync(NetworkDevice device, IPAddress addr)
+        public static async Task ProbeSnmpAsync(NetworkDevice device, IPAddress addr)
         {
-            // Precomputed SNMPv1 GetRequest for sysDescr.0, community "public".
+            // SNMPv1 GetRequest for sysDescr.0, community "public".
             byte[] query =
             [
                 0x30, 0x29,
@@ -1184,32 +1185,23 @@ namespace KillerScan.Engine
                 0x05, 0x00,
             ];
 
+            var identity = new byte[4];
+            using (var random = RandomNumberGenerator.Create()) random.GetBytes(identity);
+            identity[0] = (byte)((identity[0] & 0x3f) | 0x40);
+            Array.Copy(identity, 0, query, 17, identity.Length);
+            int requestId = (identity[0] << 24) | (identity[1] << 16) | (identity[2] << 8) | identity[3];
             try
             {
                 using var udp = new UdpClient();
                 udp.Client.SendTimeout = 500;
                 udp.Client.ReceiveTimeout = 1000;
-                await udp.SendAsync(query, query.Length, new IPEndPoint(addr, 161));
+                udp.Connect(addr, 161);
+                await udp.SendAsync(query, query.Length);
 
                 var recvTask = udp.ReceiveAsync();
                 if (await Task.WhenAny(recvTask, Task.Delay(1000)) != recvTask) return;
                 var resp = recvTask.Result.Buffer;
-                if (resp.Length < 30) return;
-
-                // The response's last OCTET STRING tag is sysDescr. Walk backward for
-                // a 0x04 tag whose payload is long enough to plausibly be a description
-                // and whose content doesn't match "public" (the community echo).
-                for (int i = resp.Length - 2; i >= 0; i--)
-                {
-                    if (resp[i] != 0x04) continue;
-                    int len = resp[i + 1];
-                    if (len < 5 || i + 2 + len > resp.Length) continue;
-                    string s = Encoding.UTF8.GetString(resp, i + 2, len);
-                    if (s.Equals("public", StringComparison.Ordinal)) continue;
-                    if (s.Any(c => c < 0x20 && c != '\r' && c != '\n' && c != '\t')) continue;
-                    device.SnmpDescr = s.Trim();
-                    return;
-                }
+                if (SnmpResponse.TryDecode(resp, requestId, out var description)) device.SnmpDescr = description;
             }
             catch { }
         }

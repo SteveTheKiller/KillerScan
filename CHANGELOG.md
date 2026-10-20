@@ -18,6 +18,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Executable installation verifies the complete copy and preserves recovery files if replacement fails.
 - Reports keep the scanned target, timestamp and captured results when pending input or live results change during export.
 - Scan history includes empty results and final automatic deep-profile results, with canceled or partial runs labeled.
+- SNMP fingerprints preserve long descriptions and reject malformed or mismatched response identities.
 - Stopping a scan cancels active HTTP and TLS fingerprint connections and prevents probes of later ports.
 - Stopping during MAC resolution returns promptly, skips queued lookups and keeps native work bounded across scans.
 - The public subnet helper rejects IPv6 addresses and malformed CIDR suffixes before expanding hosts.
