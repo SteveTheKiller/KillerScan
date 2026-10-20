@@ -15,6 +15,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Vendor database updates preserve the prior complete file on failure and keep lookups available throughout reloads.
 - Scan history includes empty results and final automatic deep-profile results, with canceled or partial runs labeled.
 - Reports keep the scanned target, timestamp and captured results when pending input or live results change during export.
+- Demo device types and SSH usernames stay in memory without reading or changing saved real-device values.
 - Executable installation verifies the complete copy and preserves recovery files if replacement fails.
 - Window resize minimums stay within the current monitor's work area on small or scaled displays.
 - Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.

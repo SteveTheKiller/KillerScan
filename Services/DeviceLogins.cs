@@ -35,10 +35,10 @@ namespace KillerScan.Services
         public static void Load()
         {
             _store = CreateStore();
-            _store.Load();
+            if (!DemoData.Enabled) _store.Load();
         }
 
-        public static bool Save() => _store.Save();
+        public static bool Save() => DemoData.Enabled || _store.Save();
 
         /// <summary>MAC when there is one, otherwise the IP. Empty when neither is known, which the
         /// callers treat as "do not remember this one".</summary>
@@ -66,7 +66,7 @@ namespace KillerScan.Services
             {
                 if (string.IsNullOrWhiteSpace(user)) values.Remove(key);
                 else values[key] = user!.Trim();
-            });
+            }, DemoData.Enabled);
         }
     }
 }

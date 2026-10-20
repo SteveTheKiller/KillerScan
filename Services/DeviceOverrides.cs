@@ -21,10 +21,10 @@ namespace KillerScan.Services
         public static void Load()
         {
             _store = CreateStore();
-            _store.Load();
+            if (!DemoData.Enabled) _store.Load();
         }
 
-        public static bool Save() => _store.Save();
+        public static bool Save() => DemoData.Enabled || _store.Save();
 
         /// <summary>
         /// Set a manual override for a device by MAC address. Pass null to remove.
@@ -37,7 +37,7 @@ namespace KillerScan.Services
             {
                 if (deviceType == null) values.Remove(key);
                 else values[key] = deviceType;
-            });
+            }, DemoData.Enabled);
         }
 
         /// <summary>
