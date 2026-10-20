@@ -213,7 +213,7 @@ internal static class Program
             int completedHook = 0;
             NetworkScanner.DeviceCompleted = _ => completedHook++;
 
-            var scanner = new NetworkScanner();
+            var scanner = new NetworkScanner(new IsolatedDiscovery());
             var stages = new List<ScanStage>();
             var found = new List<NetworkDevice>();
             int lastProgress = -1;
@@ -251,7 +251,7 @@ internal static class Program
             cts.Cancel();
             try
             {
-                await new NetworkScanner().ScanSubnetAsync("127.0.0.1", cts.Token, fullScan: false);
+                await new NetworkScanner(new IsolatedDiscovery()).ScanSubnetAsync("127.0.0.1", cts.Token, fullScan: false);
             }
             catch (OperationCanceledException)
             {

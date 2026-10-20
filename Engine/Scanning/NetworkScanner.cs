@@ -12,6 +12,10 @@ namespace KillerScan.Engine
 {
     public class NetworkScanner
     {
+        private readonly IScanDiscovery _discovery;
+        public NetworkScanner() : this(new MulticastScanDiscovery()) { }
+        public NetworkScanner(IScanDiscovery discovery) => _discovery = discovery ?? throw new ArgumentNullException(nameof(discovery));
+
         // Common ports to probe for device type detection
         private static readonly int[] ProbePorts = [
             22,    // SSH
@@ -159,8 +163,8 @@ namespace KillerScan.Engine
 
             // Kick off network-wide service discovery (mDNS + SSDP) to run alongside the ping sweep;
             // results are awaited before the probe phase and mapped to hosts by source IP.
-            var mdnsTask = MulticastDiscovery.CollectMdnsAsync(ct);
-            var ssdpTask = MulticastDiscovery.CollectSsdpAsync(ct);
+            var mdnsTask = _discovery.CollectMdnsAsync(ct);
+            var ssdpTask = _discovery.CollectSsdpAsync(ct);
 
             // Fast parallel ping sweep (async, no blocking ARP calls)
             var semaphore = new SemaphoreSlim(200);

@@ -32,7 +32,7 @@ internal static class EngineBehaviorTests
                 fingerprintAtCompletion = (device.HttpTitle, device.HttpServer);
                 device.Hostname = "Saved device name";
             };
-            var scanner = new NetworkScanner();
+            var scanner = new NetworkScanner(new IsolatedDiscovery());
             NetworkDevice? reported = null;
             scanner.DeviceFound += device => reported = device;
             using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(20));
@@ -90,7 +90,7 @@ internal static class EngineBehaviorTests
                 }
             };
             NetworkScanner.DeviceCompleted = _ => Interlocked.Increment(ref completionHooks);
-            scan = new NetworkScanner().DeepProbeHostAsync("127.0.0.1", cancel.Token);
+            scan = new NetworkScanner(new IsolatedDiscovery()).DeepProbeHostAsync("127.0.0.1", cancel.Token);
             Require(await Task.WhenAny(started.Task, Task.Delay(5000)) == started.Task,
                 "Deep probe reaches the controlled MAC lookup.");
             await RequirePromptCancellation(scan, cancel);
