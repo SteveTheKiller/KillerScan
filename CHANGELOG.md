@@ -16,7 +16,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Keep Alive and Diagnose add new targets to a running watch without resetting existing cards or counters.
 - HTTP fingerprints follow bounded redirects only on the scanned IP, preserving local panels without contacting or labeling another device.
 - Vendor database updates preserve the prior complete file on failure and keep lookups available throughout reloads.
-- Executable installation verifies the complete copy and preserves recovery files if replacement fails.
+- Executable installation and self-updates verify complete copies and preserve recovery files after replacement failures. Update reports support non-English folders.
 - Reports keep the scanned target, timestamp and captured results when pending input or live results change during export.
 - Scan history includes empty results and final automatic deep-profile results, with canceled or partial runs labeled.
 - SNMP fingerprints preserve long descriptions and reject malformed or mismatched response identities.

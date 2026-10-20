@@ -229,7 +229,6 @@ namespace KillerScan.Features.About
             }
             catch
             {
-                UpdateService.DiscardDownload(newExe);
                 _updating           = false;
                 _host.UpdateEnabled = true;
                 _host.UpdateText    = string.Format(_host.Loc("Str_About_UpdateAvailable"), tag);

@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -98,6 +99,7 @@ namespace KillerScan.Services
             var path = Path.Combine(Path.GetTempPath(),
                                     $"{AppInfo.DisplayName}_update_{Guid.NewGuid():N}.exe");
             File.WriteAllBytes(path, exeBytes);
+            UpdateImagePublication.RememberVerified(path, actual);
             return path;
         }
 
@@ -119,79 +121,48 @@ namespace KillerScan.Services
 
             bool needsElevation = !CanWriteTo(Path.GetDirectoryName(curExe)!);
 
-            // Keep Add/Remove Programs honest: the swap replaces the exe but the install keys
-            // still carry the old version, which is how a machine ends up with an ARP entry
-            // describing a version that is not on disk. The batch already runs elevated exactly
-            // when the target is the machine-wide install, so it is the one place that can write
-            // whichever hive matches. A portable exe writes nothing.
-            string regLines = "";
-            if (!string.IsNullOrEmpty(newVersion))
-            {
-                string hive = RegistryHiveFor(curExe);
-                if (hive.Length > 0)
-                {
-                    string uninstall = hive + @"\Software\Microsoft\Windows\CurrentVersion\Uninstall\" + AppInfo.DisplayName;
-                    string appKey    = hive + @"\Software\" + AppInfo.DisplayName;
-                    regLines =
-                        $"reg add \"{uninstall}\" /v DisplayVersion /t REG_SZ /d \"{newVersion}\" /f >nul 2>&1\r\n" +
-                        $"reg add \"{uninstall}\" /v Publisher /t REG_SZ /d \"Steve the Killer\" /f >nul 2>&1\r\n" +
-                        $"reg add \"{appKey}\" /v Version /t REG_SZ /d \"{newVersion}\" /f >nul 2>&1\r\n";
-                }
-            }
-
-            // When elevated, relaunch through explorer.exe so the app comes back at the user's
-            // normal integrity level instead of inheriting the elevated token.
-            string relaunch = needsElevation
-                ? $"start \"\" explorer.exe \"{curExe}\""
-                : $"start \"\" \"{curExe}\"";
-
-            string staged = curExe + "." + Guid.NewGuid().ToString("N") + ".new";
-            string log = Path.ChangeExtension(bat, ".log");
+            string system = Environment.GetFolderPath(Environment.SpecialFolder.System);
+            string tasklist = Path.Combine(system, "tasklist.exe").Replace("%", "%%");
+            string find = Path.Combine(system, "find.exe").Replace("%", "%%");
+            string ping = Path.Combine(system, "ping.exe").Replace("%", "%%");
+            string notepad = Convert.ToBase64String(Encoding.UTF8.GetBytes(Path.Combine(system, "notepad.exe")));
+            string report = Convert.ToBase64String(Encoding.UTF8.GetBytes(Path.GetFullPath(newExe) + ".recovery.txt"));
+            string displayScript = "$ErrorActionPreference='Stop';$start=New-Object Diagnostics.ProcessStartInfo;"
+                + "$start.UseShellExecute=$true;$start.FileName=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('" + notepad + "'));"
+                + "$report=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('" + report + "'));"
+                + "$start.Arguments='\"'+$report+'\"';$process=[Diagnostics.Process]::Start($start);"
+                + "if($null -eq $process){throw 'The update recovery report did not open.'};$process.Dispose();";
+            string displayPowerShell = Path.Combine(system, @"WindowsPowerShell\v1.0\powershell.exe").Replace("%", "%%");
+            string displayCommand = "\"" + displayPowerShell + "\" -NoProfile -NonInteractive -EncodedCommand "
+                + Convert.ToBase64String(Encoding.Unicode.GetBytes(displayScript));
+            string publication = UpdateImagePublication.Command(newExe, curExe, needsElevation,
+                ReleasesUrl, AppInfo.DisplayName, newVersion, RegistryHiveFor(curExe));
 
             File.WriteAllText(bat,
                 "@echo off\r\n" +
-                "setlocal\r\n" +
+                "setlocal DisableDelayedExpansion\r\n" +
                 ":wait\r\n" +
-                $"tasklist /fi \"PID eq {pid}\" 2>nul | find \"{pid}\" >nul\r\n" +
-                "if not errorlevel 1 ( ping -n 2 127.0.0.1 >nul & goto wait )\r\n" +
-                "set \"failure=staging the download\"\r\n" +
-                $"copy /b /y \"{newExe}\" \"{staged}\" >\"{log}\" 2>&1\r\n" +
+                $"\"{tasklist}\" /fi \"PID eq {pid}\" 2>nul | \"{find}\" \"{pid}\" >nul\r\n" +
+                $"if not errorlevel 1 ( \"{ping}\" -n 2 127.0.0.1 >nul & goto wait )\r\n" +
+                publication + " >\"%~dpn0.helper.log\" 2>&1\r\n" +
                 "if errorlevel 1 goto failed\r\n" +
-                "set \"failure=verifying the staged file\"\r\n" +
-                $"fc /b \"{newExe}\" \"{staged}\" >>\"{log}\" 2>&1\r\n" +
-                "if errorlevel 1 goto failed\r\n" +
-                "set \"failure=replacing the installed executable\"\r\n" +
-                "for /l %%i in (1,1,10) do (\r\n" +
-                $"  move /y \"{staged}\" \"{curExe}\" >>\"{log}\" 2>&1\r\n" +
-                "  if not errorlevel 1 goto replaced\r\n" +
-                "  timeout /t 1 /nobreak >nul\r\n" +
-                ")\r\n" +
-                "goto failed\r\n" +
-                ":replaced\r\n" +
-                "set \"failure=verifying the installed executable\"\r\n" +
-                $"fc /b \"{newExe}\" \"{curExe}\" >>\"{log}\" 2>&1\r\n" +
-                "if errorlevel 1 goto failed\r\n" +
-                regLines +
-                relaunch + "\r\n" +
-                $"del \"{log}\" >nul 2>&1\r\n" +
                 "goto cleanup\r\n" +
                 ":failed\r\n" +
-                $"echo KillerScan could not finish its update while %failure%. >>\"{log}\"\r\n" +
-                $"echo Check the app version before retrying. Manual download: {ReleasesUrl} >>\"{log}\"\r\n" +
-                $"start \"\" notepad.exe \"{log}\"\r\n" +
+                displayCommand + " >\"%~dpn0.display.log\" 2>&1\r\n" +
                 ":cleanup\r\n" +
-                $"del \"{staged}\" >nul 2>&1\r\n" +
-                $"del \"{newExe}\" >nul 2>&1\r\n" +
                 "del \"%~f0\" >nul 2>&1\r\n");
 
-            var psi = new ProcessStartInfo("cmd.exe", $"/c \"{bat}\"")
+            var psi = new ProcessStartInfo(
+                Path.Combine(system, "cmd.exe"), $"/d /v:off /c \"{Path.GetFileName(bat)}\"")
             {
                 WindowStyle = ProcessWindowStyle.Hidden,
+                WorkingDirectory = Path.GetTempPath(),
                 UseShellExecute = true
             };
             if (needsElevation) psi.Verb = "runas";   // triggers the UAC prompt
 
-            Process.Start(psi);
+            if (Process.Start(psi) is null)
+                throw new IOException("The update helper did not start. Download retained at: " + newExe);
         }
 
         /// <summary>"HKCU" when <paramref name="exePath"/> is the per-user install,
