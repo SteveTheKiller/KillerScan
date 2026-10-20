@@ -94,6 +94,20 @@ Red: the actual release gate continued after simulated restore exit 42. The repa
 
 The extracted-gate cases pass under Windows PowerShell 5.1 and PowerShell 7 with rejection reasons verified, including transitive vulnerabilities, unsupported schema and incomplete package data. Actual native stderr/exit fixtures verify diagnostic preservation and error-preference restoration for both commands. The real extracted gate also completed a fresh solution restore and structured audit covering the app, engine, engine tests and sample, with no known vulnerabilities reported. Diagnostics are retained in obj/release-validation. No later release steps ran. The existing five unsigned/dry-run publication-guard fixtures also pass without reaching real publication.
 
+## FAM-002 diagnosis
+
+Ranked hypotheses before the monitor fixture:
+
+1. Empty NUGET_ID disables the entire package row.
+2. Missing publication receives the wrong review-window or failed-run outcome.
+3. A literal engine-project version comparison would misread its MSBuild expression.
+
+The fixture executes the workflow's actual inline monitor with only HTTP, Git and GitHub process boundaries replaced. It preserves the configured environment, uses app/engine project source, and captures the generated channel table under scratch. No external services are contacted.
+
+Red: the published-package fixture generated a table without any NuGet row. Setting NUGET_ID to killerscan.engine enables the existing version-specific package lookup. ENGINE_PROJECT_PATH stays intentionally empty because the engine derives its version from the app project rather than a literal XML version. The package is compared with the requested release version.
+
+The six monitor scenarios pass under PowerShell 7. Cross-version fixture execution also exposed PowerShell 5.1's different empty-JSON-array pipeline behavior; the fallback now keeps only entries with a run status before deciding pending versus missing. A real MSBuild property evaluation confirms the engine version resolves to 1.8.4, matching the current app version.
+
 ## Current evidence
 
 | Finding | Local commit | Focused evidence |

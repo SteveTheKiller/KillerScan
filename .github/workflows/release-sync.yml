@@ -20,12 +20,13 @@ jobs:
     env:
       APP_NAME: KillerScan
       PROJECT_PATH: KillerScan.csproj
+      # The engine reads Version from the app project. Compare its published package to the release.
       ENGINE_PROJECT_PATH:
       EXPECTED_ASSETS: KillerScan.exe,SHA256SUMS.txt
       CHOCOLATEY_ID: killerscan
       WINGET_ID: SteveTheKiller.KillerScan
       WINGET_MANIFEST_ROOT: manifests/s/SteveTheKiller/KillerScan
-      NUGET_ID:
+      NUGET_ID: killerscan.engine
       REQUESTED_VERSION: ${{ inputs.version }}
       GH_TOKEN: ${{ github.token }}
     steps:
@@ -72,7 +73,7 @@ jobs:
           }
           function Get-PublishFallback([string]$workflowName, [timespan]$age) {
               $json = gh run list --workflow $workflowName --branch $tag --limit 1 --json status,conclusion,url
-              $runs = @($json | ConvertFrom-Json)
+              $runs = @($json | ConvertFrom-Json | Where-Object { $null -ne $_ -and $_.status })
               if ($runs.Count -and $runs[0].conclusion -eq 'failure') { return @('Failed', $runs[0].url) }
               if ($runs.Count -and $runs[0].status -ne 'completed') { return @('Pending', $runs[0].url) }
               if ($age.TotalDays -ge 7) { return @('Missing', 'Not published after seven days') }
