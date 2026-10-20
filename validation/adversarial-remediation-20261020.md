@@ -44,6 +44,20 @@ Red: the CLI table emitted untrusted control bytes in both the interactive and r
 
 Green: terminal-safety, narrow/wide scan-presentation and CSV-export regressions pass. Both ANSI and plain CLI tables retain their expected row count. Feeding CLI and embedded output through the real terminal parser leaves the existing title unchanged and dispatches no application command. JSON retains the exact hostile input string.
 
+## UI-005 diagnosis
+
+Ranked hypotheses before the watch-command fixture:
+
+1. IncludeTarget returns immediately for an active run, discarding the requested address.
+2. ShowDetails cannot create or select a missing card and delegates to that same early return.
+3. The polling loop requires a fixed target set, preventing safe additions without restarting counters.
+
+The controlled WPF fixture uses demo replies and diagnostics, so the actual IncludeTarget, ShowDetails and Start/Stop button commands run without network traffic. It observes cards, counters, diagnostic rows, selection and the target box through the displayed model/control boundaries.
+
+Red: a started watch silently ignored IncludeTarget and created no requested card. The polling loop already snapshots its mutable target list each pass, so adding a card and its target safely preserves the existing samples. New targets run their own diagnostic sweep under the existing check token and concurrency slots. Diagnose then selects the newly added card.
+
+Initial green: the controlled run adds and diagnoses new targets, retains existing card identity and growing counters, deduplicates repeat requests and stops through the actual button command. The integrated scan lifecycle/export fixture also passes. Extended checks cover the 16-target limit and visible rejection without changing accepted targets.
+
 ## Current evidence
 
 | Finding | Local commit | Focused evidence |

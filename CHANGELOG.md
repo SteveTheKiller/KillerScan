@@ -13,6 +13,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Preference and history saves preserve existing files on failure, keep unsaved edits for retry, and report when changes could not be saved.
 - Concurrent app instances preserve saved scans and retention changes instead of overwriting newer history.
 - Demo device types and SSH usernames stay in memory without reading or changing saved real-device values.
+- Keep Alive and Diagnose add new targets to a running watch without resetting existing cards or counters.
 - HTTP fingerprints follow bounded redirects only on the scanned IP, preserving local panels without contacting or labeling another device.
 - Vendor database updates preserve the prior complete file on failure and keep lookups available throughout reloads.
 - Executable installation verifies the complete copy and preserves recovery files if replacement fails.

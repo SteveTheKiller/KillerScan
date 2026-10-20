@@ -58,6 +58,7 @@ internal static class ScanLifecycleTests
             "A first empty scan is recorded without creating a trusted-device baseline.");
         CheckDeepProfile();
         ExportSnapshotTests.Run();
+        WatchActionTests.Run();
         Console.WriteLine("PASS: populated, empty, canceled and failed scan history through the workspace command.");
     }
 

@@ -57,10 +57,22 @@ namespace KillerScan.Controls
 
         internal void IncludeTarget(string address)
         {
-            if (_run != null) return;
+            if (_closed) return;
+            if (!IPAddress.TryParse(address, out var added)) { Status.Text = L("Str_Watch_Invalid"); return; }
             var targets = Targets.Text.Split([',', ';', ' ', '\t', '\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
-            if (!targets.Contains(address))
-                Targets.Text = string.Join(", ", targets.Concat([address]));
+            IPAddress[] existing = [];
+            if (targets.Length > 0 && !ConnectionChecks.TryTargets(string.Join(", ", targets), out existing))
+            { Status.Text = L("Str_Watch_Invalid"); return; }
+            if (existing.Contains(added)) return;
+            if (existing.Length >= 16) { Status.Text = L("Str_Watch_Invalid"); return; }
+            Targets.Text = string.Join(", ", existing.Concat([added]));
+            if (_run is { IsCancellationRequested: false })
+            {
+                var card = new WatchCard(added.ToString(), L("Str_Watch_Waiting"));
+                _cards.Add(card);
+                _targets.Add(new WatchTarget(added, card));
+                RunChecks(card, _checks?.Token ?? _run.Token);
+            }
         }
 
         /// <summary>
@@ -254,7 +266,12 @@ namespace KillerScan.Controls
         {
             RememberPorts(address, ports);
             var card = _cards.FirstOrDefault(c => c.Address == address);
-            if (card == null) { IncludeTarget(address); return; }
+            if (card == null)
+            {
+                IncludeTarget(address);
+                card = _cards.FirstOrDefault(c => c.Address == address);
+                if (card == null) return;
+            }
             Cards.SelectedItem = card;
             Cards.ScrollIntoView(card);
         }
