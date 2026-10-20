@@ -11,6 +11,7 @@ internal static class Program
         {
             if (args.SequenceEqual(new[] { "--vendor-db" })) { await VendorDatabaseTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--vendor-snapshot" })) { await VendorSnapshotTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--subnet" })) { await Subnet(); Console.WriteLine("PASS: IPv4 subnet boundaries."); return 0; }
             await Run("Targets parse ranges, de-duplicate overlaps and refuse bad input", Targets);
             await Run("The address ceiling counts unique addresses and keeps first-seen order", TargetCeiling);
             await Run("CIDR expansion excludes the network and broadcast addresses", Subnet);
@@ -82,6 +83,15 @@ internal static class Program
 
     private static Task Subnet()
     {
+        foreach (string invalid in new[] { "2001:db8::/24", "::ffff:192.0.2.1/30", "2001:db8::/32", "192.0.2.0/24/30", "192.0.2.0/", "192.0.2.0/no", "", "invalid" })
+        {
+            bool rejected = false;
+            try { NetworkScanner.GetAddressesInSubnet(invalid); }
+            catch (ArgumentException) { rejected = true; }
+            catch (FormatException) { rejected = true; }
+            Require(rejected, "Invalid or non-IPv4 subnet must be rejected: " + invalid);
+        }
+        Require(NetworkScanner.GetAddressesInSubnet("192.0.2.0/31").Count == 0, "A /31 retains the existing empty-host contract.");
         foreach (string cidr in new[] { "10.0.0.0/15", "0.0.0.0/0" })
         {
             bool rejected = false;

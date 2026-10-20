@@ -92,9 +92,14 @@ namespace KillerScan.Engine
         /// </summary>
         public static List<IPAddress> GetAddressesInSubnet(string cidr)
         {
+            if (string.IsNullOrWhiteSpace(cidr))
+                throw new ArgumentException("An IPv4 subnet is required.", nameof(cidr));
             var parts = cidr.Trim().Split('/');
-            var ip = IPAddress.Parse(parts[0]);
-            int prefixLen = parts.Length > 1 ? int.Parse(parts[1]) : 24;
+            if (parts.Length > 2 || !IPAddress.TryParse(parts[0], out var ip) || ip.AddressFamily != AddressFamily.InterNetwork)
+                throw new ArgumentException("The subnet must contain an IPv4 address and an optional prefix.", nameof(cidr));
+            int prefixLen = 24;
+            if (parts.Length == 2 && !int.TryParse(parts[1], out prefixLen))
+                throw new ArgumentException("The CIDR prefix must be an integer between 0 and 32.", nameof(cidr));
             if (prefixLen < 0 || prefixLen > 32)
                 throw new ArgumentOutOfRangeException(nameof(cidr), "CIDR prefix must be between 0 and 32.");
             long hostCount = prefixLen >= 31 ? 0 : (1L << (32 - prefixLen)) - 2;
