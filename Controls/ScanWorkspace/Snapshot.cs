@@ -21,9 +21,9 @@ namespace KillerScan.Controls
     {
         private enum SnapshotFormat { PngTransparent, Jpeg, Svg }
 
-        private void ExportSnapshotPngAlpha_Click(object sender, RoutedEventArgs e) => ExportSnapshot(SnapshotFormat.PngTransparent);
-        private void ExportSnapshotJpeg_Click(object sender, RoutedEventArgs e) => ExportSnapshot(SnapshotFormat.Jpeg);
-        private void ExportSnapshotSvg_Click(object sender, RoutedEventArgs e) => ExportSnapshot(SnapshotFormat.Svg);
+        private void ExportSnapshotPngAlpha_Click(object sender, RoutedEventArgs e) => Export("png");
+        private void ExportSnapshotJpeg_Click(object sender, RoutedEventArgs e) => Export("jpg");
+        private void ExportSnapshotSvg_Click(object sender, RoutedEventArgs e) => Export("svg");
 
         private void ExportSnapshot(SnapshotFormat format)
         {

@@ -51,8 +51,11 @@ namespace KillerScan.Controls
         /// that reached topology without an odd number of trips through that handler left the
         /// button hidden while the graph was on screen.
         /// </summary>
-        private void UpdateViewChrome() =>
+        private void UpdateViewChrome()
+        {
             TopologyOrderButton.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;
+            UpdateExportButtonAvailability();
+        }
 
         private void LoadTopologyOrder()
         {

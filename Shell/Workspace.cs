@@ -155,12 +155,6 @@ namespace KillerScan.Shell
                 export.FontSize = 15;
                 export.Content = "\uE896";
                 export.SetResourceReference(StyleProperty, "RailButton");
-                var exportTip = new TextBlock();
-                var exportCaption = new System.Windows.Documents.Run();
-                exportCaption.SetResourceReference(System.Windows.Documents.Run.TextProperty, "Str_TT_Export");
-                exportTip.Inlines.Add(exportCaption);
-                exportTip.Inlines.Add(" (CSV Ctrl+E, HTML Ctrl+Shift+E, TXT Ctrl+Shift+X, PNG Ctrl+Shift+G, JPG Ctrl+Shift+J, map HTML Ctrl+Alt+H)");
-                export.ToolTip = exportTip;
                 export.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, "Str_TT_Export");
                 RailButtons.Children.Insert(0, export);
                 ApplyToolbarAppearance();

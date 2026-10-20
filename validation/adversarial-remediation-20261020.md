@@ -58,6 +58,20 @@ Red: a started watch silently ignored IncludeTarget and created no requested car
 
 Initial green: the controlled run adds and diagnoses new targets, retains existing card identity and growing counters, deduplicates repeat requests and stops through the actual button command. The integrated scan lifecycle/export fixture also passes. Extended checks cover the 16-target limit and visible rejection without changing accepted targets.
 
+## UI-006 diagnosis
+
+Ranked hypotheses before the export-action fixture:
+
+1. Services exposes both generic device CSV and service CSV with the same shortcut.
+2. Menu handlers call writers directly while keyboard commands use context dispatch.
+3. The shell's static all-format tooltip advertises unsupported exports for the current view.
+
+The fixture drives actual export menu-item events and the same context command called by keyboard shortcuts. Save dialogs are redirected to scratch files. It compares the visible service rows with exported rows and verifies unsupported formats do not open a dialog.
+
+Red: Services offered two visible Ctrl+E entries. Generic menu handlers bypassed context selection, while the command route already distinguished service CSV from device CSV. The repair routes menu and shortcut actions through the context command, shows just service CSV in Services and derives the rail tooltip from the active context.
+
+Green: the actual Services menu and keyboard command produce identical filtered service CSV with one row per visible port. Unsupported service HTML opens no dialog, and the tooltip lists only CSV. Devices still exports the device schema; Topology exposes its three snapshot actions; Watch, Terminal and History route to their own shell writers. The integrated scan lifecycle, export-provenance and watch-action fixtures pass. Rendered menu/tooltip inspection remains separate acceptance evidence.
+
 ## Current evidence
 
 | Finding | Local commit | Focused evidence |

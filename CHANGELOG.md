@@ -18,6 +18,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Vendor database updates preserve the prior complete file on failure and keep lookups available throughout reloads.
 - Executable installation and self-updates verify complete copies and preserve recovery files after replacement failures. Update reports support non-English folders.
 - Reports keep the scanned target, timestamp and captured results when pending input or live results change during export.
+- Export menus, shortcuts and tooltips match the active view, with one filtered CSV action for Services.
 - Scan history includes empty results and final automatic deep-profile results, with canceled or partial runs labeled.
 - SNMP fingerprints preserve long descriptions and reject malformed or mismatched response identities.
 - Stopping a scan cancels active HTTP and TLS fingerprint connections and prevents probes of later ports.
