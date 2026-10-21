@@ -40,6 +40,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Terminal title sequences accept BEL and ESC-backslash terminators across split reads and preserve UTF-8 titles.
 - Pasting into the terminal drops control characters other than tab and line breaks, so pasted text can no longer end a bracketed paste early and run the rest as typed commands.
 - Topology and Services no longer redraw everything for each device a scan finds. Updates are grouped, so a large scan stays responsive with either view open.
+- Topology devices can be used from the keyboard. Arrow keys move between devices, Space selects and Ctrl+Space adds to the selection, Shift+arrow keys move a device, and screen readers announce each device and whether it is selected. Focus stays on the same device when the diagram updates.
 - Keep Alive and Diagnose add new targets to a running watch without resetting existing cards or counters.
 - Export menus, shortcuts and tooltips match the active view, with one filtered CSV action for Services.
 - Terminal output exposes readable text, selection and caret ranges to accessibility tools, with a visible keyboard focus outline.

@@ -114,6 +114,14 @@ namespace KillerScan.Controls
         {
             if (TopologyCanvas == null || TopologyPane == null || !_showTopology) return;
             TopologyRefreshes++;
+            // Rebuilding replaces every node, so a focused node's device gets focus back after.
+            bool hadFocus = TopologyCanvas.IsKeyboardFocusWithin;
+            BuildTopology();
+            RestoreTopologyFocus(hadFocus);
+        }
+
+        private void BuildTopology()
+        {
 
             double scale = TopologyScale;
             double viewportWidth = Math.Max(1, TopologyPane.ActualWidth - SystemParameters.VerticalScrollBarWidth);
@@ -386,7 +394,7 @@ namespace KillerScan.Controls
             stack.Children.Add(titleBlock);
             stack.Children.Add(detailBlock);
 
-            var border = new Border
+            var border = new TopologyNode(this)
             {
                 Width = TopologyNodeWidth,
                 Height = TopologyNodeHeight,
@@ -418,6 +426,7 @@ namespace KillerScan.Controls
             Panel.SetZIndex(border, 2);
             TopologyCanvas.Children.Add(border);
             UpdateTopologyNodeSelection(border);
+            MakeTopologyNodeKeyboardReady(border, title, detail);
             return border;
         }
 
