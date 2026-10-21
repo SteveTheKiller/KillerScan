@@ -128,10 +128,10 @@ Where 1.8.4 differs from the plan above:
 - **History.** "Show all Locations" is on the History button's right-click menu.
 - **Temporary results.** "Save results to Location" moves a Temporary scan's history entries and typed names into a Location without approving anything or touching its baseline.
 
-Still open:
+- **Manage Locations.** Opens a Locations section in the sidebar, with no rail button of its own so the rail order is unchanged. Each row switches (click or Enter), renames (F2), edits notes, exports or deletes (Delete). The old Profiles section is titled Saved scans and lists the current Location's saved scans.
+- **Deleting a Location.** Asks first, removes it from the list, and moves its folder to `locations\.deleted\<id>-<time>` so it can be recovered by hand. A workspace in that Location becomes a Temporary scan. Nothing ever empties the deleted folder.
 
-- **Manage Locations.** It opens the Saved scans sidebar, which lists the current Location's saved scans; that section is still titled Profiles. A real Locations list, with delete, is not built.
-- **Deleting a Location.** Not built. Location folders are never removed.
+Still open:
 - **Notes in reports.** Notes stay out of reports, as planned; there is no report option yet.
 - **Retention.** Each Location keeps its own retention setting, copied at migration. The History settings dialog changes the current Location's only.
 - **Real-app checks.** Migration, the picker, the banner and the adapter prompt are covered by automated checks with scratch folders, but none has yet been run against a real install's data or on hardware with several adapters.

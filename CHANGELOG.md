@@ -50,7 +50,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Window resize minimums stay within the current monitor's work area on small or scaled displays.
 - The shortcuts card shows shadows at its edges when more content is out of view.
 - Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.
-- File pickers use theme content colors for files and bookmarks. Text buttons, menus, tooltips and shortcuts use the embedded interface font, including separate windows.
+- File pickers use theme content colors and app icons; 98SE dialogs have full bevels and compact fields. Text buttons, menus, tooltips and shortcuts use the embedded interface font, including separate windows.
 - Film grain has crisper specks and fades midtones across app and website themes without dimming bright highlights.
 - Balanced the Technical page columns by moving the glossary to the left.
 
@@ -67,6 +67,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - When the network's gateway has been seen in a Location, a banner offers to switch to it. It never switches by itself, offers nothing when more than one Location matches beyond listing them, and Dismiss hides it until KillerScan restarts.
 - A saved scan remembers the network adapter it was set up on. If a later run would go out a different adapter, KillerScan asks first. Each run records the adapter it used, and HTML reports show the Location and adapter.
 - Save results to Location moves a Temporary scan's history and any names you typed into a Location, without approving anything.
+- Manage Locations on the Location button opens a sidebar list of every Location, with the current one marked. Each can be switched to, renamed, given notes, exported or deleted. Deleting moves the Location's files aside to a deleted folder rather than erasing them. The Profiles section is now called Saved scans.
 - History lists the current Location's scans. Right-click the History button and choose Show all Locations to list every Location's scans, each labeled with its Location.
 - `/scan` and `/probe` take `/location <name or ID>`, and the PowerShell `scan` and `probe` commands take `-Location`. An unknown or shared name is a usage error. The terminal's Scan button scans in the current Location.
 
