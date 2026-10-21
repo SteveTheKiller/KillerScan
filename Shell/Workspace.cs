@@ -160,6 +160,15 @@ namespace KillerScan.Shell
                 ApplyToolbarAppearance();
                 _scanWorkspace.DeviceAction += (_, e) => WorkspaceDeviceAction(e.Device, e.Action, e.ServicePort);
                 _scanWorkspace.ShellExportRequested += ShellExport;
+                // The sidebar lists belong to the workspace's Location, so they follow it.
+                _scanWorkspace.LocationChanged += (_, _) =>
+                {
+                    RefreshHistoryList();
+                    RefreshProfilesList();
+                    if (_workspaceView == "history") ShowHistoryEntry();
+                    UpdateWorkspaceStatus();
+                };
+                _scanWorkspace.ManageLocationsRequested += (_, _) => ProfilesButton_Click(this, new RoutedEventArgs());
                 // Everything bound with DynamicResource follows a language change on its own. The
                 // status line and the device count do not: they are composed in code and stored,
                 // so they are re-stated here from the state the workspace is in.
@@ -396,7 +405,7 @@ namespace KillerScan.Shell
             if (devices == null || devices.Count == 0) return string.Empty;
 
             // The alert the status bar raises is a count. This is the part that answers "which?".
-            var unknown = devices.Where(device => !DevicePreferences.IsTrusted(device)).ToList();
+            var unknown = _scanWorkspace!.NewDevices;
             if (unknown.Count > 0)
             {
                 const int Listed = 8;
@@ -463,13 +472,15 @@ namespace KillerScan.Shell
             string command;
             if (action.StartsWith("Ssh", StringComparison.Ordinal))
             {
-                string? user = DeviceLogins.Get(device.MacAddress, ip);
+                // Usernames belong to the Location, so another site's same IP never skips the prompt.
+                var logins = ShellLocation.Logins;
+                string? user = logins.Get(device.MacAddress, ip);
                 if (user == null || action.StartsWith("SshAs", StringComparison.Ordinal))
                 {
                     var dialog = new InputDialog(string.Format(Loc("Str_Ssh_Head"), ip), Loc("Str_Ssh_Detail"), Loc("Str_Ssh_User"), user ?? "", Loc("Str_Ssh_Connect"), Loc("Str_Btn_Cancel")) { Owner = this };
                     dialog.ShowDialog(); if (!dialog.Confirmed) return;
                     user = dialog.Value;
-                    PersistenceFeedback.Check(DeviceLogins.Set(device.MacAddress, ip, user), DeviceLogins.Save, () => DeviceLogins.SaveError);
+                    PersistenceFeedback.Check(logins.Set(device.MacAddress, ip, user), logins.Save, () => logins.SaveError);
                 }
                 // Invoke the SSH client directly; user input never goes through a command shell.
                 command = "ssh.exe " + (servicePort.HasValue ? "-p " + servicePort.Value + " " : "")

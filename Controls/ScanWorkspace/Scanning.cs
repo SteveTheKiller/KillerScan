@@ -74,6 +74,10 @@ namespace KillerScan.Controls
             StateChanged?.Invoke(this, EventArgs.Empty);
             bool completed = false;
             var options = _active.Options;
+            // The run belongs to the Location it started in; switching is locked until it ends.
+            var location = _location;
+            _active.NewIdentities.Clear();
+            if (location.Info != null) LocationService.SetLastUsed(location.Info, _active.SubnetText, options);
             try
             {
                 await _active.Scanner.ScanSubnetAsync(_active.SubnetText, cts.Token, options, fullScan: true);
@@ -81,16 +85,7 @@ namespace KillerScan.Controls
                 if (completed)
                 {
                     if (!_runDeepAfterScan || _active.Devices.Count == 0) RecordCompletedRun(options, deep: false);
-                    if (_active.Devices.Count > 0 && !DevicePreferences.HasTrustedDevices)
-                    {
-                        PersistenceFeedback.Check(DevicePreferences.TrustAll(_active.Devices), DevicePreferences.Retry, () => DevicePreferences.SaveError);
-                        StatusText.Text = string.Format(Loc("Str_St_TrustedBaseline"), _active.Devices.Count);
-                    }
-                    else
-                    {
-                        int unknown = _active.Devices.Count(device => !DevicePreferences.IsTrusted(device));
-                        if (unknown > 0) StatusText.Text = string.Format(Loc("Str_St_UnknownDevices"), unknown);
-                    }
+                    NoteKnownDevices(location);
                 }
             }
             catch (OperationCanceledException)
@@ -119,13 +114,33 @@ namespace KillerScan.Controls
             }
         }
 
+        /// <summary>
+        /// Records a completed scan as Known in its Location. The first one sets the baseline and
+        /// approves nothing; later ones count only devices new since then. A Temporary scan has
+        /// no baseline to compare against, so it reports nothing either way.
+        /// </summary>
+        private void NoteKnownDevices(LocationData location)
+        {
+            if (location.IsTemporary || _active.Devices.Count == 0) return;
+            var devices = location.Devices;
+            var seen = devices.Observe(_active.Devices.ToList());
+            PersistenceFeedback.Check(seen.Saved, devices.Retry, () => devices.SaveError);
+            _active.NewIdentities = new(seen.NewDevices.Select(DeviceIdentity.For), StringComparer.OrdinalIgnoreCase);
+            if (seen.BaselineCreated)
+                StatusText.Text = string.Format(Loc("Str_St_KnownBaseline"), _active.Devices.Count);
+            else if (seen.NewDevices.Count > 0)
+                StatusText.Text = string.Format(Loc("Str_St_UnknownDevices"), seen.NewDevices.Count);
+            _filteredView?.Refresh();
+        }
+
         private void RecordCompletedRun(ScanOptions options, bool deep, ScanCompletion completion = ScanCompletion.Complete)
         {
-            var recorded = ScanHistory.Record(_active.ScannedSubnet, _active.SubnetText, _active.Devices, completion, options, deep);
+            var history = _location.History;
+            var recorded = history.Record(_active.ScannedSubnet, _active.SubnetText, _active.Devices, completion, options, deep);
             _active.ScannedAt = recorded.Current.ScannedAt;
             _active.Completion = completion;
             if (_disposed) return;
-            if (PersistenceFeedback.Check(recorded.Saved, ScanHistory.Retry, () => ScanHistory.SaveError))
+            if (PersistenceFeedback.Check(recorded.Saved, history.Retry, () => history.SaveError))
                 HistoryRecorded?.Invoke(this, EventArgs.Empty);
         }
     }

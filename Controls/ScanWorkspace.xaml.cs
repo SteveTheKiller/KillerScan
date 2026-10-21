@@ -64,6 +64,7 @@ namespace KillerScan.Controls
         internal ScanWorkspace(string initialTarget, bool demo, NetworkScanner scanner)
         {
             DemoMode = demo;
+            InitializeLocation();
             InitializeComponent();
             StatusDescriptor.AddValueChanged(StatusText, NotifyFooterChanged);
             ProgressDescriptor.AddValueChanged(ScanProgress, NotifyFooterChanged);
@@ -73,6 +74,7 @@ namespace KillerScan.Controls
             _active = new ScanSession(SubnetInput.Text, scanner)
             { Status = string.Format(Loc("Str_Status_Ready"), OuiLookup.Count.ToString("N0")) };
             WireSession(_active);
+            ApplyLocationHooks();
             ScanOptionsMenu.Attach(ScanOptionsButton, () => _active.Options,
                 value => { if (!_disposed && !IsScanning) _active.Options = value; });
             ActivateSession();
@@ -90,6 +92,7 @@ namespace KillerScan.Controls
             // A language switch changes these buttons' widths without resizing the bar.
             ScanBtn.SizeChanged += (_, _) => FitToolbarInputs();
             ScanOptionsButton.SizeChanged += (_, _) => FitToolbarInputs();
+            LocationButton.SizeChanged += (_, _) => FitToolbarInputs();
             DeepScanAllButton.SizeChanged += (_, _) => FitToolbarInputs();
             TopologyOrderButton.IsVisibleChanged += (_, _) => FitToolbarInputs();
             SubnetInput.TextChanged += (_, _) => { _active.SubnetText = Targets; StateChanged?.Invoke(this, EventArgs.Empty); };

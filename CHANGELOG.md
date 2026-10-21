@@ -30,6 +30,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - History compares a scan only with an earlier completed scan of the same full target list, with the same checks and the same normal or deep pass. Different lists that share a "first +N" caption no longer compare, and older entries saved with only that caption are not used as baselines.
 - A canceled or partial scan never reports devices or ports as removed, since it did not check everything.
 - Rescanning selected devices reports how many actually refreshed and how many did not respond, instead of counting every selected host. HTML reports keep the original scan time and add when devices were refreshed later and whether that refresh was partial.
+- Device names, approvals, type overrides and SSH usernames no longer carry over between customer sites that reuse the same IP addresses. Each now belongs to a Location.
+- Removing the last approved device no longer approves every device on the next scan.
 - The public subnet helper rejects IPv6 addresses and malformed CIDR suffixes before expanding hosts.
 - Terminal tables display escaped network control characters without changing raw scan data or JSON exports.
 - Terminal combining marks, wide characters and common emoji clusters keep consistent columns through drawing, editing, copying and resizing.
@@ -57,8 +59,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Added Slovenian across the app, installation prompts, website and help. (#5) (Thanks @MrCodeLabs)
 - Scan settings can let deep scans fingerprint unknown open ports. It is off by default, so unknown ports get a connection check only.
 - The PowerShell `scan` command takes `-Demo` for fabricated screenshot data.
+- Locations keep each customer site's saved scans, device names, approvals, type overrides, SSH usernames and history separate. Pick one from the Location button beside the target box, or run a Temporary scan that saves nothing. On first start, everything you already had moves into a Location named Unassigned, and the original files are left in place.
+- The first scan in a Location sets a baseline of Known devices without approving any. Later scans flag devices that are new since that baseline, and the device mark shows approved, new and known.
+- Saved scans belong to a Location and can be saved in place or under a new name. Picking a Location restores its last targets and settings without scanning.
+- `/scan` and `/probe` take `/location <name or ID>`, and the PowerShell `scan` and `probe` commands take `-Location`. An unknown or shared name is a usage error. The terminal's Scan button scans in the current Location.
 
 ### Changed
+- Trusted devices are now called approved devices, and approving is always a choice you make.
+- Command-line scans without `/location` no longer apply saved device names or types, and save nothing.
 - Updated the app and engine JSON dependency to 10.0.13.
 - Updated and pinned the build/release actions to current compatible stable versions.
 - Clarified sent-byte upload throughput and its acknowledgment requirement in the app, engine and website documentation.

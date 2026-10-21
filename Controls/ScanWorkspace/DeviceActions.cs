@@ -86,7 +86,7 @@ namespace KillerScan.Controls
             var d = GetSelectedDevice(); if (d == null || string.IsNullOrEmpty(d.MacAddress)) return;
             if (sender is MenuItem mi && mi.Tag is string type)
             {
-                PersistenceFeedback.Check(DeviceOverrides.Set(d.MacAddress, type), DeviceOverrides.Save, () => DeviceOverrides.SaveError);
+                PersistenceFeedback.Check(_location.Overrides.Set(d.MacAddress, type), _location.Overrides.Save, () => _location.Overrides.SaveError);
                 d.DeviceType = type;
                 _filteredView?.Refresh();
                 if (_showTopology) RefreshTopology();
@@ -97,8 +97,8 @@ namespace KillerScan.Controls
         private void ClearOverride_Click(object sender, RoutedEventArgs e)
         {
             var d = GetSelectedDevice(); if (d == null || string.IsNullOrEmpty(d.MacAddress)) return;
-            PersistenceFeedback.Check(DeviceOverrides.Set(d.MacAddress, null), DeviceOverrides.Save, () => DeviceOverrides.SaveError);
-            d.DeviceType = NetworkScanner.ClassifyDevice(d);
+            PersistenceFeedback.Check(_location.Overrides.Set(d.MacAddress, null), _location.Overrides.Save, () => _location.Overrides.SaveError);
+            d.DeviceType = NetworkScanner.ClassifyDevice(d, mac => _location.Overrides.Get(mac));
             _filteredView?.Refresh();
             if (_showTopology) RefreshTopology();
             StatusText.Text = string.Format(Loc("Str_St_OverrideCleared"), d.MacAddress);
@@ -111,12 +111,12 @@ namespace KillerScan.Controls
                 Loc("Str_Rename_Title"),
                 d.IpAddress,
                 Loc("Str_Rename_Label"),
-                DevicePreferences.GetName(d) ?? d.Hostname,
+                _location.Devices.GetName(d) ?? d.Hostname,
                 Loc("Str_Rename_Save"),
                 Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
             dlg.ShowDialog();
             if (!dlg.Confirmed) return;
-            PersistenceFeedback.Check(DevicePreferences.SetName(d, dlg.Value), DevicePreferences.Retry, () => DevicePreferences.SaveError);
+            PersistenceFeedback.Check(_location.Devices.SetName(d, dlg.Value), _location.Devices.Retry, () => _location.Devices.SaveError);
             if (!string.IsNullOrWhiteSpace(dlg.Value)) d.Hostname = dlg.Value.Trim();
             _filteredView?.Refresh();
             if (_showTopology) RefreshTopology();
@@ -125,7 +125,7 @@ namespace KillerScan.Controls
         private void ClearDeviceName_Click(object sender, RoutedEventArgs e)
         {
             var d = GetSelectedDevice(); if (d == null) return;
-            PersistenceFeedback.Check(DevicePreferences.SetName(d, null), DevicePreferences.Retry, () => DevicePreferences.SaveError);
+            PersistenceFeedback.Check(_location.Devices.SetName(d, null), _location.Devices.Retry, () => _location.Devices.SaveError);
             d.Hostname = string.IsNullOrWhiteSpace(d.NetbiosName) ? string.Empty : d.NetbiosName;
             _filteredView?.Refresh();
             if (_showTopology) RefreshTopology();
@@ -134,8 +134,8 @@ namespace KillerScan.Controls
         private void TrustDevice_Click(object sender, RoutedEventArgs e)
         {
             var d = GetSelectedDevice(); if (d == null) return;
-            PersistenceFeedback.Check(DevicePreferences.SetTrusted(d, !DevicePreferences.IsTrusted(d)), DevicePreferences.Retry, () => DevicePreferences.SaveError);
-            ((System.Windows.Shapes.Ellipse)TrustDeviceMenuItem.Icon).Fill = (System.Windows.Media.Brush)new TrustMarkConverter().Convert(
+            PersistenceFeedback.Check(_location.Devices.SetTrusted(d, !_location.Devices.IsTrusted(d)), _location.Devices.Retry, () => _location.Devices.SaveError);
+            ((System.Windows.Shapes.Ellipse)TrustDeviceMenuItem.Icon).Fill = (System.Windows.Media.Brush)_trustMark.Convert(
                 d, typeof(System.Windows.Media.Brush), null!, System.Globalization.CultureInfo.CurrentCulture);
             // Trust is not a property of the device, so nothing notifies the row that its gutter
             // marker has changed color. Re-reading the items is what re-runs the converter; the

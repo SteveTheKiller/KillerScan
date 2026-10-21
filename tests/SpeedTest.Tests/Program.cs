@@ -80,6 +80,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--history-load" })) { HistoryLoadTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--run-evidence" })) { HistoryUiTests.Isolated = RunEvidenceTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--locations" })) { LocationTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--location-workspace" })) { HistoryUiTests.Isolated = LocationWorkspaceTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--report-sort" })) { await ReportSortTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--command-line-path" })) { await CommandLinePathTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--executable-deployment" })) { await ExecutableDeploymentTests.Run(); return 0; }

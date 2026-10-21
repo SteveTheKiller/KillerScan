@@ -41,12 +41,15 @@ namespace KillerScan.Controls
             // the services refuse to touch their real files while demo mode is on.
             // Profiles are already fabricated: ScanProfiles.Load ran at startup, after the launch
             // flag was read, so the sidebar has them without being reloaded here.
-            ScanHistory.SeedDemo(DemoData.History(demo));
+            _location.History.SeedDemo(DemoData.History(demo));
             HistoryRecorded?.Invoke(this, EventArgs.Empty);
 
-            // A baseline with a few strangers left out of it, so the unknown-device alert has a
-            // number and the trusted flag is not uniform across the table.
-            DevicePreferences.TrustAll(_active.Devices.Take(Math.Max(1, _active.Devices.Count - 3)));
+            // A baseline with a few strangers left out of it, so the new-device alert has a
+            // number, and only some of the known devices approved, so all three marks show.
+            var known = _active.Devices.Take(Math.Max(1, _active.Devices.Count - 3)).ToList();
+            _location.Devices.Observe(known);
+            _location.Devices.TrustAll(known.Take(Math.Max(1, known.Count - 3)));
+            _active.NewIdentities = new(_active.Devices.Except(known).Select(DeviceIdentity.For), StringComparer.OrdinalIgnoreCase);
 
             _scanCompleted = true;
             var done = string.Format(Loc("Str_St_ScanComplete"), _active.Devices.Count);

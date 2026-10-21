@@ -24,7 +24,7 @@ namespace KillerScan.Shell
             // Read the selection before the source is replaced, which clears it, then put it back
             // only if that profile is still in the list.
             object? previous = ProfilesList.SelectedItem;
-            var items = ScanProfiles.Items.OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase).ToList();
+            var items = ShellLocation.SavedScans.Items.OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase).ToList();
             ProfilesList.ItemsSource = items;
             if (previous is ScanProfile selected && items.Contains(selected)) ProfilesList.SelectedItem = selected;
             SaveProfileButton.IsEnabled = ActiveScan != null;
@@ -44,8 +44,9 @@ namespace KillerScan.Shell
                 Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
             dialog.ShowDialog();
             if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return;
-            PersistenceFeedback.Check(ScanProfiles.SaveEdited(dialog.Value, scan.Targets.Trim(), scan.Options),
-                ScanProfiles.Retry, () => ScanProfiles.SaveError);
+            var store = ShellLocation.SavedScans;
+            PersistenceFeedback.Check(store.SaveEdited(dialog.Value, scan.Targets.Trim(), scan.Options),
+                store.Retry, () => store.SaveError);
             RefreshProfilesList();
         }
 
@@ -53,7 +54,7 @@ namespace KillerScan.Shell
         {
             if (ProfileFor(sender) is not { } profile) return;
             // Loading a saved target also reveals its input without starting a scan.
-            NewScan(profile.Target).LoadProfile(profile);
+            NewScan(profile.Target).LoadSavedScan(profile);
         }
 
         private void ProfileList_Activate(object sender, MouseButtonEventArgs e)
@@ -76,13 +77,15 @@ namespace KillerScan.Shell
         {
             if (sender is not MenuItem item || ProfileFor(sender) is not { } profile) return;
             profile.DeepScanAfter = item.IsChecked;
-            PersistenceFeedback.Check(ScanProfiles.Update(profile), ScanProfiles.Retry, () => ScanProfiles.SaveError);
+            var store = ShellLocation.SavedScans;
+            PersistenceFeedback.Check(store.Update(profile), store.Retry, () => store.SaveError);
         }
 
         private void ProfileDelete_Click(object sender, RoutedEventArgs e)
         {
             if (ProfileFor(sender) is not { } profile) return;
-            PersistenceFeedback.Check(ScanProfiles.Delete(profile), ScanProfiles.Retry, () => ScanProfiles.SaveError);
+            var store = ShellLocation.SavedScans;
+            PersistenceFeedback.Check(store.Delete(profile), store.Retry, () => store.SaveError);
             RefreshProfilesList();
         }
     }

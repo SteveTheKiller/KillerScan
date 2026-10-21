@@ -37,11 +37,17 @@ namespace KillerScan.Shell
             _grainBrush    = (ImageBrush)FindName("GrainBrush")!;
 
             OuiLookup.Load();
-            DeviceOverrides.Load();
-            DeviceLogins.Load();
-            DevicePreferences.Load();
-            ScanHistory.Load();
-            ScanProfiles.Load();
+            // Demo mode keeps everything in the app-wide stores, in memory. Otherwise each
+            // Location owns its own, and the first start moves existing data into Unassigned.
+            if (DemoData.Enabled)
+            {
+                DeviceOverrides.Load();
+                DeviceLogins.Load();
+                DevicePreferences.Load();
+                ScanHistory.Load();
+                ScanProfiles.Load();
+            }
+            LocationService.Load(Loc("Str_Loc_Unassigned"));
 
             _about = new AboutController(this);
 
@@ -65,7 +71,10 @@ namespace KillerScan.Shell
                 UpdateAccentStrip(animate: false);                  // Theme.cs
                 ApplyFlatChrome();                                  // Theme.cs (98SE drops the shadow)
                 FadeInContent();                                    // WindowChrome.cs
-                if (ScanHistory.LoadError != null)
+                if (LocationService.LoadError != null)
+                    Dispatcher.BeginInvoke(new Action(OfferLocationRecovery),  // History.cs
+                        System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+                if (ShellLocation.History.LoadError != null)
                     Dispatcher.BeginInvoke(new Action(OfferHistoryRecovery),   // History.cs
                         System.Windows.Threading.DispatcherPriority.ApplicationIdle);
                 if (_startScanOnLoad && !DemoMode)

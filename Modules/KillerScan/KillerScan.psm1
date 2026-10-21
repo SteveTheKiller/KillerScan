@@ -108,7 +108,7 @@ function ConvertTo-KsDevice {
 .EXAMPLE
     scan
 .EXAMPLE
-    scan 192.168.8.0/24 -Deep
+    scan 192.168.8.0/24 -Location 'Acme Dental'
 .EXAMPLE
     scan | Where-Object Type -eq 'Printer' | Format-Table Ip, Hostname, Vendor
 #>
@@ -127,14 +127,19 @@ function scan {
         [int]$Timeout,
 
         # A fabricated network for screenshots and tests. Nothing is scanned.
-        [switch]$Demo
+        [switch]$Demo,
+
+        # A saved Location, by name or ID: its device names apply, and the scan is recorded
+        # in its history. Without it nothing saved is read or written.
+        [string]$Location
     )
 
     $arguments = @('/scan')
-    if ($Target)  { $arguments += ($Target -join ',') }
-    if ($Quick)   { $arguments += '/quick' }
-    if ($Timeout) { $arguments += @('/timeout', $Timeout) }
-    if ($Demo)    { $arguments += '/demo' }
+    if ($Target)   { $arguments += ($Target -join ',') }
+    if ($Quick)    { $arguments += '/quick' }
+    if ($Timeout)  { $arguments += @('/timeout', $Timeout) }
+    if ($Demo)     { $arguments += '/demo' }
+    if ($Location) { $arguments += @('/location', $Location) }
     # No /quiet: it suppresses stdout, which is where the JSON is. Status goes to stderr.
     $arguments += '/json'
 
@@ -153,11 +158,15 @@ function probe {
         [Parameter(Position = 0, Mandatory = $true)]
         [string]$Target,
 
-        [int]$Timeout
+        [int]$Timeout,
+
+        # A saved Location whose device names and types apply to the result.
+        [string]$Location
     )
 
     $arguments = @('/probe', $Target)
-    if ($Timeout) { $arguments += @('/timeout', $Timeout) }
+    if ($Timeout)  { $arguments += @('/timeout', $Timeout) }
+    if ($Location) { $arguments += @('/location', $Location) }
     $arguments += '/json'
 
     Invoke-KsJson $arguments | ForEach-Object { ConvertTo-KsDevice $_ }

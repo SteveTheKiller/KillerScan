@@ -16,6 +16,8 @@ namespace KillerScan.Controls
         private void UpdateDeepScanButton()
         {
             ScanOptionsButton.IsEnabled = !IsScanning;
+            LocationButton.IsEnabled = !IsScanning;
+            if (IsScanning && LocationButton.ContextMenu != null) LocationButton.ContextMenu.IsOpen = false;
             if (IsScanning && ScanOptionsButton.ContextMenu != null)
                 ScanOptionsButton.ContextMenu.IsOpen = false;
             if (DeepScanAllButton == null) return;
@@ -41,7 +43,7 @@ namespace KillerScan.Controls
             var selected = GetSelectedDevice();
             foreach (var item in ResultsGrid.ContextMenu.Items.OfType<MenuItem>())
                 if (item != RescanMenuItem) item.IsEnabled = selected != null;
-            ((System.Windows.Shapes.Ellipse)TrustDeviceMenuItem.Icon).Fill = (System.Windows.Media.Brush)new TrustMarkConverter().Convert(
+            ((System.Windows.Shapes.Ellipse)TrustDeviceMenuItem.Icon).Fill = (System.Windows.Media.Brush)_trustMark.Convert(
                 selected!, typeof(System.Windows.Media.Brush), null!, System.Globalization.CultureInfo.CurrentCulture);
             TrustDeviceMenuItem.IsEnabled = selected != null;
         }

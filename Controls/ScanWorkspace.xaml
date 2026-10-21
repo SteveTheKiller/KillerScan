@@ -109,6 +109,14 @@
 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
 <Grid x:Name="ScanToolbar">
 <StackPanel Orientation="Horizontal" Margin="0,2">
+<Button x:Name="LocationButton" ToolTip="{DynamicResource Str_Loc_Title}" Style="{StaticResource OutlineButton}"
+        Click="LocationButton_Click" ContextMenuOpening="LocationButton_ContextMenuOpening"
+        FontSize="12" Padding="8,3" Margin="0,2,6,2">
+    <StackPanel Orientation="Horizontal">
+        <a11y:Glyph Text="&#xE707;" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="0,0,5,0" VerticalAlignment="Center"/>
+        <TextBlock x:Name="LocationLabel" MaxWidth="140" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+    </StackPanel>
+</Button>
 <TextBox x:Name="SubnetInput" AutomationProperties.Name="{DynamicResource Str_Lbl_Subnet}" Style="{StaticResource DarkTextBox}" Padding="5,3,9,3" FontSize="12" Width="220" MaxWidth="220" VerticalAlignment="Center" Margin="0,2,8,2"/>
 <Button x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}" Style="{StaticResource OutlineButton}" Click="ScanBtn_Click" FontSize="12" Padding="10,3" Margin="0,2,6,2">
 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Btn_Scan}"/><Run Text=" (F5)"/></TextBlock></Button.ToolTip>

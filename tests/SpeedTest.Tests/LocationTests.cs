@@ -21,6 +21,7 @@ internal static class LocationTests
             CorruptCatalog(Path.Combine(root, "corrupt"));
             Isolation(Path.Combine(root, "isolation"));
             KnownAndApproved(Path.Combine(root, "known"));
+            CommandLine(Path.Combine(root, "cli"));
         }
         finally
         {
@@ -172,6 +173,37 @@ internal static class LocationTests
         legacy.Load();
         Require(legacy.HasBaseline && legacy.IsTrusted(a) && legacy.IsKnown(a), "Older trust lists become the baseline.");
         Require(legacy.Observe([a, b]).NewDevices.Single() == b, "An older install keeps flagging devices outside its trusted list once.");
+    }
+
+    private static void CommandLine(string root)
+    {
+        var catalog = new LocationCatalog(root);
+        catalog.Load("Unassigned");
+        catalog.Create("Acme Dental", out var acme);
+        catalog.Create("Branch", out var first);
+        catalog.Create("branch", out var second);
+        var items = catalog.Items;
+        Require(KillerScan.Features.Cli.CliRunner.ResolveLocation("acme dental", items, out _)?.Id == acme!.Id,
+            "/location finds a Location by name in any letter case.");
+        Require(KillerScan.Features.Cli.CliRunner.ResolveLocation(first!.Id, items, out _)?.Id == first.Id,
+            "/location finds a Location by ID.");
+        Require(KillerScan.Features.Cli.CliRunner.ResolveLocation("Nowhere", items, out string? missing) == null &&
+            missing!.Contains("Nowhere"), "An unknown name is refused with a message.");
+        Require(KillerScan.Features.Cli.CliRunner.ResolveLocation("Branch", items, out string? ambiguous) == null &&
+            ambiguous!.Contains(first.Id) && ambiguous.Contains(second!.Id), "A shared name is refused and lists the IDs.");
+
+        var data = catalog.Open(acme);
+        var err = new StringWriter();
+        var devices = new[] { Device("10.1.0.1", "00:00:00:00:01:01"), Device("10.1.0.2", "00:00:00:00:01:02") };
+        KillerScan.Features.Cli.CliRunner.RecordToLocation(data, "10.1.0.0/24", "10.1.0.0/24", devices, quick: false, err, quiet: false, keyed: true);
+        Require(data.History.Entries.Count == 1 && data.Devices.HasBaseline && !devices.Any(data.Devices.IsTrusted),
+            "A command-line scan records history and the baseline, and approves nothing.");
+        Require(err.ToString().Contains("Str_St_KnownBaseline|2"), "The in-app terminal is told the baseline was set.");
+        err = new StringWriter();
+        KillerScan.Features.Cli.CliRunner.RecordToLocation(data, "10.1.0.0/24", "10.1.0.0/24",
+            [.. devices, Device("10.1.0.3", "00:00:00:00:01:03")], quick: false, err, quiet: false, keyed: false);
+        Require(err.ToString().Contains("1 devices are new"), "A later command-line scan reports devices new since the baseline.");
+        Require(data.History.Entries.Last().TargetKey == "10.1.0.0/24", "Command-line history keeps the full targets.");
     }
 
     private static void Require(bool condition, string message)

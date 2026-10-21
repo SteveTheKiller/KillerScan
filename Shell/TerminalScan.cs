@@ -86,10 +86,15 @@ namespace KillerScan.Shell
                 terminal.ManagedInput += input => { if (input is "\u001b" or "\u0003") stop.Cancel(); };
                 terminal.Focus();
                 var presentation = new Terminal.TerminalScanPresentation(Loc, () => terminal.Buffer.Cols);
+                // The scan runs in the scan workspace's Location, which records history and the
+                // Known list; a Temporary scan passes none and saves nothing.
+                var location = ShellLocation;
+                string locationArgument = location.Info != null && !location.IsShared && Services.LocationService.LoadError == null
+                    ? " /location " + QuoteArgument(location.Info.Id) : string.Empty;
                 using var process = new Process { StartInfo = new ProcessStartInfo
                 {
                     FileName = Assembly.GetExecutingAssembly().Location,
-                    Arguments = "/scan " + QuoteArgument(target.Trim()) + " /json /progress /terminal-progress",
+                    Arguments = "/scan " + QuoteArgument(target.Trim()) + locationArgument + " /json /progress /terminal-progress",
                     UseShellExecute = false, CreateNoWindow = true,
                     RedirectStandardOutput = true, RedirectStandardError = true
                 } };
@@ -125,18 +130,18 @@ namespace KillerScan.Shell
                 {
                     var devices = JsonSerializer.Deserialize<List<NetworkDevice>>(json) ?? [];
                     _terminalScanCount = devices.Count;
-                    if (!Services.DevicePreferences.HasTrustedDevices)
+                    // The command line already reported a new baseline or new devices, if any.
+                    if (_terminalStatusKey is not ("Str_St_KnownBaseline" or "Str_St_UnknownDevices"))
                     {
-                        Controls.PersistenceFeedback.Check(Services.DevicePreferences.TrustAll(devices),
-                            Services.DevicePreferences.Retry, () => Services.DevicePreferences.SaveError);
-                        _terminalStatusKey = "Str_St_TrustedBaseline";
+                        _terminalStatusKey = "Str_St_ScanComplete";
                         _terminalStatusArgument = devices.Count;
                     }
-                    else
+                    if (locationArgument.Length > 0)
                     {
-                        int unknown = devices.Count(device => !Services.DevicePreferences.IsTrusted(device));
-                        _terminalStatusKey = unknown > 0 ? "Str_St_UnknownDevices" : "Str_St_ScanComplete";
-                        _terminalStatusArgument = unknown > 0 ? unknown : devices.Count;
+                        // Another process wrote history and Known devices; show what it saved.
+                        location.Devices.Load();
+                        location.History.Load();
+                        RefreshHistoryList();
                     }
                     terminal.WriteManaged(presentation.Result(devices));
                 }

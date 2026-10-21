@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -78,20 +79,33 @@ namespace KillerScan.Controls
             => Binding.DoNothing;
     }
 
+    internal enum TrustMark { Known, Approved, New }
+
     /// <summary>
-    /// The trust marker in the gutter at the left of each device row: green for a device in your
-    /// trusted list, amber for one that is not. Same two colors the status bar's scan light uses,
+    /// The marker in the gutter at the left of each device row: green for an approved device,
+    /// amber for one new since its Location's baseline, and the muted text color for one that is
+    /// known but not approved. Green and amber are the status bar's scan light colors,
     /// deliberately, so the bar and the rows are saying the same thing in the same language.
     ///
-    /// Bound to the device itself rather than to a property, because trust lives in
-    /// <see cref="Services.DevicePreferences"/> keyed by hardware identity, not on the model. That
-    /// makes it a read of external state, so a row only picks up a change when the grid refreshes
-    /// its items; toggling trust does exactly that.
+    /// Bound to the device itself rather than to a property, because approval lives in the
+    /// Location's saved data keyed by hardware identity, not on the model. That makes it a read
+    /// of external state, so a row only picks up a change when the grid refreshes its items;
+    /// toggling approval does exactly that. Each scan tab supplies <see cref="State"/> for its
+    /// own Location; without one, the app-wide trusted list decides between green and amber.
     /// </summary>
     public sealed class TrustMarkConverter : IValueConverter
     {
         private static readonly Brush Trusted = Frozen("#3FA95F");
         private static readonly Brush Unknown = Frozen("#E0A317");
+
+        internal Func<NetworkDevice, TrustMark>? State { get; set; }
+
+        internal Brush BrushFor(TrustMark mark) => mark switch
+        {
+            TrustMark.Approved => Trusted,
+            TrustMark.New => Unknown,
+            _ => Application.Current?.TryFindResource("MutedTextBrush") as Brush ?? Brushes.Gray
+        };
 
         private static Brush Frozen(string hex)
         {
@@ -101,8 +115,9 @@ namespace KillerScan.Controls
         }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            => value is NetworkDevice device && Services.DevicePreferences.IsTrusted(device)
-                ? Trusted : Unknown;
+            => value is not NetworkDevice device ? Unknown
+                : State != null ? BrushFor(State(device))
+                : Services.DevicePreferences.IsTrusted(device) ? Trusted : Unknown;
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => Binding.DoNothing;

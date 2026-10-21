@@ -66,6 +66,21 @@ try {
     $env:KS_EXE = New-FakeExe 'unknown-vendor' 'Unknown' '' 3
     Require ($null -eq (vendor 00:11:22:33:44:55)) 'Exit 3 from vendor is the unknown-vendor answer.'
 
+    $located = Join-Path $work 'located.cmd'
+    Set-Content -LiteralPath $located -Encoding Ascii -Value @(
+        '@echo off',
+        'echo %* | findstr /C:"/location" >nul || (echo []& exit /b 0)',
+        'echo %* | findstr /C:"Acme Dental" >nul || (echo Error: wrong Location 1>&2& exit /b 2)',
+        'echo [{"IpAddress":"192.0.2.7","OpenPorts":[]}]')
+    $env:KS_EXE = $located
+    $site = @(scan 192.0.2.0/30 -Location 'Acme Dental')
+    Require ($site.Count -eq 1 -and $site[0].Ip -eq '192.0.2.7') '-Location passes the Location name, spaces included, to the app.'
+    Require (@(scan 192.0.2.0/30).Count -eq 0) 'Without -Location no /location is passed.'
+
+    $env:KS_EXE = $realExe
+    $demoLocation = Get-Failure { scan -Demo -Location 'Anywhere' }
+    Require ($null -ne $demoLocation -and $demoLocation.Exception.Data['ExitCode'] -eq 2) 'The real app refuses -Location with -Demo as a usage error.'
+
     $env:KS_EXE = New-FakeExe 'noisy' '[{"IpAddress":"192.0.2.1","OpenPorts":[]}]' 'Progress: 100%%' 0
     $noisy = @(scan 192.0.2.1)
     Require ($noisy.Count -eq 1 -and $noisy[0].Ip -eq '192.0.2.1') 'Stderr status lines never mix into parsed stdout.'

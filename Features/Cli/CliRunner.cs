@@ -138,8 +138,54 @@ namespace KillerScan.Features.Cli
             "/sort", "--sort", "/filter", "--filter", "/type", "--type",
             "/vendor-filter", "--vendor-filter", "/ports", "--ports", "/limit", "--limit",
             "/timeout", "--timeout", "/theme", "--theme", "/count", "--count",
-            "/interval", "--interval", "/max-hops", "--max-hops"
+            "/interval", "--interval", "/max-hops", "--max-hops", "/location", "--location"
         ];
+
+        /// <summary>
+        /// Finds the Location a command line names, by ID or by name in any letter case. Returns
+        /// null with a usage message when nothing matches or more than one Location shares the name.
+        /// </summary>
+        internal static LocationInfo? ResolveLocation(string text, IReadOnlyList<LocationInfo> items, out string? error)
+        {
+            error = null;
+            string wanted = text.Trim();
+            if (wanted.Length == 0) { error = "/location needs a Location name."; return null; }
+            if (items.FirstOrDefault(item => string.Equals(item.Id, wanted, StringComparison.OrdinalIgnoreCase)) is { } byId) return byId;
+            var named = items.Where(item => string.Equals(item.Name, wanted, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (named.Count == 1) return named[0];
+            error = named.Count == 0
+                ? $"no Location is named \"{wanted}\"."
+                : $"more than one Location is named \"{wanted}\". Use its ID instead: {string.Join(", ", named.Select(item => item.Id))}.";
+            return null;
+        }
+
+        /// <summary>
+        /// Records a finished command-line scan in its Location: one history entry, then the
+        /// Known list. Status lines go to stderr; the in-app terminal reads the keyed form.
+        /// </summary>
+        internal static void RecordToLocation(LocationData location, string caption, string targets,
+            IReadOnlyList<NetworkDevice> devices, bool quick, TextWriter err, bool quiet, bool keyed)
+        {
+            // A quick scan checks no ports, so it never becomes the baseline for a full one.
+            var options = quick ? new ScanOptions().Without("ports,http,tls,ssh") : new ScanOptions();
+            var history = location.History;
+            if (!history.Record(caption, targets, devices, ScanCompletion.Complete, options, deep: false).Saved)
+                err.WriteLine(PaintErr("Warning: the scan could not be saved to history - " + Flatten(history.SaveError), AnsiBad));
+            if (devices.Count == 0) return;
+            var seen = location.Devices.Observe(devices);
+            if (!seen.Saved)
+                err.WriteLine(PaintErr("Warning: known devices could not be saved - " + Flatten(location.Devices.SaveError), AnsiBad));
+            if (keyed)
+            {
+                if (seen.BaselineCreated) err.WriteLine("Str_St_KnownBaseline|" + devices.Count);
+                else if (seen.NewDevices.Count > 0) err.WriteLine("Str_St_UnknownDevices|" + seen.NewDevices.Count);
+            }
+            else if (!quiet)
+            {
+                if (seen.BaselineCreated) err.WriteLine($"Baseline set: {devices.Count} devices are now known. None are approved yet.");
+                else if (seen.NewDevices.Count > 0) err.WriteLine($"Alert: {seen.NewDevices.Count} devices are new since the baseline.");
+            }
+        }
 
         private static readonly string[] FlagOptions =
         [
@@ -439,14 +485,32 @@ namespace KillerScan.Features.Cli
             int[]? ports = ParsePorts(Value(options, "/ports", "--ports"));
             if (ports != null && ports.Length == 0) return Usage(err, "/ports must be comma-separated numbers from 1 to 65535.");
 
+            // With /location the run reads that Location's names and types and records there.
+            // Without it, it is a Temporary scan: nothing saved is read and nothing is written.
+            string? locationText = Value(options, "/location", "--location");
+            LocationData? location = null;
+            if (locationText != null)
+            {
+                if (demo) return Usage(err, "/location does not work with /demo.");
+                if (!LocationService.Loaded) LocationService.Load("Unassigned");
+                if (LocationService.LoadError is { } locationError)
+                    return Usage(err, "Locations are unavailable - " + Flatten(locationError), 1);
+                var info = ResolveLocation(locationText, LocationService.Items, out string? resolveError);
+                if (info == null) return Usage(err, resolveError!);
+                location = LocationService.Get(info);
+            }
+
             OuiLookup.Load();
-            DeviceOverrides.Load();
             using var cts = new CancellationTokenSource();
             if (timeout > 0) cts.CancelAfter(TimeSpan.FromSeconds(timeout));
             void OnCancel(object? sender, ConsoleCancelEventArgs e) { e.Cancel = true; cts.Cancel(); }
             try { Console.CancelKeyPress += OnCancel; } catch { }
 
-            var scanner = new NetworkScanner();
+            var scanner = new NetworkScanner
+            {
+                ManualTypes = mac => location?.Overrides.Get(mac),
+                Completed = device => location?.Devices.Apply(device)
+            };
             if (terminalProgress)
             {
                 int found = 0;
@@ -524,6 +588,10 @@ namespace KillerScan.Features.Cli
                 spinner?.Dispose();
                 try { Console.CancelKeyPress -= OnCancel; } catch { }
             }
+
+            // History and the Known list get everything the scan found, before display filters.
+            if (location != null && !probe && !demo)
+                RecordToLocation(location, parsed!.Summary, targetText, devices, quick, err, quiet, terminalProgress);
 
             devices = ApplyFilters(devices, options, ports);
             var sorted = ApplySort(devices, Value(options, "/sort", "--sort"),
@@ -714,7 +782,8 @@ namespace KillerScan.Features.Cli
             "  /descending            reverse the selected sort",
             "  /limit <count>         keep the first N rows after filtering and sorting",
             "  /fail-empty            return exit code 3 when no rows remain",
-            "  /demo                  fabricated network for screenshots; scans nothing (with /scan)", "", "OUTPUT OPTIONS",
+            "  /demo                  fabricated network for screenshots; scans nothing (with /scan)",
+            "  /location <name|id>    use and record into a saved Location; without it nothing is saved", "", "OUTPUT OPTIONS",
             "  /format <kind>         table, csv, json, or html",
             "  /table | /csv | /json | /html   shorthand for /format",
             "  /export <path>         write output; extension selects format unless overridden",

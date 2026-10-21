@@ -26,13 +26,13 @@ namespace KillerScan.Shell
 
         private void HistorySettings_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new HistorySettingsDialog(ScanHistory.Retention, ApplyHistoryRetention) { Owner = this };
+            var dialog = new HistorySettingsDialog(ShellLocation.History.Retention, ApplyHistoryRetention) { Owner = this };
             dialog.ShowDialog();
         }
 
         private bool ApplyHistoryRetention(HistoryRetention policy)
         {
-            bool applied = ScanHistory.ApplyRetention(policy, removed =>
+            bool applied = ShellLocation.History.ApplyRetention(policy, removed =>
             {
                 var confirmation = CreateHistoryRemovalConfirmation(removed,
                     OwnedWindows.OfType<HistorySettingsDialog>().FirstOrDefault() ?? (Window)this);
@@ -86,7 +86,7 @@ namespace KillerScan.Shell
             try
             {
                 var selected = HistoryList.SelectedItem as ScanHistoryEntry;
-                var entries = ScanHistory.Entries.Reverse().ToList();
+                var entries = ShellLocation.History.Entries.Reverse().ToList();
                 HistoryList.ItemsSource = entries;
                 HistoryList.SelectedItem = selected != null && entries.Contains(selected)
                     ? selected : entries.FirstOrDefault();
@@ -100,16 +100,32 @@ namespace KillerScan.Shell
         /// </summary>
         private void OfferHistoryRecovery()
         {
-            while (ScanHistory.LoadError is { } error)
+            var history = ShellLocation.History;
+            while (history.LoadError is { } error)
             {
-                string message = string.Format(Loc("Str_History_LoadFailed"), error, ScanHistory.HistoryPath);
+                string message = string.Format(Loc("Str_History_LoadFailed"), error, history.HistoryPath);
                 if (MessageBox.Show(this, message, AppInfo.DisplayName, MessageBoxButton.YesNo, MessageBoxImage.Warning)
                     != MessageBoxResult.Yes) break;
-                ScanHistory.Load();
+                history.Load();
             }
             RefreshHistoryList();
             _historyWorkspace?.RefreshLocale();
         }
+
+        /// <summary>
+        /// Offered once after the first paint when the Location catalog could not be read or the
+        /// first-start move into Unassigned failed. The original files stay in use meanwhile.
+        /// </summary>
+        private void OfferLocationRecovery()
+        {
+            if (LocationService.LoadError is not { } error) return;
+            MessageBox.Show(this, string.Format(Loc("Str_Loc_LoadFailed"), error), AppInfo.DisplayName,
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
+        /// <summary>The Location the scan workspace is in, which the sidebar lists follow.</summary>
+        private LocationData ShellLocation => _scanWorkspace?.Location ?? (_startLocation ??= LocationService.Initial());
+        private LocationData? _startLocation;
 
         private void HistoryList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -124,7 +140,11 @@ namespace KillerScan.Shell
         {
             if (_historyWorkspace == null)
             {
-                _historyWorkspace = new HistoryWorkspace { LayoutTransform = new ScaleTransform(_appScale, _appScale) };
+                _historyWorkspace = new HistoryWorkspace
+                {
+                    LayoutTransform = new ScaleTransform(_appScale, _appScale),
+                    HistorySource = () => ShellLocation.History
+                };
                 _historyWorkspace.UseTableHeaderStyle(((DataGrid)_scanWorkspace!.FindName("ResultsGrid")).ColumnHeaderStyle);
                 RegisterViewToolbar("history", _historyWorkspace.DetachToolbar());
                 _workspaceSummary.Children.Add(_historyWorkspace.DetachSummary());

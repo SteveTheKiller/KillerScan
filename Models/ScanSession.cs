@@ -27,6 +27,9 @@ namespace KillerScan.Models
         /// own time or completion, so reports state them separately. Null until a refresh.
         /// </summary>
         public ScanRefresh? Refresh { get; set; }
+
+        /// <summary>Devices this snapshot found outside its Location's Known list, by identity.</summary>
+        public HashSet<string> NewIdentities { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>What manual rescans of this snapshot did, summed across every refresh.</summary>

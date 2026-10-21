@@ -13,6 +13,10 @@ namespace KillerScan.Services
         public string Customer { get; set; } = string.Empty;
         public string Notes { get; set; } = string.Empty;
 
+        /// <summary>The targets and settings of the last scan run here, restored when it is picked.</summary>
+        public string LastTargets { get; set; } = string.Empty;
+        public ScanOptions? LastOptions { get; set; }
+
         /// <summary>What a screen reader announces for the Location's row.</summary>
         public override string ToString() => Customer.Length == 0 ? Name : Name + ", " + Customer;
     }
@@ -25,23 +29,49 @@ namespace KillerScan.Services
     {
         internal static readonly string[] StoreFiles = ["devices.json", "overrides.json", "logins.json", "profiles.json", "history.json"];
 
+        private readonly Func<DevicePreferenceStore> _devices;
+        private readonly Func<DeviceOverrideStore> _overrides;
+        private readonly Func<DeviceLoginStore> _logins;
+        private readonly Func<SavedScanStore> _savedScans;
+        private readonly Func<HistoryStore> _history;
+
         public LocationInfo? Info { get; }
-        public bool IsTemporary => Info == null;
-        public DevicePreferenceStore Devices { get; }
-        public DeviceOverrideStore Overrides { get; }
-        public DeviceLoginStore Logins { get; }
-        public SavedScanStore SavedScans { get; }
-        public HistoryStore History { get; }
+        public bool IsTemporary => Info == null && !IsShared;
+
+        /// <summary>The app-wide stores from before Locations. See <see cref="Shared"/>.</summary>
+        public bool IsShared { get; }
+        public DevicePreferenceStore Devices => _devices();
+        public DeviceOverrideStore Overrides => _overrides();
+        public DeviceLoginStore Logins => _logins();
+        public SavedScanStore SavedScans => _savedScans();
+        public HistoryStore History => _history();
 
         private LocationData(LocationInfo? info, string directory, bool memoryOnly)
         {
             Info = info;
-            Devices = new(Path.Combine(directory, "devices.json"), memoryOnly);
-            Overrides = new(Path.Combine(directory, "overrides.json"), memoryOnly);
-            Logins = new(Path.Combine(directory, "logins.json"), memoryOnly);
-            SavedScans = new(Path.Combine(directory, "profiles.json"), memoryOnly);
-            History = new(Path.Combine(directory, "history.json"), memoryOnly);
+            var devices = new DevicePreferenceStore(Path.Combine(directory, "devices.json"), memoryOnly);
+            var overrides = new DeviceOverrideStore(Path.Combine(directory, "overrides.json"), memoryOnly);
+            var logins = new DeviceLoginStore(Path.Combine(directory, "logins.json"), memoryOnly);
+            var savedScans = new SavedScanStore(Path.Combine(directory, "profiles.json"), memoryOnly);
+            var history = new HistoryStore(Path.Combine(directory, "history.json"), memoryOnly);
+            _devices = () => devices; _overrides = () => overrides; _logins = () => logins;
+            _savedScans = () => savedScans; _history = () => history;
         }
+
+        private LocationData(LocationInfo? info)
+        {
+            Info = info;
+            IsShared = true;
+            _devices = () => DevicePreferences.Store; _overrides = () => DeviceOverrides.Store;
+            _logins = () => DeviceLogins.Store; _savedScans = () => ScanProfiles.Store; _history = () => ScanHistory.Store;
+        }
+
+        /// <summary>
+        /// The app-wide stores, read through each time so a reload is always seen. Used when the
+        /// Location catalog is unavailable (the original files stay in use) and by hosts that
+        /// never load Locations, such as isolated tests.
+        /// </summary>
+        internal static LocationData Shared(LocationInfo? info = null) => new(info);
 
         internal static LocationData Open(LocationInfo info, string directory)
         {
@@ -165,6 +195,8 @@ namespace KillerScan.Services
         public bool Rename(string id, string name) => Update(id, item => item.Name = name.Trim());
         public bool SetCustomer(string id, string customer) => Update(id, item => item.Customer = customer.Trim());
         public bool SetNotes(string id, string notes) => Update(id, item => item.Notes = notes);
+        public bool SetLastUsed(string id, string targets, ScanOptions options) =>
+            Update(id, item => { item.LastTargets = targets; item.LastOptions = options; });
 
         private bool Update(string id, Action<LocationInfo> change) =>
             LoadError == null && _store.Change(value =>
