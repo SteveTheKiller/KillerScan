@@ -288,6 +288,7 @@
     "ui_accent_yellow": "Yellow",
     "ui_accent_magenta": "Magenta"
   };
+  EN.ui_store = 'Get KillerScan from the Microsoft Store';
   var currentLang = 'en';
   var translatedAttributes = ['title', 'aria-label', 'aria-roledescription', 'content'];
   function bindLabel(selector, attribute, key) {
@@ -295,6 +296,7 @@
       node.setAttribute('data-i18n-' + attribute, key);
     });
   }
+  bindLabel('.tb-store', 'title', 'ui_store');
   bindLabel('.tb-home', 'title', 'ui_home');
   bindLabel('.tgrp, .theme-toggle', 'aria-label', 'ui_choose_theme');
   bindLabel('.theme-toggle', 'title', 'ui_theme');
@@ -371,8 +373,9 @@
   if (features) new MutationObserver(translateCarousel).observe(features, { childList: true, subtree: true });
   window.addEventListener('resize', fitDiagramLabels);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitDiagramLabels);
-  var LANGS = ['en','cs','es','de','fr','ja','kk','pl','ru','uk','nb','pt','tr','vi','zh','zh-cn','bn','hu','it'];
+  var LANGS = ['en','cs','es','de','fr','ja','kk','pl','ru','uk','nb','pt','tr','vi','zh','zh-cn','bn','hu','it', 'sl'];
   var FLAGS = {
+    sl: '<svg viewBox="0 0 24 24"><rect width="24" height="8" fill="#fff"/><rect y="8" width="24" height="8" fill="#005da4"/><rect y="16" width="24" height="8" fill="#ed1c24"/><path d="M4 4h7v6c0 3-3.5 5-3.5 5S4 13 4 10Z" fill="#005da4" stroke="#ed1c24" stroke-width=".5"/><path d="m5 10 1.5-2 1 1 1-1 1.5 2v1H5Z" fill="#fff"/></svg>',
     en: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#fff"/><g fill="#b22234"><rect width="24" height="1.85"/><rect y="3.7" width="24" height="1.85"/><rect y="7.4" width="24" height="1.85"/><rect y="11.1" width="24" height="1.85"/><rect y="14.8" width="24" height="1.85"/><rect y="18.5" width="24" height="1.85"/><rect y="22.2" width="24" height="1.8"/></g><rect width="11" height="12.95" fill="#3c3b6e"/></svg>',
     cs: '<svg viewBox="0 0 24 24"><rect width="24" height="12" fill="#fff"/><rect y="12" width="24" height="12" fill="#d7141a"/><polygon points="0,0 12,12 0,24" fill="#11457e"/></svg>',
     es: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#c60b1e"/><rect y="6" width="24" height="12" fill="#ffc400"/></svg>',

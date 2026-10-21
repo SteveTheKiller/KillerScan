@@ -7,6 +7,26 @@
     metadata.insertBefore(runtime, metadata.children[2] || null);
   }
 
+  var sourceTitle = document.title;
+  var description = document.querySelector('meta[name="description"]');
+  var sourceDescription = description ? description.content : '';
+  var store = document.querySelector('.mcp-store');
+  var sourceStoreTitle = store ? store.title : '';
+  function localizeReleaseFacts() {
+    var language = document.documentElement.lang || 'en';
+    var dictionary = typeof I18N === 'undefined' ? {} : (I18N[language] || I18N[language.split('-')[0]] || {});
+    document.title = dictionary.mcp_page_title || sourceTitle;
+    if (description) description.content = dictionary.mcp_page_description || sourceDescription;
+    if (store) store.title = dictionary.mcp_store || sourceStoreTitle;
+    var version = document.documentElement.dataset.mcpRelease;
+    var label = metadata && metadata.querySelector('span:not(.mcp-runtime)');
+    if (label) label.textContent = version ? (dictionary.mcp_version || 'Version') + ' ' + version : (dictionary.mcp_check || 'Checking latest release');
+  }
+  new MutationObserver(localizeReleaseFacts).observe(document.documentElement, {
+    attributes: true, attributeFilter: ['lang', 'data-mcp-release']
+  });
+  localizeReleaseFacts();
+
   document.querySelectorAll("#limits li").forEach(function (item) {
     if (/public installer/i.test(item.textContent || "")) item.remove();
   });

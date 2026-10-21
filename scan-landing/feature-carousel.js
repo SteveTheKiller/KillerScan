@@ -15,6 +15,7 @@
   var tabs = [];
   var index = 0;
   var labels = {
+    "sl": ["Možnosti programa", "Prejšnja možnost", "Naslednja možnost", "Izberi možnost", "vrtiljak", "diapozitiv"],
     "en": ["Product features", "Previous feature", "Next feature", "Choose a feature"],
     "bn": ["পণ্যের বৈশিষ্ট্য", "আগের বৈশিষ্ট্য", "পরের বৈশিষ্ট্য", "একটি বৈশিষ্ট্য বেছে নিন"],
     "cs": ["Funkce produktu", "Předchozí funkce", "Další funkce", "Vybrat funkci"],
@@ -90,6 +91,8 @@
   function localizeControls() {
     var text = labelSet();
     carousel.setAttribute('aria-label', text[0]);
+    carousel.setAttribute('aria-roledescription', text[4] || 'carousel');
+    cards.forEach(function (card) { card.setAttribute('aria-roledescription', text[5] || 'slide'); });
     previous.setAttribute('aria-label', text[1]);
     next.setAttribute('aria-label', text[2]);
     rail.setAttribute('aria-label', text[3]);

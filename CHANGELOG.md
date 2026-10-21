@@ -41,6 +41,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Film grain has crisper specks and fades midtones across app and website themes without dimming bright highlights.
 - Balanced the Technical page columns by moving the glossary to the left.
 
+### Added
+- Added Slovenian across the app, installation prompts, website and help. (#5) (Thanks @MrCodeLabs)
+
 ### Changed
 - Updated the app and engine JSON dependency to 10.0.13.
 - Updated and pinned the build/release actions to current compatible stable versions.

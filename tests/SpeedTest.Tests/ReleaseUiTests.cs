@@ -135,7 +135,7 @@ internal static class ReleaseUiTests
             Locale(locale);
             window.GetType().GetMethod("RefreshWorkspaceLocale", Instance)!.Invoke(window, null);
             Require(app.FindResource("Str_Btn_Scan") is string text && text.Length > 0, locale + ": scan label resolves.");
-            if (locale is "UkUA" or "NbNO" or "PtBR")
+            if (locale is "UkUA" or "NbNO" or "PtBR" or "SlSI")
                 foreach (double scale in new[] { 1.0, 1.5 })
                 {
                     window.GetType().GetMethod("ApplyAppScale", Instance)!.Invoke(window, new object[] { scale, false });
@@ -149,8 +149,8 @@ internal static class ReleaseUiTests
         var leftColumn = (StackPanel)columnsPanel.Children[0];
         var rightColumn = (StackPanel)columnsPanel.Children[2];
         var languages = leftColumn.Children.Cast<RadioButton>().Concat(rightColumn.Children.Cast<RadioButton>()).ToArray();
-        Require(leftColumn.Children.Count == 10 && rightColumn.Children.Count == 9, "Language menu has two balanced columns.");
-        foreach (string locale in new[] { "UkUA", "NbNO", "PtBR" })
+        Require(leftColumn.Children.Count == 10 && rightColumn.Children.Count == 10, "Language menu has two balanced columns.");
+        foreach (string locale in new[] { "UkUA", "NbNO", "PtBR", "SlSI" })
             Require(languages.Any(radio => Equals(radio.Tag, locale)), locale + ": language is selectable in the menu.");
         Require(languages.Count(radio => radio.IsChecked == true) == 1, "Language menu marks exactly one current locale.");
         menu.Items.Clear();
@@ -202,7 +202,7 @@ internal static class ReleaseUiTests
         var sheet = new RenderTargetBitmap(columns * 370, rows * 370, 96, 96, PixelFormats.Pbgra32);
         sheet.Render(drawing);
         Save(sheet, Path.Combine(output, "ButtonStates.png"));
-        Console.WriteLine("PASS: 45 theme/accent states, 19 locales, new-language scaling, services and topology rendered.");
+        Console.WriteLine("PASS: 45 theme/accent states, 20 locales, new-language scaling, services and topology rendered.");
         Console.WriteLine("Offscreen release UI: " + output);
     }
 

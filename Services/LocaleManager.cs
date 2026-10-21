@@ -6,7 +6,7 @@ namespace KillerScan.Services
 {
     // Mirrors KillerPDF's LocaleManager. en-US.xaml is always the base layer so any locale that
     // omits a key falls back to English; the chosen locale's file is layered on top.
-    internal enum Locale { EnUS, Es, ZhTW, ZhCN, Bn, TrTR, De, Fr, Ja, CsCZ, PlPL, HuHU, ItIT, KkKZ, RuRU, ViVN, UkUA, NbNO, PtBR }
+    internal enum Locale { EnUS, Es, ZhTW, ZhCN, Bn, TrTR, De, Fr, Ja, CsCZ, PlPL, HuHU, ItIT, KkKZ, RuRU, ViVN, UkUA, NbNO, PtBR, SlSI }
 
     internal static class LocaleManager
     {
@@ -51,6 +51,7 @@ namespace KillerScan.Services
                 "uk" => Locale.UkUA,
                 "nb" or "no" or "nn" => Locale.NbNO,
                 "pt" => Locale.PtBR,
+                "sl" => Locale.SlSI,
                 _ => Locale.EnUS,
             };
         }
@@ -100,6 +101,7 @@ namespace KillerScan.Services
                 Locale.UkUA => new Uri("pack://application:,,,/Strings/uk-UA.xaml"),
                 Locale.NbNO => new Uri("pack://application:,,,/Strings/nb-NO.xaml"),
                 Locale.PtBR => new Uri("pack://application:,,,/Strings/pt-BR.xaml"),
+                Locale.SlSI => new Uri("pack://application:,,,/Strings/sl-SI.xaml"),
                 _           => null,   // English: base only
             };
 
