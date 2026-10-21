@@ -8,7 +8,8 @@ namespace KillerScan.Services
     /// </summary>
     internal static class LocationService
     {
-        private static readonly string Root = Path.Combine(
+        /// <summary>Where Locations live. Isolated tests point it at a scratch folder before loading.</summary>
+        internal static string Root { get; set; } = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerScan");
         private static LocationCatalog? _catalog;
         private static LocationData? _fallback;
@@ -103,6 +104,12 @@ namespace KillerScan.Services
             bool ok = LocationTransfer.Import(_catalog!, bytes, out imported, out error);
             if (ok) Changed?.Invoke(null, EventArgs.Empty);
             return ok;
+        }
+
+        /// <summary>Records a gateway MAC seen by a completed scan in this Location.</summary>
+        public static void AddGatewayMac(LocationInfo info, string mac)
+        {
+            if (Editable) _catalog!.AddGatewayMac(info.Id, mac);
         }
 
         /// <summary>Remembers a Location's last targets and settings. Quiet: nothing on screen depends on it.</summary>

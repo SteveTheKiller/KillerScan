@@ -33,6 +33,7 @@ internal static class LocationWorkspaceTests
         bool demo = DemoData.Enabled;
         DemoData.Enabled = false;
         string root = Path.Combine(Path.GetTempPath(), "KillerScan-location-workspace-" + Guid.NewGuid().ToString("N"));
+        string originalRoot = LocationService.Root;
         try
         {
             var catalog = new LocationCatalog(root);
@@ -75,13 +76,54 @@ internal static class LocationWorkspaceTests
             PumpUntil(() => !workspace.IsScanning && temporary.History.Entries.Count == 1);
             Require(!temporary.Devices.HasBaseline && workspace.NewDevices.Count == 0,
                 "A Temporary scan sets no baseline and flags nothing.");
+            Suggestion(Path.Combine(root, "service"));
         }
         finally
         {
+            LocationService.Root = originalRoot;
             DemoData.Enabled = demo;
             if (Directory.Exists(root)) Directory.Delete(root, true);
         }
         Console.WriteLine("PASS: the scan tab names, records and baselines through its own Location.");
+    }
+
+    // The banner offers a Location this gateway was seen in, and never switches by itself.
+    private static void Suggestion(string root)
+    {
+        LocationService.Root = root;
+        LocationService.Load("Unassigned");
+        bool createdAcme = LocationService.Create("Acme Dental", out var acme);
+        bool createdShop = LocationService.Create("Shop", out var shop);
+        Require(LocationService.Editable && createdAcme && createdShop, "Locations can be created in a scratch folder.");
+        LocationService.AddGatewayMac(acme!, "AA:BB:CC:00:00:01");
+        LocationService.AddGatewayMac(shop!, "AA:BB:CC:00:00:02");
+        LocationService.AddGatewayMac(shop!, "AA:BB:CC:00:00:03");
+        LocationService.AddGatewayMac(acme!, "AA:BB:CC:00:00:03");
+
+        using var workspace = new ScanWorkspace("192.0.2.1", false, new SiteScanner());
+        workspace.SetLocation(LocationData.Temporary());
+        var banner = (System.Windows.Controls.Border)workspace.FindName("LocationSuggestion");
+        var switchButton = (System.Windows.Controls.Button)workspace.FindName("LocationSuggestionSwitch");
+        workspace.ShowLocationSuggestion("aa-bb-cc-00-00-01");
+        Require(banner.Visibility == Visibility.Visible && switchButton.Visibility == Visibility.Visible && workspace.Location.IsTemporary,
+            "A known gateway shows the banner and does not switch by itself.");
+        switchButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+        Require(workspace.Location.Info?.Id == acme!.Id && banner.Visibility == Visibility.Collapsed, "Switch moves to the suggested Location.");
+
+        workspace.ShowLocationSuggestion("AA:BB:CC:00:00:01");
+        Require(banner.Visibility == Visibility.Collapsed, "Nothing is offered when already in the matching Location.");
+        workspace.ShowLocationSuggestion("AA:BB:CC:00:00:03");
+        Require(banner.Visibility == Visibility.Collapsed, "Nothing is offered when the current Location also matches.");
+        workspace.SetLocation(LocationData.Temporary());
+        workspace.ShowLocationSuggestion("AA:BB:CC:00:00:03");
+        Require(banner.Visibility == Visibility.Visible && switchButton.Visibility == Visibility.Collapsed,
+            "A gateway seen in two Locations lists both and offers no Switch.");
+        ((System.Windows.Controls.Button)workspace.FindName("LocationSuggestionDismiss")).RaiseEvent(
+            new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+        workspace.ShowLocationSuggestion("AA:BB:CC:00:00:03");
+        Require(banner.Visibility == Visibility.Collapsed, "A dismissed gateway is not offered again.");
+        workspace.ShowLocationSuggestion("AA:BB:CC:00:00:99");
+        Require(banner.Visibility == Visibility.Collapsed, "An unseen gateway offers nothing.");
     }
 
     private static void PumpUntil(Func<bool> complete)

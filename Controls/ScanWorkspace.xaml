@@ -106,7 +106,7 @@
         </Style.Triggers>
     </Style>
 </Grid.Resources>
-<Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+<Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
 <Grid x:Name="ScanToolbar">
 <StackPanel Orientation="Horizontal" Margin="0,2">
 <Button x:Name="LocationButton" ToolTip="{DynamicResource Str_Loc_Title}" Style="{StaticResource OutlineButton}"
@@ -346,8 +346,24 @@
 
 </StackPanel>
 </Grid>
+<!-- Offers the Location this network belongs to. It never switches by itself. -->
+<Border x:Name="LocationSuggestion" Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,6" Padding="10,6"
+        Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1"
+        CornerRadius="{DynamicResource PanelCornerRadius}"
+        AutomationProperties.LiveSetting="Polite">
+    <DockPanel>
+        <Button x:Name="LocationSuggestionDismiss" DockPanel.Dock="Right" Content="{DynamicResource Str_Loc_Dismiss}"
+                Style="{StaticResource OutlineButton}" FontSize="12" Padding="10,3" Margin="6,0,0,0" Click="LocationSuggestionDismiss_Click"/>
+        <Button x:Name="LocationSuggestionSwitch" DockPanel.Dock="Right" Content="{DynamicResource Str_Loc_Switch}"
+                Style="{StaticResource OutlineButton}" FontSize="12" Padding="10,3" Click="LocationSuggestionSwitch_Click"/>
+        <a11y:Glyph DockPanel.Dock="Left" Text="&#xE707;" FontFamily="Segoe MDL2 Assets" FontSize="13" Margin="0,0,8,0"
+                    Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
+        <TextBlock x:Name="LocationSuggestionText" Foreground="{DynamicResource TextBrush}" FontSize="12"
+                   TextWrapping="Wrap" VerticalAlignment="Center"/>
+    </DockPanel>
+</Border>
 <Border x:Name="DevicesPane"
-                Grid.Row="1" Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
+                Grid.Row="2" Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
                 BorderThickness="0" CornerRadius="{DynamicResource PanelCornerRadius}" Margin="0" Panel.ZIndex="10"
                 >
             <Grid>

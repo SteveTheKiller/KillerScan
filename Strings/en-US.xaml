@@ -406,6 +406,10 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Loc_Imported">Imported Location {0}.</sys:String>
     <sys:String x:Key="Str_Loc_ImportFailed">The Location could not be imported. Nothing was added.&#10;&#10;{0}</sys:String>
     <sys:String x:Key="Str_Loc_FileFilter">KillerScan Location</sys:String>
+    <sys:String x:Key="Str_Loc_Suggest">This network's gateway was seen in {0}. Switch to that Location?</sys:String>
+    <sys:String x:Key="Str_Loc_SuggestMany">This network's gateway was seen in more than one Location: {0}. Pick one from the Location button.</sys:String>
+    <sys:String x:Key="Str_Loc_Switch">Switch</sys:String>
+    <sys:String x:Key="Str_Loc_Dismiss">Dismiss</sys:String>
     <sys:String x:Key="Str_Tip_Scan">{0} devices, {1} with open ports</sys:String>
     <sys:String x:Key="Str_Tip_Watch">Watching {0} targets, {1} not replying</sys:String>
     <sys:String x:Key="Str_Tip_History">{0} at {1}, {2} devices recorded</sys:String>

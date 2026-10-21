@@ -75,6 +75,7 @@ namespace KillerScan.Controls
             { Status = string.Format(Loc("Str_Status_Ready"), OuiLookup.Count.ToString("N0")) };
             WireSession(_active);
             ApplyLocationHooks();
+            InitializeLocationSuggestions();
             ScanOptionsMenu.Attach(ScanOptionsButton, () => _active.Options,
                 value => { if (!_disposed && !IsScanning) _active.Options = value; });
             ActivateSession();
@@ -184,6 +185,7 @@ namespace KillerScan.Controls
             StatusDescriptor.RemoveValueChanged(StatusText, NotifyFooterChanged);
             ProgressDescriptor.RemoveValueChanged(ScanProgress, NotifyFooterChanged);
             ProgressVisibilityDescriptor.RemoveValueChanged(ScanProgress, NotifyFooterChanged);
+            DisposeLocationSuggestions();
             Stop();
             SaveColumnLayout();
         }

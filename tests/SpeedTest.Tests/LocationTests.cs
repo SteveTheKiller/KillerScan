@@ -23,6 +23,7 @@ internal static class LocationTests
             KnownAndApproved(Path.Combine(root, "known"));
             CommandLine(Path.Combine(root, "cli"));
             Transfer(Path.Combine(root, "transfer"));
+            Suggestions(Path.Combine(root, "suggest"));
         }
         finally
         {
@@ -255,6 +256,27 @@ internal static class LocationTests
         }
         Require(!File.Exists(Path.Combine(root, "evil.json")) && !File.Exists(Path.Combine(root, "locations", "evil.json")),
             "A refused import writes nothing outside its Location.");
+    }
+
+    private static void Suggestions(string root)
+    {
+        var catalog = new LocationCatalog(root);
+        catalog.Load("Unassigned");
+        catalog.Create("Acme Dental", out var acme);
+        catalog.Create("Acme Dental (Annex)", out var annex);
+        catalog.Create("Shop", out var shop);
+        Require(catalog.AddGatewayMac(acme!.Id, "aa-bb-cc-00-00-01") && catalog.AddGatewayMac(annex!.Id, "AA:BB:CC:00:00:01") &&
+            catalog.AddGatewayMac(shop!.Id, "AA:BB:CC:00:00:02"), "Gateway MACs are recorded per Location.");
+        catalog.AddGatewayMac(shop.Id, "aa:bb:cc:00:00:02");
+        var reloaded = new LocationCatalog(root);
+        reloaded.Load("Unassigned");
+        Require(reloaded.Items.Single(item => item.Id == shop.Id).GatewayMacs.Count == 1, "The same gateway is recorded once, in any format.");
+        Require(LocationCatalog.Matching(reloaded.Items, "AA-BB-CC-00-00-02").Single().Id == shop.Id,
+            "A gateway MAC suggests the Location that has seen it.");
+        Require(LocationCatalog.Matching(reloaded.Items, "aa:bb:cc:00:00:01").Count == 2,
+            "A gateway seen by two Locations suggests both and picks neither.");
+        Require(LocationCatalog.Matching(reloaded.Items, "").Count == 0 && LocationCatalog.Matching(reloaded.Items, "AA:BB:CC:00:00:09").Count == 0,
+            "No gateway MAC, or an unseen one, suggests nothing.");
     }
 
     private static void Require(bool condition, string message)

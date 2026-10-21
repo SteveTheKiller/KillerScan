@@ -182,6 +182,79 @@ namespace KillerScan.Controls
             return menu;
         }
 
+        // ── Suggesting a Location ──────────────────────────────────────────────────────────
+        // A completed scan records the gateway's MAC in its Location. When the machine is on a
+        // network whose gateway MAC a Location has seen, a banner offers it. Nothing switches by
+        // itself, and a dismissed gateway is not offered again until the app restarts.
+
+        private static readonly HashSet<string> DismissedGateways = new(StringComparer.OrdinalIgnoreCase);
+        private LocationInfo? _suggested;
+        private string _suggestedGateway = string.Empty;
+
+        private void InitializeLocationSuggestions()
+        {
+            Loaded += (_, _) => CheckLocationSuggestion();
+            System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged += OnNetworkAddressChanged;
+        }
+
+        private void DisposeLocationSuggestions() =>
+            System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged -= OnNetworkAddressChanged;
+
+        private void OnNetworkAddressChanged(object? sender, EventArgs e) =>
+            Dispatcher.BeginInvoke(new Action(CheckLocationSuggestion));
+
+        private void RecordGateway(LocationData location)
+        {
+            if (location.Info is not { } info || location.IsShared) return;
+            string gateway = LocalNetwork.Detect()?.Gateway ?? string.Empty;
+            if (gateway.Length == 0) return;
+            var device = _active.Devices.FirstOrDefault(item => item.IpAddress == gateway && item.MacAddress.Length > 0);
+            if (device != null) LocationService.AddGatewayMac(info, device.MacAddress);
+        }
+
+        private async void CheckLocationSuggestion()
+        {
+            if (_disposed || DemoMode || !LocationService.Editable) return;
+            string gateway = LocalNetwork.Detect()?.Gateway ?? string.Empty;
+            string mac = string.Empty;
+            if (System.Net.IPAddress.TryParse(gateway, out var address))
+            {
+                try { mac = await System.Threading.Tasks.Task.Run(() => NetworkPlatform.Current.ResolveMac(address)); }
+                catch (Exception ex) when (ex is not OutOfMemoryException) { mac = string.Empty; }
+            }
+            if (_disposed) return;
+            ShowLocationSuggestion(mac);
+        }
+
+        internal void ShowLocationSuggestion(string gatewayMac)
+        {
+            var matches = LocationCatalog.Matching(LocationService.Items, gatewayMac)
+                .Where(item => item.Id != _location.Info?.Id).ToList();
+            bool show = matches.Count > 0 && !DismissedGateways.Contains(LocationInfo.NormalizeMac(gatewayMac))
+                && !LocationCatalog.Matching(LocationService.Items, gatewayMac).Any(item => item.Id == _location.Info?.Id);
+            _suggestedGateway = LocationInfo.NormalizeMac(gatewayMac);
+            _suggested = show && matches.Count == 1 ? matches[0] : null;
+            LocationSuggestion.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+            if (!show) return;
+            LocationSuggestionText.Text = matches.Count == 1
+                ? string.Format(Loc("Str_Loc_Suggest"), matches[0].Name)
+                : string.Format(Loc("Str_Loc_SuggestMany"), string.Join(", ", matches.Select(item => item.Name)));
+            // With more than one match, the picker is the way to choose; nothing is preselected.
+            LocationSuggestionSwitch.Visibility = _suggested != null ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void LocationSuggestionSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            if (_suggested == null) return;
+            if (SetLocation(LocationService.Get(_suggested))) LocationSuggestion.Visibility = Visibility.Collapsed;
+        }
+
+        private void LocationSuggestionDismiss_Click(object sender, RoutedEventArgs e)
+        {
+            if (_suggestedGateway.Length > 0) DismissedGateways.Add(_suggestedGateway);
+            LocationSuggestion.Visibility = Visibility.Collapsed;
+        }
+
         private void EditNotes()
         {
             if (_location.Info is not { } info) return;

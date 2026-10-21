@@ -122,6 +122,7 @@ namespace KillerScan.Controls
         private void NoteKnownDevices(LocationData location)
         {
             if (location.IsTemporary || _active.Devices.Count == 0) return;
+            RecordGateway(location);
             var devices = location.Devices;
             var seen = devices.Observe(_active.Devices.ToList());
             PersistenceFeedback.Check(seen.Saved, devices.Retry, () => devices.SaveError);

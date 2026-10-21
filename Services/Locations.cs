@@ -17,6 +17,14 @@ namespace KillerScan.Services
         public string LastTargets { get; set; } = string.Empty;
         public ScanOptions? LastOptions { get; set; }
 
+        /// <summary>
+        /// Gateway MAC addresses seen by completed scans here, normalized. They only ever suggest
+        /// this Location; addresses like 192.168.1.x are reused too widely to suggest anything.
+        /// </summary>
+        public List<string> GatewayMacs { get; set; } = [];
+
+        internal static string NormalizeMac(string? mac) => (mac ?? string.Empty).Trim().Replace("-", ":").ToUpperInvariant();
+
         /// <summary>What a screen reader announces for the Location's row.</summary>
         public override string ToString() => Customer.Length == 0 ? Name : Name + ", " + Customer;
     }
@@ -127,6 +135,7 @@ namespace KillerScan.Services
             if (value.Version != 1) throw new InvalidDataException("Unsupported Locations catalog version.");
             value.Locations ??= [];
             value.Locations.RemoveAll(item => item == null || string.IsNullOrWhiteSpace(item.Id));
+            foreach (var item in value.Locations) item.GatewayMacs ??= [];
             return value;
         });
 
@@ -196,6 +205,24 @@ namespace KillerScan.Services
         public bool Rename(string id, string name) => Update(id, item => item.Name = name.Trim());
         public bool SetCustomer(string id, string customer) => Update(id, item => item.Customer = customer.Trim());
         public bool SetNotes(string id, string notes) => Update(id, item => item.Notes = notes);
+        public bool AddGatewayMac(string id, string mac)
+        {
+            string normalized = LocationInfo.NormalizeMac(mac);
+            if (normalized.Length == 0) return true;
+            if (Items.FirstOrDefault(item => item.Id == id)?.GatewayMacs.Contains(normalized) == true) return true;
+            return Update(id, item =>
+            {
+                if (!item.GatewayMacs.Contains(normalized)) item.GatewayMacs.Add(normalized);
+            });
+        }
+
+        /// <summary>The Locations whose completed scans have seen this gateway MAC.</summary>
+        internal static IReadOnlyList<LocationInfo> Matching(IEnumerable<LocationInfo> items, string gatewayMac)
+        {
+            string normalized = LocationInfo.NormalizeMac(gatewayMac);
+            return normalized.Length == 0 ? [] : items.Where(item => item.GatewayMacs.Contains(normalized)).ToList();
+        }
+
         public bool SetLastUsed(string id, string targets, ScanOptions options) =>
             Update(id, item => { item.LastTargets = targets; item.LastOptions = options; });
 
