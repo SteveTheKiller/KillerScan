@@ -103,14 +103,13 @@ The five current stores are global: `profiles.json`, `history.json`, `devices.js
 - Export without the checkbox contains no usernames; import always creates a new Location; a newer format version is refused.
 - A missing preferred adapter asks before using the normal route, and exports record the adapter actually used.
 - Temporary scans read no annotations and save no history until assigned.
+- `/scan /location <name>` records into that Location; an unknown or ambiguous name exits 2 without scanning, through both the CLI and the PowerShell module.
 
-## Open questions
+## Further decisions
 
-Each has a recommended answer. Confirm or change before building.
-
-1. **Does picking a Location change only the active tab, or every open tab?** Recommended: only the active tab. Each tab already owns its targets and results, so two sites can be open side by side.
-2. **Where does the Saved scans list live once the old Profiles sidebar section is gone?** Recommended: in the Location picker's dropdown, under the Location name, plus a "Manage Locations" item that opens the existing sidebar section renamed to Locations.
-3. **Does History show all Locations or just the active one?** Recommended: the active Location by default, with an "All Locations" switch, and each row labeled with its Location.
-4. **Should the terminal `scan` command and CLI `/scan` know about Locations?** Recommended: not in the first release. They stay Temporary scans; a `/location <name>` option can follow.
-5. **Retention per Location or global?** Recommended: per Location, defaulting to the current global setting at migration.
-6. **Keep Alive (watch) sessions?** Recommended: unchanged and not Location-aware in the first release.
+1. **Tabs:** picking a Location changes only the active scan tab, so two sites can be open side by side.
+2. **Saved scans list:** in the Location picker's dropdown under the Location name, plus a "Manage Locations" item that opens the existing Profiles sidebar section, renamed Locations.
+3. **History:** shows the active Location by default, with an "All Locations" switch; each row is labeled with its Location.
+4. **Command line and terminal:** `/scan` and `/probe` take `/location <name>`, and the PowerShell `scan` and `probe` commands take `-Location`. With it, the run reads that Location's names and approvals, records history there and uses its Known list. Without it, they stay Temporary scans. An unknown or ambiguous name is a usage error (exit 2), never a silent Temporary scan.
+5. **Retention:** per Location, defaulting to the current global setting at migration.
+6. **Keep Alive:** unchanged and not Location-aware in the first release.
