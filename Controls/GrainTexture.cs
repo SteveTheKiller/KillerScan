@@ -142,7 +142,9 @@ namespace KillerScan.Controls
             }
 
             var lean = CurrentLean();
-            bool highlightsOnly = Application.Current?.TryFindResource("GrainHighlightsOnly") is bool enabled ? enabled : true;
+            // Only a theme that asks (Black) gets bright specks alone. Defaulting to true gave every
+            // theme light-only grain: Light turned white and the dark themes' surfaces ran together.
+            bool highlightsOnly = Application.Current?.TryFindResource("GrainHighlightsOnly") is bool enabled && enabled;
             int key = lean is Color c ? (c.R << 16) | (c.G << 8) | c.B : -1;
             key = (key + 1) * 2 + (highlightsOnly ? 1 : 0);
             if (_current != null && key == _currentKey) return _current;
