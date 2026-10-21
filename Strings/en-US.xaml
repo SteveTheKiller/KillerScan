@@ -418,9 +418,9 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Loc_SuggestMany">This network's gateway was seen in more than one Location: {0}. Pick one from the Location button.</sys:String>
     <sys:String x:Key="Str_Loc_Switch">Switch</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Dismiss</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">Different network adapter</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">This saved scan was set up on {0}, but this scan would go out through {1}. KillerScan cannot choose the adapter yet, so it will use the route Windows picks. Scan anyway?</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">no known adapter</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">Network adapter not connected</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">This scan is set to use {0}, which is not connected. Scan using the adapter Windows chooses instead?</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} is not on {1}'s network ({2}). Choose Automatic under Network adapter to scan it.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Location</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adapter</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Save results to Location</sys:String>
@@ -614,4 +614,6 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Options_snmp">SNMP description</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS name</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Deep scan: fingerprint unknown ports (never printer ports)</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">Network adapter</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">Automatic (Windows chooses)</sys:String>
 </ResourceDictionary>

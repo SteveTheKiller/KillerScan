@@ -77,7 +77,10 @@ namespace KillerScan.Controls
             ApplyLocationHooks();
             InitializeLocationSuggestions();
             ScanOptionsMenu.Attach(ScanOptionsButton, () => _active.Options,
-                value => { if (!_disposed && !IsScanning) _active.Options = value; });
+                value => { if (!_disposed && !IsScanning) _active.Options = value; },
+                new ScanOptionsMenu.AdapterHooks(() => AdapterChoice,
+                    value => { if (!_disposed && !IsScanning) AdapterChoice = value; },
+                    () => DemoMode ? [] : AvailableAdapters()));
             ActivateSession();
             StartVendorNoticeTimer();
             RestoreColumnLayout();

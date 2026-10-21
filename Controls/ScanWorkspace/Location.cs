@@ -69,7 +69,6 @@ namespace KillerScan.Controls
             }
             _location = data;
             _loadedScanName = null;
-            _loadedScanAdapter = string.Empty;
             _active.NewIdentities.Clear();
             if (data.Info is { } info && LocationService.Find(info.Id) is { } current && current.LastTargets.Length > 0)
             {
@@ -382,12 +381,31 @@ namespace KillerScan.Controls
             if (_disposed || IsScanning) return;
             LoadProfile(scan);
             _loadedScanName = scan.Name;
-            _loadedScanAdapter = scan.Adapter ?? string.Empty;
+            AdapterChoice = scan.Adapter ?? string.Empty;
             FocusTargets();
         }
 
-        /// <summary>The adapter the loaded saved scan was set up on, checked before each run.</summary>
-        private string _loadedScanAdapter = string.Empty;
+        /// <summary>
+        /// The adapter this tab scans from, by its Windows name, or empty to let Windows choose.
+        /// A saved scan restores its own choice; Scan settings changes it.
+        /// </summary>
+        internal string AdapterChoice
+        {
+            get => _adapterChoice;
+            set
+            {
+                _adapterChoice = value ?? string.Empty;
+                // Rescans use the same scanner, so they follow the choice too.
+                _active.Scanner.Binding = _adapterChoice.Length == 0 ? null : FindAdapter(_adapterChoice);
+            }
+        }
+        private string _adapterChoice = string.Empty;
+
+        /// <summary>Finds a connected adapter by name. Tests supply their own adapters.</summary>
+        internal Func<string, ScanBinding?> FindAdapter { get; set; } = ScanBinding.Find;
+
+        /// <summary>The adapters Scan settings offers. Tests supply their own.</summary>
+        internal Func<IReadOnlyList<ScanBinding>> AvailableAdapters { get; set; } = ScanBinding.Available;
 
         /// <summary>Asks whether to scan on another adapter. Tests answer it without a dialog.</summary>
         internal Func<string, bool>? ConfirmAdapter { get; set; }
@@ -402,22 +420,42 @@ namespace KillerScan.Controls
         }
 
         /// <summary>
-        /// A saved scan's adapter is a preference resolved again on every run. KillerScan cannot
-        /// bind traffic to an adapter yet, so when the route would use another one it says so and
-        /// asks, rather than scanning a different network without a word.
+        /// Resolves the tab's adapter choice for one run. The choice is looked up again every
+        /// time, because adapters come and go. A chosen adapter that is not connected asks before
+        /// falling back to the route Windows picks; a target outside the chosen adapter's own
+        /// network is refused, since a bound scan only reaches its own network for now.
+        /// <paramref name="adapter"/> is the adapter the run will actually use, for history.
         /// </summary>
-        private bool AdapterAllowsScan(string targets, out string adapter)
+        private bool AdapterAllowsScan(string targets, IReadOnlyList<System.Net.IPAddress> addresses, out string adapter)
         {
             adapter = RouteAdapter(targets);
-            if (_loadedScanAdapter.Length == 0 || string.Equals(adapter, _loadedScanAdapter, StringComparison.OrdinalIgnoreCase))
-                return true;
-            string message = string.Format(Loc("Str_Loc_AdapterMismatch"), _loadedScanAdapter,
-                adapter.Length > 0 ? adapter : Loc("Str_Loc_AdapterUnknown"));
-            if (ConfirmAdapter != null) return ConfirmAdapter(message);
-            var confirm = new ConfirmDialog(Loc("Str_Loc_AdapterTitle"), message, Loc("Str_Btn_Scan"), Loc("Str_Btn_Cancel"))
-                { Owner = Window.GetWindow(this) };
-            confirm.ShowDialog();
-            return confirm.Confirmed;
+            if (_adapterChoice.Length == 0) { _active.Scanner.Binding = null; return true; }
+            var binding = FindAdapter(_adapterChoice);
+            if (binding == null)
+            {
+                string message = string.Format(Loc("Str_Loc_AdapterMissing"), _adapterChoice);
+                bool fallBack;
+                if (ConfirmAdapter != null) fallBack = ConfirmAdapter(message);
+                else
+                {
+                    var confirm = new ConfirmDialog(Loc("Str_Loc_AdapterTitle"), message, Loc("Str_Btn_Scan"), Loc("Str_Btn_Cancel"))
+                        { Owner = Window.GetWindow(this) };
+                    confirm.ShowDialog();
+                    fallBack = confirm.Confirmed;
+                }
+                _active.Scanner.Binding = null;
+                return fallBack;
+            }
+            var outside = addresses.FirstOrDefault(address => !binding.Contains(address));
+            if (outside != null)
+            {
+                StatusText.Text = string.Format(Loc("Str_St_AdapterOffLink"), outside, binding.InterfaceName, binding.Network);
+                FocusTargets();
+                return false;
+            }
+            _active.Scanner.Binding = binding;
+            adapter = binding.InterfaceName;
+            return true;
         }
 
         /// <summary>
@@ -472,16 +510,13 @@ namespace KillerScan.Controls
         }
 
         /// <summary>
-        /// Saves the current targets and settings under a name in this Location, with the adapter
-        /// they route through now as the scan's preferred adapter.
+        /// Saves the current targets, settings and adapter choice under a name in this Location.
         /// </summary>
         internal bool SaveScanAs(string name)
         {
             var store = _location.SavedScans;
-            string adapter = RouteAdapter(Targets);
-            bool saved = PersistenceFeedback.Check(store.SaveEdited(name, Targets.Trim(), _active.Options, adapter), store.Retry, () => store.SaveError);
+            bool saved = PersistenceFeedback.Check(store.SaveEdited(name, Targets.Trim(), _active.Options, _adapterChoice), store.Retry, () => store.SaveError);
             _loadedScanName = name;
-            _loadedScanAdapter = adapter;
             LocationChanged?.Invoke(this, EventArgs.Empty);
             return saved;
         }

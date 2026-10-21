@@ -53,7 +53,7 @@ namespace KillerScan.Controls
                 FocusTargets();
                 return;
             }
-            if (!AdapterAllowsScan(Targets, out string adapter)) return;
+            if (!AdapterAllowsScan(Targets, targets.Addresses, out string adapter)) return;
             _active.Adapter = adapter;
             _active.SubnetText = Targets;
             _active.ScannedSubnet = targets.Summary;

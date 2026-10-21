@@ -143,11 +143,12 @@ internal static class LocationWorkspaceTests
         public (string Interface, string NextHop)? BestRoute(System.Net.IPAddress address) => (Adapter, "");
     }
 
-    // A saved scan remembers the adapter it was set up on and asks before going out another one.
+    // The tab's adapter choice binds its scanner, travels with saved scans, refuses off-link
+    // targets, and asks before falling back when the adapter is not connected.
     private static void AdapterPreference(string root)
     {
         var original = NetworkPlatform.Current;
-        var platform = new RoutePlatform { Adapter = "Ethernet" };
+        var platform = new RoutePlatform { Adapter = "Wi-Fi" };
         try
         {
             NetworkPlatform.Current = platform;
@@ -155,35 +156,58 @@ internal static class LocationWorkspaceTests
             catalog.Load("Unassigned");
             catalog.Create("Site", out var info);
             var site = catalog.Open(info!);
-            using var workspace = new ScanWorkspace("192.168.1.0/24", false, new SiteScanner());
+            var scanner = new SiteScanner();
+            using var workspace = new ScanWorkspace("192.168.1.0/24", false, scanner);
+            var ethernet = new ScanBinding("Ethernet", System.Net.IPAddress.Parse("192.168.1.5"), 24);
+            bool connected = true;
+            workspace.FindAdapter = name => connected && name == "Ethernet" ? ethernet : null;
+            workspace.AvailableAdapters = () => connected ? [ethernet] : [];
             workspace.SetLocation(site);
+
+            // Scan settings offers Automatic and each connected adapter.
+            var settings = (System.Windows.Controls.Button)workspace.FindName("ScanOptionsButton");
+            settings.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+            var adapterMenu = settings.ContextMenu.Items.OfType<System.Windows.Controls.MenuItem>()
+                .Single(item => Equals(item.Header, Application.Current.FindResource("Str_Options_Adapter")));
+            var choices = adapterMenu.Items.OfType<System.Windows.Controls.MenuItem>().ToList();
+            Require(choices.Count == 2 && choices[0].IsChecked && Equals(choices[1].Header, "Ethernet"),
+                "Network adapter lists Automatic, checked, and the connected adapter.");
+            choices[1].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.ClickEvent));
+            settings.ContextMenu.IsOpen = false;
+            Require(workspace.AdapterChoice == "Ethernet" && scanner.Binding == ethernet, "Choosing an adapter binds the tab's scanner.");
+
             Require(workspace.SaveScanAs("Office LAN"), "A scan can be saved in its Location.");
-            Require(site.SavedScans.Items.Single().Adapter == "Ethernet", "Saving records the adapter the targets route through.");
-
-            string? asked = null;
-            workspace.ConfirmAdapter = message => { asked = message; return false; };
-            platform.Adapter = "Wi-Fi";
-            workspace.LoadSavedScan(site.SavedScans.Items.Single());
-            workspace.Scan();
-            Require(asked != null && asked.Contains("Ethernet") && asked.Contains("Wi-Fi") && !workspace.IsScanning && site.History.Entries.Count == 0,
-                "A different adapter asks first, and declining scans nothing.");
-
-            workspace.ConfirmAdapter = _ => true;
+            Require(site.SavedScans.Items.Single().Adapter == "Ethernet", "Saving records the chosen adapter.");
             workspace.Scan();
             PumpUntil(() => !workspace.IsScanning && site.History.Entries.Count == 1);
-            Require(site.History.Entries.Single().Adapter == "Wi-Fi", "The run records the adapter it actually used.");
+            Require(site.History.Entries.Single().Adapter == "Ethernet", "A bound run records its adapter.");
 
-            asked = null;
-            workspace.ConfirmAdapter = message => { asked = message; return true; };
-            platform.Adapter = "Ethernet";
+            workspace.Targets = "10.0.0.0/24";
+            workspace.Scan();
+            Require(!workspace.IsScanning && site.History.Entries.Count == 1 &&
+                workspace.Status == string.Format((string)Application.Current.FindResource("Str_St_AdapterOffLink"), "10.0.0.1", "Ethernet", "192.168.1.0/24"),
+                "A target outside the adapter's network is refused with a clear status.");
+
+            workspace.AdapterChoice = string.Empty;
+            workspace.LoadSavedScan(site.SavedScans.Items.Single());
+            Require(workspace.AdapterChoice == "Ethernet" && workspace.Targets == "192.168.1.0/24", "Loading a saved scan restores its adapter.");
+
+            connected = false;
+            string? asked = null;
+            workspace.ConfirmAdapter = message => { asked = message; return false; };
+            workspace.Scan();
+            Require(asked != null && asked.Contains("Ethernet") && !workspace.IsScanning && site.History.Entries.Count == 1,
+                "A disconnected adapter asks first, and declining scans nothing.");
+            workspace.ConfirmAdapter = _ => true;
             workspace.Scan();
             PumpUntil(() => !workspace.IsScanning && site.History.Entries.Count == 2);
-            Require(asked == null, "The preferred adapter scans without asking.");
+            Require(scanner.Binding == null && site.History.Entries.Last().Adapter == "Wi-Fi",
+                "Falling back runs unbound and records the adapter Windows used.");
 
             string output = Path.Combine(root, "report.html");
             workspace.ExportDialog = dialog => { dialog.FileName = output; return true; };
             workspace.Export("html");
-            Require(File.ReadAllText(output).Contains("<b>Ethernet</b>"), "The report shows the adapter the scan used.");
+            Require(File.ReadAllText(output).Contains("<b>Wi-Fi</b>"), "The report shows the adapter the scan used.");
         }
         finally { NetworkPlatform.Current = original; }
     }
