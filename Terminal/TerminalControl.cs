@@ -22,6 +22,7 @@ namespace KillerScan.Terminal
         private readonly TerminalBuffer _buf;
         private readonly VtParser _parser;
         private ConPtySession? _pty;
+        private TerminalInputWriter? _input;
         private TerminalPalette _palette;
 
         private readonly Queue<byte[]> _incoming = new();
@@ -198,6 +199,7 @@ namespace KillerScan.Terminal
             {
                 _pty = ConPtySession.Start(commandLine, workingDirectory,
                     (short)_buf.Cols, (short)_buf.Rows);
+                _input = new TerminalInputWriter(_pty.Input);
             }
             catch (Exception ex)
             {
@@ -324,13 +326,9 @@ namespace KillerScan.Terminal
             if (IsManaged) { ManagedInput?.Invoke(s); return; }
             if (_pty == null || _pty.HasExited || string.IsNullOrEmpty(s)) return;
             if (s.Contains("\r") || s.Contains("\n") || s.Contains("\u0003")) _atPrompt = false;
-            try
-            {
-                var b = Encoding.UTF8.GetBytes(s);
-                _pty.Input.Write(b, 0, b.Length);
-                _pty.Input.Flush();
-            }
-            catch { /* the shell went away between keystroke and write */ }
+            // Written in the background and in order: a busy child that is not reading input can
+            // make each write wait, which on this thread froze the window during large pastes.
+            _input?.Enqueue(Encoding.UTF8.GetBytes(s));
         }
 
         public void Stop() => Dispose();
@@ -353,6 +351,8 @@ namespace KillerScan.Terminal
             _bridge?.Dispose();
             ManagedInput = null;
             Disposed = null;
+            _input?.Dispose();
+            _input = null;
             var session = _pty;
             _pty = null;
             // Closing a pseudoconsole can block until its output is drained.

@@ -39,6 +39,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Stopping during MAC resolution returns promptly, skips queued lookups and keeps native work bounded across scans.
 - Terminal title sequences accept BEL and ESC-backslash terminators across split reads and preserve UTF-8 titles.
 - Pasting into the terminal drops control characters other than tab and line breaks, so pasted text can no longer end a bracketed paste early and run the rest as typed commands.
+- A large paste into the terminal no longer freezes the window while the shell is busy. Input is written in the background in order, so a 16 MB paste returns at once instead of blocking for many seconds.
 - Topology and Services no longer redraw everything for each device a scan finds. Updates are grouped, so a large scan stays responsive with either view open.
 - Topology devices can be used from the keyboard. Arrow keys move between devices, Space selects and Ctrl+Space adds to the selection, Shift+arrow keys move a device, and screen readers announce each device and whether it is selected. Focus stays on the same device when the diagram updates.
 - The device table's MAC column is never narrower than a full address in the current font, so a dragged or older saved width can no longer cut addresses off.
