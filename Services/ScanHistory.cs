@@ -164,13 +164,24 @@ namespace KillerScan.Services
             return applied;
         }
 
-        public ScanComparison Compare(ScanHistoryEntry entry)
+        public ScanComparison Compare(ScanHistoryEntry entry) => Compare(entry, Baseline(entry));
+
+        // The latest earlier run that is a fair baseline, by when it ran. Runs adopted from a
+        // Temporary scan keep their own time but are added at the end, so list order is not time.
+        private ScanHistoryEntry? Baseline(ScanHistoryEntry current) => _entries
+            .Where(candidate => !ReferenceEquals(candidate, current) && candidate.ScannedAt < current.ScannedAt && candidate.IsBaselineFor(current))
+            .OrderBy(candidate => candidate.ScannedAt)
+            .LastOrDefault();
+
+        /// <summary>
+        /// Rereads the file, such as after another process recorded a run, and keeps runs this
+        /// process could not save yet so a later retry still has them. Load starts over instead.
+        /// </summary>
+        public void Reload()
         {
-            int index = _entries.IndexOf(entry);
-            ScanHistoryEntry? previous = index > 0
-                ? _entries.Take(index).LastOrDefault(candidate => candidate.IsBaselineFor(entry))
-                : null;
-            return Compare(entry, previous);
+            if (MemoryOnly) return;
+            _archive.Load(DateTimeOffset.Now);
+            _entries = _archive.Entries;
         }
 
         public void Load()
@@ -211,8 +222,7 @@ namespace KillerScan.Services
                 Completion = completion,
                 Devices = [.. devices.Select(ToHistorical).OrderBy(device => device.IpAddress)]
             };
-            var previous = _entries.LastOrDefault(entry => entry.IsBaselineFor(current));
-            var comparison = Compare(current, previous);
+            var comparison = Compare(current, Baseline(current));
             if (MemoryOnly) _entries = _demoRetention.Retained(_entries.Concat([current]), current.ScannedAt);
             else
             {

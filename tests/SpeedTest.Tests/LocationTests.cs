@@ -23,6 +23,11 @@ internal static class LocationTests
             UnreadableAfterMigration(Path.Combine(root, "stale"));
             ConcurrentMigration(Path.Combine(root, "concurrent"));
             LeftoverUnassigned(Path.Combine(root, "leftover"));
+            FailedCatalogChange(Path.Combine(root, "busy"));
+            FailedImportMove(Path.Combine(root, "move"));
+            DeletedDuringScan(Path.Combine(root, "deleted"));
+            BaselineByTime(Path.Combine(root, "time"));
+            ReloadKeepsUnsaved(Path.Combine(root, "reload"));
             Isolation(Path.Combine(root, "isolation"));
             KnownAndApproved(Path.Combine(root, "known"));
             CommandLine(Path.Combine(root, "cli"));
@@ -182,6 +187,107 @@ internal static class LocationTests
             "Migration still completes over a leftover folder.");
         var kept = Directory.GetDirectories(Path.Combine(root, "locations", ".deleted"), LocationCatalog.UnassignedId + "-*").Single();
         Require(File.ReadAllText(Path.Combine(kept, "marker.txt")) == "written after the earlier move", "The leftover folder is kept under .deleted.");
+    }
+
+    // A catalog change that cannot be saved is not listed now and not replayed later.
+    private static void FailedCatalogChange(string root)
+    {
+        var catalog = new LocationCatalog(root);
+        catalog.Load("Unassigned");
+        // Another window holding the catalog's save lock for longer than the 2 s wait.
+        string path = Path.GetFullPath(Path.Combine(root, "locations.json"));
+        using var hash = System.Security.Cryptography.SHA256.Create();
+        string key = BitConverter.ToString(hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(path.ToUpperInvariant()))).Replace("-", "");
+        var held = new System.Threading.ManualResetEventSlim();
+        var release = new System.Threading.ManualResetEventSlim();
+        var holder = new System.Threading.Thread(() =>
+        {
+            using var mutex = new System.Threading.Mutex(false, "Global\\KillerScan.Preferences." + key);
+            mutex.WaitOne();
+            held.Set();
+            release.Wait();
+            mutex.ReleaseMutex();
+        });
+        holder.Start();
+        held.Wait();
+        bool created = catalog.Create("Ghost", out _);
+        release.Set();
+        holder.Join();
+        Require(!created && catalog.Items.Count == 0, "A Location whose save failed is not listed.");
+        Require(catalog.Create("Real", out _) && catalog.Items.Select(item => item.Name).SequenceEqual(["Real"]),
+            "The failed change is not replayed by the next save.");
+    }
+
+    // An import whose files cannot be moved into place leaves no Location behind.
+    private static void FailedImportMove(string root)
+    {
+        var catalog = new LocationCatalog(root);
+        catalog.Load("Unassigned");
+        byte[] file = System.Text.Encoding.UTF8.GetBytes("{\"Format\":\"KillerScan.Location\",\"Version\":1,\"Name\":\"Moved\",\"Customer\":\"Acme\",\"Notes\":\"n\",\"Files\":{}}");
+        var move = LocationTransfer.MoveDirectory;
+        try
+        {
+            LocationTransfer.MoveDirectory = (_, _) => throw new IOException("The folder is in use.");
+            Require(!LocationTransfer.Import(catalog, file, out _, out string? error) && error == "The folder is in use." && catalog.Items.Count == 0,
+                "A failed move takes the new entry off the list again.");
+        }
+        finally { LocationTransfer.MoveDirectory = move; }
+        Require(LocationTransfer.Import(catalog, file, out var imported, out _) && imported!.Customer == "Acme" && imported.Notes == "n",
+            "An import saves its customer and notes with the entry.");
+    }
+
+    // A terminal scan checks its Location is still there before recording into it.
+    private static void DeletedDuringScan(string root)
+    {
+        string previous = LocationService.Root;
+        try
+        {
+            LocationService.Root = root;
+            LocationService.Load("Unassigned");
+            Require(LocationService.Create("Site", out var site), "A Location is created.");
+            Require(LocationService.StillExists(site!.Id), "A Location in the catalog still exists.");
+            var otherWindow = new LocationCatalog(root);
+            otherWindow.Load("Unassigned");
+            Require(otherWindow.Delete(site.Id, out _), "Another window deletes it.");
+            Require(!LocationService.StillExists(site.Id), "The deletion is seen without reloading this process.");
+        }
+        finally { LocationService.Root = previous; }
+    }
+
+    // History compares with the latest earlier run by time, even after an older run is adopted.
+    private static void BaselineByTime(string root)
+    {
+        var history = new HistoryStore(Path.Combine(root, "history.json"));
+        history.Load();
+        var temporary = LocationData.Temporary().History;
+        temporary.Record("10.3.0.0/24", "10.3.0.0/24", [Device("10.3.0.1")], ScanCompletion.Complete, new ScanOptions(), deep: false);
+        System.Threading.Thread.Sleep(20);
+        history.Record("10.3.0.0/24", "10.3.0.0/24", [Device("10.3.0.2")], ScanCompletion.Complete, new ScanOptions(), deep: false);
+        var newer = history.Entries.Last();
+        history.Adopt(temporary.Entries.Single());
+        System.Threading.Thread.Sleep(20);
+        var latest = history.Record("10.3.0.0/24", "10.3.0.0/24", [Device("10.3.0.2")], ScanCompletion.Complete, new ScanOptions(), deep: false);
+        Require(latest.Previous?.ScannedAt == newer.ScannedAt, "The baseline is the newest earlier run, not the one adopted last.");
+        Require(history.Compare(history.Entries.Last()).Previous?.ScannedAt == newer.ScannedAt, "Viewing the run later picks the same baseline.");
+    }
+
+    // Rereading history after another process wrote keeps a run this process could not save.
+    private static void ReloadKeepsUnsaved(string root)
+    {
+        string path = Path.Combine(root, "history.json");
+        var history = new HistoryStore(path);
+        history.Load();
+        history.Record("10.4.0.0/24", "10.4.0.0/24", [Device("10.4.0.1")], ScanCompletion.Complete, new ScanOptions(), deep: false);
+        bool saved;
+        using (new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))
+            saved = history.Record("10.4.0.0/24", "10.4.0.0/24", [Device("10.4.0.2")], ScanCompletion.Complete, new ScanOptions(), deep: false).Saved;
+        Require(!saved && history.Entries.Count == 2, "A run that could not be saved is kept for a retry.");
+        history.Reload();
+        Require(history.Entries.Count == 2, "Reloading keeps the unsaved run.");
+        Require(history.Retry(), "The kept run saves on retry.");
+        var reread = new HistoryStore(path);
+        reread.Load();
+        Require(reread.Entries.Count == 2, "Both runs are in the file after the retry.");
     }
 
     private static void Isolation(string root)

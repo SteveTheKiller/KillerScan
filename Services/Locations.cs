@@ -215,7 +215,7 @@ namespace KillerScan.Services
                 }
                 Directory.Move(staging, target);
             }
-            if (!_store.Change(value =>
+            if (!_store.Commit(value =>
             {
                 if (existing.Count > 0 && !value.Locations.Any(item => item.Id == UnassignedId))
                     value.Locations.Add(new LocationInfo { Id = UnassignedId, Name = unassignedName });
@@ -230,12 +230,15 @@ namespace KillerScan.Services
 
         public LocationData Open(LocationInfo info) => LocationData.Open(info, DirectoryFor(info));
 
-        public bool Create(string name, out LocationInfo? created)
+        public bool Create(string name, out LocationInfo? created) => Create(name, string.Empty, string.Empty, out created);
+
+        /// <summary>Adds a Location with its customer label and notes in one save, so it is never listed half-made.</summary>
+        public bool Create(string name, string customer, string notes, out LocationInfo? created)
         {
             created = null;
             if (LoadError != null) return false;
-            var info = new LocationInfo { Id = Guid.NewGuid().ToString("N"), Name = name.Trim() };
-            if (!_store.Change(value => value.Locations.Add(info))) return false;
+            var info = new LocationInfo { Id = Guid.NewGuid().ToString("N"), Name = name.Trim(), Customer = customer.Trim(), Notes = notes };
+            if (!_store.Commit(value => value.Locations.Add(info))) return false;
             created = _store.Value.Locations.FirstOrDefault(item => item.Id == info.Id) ?? info;
             return true;
         }
@@ -248,7 +251,7 @@ namespace KillerScan.Services
         {
             kept = null;
             if (LoadError != null || Items.FirstOrDefault(item => item.Id == id) is not { } info) return false;
-            if (!_store.Change(value => value.Locations.RemoveAll(item => item.Id == id))) return false;
+            if (!_store.Commit(value => value.Locations.RemoveAll(item => item.Id == id))) return false;
             string folder = DirectoryFor(info);
             if (!Directory.Exists(folder)) return true;
             string deleted = Path.Combine(LocationsDirectory, ".deleted");
@@ -288,7 +291,7 @@ namespace KillerScan.Services
             Update(id, item => { item.LastTargets = targets; item.LastOptions = options; });
 
         private bool Update(string id, Action<LocationInfo> change) =>
-            LoadError == null && _store.Change(value =>
+            LoadError == null && _store.Commit(value =>
             {
                 if (value.Locations.FirstOrDefault(item => item.Id == id) is { } item) change(item);
             });

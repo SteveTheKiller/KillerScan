@@ -146,7 +146,7 @@ namespace KillerScan.Shell
                     {
                         // Another process wrote history and Known devices; show what it saved.
                         location.Devices.Load();
-                        location.History.Load();
+                        location.History.Reload();
                         RefreshHistoryList();
                     }
                     terminal.WriteManaged(presentation.Result(devices));

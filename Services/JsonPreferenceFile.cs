@@ -43,6 +43,20 @@ namespace KillerScan.Services
             return Save();
         }
 
+        /// <summary>
+        /// Applies a change only if it reaches the file. Unlike <see cref="Change"/>, a failed
+        /// save leaves the value as it was and does not keep the change for a later retry, so
+        /// nothing half-done is shown now or written later. For stores where an entry that
+        /// is listed but not saved would mislead, such as the Locations catalog.
+        /// </summary>
+        internal bool Commit(Action<T> mutation)
+        {
+            _pending.Add(mutation);
+            if (Save()) return true;
+            _pending.Remove(mutation);
+            return false;
+        }
+
         internal bool Save()
         {
             try

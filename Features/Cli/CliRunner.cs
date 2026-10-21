@@ -664,8 +664,15 @@ namespace KillerScan.Features.Cli
 
             // History and the Known list get everything the scan found, before display filters.
             if (location != null && !probe && !demo)
-                RecordToLocation(location, parsed!.Summary, targetText, devices, quick, err, quiet, terminalProgress, scanOptions,
-                    binding?.InterfaceName ?? string.Empty);
+            {
+                // The Location can be deleted in the app while this scan runs. Writing then would
+                // recreate its folder as an orphan nobody can open, so the run is not recorded.
+                if (location.Info is { } info && !LocationService.StillExists(info.Id))
+                    err.WriteLine(PaintErr("Warning: Location \"" + info.Name + "\" was deleted during the scan, so the run was not recorded.", AnsiBad));
+                else
+                    RecordToLocation(location, parsed!.Summary, targetText, devices, quick, err, quiet, terminalProgress, scanOptions,
+                        binding?.InterfaceName ?? string.Empty);
+            }
 
             devices = ApplyFilters(devices, options, ports);
             var sorted = ApplySort(devices, Value(options, "/sort", "--sort"),

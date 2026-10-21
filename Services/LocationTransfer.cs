@@ -82,14 +82,18 @@ namespace KillerScan.Services
                 try { unreadable = LocationData.Open(new LocationInfo { Id = "import", Name = file.Name! }, staging).ReadError; }
                 catch (Exception ex) { unreadable = ex.Message; }
                 if (unreadable != null) { error = "This Location file is damaged. " + unreadable; return false; }
-                if (!catalog.Create(file.Name!, out var created) || created == null)
+                if (!catalog.Create(file.Name!, file.Customer ?? string.Empty, file.Notes ?? string.Empty, out var created) || created == null)
                 {
                     error = catalog.SaveError ?? catalog.LoadError ?? "The Location could not be added.";
                     return false;
                 }
-                Directory.Move(staging, catalog.DirectoryFor(created));
-                catalog.SetCustomer(created.Id, file.Customer ?? string.Empty);
-                catalog.SetNotes(created.Id, file.Notes ?? string.Empty);
+                try { MoveDirectory(staging, catalog.DirectoryFor(created)); }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                    // Its files never arrived, so the entry comes off the list again.
+                    catalog.Delete(created.Id, out _);
+                    throw;
+                }
                 imported = catalog.Items.FirstOrDefault(item => item.Id == created.Id) ?? created;
                 error = null;
                 return true;
@@ -105,6 +109,9 @@ namespace KillerScan.Services
                     try { Directory.Delete(staging, true); } catch (IOException) { } catch (UnauthorizedAccessException) { }
             }
         }
+
+        /// <summary>Moves the staged folder into place. Tests replace it to make the move fail.</summary>
+        internal static Action<string, string> MoveDirectory { get; set; } = Directory.Move;
 
         private sealed class TransferFile
         {

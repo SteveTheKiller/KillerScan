@@ -119,14 +119,21 @@ namespace KillerScan.Services
         public static byte[]? Export(LocationInfo info, bool includeUsernames) =>
             Editable ? LocationTransfer.Export(Find(info.Id) ?? info, _catalog!.DirectoryFor(info), includeUsernames) : null;
 
-        public static bool Import(byte[] bytes, out LocationInfo? imported, out string? error)
+        /// <summary>
+        /// Adds a Location from a .ksloc file. With <paramref name="notify"/> false, as when it
+        /// runs off the UI thread, the caller raises <see cref="Changed"/> afterwards through
+        /// <see cref="NotifyChanged"/>, because its handlers update the window.
+        /// </summary>
+        public static bool Import(byte[] bytes, out LocationInfo? imported, out string? error, bool notify = true)
         {
             imported = null;
             if (!Editable) { error = LoadError ?? "Locations are unavailable."; return false; }
             bool ok = LocationTransfer.Import(_catalog!, bytes, out imported, out error);
-            if (ok) Changed?.Invoke(null, EventArgs.Empty);
+            if (ok && notify) Changed?.Invoke(null, EventArgs.Empty);
             return ok;
         }
+
+        public static void NotifyChanged() => Changed?.Invoke(null, EventArgs.Empty);
 
         /// <summary>Records a gateway MAC seen by a completed scan in this Location.</summary>
         public static void AddGatewayMac(LocationInfo info, string mac)
@@ -144,6 +151,19 @@ namespace KillerScan.Services
         {
             if (changed) Changed?.Invoke(null, EventArgs.Empty);
             return changed;
+        }
+
+        /// <summary>
+        /// Whether a Location is still in the catalog on disk, read afresh, so a change made by
+        /// another window since this process loaded is seen. A catalog that cannot be read
+        /// counts as still there, because nothing proves it was deleted.
+        /// </summary>
+        public static bool StillExists(string id)
+        {
+            if (!Loaded || DemoData.Enabled || _catalog == null || !_catalog.Published) return true;
+            var fresh = new LocationCatalog(Root);
+            fresh.Load(string.Empty);
+            return fresh.LoadError != null || fresh.Items.Any(item => item.Id == id);
         }
 
         /// <summary>The current catalog entry for an ID, after renames and reloads.</summary>
