@@ -1,6 +1,6 @@
 # Adversarial remediation evidence, October 20, 2026
 
-Implementation is in progress. Builds and controlled fixtures do not close rendered, native interruption, installer, Narrator or release gates.
+Source remediation and final controlled integration are complete. The untraced combined suite passes all 47 checks, both engine targets pass all 14 checks, and the fresh solution build has zero warnings/errors. Builds and controlled fixtures do not close native interruption, installer, Narrator, supported-font/live shell or release gates.
 
 ## ENG-004 diagnosis
 
@@ -168,9 +168,9 @@ Final reconciliation distinguishes source/component acceptance from native or re
 | ENG-008 | 5bf587b | CLI/embedded terminal control escaping preserves raw structured data |
 | ENG-009 | a44a41e | Atomic vendor publication/fault fixtures pass on both targets |
 | DEP-001 | Owner 2892599 | Bounded updater recovery source/component packet accepted; native interruption gate open |
-| DEP-002 | Owner work in progress | Silent completion implementation not yet committed/accepted; native lifecycle open |
-| DEP-003 | Owner work in progress | Cleanup fixture checkpoint passes; final source/native lifecycle acceptance open |
-| DEP-004 | Owner work in progress | Immutable elevated execution implementation/review and native acceptance open |
+| DEP-002 | 3997a3e | Registered completion protocol, rollback and caller fixtures pass; native lifecycle open |
+| DEP-003 | 3997a3e | Owned-image cleanup preserves unrelated files, rejects links and restores failures; native acceptance open |
+| DEP-004 | 22afee5 | Trusted installed helper and protected immutable publication implemented; rejection/parser fixtures pass; native acceptance open |
 | FAM-001 | ff760ae | Thirteen audit rejection/clean cases pass under PowerShell 5.1/7 |
 | FAM-002 | 137dd1b | Six monitor cases pass under PowerShell 5.1/7 |
 | FAM-003 | 53a68f2 | Actual disposable Publish freshness/lock/Unicode fixtures pass under both hosts |
@@ -182,7 +182,37 @@ The requested Technical layout adjustment is committed as 87a2c23. Moving the en
 
 Deployment coordination is explicitly authorized. KillerShell owns its App.xaml.cs, update/removal helpers, Chocolatey script and focused deployment tests; no competing implementation is made here. Its intermediate missing-report compile error was reported and the owner confirmed correction. The watch regression uses an isolated committed-source snapshot, so its passing build does not accept owner WIP. All VM operations remain with the Bench-coordinated exclusive windows; this chat has made no guest changes.
 
+## Deployment source acceptance
+
+KillerShell returned the index after commits 3997a3ef67c8bbfd2d4511d6a01f91e867ca638c and 22afee50716cf9e2d22020333154435d5a44e272. Author and committer identities were checked. The bounded three-pass review found one low notification omission; its red/green repair and subsequent review are recorded in KillerHarness/validation/evidence/killershell-20261020/family-final/scan-deployment. The caller correction separately verifies that missing images and denied registry access cannot masquerade as successful Chocolatey removal. Independent acceptance compared all 17 task-owned files with that packet's source-manifest.json and found no remaining material source gap.
+
+The registered QuietUninstallString owns final silent completion. Direct loaded-image /uninstall-silent returns 1618 without mutation, and the deployment guide documents that protocol. Removal preserves unknown contents, rejects linked paths, attempts image/registration restoration on failure and broadcasts final PATH state. Elevated updates use the protected installed helper, exact process identities, digest, signing certificate and newer product version checks before protected staging and immutable publication. Actual publication completion remains distinct from successful handoff.
+
+The local --installation-cleanup dispatch runs only GUID-owned filesystem fixtures and generated-command parsing. It passes preserved-report, empty/absent directory, locked-image, rollback, directory lease, junction, all user/machine silent/interactive command parsing and untrusted-update rejection cases. The actual Chocolatey caller fixture passes all four cases under both Windows PowerShell 5.1 and PowerShell 7. It replaces only the registry read boundary and never launches removal. Integration dispatch is committed as 64323ec. Native lifecycle, UAC refusal, alternate administrator, denied/locked/disconnected storage, interrupted/concurrent operations, tampering and final signed artifacts remain open with the lifecycle owner.
+
+## Combined-suite timeout repair
+
+The resumed investigation froze cdbdc3d source and added scratch-only scheduling and HTTP diagnostics. A combined --worker run reproduced AdaptiveCancel's timeout at RunAsync line 44, after successful preflight but during an idle sample. It had one accepted connection, two parsed zero-byte requests and two completed responses, with context none, 45 process threads and about 52.7 MiB private memory. Independent source inspection found no direct preceding-suite mutation of context, proxy, connection limits or thread-pool limits. Framework tracing showed successful zero-body exchanges could spend 1140-1304 ms before header parsing, then complete EOF/disposal within about 0.5 ms.
+
+The reduced parent-predecessor/transfer run reproduced the same timeout. Its server received the second request's first byte at 42 ms but had not parsed that header when the client timed out at 2298 ms. Other headers took 466-821 ms between first byte and parsing. The fixture awaited a separate NetworkStream read for every byte. An 8192-character endpoint path, still inside its existing 16 KiB header limit, amplified the same bottleneck into an observed Timeout before any complete request. This failure is intermittent: the permanent long-header check also passed once with the old reader, so a single passing old-fixture run does not disprove it.
+
+The bounded repair wraps only incoming reads in one BufferedStream per connection. Headers and upload bodies share that reader so prefetched body/next-header bytes are retained. Existing raw response writes, protocol bounds, engine code and two-second request timeout remain unchanged. Independent review found no buffering/ownership blocker. Scratch-only diagnostics and framework trace configuration are excluded from the checkout.
+
+Green: eight amplified header/reuse repetitions pass; warmed pairs complete in about 7-19 ms. The original reduced parent/transfer sequence now passes, and header parsing generally takes 0-1 ms after first byte. The permanent --loopback-headers check and all 29 speed/Worker checks pass from committed deployment source plus the owned runner change. The fixture repair is committed as dfb3625. The solution build at 64323ec source completes with zero warnings/errors. The final combined run passes all 47 checks, including the two newly integrated deployment groups, without framework tracing or temporary diagnostics. Concurrent UI/font/grain WIP is preserved and excluded from this committed-source snapshot.
+
+## Final controlled acceptance
+
+The final snapshot combines deployment baseline 22afee50716cf9e2d22020333154435d5a44e272 with Program.cs from 64323ec09c3dcb8e53beed21332d148fd93723ed. The runner source hash is f82cf8e51646619fcc7d00b17573d38520412a3d77507199d6ffdbdb79fe8a3f and executable hash is 0944cea06176e3a9ba708b65365b55a697dc5de5b2b9875873fbb6adffbc083f. The complete solution and runner builds each finish with zero warnings/errors. Source-resource discovery is explicitly pointed at the matching snapshot.
+
+The ordinary combined --worker run passes all 47 checks with exit 0. It includes 78,454 topology assertions, 1,197 history/context/shortcut assertions, the controlled deployment groups, the permanent long-header regression, real transfer/error/cancellation checks, the actual local Node Worker and offscreen terminal rendering. Both complete 14-check engine suites pass from the same final solution build on net48 and net10.0. No public internet speed test or real installation/removal is performed.
+
+Fresh structured dependency queries cover the app, engine, engine tests and sample. The transitive vulnerability query reports no known vulnerable packages; the direct-outdated query reports no outdated packages. Both exit successfully with four project records and no reported query problems. Dependency updates remain c7f331a and b2ea71f.
+
+KillerShell's older production chat was stopped by the user to avoid overlap with the active KillerShell chat. It handed the remaining KillerScan native acceptance back to this chat and withdrew its queued window. The active KillerShell chat, 01a15b8b-9c13-7b21-bcd7-4b5e474128c0, confirmed that it retains only its own KillerShell plan. KillerScan requested its separate acceptance window directly from KillerBench, the VM board coordinator. The current board assigns the guest to KillerBench. No guest changes are made here, and native acceptance cannot be claimed until the coordinated handoff and prerequisites are available. Narrator/native UIA, supported fonts and live shell/SSH editing remain separate manual gates.
+
 ## Final-review follow-ups
+
+These paragraphs retain earlier checkpoints. The resumed diagnosis and latest acceptance are recorded in the sections above.
 
 The integrated runner first failed before any full-suite check because source-resource lookup only searched ancestors of its executable. Isolated artifacts are outside the checkout. The test-only lookup now shares the existing explicit KILLERSCAN_TEST_ROOT boundary across all source-dependent fixtures, validates its project marker and retains ancestor discovery for normal in-repository builds. Product source, runtime paths and test assertions are unchanged by this runner correction.
 
