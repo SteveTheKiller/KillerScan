@@ -1,6 +1,6 @@
 # Adversarial remediation evidence, October 20, 2026
 
-Source remediation and final controlled integration are complete. The untraced combined suite passes all 47 checks, both engine targets pass all 14 checks, and the fresh solution build has zero warnings/errors. Builds and controlled fixtures do not close native interruption, installer, Narrator, supported-font/live shell or release gates.
+Source remediation includes follow-up trust-policy commit 4c46992. Final combined acceptance passes all 47 checks after that follow-up, including 124 shared cases through each trust policy and one compiled preflight control. Both engine targets pass all 14 checks and the fresh solution and runner builds have zero warnings/errors. Builds and controlled fixtures do not close native interruption, installer, Narrator, supported-font/live shell or release gates.
 
 ## ENG-004 diagnosis
 
@@ -169,8 +169,8 @@ Final reconciliation distinguishes source/component acceptance from native or re
 | ENG-009 | a44a41e | Atomic vendor publication/fault fixtures pass on both targets |
 | DEP-001 | Owner 2892599 | Bounded updater recovery source/component packet accepted; native interruption gate open |
 | DEP-002 | 3997a3e | Registered completion protocol, rollback and caller fixtures pass; native lifecycle open |
-| DEP-003 | 3997a3e | Owned-image cleanup preserves unrelated files, rejects links and restores failures; native acceptance open |
-| DEP-004 | 22afee5 | Trusted installed helper and protected immutable publication implemented; rejection/parser fixtures pass; native acceptance open |
+| DEP-003 | 3997a3e, 4c46992 | Owned-image cleanup, rollback and inherited staging-permission checks pass; native acceptance open |
+| DEP-004 | 22afee5, 4c46992 | Trusted installed helper, protected publication and inherited staging-permission checks pass; native acceptance open |
 | FAM-001 | ff760ae | Thirteen audit rejection/clean cases pass under PowerShell 5.1/7 |
 | FAM-002 | 137dd1b | Six monitor cases pass under PowerShell 5.1/7 |
 | FAM-003 | 53a68f2 | Actual disposable Publish freshness/lock/Unicode fixtures pass under both hosts |
@@ -200,7 +200,7 @@ The bounded repair wraps only incoming reads in one BufferedStream per connectio
 
 Green: eight amplified header/reuse repetitions pass; warmed pairs complete in about 7-19 ms. The original reduced parent/transfer sequence now passes, and header parsing generally takes 0-1 ms after first byte. The permanent --loopback-headers check and all 29 speed/Worker checks pass from committed deployment source plus the owned runner change. The fixture repair is committed as dfb3625. The solution build at 64323ec source completes with zero warnings/errors. The final combined run passes all 47 checks, including the two newly integrated deployment groups, without framework tracing or temporary diagnostics. Concurrent UI/font/grain WIP is preserved and excluded from this committed-source snapshot.
 
-## Final controlled acceptance
+## Controlled acceptance before the trust-policy follow-up
 
 The final snapshot combines deployment baseline 22afee50716cf9e2d22020333154435d5a44e272 with Program.cs from 64323ec09c3dcb8e53beed21332d148fd93723ed. The runner source hash is f82cf8e51646619fcc7d00b17573d38520412a3d77507199d6ffdbdb79fe8a3f and executable hash is 0944cea06176e3a9ba708b65365b55a697dc5de5b2b9875873fbb6adffbc083f. The complete solution and runner builds each finish with zero warnings/errors. Source-resource discovery is explicitly pointed at the matching snapshot.
 
@@ -211,6 +211,24 @@ Fresh structured dependency queries cover the app, engine, engine tests and samp
 KillerShell's older production chat was stopped by the user to avoid overlap with the active KillerShell chat. It handed the remaining KillerScan native acceptance back to this chat and withdrew its queued window. The active KillerShell chat, 01a15b8b-9c13-7b21-bcd7-4b5e474128c0, confirmed that it retains only its own KillerShell plan. KillerScan requested its separate acceptance window directly from KillerBench, the VM board coordinator. The current board assigns the guest to KillerBench. No guest changes are made here, and native acceptance cannot be claimed until the coordinated handoff and prerequisites are available. Narrator/native UIA, supported fonts and live shell/SSH editing remain separate manual gates.
 
 ## Final-review follow-ups
+
+### Protected child permissions
+
+Native preparation exposed a follow-up trust-policy gap in both machine deployment paths. The earlier gates ignored inheritance-only write grants and missed raw GENERIC_ALL/GENERIC_WRITE bits. A fixed untrusted principal can receive rights on new children without receiving those rights on the root. The strongest source path is the copied machine-uninstall helper: its streams close after hashing and before the staged pathname is launched. This is a confirmed DACL-policy gap; actual exploitability depends on runtime inheritance, token and integrity-label conditions and has not been demonstrated.
+
+The additional in-memory descriptor seam was explicitly approved. Red: both compiled and generated policies incorrectly accepted 60 cases in the 124-case matrix. The predicates now reject fixed untrusted effective/inherited writers and generic write masks. Normal CREATOR_OWNER inheritance remains accepted with trusted elevated creator-owner evidence checked before child creation. The early non-creating update preflight defers that proof to elevated Apply. Actual creating boundaries obtain WindowsIdentity.Owner; enabled Administrator membership alone does not substitute for that value.
+
+Green: all 124 cases pass through each policy, plus one compiled preflight control. Coverage includes OI/CI/OICI, no-propagate and inherited variants, specific rights, GA/GW, read/execute controls, trusted roots/writers, creator-owner controls and missing versus empty DACLs. No host ACL is changed. Generated completion commands still parse and the existing filesystem/rollback/junction and handoff checks pass. A fresh isolated bypass/regression review traced direct callers and staging/publication paths and found no concrete blocker in the four-file candidate. Commit 4c46992282e9775b59164510107ed0ad73d5d246 contains only that source/test correction and its concise changelog line; unrelated font/grain/UI edits remain outside it.
+
+Final acceptance at 4c46992 passes all 47 combined checks with exit 0, without framework tracing or temporary diagnostics. This includes the 124 shared cases through both policies, one compiled preflight control, the existing deployment checks and the permanent header/reuse regression. Both complete 14-check engine targets pass again from the fresh solution output. The solution and runner builds have zero warnings/errors. The fresh structured vulnerability and direct-outdated queries each cover four projects, exit successfully and report no query problems or applicable packages.
+
+Exact inputs and output hashes are recorded in C:/Users/steve/scratch/killerscan-remediation-20261020/acl-policy-green/combined-post-policy-manifest.json. The runner SHA-256 is 383f2ddbf6cb302475d7d154f4488432862c27b5862c56c7ceb1f422fa8dde3a; the actual app loaded by that runner is 4a904bdc2de2b9ae3d1d6f0b08762a781159f93cb4d2e091fdeda171760673a1. Raw final evidence is in combined-post-policy.log, engine-final.log, vulnerable-final.json and outdated-final.json beside the manifest. All five critical compiled source inputs match their committed blobs byte for byte. Two earlier preflight attempts stopped before execution because the archive normalized Program.cs line endings; the artifact copy was corrected and rebuilt before the successful final run.
+
+The final read-only evidence check confirmed those hashes and results. Because the earlier engine log concatenated both targets without labels, one bounded no-build rerun now records exact commands, target image hashes, working directories, timestamps, actual exits and separate stdout/stderr in final-execution-ledger.json beside the manifest. Both engine targets again exit 0 with 14 passes. Both dependency queries again exit 0 with four projects, no query problems and no reported packages. This closes command-attribution evidence without changing source or acceptance thresholds.
+
+The refreshed native packet is C:/Users/steve/scratch/killerscan-remediation-20261020/native-acceptance-packet.md and was sent to Bench for Scan's existing queued window. Active KillerShell received the policy follow-up as reference for its separate scope. The accepted 1.8.4 and synthetic same-source 1.8.5 inputs remain unsigned. The guarded signer and bounded native case runner pass parsing and host-refusal checks under PowerShell 5.1 and 7, and independent source re-review found no concrete preparation blocker. No positive native case has run. Guest-only temporary signing is explicitly approved, but no guest copy, signing, ACL mutation, installer execution or checkpoint operation has occurred in this chat. Bench coordinates the queue and owns the guest window. The earlier native packet and 17-file owner manifest are historical checkpoints; they do not close this later follow-up or its native matrix.
+
+Primary references: [ACE inheritance](https://learn.microsoft.com/en-us/windows/win32/secauthz/ace-inheritance-rules), [new-object ownership](https://learn.microsoft.com/en-us/windows/win32/secauthz/owner-of-a-new-object), [creator-owner mapping](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-createprivateobjectsecurityex), [mandatory integrity control](https://learn.microsoft.com/en-us/windows/win32/secauthz/mandatory-integrity-control). Integrity enforcement is a runtime qualification, not an executed exploit result.
 
 These paragraphs retain earlier checkpoints. The resumed diagnosis and latest acceptance are recorded in the sections above.
 
