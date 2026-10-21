@@ -378,7 +378,7 @@
     <sys:String x:Key="Str_Loc_Dismiss">忽略</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">网卡未连接</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">此扫描设置为使用 {0}，但该网卡未连接。要改用 Windows 选择的网卡进行扫描吗？</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} 不在 {1} 的网络（{2}）中。请在“网卡”下选择“自动”以扫描它。</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} 不在 {1} 的网络（{2}）中，Windows 也不会经由 {1} 路由到它。请在“网卡”下选择“自动”以扫描它。</sys:String>
     <sys:String x:Key="Str_Rep_Location">站点</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">网卡</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">将结果保存到站点</sys:String>

@@ -378,7 +378,7 @@
     <sys:String x:Key="Str_Loc_Dismiss">忽略</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">網路卡未連線</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">此掃描設定為使用 {0}，但該網路卡未連線。要改用 Windows 選擇的網路卡進行掃描嗎？</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} 不在 {1} 的網路（{2}）中。請在「網路卡」下選擇「自動」以掃描它。</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} 不在 {1} 的網路（{2}）中，Windows 也不會經由 {1} 路由到它。請在「網路卡」下選擇「自動」以掃描它。</sys:String>
     <sys:String x:Key="Str_Rep_Location">站點</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">網路卡</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">將結果儲存到站點</sys:String>

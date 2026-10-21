@@ -420,7 +420,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Dismiss</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">Network adapter not connected</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">This scan is set to use {0}, which is not connected. Scan using the adapter Windows chooses instead?</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} is not on {1}'s network ({2}). Choose Automatic under Network adapter to scan it.</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} is not on {1}'s network ({2}), and Windows does not route it through {1}. Choose Automatic under Network adapter to scan it.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Location</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adapter</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Save results to Location</sys:String>

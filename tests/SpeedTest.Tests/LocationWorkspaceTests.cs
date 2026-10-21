@@ -182,6 +182,7 @@ internal static class LocationWorkspaceTests
             PumpUntil(() => !workspace.IsScanning && site.History.Entries.Count == 1);
             Require(site.History.Entries.Single().Adapter == "Ethernet", "A bound run records its adapter.");
 
+            // The fake platform routes 10.0.0.1 through Wi-Fi, not the bound Ethernet.
             workspace.Targets = "10.0.0.0/24";
             workspace.Scan();
             Require(!workspace.IsScanning && site.History.Entries.Count == 1 &&

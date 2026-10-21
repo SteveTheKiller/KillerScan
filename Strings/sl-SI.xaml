@@ -353,7 +353,7 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Opusti</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">Omrežni vmesnik ni povezan</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">Ta pregled je nastavljen za uporabo vmesnika {0}, ki ni povezan. Namesto tega izvedem pregled z vmesnikom, ki ga izbere Windows?</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} ni v omrežju vmesnika {1} ({2}). Za pregled izberi Samodejno pod Omrežni vmesnik.</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} ni v omrežju vmesnika {1} ({2}) in Windows ga ne usmerja prek {1}. Za pregled izberi Samodejno pod Omrežni vmesnik.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Lokacija</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Vmesnik</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Shrani rezultate v Lokacijo</sys:String>

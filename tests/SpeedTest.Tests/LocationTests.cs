@@ -226,8 +226,19 @@ internal static class LocationTests
             "/adapter finds an adapter by name in any case, or by its address.");
         Require(KillerScan.Features.Cli.CliRunner.ResolveAdapter("Bluetooth", adapters, out string? adapterError) == null &&
             adapterError!.Contains("Ethernet") && adapterError.Contains("Wi-Fi"), "An unknown adapter is refused and the connected ones are listed.");
-        Require(KillerScan.Features.Cli.CliRunner.OffLinkTarget(ethernet, [System.Net.IPAddress.Parse("192.168.1.9"), System.Net.IPAddress.Parse("10.0.0.9")], out string? offLink)
-            && offLink!.Contains("10.0.0.9") && offLink.Contains("192.168.1.0/24"), "A target off the adapter's network is refused before scanning.");
+        var platform = NetworkPlatform.Current;
+        try
+        {
+            // Windows routes 10.8.x.x through a VPN adapter and everything else through Wi-Fi.
+            NetworkPlatform.Current = new RoutePlatform();
+            var vpn = new ScanBinding("Office VPN", System.Net.IPAddress.Parse("10.8.0.2"), 32);
+            Require(KillerScan.Features.Cli.CliRunner.OffLinkTarget(ethernet, [System.Net.IPAddress.Parse("192.168.1.9"), System.Net.IPAddress.Parse("10.0.0.9")], out string? offLink)
+                && offLink!.Contains("10.0.0.9") && offLink.Contains("192.168.1.0/24") && offLink.Contains("Wi-Fi"),
+                "A target Windows routes through another adapter is refused before scanning, naming that adapter.");
+            Require(!KillerScan.Features.Cli.CliRunner.OffLinkTarget(vpn, [System.Net.IPAddress.Parse("10.8.5.20")], out _),
+                "A target Windows routes through the bound VPN adapter is allowed.");
+        }
+        finally { NetworkPlatform.Current = platform; }
         KillerScan.Features.Cli.CliRunner.RecordToLocation(data, "10.1.0.0/24", "10.1.0.0/24", devices, quick: false, err, quiet: true, keyed: false, null, "Ethernet");
         Require(data.History.Entries.Last().Adapter == "Ethernet", "Command-line history records the adapter used.");
     }
@@ -325,5 +336,14 @@ internal static class LocationTests
     private static void Require(bool condition, string message)
     {
         if (!condition) throw new InvalidOperationException(message);
+    }
+
+    private sealed class RoutePlatform : INetworkPlatform
+    {
+        public System.Collections.Generic.IReadOnlyDictionary<string, string> ReadNeighborCache() => new System.Collections.Generic.Dictionary<string, string>();
+        public string ResolveMac(System.Net.IPAddress address) => "";
+        public void FlushDnsCache() { }
+        public (string Interface, string NextHop)? BestRoute(System.Net.IPAddress address) =>
+            address.ToString().StartsWith("10.8.") ? ("Office VPN", "") : ("Wi-Fi", "10.0.0.1");
     }
 }

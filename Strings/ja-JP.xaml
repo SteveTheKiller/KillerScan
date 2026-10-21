@@ -389,7 +389,7 @@
     <sys:String x:Key="Str_Loc_Dismiss">閉じる</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">ネットワーク アダプターが接続されていません</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">このスキャンは {0} を使用するよう設定されていますが、このアダプターは接続されていません。代わりに Windows が選んだアダプターでスキャンしますか？</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} は {1} のネットワーク ({2}) 上にありません。スキャンするには、「ネットワーク アダプター」で「自動」を選択してください。</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} は {1} のネットワーク ({2}) 上になく、Windows も {1} 経由でルーティングしません。スキャンするには、「ネットワーク アダプター」で「自動」を選択してください。</sys:String>
     <sys:String x:Key="Str_Rep_Location">ロケーション</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">アダプター</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">結果をロケーションに保存</sys:String>

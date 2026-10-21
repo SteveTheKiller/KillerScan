@@ -62,7 +62,7 @@ This replaces today's behavior where the first scan trusts everything (BF-004 co
 - A Saved scan can name a preferred adapter (Ethernet, Wi-Fi or a VPN), stored by friendly name and description, not interface index.
 - At run time the preference is resolved again on this machine. If no matching adapter is up, the run asks before falling back to the system's normal route and never falls back silently.
 - The adapter actually used is recorded in the run and shown in exports.
-- Binding traffic to an adapter is engine work (backlog B04). Until it lands, the preference is saved and shown, and the run reports which adapter the system route used. Routed versus on-link behavior is defined in B04, not here.
+- Binding traffic to an adapter is engine work (backlog B04). See "As built" for how a bound scan treats on-link and routed targets.
 
 ## Export and import
 
@@ -122,7 +122,7 @@ Where 1.8.4 differs from the plan above:
 - **Starting Location.** The workspace starts in the Location used last. After migration that is Unassigned, so an upgrade looks the same as before. A fresh install starts as a Temporary scan.
 - **Device mark.** Green is approved, amber is new since the baseline, and the muted text color is known but not approved. A Temporary scan shows everything as known.
 - **Suggestion.** Matches on gateway MAC only. Each completed scan records the MAC of the device at the gateway address in its Location. SSID and subnet are not used yet. Dismiss hides a gateway's suggestion until the app restarts.
-- **Adapter binding.** Scan settings has a Network adapter choice (Automatic, or a connected adapter), and `/adapter` and `-Adapter` do the same from the command line. A chosen adapter sends pings, TCP and UDP probes, HTTP and TLS fingerprints, ARP and mDNS/SSDP from its own address. Saved scans keep the choice; a chosen adapter that is not connected asks before falling back to Windows' route. A bound scan only reaches the adapter's own network (on-link): routed and VPN targets are refused until that behavior is decided. Name lookups still use the system resolver. Every run records the adapter it used.
+- **Adapter binding.** Scan settings has a Network adapter choice (Automatic, or a connected adapter), and `/adapter` and `-Adapter` do the same from the command line. A chosen adapter sends pings, TCP and UDP probes, HTTP and TLS fingerprints, ARP and mDNS/SSDP from its own address. Saved scans keep the choice; a chosen adapter that is not connected asks before falling back to Windows' route. A bound scan reaches the adapter's own network, and routed targets only when Windows' best route to them already goes through that adapter (hosts behind a VPN adapter, for example). A target Windows would send out another adapter, or has no route to, is refused before any traffic, and the message names the adapter Windows would use. KillerScan never adds or forces routes. Name lookups still use the system resolver. Every run records the adapter it used.
 - **Export.** History is always included. The only choice is the SSH usernames checkbox, because the existing dialog has one checkbox.
 - **Command line.** Without `/location`, scans no longer apply any saved names or types, because those now belong to a Location. `/probe /location` applies names and types but records no history.
 - **History.** "Show all Locations" is on the History button's right-click menu.

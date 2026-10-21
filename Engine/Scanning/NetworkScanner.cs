@@ -98,10 +98,10 @@ namespace KillerScan.Engine
         {
             if (Binding is { } binding)
             {
-                var outside = targets.FirstOrDefault(address => !binding.Contains(address));
-                if (outside != null)
-                    throw new ArgumentException(
-                        $"{outside} is not on {binding.InterfaceName}'s network ({binding.Network}). A bound scan only reaches its own network.");
+                foreach (var address in targets)
+                    if (!binding.Reaches(address, out string route))
+                        throw new ArgumentException(binding.Unreachable(address, route) +
+                            " A bound scan only reaches its own network and what Windows routes through it.");
             }
             ScanSource.Current = Binding;
         }

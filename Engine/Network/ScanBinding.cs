@@ -6,12 +6,34 @@ namespace KillerScan.Engine
 {
     /// <summary>
     /// An adapter a scan is bound to: every probe is sent from <see cref="LocalAddress"/>, so it
-    /// leaves through that adapter, and targets must be on its own network (on-link). Routed and
-    /// VPN targets are refused while bound rather than sent out whichever adapter Windows picks.
-    /// Name lookups still use the system resolver, which talks to the DNS server, not the targets.
+    /// leaves through that adapter. A target is reachable when it is on the adapter's own network,
+    /// or when Windows' best route to it already goes through this adapter, such as hosts behind
+    /// a VPN adapter. Anything Windows would send out another adapter is refused rather than
+    /// forced through this one. Name lookups still use the system resolver.
     /// </summary>
     public sealed record ScanBinding(string InterfaceName, IPAddress LocalAddress, int PrefixLength)
     {
+        /// <summary>
+        /// True when a bound scan may send to <paramref name="address"/>: it is on-link, or
+        /// Windows routes it through this adapter. <paramref name="routeInterface"/> names the
+        /// adapter Windows would use, empty when no route is known.
+        /// </summary>
+        public bool Reaches(IPAddress address, out string routeInterface)
+        {
+            routeInterface = string.Empty;
+            if (Contains(address)) return true;
+            routeInterface = NetworkPlatform.Current.BestRoute(address)?.Interface ?? string.Empty;
+            return string.Equals(routeInterface, InterfaceName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public bool Reaches(IPAddress address) => Reaches(address, out _);
+
+        /// <summary>Why a bound scan cannot reach a target, in plain English for logs and the CLI.</summary>
+        public string Unreachable(IPAddress address, string routeInterface) =>
+            routeInterface.Length == 0
+                ? $"{address} is not on {InterfaceName}'s network ({Network}) and Windows has no route to it."
+                : $"{address} is not on {InterfaceName}'s network ({Network}), and Windows routes it through {routeInterface}, not {InterfaceName}.";
+
         /// <summary>True when <paramref name="address"/> is on this adapter's network.</summary>
         public bool Contains(IPAddress address)
         {

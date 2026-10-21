@@ -379,7 +379,7 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Ausblenden</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">Netzwerkadapter nicht verbunden</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">Dieser Scan ist für {0} eingerichtet, dieser Adapter ist aber nicht verbunden. Stattdessen mit dem Adapter scannen, den Windows auswählt?</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} liegt nicht im Netzwerk von {1} ({2}). Wählen Sie zum Scannen unter Netzwerkadapter die Option Automatisch.</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} liegt nicht im Netzwerk von {1} ({2}), und Windows leitet es nicht über {1}. Wählen Sie zum Scannen unter Netzwerkadapter die Option Automatisch.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Standort</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adapter</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Ergebnisse im Standort speichern</sys:String>

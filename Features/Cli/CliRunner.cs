@@ -174,13 +174,20 @@ namespace KillerScan.Features.Cli
             return null;
         }
 
-        /// <summary>True, with a message, when a target is off the bound adapter's network.</summary>
+        /// <summary>
+        /// True, with a message, when a target is neither on the bound adapter's network nor
+        /// routed through it by Windows.
+        /// </summary>
         internal static bool OffLinkTarget(ScanBinding binding, IEnumerable<System.Net.IPAddress> targets, out string? error)
         {
-            var outside = targets.FirstOrDefault(address => !binding.Contains(address));
-            error = outside == null ? null
-                : $"{outside} is not on {binding.InterfaceName}'s network ({binding.Network}). A bound scan only reaches its own network; leave out /adapter to scan it.";
-            return outside != null;
+            foreach (var address in targets)
+            {
+                if (binding.Reaches(address, out string route)) continue;
+                error = binding.Unreachable(address, route) + " Leave out /adapter to scan it.";
+                return true;
+            }
+            error = null;
+            return false;
         }
 
         /// <summary>

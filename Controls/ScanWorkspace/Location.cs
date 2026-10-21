@@ -422,8 +422,8 @@ namespace KillerScan.Controls
         /// <summary>
         /// Resolves the tab's adapter choice for one run. The choice is looked up again every
         /// time, because adapters come and go. A chosen adapter that is not connected asks before
-        /// falling back to the route Windows picks; a target outside the chosen adapter's own
-        /// network is refused, since a bound scan only reaches its own network for now.
+        /// falling back to the route Windows picks; a target that is neither on the chosen
+        /// adapter's network nor routed through it by Windows is refused.
         /// <paramref name="adapter"/> is the adapter the run will actually use, for history.
         /// </summary>
         private bool AdapterAllowsScan(string targets, IReadOnlyList<System.Net.IPAddress> addresses, out string adapter)
@@ -446,7 +446,7 @@ namespace KillerScan.Controls
                 _active.Scanner.Binding = null;
                 return fallBack;
             }
-            var outside = addresses.FirstOrDefault(address => !binding.Contains(address));
+            var outside = addresses.FirstOrDefault(address => !binding.Reaches(address));
             if (outside != null)
             {
                 StatusText.Text = string.Format(Loc("Str_St_AdapterOffLink"), outside, binding.InterfaceName, binding.Network);

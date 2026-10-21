@@ -363,7 +363,7 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Odrzuć</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">Karta sieciowa nie jest połączona</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">To skanowanie ma używać karty {0}, która nie jest połączona. Skanować zamiast tego przy użyciu karty sieciowej wybranej przez system Windows?</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} nie należy do sieci karty {1} ({2}). Aby go przeskanować, wybierz Automatycznie w menu Karta sieciowa.</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} nie należy do sieci karty {1} ({2}), a system Windows nie kieruje do niego ruchu przez {1}. Aby go przeskanować, wybierz Automatycznie w menu Karta sieciowa.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Lokalizacja</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Karta sieciowa</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Zapisz wyniki w Lokalizacji</sys:String>

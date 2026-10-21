@@ -420,7 +420,7 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Avvis</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">Nettverksadapteren er ikke tilkoblet</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">Denne skanningen er satt til å bruke {0}, som ikke er tilkoblet. Skanne med adapteren Windows velger i stedet?</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} er ikke på nettverket til {1} ({2}). Velg Automatisk under Nettverksadapter for å skanne den.</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} er ikke på nettverket til {1} ({2}), og Windows ruter den ikke gjennom {1}. Velg Automatisk under Nettverksadapter for å skanne den.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Lokasjon</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adapter</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Lagre resultater i Lokasjonen</sys:String>

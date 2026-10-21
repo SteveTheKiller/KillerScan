@@ -84,13 +84,26 @@ namespace KillerScan.Engine
         {
             if (address.AddressFamily != AddressFamily.InterNetwork) return null;
             if (GetBestRoute(BitConverter.ToUInt32(address.GetAddressBytes(), 0), 0, out var route) != 0) return null;
-            var iface = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(n =>
-            {
-                try { return n.GetIPProperties().GetIPv4Properties()?.Index == route.InterfaceIndex; }
-                catch (NetworkInformationException) { return false; }
-            });
-            return (iface?.Name ?? route.InterfaceIndex.ToString(),
+            return (InterfaceName(route.InterfaceIndex),
                 route.NextHop == 0 ? string.Empty : new IPAddress(route.NextHop).ToString());
+        }
+
+        // A bound scan asks for the route of every target, so adapter names are cached by index
+        // and the adapter list is only reread when an index is not in the cache.
+        private readonly System.Collections.Concurrent.ConcurrentDictionary<uint, string> _interfaceNames = new();
+
+        private string InterfaceName(uint index)
+        {
+            if (_interfaceNames.TryGetValue(index, out var name)) return name;
+            foreach (var adapter in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                try
+                {
+                    if (adapter.GetIPProperties().GetIPv4Properties() is { } v4) _interfaceNames[(uint)v4.Index] = adapter.Name;
+                }
+                catch (NetworkInformationException) { }
+            }
+            return _interfaceNames.TryGetValue(index, out name) ? name : index.ToString();
         }
     }
 

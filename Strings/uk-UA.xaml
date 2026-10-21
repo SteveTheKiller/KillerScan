@@ -420,7 +420,7 @@
     <sys:String x:Key="Str_Loc_Dismiss">Закрити</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">Мережевий адаптер не підключено</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">Це сканування налаштовано на використання {0}, але цей адаптер не підключено. Сканувати натомість через адаптер, який вибере Windows?</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} не перебуває в мережі адаптера {1} ({2}). Щоб просканувати його, виберіть «Автоматично» в меню «Мережевий адаптер».</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} не перебуває в мережі адаптера {1} ({2}), і Windows не спрямовує трафік до нього через {1}. Щоб просканувати його, виберіть «Автоматично» в меню «Мережевий адаптер».</sys:String>
     <sys:String x:Key="Str_Rep_Location">Локація</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Адаптер</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Зберегти результати в локацію</sys:String>

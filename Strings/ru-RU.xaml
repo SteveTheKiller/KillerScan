@@ -404,7 +404,7 @@
     <sys:String x:Key="Str_Loc_Dismiss">Скрыть</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">Сетевой адаптер не подключён</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">Это сканирование настроено на использование {0}, но этот адаптер не подключён. Сканировать вместо этого через адаптер, выбранный Windows?</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} не находится в сети адаптера {1} ({2}). Чтобы просканировать его, выберите Автоматически в меню Сетевой адаптер.</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} не находится в сети адаптера {1} ({2}), и Windows не направляет трафик к нему через {1}. Чтобы просканировать его, выберите Автоматически в меню Сетевой адаптер.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Объект</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Адаптер</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Сохранить результаты в Объект</sys:String>

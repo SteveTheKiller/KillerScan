@@ -376,7 +376,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Zavřít</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">Síťový adaptér není připojen</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">Tento sken je nastaven na adaptér {0}, který není připojen. Skenovat místo toho přes adaptér, který vybere Windows?</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} není v síti adaptéru {1} ({2}). Pro skenování zvolte Automaticky v nabídce Síťový adaptér.</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} není v síti adaptéru {1} ({2}) a Windows ho přes {1} nesměruje. Pro skenování zvolte Automaticky v nabídce Síťový adaptér.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Lokalita</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adaptér</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Uložit výsledky do Lokality</sys:String>

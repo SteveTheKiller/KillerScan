@@ -378,7 +378,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Ignorer</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">Carte réseau non connectée</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">Cette analyse est configurée pour utiliser {0}, qui n’est pas connectée. Analyser plutôt avec la carte réseau choisie par Windows ?</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} n’est pas sur le réseau de {1} ({2}). Choisissez Automatique sous Carte réseau pour l’analyser.</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} n’est pas sur le réseau de {1} ({2}) et Windows ne le route pas via {1}. Choisissez Automatique sous Carte réseau pour l’analyser.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Site</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Carte réseau</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Enregistrer les résultats dans le Site</sys:String>

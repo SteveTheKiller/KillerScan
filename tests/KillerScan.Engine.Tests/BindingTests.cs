@@ -4,7 +4,7 @@ using System.Text;
 using KillerScan.Engine;
 
 // A scan bound to an adapter sends every probe from that adapter's address and refuses targets
-// outside its network. Loopback stands in for the adapter: 127.0.0.2 is the bound source and
+// that are neither on its network nor routed through it. Loopback stands in for the adapter: 127.0.0.2 is the bound source and
 // the fixtures on 127.0.0.1 record which address each probe came from.
 internal static class BindingTests
 {
@@ -24,6 +24,25 @@ internal static class BindingTests
                 "A bound deep probe refuses a target outside the adapter's network.");
             Require(binding.Contains(IPAddress.Parse("127.9.9.9")) && !binding.Contains(IPAddress.Parse("10.0.0.1")),
                 "The adapter's network is its address and prefix length.");
+
+            // Routed targets: allowed only when Windows' best route goes through the bound adapter.
+            var routed = new RoutedPlatform { Through = "Loopback test", Network = "198.51.100." };
+            NetworkPlatform.Current = routed;
+            Require(binding.Reaches(IPAddress.Parse("198.51.100.20")), "A target routed through the bound adapter is reachable.");
+            Require(!binding.Reaches(IPAddress.Parse("203.0.113.20")), "A target routed through another adapter is not.");
+            Require(binding.Reaches(IPAddress.Parse("127.0.0.9")), "On-link targets stay reachable.");
+            var quiet = new ScanOptions().Without(string.Join(",", ScanOptions.Features));
+            var viaRoute = await scanner.ScanSubnetAsync("198.51.100.20", CancellationToken.None, quiet);
+            Require(viaRoute != null, "A bound scan accepts a target routed through its adapter.");
+            await RequireRefused(() => scanner.ScanSubnetAsync("198.51.100.20,203.0.113.20", CancellationToken.None, quiet),
+                "A bound scan refuses a target Windows routes through another adapter.");
+            try { await scanner.ScanSubnetAsync("203.0.113.20", CancellationToken.None, quiet); }
+            catch (ArgumentException ex)
+            {
+                Require(ex.Message.Contains("203.0.113.20") && ex.Message.Contains("Loopback test") && ex.Message.Contains("Other"),
+                    "The refusal names the target, the bound adapter and the adapter Windows would use: " + ex.Message);
+            }
+            NetworkPlatform.Current = new QuietPlatform();
 
             using var tcp = new TcpRecorder();
             using var udp = new UdpRecorder();
@@ -58,7 +77,7 @@ internal static class BindingTests
             NetworkScanner.UdpPortOverride = null;
             NetworkScanner.DeepPortsOverride = null;
         }
-        Console.WriteLine("PASS: a bound scan sends TCP, UDP, HTTP and ping from the adapter and refuses off-link targets.");
+        Console.WriteLine("PASS: a bound scan sends TCP, UDP, HTTP and ping from the adapter and refuses targets Windows routes elsewhere.");
     }
 
     private static async Task RequireRefused(Func<Task> call, string message)
@@ -79,6 +98,16 @@ internal static class BindingTests
         public string ResolveMac(IPAddress address) => "";
         public void FlushDnsCache() { }
         public (string Interface, string NextHop)? BestRoute(IPAddress address) => ("Loopback", "");
+    }
+
+    private sealed class RoutedPlatform : INetworkPlatform
+    {
+        internal string Through = "", Network = "";
+        public IReadOnlyDictionary<string, string> ReadNeighborCache() => new Dictionary<string, string>();
+        public string ResolveMac(IPAddress address) => "";
+        public void FlushDnsCache() { }
+        public (string Interface, string NextHop)? BestRoute(IPAddress address) =>
+            address.ToString().StartsWith(Network) ? (Through, "10.8.0.1") : ("Other", "192.168.1.1");
     }
 
     private sealed class TcpRecorder : IDisposable

@@ -358,7 +358,7 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Bỏ qua</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">Bộ điều hợp mạng chưa kết nối</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">Lần quét này được đặt để dùng {0}, nhưng bộ điều hợp này chưa kết nối. Quét bằng bộ điều hợp do Windows chọn?</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} không nằm trong mạng của {1} ({2}). Hãy chọn Tự động trong Bộ điều hợp mạng để quét.</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} không nằm trong mạng của {1} ({2}) và Windows không định tuyến nó qua {1}. Hãy chọn Tự động trong Bộ điều hợp mạng để quét.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Địa điểm</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Bộ điều hợp</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Lưu kết quả vào địa điểm</sys:String>

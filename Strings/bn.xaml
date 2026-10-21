@@ -378,7 +378,7 @@
     <sys:String x:Key="Str_Loc_Dismiss">বাদ দিন</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">নেটওয়ার্ক অ্যাডাপ্টার সংযুক্ত নেই</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">এই স্ক্যানটি {0} ব্যবহার করার জন্য সেট করা আছে, কিন্তু সেটি সংযুক্ত নেই। এর পরিবর্তে Windows যে অ্যাডাপ্টার বেছে নেয় সেটি দিয়ে স্ক্যান করবেন?</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} {1}-এর নেটওয়ার্কে ({2}) নেই। এটি স্ক্যান করতে নেটওয়ার্ক অ্যাডাপ্টার থেকে স্বয়ংক্রিয় বেছে নিন।</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} {1}-এর নেটওয়ার্কে ({2}) নেই, এবং Windows এটিকে {1}-এর মাধ্যমে রাউট করে না। এটি স্ক্যান করতে নেটওয়ার্ক অ্যাডাপ্টার থেকে স্বয়ংক্রিয় বেছে নিন।</sys:String>
     <sys:String x:Key="Str_Rep_Location">লোকেশন</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">অ্যাডাপ্টার</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">ফলাফল লোকেশনে সংরক্ষণ করুন</sys:String>

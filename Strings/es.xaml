@@ -378,7 +378,7 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Descartar</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">Adaptador de red no conectado</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">Este escaneo está configurado para usar {0}, que no está conectado. ¿Escanear con el adaptador que elija Windows?</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} no está en la red de {1} ({2}). Elija Automático en Adaptador de red para escanearlo.</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} no está en la red de {1} ({2}) y Windows no lo enruta a través de {1}. Elija Automático en Adaptador de red para escanearlo.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Ubicación</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adaptador</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Guardar resultados en la Ubicación</sys:String>

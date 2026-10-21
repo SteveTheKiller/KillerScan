@@ -378,7 +378,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Kapat</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">Ağ bağdaştırıcısı bağlı değil</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">Bu tarama {0} bağdaştırıcısını kullanacak şekilde ayarlandı, ancak bu bağdaştırıcı bağlı değil. Bunun yerine Windows'un seçtiği bağdaştırıcıyla taransın mı?</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0}, {1} ağında değil ({2}). Taramak için Ağ bağdaştırıcısı altında Otomatik seçeneğini seçin.</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0}, {1} ağında değil ({2}) ve Windows onu {1} üzerinden yönlendirmiyor. Taramak için Ağ bağdaştırıcısı altında Otomatik seçeneğini seçin.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Lokasyon</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Bağdaştırıcı</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Sonuçları Lokasyona kaydet</sys:String>

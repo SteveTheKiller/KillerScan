@@ -420,7 +420,7 @@
     <sys:String x:Key="Str_Loc_Dismiss">Жабу</sys:String>
     <sys:String x:Key="Str_Loc_AdapterTitle">Желі адаптері қосылмаған</sys:String>
     <sys:String x:Key="Str_Loc_AdapterMissing">Бұл сканерлеу {0} адаптерін пайдалануға бапталған, бірақ ол қосылмаған. Оның орнына Windows таңдаған адаптер арқылы сканерлеу керек пе?</sys:String>
-    <sys:String x:Key="Str_St_AdapterOffLink">{0} {1} адаптерінің желісінде ({2}) емес. Оны сканерлеу үшін Желі адаптері мәзірінен Автоматты тармағын таңдаңыз.</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} {1} адаптерінің желісінде ({2}) емес және Windows оны {1} арқылы бағыттамайды. Оны сканерлеу үшін Желі адаптері мәзірінен Автоматты тармағын таңдаңыз.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Локация</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Адаптер</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Нәтижелерді Локацияға сақтау</sys:String>
