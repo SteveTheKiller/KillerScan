@@ -1149,7 +1149,10 @@ namespace KillerScan.Engine
         /// UDP NetBIOS name service query (NBSTAT, port 137). Returns the machine's
         /// NetBIOS name for any Windows host that answers NBT, even when SMB is locked down.
         /// </summary>
-        private static async Task ProbeNetbiosAsync(NetworkDevice device, IPAddress addr)
+        public static Task ProbeNetbiosAsync(NetworkDevice device, IPAddress addr) => ProbeNetbiosAsync(device, addr, 137);
+
+        // Windows NetBT owns UDP 137 on this machine, so fixtures pass their own port.
+        internal static async Task ProbeNetbiosAsync(NetworkDevice device, IPAddress addr, int port)
         {
             // NBSTAT query for the wildcard name "*" (encoded as 32-byte level-2 name).
             byte[] query =
@@ -1163,33 +1166,24 @@ namespace KillerScan.Engine
                 0x00, 0x01,
             ];
 
+            // A random transaction ID plus a connected socket ties the reply to this query and host.
+            var identity = new byte[2];
+            using (var random = RandomNumberGenerator.Create()) random.GetBytes(identity);
+            query[0] = identity[0];
+            query[1] = identity[1];
+            int transactionId = (identity[0] << 8) | identity[1];
             try
             {
                 using var udp = new UdpClient();
                 udp.Client.SendTimeout = 500;
                 udp.Client.ReceiveTimeout = 800;
-                await udp.SendAsync(query, query.Length, new IPEndPoint(addr, 137));
+                udp.Connect(addr, port);
+                await udp.SendAsync(query, query.Length);
 
                 var recvTask = udp.ReceiveAsync();
                 if (await Task.WhenAny(recvTask, Task.Delay(800)) != recvTask) return;
-                var resp = recvTask.Result.Buffer;
-                if (resp.Length < 57) return;
-
-                int numNames = resp[56];
-                for (int i = 0; i < numNames && 57 + (i * 18) + 18 <= resp.Length; i++)
-                {
-                    int off = 57 + (i * 18);
-                    byte suffix = resp[off + 15];
-                    if (suffix == 0x00 || suffix == 0x20)
-                    {
-                        string name = Encoding.ASCII.GetString(resp, off, 15).TrimEnd(' ', '\0');
-                        if (!string.IsNullOrWhiteSpace(name) && !name.Contains('\x01') && !name.Contains('\x02'))
-                        {
-                            device.NetbiosName = name;
-                            return;
-                        }
-                    }
-                }
+                if (NetbiosResponse.TryDecode(recvTask.Result.Buffer, transactionId, out var name))
+                    device.NetbiosName = name;
             }
             catch { }
         }
