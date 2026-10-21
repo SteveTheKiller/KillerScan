@@ -115,6 +115,30 @@ try {
     $demoLocation = Get-Failure { scan -Demo -Location 'Anywhere' }
     Require ($null -ne $demoLocation -and $demoLocation.Exception.Data['ExitCode'] -eq 2) 'The real app refuses -Location with -Demo as a usage error.'
 
+    # Arguments survive the Windows command-line split exactly, trailing backslashes and quotes included.
+    if (-not ('KsArgv' -as [type])) {
+        Add-Type -TypeDefinition @'
+using System; using System.Runtime.InteropServices;
+public static class KsArgv {
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    static extern IntPtr CommandLineToArgvW(string line, out int count);
+    [DllImport("kernel32.dll")] static extern IntPtr LocalFree(IntPtr p);
+    public static string[] Split(string line) {
+        int n; IntPtr a = CommandLineToArgvW(line, out n);
+        try { var r = new string[n]; for (int i = 0; i < n; i++) r[i] = Marshal.PtrToStringUni(Marshal.ReadIntPtr(a, i * IntPtr.Size)); return r; }
+        finally { LocalFree(a); }
+    }
+}
+'@
+    }
+    $module = Get-Module KillerScan
+    $samples = @('plain', 'two words', 'C:\some folder\', 'say "hi"', 'x\"y z', 'end\\', '')
+    foreach ($sample in $samples) {
+        $quoted = & $module { param($v) ConvertTo-KsArgument $v } $sample
+        $split = [KsArgv]::Split('app.exe ' + $quoted)
+        Require ($split.Count -eq 2 -and $split[1] -ceq $sample) "Argument quoting round-trips [$sample] as $quoted."
+    }
+
     $env:KS_EXE = New-FakeExe 'noisy' '[{"IpAddress":"192.0.2.1","OpenPorts":[]}]' 'Progress: 100%%' 0
     $noisy = @(scan 192.0.2.1)
     Require ($noisy.Count -eq 1 -and $noisy[0].Ip -eq '192.0.2.1') 'Stderr status lines never mix into parsed stdout.'

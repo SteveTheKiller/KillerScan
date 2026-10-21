@@ -42,7 +42,8 @@ $failed = @()
 foreach ($flag in $entry.ci) {
     $watch = [System.Diagnostics.Stopwatch]::StartNew()
     $log = [System.IO.Path]::GetTempFileName()
-    $arguments = @('run', '--project', $project, '--framework', $Framework, '--configuration', $Configuration,
+    # Start-Process joins the list with plain spaces, so a checkout path with a space is quoted here.
+    $arguments = @('run', '--project', ('"' + $project + '"'), '--framework', $Framework, '--configuration', $Configuration,
         '--no-build', '--no-restore', '--', $flag)
     $process = Start-Process dotnet -ArgumentList $arguments -NoNewWindow -PassThru `
         -RedirectStandardOutput $log -RedirectStandardError "$log.err"

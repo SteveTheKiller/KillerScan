@@ -20,6 +20,28 @@ function Get-KsExe {
     throw 'KillerScan was not found. Open a terminal from KillerScan, or install it so killerscan.exe is on PATH.'
 }
 
+# Quotes one argument the way Windows programs split their command line: backslashes are
+# literal unless they come before a quote, so a run of them before a quote, or before the
+# closing quote, is doubled. Without that, a path ending in a backslash would swallow the
+# closing quote and run into the next argument.
+function ConvertTo-KsArgument {
+    param([AllowEmptyString()][string]$Value)
+
+    if ($Value.Length -gt 0 -and $Value -notmatch '[\s"]') { return $Value }
+    $quoted = New-Object System.Text.StringBuilder
+    [void]$quoted.Append('"')
+    $slashes = 0
+    foreach ($c in $Value.ToCharArray()) {
+        if ($c -eq '\') { $slashes++; continue }
+        if ($c -eq '"') { [void]$quoted.Append('\', $slashes * 2 + 1) }
+        elseif ($slashes -gt 0) { [void]$quoted.Append('\', $slashes) }
+        [void]$quoted.Append($c)
+        $slashes = 0
+    }
+    if ($slashes -gt 0) { [void]$quoted.Append('\', $slashes * 2) }
+    $quoted.Append('"').ToString()
+}
+
 # Runs the app with stdout and stderr kept apart: stdout is the data, stderr is status
 # and diagnostics. Exit codes are 0 success, 1 failure, cancel or timeout, 2 bad usage
 # and 3 empty or not found. Codes listed in -Answer are results rather than failures
@@ -31,9 +53,7 @@ function Invoke-KsText {
     $exe = Get-KsExe
     $info = New-Object System.Diagnostics.ProcessStartInfo
     $info.FileName = $exe
-    $info.Arguments = ($Arguments | ForEach-Object {
-        if ($_ -match '[\s"]') { '"' + ($_ -replace '"', '\"') + '"' } else { $_ }
-    }) -join ' '
+    $info.Arguments = ($Arguments | ForEach-Object { ConvertTo-KsArgument $_ }) -join ' '
     $info.UseShellExecute = $false
     $info.CreateNoWindow = $true
     $info.RedirectStandardOutput = $true
