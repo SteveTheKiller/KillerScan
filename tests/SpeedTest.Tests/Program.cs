@@ -29,6 +29,12 @@ internal static class Program
     {
         try
         {
+            if (args.SequenceEqual(new[] { "--installation-cleanup" }))
+            {
+                InstallationCleanupTests.Run();
+                UpdateHandoffTests.Run();
+                return 0;
+            }
             if (args.SequenceEqual(new[] { "--loopback-headers" })) { await LoopbackHeaders(); return 0; }
             if (args.SequenceEqual(new[] { "--transfer-sequence" }))
             {
@@ -90,6 +96,10 @@ internal static class Program
                 await Run("HTML report columns sort from the keyboard and expose aria-sort", ReportSortTests.Run);
                 await Run("PATH registration adds and removes only the install folder", CommandLinePathTests.Run);
                 await Run("Executable deployment verifies staging and preserves recovery files", ExecutableDeploymentTests.Run);
+                await Run("Owned cleanup preserves unrelated files and completion commands parse", () =>
+                { InstallationCleanupTests.Run(); return Task.CompletedTask; });
+                await Run("Elevated update handoff rejects untrusted targets before launch", () =>
+                { UpdateHandoffTests.Run(); return Task.CompletedTask; });
                 await Run("HTML report logo returns after a theme without one", ReportLogoTests.Run);
                 await Run("Outline button hover text stays readable in every accent", OutlineHoverThemeTests.RunIsolated);
                 await Run("Radio and checkbox indicators sit on the middle of their labels", RadioCenterUiTests.RunIsolated);
