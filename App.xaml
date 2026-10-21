@@ -776,16 +776,26 @@
                                          inversion is the whole difference between a Win98 field you
                                          type into and a button you press, and pairing them by name
                                          here is what makes a recess stand proud instead. -->
-                                    <Border BorderBrush="{DynamicResource BevelDarkBrush}"
-                                            BorderThickness="{DynamicResource BevelLightThickness}"/>
-                                    <Border BorderBrush="{DynamicResource BevelLightBrush}"
-                                            BorderThickness="{DynamicResource BevelDarkThickness}"/>
                                     <input:InputContentHost x:Name="PART_ContentHost"
                                                   Margin="{TemplateBinding Padding}"/>
                                 </Grid>
                             </Border>
+                                <Border x:Name="inputWellOuterDark" Panel.ZIndex="2" IsHitTestVisible="False"
+                                        BorderBrush="{DynamicResource PaneBevelDarkBrush}" BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
+                                <Border x:Name="inputWellOuterLight" Panel.ZIndex="2" IsHitTestVisible="False"
+                                        BorderBrush="{DynamicResource PaneBevelLightBrush}" BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
+                                <Border x:Name="inputWellInnerDark" Panel.ZIndex="2" IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}"
+                                        BorderBrush="{DynamicResource FrameOuterDarkBrush}" BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
+                                <Border x:Name="inputWellInnerLight" Panel.ZIndex="2" IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}"
+                                        BorderBrush="{DynamicResource FrameOuterLightBrush}" BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
                             </Grid>
                             <ControlTemplate.Triggers>
+                                <Trigger Property="BorderThickness" Value="0">
+                                    <Setter TargetName="inputWellOuterDark" Property="Visibility" Value="Collapsed"/>
+                                    <Setter TargetName="inputWellOuterLight" Property="Visibility" Value="Collapsed"/>
+                                    <Setter TargetName="inputWellInnerDark" Property="Visibility" Value="Collapsed"/>
+                                    <Setter TargetName="inputWellInnerLight" Property="Visibility" Value="Collapsed"/>
+                                </Trigger>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
                                         <Condition Binding="{Binding Tag, ElementName=InputRoot}" Value="True"/>
