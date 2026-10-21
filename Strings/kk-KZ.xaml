@@ -565,4 +565,5 @@
     <sys:String x:Key="Str_Options_ssh">SSH баннері</sys:String>
     <sys:String x:Key="Str_Options_snmp">SNMP сипаттамасы</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS атауы</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">Терең сканерлеу: белгісіз порттарды анықтау (принтер порттарын ешқашан)</sys:String>
 </ResourceDictionary>

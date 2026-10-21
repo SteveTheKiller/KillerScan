@@ -500,4 +500,5 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Options_ssh">Pozdravno sporočilo SSH</sys:String>
     <sys:String x:Key="Str_Options_snmp">Opis SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Ime NetBIOS</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">Globinsko skeniranje: prepoznaj neznana vrata (nikoli vrat tiskalnikov)</sys:String>
 </ResourceDictionary>

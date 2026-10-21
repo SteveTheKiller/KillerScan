@@ -574,15 +574,16 @@ namespace KillerScan.Engine
             if (options.Ssdp && _ssdp.TryGetValue(ip, out var srv))
                 device.SsdpServer = srv;
 
-            // Full fingerprint pass. Deep mode widens HTTP/TLS to every open port (not just the
-            // standard web/TLS ones), so services on non-standard ports still get fingerprinted.
+            // Full fingerprint pass. Unknown open ports stay connect-only unless the caller opts in
+            // to widening HTTP/TLS to them; raw services are skipped either way.
             var fpTasks = new List<Task>();
             if (options.Netbios) fpTasks.Add(ProbeNetbiosAsync(device, addr));
             if (options.Snmp) fpTasks.Add(ProbeSnmpAsync(device, addr));
             if (device.OpenPorts.Count > 0)
             {
-                if (options.Http) fpTasks.Add(ProbeHttpAsync(device, addr, deep: true, ct: ct));
-                if (options.Tls) fpTasks.Add(ProbeTlsCertAsync(device, addr, deep: true, ct: ct));
+                bool wide = options.ProbeUnknownPorts;
+                if (options.Http) fpTasks.Add(ProbeHttpAsync(device, addr, deep: wide, ct: ct));
+                if (options.Tls) fpTasks.Add(ProbeTlsCertAsync(device, addr, deep: wide, ct: ct));
             }
             if (options.Ssh && device.OpenPorts.Contains(22))
                 fpTasks.Add(ProbeSshBannerAsync(device, addr));
@@ -984,6 +985,14 @@ namespace KillerScan.Engine
         // a web service on a non-standard port.
         private static readonly int[] TlsLikelyPorts = [443, 8443, 8006, 902, 5001, 9443, 4443, 10000, 8834];
 
+        // Services that act on whatever bytes arrive: JetDirect raw printing (9100-9103) and
+        // LPD (515) print an HTTP GET or ClientHello as a page. Deep fingerprinting never sends
+        // payloads to them, matching Nmap's default exclusion of 9100.
+        private static readonly int[] RawServicePorts = [515, 9100, 9101, 9102, 9103];
+
+        /// <summary>True when a deep fingerprint may send HTTP or TLS bytes to this extra port.</summary>
+        public static bool IsPayloadSafe(int port) => !RawServicePorts.Contains(port);
+
         public static async Task ProbeHttpAsync(NetworkDevice device, IPAddress addr, bool deep = false, CancellationToken ct = default)
         {
             (int port, bool https)[] standard =
@@ -1000,7 +1009,7 @@ namespace KillerScan.Engine
             if (deep)
             {
                 candidates.AddRange(device.OpenPorts
-                    .Where(p => !standard.Any(s => s.port == p))
+                    .Where(p => !standard.Any(s => s.port == p) && IsPayloadSafe(p))
                     .Take(12)
                     .Select(p => (port: p, https: TlsLikelyPorts.Contains(p))));
             }
@@ -1102,7 +1111,7 @@ namespace KillerScan.Engine
             // open port (a non-TLS port just fails fast), so certs on non-standard ports are caught.
             int[] tlsPorts = deep
                 ? [.. standardTls.Where(device.OpenPorts.Contains)
-                    .Concat(device.OpenPorts.Where(p => !standardTls.Contains(p)).Take(12))]
+                    .Concat(device.OpenPorts.Where(p => !standardTls.Contains(p) && IsPayloadSafe(p)).Take(12))]
                 : standardTls;
             foreach (var port in tlsPorts)
             {

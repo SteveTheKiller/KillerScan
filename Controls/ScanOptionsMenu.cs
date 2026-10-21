@@ -33,6 +33,10 @@ namespace KillerScan.Controls
             menu.Items.Add(new MenuItem { Header = detail, IsEnabled = false });
             menu.Items.Add(new Separator());
 
+            // Off by default and outside Features: it widens deep-scan payloads rather than
+            // disabling a check, so it is not part of the "all checks on" defaults.
+            var unknownPorts = new MenuItem { IsCheckable = true, StaysOpenOnClick = true };
+
             void Refresh()
             {
                 var options = read();
@@ -42,6 +46,8 @@ namespace KillerScan.Controls
                     item.IsChecked = options.IsEnabled(feature);
                     item.IsEnabled = options.Ports || feature is not ("http" or "tls" or "ssh");
                 }
+                unknownPorts.IsChecked = options.ProbeUnknownPorts;
+                unknownPorts.IsEnabled = options.Ports && (options.Http || options.Tls);
             }
 
             foreach (string feature in ScanOptions.Features)
@@ -55,6 +61,14 @@ namespace KillerScan.Controls
                 };
                 menu.Items.Add(item);
             }
+            menu.Items.Add(new Separator());
+            unknownPorts.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Options_ProbeUnknownPorts");
+            unknownPorts.Click += (_, _) =>
+            {
+                if (button.IsEnabled) write(read() with { ProbeUnknownPorts = unknownPorts.IsChecked });
+                Refresh();
+            };
+            menu.Items.Add(unknownPorts);
             menu.Items.Add(new Separator());
             var reset = new MenuItem { StaysOpenOnClick = true };
             reset.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Options_Defaults");

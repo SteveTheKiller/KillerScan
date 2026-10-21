@@ -20,6 +20,12 @@ namespace KillerScan.Engine
         public bool Snmp { get; init; } = true;
         public bool Netbios { get; init; } = true;
 
+        /// <summary>
+        /// Deep scans send HTTP and TLS payloads to open ports with no known web service only
+        /// when this is set. Raw services such as JetDirect printing are never sent payloads.
+        /// </summary>
+        public bool ProbeUnknownPorts { get; init; }
+
         /// <summary>Stable, language-independent names shared by hosts.</summary>
         public static IReadOnlyList<string> Features { get; } = Array.AsReadOnly(new[]
         {

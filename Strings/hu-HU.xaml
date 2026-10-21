@@ -539,4 +539,5 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Options_ssh">SSH-azonosító üzenet</sys:String>
     <sys:String x:Key="Str_Options_snmp">SNMP-leírás</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS-név</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">Mélyvizsgálat: ismeretlen portok azonosítása (nyomtatóportok soha)</sys:String>
 </ResourceDictionary>

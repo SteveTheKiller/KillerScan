@@ -523,4 +523,5 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Options_ssh">SSH karşılama mesajı</sys:String>
     <sys:String x:Key="Str_Options_snmp">SNMP açıklaması</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS adı</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">Derin tarama: bilinmeyen portları tanımla (yazıcı portları asla)</sys:String>
 </ResourceDictionary>

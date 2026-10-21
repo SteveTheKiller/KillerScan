@@ -18,6 +18,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--snmp" })) { await SnmpTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--upload-accounting" })) { await UploadAccountingTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--scan-options" })) { await ScanOptionsTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--safe-probes" })) { await SafeProbeTests.Run(); return 0; }
             await Run("Scan options preserve defaults and validate feature choices", ScanOptionsTests.Run);
             await Run("Targets parse ranges, de-duplicate overlaps and refuse bad input", Targets);
             await Run("The address ceiling counts unique addresses and keeps first-seen order", TargetCeiling);

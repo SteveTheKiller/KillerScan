@@ -523,4 +523,5 @@
     <sys:String x:Key="Str_Options_ssh">SSH 歡迎訊息</sys:String>
     <sys:String x:Key="Str_Options_snmp">SNMP 描述</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS 名稱</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">深度掃描：識別未知連接埠（絕不探測印表機連接埠）</sys:String>
 </ResourceDictionary>

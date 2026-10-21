@@ -523,4 +523,5 @@
     <sys:String x:Key="Str_Options_ssh">SSH ব্যানার</sys:String>
     <sys:String x:Key="Str_Options_snmp">SNMP বর্ণনা</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS নাম</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">ডিপ স্ক্যান: অজানা পোর্ট শনাক্ত করুন (প্রিন্টার পোর্ট কখনো নয়)</sys:String>
 </ResourceDictionary>

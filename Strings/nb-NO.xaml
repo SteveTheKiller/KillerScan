@@ -565,4 +565,5 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Options_ssh">SSH-banner</sys:String>
     <sys:String x:Key="Str_Options_snmp">SNMP-beskrivelse</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS-navn</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">Dypskanning: identifiser ukjente porter (aldri skriverporter)</sys:String>
 </ResourceDictionary>

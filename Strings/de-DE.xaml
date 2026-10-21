@@ -524,4 +524,5 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Options_ssh">SSH-Banner</sys:String>
     <sys:String x:Key="Str_Options_snmp">SNMP-Beschreibung</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS-Name</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">Tiefenscan: unbekannte Ports identifizieren (nie Druckerports)</sys:String>
 </ResourceDictionary>

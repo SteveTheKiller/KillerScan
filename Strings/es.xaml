@@ -523,4 +523,5 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Options_ssh">Mensaje de identificación SSH</sys:String>
     <sys:String x:Key="Str_Options_snmp">Descripción SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Nombre NetBIOS</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">Escaneo profundo: identificar puertos desconocidos (nunca puertos de impresora)</sys:String>
 </ResourceDictionary>

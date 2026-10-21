@@ -565,4 +565,5 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Options_ssh">Banner SSH</sys:String>
     <sys:String x:Key="Str_Options_snmp">Descrição SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Nome NetBIOS</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">Varredura profunda: identificar portas desconhecidas (nunca portas de impressora)</sys:String>
 </ResourceDictionary>

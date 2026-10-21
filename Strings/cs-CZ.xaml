@@ -521,4 +521,5 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Options_ssh">Uvítací zpráva SSH</sys:String>
     <sys:String x:Key="Str_Options_snmp">Popis SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Název NetBIOS</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">Hloubkový sken: identifikovat neznámé porty (nikdy porty tiskáren)</sys:String>
 </ResourceDictionary>

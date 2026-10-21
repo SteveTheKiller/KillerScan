@@ -508,4 +508,5 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Options_ssh">Baner SSH</sys:String>
     <sys:String x:Key="Str_Options_snmp">Opis SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Nazwa NetBIOS</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">Głębokie skanowanie: identyfikuj nieznane porty (nigdy porty drukarek)</sys:String>
 </ResourceDictionary>

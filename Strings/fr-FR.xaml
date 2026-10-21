@@ -523,4 +523,5 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Options_ssh">Bannière SSH</sys:String>
     <sys:String x:Key="Str_Options_snmp">Description SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Nom NetBIOS</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">Analyse approfondie : identifier les ports inconnus (jamais les ports d’imprimante)</sys:String>
 </ResourceDictionary>

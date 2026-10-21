@@ -565,4 +565,5 @@
     <sys:String x:Key="Str_Options_ssh">Банер SSH</sys:String>
     <sys:String x:Key="Str_Options_snmp">Опис SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Ім’я NetBIOS</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">Глибоке сканування: визначати невідомі порти (ніколи порти принтерів)</sys:String>
 </ResourceDictionary>

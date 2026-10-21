@@ -534,4 +534,5 @@
     <sys:String x:Key="Str_Options_ssh">SSHバナー</sys:String>
     <sys:String x:Key="Str_Options_snmp">SNMPの説明</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS名</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">詳細スキャン: 不明なポートを識別 (プリンターポートは除外)</sys:String>
 </ResourceDictionary>

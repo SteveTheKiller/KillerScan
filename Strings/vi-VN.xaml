@@ -504,4 +504,5 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Options_ssh">Thông điệp chào SSH</sys:String>
     <sys:String x:Key="Str_Options_snmp">Mô tả SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Tên NetBIOS</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">Quét sâu: nhận dạng cổng không xác định (không bao giờ quét cổng máy in)</sys:String>
 </ResourceDictionary>

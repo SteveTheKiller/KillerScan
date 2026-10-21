@@ -539,4 +539,5 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Options_ssh">Banner SSH</sys:String>
     <sys:String x:Key="Str_Options_snmp">Descrizione SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Nome NetBIOS</sys:String>
+    <sys:String x:Key="Str_Options_ProbeUnknownPorts">Scansione approfondita: identifica porte sconosciute (mai porte stampante)</sys:String>
 </ResourceDictionary>
