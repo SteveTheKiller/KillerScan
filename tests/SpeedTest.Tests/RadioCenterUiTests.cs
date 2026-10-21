@@ -157,6 +157,10 @@ internal static class RadioCenterUiTests
         root.LayoutTransform = new ScaleTransform(zoom, zoom);
         // Only the indicator outline and the label are colored, so the scan sees nothing else.
         root.Resources["DimTextBrush"] = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+        // On 98SE the checkbox is a sunken well whose bevel covers the ring, so the bevel is the
+        // indicator's outline there and is colored the same.
+        foreach (string bevel in new[] { "PaneBevelDarkBrush", "PaneBevelLightBrush", "PaneBevelDark2Brush", "PaneBevelLight2Brush" })
+            root.Resources[bevel] = new SolidColorBrush(Color.FromRgb(255, 0, 0));
         root.Resources["TextBrush"] = new SolidColorBrush(Color.FromRgb(0, 0, 255));
         root.Resources["PrimaryBrush"] = Brushes.Transparent;
         root.Resources["IconShadowOpacity"] = 0.0;
