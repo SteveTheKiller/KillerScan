@@ -142,14 +142,20 @@ namespace KillerScan.Engine
             string cidr, CancellationToken ct, ScanOptions options, bool fullScan = true)
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
+            // ScanTargets handles one or many comma-separated targets (CIDR, single host, or a
+            // range) and de-duplicates overlaps. Bad input is refused before any side effect.
+            var parsed = ScanTargets.Parse(cidr);
+            if (!parsed.Ok)
+                throw new ArgumentException(parsed.Error switch
+                {
+                    TargetError.Empty => "No scan target was given.",
+                    TargetError.TooLarge => $"The targets cover {parsed.Detail} addresses; the ceiling is {ScanTargets.MaxAddresses:N0}.",
+                    _ => $"\"{parsed.Detail}\" is not a CIDR block, host, or range."
+                }, nameof(cidr));
             ct.ThrowIfCancellationRequested();
             if (options.ReverseDns) FlushLocalDnsCache();
             _mdns = [];
             _ssdp = [];
-            // ScanTargets handles one or many comma-separated targets (CIDR, single host, or a
-            // range) and de-duplicates overlaps. The UI validates the same string before getting
-            // here, so a parse failure at this point yields an empty list rather than throwing.
-            var parsed = ScanTargets.Parse(cidr);
             var addresses = parsed.Addresses;
             // Status text uses the short summary ("192.168.9.0/24 +2"), not the raw box contents,
             // so a long multi-target list does not overrun the status bar.
@@ -514,9 +520,12 @@ namespace KillerScan.Engine
             bool flushLocalDnsCache = true)
         {
             if (options == null) throw new ArgumentNullException(nameof(options));
+            if (portConcurrency < 1)
+                throw new ArgumentOutOfRangeException(nameof(portConcurrency), portConcurrency, "Port concurrency must be at least 1.");
+            if (ip == null || !IPAddress.TryParse(ip, out var addr) || addr.AddressFamily != AddressFamily.InterNetwork)
+                throw new ArgumentException($"\"{ip}\" is not an IPv4 address.", nameof(ip));
             ct.ThrowIfCancellationRequested();
             if (flushLocalDnsCache && options.ReverseDns) FlushLocalDnsCache();
-            var addr = IPAddress.Parse(ip);
             var device = new NetworkDevice
             {
                 IpAddress  = ip,

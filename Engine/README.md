@@ -39,6 +39,10 @@ Events are raised on worker threads, so a UI host marshals them to its own threa
 
 Canceling the token ends the scan with an `OperationCanceledException`.
 
+Bad input is refused before any network or DNS cache work. `ScanSubnetAsync` throws `ArgumentException` for a blank, malformed or oversized target (check with `ScanTargets.Parse` first to show your own message). `DeepProbeHostAsync` throws `ArgumentException` for anything but an IPv4 address and `ArgumentOutOfRangeException` for a port concurrency below 1.
+
+Deep probes connect to unknown open ports without sending data. Set `ScanOptions.ProbeUnknownPorts` to also try HTTP and TLS on them. Raw print ports (9100 to 9103 and 515) never receive fingerprint payloads.
+
 Pass an immutable `ScanOptions` as the third argument to `ScanSubnetAsync` or
 `DeepProbeHostAsync` to select discovery and fingerprint checks. Existing overloads
 retain enabled defaults. See [scan settings](../docs/scan-options.md) for dependencies.
