@@ -338,7 +338,6 @@ namespace KillerScan.Shell
                     var k = new TextBlock
                     {
                         Text = keys,
-                        FontFamily = new FontFamily("Consolas"),
                         FontSize = 11,
                         Margin = new Thickness(0, 0, 12, 0),
                         VerticalAlignment = VerticalAlignment.Center,

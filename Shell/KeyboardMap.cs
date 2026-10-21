@@ -166,7 +166,7 @@ namespace KillerScan.Shell
                 var b = new Button
                 {
                     Content = layer == KbLayer.Base ? Loc("Str_KS_Base") : caption,
-                    FontFamily = new FontFamily("Consolas"), FontSize = 11,
+                    FontSize = 11,
                     Padding = new Thickness(10, 4, 10, 4), Margin = new Thickness(0, 0, 8, 0),
                 };
                 // The family's own outline button rather than WPF's default chrome, which would
@@ -213,7 +213,6 @@ namespace KillerScan.Shell
             var capText = new TextBlock
             {
                 Text = cap,
-                FontFamily = new FontFamily("Consolas"),
                 FontSize = 10,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Top,
