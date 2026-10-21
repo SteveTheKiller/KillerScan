@@ -97,6 +97,10 @@ function ConvertTo-KsDevice {
         Netbios  = $Device.NetbiosName
         Mdns     = @($Device.MdnsServices)
         Ssdp     = $Device.SsdpServer
+        # Why the device has its type (signals, alternatives, confidence), and each endpoint
+        # with what it answered. Access is an empty array, not $null, when none was recorded.
+        Recognition = $Device.Recognition
+        Access   = [object[]]@($Device.Access | Where-Object { $null -ne $_ })
     }
     $out.PSObject.TypeNames.Insert(0, 'KillerScan.Device')
     $out

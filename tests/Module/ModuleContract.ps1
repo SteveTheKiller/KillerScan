@@ -47,6 +47,13 @@ try {
     Require ($devices.Count -gt 0) 'scan -Demo returns device objects from the real executable.'
     Require ($devices[0].PSObject.TypeNames[0] -eq 'KillerScan.Device') 'Devices carry the KillerScan.Device type.'
     Require (-not [string]::IsNullOrEmpty($devices[0].Ip)) 'Devices carry their IP address.'
+    Require (-not [string]::IsNullOrEmpty($devices[0].Recognition.Confidence)) 'Devices carry their recognition evidence.'
+
+    $env:KS_EXE = New-FakeExe 'evidence' '[{"IpAddress":"192.0.2.9","OpenPorts":[443],"Recognition":{"Type":"Printer","Confidence":"High"},"Access":[{"Protocol":"https","Port":443,"Evidence":"HttpResponse","HttpStatus":401,"Login":"Requested"}]},{"IpAddress":"192.0.2.10","OpenPorts":[]}]' '' 0
+    $evidence = @(scan 192.0.2.0/30)
+    Require ($evidence[0].Recognition.Confidence -eq 'High' -and $evidence[0].Access.Count -eq 1 -and $evidence[0].Access[0].Login -eq 'Requested') 'Devices carry their access endpoints.'
+    Require ($evidence[1].Access.Count -eq 0 -and $null -eq $evidence[1].Recognition) 'A device without evidence has an empty Access list and no Recognition.'
+    $env:KS_EXE = $realExe
 
     $usage = Get-Failure { probe 'not-an-address' }
     Require ($null -ne $usage) 'A usage error from the real executable is a terminating error.'
