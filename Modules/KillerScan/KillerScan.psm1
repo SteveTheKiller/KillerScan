@@ -131,7 +131,12 @@ function scan {
 
         # A saved Location, by name or ID: its device names apply, and the scan is recorded
         # in its history. Without it nothing saved is read or written.
-        [string]$Location
+        [string]$Location,
+
+        # Checks to turn off, the same ones Scan settings offers.
+        [ValidateSet('neighbor-cache', 'arp', 'icmp', 'tcp-liveness', 'dns', 'mdns', 'ssdp',
+            'ports', 'http', 'tls', 'ssh', 'snmp', 'netbios')]
+        [string[]]$Skip
     )
 
     $arguments = @('/scan')
@@ -140,6 +145,7 @@ function scan {
     if ($Timeout)  { $arguments += @('/timeout', $Timeout) }
     if ($Demo)     { $arguments += '/demo' }
     if ($Location) { $arguments += @('/location', $Location) }
+    if ($Skip)     { $arguments += @('/skip', ($Skip -join ',')) }
     # No /quiet: it suppresses stdout, which is where the JSON is. Status goes to stderr.
     $arguments += '/json'
 
@@ -161,12 +167,18 @@ function probe {
         [int]$Timeout,
 
         # A saved Location whose device names and types apply to the result.
-        [string]$Location
+        [string]$Location,
+
+        # Checks to turn off, the same ones Scan settings offers.
+        [ValidateSet('neighbor-cache', 'arp', 'icmp', 'tcp-liveness', 'dns', 'mdns', 'ssdp',
+            'ports', 'http', 'tls', 'ssh', 'snmp', 'netbios')]
+        [string[]]$Skip
     )
 
     $arguments = @('/probe', $Target)
     if ($Timeout)  { $arguments += @('/timeout', $Timeout) }
     if ($Location) { $arguments += @('/location', $Location) }
+    if ($Skip)     { $arguments += @('/skip', ($Skip -join ',')) }
     $arguments += '/json'
 
     Invoke-KsJson $arguments | ForEach-Object { ConvertTo-KsDevice $_ }

@@ -207,6 +207,16 @@ internal static class LocationTests
             [.. devices, Device("10.1.0.3", "00:00:00:00:01:03")], quick: false, err, quiet: false, keyed: false);
         Require(err.ToString().Contains("1 devices are new"), "A later command-line scan reports devices new since the baseline.");
         Require(data.History.Entries.Last().TargetKey == "10.1.0.0/24", "Command-line history keeps the full targets.");
+
+        Require(KillerScan.Features.Cli.CliRunner.ParseSkip(null, out var none, out _) && none.DisabledFeatures.Length == 0,
+            "Without /skip every check runs.");
+        Require(KillerScan.Features.Cli.CliRunner.ParseSkip(" DNS, http ", out var skipped, out _) &&
+            !skipped.ReverseDns && !skipped.Http && skipped.Ports, "/skip turns off exactly the named checks, in any case and spacing.");
+        Require(!KillerScan.Features.Cli.CliRunner.ParseSkip("dns,bogus", out _, out string? skipError) && skipError!.Contains("bogus"),
+            "An unknown check name is refused and named.");
+        Require(!KillerScan.Features.Cli.CliRunner.ParseSkip("", out _, out _), "An empty /skip is refused.");
+        KillerScan.Features.Cli.CliRunner.RecordToLocation(data, "10.1.0.0/24", "10.1.0.0/24", devices, quick: false, err, quiet: true, keyed: false, skipped);
+        Require(Equals(data.History.Entries.Last().Options, skipped), "History records the checks a command-line scan skipped.");
     }
 
     private static void Transfer(string root)

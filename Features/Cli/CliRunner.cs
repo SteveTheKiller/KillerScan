@@ -138,7 +138,7 @@ namespace KillerScan.Features.Cli
             "/sort", "--sort", "/filter", "--filter", "/type", "--type",
             "/vendor-filter", "--vendor-filter", "/ports", "--ports", "/limit", "--limit",
             "/timeout", "--timeout", "/theme", "--theme", "/count", "--count",
-            "/interval", "--interval", "/max-hops", "--max-hops", "/location", "--location"
+            "/interval", "--interval", "/max-hops", "--max-hops", "/location", "--location", "/skip", "--skip"
         ];
 
         /// <summary>
@@ -160,14 +160,39 @@ namespace KillerScan.Features.Cli
         }
 
         /// <summary>
+        /// The checks /skip turns off, by the same names Scan settings saves (dns, http, ...).
+        /// No /skip means every check; an empty or unknown name is a usage error.
+        /// </summary>
+        internal static bool ParseSkip(string? value, out ScanOptions options, out string? error)
+        {
+            options = new ScanOptions();
+            error = null;
+            if (value == null) return true;
+            try
+            {
+                options = options.Without(value);
+                return true;
+            }
+            catch (ArgumentException)
+            {
+                var unknown = value.Split(',').Select(name => name.Trim()).FirstOrDefault(name =>
+                    name.Length == 0 || !ScanOptions.Features.Contains(name.ToLowerInvariant()));
+                error = (unknown is { Length: > 0 } ? $"\"{unknown}\" is not a check name." : "/skip needs check names.") +
+                    " Use any of: " + string.Join(", ", ScanOptions.Features) + ".";
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Records a finished command-line scan in its Location: one history entry, then the
         /// Known list. Status lines go to stderr; the in-app terminal reads the keyed form.
         /// </summary>
         internal static void RecordToLocation(LocationData location, string caption, string targets,
-            IReadOnlyList<NetworkDevice> devices, bool quick, TextWriter err, bool quiet, bool keyed)
+            IReadOnlyList<NetworkDevice> devices, bool quick, TextWriter err, bool quiet, bool keyed, ScanOptions? scanOptions = null)
         {
             // A quick scan checks no ports, so it never becomes the baseline for a full one.
-            var options = quick ? new ScanOptions().Without("ports,http,tls,ssh") : new ScanOptions();
+            var options = scanOptions ?? new ScanOptions();
+            if (quick) options = options.Without("ports,http,tls,ssh");
             var history = location.History;
             if (!history.Record(caption, targets, devices, ScanCompletion.Complete, options, deep: false).Saved)
                 err.WriteLine(PaintErr("Warning: the scan could not be saved to history - " + Flatten(history.SaveError), AnsiBad));
@@ -485,6 +510,9 @@ namespace KillerScan.Features.Cli
             int[]? ports = ParsePorts(Value(options, "/ports", "--ports"));
             if (ports != null && ports.Length == 0) return Usage(err, "/ports must be comma-separated numbers from 1 to 65535.");
 
+            if (!ParseSkip(Value(options, "/skip", "--skip"), out var scanOptions, out string? skipError))
+                return Usage(err, skipError!);
+
             // With /location the run reads that Location's names and types and records there.
             // Without it, it is a Temporary scan: nothing saved is read and nothing is written.
             string? locationText = Value(options, "/location", "--location");
@@ -562,8 +590,8 @@ namespace KillerScan.Features.Cli
             try
             {
                 Task<List<NetworkDevice>> operation = probe
-                    ? ProbeAsListAsync(scanner, probeIp!.ToString(), cts.Token)
-                    : scanner.ScanSubnetAsync(targetText, cts.Token, fullScan: !quick);
+                    ? ProbeAsListAsync(scanner, probeIp!.ToString(), scanOptions, cts.Token)
+                    : scanner.ScanSubnetAsync(targetText, cts.Token, scanOptions, fullScan: !quick);
                 if (timeout > 0)
                 {
                     var deadline = Task.Delay(TimeSpan.FromSeconds(timeout));
@@ -591,7 +619,7 @@ namespace KillerScan.Features.Cli
 
             // History and the Known list get everything the scan found, before display filters.
             if (location != null && !probe && !demo)
-                RecordToLocation(location, parsed!.Summary, targetText, devices, quick, err, quiet, terminalProgress);
+                RecordToLocation(location, parsed!.Summary, targetText, devices, quick, err, quiet, terminalProgress, scanOptions);
 
             devices = ApplyFilters(devices, options, ports);
             var sorted = ApplySort(devices, Value(options, "/sort", "--sort"),
@@ -633,9 +661,9 @@ namespace KillerScan.Features.Cli
         }
 
         private static async Task<List<NetworkDevice>> ProbeAsListAsync(
-            NetworkScanner scanner, string ip, CancellationToken cancellationToken)
+            NetworkScanner scanner, string ip, ScanOptions options, CancellationToken cancellationToken)
         {
-            return [await scanner.DeepProbeHostAsync(ip, cancellationToken)];
+            return [await scanner.DeepProbeHostAsync(ip, cancellationToken, options)];
         }
 
         private static List<NetworkDevice> ApplyFilters(List<NetworkDevice> devices,
@@ -783,7 +811,8 @@ namespace KillerScan.Features.Cli
             "  /limit <count>         keep the first N rows after filtering and sorting",
             "  /fail-empty            return exit code 3 when no rows remain",
             "  /demo                  fabricated network for screenshots; scans nothing (with /scan)",
-            "  /location <name|id>    use and record into a saved Location; without it nothing is saved", "", "OUTPUT OPTIONS",
+            "  /location <name|id>    use and record into a saved Location; without it nothing is saved",
+            "  /skip <check,...>      turn checks off: " + string.Join(", ", ScanOptions.Features), "", "OUTPUT OPTIONS",
             "  /format <kind>         table, csv, json, or html",
             "  /table | /csv | /json | /html   shorthand for /format",
             "  /export <path>         write output; extension selects format unless overridden",

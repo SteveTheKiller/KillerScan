@@ -91,10 +91,13 @@ namespace KillerScan.Shell
                 var location = ShellLocation;
                 string locationArgument = location.Info != null && !location.IsShared && Services.LocationService.LoadError == null
                     ? " /location " + QuoteArgument(location.Info.Id) : string.Empty;
+                // The same checks the Scan settings button has turned off.
+                string skipped = _scanWorkspace?.Options.DisabledFeatures ?? string.Empty;
+                string skipArgument = skipped.Length > 0 ? " /skip " + skipped : string.Empty;
                 using var process = new Process { StartInfo = new ProcessStartInfo
                 {
                     FileName = Assembly.GetExecutingAssembly().Location,
-                    Arguments = "/scan " + QuoteArgument(target.Trim()) + locationArgument + " /json /progress /terminal-progress",
+                    Arguments = "/scan " + QuoteArgument(target.Trim()) + locationArgument + skipArgument + " /json /progress /terminal-progress",
                     UseShellExecute = false, CreateNoWindow = true,
                     RedirectStandardOutput = true, RedirectStandardError = true
                 } };

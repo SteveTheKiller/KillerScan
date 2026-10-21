@@ -73,6 +73,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Manage Locations on the Location button opens a sidebar list of every Location, with the current one marked. Each can be switched to, renamed, given notes, exported or deleted. Deleting moves the Location's files aside to a deleted folder rather than erasing them. The Profiles section is now called Saved scans.
 - History lists the current Location's scans. Right-click the History button and choose Show all Locations to list every Location's scans, each labeled with its Location.
 - `/scan` and `/probe` take `/location <name or ID>`, and the PowerShell `scan` and `probe` commands take `-Location`. An unknown or shared name is a usage error. The terminal's Scan button scans in the current Location.
+- `/scan` and `/probe` take `/skip <checks>`, and the PowerShell `scan` and `probe` commands take `-Skip`, to turn off the same checks Scan settings offers. The terminal's Scan button uses the current Scan settings.
 
 ### Changed
 - Trusted devices are now called approved devices, and approving is always a choice you make.

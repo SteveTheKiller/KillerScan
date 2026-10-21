@@ -77,6 +77,20 @@ try {
     Require ($site.Count -eq 1 -and $site[0].Ip -eq '192.0.2.7') '-Location passes the Location name, spaces included, to the app.'
     Require (@(scan 192.0.2.0/30).Count -eq 0) 'Without -Location no /location is passed.'
 
+    $skipped = Join-Path $work 'skipped.cmd'
+    Set-Content -LiteralPath $skipped -Encoding Ascii -Value @(
+        '@echo off',
+        'echo %* | findstr /C:"/skip dns,http" >nul || (echo Error: skip not passed 1>&2& exit /b 2)',
+        'echo []')
+    $env:KS_EXE = $skipped
+    Require ($null -eq (Get-Failure { scan 192.0.2.0/30 -Skip dns, http })) '-Skip passes the checks to turn off as /skip.'
+    Require ($null -eq (Get-Failure { probe 192.0.2.1 -Skip dns, http })) 'probe -Skip passes them too.'
+    Require ($null -ne (Get-Failure { scan 192.0.2.0/30 -Skip bogus })) '-Skip refuses names Scan settings does not have.'
+    # The real app with /demo sends nothing; an unknown /skip name is still a usage error.
+    $real = Start-Process -FilePath $realExe -ArgumentList '/scan', '/demo', '/skip', 'bogus', '/json' -Wait -PassThru -WindowStyle Hidden
+    Require ($real.ExitCode -eq 2) 'The real app refuses an unknown /skip name with exit code 2.'
+    $env:KS_EXE = $realExe
+
     $env:KS_EXE = $realExe
     $demoLocation = Get-Failure { scan -Demo -Location 'Anywhere' }
     Require ($null -ne $demoLocation -and $demoLocation.Exception.Data['ExitCode'] -eq 2) 'The real app refuses -Location with -Demo as a usage error.'
