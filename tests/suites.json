@@ -1,0 +1,37 @@
+{
+  "_comment": "Every --flag the console test runners accept, and whether normal CI runs it. Run-FocusedSuites.ps1 fails when a runner gains a flag that is not listed here, so a new suite cannot be forgotten. Excluded entries say why; they stay separate named gates.",
+  "engine": {
+    "project": "tests/KillerScan.Engine.Tests/KillerScan.Engine.Tests.csproj",
+    "program": "tests/KillerScan.Engine.Tests/Program.cs",
+    "ci": [
+      "--vendor-db", "--vendor-snapshot", "--subnet", "--fingerprint-cancellation", "--http-redirects",
+      "--mac-cancellation", "--snmp", "--upload-accounting", "--scan-options", "--safe-probes", "--netbios",
+      "--api-contract"
+    ],
+    "excluded": {}
+  },
+  "app": {
+    "project": "tests/SpeedTest.Tests/SpeedTest.Tests.csproj",
+    "program": "tests/SpeedTest.Tests/Program.cs",
+    "ci": [
+      "--installation-cleanup", "--loopback-headers", "--transfer-sequence", "--empty-transfers",
+      "--terminal-memory", "--terminal-unicode", "--terminal-accessibility", "--history-retention",
+      "--preference-persistence", "--demo-stores", "--osc-parser", "--terminal-safety", "--terminal-paste", "--scan-lifecycle",
+      "--scan-presentation", "--menu-separators", "--startup-fade", "--release-ui", "--scan-options-ui",
+      "--history-ui", "--history-settings-ui", "--history-table-ui", "--profiles-ui", "--menu-icons-ui",
+      "--topology", "--topology-stream", "--topology-keyboard", "--csv-export", "--export-publication", "--history-load", "--run-evidence", "--locations",
+      "--locations-sidebar", "--location-workspace", "--report-sort", "--command-line-path",
+      "--executable-deployment", "--report-logo", "--outline-hover-ui", "--radio-center-ui", "--shrink-to-fit"
+    ],
+    "excluded": {
+      "--internet": "Contacts the public speed-test endpoint.",
+      "--worker": "Contacts the deployed speed-test Worker.",
+      "--worker-loopback": "Needs Node to run the Worker locally; run it where Node is installed.",
+      "--speed-loopback": "Modifier for the default run, not a suite of its own.",
+      "--terminal": "Opens the terminal view for manual inspection.",
+      "--terminal-memory-child": "Child process started by --terminal-memory.",
+      "--history-writer": "Child process started by --history-retention.",
+      "---": "Not a flag: a table-separator string in a check."
+    }
+  }
+}

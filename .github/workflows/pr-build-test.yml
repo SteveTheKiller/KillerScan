@@ -26,18 +26,22 @@ jobs:
             project: KillerScan.csproj
             mode: build
             framework: ''
+            suite: ''
           - name: engine-net48
             project: tests/KillerScan.Engine.Tests/KillerScan.Engine.Tests.csproj
             mode: console
             framework: 'net48'
+            suite: engine
           - name: engine-net10
             project: tests/KillerScan.Engine.Tests/KillerScan.Engine.Tests.csproj
             mode: console
             framework: 'net10.0'
+            suite: engine
           - name: speed-test-fixtures
             project: tests/SpeedTest.Tests/SpeedTest.Tests.csproj
             mode: console
             framework: 'net48'
+            suite: app
     name: ${{ matrix.name }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -78,6 +82,27 @@ jobs:
           # No --worker or --internet: SpeedTest uses local fixtures only.
           dotnet run --project $env:PROJECT --framework $env:FRAMEWORK --configuration Release --no-build --no-restore 2>&1 | Tee-Object ci-results/console.log
           if ($LASTEXITCODE -ne 0) { throw 'Regression checks failed. See console.log.' }
+      # The runners' flag-only groups. tests/suites.json lists every flag, and the script fails
+      # when a runner gains one that is not listed, so a new suite cannot go unrun.
+      - name: Run focused regression suites
+        if: matrix.suite != ''
+        env:
+          SUITE: ${{ matrix.suite }}
+          FRAMEWORK: ${{ matrix.framework }}
+        run: |
+          if (!$env:WINDIR) { $env:WINDIR = $env:SYSTEMROOT }
+          ./tests/Run-FocusedSuites.ps1 -Suite $env:SUITE -Framework $env:FRAMEWORK -Configuration Release 2>&1 | Tee-Object ci-results/focused.log
+          if ($LASTEXITCODE -ne 0) { throw 'Focused suites failed. See focused.log.' }
+      - name: Check the suite inventory and the PowerShell module contract
+        if: matrix.name == 'application'
+        run: |
+          ./tests/Run-FocusedSuites.ps1 -CheckOnly
+          if ($LASTEXITCODE -ne 0) { throw 'tests/suites.json does not match the test runners.' }
+          $exe = 'bin/Release/net48/KillerScan.exe'
+          pwsh -NoProfile -File tests/Module/ModuleContract.ps1 -Exe $exe 2>&1 | Tee-Object ci-results/module-pwsh.log
+          if ($LASTEXITCODE -ne 0) { throw 'Module contract failed on PowerShell 7. See module-pwsh.log.' }
+          powershell -NoProfile -ExecutionPolicy Bypass -File tests/Module/ModuleContract.ps1 -Exe $exe 2>&1 | Tee-Object ci-results/module-desktop.log
+          if ($LASTEXITCODE -ne 0) { throw 'Module contract failed on Windows PowerShell 5.1. See module-desktop.log.' }
       - name: Retain failure diagnostics and test results
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
