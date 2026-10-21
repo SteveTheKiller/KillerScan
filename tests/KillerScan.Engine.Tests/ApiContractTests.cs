@@ -31,6 +31,14 @@ internal static class ApiContractTests
             var none = new ScanOptions().Without(string.Join(",", ScanOptions.Features));
             var devices = await scanner.ScanSubnetAsync("127.0.0.1", CancellationToken.None, none);
             Require(devices != null, "A valid target still scans.");
+
+            // Two scanners side by side keep their own saved types and completion hooks.
+            var siteA = new NetworkScanner(new IsolatedDiscovery()) { ManualTypes = _ => "Printer", Completed = d => d.Hostname = "site-a" };
+            var siteB = new NetworkScanner(new IsolatedDiscovery()) { ManualTypes = _ => "Camera", Completed = d => d.Hostname = "site-b" };
+            var a = await siteA.DeepProbeHostAsync("127.0.0.1", CancellationToken.None, none);
+            var b = await siteB.DeepProbeHostAsync("127.0.0.1", CancellationToken.None, none);
+            Require(a.DeviceType == "Printer" && a.Hostname == "site-a" && b.DeviceType == "Camera" && b.Hostname == "site-b",
+                "Each scanner applies its own manual types and completion hook.");
         }
         finally { NetworkPlatform.Current = original; }
         Console.WriteLine("PASS: public scan APIs refuse bad targets and concurrency before side effects.");

@@ -43,6 +43,8 @@ Bad input is refused before any network or DNS cache work. `ScanSubnetAsync` thr
 
 Deep probes connect to unknown open ports without sending data. Set `ScanOptions.ProbeUnknownPorts` to also try HTTP and TLS on them. Raw print ports (9100 to 9103 and 515) never receive fingerprint payloads.
 
+`NetworkScanner.ManualTypeLookup` and `NetworkScanner.DeviceCompleted` apply to every scanner. A host that keeps separate saved data per site can instead set `ManualTypes` and `Completed` on each scanner instance; when set, they replace the static hooks for that scanner.
+
 Pass an immutable `ScanOptions` as the third argument to `ScanSubnetAsync` or
 `DeepProbeHostAsync` to select discovery and fingerprint checks. Existing overloads
 retain enabled defaults. See [scan settings](../docs/scan-options.md) for dependencies.

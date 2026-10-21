@@ -89,6 +89,21 @@ namespace KillerScan.Engine
         /// </summary>
         public static Action<NetworkDevice>? DeviceCompleted { get; set; }
 
+        /// <summary>
+        /// This scanner's own manual types. When set it replaces <see cref="ManualTypeLookup"/>,
+        /// so hosts that keep separate saved data per site can run scanners side by side.
+        /// </summary>
+        public Func<string, string?>? ManualTypes { get; set; }
+
+        /// <summary>This scanner's own completion hook. When set it replaces <see cref="DeviceCompleted"/>.</summary>
+        public Action<NetworkDevice>? Completed { get; set; }
+
+        private void Finish(NetworkDevice device)
+        {
+            device.DeviceType = ClassifyDevice(device, ManualTypes ?? ManualTypeLookup);
+            (Completed ?? DeviceCompleted)?.Invoke(device);
+        }
+
         // Network-wide service discovery results (collected once per scan, keyed by IP).
         private Dictionary<string, MulticastDiscovery.MdnsInfo> _mdns = [];
         private Dictionary<string, string> _ssdp = [];
@@ -327,8 +342,7 @@ namespace KillerScan.Engine
                         ct.ThrowIfCancellationRequested();
 
                         // Classify even in quick scan (hostname + OUI, no ports)
-                        device.DeviceType = ClassifyDevice(device);
-                        DeviceCompleted?.Invoke(device);
+                        Finish(device);
 
                         ReportDeviceFound(device);
                         int done = Interlocked.Increment(ref completed);
@@ -496,8 +510,7 @@ namespace KillerScan.Engine
                 device.Hostname = device.NetbiosName;
 
             // Classify device type using weighted scoring over all signals.
-            device.DeviceType = ClassifyDevice(device);
-            DeviceCompleted?.Invoke(device);
+            Finish(device);
 
             return device;
         }
@@ -602,8 +615,7 @@ namespace KillerScan.Engine
             if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(device.NetbiosName))
                 device.Hostname = device.NetbiosName;
 
-            device.DeviceType = ClassifyDevice(device);
-            DeviceCompleted?.Invoke(device);
+            Finish(device);
             return device;
         }
 
@@ -745,10 +757,13 @@ namespace KillerScan.Engine
         ///   4-7  weak supporting signal (TTL, generic port presence)
         ///   1-3  tie-breaker only
         /// </summary>
-        public static string ClassifyDevice(NetworkDevice device)
+        public static string ClassifyDevice(NetworkDevice device) => ClassifyDevice(device, ManualTypeLookup);
+
+        /// <summary>Classifies with the given manual types instead of <see cref="ManualTypeLookup"/>.</summary>
+        public static string ClassifyDevice(NetworkDevice device, Func<string, string?>? manualTypes)
         {
             // 1. Manual override always wins.
-            var manual = ManualTypeLookup?.Invoke(device.MacAddress);
+            var manual = manualTypes?.Invoke(device.MacAddress);
             if (manual != null)
                 return manual;
 
