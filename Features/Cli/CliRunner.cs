@@ -138,7 +138,8 @@ namespace KillerScan.Features.Cli
             "/sort", "--sort", "/filter", "--filter", "/type", "--type",
             "/vendor-filter", "--vendor-filter", "/ports", "--ports", "/limit", "--limit",
             "/timeout", "--timeout", "/theme", "--theme", "/count", "--count",
-            "/interval", "--interval", "/max-hops", "--max-hops", "/location", "--location", "/skip", "--skip"
+            "/interval", "--interval", "/max-hops", "--max-hops", "/location", "--location", "/skip", "--skip",
+            "/adapter", "--adapter"
         ];
 
         /// <summary>
@@ -157,6 +158,29 @@ namespace KillerScan.Features.Cli
                 ? $"no Location is named \"{wanted}\"."
                 : $"more than one Location is named \"{wanted}\". Use its ID instead: {string.Join(", ", named.Select(item => item.Id))}.";
             return null;
+        }
+
+        /// <summary>The connected adapter /adapter names, by Windows name or address, or null with a message.</summary>
+        internal static ScanBinding? ResolveAdapter(string text, IReadOnlyList<ScanBinding> available, out string? error)
+        {
+            error = null;
+            string wanted = text.Trim();
+            var found = System.Net.IPAddress.TryParse(wanted, out var address)
+                ? available.FirstOrDefault(b => b.LocalAddress.Equals(address))
+                : available.FirstOrDefault(b => string.Equals(b.InterfaceName, wanted, StringComparison.OrdinalIgnoreCase));
+            if (found != null) return found;
+            error = $"no connected adapter is named \"{wanted}\"." + (available.Count == 0 ? " No adapters are connected."
+                : " Connected: " + string.Join(", ", available.Select(b => $"{b.InterfaceName} ({b.LocalAddress}/{b.PrefixLength})")) + ".");
+            return null;
+        }
+
+        /// <summary>True, with a message, when a target is off the bound adapter's network.</summary>
+        internal static bool OffLinkTarget(ScanBinding binding, IEnumerable<System.Net.IPAddress> targets, out string? error)
+        {
+            var outside = targets.FirstOrDefault(address => !binding.Contains(address));
+            error = outside == null ? null
+                : $"{outside} is not on {binding.InterfaceName}'s network ({binding.Network}). A bound scan only reaches its own network; leave out /adapter to scan it.";
+            return outside != null;
         }
 
         /// <summary>
@@ -188,13 +212,14 @@ namespace KillerScan.Features.Cli
         /// Known list. Status lines go to stderr; the in-app terminal reads the keyed form.
         /// </summary>
         internal static void RecordToLocation(LocationData location, string caption, string targets,
-            IReadOnlyList<NetworkDevice> devices, bool quick, TextWriter err, bool quiet, bool keyed, ScanOptions? scanOptions = null)
+            IReadOnlyList<NetworkDevice> devices, bool quick, TextWriter err, bool quiet, bool keyed, ScanOptions? scanOptions = null,
+            string adapter = "")
         {
             // A quick scan checks no ports, so it never becomes the baseline for a full one.
             var options = scanOptions ?? new ScanOptions();
             if (quick) options = options.Without("ports,http,tls,ssh");
             var history = location.History;
-            if (!history.Record(caption, targets, devices, ScanCompletion.Complete, options, deep: false).Saved)
+            if (!history.Record(caption, targets, devices, ScanCompletion.Complete, options, deep: false, adapter).Saved)
                 err.WriteLine(PaintErr("Warning: the scan could not be saved to history - " + Flatten(history.SaveError), AnsiBad));
             if (devices.Count == 0) return;
             var seen = location.Devices.Observe(devices);
@@ -513,6 +538,18 @@ namespace KillerScan.Features.Cli
             if (!ParseSkip(Value(options, "/skip", "--skip"), out var scanOptions, out string? skipError))
                 return Usage(err, skipError!);
 
+            // With /adapter every probe leaves through that adapter, and only its own network can
+            // be scanned. Without it Windows picks the route, as before.
+            ScanBinding? binding = null;
+            if (Value(options, "/adapter", "--adapter") is { } adapterText)
+            {
+                if (demo) return Usage(err, "/adapter does not work with /demo.");
+                binding = ResolveAdapter(adapterText, ScanBinding.Available(), out string? adapterError);
+                if (binding == null) return Usage(err, adapterError!);
+                var reach = probe ? [probeIp!] : parsed!.Addresses;
+                if (OffLinkTarget(binding, reach, out string? offLink)) return Usage(err, offLink!);
+            }
+
             // With /location the run reads that Location's names and types and records there.
             // Without it, it is a Temporary scan: nothing saved is read and nothing is written.
             string? locationText = Value(options, "/location", "--location");
@@ -537,7 +574,8 @@ namespace KillerScan.Features.Cli
             var scanner = new NetworkScanner
             {
                 ManualTypes = mac => location?.Overrides.Get(mac),
-                Completed = device => location?.Devices.Apply(device)
+                Completed = device => location?.Devices.Apply(device),
+                Binding = binding
             };
             if (terminalProgress)
             {
@@ -619,7 +657,8 @@ namespace KillerScan.Features.Cli
 
             // History and the Known list get everything the scan found, before display filters.
             if (location != null && !probe && !demo)
-                RecordToLocation(location, parsed!.Summary, targetText, devices, quick, err, quiet, terminalProgress, scanOptions);
+                RecordToLocation(location, parsed!.Summary, targetText, devices, quick, err, quiet, terminalProgress, scanOptions,
+                    binding?.InterfaceName ?? string.Empty);
 
             devices = ApplyFilters(devices, options, ports);
             var sorted = ApplySort(devices, Value(options, "/sort", "--sort"),
@@ -812,7 +851,8 @@ namespace KillerScan.Features.Cli
             "  /fail-empty            return exit code 3 when no rows remain",
             "  /demo                  fabricated network for screenshots; scans nothing (with /scan)",
             "  /location <name|id>    use and record into a saved Location; without it nothing is saved",
-            "  /skip <check,...>      turn checks off: " + string.Join(", ", ScanOptions.Features), "", "OUTPUT OPTIONS",
+            "  /skip <check,...>      turn checks off: " + string.Join(", ", ScanOptions.Features),
+            "  /adapter <name|ip>     send every probe from one adapter; only its own network is reachable", "", "OUTPUT OPTIONS",
             "  /format <kind>         table, csv, json, or html",
             "  /table | /csv | /json | /html   shorthand for /format",
             "  /export <path>         write output; extension selects format unless overridden",

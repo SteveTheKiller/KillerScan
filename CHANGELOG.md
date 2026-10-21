@@ -78,6 +78,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - History lists the current Location's scans. Right-click the History button and choose Show all Locations to list every Location's scans, each labeled with its Location.
 - `/scan` and `/probe` take `/location <name or ID>`, and the PowerShell `scan` and `probe` commands take `-Location`. An unknown or shared name is a usage error. The terminal's Scan button scans in the current Location.
 - `/scan` and `/probe` take `/skip <checks>`, and the PowerShell `scan` and `probe` commands take `-Skip`, to turn off the same checks Scan settings offers. The terminal's Scan button uses the current Scan settings.
+- `/scan` and `/probe` take `/adapter <name or address>`, and the PowerShell commands take `-Adapter`, to send every probe from one adapter. An unknown adapter or a target off its network is a usage error, and the terminal's Scan button uses the adapter chosen in Scan settings.
 
 ### Changed
 - Trusted devices are now called approved devices, and approving is always a choice you make.

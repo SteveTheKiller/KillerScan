@@ -136,7 +136,11 @@ function scan {
         # Checks to turn off, the same ones Scan settings offers.
         [ValidateSet('neighbor-cache', 'arp', 'icmp', 'tcp-liveness', 'dns', 'mdns', 'ssdp',
             'ports', 'http', 'tls', 'ssh', 'snmp', 'netbios')]
-        [string[]]$Skip
+        [string[]]$Skip,
+
+        # Send every probe from this adapter, by Windows name or address. Only its own
+        # network can be scanned while bound.
+        [string]$Adapter
     )
 
     $arguments = @('/scan')
@@ -146,6 +150,7 @@ function scan {
     if ($Demo)     { $arguments += '/demo' }
     if ($Location) { $arguments += @('/location', $Location) }
     if ($Skip)     { $arguments += @('/skip', ($Skip -join ',')) }
+    if ($Adapter)  { $arguments += @('/adapter', $Adapter) }
     # No /quiet: it suppresses stdout, which is where the JSON is. Status goes to stderr.
     $arguments += '/json'
 
@@ -172,13 +177,17 @@ function probe {
         # Checks to turn off, the same ones Scan settings offers.
         [ValidateSet('neighbor-cache', 'arp', 'icmp', 'tcp-liveness', 'dns', 'mdns', 'ssdp',
             'ports', 'http', 'tls', 'ssh', 'snmp', 'netbios')]
-        [string[]]$Skip
+        [string[]]$Skip,
+
+        # Send every probe from this adapter, by Windows name or address.
+        [string]$Adapter
     )
 
     $arguments = @('/probe', $Target)
     if ($Timeout)  { $arguments += @('/timeout', $Timeout) }
     if ($Location) { $arguments += @('/location', $Location) }
     if ($Skip)     { $arguments += @('/skip', ($Skip -join ',')) }
+    if ($Adapter)  { $arguments += @('/adapter', $Adapter) }
     $arguments += '/json'
 
     Invoke-KsJson $arguments | ForEach-Object { ConvertTo-KsDevice $_ }

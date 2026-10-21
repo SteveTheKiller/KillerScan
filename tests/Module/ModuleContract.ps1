@@ -86,6 +86,19 @@ try {
     Require ($null -eq (Get-Failure { scan 192.0.2.0/30 -Skip dns, http })) '-Skip passes the checks to turn off as /skip.'
     Require ($null -eq (Get-Failure { probe 192.0.2.1 -Skip dns, http })) 'probe -Skip passes them too.'
     Require ($null -ne (Get-Failure { scan 192.0.2.0/30 -Skip bogus })) '-Skip refuses names Scan settings does not have.'
+    $adapted = Join-Path $work 'adapted.cmd'
+    Set-Content -LiteralPath $adapted -Encoding Ascii -Value @(
+        '@echo off',
+        'echo %* | findstr /C:"/adapter" >nul || (echo Error: adapter not passed 1>&2& exit /b 2)',
+        'echo %* | findstr /C:"Ethernet 2" >nul || (echo Error: adapter name lost 1>&2& exit /b 2)',
+        'echo []')
+    $env:KS_EXE = $adapted
+    Require ($null -eq (Get-Failure { scan 192.0.2.0/30 -Adapter 'Ethernet 2' })) '-Adapter passes the adapter name, spaces included.'
+    Require ($null -eq (Get-Failure { probe 192.0.2.1 -Adapter 'Ethernet 2' })) 'probe -Adapter passes it too.'
+    $env:KS_EXE = $realExe
+    $demoAdapter = Get-Failure { scan -Demo -Adapter 'Ethernet' }
+    Require ($null -ne $demoAdapter -and $demoAdapter.Exception.Data['ExitCode'] -eq 2) 'The real app refuses -Adapter with -Demo as a usage error.'
+
     # The real app with /demo sends nothing; an unknown /skip name is still a usage error.
     $real = Start-Process -FilePath $realExe -ArgumentList '/scan', '/demo', '/skip', 'bogus', '/json' -Wait -PassThru -WindowStyle Hidden
     Require ($real.ExitCode -eq 2) 'The real app refuses an unknown /skip name with exit code 2.'

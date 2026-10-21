@@ -94,6 +94,9 @@ namespace KillerScan.Shell
                 // The same checks the Scan settings button has turned off.
                 string skipped = _scanWorkspace?.Options.DisabledFeatures ?? string.Empty;
                 string skipArgument = skipped.Length > 0 ? " /skip " + skipped : string.Empty;
+                // And the same adapter, when one is chosen.
+                string adapterChoice = _scanWorkspace?.AdapterChoice ?? string.Empty;
+                if (adapterChoice.Length > 0) skipArgument += " /adapter " + QuoteArgument(adapterChoice);
                 using var process = new Process { StartInfo = new ProcessStartInfo
                 {
                     FileName = Assembly.GetExecutingAssembly().Location,

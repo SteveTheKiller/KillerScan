@@ -217,6 +217,19 @@ internal static class LocationTests
         Require(!KillerScan.Features.Cli.CliRunner.ParseSkip("", out _, out _), "An empty /skip is refused.");
         KillerScan.Features.Cli.CliRunner.RecordToLocation(data, "10.1.0.0/24", "10.1.0.0/24", devices, quick: false, err, quiet: true, keyed: false, skipped);
         Require(Equals(data.History.Entries.Last().Options, skipped), "History records the checks a command-line scan skipped.");
+
+        var ethernet = new ScanBinding("Ethernet", System.Net.IPAddress.Parse("192.168.1.5"), 24);
+        var wifi = new ScanBinding("Wi-Fi", System.Net.IPAddress.Parse("10.0.0.7"), 24);
+        var adapters = new[] { ethernet, wifi };
+        Require(KillerScan.Features.Cli.CliRunner.ResolveAdapter("wi-fi", adapters, out _) == wifi &&
+            KillerScan.Features.Cli.CliRunner.ResolveAdapter("192.168.1.5", adapters, out _) == ethernet,
+            "/adapter finds an adapter by name in any case, or by its address.");
+        Require(KillerScan.Features.Cli.CliRunner.ResolveAdapter("Bluetooth", adapters, out string? adapterError) == null &&
+            adapterError!.Contains("Ethernet") && adapterError.Contains("Wi-Fi"), "An unknown adapter is refused and the connected ones are listed.");
+        Require(KillerScan.Features.Cli.CliRunner.OffLinkTarget(ethernet, [System.Net.IPAddress.Parse("192.168.1.9"), System.Net.IPAddress.Parse("10.0.0.9")], out string? offLink)
+            && offLink!.Contains("10.0.0.9") && offLink.Contains("192.168.1.0/24"), "A target off the adapter's network is refused before scanning.");
+        KillerScan.Features.Cli.CliRunner.RecordToLocation(data, "10.1.0.0/24", "10.1.0.0/24", devices, quick: false, err, quiet: true, keyed: false, null, "Ethernet");
+        Require(data.History.Entries.Last().Adapter == "Ethernet", "Command-line history records the adapter used.");
     }
 
     private static void Transfer(string root)
