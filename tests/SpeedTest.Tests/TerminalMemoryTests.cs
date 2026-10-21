@@ -58,8 +58,12 @@ internal static class TerminalMemoryTests
 
     internal static void Child(string preset)
     {
-        if (Console.ReadLine() != "START" || !IsProcessInJob(Process.GetCurrentProcess().Handle, IntPtr.Zero, out bool inJob) || !inJob)
-            throw new InvalidOperationException("Memory workload requires its parent job.");
+        string? handshake = ReadHandshake();
+        bool queried = IsProcessInJob(Process.GetCurrentProcess().Handle, IntPtr.Zero, out bool inJob);
+        if (handshake != "START" || !queried || !inJob)
+            throw new InvalidOperationException("Memory workload requires its parent job. Read "
+                + (handshake == null ? "nothing" : "\"" + string.Join(" ", Array.ConvertAll(handshake.ToCharArray(), c => ((int)c).ToString("X4"))) + "\"")
+                + ", in job: " + (queried ? inJob.ToString() : "query failed") + ".");
         if (preset == "control20000x80")
         {
             Exception? failure = null;
@@ -101,6 +105,21 @@ internal static class TerminalMemoryTests
         Verify(buffer, lines, columns);
         Report(preset, "resize-alt-preserved", 0);
         GC.KeepAlive(buffer);
+    }
+
+    /// <summary>
+    /// The first stdin line, read as bytes. When the console's code page is UTF-8 (65001), the
+    /// parent's .NET Framework stdin writer sends a byte order mark as soon as it is created, and
+    /// Console.ReadLine would hand that back as part of the line, so a leading mark is skipped.
+    /// </summary>
+    private static string? ReadHandshake()
+    {
+        using var input = Console.OpenStandardInput();
+        var bytes = new System.Collections.Generic.List<byte>();
+        for (int b; bytes.Count < 64 && (b = input.ReadByte()) >= 0 && b != '\n';) bytes.Add((byte)b);
+        if (bytes.Count == 0) return null;
+        int skip = bytes.Count >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF ? 3 : 0;
+        return Encoding.ASCII.GetString(bytes.ToArray(), skip, bytes.Count - skip).TrimEnd('\r');
     }
 
     private static void Control()
