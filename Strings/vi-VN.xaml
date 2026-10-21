@@ -396,6 +396,9 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Xóa {0}? Các lần quét đã lưu, tên thiết bị, phê duyệt và lịch sử của địa điểm này sẽ rời khỏi KillerScan. Các tệp được giữ trong thư mục "deleted" của địa điểm, nên có thể khôi phục.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Xóa</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Hãy dừng quét trước khi đổi địa điểm.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTitle">Bỏ các kết quả này?</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTemporary">Kết quả của “Lần quét tạm thời” này không được lưu ở đâu cả. Đổi địa điểm sẽ xóa chúng. Để giữ lại, hãy chọn “Lưu kết quả vào địa điểm”.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardConfirm">Bỏ</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Không thể thiết lập địa điểm, nên KillerScan vẫn dùng thiết bị, các lần quét đã lưu và lịch sử hiện có như trước.&#10;&#10;{0}&#10;&#10;Không có gì bị thay đổi hay xóa. KillerScan sẽ thử lại vào lần khởi động tới.</sys:String>
     <sys:String x:Key="Str_Loc_Notes">Ghi chú địa điểm...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Ghi chú (Ctrl+Enter để lưu)</sys:String>

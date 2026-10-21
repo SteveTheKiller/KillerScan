@@ -57,9 +57,23 @@ namespace KillerScan.Controls
         /// <summary>
         /// Moves this tab to another Location. Refused while scanning, because the run captured its
         /// Location when it started. Picking a Location sends no traffic: it restores that
-        /// Location's last targets and settings and leaves the current results on screen.
+        /// Location's last targets and settings. The results on screen are cleared, because
+        /// renaming or approving a row would otherwise write into the new Location. A completed
+        /// run is in its own Location's history; a Temporary scan's results are nowhere else,
+        /// so leaving them asks first. Picking the Location the tab is already in changes nothing.
         /// </summary>
-        internal bool SetLocation(LocationData data)
+        internal bool SetLocation(LocationData data) => SetLocation(data, keepResults: false);
+
+        /// <summary>Asks whether to discard a Temporary scan's results. Tests answer it without a dialog.</summary>
+        internal Func<string, bool>? ConfirmDiscard { get; set; }
+
+        private bool IsCurrentLocation(LocationData data) =>
+            ReferenceEquals(data, _location)
+            || (data.Info != null && _location.Info != null && data.Info.Id == _location.Info.Id)
+            || (data.IsTemporary && _location.IsTemporary)
+            || (data.IsShared && _location.IsShared && data.Info == null && _location.Info == null);
+
+        private bool SetLocation(LocationData data, bool keepResults)
         {
             if (_disposed) return false;
             if (IsScanning)
@@ -67,6 +81,23 @@ namespace KillerScan.Controls
                 StatusText.Text = Loc("Str_Loc_Busy");
                 return false;
             }
+            if (IsCurrentLocation(data)) return true;
+            bool clear = !keepResults && _active.Devices.Count > 0;
+            if (clear && _location.IsTemporary)
+            {
+                string message = Loc("Str_Loc_DiscardTemporary");
+                bool discard;
+                if (ConfirmDiscard != null) discard = ConfirmDiscard(message);
+                else
+                {
+                    var confirm = new ConfirmDialog(Loc("Str_Loc_DiscardTitle"), message, Loc("Str_Loc_DiscardConfirm"), Loc("Str_Btn_Cancel"))
+                        { Owner = Window.GetWindow(this) };
+                    confirm.ShowDialog();
+                    discard = confirm.Confirmed;
+                }
+                if (!discard) return false;
+            }
+            if (clear) ClearResults();
             _location = data;
             _loadedScanName = null;
             _active.NewIdentities.Clear();
@@ -82,6 +113,22 @@ namespace KillerScan.Controls
             LocationChanged?.Invoke(this, EventArgs.Empty);
             StateChanged?.Invoke(this, EventArgs.Empty);
             return true;
+        }
+
+        // Back to an empty tab, as if nothing had been scanned yet.
+        private void ClearResults()
+        {
+            _active.Devices.Clear();
+            _active.NewIdentities.Clear();
+            _active.ScannedSubnet = string.Empty;
+            _active.Completion = ScanCompletion.Partial;
+            _active.Refresh = null;
+            _active.Adapter = string.Empty;
+            _topologyPositions.Clear();
+            _scanCompleted = false;
+            RefreshDeviceCount();
+            UpdateDeepScanButton();
+            UpdateExportButtonAvailability();
         }
 
         /// <summary>The Location's current display name, after any rename.</summary>
@@ -473,7 +520,8 @@ namespace KillerScan.Controls
                 if (source.Devices.GetName(device) is { } name) saved &= target.Devices.SetName(device, name);
             PersistenceFeedback.Check(saved, () => target.History.Retry() && target.Devices.Retry(),
                 () => target.History.SaveError ?? target.Devices.SaveError);
-            SetLocation(target);
+            // The results now belong to the target, so they stay on screen there.
+            SetLocation(target, keepResults: true);
             HistoryRecorded?.Invoke(this, EventArgs.Empty);
             return true;
         }
@@ -490,7 +538,7 @@ namespace KillerScan.Controls
         {
             if (_loadedScanName == null) { SaveScanAs(); return; }
             var store = _location.SavedScans;
-            PersistenceFeedback.Check(store.SaveEdited(_loadedScanName, Targets.Trim(), _active.Options), store.Retry, () => store.SaveError);
+            PersistenceFeedback.Check(store.SaveEdited(_loadedScanName, Targets.Trim(), _active.Options, _adapterChoice), store.Retry, () => store.SaveError);
             LocationChanged?.Invoke(this, EventArgs.Empty);
         }
 

@@ -432,6 +432,9 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Törli ezt: {0}? A mentett vizsgálatai, eszköznevei, jóváhagyásai és előzményei kikerülnek a KillerScan alkalmazásból. A fájlok a Helyszínek "deleted" mappájában maradnak, így visszaállíthatók.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Törlés</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Állítsa le a vizsgálatot a Helyszín váltása előtt.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTitle">Elveti ezeket az eredményeket?</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTemporary">Az „Ideiglenes vizsgálat” eredményei sehol sincsenek elmentve. A Helyszín váltása törli őket. Megtartásukhoz válassza helyette az „Eredmények mentése a Helyszínre” lehetőséget.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardConfirm">Elvetés</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">A Helyszíneket nem sikerült beállítani, ezért a KillerScan a korábbiakhoz hasonlóan a meglévő eszközeit, mentett vizsgálatait és előzményeit használja.&#10;&#10;{0}&#10;&#10;Semmi sem módosult, és semmi sem lett eltávolítva. A KillerScan a következő indításkor újra megpróbálja.</sys:String>
     <sys:String x:Key="Str_Loc_Notes">Helyszín jegyzetei...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Jegyzetek (Ctrl+Enter: mentés)</sys:String>

@@ -417,6 +417,9 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">{0} löschen? Die gespeicherten Scans, Gerätenamen, Freigaben und der Verlauf dieses Standorts werden aus KillerScan entfernt. Die Dateien bleiben im Ordner "deleted" der Standorte erhalten und können wiederhergestellt werden.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Löschen</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Stoppen Sie den Scan, bevor Sie den Standort wechseln.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTitle">Diese Ergebnisse verwerfen?</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTemporary">Diese Ergebnisse aus „Temporärer Scan“ werden nirgends gespeichert. Ein Wechsel des Standorts löscht sie. Um sie zu behalten, wählen Sie stattdessen „Ergebnisse im Standort speichern“.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardConfirm">Verwerfen</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Standorte konnten nicht eingerichtet werden, daher verwendet KillerScan Ihre vorhandenen Geräte, gespeicherten Scans und den Verlauf wie bisher.&#10;&#10;{0}&#10;&#10;Es wurde nichts geändert oder entfernt. KillerScan versucht es beim nächsten Start erneut.</sys:String>
     <sys:String x:Key="Str_Loc_Notes">Standortnotizen...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notizen (Strg+Eingabe speichert)</sys:String>

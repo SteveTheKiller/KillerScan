@@ -83,6 +83,8 @@ internal static class LocationWorkspaceTests
                 !a.Devices.IsTrusted(device) && workspace.Location == a,
                 "Saving results adds the run and its names to the Location, approves nothing, and moves the tab there.");
             Require(!workspace.SaveResultsTo(b), "Only a Temporary scan's results can be saved to a Location.");
+            Require(workspace.Session.Devices.Count == 1, "Saved results stay on screen in the Location they moved to.");
+            ResultsFollowLocation(a, b, scanner);
             Suggestion(Path.Combine(root, "service"));
             AdapterPreference(Path.Combine(root, "adapter"));
         }
@@ -93,6 +95,36 @@ internal static class LocationWorkspaceTests
             if (Directory.Exists(root)) Directory.Delete(root, true);
         }
         Console.WriteLine("PASS: the scan tab names, records and baselines through its own Location.");
+    }
+
+    // Results on screen belong to the Location they were scanned in, so switching clears them
+    // rather than letting a rename or approval land in the new Location.
+    private static void ResultsFollowLocation(LocationData a, LocationData b, SiteScanner scanner)
+    {
+        using var workspace = new ScanWorkspace("192.168.1.10", false, scanner);
+        workspace.SetLocation(a);
+        workspace.Scan();
+        PumpUntil(() => !workspace.IsScanning && workspace.Session.Devices.Count == 1);
+
+        Require(workspace.SetLocation(a) && workspace.Session.Devices.Count == 1 && workspace.Location == a,
+            "Picking the current Location again changes nothing, results included.");
+        Require(workspace.SetLocation(b) && workspace.Session.Devices.Count == 0 && workspace.Location == b,
+            "Switching Location clears the results scanned in the old one.");
+
+        var temporary = LocationData.Temporary();
+        workspace.SetLocation(temporary);
+        workspace.Scan();
+        PumpUntil(() => !workspace.IsScanning && workspace.Session.Devices.Count == 1);
+        string? asked = null;
+        workspace.ConfirmDiscard = message => { asked = message; return false; };
+        Require(!workspace.SetLocation(a) && workspace.Location == temporary && workspace.Session.Devices.Count == 1 &&
+                asked == (string)Application.Current.FindResource("Str_Loc_DiscardTemporary"),
+            "Leaving unsaved Temporary results asks first, and No keeps them.");
+        Require(workspace.SetLocation(LocationData.Temporary()) && workspace.Session.Devices.Count == 1,
+            "Picking Temporary scan while already in one changes nothing.");
+        workspace.ConfirmDiscard = _ => true;
+        Require(workspace.SetLocation(a) && workspace.Location == a && workspace.Session.Devices.Count == 0,
+            "Discarding moves to the Location with an empty tab.");
     }
 
     // The banner offers a Location this gateway was seen in, and never switches by itself.
@@ -192,6 +224,15 @@ internal static class LocationWorkspaceTests
             workspace.AdapterChoice = string.Empty;
             workspace.LoadSavedScan(site.SavedScans.Items.Single());
             Require(workspace.AdapterChoice == "Ethernet" && workspace.Targets == "192.168.1.0/24", "Loading a saved scan restores its adapter.");
+
+            // Save in place records the adapter chosen now, including going back to Automatic.
+            var save = typeof(ScanWorkspace).GetMethod("SaveScan", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            workspace.AdapterChoice = string.Empty;
+            save.Invoke(workspace, null);
+            Require(site.SavedScans.Items.Single().Adapter.Length == 0, "Save records a change back to Automatic.");
+            workspace.AdapterChoice = "Ethernet";
+            save.Invoke(workspace, null);
+            Require(site.SavedScans.Items.Single().Adapter == "Ethernet", "Save records a newly chosen adapter.");
 
             connected = false;
             string? asked = null;

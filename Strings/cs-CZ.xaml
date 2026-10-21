@@ -414,6 +414,9 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Odstranit {0}? Její uložené skeny, názvy zařízení, schválení a historie budou z KillerScan odebrány. Soubory zůstanou ve složce "deleted" Lokalit, takže je lze obnovit.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Odstranit</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Před změnou Lokality zastavte skenování.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTitle">Zahodit tyto výsledky?</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTemporary">Výsledky z režimu „Dočasný sken“ nejsou nikde uloženy. Změnou Lokality se vymažou. Chcete-li je zachovat, zvolte místo toho „Uložit výsledky do Lokality“.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardConfirm">Zahodit</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Lokality se nepodařilo nastavit, proto KillerScan používá vaše stávající zařízení, uložené skeny a historii jako dosud.&#10;&#10;{0}&#10;&#10;Nic nebylo změněno ani odstraněno. KillerScan to zkusí znovu při příštím spuštění.</sys:String>
     <sys:String x:Key="Str_Loc_Notes">Poznámky k Lokalitě...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Poznámky (Ctrl+Enter uloží)</sys:String>

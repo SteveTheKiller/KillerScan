@@ -416,6 +416,9 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Supprimer {0} ? Ses analyses enregistrées, noms d’appareils, approbations et historique seront retirés de KillerScan. Les fichiers sont conservés dans le dossier "deleted" des Sites, ils peuvent donc être récupérés.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Supprimer</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Arrêtez l’analyse avant de changer de Site.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTitle">Abandonner ces résultats ?</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTemporary">Les résultats de cette « Analyse temporaire » ne sont enregistrés nulle part. Changer de Site les efface. Pour les conserver, choisissez plutôt « Enregistrer les résultats dans le Site ».</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardConfirm">Abandonner</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Les Sites n’ont pas pu être configurés, KillerScan utilise donc vos appareils, analyses enregistrées et historique existants comme avant.&#10;&#10;{0}&#10;&#10;Rien n’a été modifié ni supprimé. KillerScan réessaiera au prochain démarrage.</sys:String>
     <sys:String x:Key="Str_Loc_Notes">Notes du Site...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notes (Ctrl+Enter pour enregistrer)</sys:String>

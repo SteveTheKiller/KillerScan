@@ -72,11 +72,11 @@ namespace KillerScan.Services
         }
 
         /// <summary>
-        /// The Save profile dialog edits only the target and options. Saving over an existing
-        /// name (any case) keeps the fields the dialog does not show, such as Deep Scan, and the
-        /// adapter unless a new one is given.
+        /// The Save profile dialog edits the target and options, and the adapter comes from the
+        /// tab's current choice (empty is Automatic), so it is required. Saving over an existing
+        /// name (any case) keeps only what the dialog does not show, such as Deep Scan.
         /// </summary>
-        public bool SaveEdited(string name, string target, ScanOptions options, string? adapter = null) =>
+        public bool SaveEdited(string name, string target, ScanOptions options, string adapter) =>
             _store.Change(items =>
             {
                 var existing = items.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
@@ -85,7 +85,7 @@ namespace KillerScan.Services
                 {
                     Name = name, Target = target, Options = options ?? new ScanOptions(),
                     DeepScanAfter = existing?.DeepScanAfter ?? false,
-                    Adapter = adapter ?? existing?.Adapter ?? string.Empty
+                    Adapter = adapter ?? string.Empty
                 });
             }, MemoryOnly);
 
@@ -108,7 +108,7 @@ namespace KillerScan.Services
         public static IReadOnlyList<ScanProfile> Items => Store.Items;
         public static void Load() { Store = new(FilePath); Store.Load(); }
         public static bool Save(ScanProfile profile) => Store.Save(profile);
-        public static bool SaveEdited(string name, string target, ScanOptions options) => Store.SaveEdited(name, target, options);
+        public static bool SaveEdited(string name, string target, ScanOptions options, string adapter = "") => Store.SaveEdited(name, target, options, adapter);
         public static bool Delete(ScanProfile profile) => Store.Delete(profile);
         public static bool Update(ScanProfile profile) => Store.Update(profile);
         public static bool Retry() => Store.Retry();

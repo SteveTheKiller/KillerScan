@@ -442,6 +442,9 @@
     <sys:String x:Key="Str_Loc_DeleteDetail">Удалить {0}? Его сохранённые сканирования, имена устройств, одобрения и история будут убраны из KillerScan. Файлы сохранятся в папке Объектов "deleted", поэтому их можно восстановить.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Удалить</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Остановите сканирование, прежде чем менять Объект.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTitle">Сбросить эти результаты?</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTemporary">Результаты режима «Временное сканирование» нигде не сохраняются. При смене Объекта они будут удалены. Чтобы оставить их, выберите вместо этого «Сохранить результаты в Объект».</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardConfirm">Сбросить</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Не удалось настроить Объекты, поэтому KillerScan, как и раньше, использует ваши существующие устройства, сохранённые сканирования и историю.&#10;&#10;{0}&#10;&#10;Ничего не изменено и не удалено. KillerScan попробует снова при следующем запуске.</sys:String>
     <sys:String x:Key="Str_Loc_Notes">Заметки об Объекте...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Заметки (Ctrl+Enter сохраняет)</sys:String>

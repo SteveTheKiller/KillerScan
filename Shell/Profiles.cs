@@ -45,7 +45,7 @@ namespace KillerScan.Shell
             dialog.ShowDialog();
             if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return;
             var store = ShellLocation.SavedScans;
-            PersistenceFeedback.Check(store.SaveEdited(dialog.Value, scan.Targets.Trim(), scan.Options),
+            PersistenceFeedback.Check(store.SaveEdited(dialog.Value, scan.Targets.Trim(), scan.Options, scan.AdapterChoice),
                 store.Retry, () => store.SaveError);
             RefreshProfilesList();
         }

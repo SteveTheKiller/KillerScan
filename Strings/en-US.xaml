@@ -458,6 +458,9 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Delete {0}? Its saved scans, device names, approvals and history leave KillerScan. The files are kept in the Locations "deleted" folder, so they can be recovered.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Delete</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Stop the scan before changing Location.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTitle">Discard these results?</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTemporary">These Temporary scan results are not saved anywhere. Changing Location clears them. To keep them, choose Save results to Location instead.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardConfirm">Discard</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Locations could not be set up, so KillerScan is using your existing devices, saved scans and history as before.&#10;&#10;{0}&#10;&#10;Nothing was changed or removed. KillerScan will try again the next time it starts.</sys:String>
     <sys:String x:Key="Str_Loc_Notes">Location notes...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notes (Ctrl+Enter saves)</sys:String>

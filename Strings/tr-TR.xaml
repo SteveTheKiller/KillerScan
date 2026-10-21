@@ -416,6 +416,9 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">{0} silinsin mi? Kayıtlı taramaları, cihaz adları, onayları ve geçmişi KillerScan'den kaldırılır. Dosyalar Lokasyonların "deleted" klasöründe tutulur, böylece geri yüklenebilir.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Sil</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Lokasyonu değiştirmeden önce taramayı durdurun.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTitle">Bu sonuçlar atılsın mı?</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTemporary">Bu “Geçici tarama” sonuçları hiçbir yere kaydedilmez. Lokasyonu değiştirmek bunları temizler. Saklamak için bunun yerine “Sonuçları Lokasyona kaydet” seçeneğini kullanın.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardConfirm">At</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Lokasyonlar ayarlanamadı, bu nedenle KillerScan mevcut cihazlarınızı, kayıtlı taramalarınızı ve geçmişinizi eskisi gibi kullanıyor.&#10;&#10;{0}&#10;&#10;Hiçbir şey değiştirilmedi veya kaldırılmadı. KillerScan bir sonraki açılışta yeniden deneyecek.</sys:String>
     <sys:String x:Key="Str_Loc_Notes">Lokasyon notları...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notlar (Ctrl+Enter kaydeder)</sys:String>

@@ -416,6 +416,9 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">¿Eliminar {0}? Sus escaneos guardados, nombres de dispositivos, aprobaciones e historial se quitarán de KillerScan. Los archivos se conservan en la carpeta "deleted" de las Ubicaciones, así que se pueden recuperar.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Eliminar</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Detenga el escaneo antes de cambiar de Ubicación.</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTitle">¿Descartar estos resultados?</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardTemporary">Estos resultados de «Escaneo temporal» no se guardan en ningún sitio. Cambiar de Ubicación los borra. Para conservarlos, elija «Guardar resultados en la Ubicación».</sys:String>
+    <sys:String x:Key="Str_Loc_DiscardConfirm">Descartar</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">No se pudieron configurar las Ubicaciones, así que KillerScan usa sus dispositivos, escaneos guardados e historial existentes como antes.&#10;&#10;{0}&#10;&#10;No se cambió ni se eliminó nada. KillerScan lo intentará de nuevo la próxima vez que se inicie.</sys:String>
     <sys:String x:Key="Str_Loc_Notes">Notas de la Ubicación...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notas (Ctrl+Enter guarda)</sys:String>
