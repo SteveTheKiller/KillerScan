@@ -24,6 +24,30 @@ namespace KillerScan.Services
 
         public bool HasTrustedDevices => _data.Trusted.Count > 0;
 
+        /// <summary>True once a completed scan has set this Location's Known baseline.</summary>
+        public bool HasBaseline => _data.Baseline;
+
+        /// <summary>Seen in this Location before. Known says nothing about whether it is approved.</summary>
+        public bool IsKnown(NetworkDevice device) => _data.Known.Contains(DeviceIdentity.For(device));
+
+        /// <summary>
+        /// Records a completed scan's devices as Known. The first one sets the baseline and flags
+        /// nothing; after that, only devices outside the Known list are returned as new. Approval
+        /// is never changed here: nothing becomes Approved without the technician.
+        /// </summary>
+        public Observation Observe(IReadOnlyCollection<NetworkDevice> devices)
+        {
+            bool baseline = !_data.Baseline;
+            var fresh = baseline ? [] : devices.Where(device => !IsKnown(device)).ToList();
+            var identities = devices.Select(DeviceIdentity.For).ToArray();
+            bool saved = _store.Change(value =>
+            {
+                foreach (string identity in identities) value.Known.Add(identity);
+                value.Baseline = true;
+            }, MemoryOnly);
+            return new Observation(baseline, fresh, saved);
+        }
+
         public void Load()
         {
             if (!MemoryOnly) _store.Load();
@@ -75,15 +99,26 @@ namespace KillerScan.Services
         private sealed class DevicePreferenceData
         {
             public Dictionary<string, string> Names { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+            /// <summary>Approved devices. The JSON name predates Approved and is kept for older files.</summary>
             public HashSet<string> Trusted { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+            public HashSet<string> Known { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+            /// <summary>Stored on its own so an empty approval list never means "no baseline yet".</summary>
+            public bool Baseline { get; set; }
 
             public void Normalize()
             {
-                Names = new Dictionary<string, string>(Names, StringComparer.OrdinalIgnoreCase);
-                Trusted = new HashSet<string>(Trusted, StringComparer.OrdinalIgnoreCase);
+                Names = new Dictionary<string, string>(Names ?? [], StringComparer.OrdinalIgnoreCase);
+                Trusted = new HashSet<string>(Trusted ?? [], StringComparer.OrdinalIgnoreCase);
+                Known = new HashSet<string>(Known ?? [], StringComparer.OrdinalIgnoreCase);
+                // Files from before Known existed: their trusted list was the baseline.
+                if (!Baseline && Trusted.Count > 0) { Known.UnionWith(Trusted); Baseline = true; }
             }
         }
     }
+
+    /// <summary>The result of recording a scan as Known.</summary>
+    internal sealed record Observation(bool BaselineCreated, IReadOnlyList<NetworkDevice> NewDevices, bool Saved);
 
     /// <summary>The app-wide device store, until every caller works through a Location.</summary>
     internal static class DevicePreferences

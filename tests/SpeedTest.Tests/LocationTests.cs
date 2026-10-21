@@ -20,6 +20,7 @@ internal static class LocationTests
             InterruptedMigration(Path.Combine(root, "interrupted"));
             CorruptCatalog(Path.Combine(root, "corrupt"));
             Isolation(Path.Combine(root, "isolation"));
+            KnownAndApproved(Path.Combine(root, "known"));
         }
         finally
         {
@@ -139,6 +140,38 @@ internal static class LocationTests
         Require(temporary.Devices.GetName(noMac) == "Scratch" && reloaded.Open(renamed).Devices.GetName(noMac) == "Reception" &&
             !Directory.EnumerateFiles(root, "*.json", SearchOption.AllDirectories).Any(file => File.ReadAllText(file).Contains("Scratch")),
             "A Temporary scan's data stays in memory.");
+    }
+
+    private static void KnownAndApproved(string root)
+    {
+        Directory.CreateDirectory(root);
+        string path = Path.Combine(root, "devices.json");
+        NetworkDevice a = Device("10.0.0.1", "00:00:00:00:00:01"), b = Device("10.0.0.2", "00:00:00:00:00:02"),
+            c = Device("10.0.0.3", "00:00:00:00:00:03"), d = Device("10.0.0.4");
+        var store = new DevicePreferenceStore(path);
+        store.Load();
+        var first = store.Observe([a, b]);
+        Require(first.BaselineCreated && first.NewDevices.Count == 0, "The first scan sets the baseline and flags nothing.");
+        Require(!store.IsTrusted(a) && !store.IsTrusted(b) && store.IsKnown(a), "The first scan makes devices Known, not Approved.");
+        var second = store.Observe([a, b, c]);
+        Require(!second.BaselineCreated && second.NewDevices.Single() == c, "A later scan flags only devices new since the baseline.");
+        Require(store.Observe([a, b, c]).NewDevices.Count == 0, "A device is flagged once, then Known.");
+
+        store.SetTrusted(a, true);
+        store.SetTrusted(a, false);
+        var afterRemoval = new DevicePreferenceStore(path);
+        afterRemoval.Load();
+        var third = afterRemoval.Observe([a, b, c, d]);
+        Require(afterRemoval.HasBaseline && !third.BaselineCreated && third.NewDevices.Single() == d,
+            "Removing the last approved device keeps the baseline after a restart.");
+        Require(!new[] { a, b, c, d }.Any(afterRemoval.IsTrusted), "Nothing is ever approved automatically.");
+
+        string legacyPath = Path.Combine(root, "legacy.json");
+        File.WriteAllText(legacyPath, "{\"Names\":{},\"Trusted\":[\"mac:00:00:00:00:00:01\"]}");
+        var legacy = new DevicePreferenceStore(legacyPath);
+        legacy.Load();
+        Require(legacy.HasBaseline && legacy.IsTrusted(a) && legacy.IsKnown(a), "Older trust lists become the baseline.");
+        Require(legacy.Observe([a, b]).NewDevices.Single() == b, "An older install keeps flagging devices outside its trusted list once.");
     }
 
     private static void Require(bool condition, string message)
