@@ -59,6 +59,22 @@ namespace KillerScan.Services
             }, DemoData.Enabled);
         }
 
+        /// <summary>
+        /// The Save profile dialog edits only the target and options. Saving over an existing
+        /// name (any case) keeps the fields the dialog does not show, such as Deep Scan.
+        /// </summary>
+        public static bool SaveEdited(string name, string target, ScanOptions options) =>
+            _store.Change(items =>
+            {
+                var existing = items.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
+                items.RemoveAll(item => string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
+                items.Add(new ScanProfile
+                {
+                    Name = name, Target = target, Options = options ?? new ScanOptions(),
+                    DeepScanAfter = existing?.DeepScanAfter ?? false
+                });
+            }, DemoData.Enabled);
+
         public static bool Delete(ScanProfile profile) => _store.Change(items =>
             items.RemoveAll(item => string.Equals(item.Name, profile.Name, StringComparison.OrdinalIgnoreCase)), DemoData.Enabled);
 

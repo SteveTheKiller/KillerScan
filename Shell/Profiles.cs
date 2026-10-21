@@ -44,8 +44,7 @@ namespace KillerScan.Shell
                 Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
             dialog.ShowDialog();
             if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return;
-            PersistenceFeedback.Check(ScanProfiles.Save(new ScanProfile
-                { Name = dialog.Value, Target = scan.Targets.Trim(), Options = scan.Options }),
+            PersistenceFeedback.Check(ScanProfiles.SaveEdited(dialog.Value, scan.Targets.Trim(), scan.Options),
                 ScanProfiles.Retry, () => ScanProfiles.SaveError);
             RefreshProfilesList();
         }

@@ -26,6 +26,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The engine's scan APIs refuse malformed or oversized targets and a port concurrency below 1 before any network or DNS cache work, instead of reporting an empty scan or waiting forever.
 - Saving an export over an existing file keeps the old file intact if the save fails partway. This covers CSV, HTML, SVG, PNG and JPEG exports, history CSV, Keep Alive and terminal saves, and command-line `/export`.
 - A scan history file that cannot be read (damaged, locked or access denied) is reported at startup with its location and a Retry, and History says it could not be read instead of showing no scans. The file is never overwritten.
+- Saving a profile over an existing name, in any letter case, keeps its Deep Scan choice instead of turning it off.
 - The public subnet helper rejects IPv6 addresses and malformed CIDR suffixes before expanding hosts.
 - Terminal tables display escaped network control characters without changing raw scan data or JSON exports.
 - Terminal combining marks, wide characters and common emoji clusters keep consistent columns through drawing, editing, copying and resizing.
