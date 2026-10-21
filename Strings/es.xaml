@@ -81,6 +81,25 @@
     <sys:String x:Key="Str_Btn_Cancel">Cancelar</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Establecer tipo de dispositivo</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Borrar anulación</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">Acceso</sys:String>
+    <sys:String x:Key="Str_Access_None">No se registraron puertos abiertos</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">Copiar dirección</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}: {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">respondió {0}</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">pide iniciar sesión</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">pide iniciar sesión ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">página de inicio de sesión</sys:String>
+    <sys:String x:Key="Str_Access_Banner">banner recibido</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">puerto abierto</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">El servidor web respondió HTTP {0} en esta dirección.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">Pidió credenciales. KillerScan no envió ninguna.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">La página tiene un campo de contraseña, así que es una página de inicio de sesión. No se sabe si un inicio de sesión funcionaría.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">No se sabe si requiere iniciar sesión.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">El servidor SSH envió su banner. No se intentó iniciar sesión.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">El puerto aceptó una conexión. El protocolo se deduce del número de puerto.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">Visto el {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">Ninguna aplicación abre este protocolo, así que al hacer clic se copia la dirección.</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">¿Por qué este tipo?</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>

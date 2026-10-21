@@ -64,7 +64,8 @@ internal static class HttpRedirectTests
         const string body = "<title>Local panel</title>";
         return "HTTP/1.1 200 OK\r\nServer: Local-Fixture\r\nContent-Length: " + body.Length + "\r\nConnection: close\r\n\r\n" + body;
     }
-    private sealed class Server : IDisposable
+    // Shared with AccessTests, which needs the same loopback web fixtures.
+    internal sealed class Server : IDisposable
     {
         private readonly TcpListener _listener;
         private readonly CancellationTokenSource _stop = new();

@@ -71,6 +71,25 @@
     <sys:String x:Key="Str_Ctx_OpenBrowser">Otwórz w przeglądarce</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Ustaw typ urządzenia</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Usuń nadpisanie</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">Dostęp</sys:String>
+    <sys:String x:Key="Str_Access_None">Nie zarejestrowano otwartych portów</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">Kopiuj adres</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}: {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">odpowiedział {0}</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">prosi o zalogowanie</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">prosi o zalogowanie ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">strona logowania</sys:String>
+    <sys:String x:Key="Str_Access_Banner">odebrano baner</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">port otwarty</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">Serwer WWW odpowiedział HTTP {0} pod tym adresem.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">Poprosił o dane logowania. KillerScan nie wysłał żadnych.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">Strona ma pole hasła, więc jest to strona logowania. Nie wiadomo, czy logowanie by się powiodło.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">Nie wiadomo, czy wymaga logowania.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">Serwer SSH wysłał swój baner. Nie próbowano się zalogować.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">Port przyjął połączenie. Protokół jest odgadywany na podstawie numeru portu.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">Widziano {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">Żadna aplikacja nie otwiera tego protokołu, więc kliknięcie kopiuje adres.</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">Dlaczego ten typ?</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>

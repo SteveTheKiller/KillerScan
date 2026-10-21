@@ -76,6 +76,25 @@
     <sys:String x:Key="Str_Ctx_SshAs">Poveži se prek SSH kot...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Nastavi vrsto naprave</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Odstrani ročno nastavitev</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">Dostop</sys:String>
+    <sys:String x:Key="Str_Access_None">Ni zabeleženih odprtih vrat</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">Kopiraj naslov</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}: {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">odgovor {0}</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">zahteva prijavo</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">zahteva prijavo ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">stran za prijavo</sys:String>
+    <sys:String x:Key="Str_Access_Banner">prejeta pasica</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">vrata odprta</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">Spletni strežnik je na tem naslovu odgovoril s HTTP {0}.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">Zahteval je poverilnice. KillerScan ni poslal nobenih.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">Stran ima polje za geslo, zato je to stran za prijavo. Ali bi prijava delovala, ni znano.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">Ali zahteva prijavo, ni znano.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">Strežnik SSH je poslal svojo pasico. Prijava ni bila poskušena.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">Vrata so sprejela povezavo. Protokol je ocenjen glede na številko vrat.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">Zaznano {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">Tega protokola ne odpre nobena aplikacija, zato klik kopira naslov.</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">Zakaj ta vrsta?</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>

@@ -81,6 +81,25 @@
     <sys:String x:Key="Str_Btn_Cancel">Abbrechen</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Gerätetyp festlegen</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Überschreibung löschen</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">Zugriff</sys:String>
+    <sys:String x:Key="Str_Access_None">Keine offenen Ports erfasst</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">Adresse kopieren</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}: {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">antwortete mit {0}</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">fordert eine Anmeldung an</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">fordert eine Anmeldung an ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">Anmeldeseite</sys:String>
+    <sys:String x:Key="Str_Access_Banner">Banner empfangen</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">Port offen</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">Der Webserver hat unter dieser Adresse mit HTTP {0} geantwortet.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">Er hat Anmeldedaten angefordert. KillerScan hat keine gesendet.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">Die Seite hat ein Passwortfeld, es ist also eine Anmeldeseite. Ob eine Anmeldung funktionieren würde, ist nicht bekannt.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">Ob eine Anmeldung nötig ist, ist nicht bekannt.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">Der SSH-Server hat sein Banner gesendet. Es wurde keine Anmeldung versucht.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">Der Port hat eine Verbindung angenommen. Das Protokoll wird anhand der Portnummer vermutet.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">Gesehen: {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">Keine App öffnet dieses Protokoll, daher kopiert ein Klick die Adresse.</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">Warum dieser Typ?</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>

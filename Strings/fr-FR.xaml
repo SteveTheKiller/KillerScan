@@ -81,6 +81,25 @@
     <sys:String x:Key="Str_Btn_Cancel">Annuler</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Définir le type d'appareil</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Effacer le remplacement</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">Accès</sys:String>
+    <sys:String x:Key="Str_Access_None">Aucun port ouvert enregistré</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">Copier l'adresse</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1} : {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">a répondu {0}</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">demande une connexion</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">demande une connexion ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">page de connexion</sys:String>
+    <sys:String x:Key="Str_Access_Banner">bannière reçue</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">port ouvert</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">Le serveur web a répondu HTTP {0} à cette adresse.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">Il a demandé des identifiants. KillerScan n'en a envoyé aucun.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">La page contient un champ de mot de passe, c'est donc une page de connexion. On ne sait pas si une connexion fonctionnerait.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">On ne sait pas si une connexion est requise.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">Le serveur SSH a envoyé sa bannière. Aucune connexion n'a été tentée.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">Le port a accepté une connexion. Le protocole est déduit du numéro de port.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">Vu le {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">Aucune application n'ouvre ce protocole, un clic copie donc l'adresse.</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">Pourquoi ce type ?</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>

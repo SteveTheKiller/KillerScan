@@ -125,6 +125,66 @@ namespace KillerScan.Controls
             show(RecognitionText.Heading(d), RecognitionText.Detail(d));
         }
 
+        /// <summary>
+        /// Lists the selected device's endpoints from what the scan recorded. Opening the menu
+        /// sends nothing; clicking an endpoint opens it with the existing browser, SSH or Remote
+        /// Desktop action, or copies the address when no app handles the protocol.
+        /// </summary>
+        private void AccessMenu_Opened(object sender, RoutedEventArgs e)
+        {
+            if (!ReferenceEquals(e.OriginalSource, AccessMenuItem)) return;
+            AccessMenuItem.Items.Clear();
+            var d = GetSelectedDevice();
+            var endpoints = d == null ? [] : DeviceAccess.ForDevice(d);
+            if (d == null || endpoints.Count == 0)
+            {
+                AccessMenuItem.Items.Add(new MenuItem { Header = Loc("Str_Access_None"), IsEnabled = false, Icon = MenuGlyph.Create(0xE946) });
+                return;
+            }
+            foreach (var endpoint in endpoints)
+            {
+                string? action = AccessAction(endpoint);
+                var item = new MenuItem { Header = AccessWording.Item(endpoint), ToolTip = AccessWording.Tooltip(endpoint, action != null), Icon = MenuGlyph.Create(AccessGlyph(endpoint)) };
+                item.Click += (_, _) => OpenAccess(d, endpoint);
+                AccessMenuItem.Items.Add(item);
+            }
+            var copy = new MenuItem { Header = Loc("Str_Access_CopyMenu"), Icon = MenuGlyph.Create(0xE8C8) };
+            foreach (var endpoint in endpoints)
+            {
+                string? address = DeviceAccess.Address(d.IpAddress, endpoint);
+                if (address == null) continue;
+                var item = new MenuItem { Header = address, Icon = MenuGlyph.Create(0xE8C8) };
+                item.Click += (_, _) => CopyDeviceText(address);
+                copy.Items.Add(item);
+            }
+            AccessMenuItem.Items.Add(copy);
+        }
+
+        // The same glyphs the device menu uses for Open in Browser, SSH and Remote Desktop.
+        private static int AccessGlyph(AccessEndpoint endpoint) => endpoint.Protocol switch
+        {
+            "http" or "https" => 0xE8A7,
+            "ssh" => 0xE756,
+            "rdp" => 0xE7F4,
+            _ => 0xE8C8,
+        };
+
+        private static string? AccessAction(AccessEndpoint endpoint) => endpoint.Protocol switch
+        {
+            "http" or "https" => "Browser",
+            "ssh" => "Ssh",
+            "rdp" => "Rdp",
+            _ => null,
+        };
+
+        internal void OpenAccess(NetworkDevice device, AccessEndpoint endpoint)
+        {
+            if (AccessAction(endpoint) is { } action)
+                DeviceAction?.Invoke(this, new ScanDeviceActionEventArgs(device, action, false, endpoint.Port));
+            else if (DeviceAccess.Address(device.IpAddress, endpoint) is { } address)
+                CopyDeviceText(address);
+        }
+
         /// <summary>Test hook: replaces the window that shows a device's evidence.</summary>
         internal Action<string, string>? ShowRecognition { get; set; }
 

@@ -94,6 +94,25 @@
     <sys:String x:Key="Str_Ctx_SshAs">SSH mint...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Eszköztípus beállítása</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Felülbírálás törlése</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">Hozzáférés</sys:String>
+    <sys:String x:Key="Str_Access_None">Nincs rögzített nyitott port</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">Cím másolása</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}: {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">válaszkód {0}</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">bejelentkezést kér</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">bejelentkezést kér ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">bejelentkezési oldal</sys:String>
+    <sys:String x:Key="Str_Access_Banner">banner érkezett</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">port nyitva</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">A webkiszolgáló HTTP {0} kóddal válaszolt ezen a címen.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">Hitelesítő adatokat kért. A KillerScan nem küldött semmit.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">Az oldalon jelszómező van, így ez egy bejelentkezési oldal. Nem ismert, hogy működne-e egy bejelentkezés.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">Nem ismert, hogy kell-e bejelentkezés.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">Az SSH-kiszolgáló elküldte a bannerét. Bejelentkezési kísérlet nem történt.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">A port fogadott egy kapcsolatot. A protokoll a portszám alapján becsült.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">Észlelve: {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">Ezt a protokollt egy alkalmazás sem nyitja meg, ezért a kattintás a címet másolja.</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">Miért ez a típus?</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>

@@ -81,6 +81,25 @@
     <sys:String x:Key="Str_Btn_Cancel">İptal</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Cihaz türünü ayarla</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Geçersiz kılmayı temizle</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">Erişim</sys:String>
+    <sys:String x:Key="Str_Access_None">Kayıtlı açık bağlantı noktası yok</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">Adresi kopyala</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}: {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">{0} yanıtı verdi</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">oturum açma istiyor</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">oturum açma istiyor ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">oturum açma sayfası</sys:String>
+    <sys:String x:Key="Str_Access_Banner">banner alındı</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">bağlantı noktası açık</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">Web sunucusu bu adreste HTTP {0} ile yanıt verdi.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">Kimlik bilgileri istedi. KillerScan hiçbir bilgi göndermedi.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">Sayfada bir parola alanı var, bu nedenle bir oturum açma sayfasıdır. Oturum açmanın işe yarayıp yaramayacağı bilinmiyor.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">Oturum açma gerekip gerekmediği bilinmiyor.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">SSH sunucusu banner bilgisini gönderdi. Oturum açma denenmedi.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">Bağlantı noktası bir bağlantıyı kabul etti. Protokol, bağlantı noktası numarasından tahmin edildi.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">Görülme: {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">Bu protokolü açan bir uygulama yok, bu yüzden tıklamak adresi kopyalar.</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">Neden bu tür?</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>

@@ -94,6 +94,25 @@
     <sys:String x:Key="Str_Ctx_SshAs">SSH как...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Задать тип устройства</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Сбросить переопределение</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">Доступ</sys:String>
+    <sys:String x:Key="Str_Access_None">Открытых портов не зафиксировано</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">Копировать адрес</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}: {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">ответ {0}</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">запрашивает вход</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">запрашивает вход ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">страница входа</sys:String>
+    <sys:String x:Key="Str_Access_Banner">получен баннер</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">порт открыт</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">Веб-сервер по этому адресу ответил HTTP {0}.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">Он запросил учётные данные. KillerScan их не отправлял.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">На странице есть поле пароля, значит, это страница входа. Сработает ли вход, неизвестно.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">Нужен ли вход, неизвестно.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">SSH-сервер отправил свой баннер. Попыток входа не было.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">Порт принял подключение. Протокол определён предположительно, по номеру порта.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">Обнаружено: {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">Ни одно приложение не открывает этот протокол, поэтому щелчок копирует адрес.</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">Почему этот тип?</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>

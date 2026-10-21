@@ -651,7 +651,8 @@ namespace KillerScan.Engine
             if (device.OpenPorts.Count > 0)
             {
                 bool wide = options.ProbeUnknownPorts;
-                if (options.Http) fpTasks.Add(ProbeHttpAsync(device, addr, deep: wide, ct: ct));
+                // A deep pass checks every web port, so each one has its own access evidence.
+                if (options.Http) fpTasks.Add(ProbeHttpAsync(device, addr, deep: wide, everyPort: true, ct));
                 if (options.Tls) fpTasks.Add(ProbeTlsCertAsync(device, addr, deep: wide, ct: ct));
             }
             if (options.Ssh && device.OpenPorts.Contains(22))
@@ -1161,7 +1162,17 @@ namespace KillerScan.Engine
         /// <summary>True when a deep fingerprint may send HTTP or TLS bytes to this extra port.</summary>
         public static bool IsPayloadSafe(int port) => !RawServicePorts.Contains(port);
 
-        public static async Task ProbeHttpAsync(NetworkDevice device, IPAddress addr, bool deep = false, CancellationToken ct = default)
+        public static Task ProbeHttpAsync(NetworkDevice device, IPAddress addr, bool deep = false, CancellationToken ct = default) =>
+            ProbeHttpAsync(device, addr, deep, everyPort: false, ct);
+
+        /// <summary>
+        /// Fetches the root page of the device's web ports. The first useful title and Server
+        /// header feed classification. Every response is also recorded in
+        /// <see cref="NetworkDevice.Access"/>, with whether it asked for a login. Normal scans stop
+        /// at the first useful page; with <paramref name="everyPort"/> (deep scans) every web
+        /// port is tried so each gets its own evidence. No credentials are ever sent.
+        /// </summary>
+        internal static async Task ProbeHttpAsync(NetworkDevice device, IPAddress addr, bool deep, bool everyPort, CancellationToken ct)
         {
             (int port, bool https)[] standard =
             [
@@ -1196,17 +1207,33 @@ namespace KillerScan.Engine
                 try
                 {
                     var scheme = https ? "https" : "http";
-                    using var resp = await GetDeviceResponseAsync(client, new Uri($"{scheme}://{addr}:{port}/"), addr, ct);
+                    var (resp, final, redirectStatus) = await GetDeviceResponseAsync(client, new Uri($"{scheme}://{addr}:{port}/"), addr, ct);
+                    // A redirect is a server answering at this endpoint. What it led to is
+                    // recorded under the endpoint that gave that answer, never under this one.
+                    if (redirectStatus is { } moved) RecordWeb(device, scheme, port, moved, AccessLogin.Unknown, string.Empty);
                     if (resp == null) continue;
-                    var body = await resp.Content.ReadAsStringAsync();
-                    ct.ThrowIfCancellationRequested();
-                    if (resp.Headers.TryGetValues("Server", out var serverVals))
-                        device.HttpServer = string.Join(", ", serverVals).Trim();
-                    var m = Regex.Match(body, @"<title[^>]*>([^<]+)</title>", RegexOptions.IgnoreCase);
-                    if (m.Success)
-                        device.HttpTitle = WebUtility.HtmlDecode(m.Groups[1].Value).Trim();
+                    using (resp)
+                    {
+                        var body = await resp.Content.ReadAsStringAsync();
+                        ct.ThrowIfCancellationRequested();
+                        int status = (int)resp.StatusCode;
+                        string authScheme = resp.Headers.WwwAuthenticate.Select(a => a.Scheme).FirstOrDefault(IsTokenSafe) ?? string.Empty;
+                        var login = status == 401 ? AccessLogin.Requested : HasLoginForm(body) ? AccessLogin.LoginForm : AccessLogin.Unknown;
+                        // A same-address redirect to another root path still answers for that endpoint.
+                        RecordWeb(device, final.Scheme, final.Port, status, login, authScheme);
 
-                    if (device.HttpTitle.Length > 0 || device.HttpServer.Length > 0)
+                        // Classification reads the first useful page; later ports only add evidence.
+                        if (device.HttpTitle.Length == 0 && device.HttpServer.Length == 0)
+                        {
+                            if (resp.Headers.TryGetValues("Server", out var serverVals))
+                                device.HttpServer = string.Join(", ", serverVals).Trim();
+                            var m = Regex.Match(body, @"<title[^>]*>([^<]+)</title>", RegexOptions.IgnoreCase);
+                            if (m.Success)
+                                device.HttpTitle = WebUtility.HtmlDecode(m.Groups[1].Value).Trim();
+                        }
+                    }
+
+                    if (!everyPort && (device.HttpTitle.Length > 0 || device.HttpServer.Length > 0))
                         return;
                 }
                 catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
@@ -1251,8 +1278,56 @@ namespace KillerScan.Engine
             };
         }
 
-        private static async Task<HttpResponseMessage?> GetDeviceResponseAsync(HttpClient client, Uri uri, IPAddress address, CancellationToken ct)
+        private static readonly object AccessLock = new();
+
+        private static void RecordWeb(NetworkDevice device, string scheme, int port, int status, AccessLogin login, string authScheme)
         {
+            lock (AccessLock)
+            {
+                device.Access ??= [];
+                device.Access.RemoveAll(e => e.Protocol == scheme && e.Port == port);
+                device.Access.Add(new AccessEndpoint
+                {
+                    Protocol = scheme, Port = port, Evidence = AccessEvidence.HttpResponse, HttpStatus = status,
+                    Login = login, AuthScheme = authScheme, ObservedAt = DateTimeOffset.UtcNow,
+                });
+            }
+        }
+
+        // An auth scheme is a short token such as Basic, Digest, NTLM or Negotiate.
+        private static bool IsTokenSafe(string scheme) =>
+            scheme.Length is > 0 and <= 32 && scheme.All(c => c < 128 && (char.IsLetterOrDigit(c) || c is '-' or '_'));
+
+        private static readonly TimeSpan HtmlScanLimit = TimeSpan.FromMilliseconds(200);
+
+        /// <summary>
+        /// True when the page has a form with a password field: a sign-in page, which says a
+        /// login exists, not that one would work. Comments, scripts and styles are ignored, and
+        /// a login built by JavaScript or single sign-on is missed.
+        /// </summary>
+        internal static bool HasLoginForm(string html)
+        {
+            try
+            {
+                string page = Regex.Replace(html, @"<!--.*?-->|<(script|style)\b[^>]*>.*?</\1\s*>", " ",
+                    RegexOptions.Singleline | RegexOptions.IgnoreCase, HtmlScanLimit);
+                return Regex.Matches(page, @"<form\b[^>]*>(.*?)</form\s*>", RegexOptions.Singleline | RegexOptions.IgnoreCase, HtmlScanLimit)
+                    .Cast<Match>()
+                    .Any(form => Regex.IsMatch(form.Groups[1].Value, @"<input\b[^>]*\btype\s*=\s*[""']?password\b",
+                        RegexOptions.Singleline | RegexOptions.IgnoreCase, HtmlScanLimit));
+            }
+            catch (RegexMatchTimeoutException) { return false; }
+        }
+
+        /// <summary>
+        /// The device's own response, following up to two redirects that stay on the same
+        /// address. <c>Final</c> is where the response came from, which a redirect can move to
+        /// another port or scheme. <c>RedirectStatus</c> is the first redirect's status, if any.
+        /// A redirect it will not follow returns no response.
+        /// </summary>
+        private static async Task<(HttpResponseMessage? Response, Uri Final, int? RedirectStatus)> GetDeviceResponseAsync(HttpClient client, Uri uri, IPAddress address, CancellationToken ct)
+        {
+            int? firstRedirect = null;
             for (int hop = 0; hop <= 2; hop++)
             {
                 ct.ThrowIfCancellationRequested();
@@ -1266,17 +1341,18 @@ namespace KillerScan.Engine
 #endif
                 var response = await client.GetAsync(uri, ct);
                 int status = (int)response.StatusCode;
-                if (status < 300 || status >= 400) return response;
+                if (status < 300 || status >= 400) return (response, uri, firstRedirect);
+                firstRedirect ??= status;
                 Uri? location = response.Headers.Location;
                 response.Dispose();
                 if (hop == 2 || status is not (301 or 302 or 303 or 307 or 308) || location == null ||
                     !Uri.TryCreate(uri, location, out var next) ||
                     (next.Scheme != Uri.UriSchemeHttp && next.Scheme != Uri.UriSchemeHttps) ||
                     next.UserInfo.Length != 0 || !IPAddress.TryParse(next.Host, out var target) || !target.Equals(address))
-                    return null;
+                    return (null, uri, firstRedirect);
                 uri = next;
             }
-            return null;
+            return (null, uri, firstRedirect);
         }
 
         /// <summary>

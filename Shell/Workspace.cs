@@ -465,7 +465,7 @@ namespace KillerScan.Shell
             if (action == "Watch" || action == "Diagnose") { OpenNetworkTool(device, action == "Diagnose"); return; }
             if (action == "Browser")
             {
-                string? url = servicePort.HasValue ? ScanWorkspace.ServiceBrowserUri(ip, servicePort.Value)?.AbsoluteUri : "http://" + ip;
+                string? url = ScanWorkspace.BrowserAddress(device, servicePort);
                 if (url != null) Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                 return;
             }

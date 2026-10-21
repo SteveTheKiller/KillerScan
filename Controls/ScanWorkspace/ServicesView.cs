@@ -66,9 +66,12 @@ namespace KillerScan.Controls
             /// <summary>The localized type, for the CSV export, which writes what you can read.</summary>
             public string DeviceTypeDisplay { get; init; } = string.Empty;
             public uint IpSortKey { get; init; }
+            /// <summary>Where Open in Browser goes for this port, or null when it is not a web port.</summary>
+            public string? WebAddress { get; init; }
 
             public static ServiceRow From(NetworkDevice device, int port) => new()
             {
+                WebAddress = BrowserAddress(device, port),
                 Service = Names.TryGetValue(port, out string? name) ? name : $"TCP {port}",
                 Port = port,
                 DeviceName = string.IsNullOrWhiteSpace(device.Hostname) ? device.MacAddress : device.Hostname,

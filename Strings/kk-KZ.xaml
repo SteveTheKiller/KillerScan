@@ -94,6 +94,25 @@
     <sys:String x:Key="Str_Ctx_SshAs">SSH атымен кіру...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Құрылғы түрін орнату</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Қайта анықтауды тазалау</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">Қатынау</sys:String>
+    <sys:String x:Key="Str_Access_None">Ашық порттар тіркелмеген</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">Мекенжайды көшіру</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}: {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">жауап {0}</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">кіруді сұрайды</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">кіруді сұрайды ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">кіру беті</sys:String>
+    <sys:String x:Key="Str_Access_Banner">баннер алынды</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">порт ашық</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">Веб-сервер осы мекенжайда HTTP {0} деп жауап берді.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">Ол тіркелгі деректерін сұрады. KillerScan ешнәрсе жіберген жоқ.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">Бетте құпиясөз өрісі бар, сондықтан бұл кіру беті. Кіру жұмыс істей ме, белгісіз.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">Кіру қажет пе, белгісіз.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">SSH сервері өз баннерін жіберді. Кіру әрекеті жасалмады.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">Порт қосылымды қабылдады. Протокол порт нөміріне қарап болжанды.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">Көрінген уақыты: {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">Бұл протоколды ешбір қолданба ашпайды, сондықтан басу мекенжайды көшіреді.</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">Неге бұл түр?</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>

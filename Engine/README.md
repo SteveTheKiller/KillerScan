@@ -59,6 +59,8 @@ Stored values such as `NetworkDevice.DeviceType` and the randomized-MAC vendor m
 
 Every scanned device also carries `NetworkDevice.Recognition`: the signals behind its type (each with a stable source such as `ports`, `mdns` or `snmp`, the value seen and its weight), close alternatives, whether an unrelated type scored close, and a confidence of `Low`, `Medium`, `High` or `Manual`. Confidence is a grade, not a probability, and protocol values are self-reported, so even High does not authenticate a device. `NetworkScanner.AssessDevice(device, manualTypes)` produces the same result from the fields already on a device without sending anything. It is null on devices that were never assessed. See [docs/recognition.md](../docs/recognition.md) for the grading rules.
 
+`NetworkDevice.Access` lists the web endpoints that answered during the scan, each with its status, whether it asked for a login (`Requested` for a 401, `LoginForm` for a page with a password field, otherwise `Unknown`) and when it was seen. None of these means a login would work, and no credentials are ever sent. `DeviceAccess.ForDevice(device)` adds the device's other open ports, `DeviceAccess.Address` builds an address from the numeric IP and the endpoint only, and `DeviceAccess.BestWeb` picks the endpoint to open by default. A normal scan stops at the first useful web page; a deep probe checks every web port. See [docs/access.md](../docs/access.md).
+
 ## Host hooks
 
 These are static and set once at startup.

@@ -94,6 +94,25 @@
     <sys:String x:Key="Str_Ctx_SshAs">SSH som...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Angi enhetstype</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Fjern overstyring</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">Tilgang</sys:String>
+    <sys:String x:Key="Str_Access_None">Ingen åpne porter registrert</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">Kopier adresse</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}: {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">svarte {0}</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">ber om pålogging</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">ber om pålogging ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">påloggingsside</sys:String>
+    <sys:String x:Key="Str_Access_Banner">banner mottatt</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">port åpen</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">Webserveren svarte HTTP {0} på denne adressen.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">Den ba om påloggingsinformasjon. KillerScan sendte ingen.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">Siden har et passordfelt, så det er en påloggingsside. Om en pålogging ville fungere, er ikke kjent.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">Om den krever pålogging, er ikke kjent.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">SSH-serveren sendte banneret sitt. Ingen pålogging ble forsøkt.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">Porten godtok en tilkobling. Protokollen er gjettet ut fra portnummeret.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">Sett {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">Ingen app åpner denne protokollen, så et klikk kopierer adressen.</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">Hvorfor denne typen?</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>

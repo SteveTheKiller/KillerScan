@@ -79,6 +79,25 @@
     <sys:String x:Key="Str_Ctx_SshAs">SSH với tài khoản...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Đặt loại thiết bị</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Xóa ghi đè</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">Truy cập</sys:String>
+    <sys:String x:Key="Str_Access_None">Không ghi nhận cổng mở nào</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">Sao chép địa chỉ</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}: {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">đã phản hồi {0}</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">yêu cầu đăng nhập</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">yêu cầu đăng nhập ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">trang đăng nhập</sys:String>
+    <sys:String x:Key="Str_Access_Banner">đã nhận banner</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">cổng mở</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">Máy chủ web đã phản hồi HTTP {0} tại địa chỉ này.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">Máy chủ đã yêu cầu thông tin đăng nhập. KillerScan không gửi gì.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">Trang có ô mật khẩu nên đây là trang đăng nhập. Chưa biết việc đăng nhập có thành công hay không.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">Chưa biết có cần đăng nhập hay không.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">Máy chủ SSH đã gửi banner. Không có lần thử đăng nhập nào.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">Cổng đã chấp nhận kết nối. Giao thức được đoán dựa trên số cổng.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">Thấy lúc {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">Không có ứng dụng nào mở giao thức này, vì vậy nhấp sẽ sao chép địa chỉ.</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">Vì sao là loại này?</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>

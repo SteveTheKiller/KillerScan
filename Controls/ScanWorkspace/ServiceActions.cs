@@ -14,18 +14,26 @@ namespace KillerScan.Controls
         internal static Uri? ServiceBrowserUri(string ip, int port)
         {
             if (!IPAddress.TryParse(ip, out var address)) return null;
-            string? scheme = port switch
-            {
-                443 or 5001 or 8006 or 8443 => "https",
-                80 or 5000 or 5357 or 8080 or 8123 or 32400 => "http",
-                _ => null
-            };
+            string? scheme = DeviceAccess.SuggestedWebProtocol(port);
             return scheme == null ? null : new UriBuilder(scheme, address.ToString(), port).Uri;
+        }
+
+        /// <summary>
+        /// The address Open in Browser uses. For a port, the scheme that port actually answered
+        /// with, or the one its number suggests. For the device, the web endpoint that answered
+        /// (HTTPS first), falling back to http://address/ when none did.
+        /// </summary>
+        internal static string? BrowserAddress(NetworkDevice device, int? port = null)
+        {
+            if (!IPAddress.TryParse(device.IpAddress, out var address)) return null;
+            var web = DeviceAccess.BestWeb(device, port);
+            if (web != null) return DeviceAccess.Address(device.IpAddress, web);
+            return port == null ? new UriBuilder("http", address.ToString()).Uri.AbsoluteUri : null;
         }
 
         private static bool CanOpenService(ServiceRow row, string action) => action switch
         {
-            "Browser" => ServiceBrowserUri(row.IpAddress, row.Port) != null,
+            "Browser" => row.WebAddress != null,
             "Ssh" or "SshAs" => row.Port == 22,
             "Rdp" => row.Port == 3389,
             _ => false

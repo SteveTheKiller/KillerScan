@@ -81,6 +81,25 @@
     <sys:String x:Key="Str_Btn_Cancel">取消</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">設定裝置類型</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">清除覆寫</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">存取</sys:String>
+    <sys:String x:Key="Str_Access_None">未記錄開放的連接埠</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">複製位址</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}：{2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">回應 {0}</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">要求登入</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">要求登入（{0}）</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">登入頁面</sys:String>
+    <sys:String x:Key="Str_Access_Banner">已收到橫幅</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">連接埠開放</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">此位址的網頁伺服器回應了 HTTP {0}。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">它要求提供認證資訊。KillerScan 未傳送任何認證資訊。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">此頁面有密碼欄位，因此是登入頁面。無法得知登入是否可行。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">無法得知是否需要登入。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">SSH 伺服器傳送了其橫幅。未嘗試登入。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">此連接埠接受了連線。通訊協定是依連接埠號碼推測的。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">發現時間：{0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">沒有應用程式可開啟此通訊協定，因此按一下會複製位址。</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">為什麼是這個類型？</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0}（{1}）</sys:String>

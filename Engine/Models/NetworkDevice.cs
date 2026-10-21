@@ -30,6 +30,12 @@ namespace KillerScan.Engine
         /// </summary>
         public DeviceRecognition? Recognition { get; set; }
 
+        /// <summary>
+        /// Web endpoints that answered during the scan. Other open ports are added by
+        /// <see cref="DeviceAccess.ForDevice"/>. Null when no web response was recorded.
+        /// </summary>
+        public List<AccessEndpoint>? Access { get; set; }
+
         // -- Active fingerprint fields (populated by scanner) --
         public int? Ttl { get; set; }
         public string HttpTitle { get; set; } = string.Empty;

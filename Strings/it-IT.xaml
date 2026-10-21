@@ -94,6 +94,25 @@
     <sys:String x:Key="Str_Ctx_SshAs">SSH come...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Imposta tipo di dispositivo</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Rimuovi override</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">Accesso</sys:String>
+    <sys:String x:Key="Str_Access_None">Nessuna porta aperta registrata</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">Copia indirizzo</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}: {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">ha risposto {0}</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">richiede un accesso</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">richiede un accesso ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">pagina di accesso</sys:String>
+    <sys:String x:Key="Str_Access_Banner">banner ricevuto</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">porta aperta</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">Il server web ha risposto HTTP {0} a questo indirizzo.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">Ha chiesto le credenziali. KillerScan non ne ha inviata nessuna.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">La pagina ha un campo password, quindi è una pagina di accesso. Non si sa se un accesso funzionerebbe.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">Non si sa se richiede un accesso.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">Il server SSH ha inviato il suo banner. Non è stato tentato alcun accesso.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">La porta ha accettato una connessione. Il protocollo è dedotto dal numero di porta.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">Visto il {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">Nessuna app apre questo protocollo, quindi il clic copia l'indirizzo.</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">Perché questo tipo?</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>

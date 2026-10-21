@@ -81,6 +81,25 @@
     <sys:String x:Key="Str_Btn_Cancel">取消</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">设置设备类型</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">清除覆盖</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">访问</sys:String>
+    <sys:String x:Key="Str_Access_None">未记录开放端口</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">复制地址</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}：{2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">返回 {0}</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">要求登录</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">要求登录（{0}）</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">登录页面</sys:String>
+    <sys:String x:Key="Str_Access_Banner">已收到横幅</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">端口开放</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">此地址的 Web 服务器返回了 HTTP {0}。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">它要求提供凭据。KillerScan 未发送任何凭据。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">该页面有密码字段，因此是登录页面。登录能否成功未知。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">是否需要登录未知。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">SSH 服务器发送了其横幅。未尝试登录。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">该端口接受了连接。协议是根据端口号推测的。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">发现时间：{0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">没有应用可打开此协议，因此点击会复制地址。</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">为什么是这个类型？</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0}（{1}）</sys:String>

@@ -82,9 +82,9 @@ internal static class RecognitionUiTests
             // Exports carry the evidence: CSV adds two trailing columns, HTML a hover title.
             string csv = ReportExport.BuildCsv([shown, old]);
             var lines = csv.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-            Require(lines[0] == "IP Address,Hostname,MAC Address,Vendor,Type,Open Ports,Confidence,Evidence", "CSV adds Confidence and Evidence at the end.");
+            Require(lines[0] == "IP Address,Hostname,MAC Address,Vendor,Type,Open Ports,Confidence,Evidence,Access", "CSV adds Confidence and Evidence at the end.");
             Require(lines[1].Contains("\"High\"") && lines[1].Contains("mdns: _ipp._tcp"), "A CSV row has the confidence and evidence: " + lines[1]);
-            Require(lines[2].EndsWith(",\"\",\"\""), "A device with no evidence leaves both columns empty.");
+            Require(lines[2].EndsWith(",\"\",\"\",\"\""), "A device with no evidence leaves its evidence columns empty.");
             string html = ReportExport.BuildHtml([shown], "192.0.2.0/24", "dark");
             Require(html.Contains("title='" + Res("Str_Rec_Conf_High")) && html.Contains("&lt;b&gt;printer&lt;/b&gt;") && !html.Contains("<b>printer</b>"),
                 "The HTML type cell has an escaped evidence title.");

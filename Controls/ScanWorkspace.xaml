@@ -471,6 +471,13 @@
                             <MenuItem Header="{DynamicResource Str_Ctx_SshAs}" InputGestureText="Ctrl+Shift+S" Click="SshAsDevice_Click">
                                 <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
                             </MenuItem>
+                            <!-- Filled when it opens, from what the scan recorded. Opening it sends nothing. -->
+                            <MenuItem x:Name="AccessMenuItem" Header="{DynamicResource Str_Access_Menu}" SubmenuOpened="AccessMenu_Opened">
+                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE71B;"/></MenuItem.Icon>
+                                <MenuItem Header="{DynamicResource Str_Access_None}" IsEnabled="False">
+                                    <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE946;"/></MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
                             <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
                             <MenuItem Header="{DynamicResource Str_Rename_Title}" InputGestureText="F2" Click="RenameDevice_Click">
                                 <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE70F;"/></MenuItem.Icon>

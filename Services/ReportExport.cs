@@ -58,13 +58,13 @@ namespace KillerScan.Services
         internal static string BuildCsv(IEnumerable<NetworkDevice> devices)
         {
             var sb = new StringBuilder();
-            // Confidence and Evidence come last, so scripts that read the first six columns by
-            // position keep working.
-            sb.AppendLine("IP Address,Hostname,MAC Address,Vendor,Type,Open Ports,Confidence,Evidence");
+            // Confidence, Evidence and Access come last, so scripts that read the first six
+            // columns by position keep working.
+            sb.AppendLine("IP Address,Hostname,MAC Address,Vendor,Type,Open Ports,Confidence,Evidence,Access");
             foreach (var d in devices.OrderBy(d => d.IpSortKey))
                 sb.AppendLine(string.Join(",", CsvField(d.IpAddress), CsvField(d.Hostname),
                     CsvField(d.MacAddress), CsvField(d.Vendor), CsvField(d.DeviceType), CsvField(d.OpenPortsDisplay),
-                    CsvField(d.Recognition?.Confidence.ToString()), CsvField(RecognitionText.Csv(d.Recognition))));
+                    CsvField(d.Recognition?.Confidence.ToString()), CsvField(RecognitionText.Csv(d.Recognition)), CsvField(AccessWording.Csv(d))));
             return sb.ToString();
         }
 
@@ -198,7 +198,8 @@ namespace KillerScan.Services
                     // the visible cell is translated.
                     // Hovering the type shows the same evidence summary as the app's tooltip.
                     $"<td class='{cls}' title='{Esc(RecognitionText.Tooltip(d.Recognition))}'>{Esc(Controls.DeviceTypeConverter.Display(d.DeviceType))}</td>" +
-                    $"<td class='mono'>{Esc(d.OpenPortsDisplay)}</td></tr>");
+                    // Hovering the ports lists each endpoint and what it answered.
+                    $"<td class='mono' title='{Esc(string.Join("\n", DeviceAccess.ForDevice(d).Select(AccessWording.Item)))}'>{Esc(d.OpenPortsDisplay)}</td></tr>");
             }
             sb.AppendLine("</tbody></table></div>");
 

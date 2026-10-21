@@ -81,6 +81,25 @@
     <sys:String x:Key="Str_Btn_Cancel">বাতিল</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">ডিভাইসের ধরন সেট করুন</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">ওভাররাইড সাফ করুন</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">অ্যাক্সেস</sys:String>
+    <sys:String x:Key="Str_Access_None">কোনো খোলা পোর্ট রেকর্ড হয়নি</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">ঠিকানা কপি করুন</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}: {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">{0} উত্তর দিয়েছে</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">সাইন ইন চাইছে</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">সাইন ইন চাইছে ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">সাইন ইন পেজ</sys:String>
+    <sys:String x:Key="Str_Access_Banner">ব্যানার পাওয়া গেছে</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">পোর্ট খোলা</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">এই ঠিকানায় ওয়েব সার্ভার HTTP {0} দিয়ে উত্তর দিয়েছে।</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">এটি লগইন তথ্য চেয়েছে। KillerScan কিছুই পাঠায়নি।</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">পেজটিতে একটি পাসওয়ার্ড ঘর আছে, তাই এটি একটি সাইন ইন পেজ। সাইন ইন কাজ করবে কি না জানা নেই।</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">এর জন্য সাইন ইন লাগে কি না জানা নেই।</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">SSH সার্ভার তার ব্যানার পাঠিয়েছে। কোনো সাইন ইনের চেষ্টা করা হয়নি।</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">পোর্টটি একটি সংযোগ গ্রহণ করেছে। প্রোটোকলটি পোর্ট নম্বর থেকে অনুমান করা হয়েছে।</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">দেখা গেছে {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">কোনো অ্যাপ এই প্রোটোকল খোলে না, তাই ক্লিক করলে ঠিকানাটি কপি হয়।</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">এই ধরন কেন?</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>

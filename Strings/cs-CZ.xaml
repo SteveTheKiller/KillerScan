@@ -89,6 +89,25 @@
     <sys:String x:Key="Str_Btn_Cancel">Zrušit</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Nastavit typ zařízení</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Zrušit ruční nastavení</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">Přístup</sys:String>
+    <sys:String x:Key="Str_Access_None">Nezaznamenány žádné otevřené porty</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">Kopírovat adresu</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}: {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">odpověď {0}</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">žádá o přihlášení</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">žádá o přihlášení ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">přihlašovací stránka</sys:String>
+    <sys:String x:Key="Str_Access_Banner">přijat banner</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">port otevřen</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">Webový server na této adrese odpověděl HTTP {0}.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">Vyžádal si přihlašovací údaje. KillerScan žádné neodeslal.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">Stránka obsahuje pole pro heslo, jde tedy o přihlašovací stránku. Zda by přihlášení fungovalo, není známo.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">Zda vyžaduje přihlášení, není známo.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">SSH server odeslal svůj banner. Přihlášení nebylo zkoušeno.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">Port přijal připojení. Protokol je odhadnut podle čísla portu.</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">Zaznamenáno {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">Tento protokol neotevírá žádná aplikace, proto kliknutí zkopíruje adresu.</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">Proč tento typ?</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>

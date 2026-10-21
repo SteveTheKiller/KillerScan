@@ -96,6 +96,25 @@
     <sys:String x:Key="Str_Btn_Cancel">キャンセル</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">デバイスの種類を設定</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">上書きをクリア</sys:String>
+    <!-- Access: each way into a device and what the scan actually saw there. -->
+    <sys:String x:Key="Str_Access_Menu">アクセス</sys:String>
+    <sys:String x:Key="Str_Access_None">開放ポートの記録なし</sys:String>
+    <sys:String x:Key="Str_Access_CopyMenu">アドレスをコピー</sys:String>
+    <sys:String x:Key="Str_Access_Item">{0} {1}: {2}</sys:String>
+    <sys:String x:Key="Str_Access_Answered">{0} を応答</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequested">サインインを要求</sys:String>
+    <sys:String x:Key="Str_Access_LoginRequestedScheme">サインインを要求 ({0})</sys:String>
+    <sys:String x:Key="Str_Access_LoginForm">サインインページ</sys:String>
+    <sys:String x:Key="Str_Access_Banner">バナーを受信</sys:String>
+    <sys:String x:Key="Str_Access_PortOpen">ポート開放</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Http">このアドレスで Web サーバーが HTTP {0} を応答しました。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Requested">資格情報を要求されました。KillerScan は何も送信していません。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_LoginForm">このページにはパスワード欄があるため、サインインページです。サインインできるかどうかは不明です。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Unknown">サインインが必要かどうかは不明です。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Banner">SSH サーバーがバナーを送信しました。サインインは試行していません。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_PortOpen">ポートが接続を受け付けました。プロトコルはポート番号から推測しています。</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Seen">検出日時: {0}</sys:String>
+    <sys:String x:Key="Str_Access_Tip_Copy">このプロトコルを開くアプリがないため、クリックするとアドレスをコピーします。</sys:String>
     <!-- Recognition evidence: why a device has its type. -->
     <sys:String x:Key="Str_Rec_Menu">この種類になった理由</sys:String>
     <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>
