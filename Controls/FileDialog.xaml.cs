@@ -166,6 +166,8 @@ namespace KillerScan.Controls
         {
             _mode = mode;
             InitializeComponent();
+            TitleIcon.Source = BitmapDecoder.Create(new Uri("pack://application:,,,/KillerScan;component/Resources/ks-icon.ico"),
+                BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames[0];
             Loaded += (_, _) => Anim.FadeIn(RootFade);
 
             // Size and placement remembered separately from the folder picker: this dialog is a

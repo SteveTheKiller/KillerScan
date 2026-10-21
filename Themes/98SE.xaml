@@ -585,4 +585,6 @@
     <SolidColorBrush x:Key="RadioAccent" Color="#FF004F00" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionAccent" Color="#FF004F00" po:Freeze="True"/>
     <SolidColorBrush x:Key="AccentLogo" Color="#FF004F00" po:Freeze="True"/>
+    <Thickness x:Key="CompactInputPadding">2,1</Thickness>
+    <sys:Double x:Key="CompactInputMinHeight">22</sys:Double>
 </ResourceDictionary>

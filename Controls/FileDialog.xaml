@@ -76,7 +76,7 @@
 
         <!-- Corner radius follows the theme, not a hardcoded 6: a square-cornered palette was
              getting a rounded card, and its square bevel then cut across the corners. -->
-        <kui:PickerBorder x:Name="RootBorder" BorderBrush="{DynamicResource DialogFrameBrush}" BorderThickness="{DynamicResource DialogFrameThickness}"
+        <kui:PickerBorder x:Name="RootBorder" Tag="{DynamicResource UseDialogCaption}" BorderBrush="{DynamicResource DialogFrameBrush}" BorderThickness="{DynamicResource DialogFrameThickness}"
                 Background="{DynamicResource BackgroundBrush}"
                 CornerRadius="{DynamicResource PanelCornerRadius}" Margin="{DynamicResource DialogHaloMargin}"
                 Padding="{DynamicResource DialogWindowFramePadding}">
@@ -108,6 +108,9 @@
                 <Border IsHitTestVisible="False"
                         Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
                 <Grid Margin="{DynamicResource TitleBarPadding}">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <kui:AppIcon x:Name="TitleIcon" Width="{DynamicResource TitleIconSize}" Height="{DynamicResource TitleIconSize}"
+                                 Margin="{DynamicResource TitleIconMargin}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                     <!-- A file picker caption names the operation. It is window chrome, not a
                          branding surface; the caller's Title belongs here and nowhere else. -->
                     <TextBlock Text="{Binding Title, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
@@ -115,6 +118,7 @@
                                FontSize="{DynamicResource MenuFontSize}" FontWeight="Bold"
                                Foreground="{DynamicResource ChromeTextBrush}"
                                VerticalAlignment="Center" IsHitTestVisible="False"/>
+                    </StackPanel>
                     <!-- The family overlay and dialog close (App.xaml, OverlayCloseButton): the glyph
                          reddens on hover without a fill, and 98SE gets the caption button face. -->
                     <Button x:Name="CaptionCloseButton" Content="{DynamicResource AboutCloseGlyph}" Click="Cancel_Click"
@@ -141,7 +145,7 @@
                      focus border. The chevron overlays the box's right edge (the box pads 28 to
                      clear it) and drops the recent-locations list, like Explorer's address bar. -->
                 <Grid Grid.Column="1">
-                    <TextBox x:Name="PathBox" Height="28" Style="{StaticResource DarkTextBox}"
+                    <TextBox x:Name="PathBox" Style="{StaticResource DialogPickerTextBox}"
                              AutomationProperties.Name="{Binding Text, RelativeSource={RelativeSource Self}}"
                              FontFamily="{DynamicResource UiFont}" FontSize="12" Padding="8,0,28,0"
                              VerticalContentAlignment="Center" KeyDown="PathBox_KeyDown"/>
@@ -532,9 +536,9 @@
                      (WPF's TextBoxView), so at 8 the name started visibly right of the filter
                      combo's text directly below it (combo padding is 7 with no inherent inset).
                      5 + 2 lines the two up. (2026-07-31) -->
-                <TextBox x:Name="FileNameBox" Grid.Row="0" Grid.Column="1" Height="28"
+                <TextBox x:Name="FileNameBox" Grid.Row="0" Grid.Column="1"
                          AutomationProperties.Name="{DynamicResource Str_Dlg_FileName}"
-                         Style="{StaticResource DarkTextBox}"
+                         Style="{StaticResource DialogPickerTextBox}"
                          FontFamily="{DynamicResource UiFont}" FontSize="12" Padding="5,0,8,0"
                          VerticalContentAlignment="Center" KeyDown="FileNameBox_KeyDown"/>
 

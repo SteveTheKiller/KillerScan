@@ -30,6 +30,14 @@
         </kui:PickerBorder.Effect>
         <Grid x:Name="DialogSurface">
             <Border IsHitTestVisible="False" Panel.ZIndex="8"
+                    Margin="{DynamicResource FrameInnerMargin}"
+                    BorderBrush="{DynamicResource FrameInnerLightBrush}"
+                    BorderThickness="{DynamicResource FrameInnerLightThickness}"/>
+            <Border IsHitTestVisible="False" Panel.ZIndex="8"
+                    Margin="{DynamicResource FrameInnerMargin}"
+                    BorderBrush="{DynamicResource FrameInnerDarkBrush}"
+                    BorderThickness="{DynamicResource FrameInnerDarkThickness}"/>
+            <Border IsHitTestVisible="False" Panel.ZIndex="8"
                     BorderBrush="{DynamicResource FrameOuterLightBrush}"
                     BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
             <Border IsHitTestVisible="False" Panel.ZIndex="8"

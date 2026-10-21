@@ -12,6 +12,7 @@
      merged-dictionary slot [2] and removes it outright for English.
      ============================================================ -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:input="clr-namespace:KillerFamily.Controls"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a11y="clr-namespace:KillerFamily.Accessibility"
                     xmlns:local="clr-namespace:KillerScan.Controls"
@@ -178,6 +179,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
+                    <Grid x:Name="InputRoot" Tag="{DynamicResource UseDialogCaption}">
                     <Border x:Name="border" Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{DynamicResource ControlCornerRadius}">
@@ -185,10 +187,21 @@
                              content host fills the box top-down, so in a fixed-height row the text
                              line is taller than the space left by Padding and scrolls out of sight,
                              leaving what looks like an empty box. -->
-                        <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
+                        <input:InputContentHost x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                     </Border>
+                    </Grid>
                     <ControlTemplate.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Tag, ElementName=InputRoot}" Value="True"/>
+                                <Condition Binding="{Binding AcceptsReturn, RelativeSource={RelativeSource Self}}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="InputRoot" Property="MinHeight" Value="{DynamicResource CompactInputMinHeight}"/>
+                            <Setter TargetName="PART_ContentHost" Property="Margin" Value="0"/>
+                            <Setter TargetName="PART_ContentHost" Property="CompactPadding" Value="{DynamicResource CompactInputPadding}"/>
+                            <Setter TargetName="PART_ContentHost" Property="VerticalAlignment" Value="Center"/>
+                        </MultiDataTrigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource InputHoverBrush}"/>
                         </Trigger>
@@ -199,6 +212,17 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="DialogPickerTextBox" TargetType="TextBox" BasedOn="{StaticResource DarkTextBox}">
+        <Setter Property="Height" Value="28"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Tag, ElementName=RootBorder}" Value="True">
+                <Setter Property="Height" Value="Auto"/>
+                <Setter Property="MinHeight" Value="{DynamicResource CompactInputMinHeight}"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 
     <ContextMenu x:Key="TextInputContextMenu" x:Shared="False">
