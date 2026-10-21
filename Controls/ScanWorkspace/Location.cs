@@ -69,6 +69,7 @@ namespace KillerScan.Controls
             }
             _location = data;
             _loadedScanName = null;
+            _loadedScanAdapter = string.Empty;
             _active.NewIdentities.Clear();
             if (data.Info is { } info && LocationService.Find(info.Id) is { } current && current.LastTargets.Length > 0)
             {
@@ -334,7 +335,42 @@ namespace KillerScan.Controls
             if (_disposed || IsScanning) return;
             LoadProfile(scan);
             _loadedScanName = scan.Name;
+            _loadedScanAdapter = scan.Adapter ?? string.Empty;
             FocusTargets();
+        }
+
+        /// <summary>The adapter the loaded saved scan was set up on, checked before each run.</summary>
+        private string _loadedScanAdapter = string.Empty;
+
+        /// <summary>Asks whether to scan on another adapter. Tests answer it without a dialog.</summary>
+        internal Func<string, bool>? ConfirmAdapter { get; set; }
+
+        /// <summary>The adapter Windows would route these targets through, by its name, or empty.</summary>
+        private static string RouteAdapter(string targets)
+        {
+            var parsed = ScanTargets.Parse(targets);
+            if (!parsed.Ok || parsed.Addresses.Count == 0) return string.Empty;
+            try { return NetworkPlatform.Current.BestRoute(parsed.Addresses[0])?.Interface ?? string.Empty; }
+            catch (Exception ex) when (ex is not OutOfMemoryException) { return string.Empty; }
+        }
+
+        /// <summary>
+        /// A saved scan's adapter is a preference resolved again on every run. KillerScan cannot
+        /// bind traffic to an adapter yet, so when the route would use another one it says so and
+        /// asks, rather than scanning a different network without a word.
+        /// </summary>
+        private bool AdapterAllowsScan(string targets, out string adapter)
+        {
+            adapter = RouteAdapter(targets);
+            if (_loadedScanAdapter.Length == 0 || string.Equals(adapter, _loadedScanAdapter, StringComparison.OrdinalIgnoreCase))
+                return true;
+            string message = string.Format(Loc("Str_Loc_AdapterMismatch"), _loadedScanAdapter,
+                adapter.Length > 0 ? adapter : Loc("Str_Loc_AdapterUnknown"));
+            if (ConfirmAdapter != null) return ConfirmAdapter(message);
+            var confirm = new ConfirmDialog(Loc("Str_Loc_AdapterTitle"), message, Loc("Str_Btn_Scan"), Loc("Str_Btn_Cancel"))
+                { Owner = Window.GetWindow(this) };
+            confirm.ShowDialog();
+            return confirm.Confirmed;
         }
 
         private string? AskName(string titleKey, string current)
@@ -365,9 +401,22 @@ namespace KillerScan.Controls
                 confirm.ShowDialog();
                 if (!confirm.Confirmed) return;
             }
-            PersistenceFeedback.Check(store.SaveEdited(name, Targets.Trim(), _active.Options), store.Retry, () => store.SaveError);
+            SaveScanAs(name);
+        }
+
+        /// <summary>
+        /// Saves the current targets and settings under a name in this Location, with the adapter
+        /// they route through now as the scan's preferred adapter.
+        /// </summary>
+        internal bool SaveScanAs(string name)
+        {
+            var store = _location.SavedScans;
+            string adapter = RouteAdapter(Targets);
+            bool saved = PersistenceFeedback.Check(store.SaveEdited(name, Targets.Trim(), _active.Options, adapter), store.Retry, () => store.SaveError);
             _loadedScanName = name;
+            _loadedScanAdapter = adapter;
             LocationChanged?.Invoke(this, EventArgs.Empty);
+            return saved;
         }
 
         private void CreateLocation()

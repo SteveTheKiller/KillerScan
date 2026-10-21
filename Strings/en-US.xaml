@@ -410,6 +410,11 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Loc_SuggestMany">This network's gateway was seen in more than one Location: {0}. Pick one from the Location button.</sys:String>
     <sys:String x:Key="Str_Loc_Switch">Switch</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Dismiss</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">Different network adapter</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMismatch">This saved scan was set up on {0}, but this scan would go out through {1}. KillerScan cannot choose the adapter yet, so it will use the route Windows picks. Scan anyway?</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterUnknown">no known adapter</sys:String>
+    <sys:String x:Key="Str_Rep_Location">Location</sys:String>
+    <sys:String x:Key="Str_Rep_Adapter">Adapter</sys:String>
     <sys:String x:Key="Str_Tip_Scan">{0} devices, {1} with open ports</sys:String>
     <sys:String x:Key="Str_Tip_Watch">Watching {0} targets, {1} not replying</sys:String>
     <sys:String x:Key="Str_Tip_History">{0} at {1}, {2} devices recorded</sys:String>

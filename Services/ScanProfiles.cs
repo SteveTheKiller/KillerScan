@@ -10,6 +10,12 @@ namespace KillerScan.Services
         public bool DeepScanAfter { get; set; }
         public ScanOptions Options { get; set; } = new();
 
+        /// <summary>
+        /// The adapter this scan was set up on, by its Windows name. A preference only: it is
+        /// checked against the route again on every run, and a mismatch asks before scanning.
+        /// </summary>
+        public string Adapter { get; set; } = string.Empty;
+
         /// <summary>What a screen reader announces for the profile's row in the profiles list.</summary>
         public override string ToString() => Name + ", " + Target;
     }
@@ -37,6 +43,7 @@ namespace KillerScan.Services
                     item.Name ??= string.Empty;
                     item.Target ??= string.Empty;
                     item.Options ??= new ScanOptions();
+                    item.Adapter ??= string.Empty;
                 }
                 return items;
             });
@@ -55,7 +62,7 @@ namespace KillerScan.Services
             var saved = new ScanProfile
             {
                 Name = profile.Name, Target = profile.Target, DeepScanAfter = profile.DeepScanAfter,
-                Options = profile.Options ?? new ScanOptions()
+                Options = profile.Options ?? new ScanOptions(), Adapter = profile.Adapter ?? string.Empty
             };
             return _store.Change(items =>
             {
@@ -66,9 +73,10 @@ namespace KillerScan.Services
 
         /// <summary>
         /// The Save profile dialog edits only the target and options. Saving over an existing
-        /// name (any case) keeps the fields the dialog does not show, such as Deep Scan.
+        /// name (any case) keeps the fields the dialog does not show, such as Deep Scan, and the
+        /// adapter unless a new one is given.
         /// </summary>
-        public bool SaveEdited(string name, string target, ScanOptions options) =>
+        public bool SaveEdited(string name, string target, ScanOptions options, string? adapter = null) =>
             _store.Change(items =>
             {
                 var existing = items.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
@@ -76,7 +84,8 @@ namespace KillerScan.Services
                 items.Add(new ScanProfile
                 {
                     Name = name, Target = target, Options = options ?? new ScanOptions(),
-                    DeepScanAfter = existing?.DeepScanAfter ?? false
+                    DeepScanAfter = existing?.DeepScanAfter ?? false,
+                    Adapter = adapter ?? existing?.Adapter ?? string.Empty
                 });
             }, MemoryOnly);
 

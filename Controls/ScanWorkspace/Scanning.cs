@@ -53,6 +53,8 @@ namespace KillerScan.Controls
                 FocusTargets();
                 return;
             }
+            if (!AdapterAllowsScan(Targets, out string adapter)) return;
+            _active.Adapter = adapter;
             _active.SubnetText = Targets;
             _active.ScannedSubnet = targets.Summary;
             _active.ScannedAt = DateTimeOffset.Now;
@@ -137,7 +139,7 @@ namespace KillerScan.Controls
         private void RecordCompletedRun(ScanOptions options, bool deep, ScanCompletion completion = ScanCompletion.Complete)
         {
             var history = _location.History;
-            var recorded = history.Record(_active.ScannedSubnet, _active.SubnetText, _active.Devices, completion, options, deep);
+            var recorded = history.Record(_active.ScannedSubnet, _active.SubnetText, _active.Devices, completion, options, deep, _active.Adapter);
             _active.ScannedAt = recorded.Current.ScannedAt;
             _active.Completion = completion;
             if (_disposed) return;

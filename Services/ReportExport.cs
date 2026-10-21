@@ -74,7 +74,8 @@ namespace KillerScan.Services
             => BuildSnapshotHtml(devices, subnetText, themeKey, DateTimeOffset.Now, ScanCompletion.Complete);
 
         internal static string BuildSnapshotHtml(IEnumerable<NetworkDevice> devices, string subnetText, string themeKey,
-            DateTimeOffset scannedAt, ScanCompletion completion, KillerScan.Models.ScanRefresh? refresh = null)
+            DateTimeOffset scannedAt, ScanCompletion completion, KillerScan.Models.ScanRefresh? refresh = null,
+            string location = "", string adapter = "")
         {
             string current = string.IsNullOrEmpty(themeKey) ? "dark" : themeKey.ToLowerInvariant();
             var list = devices.OrderBy(d => d.IpSortKey).ToList();
@@ -157,6 +158,9 @@ namespace KillerScan.Services
                 _ => string.Empty
             };
             string status = state.Length == 0 ? string.Empty : " &middot; <b>" + Esc(state) + "</b>";
+            // Where the scan was run from, so a ticket shows which site and which network card.
+            if (location.Length > 0) status += $" &middot; {Esc(L("Str_Rep_Location", "Location"))} <b>{Esc(location)}</b>";
+            if (adapter.Length > 0) status += $" &middot; {Esc(L("Str_Rep_Adapter", "Adapter"))} <b>{Esc(adapter)}</b>";
             // Manual rescans changed some rows after the scan time above, so say when and how many.
             if (refresh != null)
             {

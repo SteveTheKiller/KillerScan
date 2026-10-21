@@ -25,6 +25,9 @@ namespace KillerScan.Services
         /// <summary>True for a deep run (every port 1 to 1024 and more). Null in older entries.</summary>
         public bool? Deep { get; set; }
 
+        /// <summary>The adapter the run's traffic routed through. Empty in older entries and command-line runs.</summary>
+        public string Adapter { get; set; } = string.Empty;
+
         /// <summary>The Location label shown when History lists every Location. Never saved.</summary>
         [System.Text.Json.Serialization.JsonIgnore]
         public string LocationName { get; set; } = string.Empty;
@@ -195,11 +198,12 @@ namespace KillerScan.Services
         /// decides which earlier runs are fair baselines.
         /// </summary>
         public ScanComparison Record(string caption, string targets, IEnumerable<NetworkDevice> devices,
-            ScanCompletion completion, ScanOptions options, bool deep)
+            ScanCompletion completion, ScanOptions options, bool deep, string adapter = "")
         {
             var current = new ScanHistoryEntry
             {
                 ScannedAt = DateTimeOffset.Now,
+                Adapter = adapter,
                 Target = caption,
                 TargetKey = ScanHistoryEntry.KeyFor(targets),
                 Options = options,

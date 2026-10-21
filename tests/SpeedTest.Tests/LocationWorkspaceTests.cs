@@ -77,6 +77,7 @@ internal static class LocationWorkspaceTests
             Require(!temporary.Devices.HasBaseline && workspace.NewDevices.Count == 0,
                 "A Temporary scan sets no baseline and flags nothing.");
             Suggestion(Path.Combine(root, "service"));
+            AdapterPreference(Path.Combine(root, "adapter"));
         }
         finally
         {
@@ -124,6 +125,60 @@ internal static class LocationWorkspaceTests
         Require(banner.Visibility == Visibility.Collapsed, "A dismissed gateway is not offered again.");
         workspace.ShowLocationSuggestion("AA:BB:CC:00:00:99");
         Require(banner.Visibility == Visibility.Collapsed, "An unseen gateway offers nothing.");
+    }
+
+    private sealed class RoutePlatform : INetworkPlatform
+    {
+        internal string Adapter = "Wi-Fi";
+        public IReadOnlyDictionary<string, string> ReadNeighborCache() => new Dictionary<string, string>();
+        public string ResolveMac(System.Net.IPAddress address) => "";
+        public void FlushDnsCache() { }
+        public (string Interface, string NextHop)? BestRoute(System.Net.IPAddress address) => (Adapter, "");
+    }
+
+    // A saved scan remembers the adapter it was set up on and asks before going out another one.
+    private static void AdapterPreference(string root)
+    {
+        var original = NetworkPlatform.Current;
+        var platform = new RoutePlatform { Adapter = "Ethernet" };
+        try
+        {
+            NetworkPlatform.Current = platform;
+            var catalog = new LocationCatalog(root);
+            catalog.Load("Unassigned");
+            catalog.Create("Site", out var info);
+            var site = catalog.Open(info!);
+            using var workspace = new ScanWorkspace("192.168.1.0/24", false, new SiteScanner());
+            workspace.SetLocation(site);
+            Require(workspace.SaveScanAs("Office LAN"), "A scan can be saved in its Location.");
+            Require(site.SavedScans.Items.Single().Adapter == "Ethernet", "Saving records the adapter the targets route through.");
+
+            string? asked = null;
+            workspace.ConfirmAdapter = message => { asked = message; return false; };
+            platform.Adapter = "Wi-Fi";
+            workspace.LoadSavedScan(site.SavedScans.Items.Single());
+            workspace.Scan();
+            Require(asked != null && asked.Contains("Ethernet") && asked.Contains("Wi-Fi") && !workspace.IsScanning && site.History.Entries.Count == 0,
+                "A different adapter asks first, and declining scans nothing.");
+
+            workspace.ConfirmAdapter = _ => true;
+            workspace.Scan();
+            PumpUntil(() => !workspace.IsScanning && site.History.Entries.Count == 1);
+            Require(site.History.Entries.Single().Adapter == "Wi-Fi", "The run records the adapter it actually used.");
+
+            asked = null;
+            workspace.ConfirmAdapter = message => { asked = message; return true; };
+            platform.Adapter = "Ethernet";
+            workspace.Scan();
+            PumpUntil(() => !workspace.IsScanning && site.History.Entries.Count == 2);
+            Require(asked == null, "The preferred adapter scans without asking.");
+
+            string output = Path.Combine(root, "report.html");
+            workspace.ExportDialog = dialog => { dialog.FileName = output; return true; };
+            workspace.Export("html");
+            Require(File.ReadAllText(output).Contains("<b>Ethernet</b>"), "The report shows the adapter the scan used.");
+        }
+        finally { NetworkPlatform.Current = original; }
     }
 
     private static void PumpUntil(Func<bool> complete)
