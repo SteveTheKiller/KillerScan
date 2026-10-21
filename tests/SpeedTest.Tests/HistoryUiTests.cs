@@ -413,7 +413,10 @@ internal static partial class HistoryUiTests
         }
         var home = Profile("Home", "192.0.2.0/24", false);
         var work = Profile("Work", "198.51.100.0/25", true);
-        store.GetField("_items", Static)!.SetValue(null, profiles);
+        // The saved scans live in the shared store's file wrapper; swap its in-memory list.
+        var shared = store.GetProperty("Store", Static)!.GetValue(null)!;
+        var file = shared.GetType().GetField("_store", Instance)!.GetValue(shared)!;
+        file.GetType().GetProperty("Value", Instance)!.SetValue(file, profiles);
         var scan = (ScanWorkspace)Field(window, "_scanWorkspace")!;
         Require((bool)Field(scan, "DemoMode")!, "Profile tests cannot launch real network scans.");
         var root = (FrameworkElement)window.Content;

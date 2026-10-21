@@ -312,7 +312,8 @@ internal static class ReleaseUiTests
         }
         try
         {
-            load.Invoke(workspace, new object[] { "192.0.2.0/24", new[] { host, unnamed } });
+            // LoadSnapshot's optional scan time must be passed explicitly through reflection.
+            load.Invoke(workspace, new object?[] { "192.0.2.0/24", new[] { host, unnamed }, null });
             refresh.Invoke(workspace, null);
             Render(root, 1200, 780);
             void RightClick(object item)
@@ -383,7 +384,7 @@ internal static class ReleaseUiTests
         finally
         {
             actionField.SetValue(workspace, originalHandler);
-            load.Invoke(workspace, new object[] { originalTarget, original });
+            load.Invoke(workspace, new object?[] { originalTarget, original, null });
             refresh.Invoke(workspace, null);
         }
     }

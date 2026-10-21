@@ -65,7 +65,11 @@ internal static partial class HistoryUiTests
         var parser = new ParserContext();
         parser.XmlnsDictionary.Add("", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
         parser.XmlnsDictionary.Add("x", "http://schemas.microsoft.com/winfx/2006/xaml");
-        menus.Add("Sort", (ContextMenu)XamlReader.Parse(PreserveMenuGlyphReferences(sort.OuterXml), parser));
+        // FileDialog.xaml maps its glyph namespace without an assembly; the parser needs it named.
+        string sortXaml = sort.OuterXml
+            .Replace("clr-namespace:KillerFamily.Accessibility\"", "clr-namespace:KillerFamily.Accessibility;assembly=KillerScan\"")
+            .Replace("clr-namespace:KillerScan.Controls\"", "clr-namespace:KillerScan.Controls;assembly=KillerScan\"");
+        menus.Add("Sort", (ContextMenu)XamlReader.Parse(PreserveMenuGlyphReferences(sortXaml), parser));
 
         // Build the actual dynamic menus without needing a visible desktop popup or any action.
         menus.Add("HistoryExport", (ContextMenu)Call(history, "CreateExportMenu", (FrameworkElement)scan.FindName("ExportButton"))!);
