@@ -31,6 +31,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Changer la disposition de la topologie</sys:String>
     <sys:String x:Key="Str_History_Title">Historique des analyses</sys:String>
     <sys:String x:Key="Str_History_Empty">Aucune analyse terminée.</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">L’historique des analyses n’a pas pu être lu. Le fichier n’a pas été modifié.</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">L’historique des analyses n’a pas pu être lu : il n’est donc pas affiché et les nouvelles analyses n’y sont pas ajoutées.&#10;&#10;{0}&#10;&#10;Le fichier n’a pas été modifié : {1}&#10;Fermez les autres fenêtres KillerScan ou déplacez le fichier pour commencer un nouvel historique. Réessayer ?</sys:String>
     <sys:String x:Key="Str_History_Change">Modification</sys:String>
     <sys:String x:Key="Str_History_Added">Ajouté</sys:String>
     <sys:String x:Key="Str_History_Removed">Absent</sys:String>

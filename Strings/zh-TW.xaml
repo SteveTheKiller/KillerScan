@@ -31,6 +31,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">切換拓撲排列方式</sys:String>
     <sys:String x:Key="Str_History_Title">掃描歷史</sys:String>
     <sys:String x:Key="Str_History_Empty">尚無已完成的掃描。</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">無法讀取掃描歷程記錄。檔案未經變更。</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">無法讀取掃描歷程記錄，因此不會顯示，新的掃描也不會加入其中。&#10;&#10;{0}&#10;&#10;檔案未經變更：{1}&#10;請關閉其他 KillerScan 視窗，或將檔案移到別處以開始新的歷程記錄。要重試嗎？</sys:String>
     <sys:String x:Key="Str_History_Change">變更</sys:String>
     <sys:String x:Key="Str_History_Added">新增</sys:String>
     <sys:String x:Key="Str_History_Removed">缺少</sys:String>

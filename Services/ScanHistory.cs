@@ -53,6 +53,10 @@ namespace KillerScan.Services
         public static IReadOnlyList<ScanHistoryEntry> Entries => _entries;
         public static string? SaveError => _archive.SaveError;
 
+        /// <summary>Why the history file could not be read, or null when it loaded (or does not exist yet).</summary>
+        public static string? LoadError => DemoData.Enabled ? null : _archive.LoadError;
+        internal static string HistoryPath => FilePath;
+
         public static bool Retry()
         {
             if (DemoData.Enabled) return true;

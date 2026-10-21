@@ -31,6 +31,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">切换拓扑排列方式</sys:String>
     <sys:String x:Key="Str_History_Title">扫描历史</sys:String>
     <sys:String x:Key="Str_History_Empty">尚无已完成的扫描。</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">无法读取扫描历史记录。文件未作更改。</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">无法读取扫描历史记录，因此不会显示，新的扫描也不会添加到其中。&#10;&#10;{0}&#10;&#10;文件未作更改：{1}&#10;请关闭其他 KillerScan 窗口，或将该文件移到别处以开始新的历史记录。要重试吗？</sys:String>
     <sys:String x:Key="Str_History_Change">变化</sys:String>
     <sys:String x:Key="Str_History_Added">新增</sys:String>
     <sys:String x:Key="Str_History_Removed">缺失</sys:String>

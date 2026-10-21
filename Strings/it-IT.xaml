@@ -45,6 +45,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Cambia disposizione topologia</sys:String>
     <sys:String x:Key="Str_History_Title">Cronologia scansioni</sys:String>
     <sys:String x:Key="Str_History_Empty">Nessuna scansione completata.</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">Impossibile leggere la cronologia delle scansioni. Il file non è stato modificato.</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">Impossibile leggere la cronologia delle scansioni, quindi non viene mostrata e le nuove scansioni non vengono aggiunte.&#10;&#10;{0}&#10;&#10;Il file non è stato modificato: {1}&#10;Chiudi le altre finestre di KillerScan o sposta il file per iniziare una nuova cronologia. Riprovare?</sys:String>
     <sys:String x:Key="Str_History_Change">Modifica</sys:String>
     <sys:String x:Key="Str_History_Added">Aggiunto</sys:String>
     <sys:String x:Key="Str_History_Removed">Assente</sys:String>

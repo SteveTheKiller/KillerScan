@@ -93,7 +93,9 @@ namespace KillerScan.Controls
             HistoryComparisonContext.Text = comparison?.Previous == null ? string.Empty :
                 string.Format(Loc("Str_History_ComparedWith"), comparison.Previous.ScannedAt.ToString("g"));
             bool comparing = !_showAll && comparison?.Previous != null;
-            HistoryTarget.Text = _entry?.Target ?? Loc("Str_History_Empty");
+            // An unreadable file is not an empty archive; say which one this is.
+            string empty = Loc(ScanHistory.LoadError != null ? "Str_History_Unreadable" : "Str_History_Empty");
+            HistoryTarget.Text = _entry?.Target ?? empty;
             if (_entry?.Completion is ScanCompletion.Partial or ScanCompletion.Canceled)
             {
                 string state = Loc(_entry.Completion == ScanCompletion.Canceled ? "Str_St_ScanCanceled" : "Str_History_Partial");
@@ -106,7 +108,7 @@ namespace KillerScan.Controls
             HistoryCurrentTimestamp.Text = _entry?.ScannedAt.ToString("g") ?? string.Empty;
             if (_entry == null)
             {
-                HistorySummary.Text = Loc("Str_History_Empty");
+                HistorySummary.Text = empty;
                 return;
             }
             if (_showAll)

@@ -18,6 +18,7 @@ namespace KillerScan.Services
         internal List<ScanHistoryEntry> Entries { get; private set; } = [];
         internal HistoryRetention Policy { get; private set; } = new(HistoryRetentionMode.Count);
         internal string? SaveError { get; private set; }
+        internal string? LoadError { get; private set; }
 
         internal HistoryArchive(string path) => _path = Path.GetFullPath(path);
 
@@ -36,8 +37,8 @@ namespace KillerScan.Services
                     return true;
                 });
             }
-            catch (IOException) { }
-            catch (UnauthorizedAccessException) { }
+            // A busy lock or a failed retention save leaves the archive unread or unchanged.
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { LoadError ??= ex.Message; }
         }
 
         private void ReadCurrent()
@@ -46,7 +47,7 @@ namespace KillerScan.Services
             _revision = null;
             Entries = [];
             Policy = new(HistoryRetentionMode.Count);
-            if (!File.Exists(_path)) { Entries.AddRange(_pending); return; }
+            if (!File.Exists(_path)) { LoadError = null; Entries.AddRange(_pending); return; }
             try
             {
                 _revision = File.ReadAllText(_path);
@@ -75,14 +76,17 @@ namespace KillerScan.Services
                     foreach (var device in entry.Devices) device.OpenPorts ??= [];
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Keep an unreadable file intact rather than overwriting it on the next scan.
+                // Keep an unreadable file intact rather than overwriting it on the next scan,
+                // and say so: an empty list here would look like no history at all.
                 Entries = [];
                 _readable = false;
                 Policy = new(HistoryRetentionMode.SaveAll);
+                LoadError = ex.Message;
                 return;
             }
+            LoadError = null;
             Entries.AddRange(_pending);
         }
 

@@ -31,6 +31,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Topologieanordnung wechseln</sys:String>
     <sys:String x:Key="Str_History_Title">Scanverlauf</sys:String>
     <sys:String x:Key="Str_History_Empty">Noch keine abgeschlossenen Scans.</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">Der Scanverlauf konnte nicht gelesen werden. Die Datei wurde nicht verändert.</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">Der Scanverlauf konnte nicht gelesen werden. Er wird daher nicht angezeigt, und neue Scans werden nicht hinzugefügt.&#10;&#10;{0}&#10;&#10;Die Datei wurde nicht verändert: {1}&#10;Schließen Sie andere KillerScan-Fenster oder verschieben Sie die Datei, um einen neuen Verlauf zu beginnen. Erneut versuchen?</sys:String>
     <sys:String x:Key="Str_History_Change">Änderung</sys:String>
     <sys:String x:Key="Str_History_Added">Hinzugefügt</sys:String>
     <sys:String x:Key="Str_History_Removed">Fehlt</sys:String>

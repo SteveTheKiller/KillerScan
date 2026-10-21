@@ -44,6 +44,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">トポロジの配置を切り替える</sys:String>
     <sys:String x:Key="Str_History_Title">スキャン履歴</sys:String>
     <sys:String x:Key="Str_History_Empty">完了したスキャンはまだありません。</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">スキャン履歴を読み込めませんでした。ファイルは変更されていません。</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">スキャン履歴を読み込めなかったため、表示されず、新しいスキャンも追加されません。&#10;&#10;{0}&#10;&#10;ファイルは変更されていません: {1}&#10;ほかの KillerScan ウィンドウを閉じるか、新しい履歴を始めるにはファイルを別の場所へ移動してください。もう一度試しますか?</sys:String>
     <sys:String x:Key="Str_History_Change">変更</sys:String>
     <sys:String x:Key="Str_History_Added">追加</sys:String>
     <sys:String x:Key="Str_History_Removed">不明</sys:String>

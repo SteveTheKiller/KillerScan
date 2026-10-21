@@ -77,6 +77,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--topology" })) { await TopologyTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--csv-export" })) { await CsvExportTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--export-publication" })) { ExportPublicationTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--history-load" })) { HistoryLoadTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--report-sort" })) { await ReportSortTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--command-line-path" })) { await CommandLinePathTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--executable-deployment" })) { await ExecutableDeploymentTests.Run(); return 0; }

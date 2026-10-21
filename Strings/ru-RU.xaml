@@ -45,6 +45,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Переключить расположение топологии</sys:String>
     <sys:String x:Key="Str_History_Title">История сканирования</sys:String>
     <sys:String x:Key="Str_History_Empty">Завершенных сканирований пока нет.</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">Не удалось прочитать историю сканирования. Файл не изменен.</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">Не удалось прочитать историю сканирования, поэтому она не отображается, а новые сканирования в нее не добавляются.&#10;&#10;{0}&#10;&#10;Файл не изменен: {1}&#10;Закройте другие окна KillerScan или переместите файл, чтобы начать новую историю. Повторить?</sys:String>
     <sys:String x:Key="Str_History_Change">Изменение</sys:String>
     <sys:String x:Key="Str_History_Added">Добавлено</sys:String>
     <sys:String x:Key="Str_History_Removed">Отсутствует</sys:String>

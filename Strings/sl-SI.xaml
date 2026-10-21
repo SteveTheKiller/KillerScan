@@ -31,6 +31,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Zamenjaj razporeditev topologije</sys:String>
     <sys:String x:Key="Str_History_Title">Zgodovina pregledov</sys:String>
     <sys:String x:Key="Str_History_Empty">Ni še dokončanih pregledov.</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">Zgodovine pregledov ni bilo mogoče prebrati. Datoteka ni bila spremenjena.</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">Zgodovine pregledov ni bilo mogoče prebrati, zato ni prikazana in novi pregledi se vanjo ne dodajajo.&#10;&#10;{0}&#10;&#10;Datoteka ni bila spremenjena: {1}&#10;Zaprite druga okna KillerScan ali premaknite datoteko, da začnete novo zgodovino. Poskusim znova?</sys:String>
     <sys:String x:Key="Str_History_Change">Sprememba</sys:String>
     <sys:String x:Key="Str_History_Added">Dodano</sys:String>
     <sys:String x:Key="Str_History_Removed">Manjka</sys:String>

@@ -37,6 +37,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Procházet uspořádání topologie</sys:String>
     <sys:String x:Key="Str_History_Title">Historie skenování</sys:String>
     <sys:String x:Key="Str_History_Empty">Zatím žádná dokončená skenování.</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">Historii skenování nelze přečíst. Soubor zůstal beze změny.</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">Historii skenování nelze přečíst, proto se nezobrazuje a nová skenování se do ní nepřidávají.&#10;&#10;{0}&#10;&#10;Soubor zůstal beze změny: {1}&#10;Zavřete ostatní okna KillerScan nebo soubor přesuňte jinam a začněte novou historii. Zkusit znovu?</sys:String>
     <sys:String x:Key="Str_History_Change">Změna</sys:String>
     <sys:String x:Key="Str_History_Added">Přidáno</sys:String>
     <sys:String x:Key="Str_History_Removed">Chybí</sys:String>

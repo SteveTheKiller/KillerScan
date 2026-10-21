@@ -94,6 +94,23 @@ namespace KillerScan.Shell
             finally { _syncingHistory = false; }
         }
 
+        /// <summary>
+        /// Offered once after the first paint when the history file exists but cannot be read.
+        /// The file is never overwritten while unreadable, so this only explains and retries.
+        /// </summary>
+        private void OfferHistoryRecovery()
+        {
+            while (ScanHistory.LoadError is { } error)
+            {
+                string message = string.Format(Loc("Str_History_LoadFailed"), error, ScanHistory.HistoryPath);
+                if (MessageBox.Show(this, message, AppInfo.DisplayName, MessageBoxButton.YesNo, MessageBoxImage.Warning)
+                    != MessageBoxResult.Yes) break;
+                ScanHistory.Load();
+            }
+            RefreshHistoryList();
+            _historyWorkspace?.RefreshLocale();
+        }
+
         private void HistoryList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_syncingHistory) return;

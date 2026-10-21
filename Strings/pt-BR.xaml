@@ -45,6 +45,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Alternar a organização da topologia</sys:String>
     <sys:String x:Key="Str_History_Title">Histórico de verificações</sys:String>
     <sys:String x:Key="Str_History_Empty">Nenhuma verificação concluída ainda.</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">Não foi possível ler o histórico de verificações. O arquivo não foi alterado.</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">Não foi possível ler o histórico de verificações, então ele não é exibido e novas verificações não são adicionadas.&#10;&#10;{0}&#10;&#10;O arquivo não foi alterado: {1}&#10;Feche outras janelas do KillerScan ou mova o arquivo para começar um novo histórico. Tentar novamente?</sys:String>
     <sys:String x:Key="Str_History_Change">Alteração</sys:String>
     <sys:String x:Key="Str_History_Added">Adicionado</sys:String>
     <sys:String x:Key="Str_History_Removed">Ausente</sys:String>

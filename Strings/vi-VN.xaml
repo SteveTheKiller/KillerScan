@@ -34,6 +34,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Chuyển kiểu sắp xếp sơ đồ</sys:String>
     <sys:String x:Key="Str_History_Title">Lịch sử quét</sys:String>
     <sys:String x:Key="Str_History_Empty">Chưa có lần quét nào hoàn tất.</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">Không đọc được lịch sử quét. Tệp vẫn được giữ nguyên.</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">Không đọc được lịch sử quét, nên lịch sử không được hiển thị và các lần quét mới không được thêm vào.&#10;&#10;{0}&#10;&#10;Tệp vẫn được giữ nguyên: {1}&#10;Đóng các cửa sổ KillerScan khác hoặc di chuyển tệp sang chỗ khác để bắt đầu lịch sử mới. Thử lại?</sys:String>
     <sys:String x:Key="Str_History_Change">Thay đổi</sys:String>
     <sys:String x:Key="Str_History_Added">Đã thêm</sys:String>
     <sys:String x:Key="Str_History_Removed">Bị thiếu</sys:String>

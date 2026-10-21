@@ -45,6 +45,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Bla gjennom topologiordninger</sys:String>
     <sys:String x:Key="Str_History_Title">Skanneloggen</sys:String>
     <sys:String x:Key="Str_History_Empty">Ingen fullførte skanninger ennå.</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">Skannehistorikken kunne ikke leses. Filen ble ikke endret.</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">Skannehistorikken kunne ikke leses, så den vises ikke, og nye skanninger legges ikke til.&#10;&#10;{0}&#10;&#10;Filen ble ikke endret: {1}&#10;Lukk andre KillerScan-vinduer, eller flytt filen for å starte en ny historikk. Prøve igjen?</sys:String>
     <sys:String x:Key="Str_History_Change">Endring</sys:String>
     <sys:String x:Key="Str_History_Added">Lagt til</sys:String>
     <sys:String x:Key="Str_History_Removed">Mangler</sys:String>

@@ -65,6 +65,9 @@ namespace KillerScan.Shell
                 UpdateAccentStrip(animate: false);                  // Theme.cs
                 ApplyFlatChrome();                                  // Theme.cs (98SE drops the shadow)
                 FadeInContent();                                    // WindowChrome.cs
+                if (ScanHistory.LoadError != null)
+                    Dispatcher.BeginInvoke(new Action(OfferHistoryRecovery),   // History.cs
+                        System.Windows.Threading.DispatcherPriority.ApplicationIdle);
                 if (_startScanOnLoad && !DemoMode)
                     Dispatcher.BeginInvoke(new Action(() => ActiveScan?.Scan()),
                         System.Windows.Threading.DispatcherPriority.ApplicationIdle);

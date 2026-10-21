@@ -31,6 +31,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Topoloji düzenini değiştir</sys:String>
     <sys:String x:Key="Str_History_Title">Tarama geçmişi</sys:String>
     <sys:String x:Key="Str_History_Empty">Henüz tamamlanmış tarama yok.</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">Tarama geçmişi okunamadı. Dosya değiştirilmedi.</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">Tarama geçmişi okunamadı, bu yüzden gösterilmiyor ve yeni taramalar eklenmiyor.&#10;&#10;{0}&#10;&#10;Dosya değiştirilmedi: {1}&#10;Diğer KillerScan pencerelerini kapatın veya yeni bir geçmiş başlatmak için dosyayı başka yere taşıyın. Yeniden denensin mi?</sys:String>
     <sys:String x:Key="Str_History_Change">Değişiklik</sys:String>
     <sys:String x:Key="Str_History_Added">Eklendi</sys:String>
     <sys:String x:Key="Str_History_Removed">Eksik</sys:String>

@@ -45,6 +45,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Топология орналасуын ауыстыру</sys:String>
     <sys:String x:Key="Str_History_Title">Сканерлеу тарихы</sys:String>
     <sys:String x:Key="Str_History_Empty">Аяқталған сканерлеулер әлі жоқ.</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">Сканерлеу тарихын оқу мүмкін болмады. Файл өзгертілмеді.</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">Сканерлеу тарихын оқу мүмкін болмады, сондықтан ол көрсетілмейді және жаңа сканерлеулер оған қосылмайды.&#10;&#10;{0}&#10;&#10;Файл өзгертілмеді: {1}&#10;Басқа KillerScan терезелерін жабыңыз немесе жаңа тарих бастау үшін файлды басқа жерге жылжытыңыз. Қайталау керек пе?</sys:String>
     <sys:String x:Key="Str_History_Change">Өзгеріс</sys:String>
     <sys:String x:Key="Str_History_Added">Қосылды</sys:String>
     <sys:String x:Key="Str_History_Removed">Жоқ</sys:String>

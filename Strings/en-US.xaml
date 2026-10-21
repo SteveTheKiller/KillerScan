@@ -45,6 +45,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Cycle topology arrangement</sys:String>
     <sys:String x:Key="Str_History_Title">Scan History</sys:String>
     <sys:String x:Key="Str_History_Empty">No completed scans yet.</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">Scan history could not be read. The file was left untouched.</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">Scan history could not be read, so it is not shown and new scans are not added to it.&#10;&#10;{0}&#10;&#10;The file was left untouched: {1}&#10;Close other KillerScan windows, or move the file aside to start a new history. Try again?</sys:String>
     <sys:String x:Key="Str_History_Change">Change</sys:String>
     <sys:String x:Key="Str_History_Added">Added</sys:String>
     <sys:String x:Key="Str_History_Removed">Missing</sys:String>

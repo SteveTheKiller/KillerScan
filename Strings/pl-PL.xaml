@@ -30,6 +30,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Przełącz układ topologii</sys:String>
     <sys:String x:Key="Str_History_Title">Historia skanowania</sys:String>
     <sys:String x:Key="Str_History_Empty">Brak ukończonych skanów.</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">Nie można odczytać historii skanowania. Plik nie został zmieniony.</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">Nie można odczytać historii skanowania, więc nie jest wyświetlana, a nowe skany nie są do niej dodawane.&#10;&#10;{0}&#10;&#10;Plik nie został zmieniony: {1}&#10;Zamknij inne okna KillerScan lub przenieś plik, aby zacząć nową historię. Spróbować ponownie?</sys:String>
     <sys:String x:Key="Str_History_Change">Zmiana</sys:String>
     <sys:String x:Key="Str_History_Added">Dodano</sys:String>
     <sys:String x:Key="Str_History_Removed">Brak</sys:String>

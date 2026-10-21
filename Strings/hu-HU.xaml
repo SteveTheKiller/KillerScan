@@ -45,6 +45,8 @@
     <sys:String x:Key="Str_Sc_CycleTopologyOrder">Topológiaelrendezés váltása</sys:String>
     <sys:String x:Key="Str_History_Title">Vizsgálati előzmények</sys:String>
     <sys:String x:Key="Str_History_Empty">Még nincs befejezett vizsgálat.</sys:String>
+    <sys:String x:Key="Str_History_Unreadable">A vizsgálati előzmények nem olvashatók. A fájl változatlan maradt.</sys:String>
+    <sys:String x:Key="Str_History_LoadFailed">A vizsgálati előzmények nem olvashatók, ezért nem jelennek meg, és az új vizsgálatok nem kerülnek bele.&#10;&#10;{0}&#10;&#10;A fájl változatlan maradt: {1}&#10;Zárja be a többi KillerScan ablakot, vagy helyezze át a fájlt új előzmények indításához. Újrapróbálja?</sys:String>
     <sys:String x:Key="Str_History_Change">Változás</sys:String>
     <sys:String x:Key="Str_History_Added">Hozzáadva</sys:String>
     <sys:String x:Key="Str_History_Removed">Hiányzik</sys:String>
