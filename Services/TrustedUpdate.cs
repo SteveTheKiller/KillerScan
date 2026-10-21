@@ -61,7 +61,9 @@ namespace KillerScan.Services
                     throw new SecurityException("The update helper is not the protected installed application.");
                 using var lease = KillerFamily.Deployment.InstallerExitCodes.Acquire("KillerScan");
                 using var pinned = InstallationFiles.PinDirectory(directory);
-                ValidateMachineOwner(directory);
+                using var creator = WindowsIdentity.GetCurrent();
+                ValidateMachineOwner(directory, creator.Owner
+                    ?? throw new SecurityException("The machine staging creator owner is unavailable."));
                 string download = Path.GetFullPath(Encoding.Unicode.GetString(Convert.FromBase64String(args[1])));
                 string expected = args[2], version = NormalizeVersion(args[3]);
                 UpdateImagePublication.RememberVerified(download, expected);
@@ -151,18 +153,26 @@ namespace KillerScan.Services
             + Convert.ToBase64String(Encoding.Unicode.GetBytes(text)) + "'))";
         private static string Hex(byte[] bytes) => BitConverter.ToString(bytes).Replace("-", "");
 
-        internal static void ValidateMachineOwner(string directory)
+        internal static void ValidateMachineOwner(string directory, SecurityIdentifier? stagingOwner = null)
+            => ValidateMachineOwner(Directory.GetAccessControl(directory), stagingOwner);
+
+        // Pre-UAC validation defers creator proof; the elevated staging caller supplies its token owner.
+        internal static void ValidateMachineOwner(DirectorySecurity security, SecurityIdentifier? stagingOwner = null)
         {
             var trusted = new[] { "S-1-5-18", "S-1-5-32-544", "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464" };
-            var security = Directory.GetAccessControl(directory);
             if (!trusted.Contains(security.GetOwner(typeof(SecurityIdentifier)).Value))
                 throw new SecurityException("The machine installation has an untrusted owner.");
+            if (stagingOwner != null && !trusted.Contains(stagingOwner.Value))
+                throw new SecurityException("The machine staging creator has an untrusted owner.");
             var writes = FileSystemRights.Write | FileSystemRights.Delete | FileSystemRights.DeleteSubdirectoriesAndFiles
                 | FileSystemRights.ChangePermissions | FileSystemRights.TakeOwnership;
+            const uint genericWrites = 0x50000000u; // GENERIC_ALL and GENERIC_WRITE can remain unmapped in inheritable ACEs.
             foreach (FileSystemAccessRule rule in security.GetAccessRules(true, true, typeof(SecurityIdentifier)))
                 if (rule.AccessControlType == AccessControlType.Allow
-                    && (rule.PropagationFlags & PropagationFlags.InheritOnly) == 0
-                    && (rule.FileSystemRights & writes) != 0 && !trusted.Contains(rule.IdentityReference.Value))
+                    && ((unchecked((uint)rule.FileSystemRights) & ((uint)writes | genericWrites)) != 0)
+                    && !trusted.Contains(rule.IdentityReference.Value)
+                    && !(rule.IdentityReference.Value == "S-1-3-0"
+                        && (rule.PropagationFlags & PropagationFlags.InheritOnly) != 0))
                     throw new SecurityException("The machine installation permits untrusted writes.");
         }
     }

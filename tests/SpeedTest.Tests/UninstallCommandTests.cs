@@ -26,6 +26,7 @@ internal static class UninstallCommandTests
                 }
             }
         Console.WriteLine("PASS Windows PowerShell parses all user/machine, silent/interactive completion commands.");
+        InstallationTrustPolicyTests.Run();
     }
 
     internal static string Decode(string arguments)

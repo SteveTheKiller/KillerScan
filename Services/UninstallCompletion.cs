@@ -23,6 +23,17 @@ namespace KillerScan.Services
             ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "KillerScan")
             : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "KillerScan");
 
+        internal static string MachineDirectoryPolicy =>
+            "$trusted=@('S-1-5-18','S-1-5-32-544','S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464');"
+            + "if($acl.GetOwner([Security.Principal.SecurityIdentifier]).Value -notin $trusted){throw 'The machine installation has an untrusted owner.'};"
+            + "if($creatorOwner -notin $trusted){throw 'The machine staging creator has an untrusted owner.'};"
+            + "$writes=[Security.AccessControl.FileSystemRights]'Write,Delete,DeleteSubdirectoriesAndFiles,ChangePermissions,TakeOwnership';"
+            + "$genericWrites=0x50000000;"
+            + "foreach($rule in $acl.GetAccessRules($true,$true,[Security.Principal.SecurityIdentifier])){"
+            + "if($rule.AccessControlType -eq 'Allow' -and (($rule.FileSystemRights -band $writes) -or ([long]$rule.FileSystemRights -band $genericWrites))"
+            + " -and $rule.IdentityReference.Value -notin $trusted -and -not ($rule.IdentityReference.Value -eq 'S-1-3-0'"
+            + " -and ($rule.PropagationFlags -band [Security.AccessControl.PropagationFlags]::InheritOnly))){throw 'The machine installation permits untrusted writes.'}};";
+
         internal static ProcessStartInfo StartInfo(bool machine, bool silent, int parentId = 0, long parentTicks = 0)
         {
             string script = "$ErrorActionPreference='Stop';try{\n";
@@ -37,12 +48,8 @@ namespace KillerScan.Services
             if (machine)
             {
                 string thumb = CodeSignature.GetSignerInfo().thumb;
-                script += "$acl=[IO.Directory]::GetAccessControl($root);$trusted=@('S-1-5-18','S-1-5-32-544','S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464');"
-                    + "if($acl.GetOwner([Security.Principal.SecurityIdentifier]).Value -notin $trusted){throw 'The machine installation has an untrusted owner.'};"
-                    + "$writes=[Security.AccessControl.FileSystemRights]'Write,Delete,DeleteSubdirectoriesAndFiles,ChangePermissions,TakeOwnership';"
-                    + "foreach($rule in $acl.GetAccessRules($true,$true,[Security.Principal.SecurityIdentifier])){"
-                    + "if($rule.AccessControlType -eq 'Allow' -and -not ($rule.PropagationFlags -band [Security.AccessControl.PropagationFlags]::InheritOnly)"
-                    + " -and ($rule.FileSystemRights -band $writes) -and $rule.IdentityReference.Value -notin $trusted){throw 'The machine installation permits untrusted writes.'}};"
+                script += "$acl=[IO.Directory]::GetAccessControl($root);$creator=[Security.Principal.WindowsIdentity]::GetCurrent();"
+                    + "try{$creatorOwner=$creator.Owner.Value}finally{$creator.Dispose()};" + MachineDirectoryPolicy
                     + "$signature=Get-AuthenticodeSignature -LiteralPath $image;"
                     + "if($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Thumbprint -ne " + Data(thumb)
                     + "){throw 'The installed uninstall helper does not match its trusted publisher.'};\n";

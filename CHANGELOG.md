@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ## [1.8.4] - Unreleased
 
 ### Fixed
+- Machine update and uninstall helpers reject unsafe inherited permissions before creating elevated staging.
 - Installation cleanup preserves unrelated files and folders; registered silent uninstall waits for owned removal and reports failures.
 - Elevated updates use the signed installed helper and verify the release identity, digest and publisher in protected staging.
 - Preference and history saves preserve existing files on failure, keep unsaved edits for retry, and report when changes could not be saved.
