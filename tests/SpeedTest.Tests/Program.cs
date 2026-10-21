@@ -29,6 +29,7 @@ internal static class Program
     {
         try
         {
+            if (args.SequenceEqual(new[] { "--loopback-headers" })) { await LoopbackHeaders(); return 0; }
             if (args.SequenceEqual(new[] { "--transfer-sequence" }))
             {
                 await Run("Adaptive per-connection warmup", () => Adaptive(Mode.SlowDownload, 8));
@@ -97,6 +98,7 @@ internal static class Program
                 await Run("Scan terminal progress stays on one line and results fit narrow widths", ScanPresentation);
                 await Run("Terminal history survives resizing, clears and shell replacement", TerminalHistory);
             }
+            await Run("Loopback headers remain bounded and responsive on reused connections", LoopbackHeaders);
             await Run("Cloudflare upload response is accepted only for the exact official endpoint", CloudflareAcknowledgment);
             await Run("Public endpoint profile reduces request pressure without shortening the test", PublicProfile);
             await Run("Adaptive warmup adds streams on a per-connection bottleneck", () => Adaptive(Mode.SlowDownload, 8));
@@ -893,6 +895,31 @@ internal static class Program
             "Phase completion updates carry final measured counts");
     }
 
+    private static async Task LoopbackHeaders()
+    {
+        for (int attempt = 0; attempt < 8; attempt++)
+        {
+            using var server = new LoopbackServer(Mode.SlowDownload);
+            using var stop = new CancellationTokenSource();
+            var options = Options(server);
+            options.MaximumStreams = 8;
+            options.Endpoint = new Uri(server.Endpoint, new string('p', 8192) + "/");
+            int samples = 0;
+            var progress = new CallbackProgress(update =>
+            {
+                if (update.Phase == SpeedTestPhase.IdleLatency) { samples++; stop.Cancel(); }
+            });
+            try
+            {
+                await new SpeedTestEngine().RunAsync(options, progress, stop.Token);
+                throw new InvalidOperationException("Idle cancellation returned a result.");
+            }
+            catch (OperationCanceledException)
+            { Require(samples == 1, "Preflight and its reused idle response complete within the unchanged request timeout."); }
+        }
+        Console.WriteLine("PASS: buffered loopback acquisition handles long bounded headers and connection reuse.");
+    }
+
     private static async Task AdaptiveCancel()
     {
         using var server = new LoopbackServer(Mode.SlowDownload);
@@ -1104,7 +1131,7 @@ internal static class Program
             catch (SocketException) when (_stop.IsCancellationRequested) { }
         }
 
-        private static async Task<string?> HeaderAsync(NetworkStream stream, CancellationToken token)
+        private static async Task<string?> HeaderAsync(Stream stream, CancellationToken token)
         {
             var data = new List<byte>();
             var next = new byte[1];
@@ -1126,10 +1153,12 @@ internal static class Program
                 try
                 {
                     var stream = client.GetStream();
+                    // Buffer reads only. Uploads must consume any bytes prefetched with their headers.
+                    using var input = new BufferedStream(stream, 8192);
                     var buffer = new byte[4096];
                     while (!_stop.IsCancellationRequested)
                     {
-                        var header = await HeaderAsync(stream, _stop.Token);
+                        var header = await HeaderAsync(input, _stop.Token);
                         if (header == null) return;
                         var lines = header.Split(new[] { "\r\n" }, StringSplitOptions.None);
                         var parts = lines[0].Split(' ');
@@ -1162,7 +1191,7 @@ internal static class Program
                             int remaining = int.Parse(contentLength.Substring(contentLength.IndexOf(':') + 1).Trim(), CultureInfo.InvariantCulture);
                             while (remaining > 0)
                             {
-                                int read = await stream.ReadAsync(buffer, 0, Math.Min(buffer.Length, remaining), _stop.Token);
+                                int read = await input.ReadAsync(buffer, 0, Math.Min(buffer.Length, remaining), _stop.Token);
                                 if (read == 0) return;
                                 remaining -= read;
                                 Interlocked.Add(ref _uploadBytes, read);
