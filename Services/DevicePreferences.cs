@@ -4,69 +4,73 @@ using KillerScan.Models;
 
 namespace KillerScan.Services
 {
-    internal static class DevicePreferences
+    /// <summary>Saved device names and trust for one Location (devices.json).</summary>
+    internal sealed class DevicePreferenceStore
     {
-        private static readonly string FilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "KillerScan", "devices.json");
-        private static JsonPreferenceFile<DevicePreferenceData> _store = CreateStore();
-        private static DevicePreferenceData _data => _store.Value;
-        public static string? SaveError => _store.Error;
-        private static JsonPreferenceFile<DevicePreferenceData> CreateStore() => new(FilePath,
-            () => new(), value => { value.Normalize(); return value; });
+        private readonly JsonPreferenceFile<DevicePreferenceData> _store;
+        private readonly bool _memoryOnly;
+        private DevicePreferenceData _data => _store.Value;
+        public string? SaveError => _store.Error;
 
-        public static bool HasTrustedDevices => _data.Trusted.Count > 0;
+        // Demo mode starts from nothing and stays in memory, so the fabricated network cannot
+        // trust, rename, or otherwise disturb the real devices on the machine it runs on.
+        private bool MemoryOnly => _memoryOnly || DemoData.Enabled;
 
-        public static void Load()
+        internal DevicePreferenceStore(string path, bool memoryOnly = false)
         {
-            // Demo mode starts from nothing and stays in memory, so the fabricated network cannot
-            // trust, rename, or otherwise disturb the real devices on the machine it runs on.
-            _store = CreateStore();
-            if (!DemoData.Enabled) _store.Load();
+            _memoryOnly = memoryOnly;
+            _store = new(path, () => new(), value => { value.Normalize(); return value; });
         }
 
-        public static void Apply(NetworkDevice device)
+        public bool HasTrustedDevices => _data.Trusted.Count > 0;
+
+        public void Load()
+        {
+            if (!MemoryOnly) _store.Load();
+        }
+
+        public void Apply(NetworkDevice device)
         {
             if (_data.Names.TryGetValue(DeviceIdentity.For(device), out string? name) &&
                 !string.IsNullOrWhiteSpace(name))
                 device.Hostname = name;
         }
 
-        public static string? GetName(NetworkDevice device) =>
+        public string? GetName(NetworkDevice device) =>
             _data.Names.TryGetValue(DeviceIdentity.For(device), out string? name) ? name : null;
 
-        public static bool SetName(NetworkDevice device, string? name)
+        public bool SetName(NetworkDevice device, string? name)
         {
             string identity = DeviceIdentity.For(device);
             return _store.Change(value =>
             {
                 if (string.IsNullOrWhiteSpace(name)) value.Names.Remove(identity);
                 else value.Names[identity] = name!.Trim();
-            }, DemoData.Enabled);
+            }, MemoryOnly);
         }
 
-        public static bool IsTrusted(NetworkDevice device) => _data.Trusted.Contains(DeviceIdentity.For(device));
+        public bool IsTrusted(NetworkDevice device) => _data.Trusted.Contains(DeviceIdentity.For(device));
 
-        public static bool SetTrusted(NetworkDevice device, bool trusted)
+        public bool SetTrusted(NetworkDevice device, bool trusted)
         {
             string identity = DeviceIdentity.For(device);
             return _store.Change(value =>
             {
                 if (trusted) value.Trusted.Add(identity);
                 else value.Trusted.Remove(identity);
-            }, DemoData.Enabled);
+            }, MemoryOnly);
         }
 
-        public static bool TrustAll(IEnumerable<NetworkDevice> devices)
+        public bool TrustAll(IEnumerable<NetworkDevice> devices)
         {
             var identities = devices.Select(DeviceIdentity.For).ToArray();
             return _store.Change(value =>
             {
                 foreach (string identity in identities) value.Trusted.Add(identity);
-            }, DemoData.Enabled);
+            }, MemoryOnly);
         }
 
-        public static bool Retry() => DemoData.Enabled || _store.Save();
+        public bool Retry() => MemoryOnly || _store.Save();
 
         private sealed class DevicePreferenceData
         {
@@ -79,5 +83,25 @@ namespace KillerScan.Services
                 Trusted = new HashSet<string>(Trusted, StringComparer.OrdinalIgnoreCase);
             }
         }
+    }
+
+    /// <summary>The app-wide device store, until every caller works through a Location.</summary>
+    internal static class DevicePreferences
+    {
+        private static readonly string FilePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "KillerScan", "devices.json");
+        internal static DevicePreferenceStore Store { get; private set; } = new(FilePath);
+
+        public static string? SaveError => Store.SaveError;
+        public static bool HasTrustedDevices => Store.HasTrustedDevices;
+        public static void Load() { Store = new(FilePath); Store.Load(); }
+        public static void Apply(NetworkDevice device) => Store.Apply(device);
+        public static string? GetName(NetworkDevice device) => Store.GetName(device);
+        public static bool SetName(NetworkDevice device, string? name) => Store.SetName(device, name);
+        public static bool IsTrusted(NetworkDevice device) => Store.IsTrusted(device);
+        public static bool SetTrusted(NetworkDevice device, bool trusted) => Store.SetTrusted(device, trusted);
+        public static bool TrustAll(IEnumerable<NetworkDevice> devices) => Store.TrustAll(devices);
+        public static bool Retry() => Store.Retry();
     }
 }

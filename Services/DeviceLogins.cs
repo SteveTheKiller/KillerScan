@@ -4,8 +4,8 @@ using System.Text.Json;
 namespace KillerScan.Services
 {
     /// <summary>
-    /// Remembers the SSH username to use for a device, keyed the same way device-type overrides
-    /// are: by MAC address, so it survives a DHCP lease change.
+    /// Remembers the SSH username to use for a device in one Location (logins.json), keyed the
+    /// same way device-type overrides are: by MAC address, so it survives a DHCP lease change.
     ///
     /// The point of storing it at all is that the username is per DEVICE, not per network. Windows'
     /// ssh client falls back to the logged-on account name when no user is given, which is right
@@ -20,25 +20,26 @@ namespace KillerScan.Services
     /// off to the system ssh client and lets it do the authenticating, so there is nothing here
     /// worth stealing.
     /// </summary>
-    internal static class DeviceLogins
+    internal sealed class DeviceLoginStore
     {
-        private static readonly string FilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "KillerScan", "logins.json");
+        private readonly JsonPreferenceFile<Dictionary<string, string>> _store;
+        private readonly bool _memoryOnly;
+        private Dictionary<string, string> _logins => _store.Value;
+        public string? SaveError => _store.Error;
+        private bool MemoryOnly => _memoryOnly || DemoData.Enabled;
 
-        private static JsonPreferenceFile<Dictionary<string, string>> _store = CreateStore();
-        private static Dictionary<string, string> _logins => _store.Value;
-        public static string? SaveError => _store.Error;
-        private static JsonPreferenceFile<Dictionary<string, string>> CreateStore() => new(FilePath,
-            () => new(StringComparer.OrdinalIgnoreCase), value => new(value, StringComparer.OrdinalIgnoreCase));
-
-        public static void Load()
+        internal DeviceLoginStore(string path, bool memoryOnly = false)
         {
-            _store = CreateStore();
-            if (!DemoData.Enabled) _store.Load();
+            _memoryOnly = memoryOnly;
+            _store = new(path, () => new(StringComparer.OrdinalIgnoreCase), value => new(value, StringComparer.OrdinalIgnoreCase));
         }
 
-        public static bool Save() => DemoData.Enabled || _store.Save();
+        public void Load()
+        {
+            if (!MemoryOnly) _store.Load();
+        }
+
+        public bool Save() => MemoryOnly || _store.Save();
 
         /// <summary>MAC when there is one, otherwise the IP. Empty when neither is known, which the
         /// callers treat as "do not remember this one".</summary>
@@ -48,7 +49,7 @@ namespace KillerScan.Services
             : string.Empty;
 
         /// <summary>The remembered username, or null if this device has never been asked about.</summary>
-        public static string? Get(string? mac, string? ip)
+        public string? Get(string? mac, string? ip)
         {
             string key = KeyFor(mac, ip);
             if (key.Length == 0) return null;
@@ -58,7 +59,7 @@ namespace KillerScan.Services
         /// <summary>Remembers a username for the device. An empty or null username REMOVES the entry,
         /// so clearing the box in the prompt goes back to plain `ssh &lt;ip&gt;` rather than storing a
         /// blank that would look like a remembered answer.</summary>
-        public static bool Set(string? mac, string? ip, string? user)
+        public bool Set(string? mac, string? ip, string? user)
         {
             string key = KeyFor(mac, ip);
             if (key.Length == 0) return true;
@@ -66,7 +67,22 @@ namespace KillerScan.Services
             {
                 if (string.IsNullOrWhiteSpace(user)) values.Remove(key);
                 else values[key] = user!.Trim();
-            }, DemoData.Enabled);
+            }, MemoryOnly);
         }
+    }
+
+    /// <summary>The app-wide login store, until every caller works through a Location.</summary>
+    internal static class DeviceLogins
+    {
+        private static readonly string FilePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "KillerScan", "logins.json");
+        internal static DeviceLoginStore Store { get; private set; } = new(FilePath);
+
+        public static string? SaveError => Store.SaveError;
+        public static void Load() { Store = new(FilePath); Store.Load(); }
+        public static bool Save() => Store.Save();
+        public static string? Get(string? mac, string? ip) => Store.Get(mac, ip);
+        public static bool Set(string? mac, string? ip, string? user) => Store.Set(mac, ip, user);
     }
 }

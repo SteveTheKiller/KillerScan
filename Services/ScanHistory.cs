@@ -74,35 +74,70 @@ namespace KillerScan.Services
         IReadOnlyList<HistoricalDevice> Changed,
         bool Saved = true);
 
+    /// <summary>The app-wide history, until every caller works through a Location.</summary>
     internal static class ScanHistory
     {
         private static readonly string FilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "KillerScan", "history.json");
-        private static HistoryArchive _archive = new(FilePath);
-        private static List<ScanHistoryEntry> _entries = [];
-        private static HistoryRetention _demoRetention = new(HistoryRetentionMode.Count);
+        internal static HistoryStore Store { get; private set; } = new(FilePath);
 
-        public static IReadOnlyList<ScanHistoryEntry> Entries => _entries;
-        public static string? SaveError => _archive.SaveError;
+        public static IReadOnlyList<ScanHistoryEntry> Entries => Store.Entries;
+        public static string? SaveError => Store.SaveError;
+        public static string? LoadError => Store.LoadError;
+        internal static string HistoryPath => Store.HistoryPath;
+        public static bool Retry() => Store.Retry();
+        internal static HistoryRetention Retention => Store.Retention;
+        internal static bool ApplyRetention(HistoryRetention policy, Func<int, bool> confirmRemoval) => Store.ApplyRetention(policy, confirmRemoval);
+        public static ScanComparison Compare(ScanHistoryEntry entry) => Store.Compare(entry);
+        public static void Load() { Store = new(FilePath); Store.Load(); }
+        internal static void SeedDemo(IEnumerable<ScanHistoryEntry> entries) => Store.SeedDemo(entries);
+        public static ScanComparison Record(string target, IEnumerable<NetworkDevice> devices, ScanCompletion completion = ScanCompletion.Complete) =>
+            Store.Record(target, devices, completion);
+        public static ScanComparison Record(string caption, string targets, IEnumerable<NetworkDevice> devices,
+            ScanCompletion completion, ScanOptions options, bool deep) => Store.Record(caption, targets, devices, completion, options, deep);
+    }
+
+    /// <summary>The scan history of one Location (history.json) and how runs compare.</summary>
+    internal sealed class HistoryStore
+    {
+        private readonly string _path;
+        private readonly bool _memoryOnly;
+        private HistoryArchive _archive;
+        private List<ScanHistoryEntry> _entries = [];
+        private HistoryRetention _demoRetention = new(HistoryRetentionMode.Count);
+
+        // Demo mode never reads or writes the real history. It is a screenshot build running
+        // on somebody's actual machine, so the fabricated network must not touch their file.
+        private bool MemoryOnly => _memoryOnly || DemoData.Enabled;
+
+        internal HistoryStore(string path, bool memoryOnly = false)
+        {
+            _path = path;
+            _memoryOnly = memoryOnly;
+            _archive = new(path);
+        }
+
+        public IReadOnlyList<ScanHistoryEntry> Entries => _entries;
+        public string? SaveError => _archive.SaveError;
 
         /// <summary>Why the history file could not be read, or null when it loaded (or does not exist yet).</summary>
-        public static string? LoadError => DemoData.Enabled ? null : _archive.LoadError;
-        internal static string HistoryPath => FilePath;
+        public string? LoadError => MemoryOnly ? null : _archive.LoadError;
+        internal string HistoryPath => _path;
 
-        public static bool Retry()
+        public bool Retry()
         {
-            if (DemoData.Enabled) return true;
+            if (MemoryOnly) return true;
             bool saved = _archive.Retry(DateTimeOffset.Now);
             _entries = _archive.Entries;
             return saved;
         }
 
-        internal static HistoryRetention Retention => DemoData.Enabled ? _demoRetention : _archive.Policy;
+        internal HistoryRetention Retention => MemoryOnly ? _demoRetention : _archive.Policy;
 
-        internal static bool ApplyRetention(HistoryRetention policy, Func<int, bool> confirmRemoval)
+        internal bool ApplyRetention(HistoryRetention policy, Func<int, bool> confirmRemoval)
         {
-            if (DemoData.Enabled)
+            if (MemoryOnly)
             {
                 var original = _entries;
                 var kept = policy.Retained(original, DateTimeOffset.Now);
@@ -118,7 +153,7 @@ namespace KillerScan.Services
             return applied;
         }
 
-        public static ScanComparison Compare(ScanHistoryEntry entry)
+        public ScanComparison Compare(ScanHistoryEntry entry)
         {
             int index = _entries.IndexOf(entry);
             ScanHistoryEntry? previous = index > 0
@@ -127,25 +162,23 @@ namespace KillerScan.Services
             return Compare(entry, previous);
         }
 
-        public static void Load()
+        public void Load()
         {
-            // Demo mode never reads or writes the real history. It is a screenshot build running
-            // on somebody's actual machine, so the fabricated network must not touch their file.
-            if (DemoData.Enabled) { _entries = []; _demoRetention = new(HistoryRetentionMode.Count); return; }
-            _archive = new(FilePath);
+            if (MemoryOnly) { _entries = []; _demoRetention = new(HistoryRetentionMode.Count); return; }
+            _archive = new(_path);
             _archive.Load(DateTimeOffset.Now);
             _entries = _archive.Entries;
         }
 
-        /// <summary>Demo mode only: seeds fabricated history without going near the real file.</summary>
-        internal static void SeedDemo(IEnumerable<ScanHistoryEntry> entries)
+        /// <summary>Memory-only stores: seeds history without going near a real file.</summary>
+        internal void SeedDemo(IEnumerable<ScanHistoryEntry> entries)
         {
-            if (!DemoData.Enabled) return;
+            if (!MemoryOnly) return;
             _entries = [.. entries];
             _demoRetention = new(HistoryRetentionMode.SaveAll);
         }
 
-        public static ScanComparison Record(string target, IEnumerable<NetworkDevice> devices, ScanCompletion completion = ScanCompletion.Complete) =>
+        public ScanComparison Record(string target, IEnumerable<NetworkDevice> devices, ScanCompletion completion = ScanCompletion.Complete) =>
             Record(target, target, devices, completion, new ScanOptions(), false);
 
         /// <summary>
@@ -153,7 +186,7 @@ namespace KillerScan.Services
         /// is the full target text, and with <paramref name="options"/> and <paramref name="deep"/>
         /// decides which earlier runs are fair baselines.
         /// </summary>
-        public static ScanComparison Record(string caption, string targets, IEnumerable<NetworkDevice> devices,
+        public ScanComparison Record(string caption, string targets, IEnumerable<NetworkDevice> devices,
             ScanCompletion completion, ScanOptions options, bool deep)
         {
             var current = new ScanHistoryEntry
@@ -168,7 +201,7 @@ namespace KillerScan.Services
             };
             var previous = _entries.LastOrDefault(entry => entry.IsBaselineFor(current));
             var comparison = Compare(current, previous);
-            if (DemoData.Enabled) _entries = _demoRetention.Retained(_entries.Concat([current]), current.ScannedAt);
+            if (MemoryOnly) _entries = _demoRetention.Retained(_entries.Concat([current]), current.ScannedAt);
             else
             {
                 comparison = comparison with { Saved = _archive.Append(current, current.ScannedAt) };
