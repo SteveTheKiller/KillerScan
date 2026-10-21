@@ -14,6 +14,25 @@ namespace KillerScan.Controls
             ["ColPorts"]  = ColPorts,
         };
 
+        /// <summary>
+        /// Keeps the MAC column at least as wide as a full address in the grid's current font,
+        /// so neither a drag, a saved width from an older version nor a wider theme font can cut
+        /// one off. The widest hex digit stands in for every position.
+        /// </summary>
+        private void FitMacColumn()
+        {
+            var sample = new System.Windows.Media.FormattedText("DD:DD:DD:DD:DD:DD",
+                System.Globalization.CultureInfo.InvariantCulture, System.Windows.FlowDirection.LeftToRight,
+                new System.Windows.Media.Typeface(ResultsGrid.FontFamily, ResultsGrid.FontStyle, System.Windows.FontWeights.SemiBold, ResultsGrid.FontStretch),
+                ResultsGrid.FontSize, System.Windows.Media.Brushes.Black,
+                System.Windows.Media.VisualTreeHelper.GetDpi(this).PixelsPerDip);
+            // Cell padding, the gridline and the sort glyph's room in the header.
+            double needed = Math.Ceiling(sample.WidthIncludingTrailingWhitespace) + 24;
+            ColMac.MinWidth = Math.Max(110, needed);
+            if (ColMac.Width.IsAbsolute && ColMac.Width.Value < ColMac.MinWidth)
+                ColMac.Width = new DataGridLength(ColMac.MinWidth);
+        }
+
         private void SaveColumnLayout()
         {
             try

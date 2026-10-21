@@ -81,6 +81,13 @@ namespace KillerScan.Controls
             ActivateSession();
             StartVendorNoticeTimer();
             RestoreColumnLayout();
+            FitMacColumn();
+            // Themes and the interface font change the grid's font; the MAC column follows.
+            DependencyPropertyDescriptor.FromProperty(Control.FontFamilyProperty, typeof(DataGrid))
+                .AddValueChanged(ResultsGrid, (_, _) => FitMacColumn());
+            DependencyPropertyDescriptor.FromProperty(Control.FontSizeProperty, typeof(DataGrid))
+                .AddValueChanged(ResultsGrid, (_, _) => FitMacColumn());
+            Loaded += (_, _) => FitMacColumn();
             AddWorkspaceDeviceMenus();
             ServicesGrid.SelectionChanged += (_, _) =>
             {

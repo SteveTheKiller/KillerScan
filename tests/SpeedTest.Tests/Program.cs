@@ -76,6 +76,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--profiles-ui" })) { await HistoryUiTests.Run(profilesOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--menu-icons-ui" })) { await HistoryUiTests.Run(menusOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--topology" })) { await TopologyTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--device-table" })) { HistoryUiTests.Isolated = DeviceTableTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--topology-keyboard" })) { HistoryUiTests.Isolated = TopologyKeyboardTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--topology-stream" })) { HistoryUiTests.Isolated = TopologyStreamTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--csv-export" })) { await CsvExportTests.Run(); return 0; }
