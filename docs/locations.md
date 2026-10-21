@@ -1,6 +1,6 @@
 # Locations
 
-Status: draft spec, agreed in planning on October 21, 2026. Nothing here is built yet.
+Status: agreed in planning on October 21, 2026, and built in 1.8.4. "As built" at the end records where the build differs from this plan and what is still open.
 
 Locations keep each customer site's saved scans, device names, approvals, history and remembered usernames separate. Today all of that is global and keyed by MAC or IP, so two sites that both use `192.168.1.x` can share names, trust and SSH usernames (review finding BF-003). Locations fix that and replace the Scan Profiles list with Saved scans inside each Location.
 
@@ -113,3 +113,25 @@ The five current stores are global: `profiles.json`, `history.json`, `devices.js
 4. **Command line and terminal:** `/scan` and `/probe` take `/location <name>`, and the PowerShell `scan` and `probe` commands take `-Location`. With it, the run reads that Location's names and approvals, records history there and uses its Known list. Without it, they stay Temporary scans. An unknown or ambiguous name is a usage error (exit 2), never a silent Temporary scan.
 5. **Retention:** per Location, defaulting to the current global setting at migration.
 6. **Keep Alive:** unchanged and not Location-aware in the first release.
+
+## As built
+
+Where 1.8.4 differs from the plan above:
+
+- **One scan workspace.** The app has a single scan workspace rather than tabs, so "the active tab" is that workspace. Its Location drives the History and Saved scans sidebar lists, the status tooltip, SSH usernames and the terminal's Scan button.
+- **Starting Location.** The workspace starts in the Location used last. After migration that is Unassigned, so an upgrade looks the same as before. A fresh install starts as a Temporary scan.
+- **Device mark.** Green is approved, amber is new since the baseline, and the muted text color is known but not approved. A Temporary scan shows everything as known.
+- **Suggestion.** Matches on gateway MAC only. Each completed scan records the MAC of the device at the gateway address in its Location. SSID and subnet are not used yet. Dismiss hides a gateway's suggestion until the app restarts.
+- **Adapter preference.** Save scan records the adapter Windows routes the targets through. Picking the adapter by hand, and binding traffic to it, wait for backlog B04. A run that would route through another adapter asks first, and every run records the adapter it used.
+- **Export.** History is always included. The only choice is the SSH usernames checkbox, because the existing dialog has one checkbox.
+- **Command line.** Without `/location`, scans no longer apply any saved names or types, because those now belong to a Location. `/probe /location` applies names and types but records no history.
+- **History.** "Show all Locations" is on the History button's right-click menu.
+- **Temporary results.** "Save results to Location" moves a Temporary scan's history entries and typed names into a Location without approving anything or touching its baseline.
+
+Still open:
+
+- **Manage Locations.** It opens the Saved scans sidebar, which lists the current Location's saved scans; that section is still titled Profiles. A real Locations list, with delete, is not built.
+- **Deleting a Location.** Not built. Location folders are never removed.
+- **Notes in reports.** Notes stay out of reports, as planned; there is no report option yet.
+- **Retention.** Each Location keeps its own retention setting, copied at migration. The History settings dialog changes the current Location's only.
+- **Real-app checks.** Migration, the picker, the banner and the adapter prompt are covered by automated checks with scratch folders, but none has yet been run against a real install's data or on hardware with several adapters.
