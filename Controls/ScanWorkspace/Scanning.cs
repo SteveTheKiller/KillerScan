@@ -79,7 +79,7 @@ namespace KillerScan.Controls
                 completed = !cts.IsCancellationRequested && !_disposed;
                 if (completed)
                 {
-                    if (!_runDeepAfterScan || _active.Devices.Count == 0) RecordCompletedRun();
+                    if (!_runDeepAfterScan || _active.Devices.Count == 0) RecordCompletedRun(options, deep: false);
                     if (_active.Devices.Count > 0 && !DevicePreferences.HasTrustedDevices)
                     {
                         PersistenceFeedback.Check(DevicePreferences.TrustAll(_active.Devices), DevicePreferences.Retry, () => DevicePreferences.SaveError);
@@ -118,9 +118,9 @@ namespace KillerScan.Controls
             }
         }
 
-        private void RecordCompletedRun(ScanCompletion completion = ScanCompletion.Complete)
+        private void RecordCompletedRun(ScanOptions options, bool deep, ScanCompletion completion = ScanCompletion.Complete)
         {
-            var recorded = ScanHistory.Record(_active.ScannedSubnet, _active.Devices, completion);
+            var recorded = ScanHistory.Record(_active.ScannedSubnet, _active.SubnetText, _active.Devices, completion, options, deep);
             _active.ScannedAt = recorded.Current.ScannedAt;
             _active.Completion = completion;
             if (_disposed) return;

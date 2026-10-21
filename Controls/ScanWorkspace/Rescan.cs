@@ -184,7 +184,7 @@ namespace KillerScan.Controls
                     if (recordProfile)
                     {
                         _scanCompleted = completion == ScanCompletion.Complete;
-                        RecordCompletedRun(completion);
+                        RecordCompletedRun(options, deep: true, completion);
                     }
                 }
                 finally
