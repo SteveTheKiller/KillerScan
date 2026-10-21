@@ -138,6 +138,9 @@
     <sys:String x:Key="Str_Ctx_RescanMany">Réanalyser les IP</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Analyse approfondie de {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Réanalyse terminée - {0} hôte(s) actualisé(s)</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Réanalyse terminée - {0} hôte(s) sur {1} actualisé(s), {2} sans réponse</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Actualisé ensuite</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Actualisation partielle</sys:String>
     <sys:String x:Key="Str_St_AppSize">Taille de l'application {0} %</sys:String>
     <sys:String x:Key="Str_St_BadTarget">Cible non valide : « {0} » - utilisez 192.168.1.0/24, 192.168.1.7 ou 192.168.1.10-50, séparées par des virgules</sys:String>
     <sys:String x:Key="Str_St_TooManyAddresses">Cela fait {0} adresses - trop pour une seule analyse (limite {1}). Réduisez la plage ou analysez-la en plusieurs fois.</sys:String>

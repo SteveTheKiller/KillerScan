@@ -29,6 +29,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Saving a profile over an existing name, in any letter case, keeps its Deep Scan choice instead of turning it off.
 - History compares a scan only with an earlier completed scan of the same full target list, with the same checks and the same normal or deep pass. Different lists that share a "first +N" caption no longer compare, and older entries saved with only that caption are not used as baselines.
 - A canceled or partial scan never reports devices or ports as removed, since it did not check everything.
+- Rescanning selected devices reports how many actually refreshed and how many did not respond, instead of counting every selected host. HTML reports keep the original scan time and add when devices were refreshed later and whether that refresh was partial.
 - The public subnet helper rejects IPv6 addresses and malformed CIDR suffixes before expanding hosts.
 - Terminal tables display escaped network control characters without changing raw scan data or JSON exports.
 - Terminal combining marks, wide characters and common emoji clusters keep consistent columns through drawing, editing, copying and resizing.

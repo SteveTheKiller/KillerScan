@@ -144,6 +144,9 @@
     <sys:String x:Key="Str_St_ScanCanceled">Scansione annullata</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Scansione approfondita di {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Riscansione completata - {0} host aggiornati</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Riscansione terminata - {0} host su {1} aggiornati, {2} senza risposta</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Aggiornato in seguito</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Aggiornamento parziale</sys:String>
     <sys:String x:Key="Str_St_Exported">Esportato in {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Override impostato: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">Override rimosso per {0}</sys:String>

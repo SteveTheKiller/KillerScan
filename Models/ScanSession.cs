@@ -21,5 +21,19 @@ namespace KillerScan.Models
         public string ScannedSubnet { get; set; } = "";
         public DateTimeOffset ScannedAt { get; set; } = DateTimeOffset.Now;
         public ScanCompletion Completion { get; set; } = ScanCompletion.Partial;
+
+        /// <summary>
+        /// Manual rescans after the scan itself. They change some devices but not the scan's
+        /// own time or completion, so reports state them separately. Null until a refresh.
+        /// </summary>
+        public ScanRefresh? Refresh { get; set; }
+    }
+
+    /// <summary>What manual rescans of this snapshot did, summed across every refresh.</summary>
+    internal sealed record ScanRefresh(DateTimeOffset At, int Refreshed, int Failed, bool Canceled)
+    {
+        public bool Partial => Failed > 0 || Canceled;
+        public ScanRefresh Then(DateTimeOffset at, int refreshed, int failed, bool canceled) =>
+            new(at, Refreshed + refreshed, Failed + failed, Canceled || canceled);
     }
 }

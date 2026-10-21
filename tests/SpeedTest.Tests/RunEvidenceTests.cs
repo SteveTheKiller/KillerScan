@@ -1,5 +1,11 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using KillerScan.Controls;
 using KillerScan.Engine;
 using KillerScan.Services;
 
@@ -14,6 +20,7 @@ internal static class RunEvidenceTests
         {
             ProfileSaveKeepsDeepScan();
             HistoryBaselines();
+            ManualRefreshProvenance();
         }
         finally { DemoData.Enabled = demo; }
         Console.WriteLine("PASS: saved scans, baselines and refreshes describe what was actually run.");
@@ -76,6 +83,63 @@ internal static class RunEvidenceTests
         var legacy = ScanHistory.Compare(ScanHistory.Entries.Last(entry => entry.Target == "10.9.0.0/24"));
         Require(legacy.Previous?.Devices.Count == 1 && legacy.Removed.Count == 1,
             "Old single-target entries still compare with each other.");
+    }
+
+    private sealed class RefreshScanner : NetworkScanner
+    {
+        public override Task<NetworkDevice> DeepProbeHostAsync(string ip, CancellationToken token,
+            ScanOptions options, int portConcurrency = 256, bool flushLocalDnsCache = true) =>
+            ip == "192.0.2.2"
+                ? Task.FromException<NetworkDevice>(new InvalidOperationException("Controlled refresh failure."))
+                : Task.FromResult(new NetworkDevice { IpAddress = ip, Hostname = "refreshed", OpenPorts = [443] });
+    }
+
+    private static void ManualRefreshProvenance()
+    {
+        SynchronizationContext.SetSynchronizationContext(new System.Windows.Threading.DispatcherSynchronizationContext(
+            System.Windows.Threading.Dispatcher.CurrentDispatcher));
+        string directory = Path.Combine(Path.GetTempPath(), "KillerScan-refresh-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            using var workspace = new ScanWorkspace("192.0.2.0/24", false, new RefreshScanner());
+            var scannedAt = new DateTimeOffset(2025, 3, 4, 5, 6, 0, TimeSpan.Zero);
+            workspace.LoadSnapshot("192.0.2.0/24", [new NetworkDevice { IpAddress = "192.0.2.1", OpenPorts = [80] },
+                new NetworkDevice { IpAddress = "192.0.2.2", OpenPorts = [22] }], scannedAt);
+            var grid = (DataGrid)workspace.FindName("ResultsGrid");
+            grid.SelectAll();
+            ((MenuItem)workspace.FindName("RescanMenuItem")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            PumpUntil(() => !workspace.IsScanning && workspace.Session.Devices.Any(d => d.Hostname == "refreshed"));
+            string status = workspace.Status;
+            string expected = string.Format((string)Application.Current.FindResource("Str_St_RescanPartial"), 1, 2, 1);
+            Require(status == expected, "A selected rescan reports what actually refreshed: \"" + status + "\"");
+
+            string output = Path.Combine(directory, "report.html");
+            workspace.ExportDialog = dialog => { dialog.FileName = output; return true; };
+            workspace.Export("html");
+            string report = File.ReadAllText(output);
+            Require(report.Contains("<b>2025-03-04 05:06</b>"), "The report keeps the original scan time.");
+            Require(report.Contains((string)Application.Current.FindResource("Str_Rep_Refreshed")) &&
+                report.Contains((string)Application.Current.FindResource("Str_Rep_RefreshPartial")),
+                "The report says some devices were refreshed later and that the refresh was partial.");
+
+            workspace.LoadSnapshot("192.0.2.0/24", [new NetworkDevice { IpAddress = "192.0.2.1" }], scannedAt);
+            workspace.Export("html");
+            Require(!File.ReadAllText(output).Contains((string)Application.Current.FindResource("Str_Rep_Refreshed")),
+                "A new snapshot carries no refresh note from the previous one.");
+        }
+        finally { Directory.Delete(directory, true); }
+    }
+
+    private static void PumpUntil(Func<bool> complete)
+    {
+        var frame = new System.Windows.Threading.DispatcherFrame();
+        var elapsed = System.Diagnostics.Stopwatch.StartNew();
+        var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(5) };
+        timer.Tick += (_, _) => { if (complete() || elapsed.ElapsedMilliseconds > 3000) frame.Continue = false; };
+        timer.Start();
+        System.Windows.Threading.Dispatcher.PushFrame(frame);
+        timer.Stop();
     }
 
     internal static void Require(bool condition, string message)

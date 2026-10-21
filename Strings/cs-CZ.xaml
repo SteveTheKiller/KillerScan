@@ -127,6 +127,9 @@
     <sys:String x:Key="Str_St_ScanCanceled">Skenování zrušeno</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Hloubkové skenování {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Opakované skenování dokončeno - obnoveno {0} hostitelů</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Opakované skenování skončilo - obnoveno {0} z {1} hostitelů, {2} neodpověděl(o)</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Později obnoveno</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Částečné obnovení</sys:String>
     <sys:String x:Key="Str_St_Exported">Exportováno do {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Ruční nastavení: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">Ruční nastavení zrušeno pro {0}</sys:String>

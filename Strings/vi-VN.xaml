@@ -120,6 +120,9 @@
     <sys:String x:Key="Str_St_ScanCanceled">Đã hủy quét</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Đang quét sâu {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Quét lại hoàn tất - đã làm mới {0} máy chủ</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Quét lại kết thúc - đã làm mới {0}/{1} máy chủ, {2} không phản hồi</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Làm mới sau</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Làm mới một phần</sys:String>
     <sys:String x:Key="Str_St_Exported">Đã xuất sang {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Đã đặt ghi đè: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">Đã xóa ghi đè cho {0}</sys:String>

@@ -179,7 +179,7 @@ namespace KillerScan.Controls
             {
                 string html = ReportExport.BuildSnapshotHtml(
                     ActiveDevices, _active.ScannedSubnet, ThemeManager.Current.ToString().ToLowerInvariant(),
-                    _active.ScannedAt, _active.Completion);
+                    _active.ScannedAt, _active.Completion, _active.Refresh);
                 if (ShowExportDialog(dlg) != true) return;
                 ExportFile.WriteText(dlg.FileName, html, Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));

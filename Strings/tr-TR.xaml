@@ -138,6 +138,9 @@
     <sys:String x:Key="Str_Ctx_RescanMany">IP'leri yeniden tara</sys:String>
     <sys:String x:Key="Str_St_Rescanning">{0} derin taranıyor ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Yeniden tarama tamamlandı - {0} ana bilgisayar yenilendi</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Yeniden tarama bitti - {1} ana bilgisayardan {0} tanesi yenilendi, {2} tanesi yanıt vermedi</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Sonradan yenilendi</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Kısmi yenileme</sys:String>
     <sys:String x:Key="Str_St_AppSize">Uygulama boyutu %{0}</sys:String>
     <sys:String x:Key="Str_St_BadTarget">Geçersiz hedef: "{0}" - virgülle ayrılmış olarak 192.168.1.0/24, 192.168.1.7 veya 192.168.1.10-50 kullanın</sys:String>
     <sys:String x:Key="Str_St_TooManyAddresses">Bu {0} adres - tek bir tarama için çok fazla (sınır {1}). Aralığı daraltın veya parçalar hâlinde tarayın.</sys:String>

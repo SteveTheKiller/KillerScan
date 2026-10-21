@@ -144,6 +144,9 @@
     <sys:String x:Key="Str_St_ScanCanceled">Szkennelés megszakítva</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Mély vizsgálat {0}...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Újrakeresés kész - {0} gazdagép frissítve</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Újrakeresés befejezve - {1} gazdagépből {0} frissítve, {2} nem válaszolt</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Később frissítve</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Részleges frissítés</sys:String>
     <sys:String x:Key="Str_St_Exported">Exportálva ide: {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Felülbírálás beállítva: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">A(z) {0} felülbírálása törölve</sys:String>

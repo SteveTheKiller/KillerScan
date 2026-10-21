@@ -138,6 +138,9 @@
     <sys:String x:Key="Str_Ctx_RescanMany">重新掃描 IP</sys:String>
     <sys:String x:Key="Str_St_Rescanning">正在深度掃描 {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">重新掃描完成 - 已重新整理 {0} 台主機</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">重新掃描結束 - 已重新整理 {0}/{1} 台主機，{2} 台無回應</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">之後重新整理</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">部分重新整理</sys:String>
     <sys:String x:Key="Str_St_AppSize">應用程式大小 {0}%</sys:String>
     <sys:String x:Key="Str_St_BadTarget">目標無效：「{0}」 - 請使用 192.168.1.0/24、192.168.1.7 或 192.168.1.10-50，以逗號分隔</sys:String>
     <sys:String x:Key="Str_St_TooManyAddresses">這是 {0} 個位址 - 單次掃描過多（上限 {1}）。請縮小範圍或分批掃描。</sys:String>

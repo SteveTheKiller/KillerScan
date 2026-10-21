@@ -126,6 +126,9 @@
     <sys:String x:Key="Str_About_DescB" xml:space="preserve"> na licencji GPLv3.</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Dokładne skanowanie {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Ponowne skanowanie zakończone - odświeżono hostów: {0}</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Ponowne skanowanie zakończone - odświeżono {0} z {1} hostów, bez odpowiedzi: {2}</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Odświeżono później</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Częściowe odświeżenie</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Ustawiono typ: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">Wyczyszczono typ dla {0}</sys:String>
     <sys:String x:Key="Str_St_AppSize">Rozmiar aplikacji {0}%</sys:String>

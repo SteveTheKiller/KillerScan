@@ -144,6 +144,9 @@
     <sys:String x:Key="Str_St_ScanCanceled">Verificação cancelada</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Verificação profunda de {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Nova verificação concluída - {0} host(s) atualizado(s)</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Nova verificação encerrada - {0} de {1} host(s) atualizado(s), {2} sem resposta</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Atualizado depois</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Atualização parcial</sys:String>
     <sys:String x:Key="Str_St_Exported">Exportado para {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Substituição definida: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">Substituição removida para {0}</sys:String>

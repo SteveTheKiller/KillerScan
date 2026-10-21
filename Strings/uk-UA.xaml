@@ -144,6 +144,9 @@
     <sys:String x:Key="Str_St_ScanCanceled">Сканування скасовано</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Глибоке сканування {0}...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Повторне сканування завершено - оновлено хостів: {0}</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Повторне сканування закінчено - оновлено {0} з {1} хостів, не відповіли: {2}</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Оновлено пізніше</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Часткове оновлення</sys:String>
     <sys:String x:Key="Str_St_Exported">Експортовано до {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Заміну задано: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">Заміну скинуто для {0}</sys:String>

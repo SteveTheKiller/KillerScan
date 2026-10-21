@@ -116,6 +116,9 @@
     <sys:String x:Key="Str_St_ScanCanceled">Pregled je preklican</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Podroben pregled: {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Ponovni pregled je končan - osveženi gostitelji: {0}</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Ponovni pregled je končan - osveženih {0} od {1} gostiteljev, brez odziva: {2}</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Osveženo pozneje</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Delna osvežitev</sys:String>
     <sys:String x:Key="Str_St_Exported">Izvoženo v {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Ročna nastavitev: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">Ročna nastavitev za {0} je odstranjena</sys:String>

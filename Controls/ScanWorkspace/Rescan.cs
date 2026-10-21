@@ -65,7 +65,8 @@ namespace KillerScan.Controls
 
             ScanProgress.Value = 0;
             ScanProgress.Visibility = Visibility.Visible;
-            int done = 0;
+            int done = 0, refreshed = 0;
+            bool canceled = false;
             var options = s.Options;
             if (options.ReverseDns) NetworkScanner.FlushLocalDnsCache();
 
@@ -87,16 +88,17 @@ namespace KillerScan.Controls
                     catch { done++; ScanProgress.Value = done * 100.0 / targets.Count; continue; }
 
                     int idx = s.Devices.IndexOf(old);
-                    if (idx >= 0) s.Devices[idx] = fresh;
+                    if (idx >= 0) { s.Devices[idx] = fresh; refreshed++; }
 
                     done++;
                     ScanProgress.Value = done * 100.0 / targets.Count;
                 }
-                StatusText.Text = string.Format(Loc("Str_St_RescanDone"), targets.Count);
+                StatusText.Text = RescanSummary(refreshed, targets.Count);
             }
-            catch (OperationCanceledException) { if (!_disposed) StatusText.Text = Loc("Str_St_ScanCanceled"); }
+            catch (OperationCanceledException) { canceled = true; if (!_disposed) StatusText.Text = Loc("Str_St_ScanCanceled"); }
             finally
             {
+                NoteRefresh(s, refreshed, targets.Count - refreshed, canceled);
                 _rescanCts.Dispose();
                 _rescanCts = null;
                 FinishRescanUi();
@@ -105,6 +107,21 @@ namespace KillerScan.Controls
 
         private async void DeepScanAll_Click(object sender, RoutedEventArgs e)
             => await DeepScanAllAsync();
+
+        // "N refreshed" only when every host answered; otherwise how many did and did not.
+        private string RescanSummary(int refreshed, int total) => refreshed == total
+            ? string.Format(Loc("Str_St_RescanDone"), refreshed)
+            : string.Format(Loc("Str_St_RescanPartial"), refreshed, total, total - refreshed);
+
+        // Manual refreshes keep the scan's own time and completion and are noted beside them.
+        // Canceled hosts that were never reached count as not refreshed.
+        private static void NoteRefresh(ScanSession session, int refreshed, int failed, bool canceled)
+        {
+            if (refreshed == 0 && failed == 0) return;
+            var now = DateTimeOffset.Now;
+            session.Refresh = session.Refresh?.Then(now, refreshed, failed, canceled)
+                ?? new ScanRefresh(now, refreshed, failed, canceled);
+        }
 
         private async Task DeepScanAllAsync(bool recordProfile = false)
         {
@@ -166,7 +183,7 @@ namespace KillerScan.Controls
 
                 await Task.WhenAll(tasks);
                 completion = refreshed == targets.Count ? ScanCompletion.Complete : ScanCompletion.Partial;
-                if (!_disposed) StatusText.Text = string.Format(Loc("Str_St_RescanDone"), refreshed);
+                if (!_disposed) StatusText.Text = RescanSummary(refreshed, targets.Count);
             }
             catch (OperationCanceledException)
             {
@@ -186,6 +203,9 @@ namespace KillerScan.Controls
                         _scanCompleted = completion == ScanCompletion.Complete;
                         RecordCompletedRun(options, deep: true, completion);
                     }
+                    // A manual Deep Scan All refreshes an existing snapshot; an automatic one is
+                    // part of the run it just recorded.
+                    else NoteRefresh(s, refreshed, targets.Count - refreshed, completion == ScanCompletion.Canceled);
                 }
                 finally
                 {

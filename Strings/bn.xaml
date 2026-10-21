@@ -138,6 +138,9 @@
     <sys:String x:Key="Str_Ctx_RescanMany">IP গুলো পুনরায় স্ক্যান করুন</sys:String>
     <sys:String x:Key="Str_St_Rescanning">{0} গভীরভাবে স্ক্যান করা হচ্ছে ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">পুনঃস্ক্যান সম্পন্ন - {0}টি হোস্ট হালনাগাদ হয়েছে</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">পুনঃস্ক্যান শেষ - {1}টির মধ্যে {0}টি হোস্ট হালনাগাদ হয়েছে, {2}টি সাড়া দেয়নি</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">পরে হালনাগাদ</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">আংশিক হালনাগাদ</sys:String>
     <sys:String x:Key="Str_St_AppSize">অ্যাপের আকার {0}%</sys:String>
     <sys:String x:Key="Str_St_BadTarget">বৈধ লক্ষ্য নয়: “{0}” - কমা দিয়ে আলাদা করে 192.168.1.0/24, 192.168.1.7 বা 192.168.1.10-50 ব্যবহার করুন</sys:String>
     <sys:String x:Key="Str_St_TooManyAddresses">এটি {0}টি ঠিকানা - একটি স্ক্যানের জন্য অত্যধিক (সীমা {1})। পরিসর ছোট করুন বা অংশে ভাগ করে স্ক্যান করুন।</sys:String>

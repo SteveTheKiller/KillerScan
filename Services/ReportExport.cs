@@ -74,7 +74,7 @@ namespace KillerScan.Services
             => BuildSnapshotHtml(devices, subnetText, themeKey, DateTimeOffset.Now, ScanCompletion.Complete);
 
         internal static string BuildSnapshotHtml(IEnumerable<NetworkDevice> devices, string subnetText, string themeKey,
-            DateTimeOffset scannedAt, ScanCompletion completion)
+            DateTimeOffset scannedAt, ScanCompletion completion, KillerScan.Models.ScanRefresh? refresh = null)
         {
             string current = string.IsNullOrEmpty(themeKey) ? "dark" : themeKey.ToLowerInvariant();
             var list = devices.OrderBy(d => d.IpSortKey).ToList();
@@ -157,6 +157,13 @@ namespace KillerScan.Services
                 _ => string.Empty
             };
             string status = state.Length == 0 ? string.Empty : " &middot; <b>" + Esc(state) + "</b>";
+            // Manual rescans changed some rows after the scan time above, so say when and how many.
+            if (refresh != null)
+            {
+                status += $" &middot; {Esc(L("Str_Rep_Refreshed", "Refreshed later"))} <b>{refresh.At:yyyy-MM-dd HH:mm}</b>" +
+                    $" &middot; <b>{refresh.Refreshed}</b> {Esc(L("Str_Rep_Devices", "devices"))}";
+                if (refresh.Partial) status += " &middot; <b>" + Esc(L("Str_Rep_RefreshPartial", "Partial refresh")) + "</b>";
+            }
             sb.AppendLine($"<p class='meta'>{Esc(L("Str_Rep_Subnet", "Subnet"))} <b>{Esc(subnetText)}</b> &middot; {Esc(L("Str_Rep_Scanned", "Scanned"))} <b>{scannedAt:yyyy-MM-dd HH:mm}</b> &middot; <b>{list.Count}</b> {Esc(L("Str_Rep_Devices", "devices"))}{status}</p>");
 
             // The report's headers reuse the grid's own column keys, so the two never disagree.

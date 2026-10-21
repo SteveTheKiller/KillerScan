@@ -138,6 +138,9 @@
     <sys:String x:Key="Str_Ctx_RescanMany">IPs erneut scannen</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Tiefen-Scan von {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Erneuter Scan abgeschlossen - {0} Host(s) aktualisiert</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Erneuter Scan beendet - {0} von {1} Host(s) aktualisiert, {2} ohne Antwort</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Später aktualisiert</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Teilweise aktualisiert</sys:String>
     <sys:String x:Key="Str_St_AppSize">App-Größe {0} %</sys:String>
     <sys:String x:Key="Str_St_BadTarget">Kein gültiges Ziel: "{0}" - verwende 192.168.1.0/24, 192.168.1.7 oder 192.168.1.10-50, durch Kommas getrennt</sys:String>
     <sys:String x:Key="Str_St_TooManyAddresses">Das sind {0} Adressen - zu viele für einen Scan (Grenze {1}). Grenze den Bereich ein oder scanne ihn in Teilen.</sys:String>

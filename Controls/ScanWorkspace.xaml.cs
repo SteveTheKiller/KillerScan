@@ -204,6 +204,7 @@ namespace KillerScan.Controls
             _active.ScannedSubnet = target;
             _active.ScannedAt = scannedAt ?? DateTimeOffset.Now;
             _active.Completion = ScanCompletion.Complete;
+            _active.Refresh = null;
             _active.Devices.Clear();
             foreach (var device in devices) _active.Devices.Add(device);
             RefreshDeviceCount();

@@ -144,6 +144,9 @@
     <sys:String x:Key="Str_St_ScanCanceled">Skanningen ble avbrutt</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Dypskanner {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Ny skanning fullført - {0} vert(er) oppdatert</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Ny skanning ferdig - {0} av {1} vert(er) oppdatert, {2} svarte ikke</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Oppdatert senere</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Delvis oppdatering</sys:String>
     <sys:String x:Key="Str_St_Exported">Eksportert til {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Overstyring satt: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">Overstyringen er fjernet for {0}</sys:String>

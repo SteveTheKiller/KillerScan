@@ -144,6 +144,9 @@
     <sys:String x:Key="Str_St_ScanCanceled">Сканерлеу болдырылмады</sys:String>
     <sys:String x:Key="Str_St_Rescanning">{0} терең сканерленуде...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Қайта сканерлеу аяқталды - {0} хост жаңартылды</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Қайта сканерлеу аяқталды - {1} хостың {0} жаңартылды, {2} жауап бермеді</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Кейін жаңартылды</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Ішінара жаңарту</sys:String>
     <sys:String x:Key="Str_St_Exported">{0} ішіне экспортталды</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Қайта анықтау орнатылды: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">{0} үшін қайта анықтау тазаланды</sys:String>

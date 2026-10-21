@@ -57,6 +57,7 @@ namespace KillerScan.Controls
             _active.ScannedSubnet = targets.Summary;
             _active.ScannedAt = DateTimeOffset.Now;
             _active.Completion = ScanCompletion.Partial;
+            _active.Refresh = null;
             _active.Devices.Clear();
             _topologyPositions.Clear();
             var cts = new CancellationTokenSource();

@@ -149,6 +149,9 @@
     <sys:String x:Key="Str_Ctx_RescanMany">IP を再スキャン</sys:String>
     <sys:String x:Key="Str_St_Rescanning">{0} を詳細スキャン中 ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">再スキャン完了 - {0} 台のホストを更新しました</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">再スキャン終了 - {1} 台中 {0} 台のホストを更新、{2} 台は応答なし</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">後で更新</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">一部のみ更新</sys:String>
     <sys:String x:Key="Str_St_AppSize">アプリのサイズ {0}%</sys:String>
     <sys:String x:Key="Str_St_BadTarget">無効なターゲットです: 「{0}」 - 192.168.1.0/24、192.168.1.7、192.168.1.10-50 のようにカンマ区切りで指定してください</sys:String>
     <sys:String x:Key="Str_St_TooManyAddresses">{0} 件のアドレスです - 1 回のスキャンには多すぎます (上限 {1})。範囲を狭めるか、分割してスキャンしてください。</sys:String>

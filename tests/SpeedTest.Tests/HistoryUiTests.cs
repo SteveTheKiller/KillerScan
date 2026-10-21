@@ -32,6 +32,9 @@ internal static partial class HistoryUiTests
     private static object? Field(object target, string name) => target.GetType().GetField(name, Instance)!.GetValue(target);
     private static void Require(bool condition, string message) { _checks++; if (!condition) throw new InvalidOperationException(message); }
 
+    /// <summary>Runs one other check inside this suite's app host instead of the history checks.</summary>
+    internal static Action? Isolated;
+
     public static Task Run(bool settingsOnly = false, bool tableOnly = false, bool profilesOnly = false, bool menusOnly = false, bool lifecycleOnly = false)
     {
         Exception? failure = null;
@@ -43,8 +46,9 @@ internal static partial class HistoryUiTests
         thread.SetApartmentState(ApartmentState.STA); thread.Start();
         Require(thread.Join(TimeSpan.FromSeconds(120)), "History checks finish within two minutes.");
         if (failure != null) throw new InvalidOperationException("History UI regression failed.", failure);
-        Console.WriteLine(lifecycleOnly ? "PASS: controlled workspace lifecycle setup."
-            : "PASS: " + _checks + " history, context-menu, shortcut and rendering assertions.");
+        if (Isolated == null)
+            Console.WriteLine(lifecycleOnly ? "PASS: controlled workspace lifecycle setup."
+                : "PASS: " + _checks + " history, context-menu, shortcut and rendering assertions.");
         return Task.CompletedTask;
     }
 
@@ -107,6 +111,7 @@ internal static partial class HistoryUiTests
             ((Action?)localeManager.GetField("LocaleChanged", Static)!.GetValue(null))?.Invoke();
         }
         Theme("Black"); Locale("EnUS");
+        if (Isolated != null) { Isolated(); return; }
         if (lifecycleOnly) { ScanLifecycleTests.Run(); return; }
         if (settingsOnly)
         {

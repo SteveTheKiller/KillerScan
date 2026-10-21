@@ -138,6 +138,9 @@
     <sys:String x:Key="Str_Ctx_RescanMany">Reescanear IP</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Escaneo profundo de {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Reescaneo completado: {0} host(s) actualizados</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Reescaneo terminado: {0} de {1} host(s) actualizados, {2} sin respuesta</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Actualizado después</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Actualización parcial</sys:String>
     <sys:String x:Key="Str_St_AppSize">Tamaño de la aplicación {0} %</sys:String>
     <sys:String x:Key="Str_St_BadTarget">Objetivo no válido: «{0}». Usa 192.168.1.0/24, 192.168.1.7 o 192.168.1.10-50, separados por comas</sys:String>
     <sys:String x:Key="Str_St_TooManyAddresses">Son {0} direcciones - demasiadas para un solo escaneo (límite {1}). Reduce el rango o escanéalo por partes.</sys:String>

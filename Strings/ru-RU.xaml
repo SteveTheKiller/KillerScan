@@ -144,6 +144,9 @@
     <sys:String x:Key="Str_St_ScanCanceled">Сканирование отменено</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Глубокое сканирование {0} ...</sys:String>
     <sys:String x:Key="Str_St_RescanDone">Пересканирование завершено - обновлено хостов: {0}</sys:String>
+    <sys:String x:Key="Str_St_RescanPartial">Пересканирование окончено - обновлено {0} из {1} хостов, не ответили: {2}</sys:String>
+    <sys:String x:Key="Str_Rep_Refreshed">Обновлено позже</sys:String>
+    <sys:String x:Key="Str_Rep_RefreshPartial">Частичное обновление</sys:String>
     <sys:String x:Key="Str_St_Exported">Экспортировано в {0}</sys:String>
     <sys:String x:Key="Str_St_OverrideSet">Переопределение задано: {0} = {1}</sys:String>
     <sys:String x:Key="Str_St_OverrideCleared">Переопределение сброшено для {0}</sys:String>
