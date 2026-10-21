@@ -287,6 +287,7 @@ Suas configurações não serão removidas.</sys:String>
          can never disagree with the app that produced it. Only these are its own. Accent names
          are new: the app's accent dots are swatches with no text, but the report's need titles. -->
     <sys:String x:Key="Str_Rep_Theme">Tema</sys:String>
+    <sys:String x:Key="Str_Rep_Title">Relatório do KillerScan</sys:String>
     <sys:String x:Key="Str_Rep_Accent">Destaque</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">Sub-rede</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">Verificado</sys:String>

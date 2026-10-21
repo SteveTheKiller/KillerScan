@@ -82,9 +82,11 @@ namespace KillerScan.Services
             var sb = new StringBuilder();
 
             sb.AppendLine("<!DOCTYPE html>");
-            sb.AppendLine($"<html lang='en' class='theme-{current}'><head><meta charset='utf-8'/>");
+            // The report is written in the app's language, so it says so for screen readers,
+            // spell checkers and translation tools.
+            sb.AppendLine($"<html lang='{Esc(LocaleManager.LanguageTag)}' class='theme-{current}'><head><meta charset='utf-8'/>");
             sb.AppendLine("<meta name='viewport' content='width=device-width, initial-scale=1'/>");
-            sb.AppendLine("<title>KillerScan Report</title>");
+            sb.AppendLine($"<title>{Esc(L("Str_Rep_Title", "KillerScan Report"))}</title>");
             sb.AppendLine("<style>");
 
             // Per-theme variable blocks (built without string interpolation to avoid brace escaping).

@@ -220,6 +220,7 @@
 
     <!-- Exported HTML report -->
     <sys:String x:Key="Str_Rep_Theme">Téma</sys:String>
+    <sys:String x:Key="Str_Rep_Title">KillerScan-jelentés</sys:String>
     <sys:String x:Key="Str_Rep_Accent">Kiemelés</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">Alhálózat</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">Vizsgálva</sys:String>

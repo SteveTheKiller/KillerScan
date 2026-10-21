@@ -282,6 +282,7 @@
 
     <!-- Exported HTML report -->
     <sys:String x:Key="Str_Rep_Theme">Тема</sys:String>
+    <sys:String x:Key="Str_Rep_Title">Отчёт KillerScan</sys:String>
     <sys:String x:Key="Str_Rep_Accent">Акцент</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">Подсеть</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">Сканировано</sys:String>

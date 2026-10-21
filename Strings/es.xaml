@@ -193,6 +193,7 @@
 
     <!-- Exported HTML report -->
     <sys:String x:Key="Str_Rep_Theme">Tema</sys:String>
+    <sys:String x:Key="Str_Rep_Title">Informe de KillerScan</sys:String>
     <sys:String x:Key="Str_Rep_Accent">Acento</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">Subred</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">Escaneado</sys:String>

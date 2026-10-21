@@ -176,6 +176,7 @@ namespace KillerScan.Controls
         public void Export() => ExportButton_Click(ExportButton, new RoutedEventArgs());
         public void RefreshLocale()
         {
+            RefreshColumnHeaders();
             _filteredView?.Refresh();
             RefreshDeviceCount();
             UpdateDeepScanButton();
@@ -184,6 +185,20 @@ namespace KillerScan.Controls
             if (_showTopology) RefreshTopology();
             if (_showServices) RefreshServices();
         }
+        // Grid columns sit outside the visual tree, so their DynamicResource headers keep the
+        // language they were created in. They are restated on every language change.
+        private void RefreshColumnHeaders()
+        {
+            ColIp.Header = Loc("Str_Col_Ip");
+            ColHost.Header = Loc("Str_Col_Host");
+            ColMac.Header = Loc("Str_Col_Mac");
+            ColVendor.Header = Loc("Str_Col_Vendor");
+            ColType.Header = Loc("Str_Col_Type");
+            ColPorts.Header = Loc("Str_Col_Ports");
+            string[] services = ["Str_Services_Service", "Str_Col_Ports", "Str_Col_DeviceName", "Str_Col_Ip", "Str_Col_Type"];
+            for (int i = 0; i < services.Length && i < ServicesGrid.Columns.Count; i++) ServicesGrid.Columns[i].Header = Loc(services[i]);
+        }
+
         public void ApplyScale(double scale) => LayoutTransform = new ScaleTransform(scale, scale);
         public void Dispose()
         {

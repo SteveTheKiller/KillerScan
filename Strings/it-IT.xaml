@@ -220,6 +220,7 @@
 
     <!-- Exported HTML report -->
     <sys:String x:Key="Str_Rep_Theme">Tema</sys:String>
+    <sys:String x:Key="Str_Rep_Title">Report di KillerScan</sys:String>
     <sys:String x:Key="Str_Rep_Accent">Accento</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">Sottorete</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">Scansione eseguita</sys:String>

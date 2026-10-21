@@ -204,6 +204,7 @@
 
     <!-- Exported HTML report -->
     <sys:String x:Key="Str_Rep_Theme">テーマ</sys:String>
+    <sys:String x:Key="Str_Rep_Title">KillerScan レポート</sys:String>
     <sys:String x:Key="Str_Rep_Accent">アクセント</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">サブネット</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">スキャン日時</sys:String>

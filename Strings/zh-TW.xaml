@@ -193,6 +193,7 @@
 
     <!-- Exported HTML report -->
     <sys:String x:Key="Str_Rep_Theme">佈景主題</sys:String>
+    <sys:String x:Key="Str_Rep_Title">KillerScan 報告</sys:String>
     <sys:String x:Key="Str_Rep_Accent">強調色</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">子網路</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">掃描時間</sys:String>

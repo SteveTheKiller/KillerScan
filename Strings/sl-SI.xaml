@@ -234,6 +234,7 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
     <sys:String x:Key="Str_Vendor_Randomized">(Naključen naslov MAC)</sys:String>
     <sys:String x:Key="Str_Rep_Theme">Tema</sys:String>
+    <sys:String x:Key="Str_Rep_Title">Poročilo KillerScan</sys:String>
     <sys:String x:Key="Str_Rep_Accent">Poudarjena barva</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">Podomrežje</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">Pregledano</sys:String>

@@ -193,6 +193,7 @@
 
     <!-- Exported HTML report -->
     <sys:String x:Key="Str_Rep_Theme">Tema</sys:String>
+    <sys:String x:Key="Str_Rep_Title">KillerScan Raporu</sys:String>
     <sys:String x:Key="Str_Rep_Accent">Vurgu</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">Alt ağ</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">Tarandı</sys:String>

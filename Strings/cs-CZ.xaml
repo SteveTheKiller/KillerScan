@@ -191,6 +191,7 @@
 
     <!-- Exported HTML report -->
     <sys:String x:Key="Str_Rep_Theme">Motiv</sys:String>
+    <sys:String x:Key="Str_Rep_Title">Přehled KillerScan</sys:String>
     <sys:String x:Key="Str_Rep_Accent">Zvýraznění</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">Podsíť</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">Skenováno</sys:String>

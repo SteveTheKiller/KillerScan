@@ -287,6 +287,7 @@
          can never disagree with the app that produced it. Only these are its own. Accent names
          are new: the app's accent dots are swatches with no text, but the report's need titles. -->
     <sys:String x:Key="Str_Rep_Theme">Тема</sys:String>
+    <sys:String x:Key="Str_Rep_Title">Звіт KillerScan</sys:String>
     <sys:String x:Key="Str_Rep_Accent">Акцент</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">Підмережа</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">Скановано</sys:String>

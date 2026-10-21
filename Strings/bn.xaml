@@ -193,6 +193,7 @@
 
     <!-- Exported HTML report -->
     <sys:String x:Key="Str_Rep_Theme">থিম</sys:String>
+    <sys:String x:Key="Str_Rep_Title">KillerScan রিপোর্ট</sys:String>
     <sys:String x:Key="Str_Rep_Accent">অ্যাকসেন্ট</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">সাবনেট</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">স্ক্যান করা হয়েছে</sys:String>

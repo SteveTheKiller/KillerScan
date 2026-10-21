@@ -19,7 +19,7 @@
       "--preference-persistence", "--demo-stores", "--osc-parser", "--terminal-safety", "--terminal-paste", "--conpty-backpressure", "--scan-lifecycle",
       "--scan-presentation", "--menu-separators", "--startup-fade", "--release-ui", "--scan-options-ui",
       "--history-ui", "--history-settings-ui", "--history-table-ui", "--profiles-ui", "--menu-icons-ui",
-      "--topology", "--topology-stream", "--topology-keyboard", "--device-table", "--csv-export", "--export-publication", "--history-load", "--run-evidence", "--locations",
+      "--topology", "--topology-stream", "--topology-keyboard", "--device-table", "--report-language", "--csv-export", "--export-publication", "--history-load", "--run-evidence", "--locations",
       "--locations-sidebar", "--location-workspace", "--report-sort", "--command-line-path",
       "--executable-deployment", "--report-logo", "--outline-hover-ui", "--radio-center-ui", "--shrink-to-fit"
     ],

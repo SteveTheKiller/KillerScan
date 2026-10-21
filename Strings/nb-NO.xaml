@@ -287,6 +287,7 @@ Innstillingene dine fjernes ikke.</sys:String>
          can never disagree with the app that produced it. Only these are its own. Accent names
          are new: the app's accent dots are swatches with no text, but the report's need titles. -->
     <sys:String x:Key="Str_Rep_Theme">Tema</sys:String>
+    <sys:String x:Key="Str_Rep_Title">KillerScan-rapport</sys:String>
     <sys:String x:Key="Str_Rep_Accent">Aksent</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">Subnett</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">Skannet</sys:String>

@@ -238,6 +238,7 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Iface_Ethernet">Ethernet</sys:String>
     <sys:String x:Key="Str_Vendor_Randomized">(Ngẫu nhiên hóa)</sys:String>
     <sys:String x:Key="Str_Rep_Theme">Giao diện</sys:String>
+    <sys:String x:Key="Str_Rep_Title">Báo cáo KillerScan</sys:String>
     <sys:String x:Key="Str_Rep_Accent">Màu nhấn</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">Mạng con</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">Đã quét</sys:String>

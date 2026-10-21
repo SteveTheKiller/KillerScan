@@ -72,9 +72,13 @@ namespace KillerScan.Services
             LocaleChanged?.Invoke();
         }
 
+        /// <summary>The BCP 47 tag of the language actually in use, such as "de-DE", for reports.</summary>
+        public static string LanguageTag { get; private set; } = "en-US";
+
         private static void ApplyInternal(Locale locale)
         {
             var merged = Application.Current.Resources.MergedDictionaries;
+            LanguageTag = "en-US";
 
             // [0] theme. [1] en-US BASE - always present so any partial locale falls back to English
             // for keys it doesn't translate. [2] the chosen locale's overrides (absent for English).
@@ -111,6 +115,9 @@ namespace KillerScan.Services
                 {
                     var ov = new ResourceDictionary { Source = overrideUri };
                     if (merged.Count > 2) merged[2] = ov; else merged.Add(ov);
+                    // The string files are named by tag, except Spanish, Bengali and the like
+                    // whose file names are bare language codes, which are valid tags too.
+                    LanguageTag = System.IO.Path.GetFileNameWithoutExtension(overrideUri.AbsolutePath);
                 }
                 catch
                 {

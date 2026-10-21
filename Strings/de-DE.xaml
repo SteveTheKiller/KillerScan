@@ -193,6 +193,7 @@
 
     <!-- Exported HTML report -->
     <sys:String x:Key="Str_Rep_Theme">Design</sys:String>
+    <sys:String x:Key="Str_Rep_Title">KillerScan-Bericht</sys:String>
     <sys:String x:Key="Str_Rep_Accent">Akzent</sys:String>
     <sys:String x:Key="Str_Rep_Subnet">Subnetz</sys:String>
     <sys:String x:Key="Str_Rep_Scanned">Gescannt</sys:String>
