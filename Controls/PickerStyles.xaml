@@ -18,6 +18,7 @@
                     xmlns:kui="clr-namespace:KillerScan.Controls">
 
     <Style x:Key="OutlineButton" TargetType="Button">
+        <Setter Property="FontFamily" Value="{DynamicResource UiFont}"/>
         <Setter Property="AutomationProperties.Name" Value="{Binding RelativeSource={RelativeSource Self}, Path=ToolTip}"/>
         <!-- Transparent at rest, NOT RowSelectedBrush. Filled with RowSelectedBrush while its text
              was OutlineBtnBrush, both resolve to the accent on several palettes - so the confirm
@@ -86,6 +87,7 @@
     </Style>
 
     <Style x:Key="SurfaceButton" TargetType="Button">
+        <Setter Property="FontFamily" Value="{DynamicResource UiFont}"/>
         <Setter Property="AutomationProperties.Name" Value="{Binding RelativeSource={RelativeSource Self}, Path=ToolTip}"/>
         <Setter Property="Background" Value="{DynamicResource PaneBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>

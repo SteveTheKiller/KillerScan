@@ -123,4 +123,5 @@
     <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#FF25232C" po:Freeze="True"/>
     <LinearGradientBrush x:Key="FooterBackgroundBrush" StartPoint="0,0.5" EndPoint="1,0.5" MappingMode="RelativeToBoundingBox" SpreadMethod="Pad" ColorInterpolationMode="SRgbLinearInterpolation" po:Freeze="True"><GradientStop Color="#FF5E1764" Offset="0"/><GradientStop Color="#FF25232B" Offset="1"/></LinearGradientBrush>
     <SolidColorBrush x:Key="MenuSeparatorBrush" Color="#FF109FA3" po:Freeze="True"/>
+    <SolidColorBrush x:Key="FileDialogPaneBrush" Color="#FF293C3F" po:Freeze="True"/>
 </ResourceDictionary>

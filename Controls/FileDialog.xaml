@@ -386,7 +386,7 @@
                             </LinearGradientBrush>
                         </Border.OpacityMask>
                         <Grid>
-                            <Border Background="{DynamicResource BackgroundBrush}"/>
+                            <Border Background="{DynamicResource FileDialogPaneBrush}"/>
                             <Border Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
                         </Grid>
                     </Border>
@@ -399,7 +399,7 @@
                             </LinearGradientBrush>
                         </Border.OpacityMask>
                         <Grid>
-                            <Border Background="{DynamicResource BackgroundBrush}"/>
+                            <Border Background="{DynamicResource FileDialogPaneBrush}"/>
                             <Border Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
                         </Grid>
                     </Border>

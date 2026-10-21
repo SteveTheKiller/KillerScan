@@ -113,4 +113,5 @@
     <SolidColorBrush x:Key="MenuSeparatorBrush" Color="#FF2E2E2E" po:Freeze="True"/>
     <sys:Double x:Key="TitleWordmarkBoldSize" xmlns:sys="clr-namespace:System;assembly=mscorlib">22.52</sys:Double>
     <sys:Double x:Key="TitleWordmarkSize" xmlns:sys="clr-namespace:System;assembly=mscorlib">15</sys:Double>
+    <SolidColorBrush x:Key="FileDialogPaneBrush" Color="#FF3A3A3A" po:Freeze="True"/>
 </ResourceDictionary>

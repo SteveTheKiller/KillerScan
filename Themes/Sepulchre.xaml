@@ -129,4 +129,5 @@
     <sys:Double x:Key="PaneShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.6</sys:Double>
     <LinearGradientBrush x:Key="FooterBackgroundBrush" StartPoint="0,0.5" EndPoint="1,0.5" MappingMode="RelativeToBoundingBox" SpreadMethod="Pad" ColorInterpolationMode="SRgbLinearInterpolation" po:Freeze="True"><GradientStop Color="#FF25282B" Offset="0"/><GradientStop Color="#FF2C5458" Offset="1"/></LinearGradientBrush>
     <SolidColorBrush x:Key="MenuSeparatorBrush" Color="#FF835A30" po:Freeze="True"/>
+    <SolidColorBrush x:Key="FileDialogPaneBrush" Color="#FF3A352F" po:Freeze="True"/>
 </ResourceDictionary>

@@ -242,7 +242,7 @@ namespace KillerScan.Services
             Complete("ButtonBevelLightThickness", newDict["BevelLightThickness"]);
             Complete("ButtonBevelDarkThickness", newDict["BevelDarkThickness"]);
             Complete("SurfaceButtonEdgeBrush", newDict.Contains("ButtonEdgeBrush") ? newDict["ButtonEdgeBrush"] : newDict["CardBorderBrush"]);
-            Complete("FileDialogPaneBrush", newDict["PaneBrush"]);
+            Complete("FileDialogPaneBrush", newDict["ScanContentPaneBrush"]);
             Complete("MenuFontFamily", KillerSansUiStack);
             Complete("MenuFontSize", 12.0);
             Complete("MenuItemPadding", new Thickness(8, 6, 10, 6));
