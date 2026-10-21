@@ -17,7 +17,7 @@ internal static class DnsBudgetTests
             var scanner = new NetworkScanner(new IsolatedDiscovery());
 
             var watch = Stopwatch.StartNew();
-            var device = await scanner.DeepProbeHostAsync("127.0.0.1", CancellationToken.None, options).WaitAsyncCompat(TimeSpan.FromSeconds(10));
+            var device = await scanner.DeepProbeHostAsync("127.0.0.1", CancellationToken.None, options, flushLocalDnsCache: false).WaitAsyncCompat(TimeSpan.FromSeconds(10));
             Require(device.Hostname.Length == 0 && watch.Elapsed < TimeSpan.FromSeconds(6),
                 $"A stalled lookup gives up within its budget, not {watch.Elapsed.TotalSeconds:0.0} s.");
 
@@ -30,7 +30,7 @@ internal static class DnsBudgetTests
             await Task.Delay(200);
             int before = Volatile.Read(ref started);
             NetworkScanner.HostnameResolverOverride = _ => { Interlocked.Increment(ref started); return Task.FromResult("fresh.example"); };
-            var after = await scanner.DeepProbeHostAsync("127.0.0.1", CancellationToken.None, options);
+            var after = await scanner.DeepProbeHostAsync("127.0.0.1", CancellationToken.None, options, flushLocalDnsCache: false);
             Require(after.Hostname == "fresh.example" && Volatile.Read(ref started) == before + 1,
                 "Once stalled lookups finish, their slots are free for new lookups.");
         }

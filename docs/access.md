@@ -28,7 +28,7 @@ KillerScan never sends credentials, never logs in, and never stores passwords.
 
 Addresses are built only from the device's numeric IP and the endpoint's protocol and port, never from anything the device sent, such as a redirect target. Only `http`, `https`, `ssh`, `rdp` and `tcp` with ports 1 to 65535 are allowed, and devices without a numeric address have no endpoints.
 
-A redirect that stays on the same address (up to two hops, as the fingerprint already allowed) is recorded twice: the first port records the redirect status, and the page it led to is recorded under the port and scheme that served it. A redirect anywhere else is recorded as the redirect status only.
+A redirect that stays on the same address (up to two hops, as the fingerprint already allowed) is recorded twice: the first port records the redirect status, and the page it led to is recorded under the port and scheme that served it. A redirect anywhere else, or to a raw print port (9100 to 9103 or 515), is recorded as the redirect status only and not followed. A redirect is recorded even when the page it points to does not answer.
 
 ## What is recorded
 

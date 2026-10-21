@@ -84,10 +84,18 @@ internal static class SafeProbeTests
 #endif
         try
         {
-            // TEST-NET-1 is never routed, so only a proxy could produce a fingerprint.
-            var target = IPAddress.Parse("192.0.2.123");
-            var device = new NetworkDevice { IpAddress = target.ToString(), OpenPorts = [80] };
-            await NetworkScanner.ProbeHttpAsync(device, target);
+            // A closed port on this PC's own adapter address: traffic to it never leaves the
+            // machine, and both runtimes would send it through a configured proxy, so only the
+            // proxy could produce a fingerprint. (.NET Framework skips proxies for loopback.)
+            var target = OwnAddress() ?? IPAddress.Parse("127.0.0.2");
+            if (target.Equals(IPAddress.Parse("127.0.0.2")))
+                Console.WriteLine("NOTE: no adapter address; on .NET Framework the loopback fallback does not exercise the proxy.");
+            var closed = new TcpListener(IPAddress.Any, 0);
+            closed.Start();
+            int closedPort = ((IPEndPoint)closed.LocalEndpoint).Port;
+            closed.Stop();
+            var device = new NetworkDevice { IpAddress = target.ToString(), OpenPorts = [closedPort] };
+            await NetworkScanner.ProbeHttpAsync(device, target, deep: true);
             Require(Volatile.Read(ref requests) == 0, "Device fingerprinting sent " + requests + " request(s) through the system proxy.");
             Require(device.HttpTitle.Length == 0 && device.HttpServer.Length == 0,
                 "A proxy response was attributed to the device: " + device.HttpTitle + " / " + device.HttpServer);
@@ -104,6 +112,15 @@ internal static class SafeProbeTests
         }
         Console.WriteLine("PASS: HTTP fingerprinting ignores the system proxy.");
     }
+
+    // An IPv4 address assigned to an adapter that is up, other than loopback and link-local.
+    private static IPAddress? OwnAddress() =>
+        System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces()
+            .Where(n => n.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up &&
+                        n.NetworkInterfaceType != System.Net.NetworkInformation.NetworkInterfaceType.Loopback)
+            .SelectMany(n => n.GetIPProperties().UnicastAddresses)
+            .Select(u => u.Address)
+            .FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork && !a.ToString().StartsWith("169.254.", StringComparison.Ordinal));
 
     private static void Require(bool condition, string message)
     {

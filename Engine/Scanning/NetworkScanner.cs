@@ -384,9 +384,18 @@ namespace KillerScan.Engine
             return devices;
         }
 
-        /// <summary>The neighbor (ARP) cache from the platform.</summary>
-        private static IReadOnlyDictionary<string, string> GetArpCache() =>
-            NetworkPlatform.Current.ReadNeighborCache();
+        /// <summary>The neighbor (ARP) cache from the platform; a bound run reads only its own adapter's.</summary>
+        private static IReadOnlyDictionary<string, string> GetArpCache()
+        {
+            if (ScanSource.Current is { } binding && NetworkPlatform.Current is WindowsNetworkPlatform windows
+                && System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+            {
+#pragma warning disable CA1416
+                return windows.ReadNeighborCacheOn(binding.LocalAddress);
+#pragma warning restore CA1416
+            }
+            return NetworkPlatform.Current.ReadNeighborCache();
+        }
 
         /// <summary>
         /// Probe a single host for hostname, open ports, fingerprints, and device type.
@@ -1331,15 +1340,14 @@ namespace KillerScan.Engine
             for (int hop = 0; hop <= 2; hop++)
             {
                 ct.ThrowIfCancellationRequested();
-#if NETFRAMEWORK
-                // .NET Framework's handler connects through the URI's service point, whose bind
-                // delegate chooses the local address. It is set for every request so an unbound
-                // run never inherits a binding left on a shared service point.
-                var local = ScanSource.Current?.LocalAddress;
-                ServicePointManager.FindServicePoint(uri).BindIPEndPointDelegate =
-                    local == null ? null : (_, _, _) => new IPEndPoint(local, 0);
-#endif
-                var response = await client.GetAsync(uri, ct);
+                HttpResponseMessage response;
+                try { response = await SendFingerprintAsync(client, uri, ct); }
+                catch (Exception) when (firstRedirect != null && !ct.IsCancellationRequested)
+                {
+                    // The redirect was an answer at this endpoint, even when the hop it pointed to
+                    // fails or times out (HttpClient reports its own timeout as a cancellation).
+                    return (null, uri, firstRedirect);
+                }
                 int status = (int)response.StatusCode;
                 if (status < 300 || status >= 400) return (response, uri, firstRedirect);
                 firstRedirect ??= status;
@@ -1348,12 +1356,54 @@ namespace KillerScan.Engine
                 if (hop == 2 || status is not (301 or 302 or 303 or 307 or 308) || location == null ||
                     !Uri.TryCreate(uri, location, out var next) ||
                     (next.Scheme != Uri.UriSchemeHttp && next.Scheme != Uri.UriSchemeHttps) ||
-                    next.UserInfo.Length != 0 || !IPAddress.TryParse(next.Host, out var target) || !target.Equals(address))
+                    next.UserInfo.Length != 0 || !IPAddress.TryParse(next.Host, out var target) || !target.Equals(address) ||
+                    // A redirect to a raw print port would make the GET print, like any payload there.
+                    !IsPayloadSafe(next.Port))
                     return (null, uri, firstRedirect);
                 uri = next;
             }
             return (null, uri, firstRedirect);
         }
+
+#if NETFRAMEWORK
+        // .NET Framework connects through a service point shared by every request to the same
+        // scheme, host and port, and its bind delegate is read when the connection opens. One
+        // lock per stripe of endpoints keeps a bound and an unbound request to the same endpoint
+        // from swapping each other's delegate in between.
+        private static readonly SemaphoreSlim[] ServicePointLocks = [.. Enumerable.Range(0, 32).Select(_ => new SemaphoreSlim(1, 1))];
+#endif
+
+        /// <summary>
+        /// One fingerprint request. It closes its connection afterwards, so a connection opened
+        /// from one adapter is never reused by a later request that should go from another.
+        /// </summary>
+        private static async Task<HttpResponseMessage> SendFingerprintAsync(HttpClient client, Uri uri, CancellationToken ct)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, uri);
+            request.Headers.ConnectionClose = true;
+#if NETFRAMEWORK
+            var gate = ServicePointLocks[(uri.Scheme + uri.Authority).GetHashCode() & 31];
+            await gate.WaitAsync(ct);
+            try
+            {
+                var local = ScanSource.Current?.LocalAddress;
+                ServicePointManager.FindServicePoint(uri).BindIPEndPointDelegate =
+                    local == null ? null : (_, _, retry) => BindOnce(local, retry);
+                return await client.SendAsync(request, ct);
+            }
+            finally { gate.Release(); }
+#else
+            return await client.SendAsync(request, ct);
+#endif
+        }
+
+#if NETFRAMEWORK
+        // The service point calls the delegate again after each failed bind. Retrying the same
+        // address would spin, and returning null would let Windows pick another adapter, so a
+        // second call fails the request instead.
+        private static IPEndPoint BindOnce(IPAddress local, int retry) =>
+            retry == 0 ? new IPEndPoint(local, 0) : throw new InvalidOperationException("The bound adapter's address " + local + " is no longer available.");
+#endif
 
         /// <summary>
         /// Read SSH server banner (first line after TCP connect) from port 22.

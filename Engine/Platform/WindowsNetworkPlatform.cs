@@ -28,13 +28,28 @@ namespace KillerScan.Engine
         [DllImport("iphlpapi.dll")]
         private static extern uint GetBestRoute(uint destination, uint source, out ForwardRow route);
 
+        public WindowsNetworkPlatform()
+        {
+            // An adapter renamed, or an index reused after a VPN reconnects, would otherwise keep
+            // its old name here and make a bound scan refuse a target it can reach.
+            NetworkChange.NetworkAddressChanged += (_, _) => _interfaceNames.Clear();
+        }
+
         /// <summary>Reads the system ARP cache via arp -a.</summary>
-        public IReadOnlyDictionary<string, string> ReadNeighborCache()
+        public IReadOnlyDictionary<string, string> ReadNeighborCache() => RunArp("-a");
+
+        /// <summary>
+        /// The ARP cache of the one adapter with this address (arp -a -N). A bound scan seeds
+        /// hosts only from its own adapter, even when another adapter carries the same subnet.
+        /// </summary>
+        internal IReadOnlyDictionary<string, string> ReadNeighborCacheOn(IPAddress local) => RunArp("-a -N " + local);
+
+        private static IReadOnlyDictionary<string, string> RunArp(string arguments)
         {
             var cache = new Dictionary<string, string>();
             try
             {
-                var psi = new ProcessStartInfo("arp", "-a")
+                var psi = new ProcessStartInfo("arp", arguments)
                 {
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
