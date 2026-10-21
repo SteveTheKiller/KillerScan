@@ -62,6 +62,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Locations keep each customer site's saved scans, device names, approvals, type overrides, SSH usernames and history separate. Pick one from the Location button beside the target box, or run a Temporary scan that saves nothing. On first start, everything you already had moves into a Location named Unassigned, and the original files are left in place.
 - The first scan in a Location sets a baseline of Known devices without approving any. Later scans flag devices that are new since that baseline, and the device mark shows approved, new and known.
 - Saved scans belong to a Location and can be saved in place or under a new name. Picking a Location restores its last targets and settings without scanning.
+- History lists the current Location's scans. Right-click the History button and choose Show all Locations to list every Location's scans, each labeled with its Location.
 - `/scan` and `/probe` take `/location <name or ID>`, and the PowerShell `scan` and `probe` commands take `-Location`. An unknown or shared name is a usage error. The terminal's Scan button scans in the current Location.
 
 ### Changed

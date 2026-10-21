@@ -11,8 +11,12 @@ namespace KillerScan.Shell
     {
         private HistoryWorkspace? _historyWorkspace;
 
-        private void HistorySettingsMenu_Opening(object sender, ContextMenuEventArgs e) =>
+        private void HistorySettingsMenu_Opening(object sender, ContextMenuEventArgs e)
+        {
+            HistoryAllLocationsItem.IsChecked = _historyAllLocations;
+            HistoryAllLocationsItem.IsEnabled = LocationService.Loaded && !DemoData.Enabled && LocationService.Items.Count > 0;
             FlyoutPlacement.Attach(HistoryButton.ContextMenu, HistoryButton);
+        }
 
         private bool HandleHistorySettingsShortcut(Key key, ModifierKeys modifiers)
         {
@@ -86,12 +90,43 @@ namespace KillerScan.Shell
             try
             {
                 var selected = HistoryList.SelectedItem as ScanHistoryEntry;
-                var entries = ShellLocation.History.Entries.Reverse().ToList();
+                var entries = HistoryEntries();
                 HistoryList.ItemsSource = entries;
                 HistoryList.SelectedItem = selected != null && entries.Contains(selected)
                     ? selected : entries.FirstOrDefault();
             }
             finally { _syncingHistory = false; }
+        }
+
+        /// <summary>Whether History lists every Location rather than the scan workspace's.</summary>
+        private bool _historyAllLocations = App.GetSetting("HistoryAllLocations") == "1";
+
+        /// <summary>
+        /// Newest first. Each entry keeps the store it came from, so its baseline is picked from
+        /// its own Location, and is labeled with that Location when every Location is listed.
+        /// </summary>
+        private List<ScanHistoryEntry> HistoryEntries()
+        {
+            var sources = _historyAllLocations && LocationService.Loaded && !DemoData.Enabled && LocationService.Items.Count > 0
+                ? LocationService.Items.Select(info => (Name: info.Name, Store: LocationService.Get(info).History)).ToList()
+                : [(Name: string.Empty, Store: ShellLocation.History)];
+            var entries = new List<ScanHistoryEntry>();
+            foreach (var (name, store) in sources)
+                foreach (var entry in store.Entries)
+                {
+                    entry.Owner = store;
+                    entry.LocationName = name;
+                    entries.Add(entry);
+                }
+            return [.. entries.OrderByDescending(entry => entry.ScannedAt)];
+        }
+
+        private void HistorySettingsMenu_LocationsClick(object sender, RoutedEventArgs e)
+        {
+            _historyAllLocations = sender is MenuItem { IsChecked: true };
+            App.SetSetting("HistoryAllLocations", _historyAllLocations ? "1" : "0");
+            RefreshHistoryList();
+            if (_workspaceView == "history") ShowHistoryEntry();
         }
 
         /// <summary>

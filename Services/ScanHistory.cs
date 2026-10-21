@@ -25,6 +25,14 @@ namespace KillerScan.Services
         /// <summary>True for a deep run (every port 1 to 1024 and more). Null in older entries.</summary>
         public bool? Deep { get; set; }
 
+        /// <summary>The Location label shown when History lists every Location. Never saved.</summary>
+        [System.Text.Json.Serialization.JsonIgnore]
+        public string LocationName { get; set; } = string.Empty;
+
+        /// <summary>The history this entry was listed from, which picks its baseline. Never saved.</summary>
+        [System.Text.Json.Serialization.JsonIgnore]
+        internal HistoryStore? Owner { get; set; }
+
         /// <summary>The normalized key for a target list, or null when it does not parse.</summary>
         internal static string? KeyFor(string targets)
         {

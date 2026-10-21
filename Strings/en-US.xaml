@@ -546,6 +546,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_History_ToggleView">Switch history view</sys:String>
     <sys:String x:Key="Str_Sc_ContextMenu">Context menu</sys:String>
     <sys:String x:Key="Str_History_Settings">History settings</sys:String>
+    <sys:String x:Key="Str_History_AllLocations">Show all Locations</sys:String>
     <sys:String x:Key="Str_History_KeepFor">Keep scans for</sys:String>
     <sys:String x:Key="Str_History_Days">days</sys:String>
     <sys:String x:Key="Str_History_KeepLatest">Keep the latest</sys:String>

@@ -387,6 +387,24 @@
                                         </Style>
                                     </TextBlock.Style>
                                 </TextBlock>
+                                <!-- Only filled when History lists every Location. -->
+                                <TextBlock Text="{Binding LocationName}" FontSize="11"
+                                           TextTrimming="CharacterEllipsis" controls:ShrinkToFit.MinScale="0.85">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding LocationName}" Value="">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                                    <Setter Property="Opacity" Value="0.78"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -513,6 +531,8 @@
                                   Click="HistorySettings_Click">
                             <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE81C;"/></MenuItem.Icon>
                         </MenuItem>
+                        <MenuItem x:Name="HistoryAllLocationsItem" Header="{DynamicResource Str_History_AllLocations}"
+                                  IsCheckable="True" Click="HistorySettingsMenu_LocationsClick"/>
                     </ContextMenu>
                 </Button.ContextMenu>
                 <Button.ToolTip>

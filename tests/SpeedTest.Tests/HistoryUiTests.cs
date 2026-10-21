@@ -315,7 +315,8 @@ internal static partial class HistoryUiTests
         var texts = new List<TextBlock>();
         void Collect(DependencyObject parent)
         {
-            if (parent is TextBlock text) texts.Add(text);
+            // The Location label is collapsed unless History lists every Location.
+            if (parent is TextBlock text && text.Visibility == Visibility.Visible) texts.Add(text);
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++) Collect(VisualTreeHelper.GetChild(parent, i));
         }
         var secondRow = (ListBoxItem)historyList.ItemContainerGenerator.ContainerFromIndex(1);
@@ -824,7 +825,10 @@ internal static partial class HistoryUiTests
             Require(Math.Abs(candidates[0].Point.Y + 18 * scale) < 0.01 && Math.Abs(candidates[1].Point.Y + 80 * scale - 26 * scale - 24 * scale) < 0.01,
                 "Top and bottom candidates let WPF fit screen edges without covering the rail.");
         }
-        var item = menu.Items.OfType<MenuItem>().Single();
+        Require(menu.Items.OfType<MenuItem>().Count() == 2 &&
+            menu.Items.OfType<MenuItem>().Last() is { IsCheckable: true } all && Equals(all.Header, app.FindResource("Str_History_AllLocations")),
+            "The history icon also offers the all-Locations switch.");
+        var item = menu.Items.OfType<MenuItem>().First();
         Require(Equals(item.Header, app.FindResource("Str_History_Settings")) && item.InputGestureText == "Ctrl+Alt+R",
             "The history icon offers localized settings with its visible shortcut.");
         Require(item.Icon is TextBlock clock && clock.Text == (string)icon.Content,
