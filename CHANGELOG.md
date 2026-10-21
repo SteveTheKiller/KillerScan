@@ -19,6 +19,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Scan history includes empty results and final automatic deep-profile results, with canceled or partial runs labeled.
 - HTTP fingerprints follow bounded redirects only on the scanned IP, preserving local panels without contacting or labeling another device.
 - SNMP fingerprints preserve long descriptions and reject malformed or mismatched response identities.
+- Deep scans never send HTTP or TLS data to raw print ports (9100 to 9103 and 515), so a rescan cannot print junk pages.
+- HTTP fingerprints connect to the device directly, so a system or PAC proxy can no longer answer and have its page reported as the device.
+- NetBIOS names are accepted only from validated replies sent by the queried host.
+- The PowerShell `scan` and `probe` commands return device objects instead of nothing, and failures, timeouts and usage errors throw with the app's message and exit code.
+- The engine's scan APIs refuse malformed or oversized targets and a port concurrency below 1 before any network or DNS cache work, instead of reporting an empty scan or waiting forever.
 - The public subnet helper rejects IPv6 addresses and malformed CIDR suffixes before expanding hosts.
 - Terminal tables display escaped network control characters without changing raw scan data or JSON exports.
 - Terminal combining marks, wide characters and common emoji clusters keep consistent columns through drawing, editing, copying and resizing.
@@ -37,13 +42,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Window resize minimums stay within the current monitor's work area on small or scaled displays.
 - The shortcuts card shows shadows at its edges when more content is out of view.
 - Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.
-- Text buttons, menus, tooltips and shortcuts use the embedded interface font, including separate windows.
+- File pickers use theme content colors for files and bookmarks. Text buttons, menus, tooltips and shortcuts use the embedded interface font, including separate windows.
 - Film grain has crisper specks and fades midtones across app and website themes without dimming bright highlights.
 - Balanced the Technical page columns by moving the glossary to the left.
 
 ### Added
 - Scan settings beside Scan selects discovery and fingerprint checks, saves them with profiles, and applies them to normal and deep scans. (#6) (Thanks @MrCodeLabs)
 - Added Slovenian across the app, installation prompts, website and help. (#5) (Thanks @MrCodeLabs)
+- Scan settings can let deep scans fingerprint unknown open ports. It is off by default, so unknown ports get a connection check only.
+- The PowerShell `scan` command takes `-Demo` for fabricated screenshot data.
 
 ### Changed
 - Updated the app and engine JSON dependency to 10.0.13.
