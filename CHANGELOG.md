@@ -1,4 +1,4 @@
-# Changelog
+# KillerScan Changelog
 
 All notable changes to KillerScan are documented here.
 
