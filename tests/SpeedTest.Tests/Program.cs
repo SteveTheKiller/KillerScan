@@ -76,6 +76,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--profiles-ui" })) { await HistoryUiTests.Run(profilesOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--menu-icons-ui" })) { await HistoryUiTests.Run(menusOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--topology" })) { await TopologyTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--topology-stream" })) { HistoryUiTests.Isolated = TopologyStreamTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--csv-export" })) { await CsvExportTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--export-publication" })) { ExportPublicationTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--history-load" })) { HistoryLoadTests.Run(); return 0; }
@@ -458,7 +459,8 @@ internal static class Program
                 xml.Load(Path.Combine(directory!.FullName, "App.xaml"));
                 string dictionary = xml.DocumentElement!.FirstChild!.FirstChild!.OuterXml
                     .Replace("clr-namespace:KillerScan.Controls", "clr-namespace:KillerScan.Controls;assembly=KillerScan")
-                    .Replace("clr-namespace:KillerFamily.Layout\"", "clr-namespace:KillerFamily.Layout;assembly=KillerScan\"");
+                    .Replace("clr-namespace:KillerFamily.Layout\"", "clr-namespace:KillerFamily.Layout;assembly=KillerScan\"")
+                    .Replace("clr-namespace:KillerFamily.Controls\"", "clr-namespace:KillerFamily.Controls;assembly=KillerScan\"");
                 var context = new ParserContext { BaseUri = new Uri("pack://application:,,,/KillerScan;component/") };
                 context.XmlnsDictionary.Add("", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
                 context.XmlnsDictionary.Add("x", "http://schemas.microsoft.com/winfx/2006/xaml");

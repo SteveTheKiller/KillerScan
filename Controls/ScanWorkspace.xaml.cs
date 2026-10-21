@@ -182,6 +182,7 @@ namespace KillerScan.Controls
         {
             if (_disposed) return;
             _disposed = true;
+            _viewRefreshTimer?.Stop();
             StatusDescriptor.RemoveValueChanged(StatusText, NotifyFooterChanged);
             ProgressDescriptor.RemoveValueChanged(ScanProgress, NotifyFooterChanged);
             ProgressVisibilityDescriptor.RemoveValueChanged(ScanProgress, NotifyFooterChanged);

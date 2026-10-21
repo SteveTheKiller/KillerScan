@@ -107,9 +107,13 @@ namespace KillerScan.Controls
             if (_showTopology) RefreshTopology();
         }
 
+        /// <summary>How many times the diagram has been rebuilt, for the streaming budget check.</summary>
+        internal int TopologyRefreshes { get; private set; }
+
         private void RefreshTopology()
         {
             if (TopologyCanvas == null || TopologyPane == null || !_showTopology) return;
+            TopologyRefreshes++;
 
             double scale = TopologyScale;
             double viewportWidth = Math.Max(1, TopologyPane.ActualWidth - SystemParameters.VerticalScrollBarWidth);
