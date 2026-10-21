@@ -63,6 +63,14 @@ internal static class BindingTests
             var pinger = new NetworkScanner(new IsolatedDiscovery()) { Binding = new ScanBinding("Loopback", IPAddress.Loopback, 8) };
             var pinged = await pinger.DeepProbeHostAsync("127.0.0.1", CancellationToken.None, options.Without("ports,http"));
             Require(pinged.Ttl > 0, "A bound ping from the adapter's address gets a reply and a TTL.");
+            // Bound pings run asynchronously, so many at once all complete with their own reply.
+            var burst = await Task.WhenAll(Enumerable.Range(0, 64).Select(_ => Task.Run(async () =>
+            {
+                ScanSource.Current = new ScanBinding("Loopback", IPAddress.Loopback, 8);
+                try { return await ScanSource.PingAsync(IPAddress.Loopback, 1000); }
+                finally { ScanSource.Current = null; }
+            })));
+            Require(burst.All(reply => reply.Success && reply.Ttl > 0), "64 concurrent bound pings each get a reply and a TTL.");
 
             var unbound = new NetworkScanner(new IsolatedDiscovery());
             int before = tcp.Sources.Count;

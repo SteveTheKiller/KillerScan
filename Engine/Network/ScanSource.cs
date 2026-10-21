@@ -40,8 +40,7 @@ namespace KillerScan.Engine
                 var reply = await ping.SendPingAsync(address, timeoutMs);
                 return (reply.Status == IPStatus.Success, reply.Options?.Ttl ?? 0);
             }
-            var source = binding.LocalAddress;
-            return await Task.Run(() => BoundEcho(source, address, timeoutMs));
+            return await BoundEchoAsync(binding.LocalAddress, address, timeoutMs);
         }
 
         /// <summary>The MAC for an address; bound runs ask from the adapter's address.</summary>
@@ -66,35 +65,76 @@ namespace KillerScan.Engine
 
         [DllImport("iphlpapi.dll", SetLastError = true)]
         private static extern uint IcmpSendEcho2Ex(IntPtr handle, IntPtr evt, IntPtr apcRoutine, IntPtr apcContext,
-            uint sourceAddress, uint destinationAddress, byte[] requestData, ushort requestSize,
+            uint sourceAddress, uint destinationAddress, IntPtr requestData, ushort requestSize,
             IntPtr requestOptions, IntPtr replyBuffer, uint replySize, uint timeout);
 
-        // System.Net.NetworkInformation.Ping cannot choose a source address; IcmpSendEcho2Ex can.
-        private static (bool Success, int Ttl) BoundEcho(IPAddress source, IPAddress destination, int timeoutMs)
+        [DllImport("iphlpapi.dll", SetLastError = true)]
+        private static extern uint IcmpParseReplies(IntPtr replyBuffer, uint replySize);
+
+        private const int ErrorIoPending = 997;
+        private const int PayloadSize = 32;
+        private const int ReplySize = 64 + PayloadSize + 8 + 64;
+
+        /// <summary>
+        /// System.Net.NetworkInformation.Ping cannot choose a source address; IcmpSendEcho2Ex can.
+        /// It runs in its asynchronous mode: Windows signals an event when the reply or the
+        /// timeout arrives, and a registered wait completes the task, so a bound sweep of silent
+        /// hosts holds no thread while it waits. The request and reply buffers are unmanaged and
+        /// stay alive until that signal.
+        /// </summary>
+        private static Task<(bool Success, int Ttl)> BoundEchoAsync(IPAddress source, IPAddress destination, int timeoutMs)
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return (false, 0);
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return Task.FromResult((false, 0));
             IntPtr handle = IcmpCreateFile();
-            if (handle == new IntPtr(-1) || handle == IntPtr.Zero) return (false, 0);
-            byte[] payload = new byte[32];
-            int replySize = 64 + payload.Length + 8 + 64;
-            IntPtr reply = Marshal.AllocHGlobal(replySize);
-            try
+            if (handle == new IntPtr(-1) || handle == IntPtr.Zero) return Task.FromResult((false, 0));
+            var signal = new ManualResetEvent(false);
+            IntPtr payload = Marshal.AllocHGlobal(PayloadSize);
+            IntPtr reply = Marshal.AllocHGlobal(ReplySize);
+            for (int i = 0; i < PayloadSize; i++) Marshal.WriteByte(payload, i, 0);
+            var done = new TaskCompletionSource<(bool, int)>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            void Release(bool freeBuffers)
             {
-                uint count = IcmpSendEcho2Ex(handle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero,
-                    BitConverter.ToUInt32(source.GetAddressBytes(), 0), BitConverter.ToUInt32(destination.GetAddressBytes(), 0),
-                    payload, (ushort)payload.Length, IntPtr.Zero, reply, (uint)replySize, (uint)timeoutMs);
-                if (count == 0) return (false, 0);
-                // ICMP_ECHO_REPLY: Address, Status, RoundTripTime (4 bytes each), DataSize and
-                // Reserved (2 each), a Data pointer, then IP_OPTION_INFORMATION starting with Ttl.
-                uint status = (uint)Marshal.ReadInt32(reply, 4);
-                int ttl = Marshal.ReadByte(reply, 16 + IntPtr.Size);
-                return (status == 0, ttl);
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(reply);
                 IcmpCloseHandle(handle);
+                signal.Dispose();
+                if (!freeBuffers) return;
+                Marshal.FreeHGlobal(payload);
+                Marshal.FreeHGlobal(reply);
             }
+
+            uint sent = IcmpSendEcho2Ex(handle, signal.SafeWaitHandle.DangerousGetHandle(), IntPtr.Zero, IntPtr.Zero,
+                BitConverter.ToUInt32(source.GetAddressBytes(), 0), BitConverter.ToUInt32(destination.GetAddressBytes(), 0),
+                payload, PayloadSize, IntPtr.Zero, reply, ReplySize, (uint)timeoutMs);
+            if (sent == 0 && Marshal.GetLastWin32Error() != ErrorIoPending)
+            {
+                Release(freeBuffers: true);
+                return Task.FromResult((false, 0));
+            }
+
+            RegisteredWaitHandle? registration = null;
+            registration = ThreadPool.RegisterWaitForSingleObject(signal, (_, timedOut) =>
+            {
+                registration?.Unregister(null);
+                if (timedOut)
+                {
+                    // Windows has not finished with the buffers, so they are left allocated
+                    // rather than freed under it. ICMP's own timeout makes this all but unreachable.
+                    Release(freeBuffers: false);
+                    done.TrySetResult((false, 0));
+                    return;
+                }
+                (bool, int) result = (false, 0);
+                if (IcmpParseReplies(reply, ReplySize) > 0)
+                {
+                    // ICMP_ECHO_REPLY: Address, Status, RoundTripTime (4 bytes each), DataSize and
+                    // Reserved (2 each), a Data pointer, then IP_OPTION_INFORMATION starting with Ttl.
+                    uint status = (uint)Marshal.ReadInt32(reply, 4);
+                    result = (status == 0, Marshal.ReadByte(reply, 16 + IntPtr.Size));
+                }
+                Release(freeBuffers: true);
+                done.TrySetResult(result);
+            }, null, timeoutMs + 5000, executeOnlyOnce: true);
+            return done.Task;
         }
     }
 }
