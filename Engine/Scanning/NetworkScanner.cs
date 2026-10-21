@@ -1018,6 +1018,8 @@ namespace KillerScan.Engine
             {
                 ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
                 AllowAutoRedirect = false,
+                // A system or PAC proxy would answer in the device's place.
+                UseProxy = false,
             };
             using var client = new HttpClient(handler)
             {

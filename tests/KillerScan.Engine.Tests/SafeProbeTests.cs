@@ -45,6 +45,63 @@ internal static class SafeProbeTests
         }
         finally { NetworkPlatform.Current = platform; }
         Console.WriteLine("PASS: deep fingerprinting skips raw services and keeps unknown ports connect-only by default.");
+        await ProxyIgnored();
+    }
+
+    // A system proxy must never answer for the device: fingerprinting talks to the target directly.
+    private static async Task ProxyIgnored()
+    {
+        var listener = new TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+        int requests = 0;
+        var serve = Task.Run(async () =>
+        {
+            while (true)
+            {
+                TcpClient client;
+                try { client = await listener.AcceptTcpClientAsync(); }
+                catch { return; }
+                using (client)
+                {
+                    Interlocked.Increment(ref requests);
+                    var stream = client.GetStream();
+                    var buffer = new byte[4096];
+                    try { await stream.ReadAsync(buffer, 0, buffer.Length); } catch { continue; }
+                    byte[] reply = System.Text.Encoding.ASCII.GetBytes(
+                        "HTTP/1.1 200 OK\r\nServer: Proxy-Fixture\r\nContent-Type: text/html\r\nContent-Length: 30\r\nConnection: close\r\n\r\n<title>Proxy page</title>     ");
+                    try { await stream.WriteAsync(reply, 0, reply.Length); } catch { }
+                }
+            }
+        });
+        var proxy = new WebProxy("http://127.0.0.1:" + ((IPEndPoint)listener.LocalEndpoint).Port + "/", false);
+#if NETFRAMEWORK
+        var previous = WebRequest.DefaultWebProxy;
+        WebRequest.DefaultWebProxy = proxy;
+#else
+        var previous = System.Net.Http.HttpClient.DefaultProxy;
+        System.Net.Http.HttpClient.DefaultProxy = proxy;
+#endif
+        try
+        {
+            // TEST-NET-1 is never routed, so only a proxy could produce a fingerprint.
+            var target = IPAddress.Parse("192.0.2.123");
+            var device = new NetworkDevice { IpAddress = target.ToString(), OpenPorts = [80] };
+            await NetworkScanner.ProbeHttpAsync(device, target);
+            Require(Volatile.Read(ref requests) == 0, "Device fingerprinting sent " + requests + " request(s) through the system proxy.");
+            Require(device.HttpTitle.Length == 0 && device.HttpServer.Length == 0,
+                "A proxy response was attributed to the device: " + device.HttpTitle + " / " + device.HttpServer);
+        }
+        finally
+        {
+#if NETFRAMEWORK
+            WebRequest.DefaultWebProxy = previous;
+#else
+            System.Net.Http.HttpClient.DefaultProxy = previous;
+#endif
+            listener.Stop();
+            await serve;
+        }
+        Console.WriteLine("PASS: HTTP fingerprinting ignores the system proxy.");
     }
 
     private static void Require(bool condition, string message)
