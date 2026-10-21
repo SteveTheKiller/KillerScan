@@ -15,6 +15,8 @@ internal static class LocationsSidebarTests
 
     internal static void Run()
     {
+        // Demo mode skips Locations entirely; this check needs the real path, on scratch data.
+        DemoData.Enabled = false;
         var window = new MainWindow();
         Require(LocationService.Loaded && LocationService.Editable && LocationService.Items.Count == 0,
             "The window loads an empty scratch catalog, never the real one.");
@@ -49,9 +51,10 @@ internal static class LocationsSidebarTests
             string.Format((string)Application.Current.FindResource("Str_Loc_Current"), "Branch office"), "The current mark follows the switch.");
 
         Call(window, "ProfilesButton_Click", window, new RoutedEventArgs());
-        Require(heading.Text == (string)Application.Current.FindResource("Str_Profiles_Title") && list.Visibility != Visibility.Visible ||
-            ((ListBox)window.FindName("ProfilesList")).Visibility == Visibility.Visible,
-            "The Saved scans section replaces the Locations list.");
+        // The lists cross-fade, so check what changes at once: the heading and the buttons.
+        Require(heading.Text == "Saved scans" && ((Button)window.FindName("NewLocationButton")).Visibility == Visibility.Collapsed &&
+            ((Button)window.FindName("SaveProfileButton")).Visibility == Visibility.Visible,
+            "The Saved scans section, under its new title, replaces the Locations section.");
         Console.WriteLine("PASS: the Locations sidebar lists, marks and opens Locations.");
     }
 
