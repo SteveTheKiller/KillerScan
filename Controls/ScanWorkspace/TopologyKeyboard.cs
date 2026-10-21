@@ -95,9 +95,16 @@ namespace KillerScan.Controls
                 _topologyDragStarts.Clear();
                 e.Handled = true;
             }
-            else if (direction != default && modifiers == ModifierKeys.None)
+            else if (direction != default && modifiers is ModifierKeys.None or ModifierKeys.Control)
             {
-                if (NearestTopologyNode(border, direction) is { } next) next.Focus();
+                // As in a list: an arrow moves and selects, so Enter, F2 and the other device
+                // actions apply to the device that has focus. Ctrl+arrow moves without changing
+                // the selection, for building one with Ctrl+Space.
+                if (NearestTopologyNode(border, direction) is { Tag: NetworkDevice nextDevice } next)
+                {
+                    next.Focus();
+                    if (modifiers == ModifierKeys.None) SelectTopologyDevice(nextDevice, only: true);
+                }
                 e.Handled = true;
             }
         }

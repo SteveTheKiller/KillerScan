@@ -391,6 +391,7 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Izbrišem {0}? KillerScan ne bo več prikazoval njenih shranjenih pregledov, imen naprav, odobritev in zgodovine. Datoteke ostanejo v mapi Lokacij "deleted", zato jih je mogoče obnoviti.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Izbriši</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Pred menjavo Lokacije ustavi pregled.</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">Ta datoteka Lokacije je večja od {0} MB, kar je več, kot KillerScan uvozi.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Želiš zavreči te rezultate?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Rezultati načina »Začasni pregled« niso nikjer shranjeni. Menjava Lokacije jih izbriše. Če jih želiš obdržati, raje izberi »Shrani rezultate v Lokacijo«.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Zavrzi</sys:String>
@@ -478,6 +479,7 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologija</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Nadzor povezave</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">Terminal ni mogel naenkrat sprejeti toliko vnosa, zato ni bil poslan.</sys:String>
     <sys:String x:Key="Str_Term_Copy">Kopiraj</sys:String>
     <sys:String x:Key="Str_Term_Paste">Prilepi</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Izberi vse</sys:String>

@@ -416,6 +416,7 @@
     <sys:String x:Key="Str_Loc_DeleteDetail">{0} মুছবেন? এর সংরক্ষিত স্ক্যান, ডিভাইসের নাম, অনুমোদন ও ইতিহাস KillerScan থেকে সরিয়ে দেওয়া হবে। ফাইলগুলো লোকেশনের "deleted" ফোল্ডারে রাখা থাকে, তাই সেগুলো পুনরুদ্ধার করা যাবে।</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">মুছুন</sys:String>
     <sys:String x:Key="Str_Loc_Busy">লোকেশন পরিবর্তনের আগে স্ক্যান বন্ধ করুন।</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">এই লোকেশন ফাইলটি {0} MB-এর চেয়ে বড়, যা KillerScan যতটা ইমপোর্ট করে তার চেয়ে বেশি।</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">এই ফলাফলগুলো বাতিল করবেন?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">এই “অস্থায়ী স্ক্যান” থেকে পাওয়া ফলাফল কোথাও সংরক্ষিত নেই। লোকেশন পরিবর্তন করলে সেগুলো মুছে যাবে। রেখে দিতে চাইলে এর বদলে “ফলাফল লোকেশনে সংরক্ষণ করুন” বেছে নিন।</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">ফেলে দিন</sys:String>
@@ -503,6 +504,7 @@
     <sys:String x:Key="Str_View_Topology">টপোলজি</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">সংযোগ পর্যবেক্ষণ</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">টার্মিনাল</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">টার্মিনাল একবারে এত ইনপুট নিতে পারেনি, তাই এটি পাঠানো হয়নি।</sys:String>
     <sys:String x:Key="Str_Term_Copy">কপি</sys:String>
     <sys:String x:Key="Str_Term_Paste">পেস্ট</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">সব নির্বাচন</sys:String>

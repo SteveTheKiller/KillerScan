@@ -396,6 +396,7 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Xóa {0}? Các lần quét đã lưu, tên thiết bị, phê duyệt và lịch sử của địa điểm này sẽ rời khỏi KillerScan. Các tệp được giữ trong thư mục "deleted" của địa điểm, nên có thể khôi phục.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Xóa</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Hãy dừng quét trước khi đổi địa điểm.</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">Tệp địa điểm này lớn hơn {0} MB, vượt quá mức KillerScan nhập được.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Bỏ các kết quả này?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Kết quả của “Lần quét tạm thời” này không được lưu ở đâu cả. Đổi địa điểm sẽ xóa chúng. Để giữ lại, hãy chọn “Lưu kết quả vào địa điểm”.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Bỏ</sys:String>
@@ -483,6 +484,7 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_View_Topology">Sơ đồ</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Giám sát kết nối</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">Terminal không thể nhận nhiều dữ liệu nhập cùng lúc như vậy, nên dữ liệu chưa được gửi.</sys:String>
     <sys:String x:Key="Str_Term_Copy">Sao chép</sys:String>
     <sys:String x:Key="Str_Term_Paste">Dán</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Chọn tất cả</sys:String>

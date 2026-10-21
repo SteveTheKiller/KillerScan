@@ -54,6 +54,7 @@ namespace KillerScan.Shell
             ("F2",              "Str_Rename_Title",         "Device"),
             ("Ctrl + Alt + N",   "Str_Rename_Clear",         "Device"),
             ("Ctrl + Alt + T",   "Str_Ctx_ClearOverride",    "Device"),
+            ("Ctrl + I",         "Str_Rec_Menu",             "Device"),
             ("Ctrl + Shift + B", "Str_Trust_Device",         "Device"),
             ("Ctrl + Shift + C", "Str_Services_CopyEndpoint", "Device"),
             ("Ctrl + Shift + Y", "Str_Services_CopyName",    "Device"),

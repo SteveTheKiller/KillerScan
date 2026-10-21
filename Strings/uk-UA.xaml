@@ -458,6 +458,7 @@
     <sys:String x:Key="Str_Loc_DeleteDetail">Видалити {0}? Її збережені сканування, імена пристроїв, схвалення та історія зникнуть із KillerScan. Файли зберігаються в папці локацій «deleted», тож їх можна відновити.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Видалити</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Зупиніть сканування, перш ніж змінювати локацію.</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">Цей файл локації більший за {0} MB, а це більше, ніж імпортує KillerScan.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Відкинути ці результати?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Результати режиму «Тимчасове сканування» ніде не зберігаються. Зміна локації очистить їх. Щоб зберегти їх, виберіть натомість «Зберегти результати в локацію».</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Відкинути</sys:String>
@@ -545,6 +546,7 @@
     <sys:String x:Key="Str_View_Topology">Топологія</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Спостереження за з'єднанням</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Термінал</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">Термінал не зміг прийняти стільки введення за раз, тому його не надіслано.</sys:String>
     <sys:String x:Key="Str_Term_Copy">Копіювати</sys:String>
     <sys:String x:Key="Str_Term_Paste">Вставити</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Виділити все</sys:String>

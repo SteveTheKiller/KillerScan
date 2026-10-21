@@ -416,6 +416,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">{0} silinsin mi? Kayıtlı taramaları, cihaz adları, onayları ve geçmişi KillerScan'den kaldırılır. Dosyalar Lokasyonların "deleted" klasöründe tutulur, böylece geri yüklenebilir.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Sil</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Lokasyonu değiştirmeden önce taramayı durdurun.</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">Bu Lokasyon dosyası {0} MB'tan büyük; bu, KillerScan'in içe aktardığından fazla.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Bu sonuçlar atılsın mı?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Bu “Geçici tarama” sonuçları hiçbir yere kaydedilmez. Lokasyonu değiştirmek bunları temizler. Saklamak için bunun yerine “Sonuçları Lokasyona kaydet” seçeneğini kullanın.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">At</sys:String>
@@ -503,6 +504,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topoloji</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Bağlantı izleme</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">Terminal bu kadar çok girdiyi tek seferde alamadı, bu yüzden gönderilmedi.</sys:String>
     <sys:String x:Key="Str_Term_Copy">Kopyala</sys:String>
     <sys:String x:Key="Str_Term_Paste">Yapıştır</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Tümünü seç</sys:String>

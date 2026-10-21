@@ -427,6 +427,7 @@
     <sys:String x:Key="Str_Loc_DeleteDetail">{0} を削除しますか？保存済みスキャン、デバイス名、承認、履歴は KillerScan に表示されなくなります。ファイルはロケーションの "deleted" フォルダーに保持されるため、復元できます。</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">削除</sys:String>
     <sys:String x:Key="Str_Loc_Busy">ロケーションを変更する前にスキャンを停止してください。</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">このロケーションファイルは {0} MB を超えており、KillerScan がインポートできるサイズを上回っています。</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">この結果を破棄しますか？</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">この「一時スキャン」の結果はどこにも保存されていません。ロケーションを変更すると消去されます。残す場合は、代わりに「結果をロケーションに保存」を選択してください。</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">破棄</sys:String>
@@ -514,6 +515,7 @@
     <sys:String x:Key="Str_View_Topology">トポロジ</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">接続監視</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">ターミナル</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">ターミナルが一度に受け付けられる入力量を超えたため、送信されませんでした。</sys:String>
     <sys:String x:Key="Str_Term_Copy">コピー</sys:String>
     <sys:String x:Key="Str_Term_Paste">貼り付け</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">すべて選択</sys:String>

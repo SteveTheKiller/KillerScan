@@ -416,6 +416,7 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">¿Eliminar {0}? Sus escaneos guardados, nombres de dispositivos, aprobaciones e historial se quitarán de KillerScan. Los archivos se conservan en la carpeta "deleted" de las Ubicaciones, así que se pueden recuperar.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Eliminar</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Detenga el escaneo antes de cambiar de Ubicación.</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">Este archivo de Ubicación supera los {0} MB, más de lo que KillerScan importa.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">¿Descartar estos resultados?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Estos resultados de «Escaneo temporal» no se guardan en ningún sitio. Cambiar de Ubicación los borra. Para conservarlos, elija «Guardar resultados en la Ubicación».</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Descartar</sys:String>
@@ -503,6 +504,7 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topología</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Supervisión de conexión</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">El terminal no pudo aceptar tanta entrada a la vez, así que no se envió.</sys:String>
     <sys:String x:Key="Str_Term_Copy">Copiar</sys:String>
     <sys:String x:Key="Str_Term_Paste">Pegar</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Seleccionar todo</sys:String>

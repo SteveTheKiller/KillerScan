@@ -458,6 +458,7 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Excluir {0}? As verificações salvas, os nomes de dispositivos, as aprovações e o histórico dele saem do KillerScan. Os arquivos ficam guardados na pasta "deleted" dos Locais, então podem ser recuperados.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Excluir</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Pare a verificação antes de trocar de Local.</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">Este arquivo de Local tem mais de {0} MB, mais do que o KillerScan importa.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Descartar estes resultados?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Estes resultados de “Verificação temporária” não são salvos em nenhum lugar. Trocar de Local os apaga. Para mantê-los, escolha “Salvar resultados no Local”.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Descartar</sys:String>
@@ -545,6 +546,7 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologia</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Monitoramento de conexão</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">O terminal não conseguiu receber tanta entrada de uma vez, então ela não foi enviada.</sys:String>
     <sys:String x:Key="Str_Term_Copy">Copiar</sys:String>
     <sys:String x:Key="Str_Term_Paste">Colar</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Selecionar tudo</sys:String>

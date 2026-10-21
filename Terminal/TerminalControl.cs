@@ -328,7 +328,20 @@ namespace KillerScan.Terminal
             if (s.Contains("\r") || s.Contains("\n") || s.Contains("\u0003")) _atPrompt = false;
             // Written in the background and in order: a busy child that is not reading input can
             // make each write wait, which on this thread froze the window during large pastes.
-            _input?.Enqueue(Encoding.UTF8.GetBytes(s));
+            if (_input?.Enqueue(Encoding.UTF8.GetBytes(s)) == false) RefuseInput();
+        }
+
+        /// <summary>
+        /// Raised when input could not be queued, because the shell has not read what is already
+        /// waiting or a paste is larger than the queue holds. The input is not sent, so the host
+        /// says so instead of letting it vanish.
+        /// </summary>
+        public event Action? InputRefused;
+
+        private void RefuseInput()
+        {
+            System.Media.SystemSounds.Beep.Play();
+            InputRefused?.Invoke();
         }
 
         public void Stop() => Dispose();

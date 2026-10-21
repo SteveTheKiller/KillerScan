@@ -416,6 +416,7 @@
     <sys:String x:Key="Str_Loc_DeleteDetail">要刪除 {0} 嗎？其已儲存的掃描、裝置名稱、核准記錄與歷史記錄將從 KillerScan 中移除。檔案會保留在站點的「deleted」資料夾中，因此可以復原。</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">刪除</sys:String>
     <sys:String x:Key="Str_Loc_Busy">請先停止掃描，再切換站點。</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">此站點檔案大於 {0} MB，超出 KillerScan 的匯入上限。</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">捨棄這些結果？</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">此「暫時掃描」的結果未儲存在任何位置。切換站點會清除這些結果。如需保留，請改為選擇「將結果儲存到站點」。</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">捨棄</sys:String>
@@ -503,6 +504,7 @@
     <sys:String x:Key="Str_View_Topology">拓撲</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">連線監控</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">終端機</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">終端機無法一次接收這麼多輸入，因此未傳送。</sys:String>
     <sys:String x:Key="Str_Term_Copy">複製</sys:String>
     <sys:String x:Key="Str_Term_Paste">貼上</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">全選</sys:String>

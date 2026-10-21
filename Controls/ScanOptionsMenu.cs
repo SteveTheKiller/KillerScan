@@ -40,7 +40,7 @@ namespace KillerScan.Controls
                 var available = hooks.List();
                 foreach (var binding in available.GroupBy(b => b.InterfaceName).Select(g => g.First()))
                 {
-                    var item = new MenuItem
+                    var item = new DetailMenuItem
                     {
                         Header = binding.InterfaceName,
                         InputGestureText = binding.LocalAddress + "/" + binding.PrefixLength,

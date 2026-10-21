@@ -87,6 +87,7 @@ internal static class LocationWorkspaceTests
             ResultsFollowLocation(a, b, scanner);
             Suggestion(Path.Combine(root, "service"));
             AdapterPreference(Path.Combine(root, "adapter"));
+            LocationControls(Path.Combine(root, "controls"));
         }
         finally
         {
@@ -164,6 +165,96 @@ internal static class LocationWorkspaceTests
         Require(banner.Visibility == Visibility.Collapsed, "A dismissed gateway is not offered again.");
         workspace.ShowLocationSuggestion("AA:BB:CC:00:00:99");
         Require(banner.Visibility == Visibility.Collapsed, "An unseen gateway offers nothing.");
+    }
+
+    // Serves the gateway's MAC from the ARP cache and fails any attempt to ask the network.
+    private sealed class CachePlatform(string gateway, string mac) : INetworkPlatform
+    {
+        internal int Asked;
+        public IReadOnlyDictionary<string, string> ReadNeighborCache() => new Dictionary<string, string> { [gateway] = mac };
+        public string ResolveMac(System.Net.IPAddress address) { Interlocked.Increment(ref Asked); return mac; }
+        public void FlushDnsCache() { }
+        public (string Interface, string NextHop)? BestRoute(System.Net.IPAddress address) => ("Ethernet", "");
+    }
+
+    // The suggestion banner, the Location label, the detail menus and import, beyond scanning.
+    private static void LocationControls(string root)
+    {
+        LocationService.Root = root;
+        LocationService.Load("Unassigned");
+        LocationService.Create("Acme Dental", out var acme);
+        string? gateway = LocalNetwork.Detect()?.Gateway;
+        var original = NetworkPlatform.Current;
+        using var workspace = new ScanWorkspace("192.0.2.1", false, new SiteScanner());
+        try
+        {
+            workspace.SetLocation(LocationData.Temporary());
+            var banner = (System.Windows.Controls.Border)workspace.FindName("LocationSuggestion");
+            if (!string.IsNullOrEmpty(gateway))
+            {
+                // The banner reads the gateway's MAC from the ARP cache only; it never asks the network.
+                LocationService.AddGatewayMac(acme!, "AA:BB:CC:00:10:01");
+                var platform = new CachePlatform(gateway!, "AA:BB:CC:00:10:01");
+                NetworkPlatform.Current = platform;
+                typeof(ScanWorkspace).GetMethod("CheckLocationSuggestion", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+                    .Invoke(workspace, null);
+                PumpUntil(() => banner.Visibility == Visibility.Visible);
+                Require(banner.Visibility == Visibility.Visible && platform.Asked == 0, "The suggestion comes from the ARP cache without sending anything.");
+
+                // Picking the suggested Location another way hides the banner; leaving it brings it back.
+                Require(workspace.OpenLocation(LocationService.Find(acme!.Id)!) && banner.Visibility == Visibility.Collapsed,
+                    "The banner goes away once the tab is in the suggested Location.");
+                workspace.SetLocation(LocationData.Temporary());
+                Require(banner.Visibility == Visibility.Visible, "Leaving the suggested Location offers it again.");
+            }
+            else Console.WriteLine("NOTE: no default gateway, so the banner checks were skipped.");
+
+            var text = (System.Windows.Controls.TextBlock)workspace.FindName("LocationSuggestionText");
+            var switchButton = (System.Windows.Controls.Button)workspace.FindName("LocationSuggestionSwitch");
+            var dismiss = (System.Windows.Controls.Button)workspace.FindName("LocationSuggestionDismiss");
+            Require(System.Windows.Automation.AutomationProperties.GetLiveSetting(text) == System.Windows.Automation.AutomationLiveSetting.Polite &&
+                    System.Windows.Input.KeyboardNavigation.GetTabIndex(switchButton) < System.Windows.Input.KeyboardNavigation.GetTabIndex(dismiss),
+                "The banner text is a live region and Tab reaches Switch before Dismiss.");
+
+            // A language change relabels the Location button.
+            var label = (System.Windows.Controls.TextBlock)workspace.FindName("LocationLabel");
+            object previous = Application.Current.Resources["Str_Loc_Temporary"];
+            try
+            {
+                Application.Current.Resources["Str_Loc_Temporary"] = "Temporary (other language)";
+                workspace.RefreshLocale();
+                Require(label.Text == "Temporary (other language)", "The Location button follows a language change.");
+            }
+            finally { Application.Current.Resources["Str_Loc_Temporary"] = previous; workspace.RefreshLocale(); }
+
+            // A detail in the shortcut column is help text to a screen reader, not a shortcut.
+            var detail = new DetailMenuItem { Header = "Office LAN", InputGestureText = "10.0.0.0/24" };
+            var peer = System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(detail)!;
+            Require(peer.GetAcceleratorKey().Length == 0 && peer.GetHelpText() == "10.0.0.0/24", "A menu detail is read as help, not as a shortcut.");
+
+            // Import refuses an oversized file before reading it, and runs off the UI thread.
+            string? failed = null;
+            workspace.ImportFailed = message => failed = message;
+            string big = Path.Combine(root, "big.ksloc");
+            File.WriteAllBytes(big, new byte[4096]);
+            long cap = ScanWorkspace.MaxImportBytes;
+            try
+            {
+                ScanWorkspace.MaxImportBytes = 1024;
+                var import = workspace.ImportLocationFrom(big);
+                PumpUntil(() => import.IsCompleted);
+                Require(failed == string.Format((string)Application.Current.FindResource("Str_Loc_ImportTooLarge"), 1) && LocationService.Items.Count == 1,
+                    "An oversized Location file is refused and adds nothing.");
+            }
+            finally { ScanWorkspace.MaxImportBytes = cap; }
+            string good = Path.Combine(root, "good.ksloc");
+            File.WriteAllText(good, "{\"Format\":\"KillerScan.Location\",\"Version\":1,\"Name\":\"Shop\",\"Files\":{}}");
+            failed = null;
+            var ok = workspace.ImportLocationFrom(good);
+            PumpUntil(() => ok.IsCompleted);
+            Require(failed == null && workspace.LocationName == "Shop" && LocationService.Items.Count == 2, "A Location imports and the tab moves to it: " + failed);
+        }
+        finally { NetworkPlatform.Current = original; }
     }
 
     private sealed class RoutePlatform : INetworkPlatform

@@ -353,16 +353,17 @@
 <!-- Offers the Location this network belongs to. It never switches by itself. -->
 <Border x:Name="LocationSuggestion" Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,6" Padding="10,6"
         Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1"
-        CornerRadius="{DynamicResource PanelCornerRadius}"
-        AutomationProperties.LiveSetting="Polite">
-    <DockPanel>
+        CornerRadius="{DynamicResource PanelCornerRadius}">
+    <!-- Docked right, Dismiss is declared first so it sits at the far right; the tab order still
+         reaches Switch, the main choice, first. -->
+    <DockPanel KeyboardNavigation.TabNavigation="Local">
         <Button x:Name="LocationSuggestionDismiss" DockPanel.Dock="Right" Content="{DynamicResource Str_Loc_Dismiss}"
-                Style="{StaticResource OutlineButton}" FontSize="12" Padding="10,3" Margin="6,0,0,0" Click="LocationSuggestionDismiss_Click"/>
+                Style="{StaticResource OutlineButton}" FontSize="12" Padding="10,3" Margin="6,0,0,0" Click="LocationSuggestionDismiss_Click" KeyboardNavigation.TabIndex="1"/>
         <Button x:Name="LocationSuggestionSwitch" DockPanel.Dock="Right" Content="{DynamicResource Str_Loc_Switch}"
-                Style="{StaticResource OutlineButton}" FontSize="12" Padding="10,3" Click="LocationSuggestionSwitch_Click"/>
+                Style="{StaticResource OutlineButton}" FontSize="12" Padding="10,3" Click="LocationSuggestionSwitch_Click" KeyboardNavigation.TabIndex="0"/>
         <a11y:Glyph DockPanel.Dock="Left" Text="&#xE707;" FontFamily="Segoe MDL2 Assets" FontSize="13" Margin="0,0,8,0"
                     Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
-        <TextBlock x:Name="LocationSuggestionText" Foreground="{DynamicResource TextBrush}" FontSize="12"
+        <TextBlock x:Name="LocationSuggestionText" Foreground="{DynamicResource TextBrush}" FontSize="12" AutomationProperties.LiveSetting="Polite"
                    TextWrapping="Wrap" VerticalAlignment="Center"/>
     </DockPanel>
 </Border>

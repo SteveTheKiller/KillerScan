@@ -432,6 +432,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Eliminare {0}? Le sue scansioni salvate, i nomi dei dispositivi, le approvazioni e la cronologia verranno rimossi da KillerScan. I file restano nella cartella "deleted" delle Sedi, quindi possono essere recuperati.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Elimina</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Interrompi la scansione prima di cambiare Sede.</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">Questo file di Sede supera {0} MB, più di quanto KillerScan importi.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Scartare questi risultati?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">I risultati di questa «Scansione temporanea» non vengono salvati da nessuna parte. Cambiare Sede li cancella. Per conservarli, scegli invece «Salva i risultati nella Sede».</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Scarta</sys:String>
@@ -519,6 +520,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologia</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Monitoraggio connessione</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminale</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">Il terminale non ha potuto accettare così tanto input in una volta, quindi non è stato inviato.</sys:String>
     <sys:String x:Key="Str_Term_Copy">Copia</sys:String>
     <sys:String x:Key="Str_Term_Paste">Incolla</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Seleziona tutto</sys:String>

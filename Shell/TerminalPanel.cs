@@ -51,6 +51,13 @@ namespace KillerScan.Shell
                 _terminalScanHasStatus = false;
                 terminal.GotKeyboardFocus += (_, _) => UpdateTerminalPanelStatus();
                 terminal.PromptReady += () => TerminalPromptReady(terminal);
+                terminal.InputRefused += () =>
+                {
+                    if (_terminalControl != terminal) return;
+                    _terminalStatusKey = "Str_Term_InputRefused";
+                    _terminalStatusArgument = null;
+                    UpdateTerminalPanelStatus();
+                };
                 terminal.SpeedTestRequested += () =>
                 {
                     if (_terminalControl == terminal) StartSpeedTest();

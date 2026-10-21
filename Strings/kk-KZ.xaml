@@ -458,6 +458,7 @@
     <sys:String x:Key="Str_Loc_DeleteDetail">{0} жойылсын ба? Оның сақталған сканерлеулері, құрылғы атаулары, мақұлдаулары және тарихы KillerScan ішінде енді көрсетілмейді. Файлдар Локациялардың "deleted" қалтасында сақталады, сондықтан оларды қалпына келтіруге болады.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Жою</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Локацияны ауыстырмас бұрын сканерлеуді тоқтатыңыз.</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">Бұл Локация файлы {0} MB-тан үлкен, бұл KillerScan импорттайтын көлемнен асады.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Бұл нәтижелерді жою керек пе?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Бұл «Уақытша сканерлеу» нәтижелері ешқайда сақталмаған. Локацияны ауыстырсаңыз, олар өшіріледі. Оларды сақтап қалу үшін оның орнына «Нәтижелерді Локацияға сақтау» тармағын таңдаңыз.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Жою</sys:String>
@@ -545,6 +546,7 @@
     <sys:String x:Key="Str_View_Topology">Топология</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Қосылымды бақылау</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Терминал</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">Терминал бір уақытта мұнша көп енгізуді қабылдай алмады, сондықтан ол жіберілмеді.</sys:String>
     <sys:String x:Key="Str_Term_Copy">Көшіру</sys:String>
     <sys:String x:Key="Str_Term_Paste">Қою</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Барлығын таңдау</sys:String>

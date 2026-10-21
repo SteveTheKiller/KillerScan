@@ -4,7 +4,7 @@ The F1 list and keyboard map read `Shell/Shortcuts.cs`. The help page reads the 
 
 | Surface | Keyboard actions |
 | --- | --- |
-| Devices and topology devices | Copy IP/MAC/hostname, browser, ping, SSH/account, RDP, deep rescan, rename (F2), trust (Ctrl+Shift+B), clear manual name (Ctrl+Alt+N), clear type override (Ctrl+Alt+T) |
+| Devices and topology devices | Copy IP/MAC/hostname, browser, ping, SSH/account, RDP, deep rescan, rename (F2), trust (Ctrl+Shift+B), clear manual name (Ctrl+Alt+N), clear type override (Ctrl+Alt+T), why this type (Ctrl+I), Access submenu |
 | Services | Copy IP/hostname, endpoint (Ctrl+Shift+C), service name (Ctrl+Shift+Y), port (Ctrl+Alt+P), protocol-appropriate browser/SSH/RDP, select all and CSV export |
 | History rows and pane background | Copy saved IP/MAC/hostname/details, CSV export, Changes/All Devices (Ctrl+Shift+H), sidebar (Ctrl+H), current Devices (F6). Background menus disable row copy. Archived addresses never receive live device commands. |
 | History icon | History settings (Ctrl+Alt+R), with the same clock icon as the rail button. |

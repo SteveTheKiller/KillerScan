@@ -108,6 +108,7 @@ namespace KillerScan.Controls
             }
             LocationService.Remember(data);
             ApplyLocationHooks();
+            RefreshLocationSuggestion();
             _filteredView?.Refresh();
             if (_showTopology) RefreshTopology();
             LocationChanged?.Invoke(this, EventArgs.Empty);
@@ -204,7 +205,7 @@ namespace KillerScan.Controls
                 foreach (var scan in saved)
                 {
                     var captured = scan;
-                    var item = new MenuItem { Header = scan.Name, InputGestureText = scan.Target };
+                    var item = new DetailMenuItem { Header = scan.Name, InputGestureText = scan.Target };
                     item.Click += (_, _) => LoadSavedScan(captured);
                     menu.Items.Add(item);
                 }
@@ -274,22 +275,35 @@ namespace KillerScan.Controls
             if (device != null) LocationService.AddGatewayMac(info, device.MacAddress);
         }
 
+        private int _suggestionCheck;
+        private string _lastGatewayMac = string.Empty;
+
+        /// <summary>
+        /// Looks up the gateway's MAC in the ARP cache Windows already has, off the UI thread.
+        /// It never asks the network: a suggestion sends no traffic by itself. When several
+        /// checks overlap, as on a burst of network changes, only the latest one is shown.
+        /// </summary>
         private async void CheckLocationSuggestion()
         {
             if (_disposed || DemoMode || !LocationService.Editable) return;
-            string gateway = LocalNetwork.Detect()?.Gateway ?? string.Empty;
-            string mac = string.Empty;
-            if (System.Net.IPAddress.TryParse(gateway, out var address))
+            int check = ++_suggestionCheck;
+            string mac;
+            try
             {
-                try { mac = await System.Threading.Tasks.Task.Run(() => NetworkPlatform.Current.ResolveMac(address)); }
-                catch (Exception ex) when (ex is not OutOfMemoryException) { mac = string.Empty; }
+                mac = await System.Threading.Tasks.Task.Run(() =>
+                {
+                    string gateway = LocalNetwork.Detect()?.Gateway ?? string.Empty;
+                    return gateway.Length > 0 && NetworkPlatform.Current.ReadNeighborCache().TryGetValue(gateway, out var known) ? known : string.Empty;
+                });
             }
-            if (_disposed) return;
+            catch (Exception ex) when (ex is not OutOfMemoryException) { mac = string.Empty; }
+            if (_disposed || check != _suggestionCheck) return;
             ShowLocationSuggestion(mac);
         }
 
         internal void ShowLocationSuggestion(string gatewayMac)
         {
+            _lastGatewayMac = gatewayMac;
             var matches = LocationCatalog.Matching(LocationService.Items, gatewayMac)
                 .Where(item => item.Id != _location.Info?.Id).ToList();
             bool show = matches.Count > 0 && !DismissedGateways.Contains(LocationInfo.NormalizeMac(gatewayMac))
@@ -303,6 +317,17 @@ namespace KillerScan.Controls
                 : string.Format(Loc("Str_Loc_SuggestMany"), string.Join(", ", matches.Select(item => item.Name)));
             // With more than one match, the picker is the way to choose; nothing is preselected.
             LocationSuggestionSwitch.Visibility = _suggested != null ? Visibility.Visible : Visibility.Collapsed;
+            // The text is a live region, so a screen reader announces the suggestion when it appears.
+            System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(LocationSuggestionText)?
+                .RaiseAutomationEvent(System.Windows.Automation.Peers.AutomationEvents.LiveRegionChanged);
+        }
+
+        // After a Location change or a language change the banner may no longer apply, or
+        // reads in the old language, so it is worked out again from the last gateway seen.
+        private void RefreshLocationSuggestion()
+        {
+            if (_lastGatewayMac.Length > 0) ShowLocationSuggestion(_lastGatewayMac);
+            else LocationSuggestion.Visibility = Visibility.Collapsed;
         }
 
         private void LocationSuggestionSwitch_Click(object sender, RoutedEventArgs e)
@@ -392,18 +417,47 @@ namespace KillerScan.Controls
 
         internal void NewLocation() => CreateLocation();
 
-        private void ImportLocation()
+        /// <summary>The largest .ksloc file Import reads. Tests lower it.</summary>
+        internal static long MaxImportBytes { get; set; } = 256L * 1024 * 1024;
+        private bool _importing;
+
+        private async void ImportLocation()
         {
             var dialog = new FileDialog(FileDialogMode.Open) { Filter = Loc("Str_Loc_FileFilter") + "|*" + LocationTransfer.Extension };
             if (dialog.ShowDialog(Window.GetWindow(this)) != true) return;
-            byte[] bytes;
-            try { bytes = System.IO.File.ReadAllBytes(dialog.FileName); }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { ShowImportError(ex.Message); return; }
-            if (!LocationService.Import(bytes, out var imported, out string? error) || imported == null)
+            await ImportLocationFrom(dialog.FileName);
+        }
+
+        /// <summary>Imports a .ksloc file and moves the tab to it. Tests call it with their own file.</summary>
+        internal async System.Threading.Tasks.Task ImportLocationFrom(string path)
+        {
+            if (_importing) return;
+            LocationInfo? imported;
+            string? error;
+            _importing = true;
+            try
+            {
+                // Read, checked and staged off the UI thread, so a large export does not freeze the
+                // window. A file past the cap is refused before it is read into memory at all.
+                long limit = MaxImportBytes;
+                string tooLarge = string.Format(Loc("Str_Loc_ImportTooLarge"), Math.Max(1, limit / (1024 * 1024)));
+                (imported, error) = await System.Threading.Tasks.Task.Run(() =>
+                {
+                    if (new FileInfo(path).Length > limit) return ((LocationInfo?)null, (string?)tooLarge);
+                    byte[] bytes = File.ReadAllBytes(path);
+                    bool ok = LocationService.Import(bytes, out var added, out string? why, notify: false);
+                    return (ok ? added : null, why);
+                });
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { imported = null; error = ex.Message; }
+            finally { _importing = false; }
+            if (_disposed) return;
+            if (imported == null)
             {
                 ShowImportError(error ?? string.Empty);
                 return;
             }
+            LocationService.NotifyChanged();
             SetLocation(LocationService.Get(imported));
             StatusText.Text = string.Format(Loc("Str_Loc_Imported"), imported.Name);
             // Same name as an existing Location is allowed, so offer a rename straight away.
@@ -411,9 +465,15 @@ namespace KillerScan.Controls
                 RenameLocation();
         }
 
-        private void ShowImportError(string message) =>
+        /// <summary>Shows why an import failed. Tests capture the message without a dialog.</summary>
+        internal Action<string>? ImportFailed { get; set; }
+
+        private void ShowImportError(string message)
+        {
+            if (ImportFailed != null) { ImportFailed(message); return; }
             MessageBox.Show(Window.GetWindow(this), string.Format(Loc("Str_Loc_ImportFailed"), message), AppInfo.DisplayName,
                 MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
 
         private static string SafeFileName(string name)
         {

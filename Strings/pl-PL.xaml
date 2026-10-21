@@ -401,6 +401,7 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Usunąć {0}? Jej zapisane skany, nazwy urządzeń, zatwierdzenia i historia znikną z KillerScan. Pliki zostaną zachowane w folderze Lokalizacji "deleted", więc można je odzyskać.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Usuń</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Zatrzymaj skanowanie przed zmianą Lokalizacji.</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">Ten plik Lokalizacji jest większy niż {0} MB, czyli więcej, niż KillerScan importuje.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Odrzucić te wyniki?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Wyniki z trybu „Skanowanie tymczasowe” nie są nigdzie zapisane. Zmiana Lokalizacji je usunie. Aby je zachować, wybierz zamiast tego „Zapisz wyniki w Lokalizacji”.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Odrzuć</sys:String>
@@ -488,6 +489,7 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologia</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Monitorowanie połączenia</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">Terminal nie mógł przyjąć tak dużej ilości danych naraz, więc nie zostały wysłane.</sys:String>
     <sys:String x:Key="Str_Term_Copy">Kopiuj</sys:String>
     <sys:String x:Key="Str_Term_Paste">Wklej</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Zaznacz wszystko</sys:String>

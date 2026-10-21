@@ -52,6 +52,16 @@ internal static class TopologyKeyboardTests
             }
             var moved = Keyboard.FocusedElement as Border;
             Require(moved != null && moved != start && moved.Tag is NetworkDevice, "Arrow keys move focus to a neighboring node.");
+            Require(grid.SelectedItems.Count == 1 && grid.SelectedItems[0] == moved!.Tag,
+                "An arrow key also selects the device it moves to, so device actions apply to the focused one.");
+            foreach (var key in new[] { Key.Right, Key.Down, Key.Left, Key.Up })
+            {
+                var before = Keyboard.FocusedElement;
+                Press(moved!, key, ModifierKeys.Control);
+                if (Keyboard.FocusedElement != before) break;
+            }
+            Require(Keyboard.FocusedElement != moved && grid.SelectedItems.Count == 1 && grid.SelectedItems[0] == moved!.Tag,
+                "Ctrl+arrow moves focus without changing the selection.");
 
             Press(moved!, Key.Space);
             Require(grid.SelectedItems.Count == 1 && grid.SelectedItems[0] == moved!.Tag, "Space selects the focused node alone.");

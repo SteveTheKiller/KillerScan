@@ -86,10 +86,11 @@ namespace KillerScan.Controls
             RestoreColumnLayout();
             FitMacColumn();
             // Themes and the interface font change the grid's font; the MAC column follows.
-            DependencyPropertyDescriptor.FromProperty(Control.FontFamilyProperty, typeof(DataGrid))
-                .AddValueChanged(ResultsGrid, (_, _) => FitMacColumn());
-            DependencyPropertyDescriptor.FromProperty(Control.FontSizeProperty, typeof(DataGrid))
-                .AddValueChanged(ResultsGrid, (_, _) => FitMacColumn());
+            // A named handler, so Dispose can remove it: the descriptor table would otherwise keep
+            // every closed workspace alive.
+            _fitMac = (_, _) => FitMacColumn();
+            GridFontFamily.AddValueChanged(ResultsGrid, _fitMac);
+            GridFontSize.AddValueChanged(ResultsGrid, _fitMac);
             Loaded += (_, _) => FitMacColumn();
             AddWorkspaceDeviceMenus();
             ServicesGrid.SelectionChanged += (_, _) =>
@@ -187,6 +188,8 @@ namespace KillerScan.Controls
             PaneTitle.Text = Loc(_showTopology ? "Str_Topology_Title" : _showServices ? "Str_Services_Title" : "Str_DiscoveredDevices");
             if (_showTopology) RefreshTopology();
             if (_showServices) RefreshServices();
+            UpdateLocationLabel();
+            if (LocationSuggestion.Visibility == Visibility.Visible) RefreshLocationSuggestion();
         }
         // Grid columns sit outside the visual tree, so their DynamicResource headers keep the
         // language they were created in. They are restated on every language change.
@@ -203,12 +206,22 @@ namespace KillerScan.Controls
         }
 
         public void ApplyScale(double scale) => LayoutTransform = new ScaleTransform(scale, scale);
+        private static readonly DependencyPropertyDescriptor GridFontFamily = DependencyPropertyDescriptor.FromProperty(Control.FontFamilyProperty, typeof(DataGrid));
+        private static readonly DependencyPropertyDescriptor GridFontSize = DependencyPropertyDescriptor.FromProperty(Control.FontSizeProperty, typeof(DataGrid));
+        private EventHandler? _fitMac;
+
         public void Dispose()
         {
             if (_disposed) return;
             _disposed = true;
             _viewRefreshTimer?.Stop();
+            _vendorNoticeTimer?.Stop();
             StatusDescriptor.RemoveValueChanged(StatusText, NotifyFooterChanged);
+            if (_fitMac != null)
+            {
+                GridFontFamily.RemoveValueChanged(ResultsGrid, _fitMac);
+                GridFontSize.RemoveValueChanged(ResultsGrid, _fitMac);
+            }
             ProgressDescriptor.RemoveValueChanged(ScanProgress, NotifyFooterChanged);
             ProgressVisibilityDescriptor.RemoveValueChanged(ScanProgress, NotifyFooterChanged);
             DisposeLocationSuggestions();

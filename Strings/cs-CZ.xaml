@@ -414,6 +414,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Odstranit {0}? Její uložené skeny, názvy zařízení, schválení a historie budou z KillerScan odebrány. Soubory zůstanou ve složce "deleted" Lokalit, takže je lze obnovit.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Odstranit</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Před změnou Lokality zastavte skenování.</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">Tento soubor Lokality je větší než {0} MB, což je víc, než KillerScan importuje.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Zahodit tyto výsledky?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Výsledky z režimu „Dočasný sken“ nejsou nikde uloženy. Změnou Lokality se vymažou. Chcete-li je zachovat, zvolte místo toho „Uložit výsledky do Lokality“.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Zahodit</sys:String>
@@ -501,6 +502,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologie</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Sledování připojení</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminál</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">Terminál nedokázal přijmout tolik vstupu najednou, proto nebyl odeslán.</sys:String>
     <sys:String x:Key="Str_Term_Copy">Kopírovat</sys:String>
     <sys:String x:Key="Str_Term_Paste">Vložit</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Vybrat vše</sys:String>

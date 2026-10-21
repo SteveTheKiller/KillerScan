@@ -458,6 +458,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Delete {0}? Its saved scans, device names, approvals and history leave KillerScan. The files are kept in the Locations "deleted" folder, so they can be recovered.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Delete</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Stop the scan before changing Location.</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">This Location file is larger than {0} MB, which is more than KillerScan imports.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Discard these results?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">These Temporary scan results are not saved anywhere. Changing Location clears them. To keep them, choose Save results to Location instead.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Discard</sys:String>
@@ -544,6 +545,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topology</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Keep Alive</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">The terminal could not take that much input at once, so it was not sent.</sys:String>
     <sys:String x:Key="Str_Term_Copy">Copy</sys:String>
     <sys:String x:Key="Str_Term_Paste">Paste</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Select all</sys:String>

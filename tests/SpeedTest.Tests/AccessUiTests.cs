@@ -85,7 +85,26 @@ internal static class AccessUiTests
             Require(html.Contains(System.Net.WebUtility.HtmlEncode(Item("HTTPS", 8443, Res("Str_Access_LoginForm")))), "The HTML ports cell lists the endpoints on hover.");
         }
         finally { DemoData.Enabled = demo; }
+        Require(DisposedWorkspaceIsCollected(), "A closed scan workspace is not kept alive by its font hooks or other handlers.");
         Console.WriteLine("PASS: the Access menu lists each endpoint, opens it with the right action and claims no login.");
+    }
+
+    private static bool DisposedWorkspaceIsCollected()
+    {
+        WeakReference Make()
+        {
+            var workspace = new ScanWorkspace("192.0.2.0/24", false);
+            workspace.Dispose();
+            return new WeakReference(workspace);
+        }
+        var weak = Make();
+        for (int i = 0; i < 5 && weak.IsAlive; i++)
+        {
+            System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+        return !weak.IsAlive;
     }
 
     private static void Require(bool condition, string message)

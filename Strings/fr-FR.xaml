@@ -416,6 +416,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Supprimer {0} ? Ses analyses enregistrées, noms d’appareils, approbations et historique seront retirés de KillerScan. Les fichiers sont conservés dans le dossier "deleted" des Sites, ils peuvent donc être récupérés.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Supprimer</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Arrêtez l’analyse avant de changer de Site.</sys:String>
+    <sys:String x:Key="Str_Loc_ImportTooLarge">Ce fichier de Site dépasse {0} MB, soit plus que ce que KillerScan importe.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Abandonner ces résultats ?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Les résultats de cette « Analyse temporaire » ne sont enregistrés nulle part. Changer de Site les efface. Pour les conserver, choisissez plutôt « Enregistrer les résultats dans le Site ».</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Abandonner</sys:String>
@@ -503,6 +504,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_View_Topology">Topologie</sys:String>
     <sys:String x:Key="Str_View_KeepAlive">Surveillance de connexion</sys:String>
     <sys:String x:Key="Str_Workspace_Terminal">Terminal</sys:String>
+    <sys:String x:Key="Str_Term_InputRefused">Le terminal n’a pas pu accepter autant de saisie à la fois, elle n’a donc pas été envoyée.</sys:String>
     <sys:String x:Key="Str_Term_Copy">Copier</sys:String>
     <sys:String x:Key="Str_Term_Paste">Coller</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Tout sélectionner</sys:String>
