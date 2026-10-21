@@ -85,6 +85,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Right-click a device and choose Access to see every way into it: each web port and what it answered (a status, a login request or a sign-in page), the SSH banner, and every other open port. Clicking an entry opens it in the browser, SSH or Remote Desktop on that port, and Copy Address copies any of them. Nothing is claimed beyond what was seen, no credentials are ever sent, and opening the menu sends nothing. Deep scans now check every web port so each has its own evidence. CSV adds an Access column, HTML reports list the endpoints when hovering a device's ports, and CLI JSON and the PowerShell module carry the full list.
 
 ### Changed
+- Light's background, sidebar and footer are a slightly darker gray (#d4d4d4), and fields a touch lighter, so content stands apart from the chrome.
 - Open in Browser opens the web port that actually answered, HTTPS first, instead of always `http://` on port 80. The Services view opens a port with the scheme it answered with, including on non-standard ports.
 - A name containing a device keyword, such as "synology" or "pihole", is now heavy evidence rather than the final word, so clearer protocol answers can outvote it. A UniFi or UBNT name now shows Switch/AP instead of the generic Network type.
 - Trusted devices are now called approved devices, and approving is always a choice you make.
