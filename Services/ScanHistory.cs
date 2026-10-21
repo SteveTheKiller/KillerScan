@@ -222,6 +222,20 @@ namespace KillerScan.Services
             return comparison;
         }
 
+        /// <summary>Adds a run recorded elsewhere, such as a Temporary scan saved to a Location.</summary>
+        public bool Adopt(ScanHistoryEntry entry)
+        {
+            var copy = new ScanHistoryEntry
+            {
+                ScannedAt = entry.ScannedAt, Target = entry.Target, TargetKey = entry.TargetKey, Options = entry.Options,
+                Deep = entry.Deep, Completion = entry.Completion, Adapter = entry.Adapter, Devices = [.. entry.Devices]
+            };
+            if (MemoryOnly) { _entries = _demoRetention.Retained(_entries.Concat([copy]), DateTimeOffset.Now); return true; }
+            bool saved = _archive.Append(copy, DateTimeOffset.Now);
+            _entries = _archive.Entries;
+            return saved;
+        }
+
         private static ScanComparison Compare(ScanHistoryEntry current, ScanHistoryEntry? previous)
         {
             if (previous == null)

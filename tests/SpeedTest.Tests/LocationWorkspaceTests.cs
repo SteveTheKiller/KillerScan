@@ -76,6 +76,13 @@ internal static class LocationWorkspaceTests
             PumpUntil(() => !workspace.IsScanning && temporary.History.Entries.Count == 1);
             Require(!temporary.Devices.HasBaseline && workspace.NewDevices.Count == 0,
                 "A Temporary scan sets no baseline and flags nothing.");
+            temporary.Devices.SetName(workspace.Session.Devices.Single(), "Typed during the visit");
+            int before = a.History.Entries.Count;
+            Require(workspace.SaveResultsTo(a), "Temporary results can be saved to a Location.");
+            Require(a.History.Entries.Count == before + 1 && a.Devices.GetName(device) == "Typed during the visit" &&
+                !a.Devices.IsTrusted(device) && workspace.Location == a,
+                "Saving results adds the run and its names to the Location, approves nothing, and moves the tab there.");
+            Require(!workspace.SaveResultsTo(b), "Only a Temporary scan's results can be saved to a Location.");
             Suggestion(Path.Combine(root, "service"));
             AdapterPreference(Path.Combine(root, "adapter"));
         }

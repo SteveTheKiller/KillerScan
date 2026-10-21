@@ -164,6 +164,21 @@ namespace KillerScan.Controls
                 }
             }
 
+            if (_location.IsTemporary && _location.History.Entries.Count > 0 && LocationService.Items.Count > 0 && !DemoMode)
+            {
+                menu.Items.Add(new Separator());
+                var saveTo = new MenuItem { IsEnabled = !IsScanning };
+                saveTo.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Loc_SaveResults");
+                foreach (var info in LocationService.Items.OrderBy(item => item.Name, StringComparer.CurrentCultureIgnoreCase))
+                {
+                    var captured = info;
+                    var item = new MenuItem { Header = info.ToString() };
+                    item.Click += (_, _) => SaveResultsTo(LocationService.Get(captured));
+                    saveTo.Items.Add(item);
+                }
+                menu.Items.Add(saveTo);
+            }
+
             menu.Items.Add(new Separator());
             bool editable = !IsScanning && (LocationService.Loaded || _location.IsShared);
             menu.Items.Add(MenuText("Str_Loc_SaveScan", SaveScan, editable && _loadedScanName != null));
@@ -371,6 +386,26 @@ namespace KillerScan.Controls
                 { Owner = Window.GetWindow(this) };
             confirm.ShowDialog();
             return confirm.Confirmed;
+        }
+
+        /// <summary>
+        /// Moves a Temporary scan's results into a Location: its history entries and any names
+        /// typed while it was temporary. Nothing is approved and the baseline is not touched,
+        /// then the tab moves to that Location.
+        /// </summary>
+        internal bool SaveResultsTo(LocationData target)
+        {
+            if (_disposed || IsScanning || !_location.IsTemporary || target.IsTemporary || ReferenceEquals(target, _location)) return false;
+            var source = _location;
+            bool saved = true;
+            foreach (var entry in source.History.Entries) saved &= target.History.Adopt(entry);
+            foreach (var device in _active.Devices)
+                if (source.Devices.GetName(device) is { } name) saved &= target.Devices.SetName(device, name);
+            PersistenceFeedback.Check(saved, () => target.History.Retry() && target.Devices.Retry(),
+                () => target.History.SaveError ?? target.Devices.SaveError);
+            SetLocation(target);
+            HistoryRecorded?.Invoke(this, EventArgs.Empty);
+            return true;
         }
 
         private string? AskName(string titleKey, string current)
