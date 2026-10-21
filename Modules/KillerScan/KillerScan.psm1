@@ -20,15 +20,47 @@ function Get-KsExe {
     throw 'KillerScan was not found. Open a terminal from KillerScan, or install it so killerscan.exe is on PATH.'
 }
 
+# Runs the app with stdout and stderr kept apart: stdout is the data, stderr is status
+# and diagnostics. Exit codes are 0 success, 1 failure, cancel or timeout, 2 bad usage
+# and 3 empty or not found. Codes listed in -Answer are results rather than failures
+# (3 from /vendor means an unknown maker); anything else becomes a terminating error
+# that keeps the exit code in Exception.Data['ExitCode'] and the app's own message.
 function Invoke-KsText {
-    param([string[]]$Arguments)
+    param([string[]]$Arguments, [int[]]$Answer = @(0))
 
     $exe = Get-KsExe
-    $raw = & $exe @Arguments 2>&1
-    # 2 is bad usage, which is a real error. 1 is "found nothing" and 3 is "unknown
-    # vendor", both of which are answers rather than failures.
-    if ($LASTEXITCODE -eq 2) { throw (($raw | Out-String).Trim()) }
-    ($raw | Where-Object { $_ -isnot [System.Management.Automation.ErrorRecord] } | Out-String).Trim()
+    $info = New-Object System.Diagnostics.ProcessStartInfo
+    $info.FileName = $exe
+    $info.Arguments = ($Arguments | ForEach-Object {
+        if ($_ -match '[\s"]') { '"' + ($_ -replace '"', '\"') + '"' } else { $_ }
+    }) -join ' '
+    $info.UseShellExecute = $false
+    $info.CreateNoWindow = $true
+    $info.RedirectStandardOutput = $true
+    $info.RedirectStandardError = $true
+    $info.StandardOutputEncoding = [System.Text.Encoding]::UTF8
+    $info.StandardErrorEncoding = [System.Text.Encoding]::UTF8
+
+    $process = [System.Diagnostics.Process]::Start($info)
+    try {
+        # Both streams are drained together so neither can fill and stall the app.
+        $errorTask = $process.StandardError.ReadToEndAsync()
+        $stdout = $process.StandardOutput.ReadToEnd()
+        $process.WaitForExit()
+        $stderr = $errorTask.GetAwaiter().GetResult().Trim()
+        $code = $process.ExitCode
+    }
+    finally { $process.Dispose() }
+
+    if ($Answer -notcontains $code) {
+        $message = if ($stderr) { $stderr } else { "KillerScan exited with code $code." }
+        $exception = New-Object System.InvalidOperationException $message
+        $exception.Data['ExitCode'] = $code
+        throw (New-Object System.Management.Automation.ErrorRecord $exception, "KillerScanExit$code",
+            ([System.Management.Automation.ErrorCategory]::NotSpecified), $Arguments[0])
+    }
+    if ($stderr) { Write-Verbose $stderr }
+    $stdout.Trim()
 }
 
 function Invoke-KsJson {
@@ -92,14 +124,19 @@ function scan {
         [switch]$Quick,
 
         # Seconds to allow the whole scan.
-        [int]$Timeout
+        [int]$Timeout,
+
+        # A fabricated network for screenshots and tests. Nothing is scanned.
+        [switch]$Demo
     )
 
     $arguments = @('/scan')
     if ($Target)  { $arguments += ($Target -join ',') }
     if ($Quick)   { $arguments += '/quick' }
     if ($Timeout) { $arguments += @('/timeout', $Timeout) }
-    $arguments += @('/json', '/quiet')
+    if ($Demo)    { $arguments += '/demo' }
+    # No /quiet: it suppresses stdout, which is where the JSON is. Status goes to stderr.
+    $arguments += '/json'
 
     Invoke-KsJson $arguments | ForEach-Object { ConvertTo-KsDevice $_ }
 }
@@ -121,7 +158,7 @@ function probe {
 
     $arguments = @('/probe', $Target)
     if ($Timeout) { $arguments += @('/timeout', $Timeout) }
-    $arguments += @('/json', '/quiet')
+    $arguments += '/json'
 
     Invoke-KsJson $arguments | ForEach-Object { ConvertTo-KsDevice $_ }
 }
@@ -145,7 +182,7 @@ function vendor {
         # /vendor accepts no options at all, so it is called bare and its single line
         # of output is the answer. "Unknown" comes back as $null rather than a word
         # you would have to test for.
-        $name = Invoke-KsText @('/vendor', $Mac)
+        $name = Invoke-KsText @('/vendor', $Mac) -Answer 0, 3
         if ($name -eq 'Unknown') { $null } else { $name }
     }
 }
