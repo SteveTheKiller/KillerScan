@@ -376,9 +376,9 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Loc_SuggestMany">La puerta de enlace de esta red se vio en más de una Ubicación: {0}. Elija una con el botón Ubicación.</sys:String>
     <sys:String x:Key="Str_Loc_Switch">Cambiar</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Descartar</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">Adaptador de red diferente</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">Este escaneo guardado se configuró en {0}, pero este escaneo saldría por {1}. KillerScan todavía no puede elegir el adaptador, así que usará la ruta que elija Windows. ¿Escanear de todos modos?</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">ningún adaptador conocido</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">Adaptador de red no conectado</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">Este escaneo está configurado para usar {0}, que no está conectado. ¿Escanear con el adaptador que elija Windows?</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} no está en la red de {1} ({2}). Elija Automático en Adaptador de red para escanearlo.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Ubicación</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adaptador</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Guardar resultados en la Ubicación</sys:String>
@@ -572,4 +572,6 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Options_snmp">Descripción SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Nombre NetBIOS</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Escaneo profundo: identificar puertos desconocidos (nunca puertos de impresora)</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">Adaptador de red</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">Automático (lo elige Windows)</sys:String>
 </ResourceDictionary>

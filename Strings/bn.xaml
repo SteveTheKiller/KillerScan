@@ -376,9 +376,9 @@
     <sys:String x:Key="Str_Loc_SuggestMany">এই নেটওয়ার্কের গেটওয়ে একাধিক লোকেশনে দেখা গেছে: {0}। লোকেশন বোতাম থেকে একটি বেছে নিন।</sys:String>
     <sys:String x:Key="Str_Loc_Switch">পরিবর্তন করুন</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">বাদ দিন</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">ভিন্ন নেটওয়ার্ক অ্যাডাপ্টার</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">এই সংরক্ষিত স্ক্যানটি {0}-এ সেট আপ করা হয়েছিল, কিন্তু এই স্ক্যানটি {1} দিয়ে যাবে। KillerScan এখনও অ্যাডাপ্টার বেছে নিতে পারে না, তাই Windows যে রুট বেছে নেয় সেটিই ব্যবহার করবে। তবুও স্ক্যান করবেন?</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">কোনো পরিচিত অ্যাডাপ্টার নেই</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">নেটওয়ার্ক অ্যাডাপ্টার সংযুক্ত নেই</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">এই স্ক্যানটি {0} ব্যবহার করার জন্য সেট করা আছে, কিন্তু সেটি সংযুক্ত নেই। এর পরিবর্তে Windows যে অ্যাডাপ্টার বেছে নেয় সেটি দিয়ে স্ক্যান করবেন?</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} {1}-এর নেটওয়ার্কে ({2}) নেই। এটি স্ক্যান করতে নেটওয়ার্ক অ্যাডাপ্টার থেকে স্বয়ংক্রিয় বেছে নিন।</sys:String>
     <sys:String x:Key="Str_Rep_Location">লোকেশন</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">অ্যাডাপ্টার</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">ফলাফল লোকেশনে সংরক্ষণ করুন</sys:String>
@@ -572,4 +572,6 @@
     <sys:String x:Key="Str_Options_snmp">SNMP বর্ণনা</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS নাম</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">ডিপ স্ক্যান: অজানা পোর্ট শনাক্ত করুন (প্রিন্টার পোর্ট কখনো নয়)</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">নেটওয়ার্ক অ্যাডাপ্টার</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">স্বয়ংক্রিয় (Windows বেছে নেয়)</sys:String>
 </ResourceDictionary>

@@ -418,9 +418,9 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Loc_SuggestMany">Gatewayen til dette nettverket er sett i mer enn én Lokasjon: {0}. Velg en fra Lokasjon-knappen.</sys:String>
     <sys:String x:Key="Str_Loc_Switch">Bytt</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Avvis</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">Annen nettverksadapter</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">Denne lagrede skanningen ble satt opp på {0}, men denne skanningen ville gått ut via {1}. KillerScan kan ikke velge adapter ennå, så den bruker ruten Windows velger. Skanne likevel?</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">ingen kjent adapter</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">Nettverksadapteren er ikke tilkoblet</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">Denne skanningen er satt til å bruke {0}, som ikke er tilkoblet. Skanne med adapteren Windows velger i stedet?</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} er ikke på nettverket til {1} ({2}). Velg Automatisk under Nettverksadapter for å skanne den.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Lokasjon</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adapter</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Lagre resultater i Lokasjonen</sys:String>
@@ -614,4 +614,6 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Options_snmp">SNMP-beskrivelse</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS-navn</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Dypskanning: identifiser ukjente porter (aldri skriverporter)</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">Nettverksadapter</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">Automatisk (Windows velger)</sys:String>
 </ResourceDictionary>

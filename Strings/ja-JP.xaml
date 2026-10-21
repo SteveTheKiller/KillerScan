@@ -387,9 +387,9 @@
     <sys:String x:Key="Str_Loc_SuggestMany">このネットワークのゲートウェイは複数のロケーションで検出されています: {0}。ロケーション ボタンから 1 つ選択してください。</sys:String>
     <sys:String x:Key="Str_Loc_Switch">切り替え</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">閉じる</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">異なるネットワーク アダプター</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">この保存済みスキャンは {0} で設定されましたが、このスキャンは {1} 経由で送信されます。KillerScan はまだアダプターを選択できないため、Windows が選んだ経路を使用します。それでもスキャンしますか？</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">既知のアダプターなし</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">ネットワーク アダプターが接続されていません</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">このスキャンは {0} を使用するよう設定されていますが、このアダプターは接続されていません。代わりに Windows が選んだアダプターでスキャンしますか？</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} は {1} のネットワーク ({2}) 上にありません。スキャンするには、「ネットワーク アダプター」で「自動」を選択してください。</sys:String>
     <sys:String x:Key="Str_Rep_Location">ロケーション</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">アダプター</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">結果をロケーションに保存</sys:String>
@@ -583,4 +583,6 @@
     <sys:String x:Key="Str_Options_snmp">SNMPの説明</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS名</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">詳細スキャン: 不明なポートを識別 (プリンターポートは除外)</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">ネットワーク アダプター</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">自動 (Windows が選択)</sys:String>
 </ResourceDictionary>

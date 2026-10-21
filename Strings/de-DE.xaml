@@ -377,9 +377,9 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Loc_SuggestMany">Das Gateway dieses Netzwerks wurde an mehr als einem Standort gesehen: {0}. Wählen Sie einen über die Schaltfläche Standort aus.</sys:String>
     <sys:String x:Key="Str_Loc_Switch">Wechseln</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Ausblenden</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">Anderer Netzwerkadapter</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">Dieser gespeicherte Scan wurde auf {0} eingerichtet, dieser Scan würde aber über {1} laufen. KillerScan kann den Adapter noch nicht wählen und verwendet daher die Route, die Windows auswählt. Trotzdem scannen?</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">kein bekannter Adapter</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">Netzwerkadapter nicht verbunden</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">Dieser Scan ist für {0} eingerichtet, dieser Adapter ist aber nicht verbunden. Stattdessen mit dem Adapter scannen, den Windows auswählt?</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} liegt nicht im Netzwerk von {1} ({2}). Wählen Sie zum Scannen unter Netzwerkadapter die Option Automatisch.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Standort</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adapter</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Ergebnisse im Standort speichern</sys:String>
@@ -573,4 +573,6 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Options_snmp">SNMP-Beschreibung</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS-Name</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Tiefenscan: unbekannte Ports identifizieren (nie Druckerports)</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">Netzwerkadapter</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">Automatisch (Windows wählt)</sys:String>
 </ResourceDictionary>

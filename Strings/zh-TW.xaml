@@ -376,9 +376,9 @@
     <sys:String x:Key="Str_Loc_SuggestMany">曾在多個站點中看到此網路的閘道：{0}。請從「站點」按鈕選擇一個。</sys:String>
     <sys:String x:Key="Str_Loc_Switch">切換</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">忽略</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">不同的網路卡</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">此已儲存的掃描是在 {0} 上設定的，但本次掃描會經由 {1} 送出。KillerScan 目前無法選擇網路卡，因此會使用 Windows 選擇的路由。仍要掃描嗎？</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">沒有已知的網路卡</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">網路卡未連線</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">此掃描設定為使用 {0}，但該網路卡未連線。要改用 Windows 選擇的網路卡進行掃描嗎？</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} 不在 {1} 的網路（{2}）中。請在「網路卡」下選擇「自動」以掃描它。</sys:String>
     <sys:String x:Key="Str_Rep_Location">站點</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">網路卡</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">將結果儲存到站點</sys:String>
@@ -572,4 +572,6 @@
     <sys:String x:Key="Str_Options_snmp">SNMP 描述</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS 名稱</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">深度掃描：識別未知連接埠（絕不探測印表機連接埠）</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">網路卡</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">自動（由 Windows 選擇）</sys:String>
 </ResourceDictionary>

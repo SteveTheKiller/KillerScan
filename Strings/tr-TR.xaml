@@ -376,9 +376,9 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Loc_SuggestMany">Bu ağın ağ geçidi birden fazla Lokasyonda görüldü: {0}. Lokasyon düğmesinden birini seçin.</sys:String>
     <sys:String x:Key="Str_Loc_Switch">Geç</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Kapat</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">Farklı ağ bağdaştırıcısı</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">Bu kayıtlı tarama {0} üzerinde ayarlandı, ancak bu tarama {1} üzerinden çıkacak. KillerScan henüz bağdaştırıcıyı seçemiyor, bu yüzden Windows'un seçtiği yolu kullanacak. Yine de taransın mı?</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">bilinen bağdaştırıcı yok</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">Ağ bağdaştırıcısı bağlı değil</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">Bu tarama {0} bağdaştırıcısını kullanacak şekilde ayarlandı, ancak bu bağdaştırıcı bağlı değil. Bunun yerine Windows'un seçtiği bağdaştırıcıyla taransın mı?</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0}, {1} ağında değil ({2}). Taramak için Ağ bağdaştırıcısı altında Otomatik seçeneğini seçin.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Lokasyon</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Bağdaştırıcı</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Sonuçları Lokasyona kaydet</sys:String>
@@ -572,4 +572,6 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Options_snmp">SNMP açıklaması</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS adı</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Derin tarama: bilinmeyen portları tanımla (yazıcı portları asla)</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">Ağ bağdaştırıcısı</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">Otomatik (Windows seçer)</sys:String>
 </ResourceDictionary>

@@ -376,9 +376,9 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Loc_SuggestMany">La passerelle de ce réseau a été vue dans plusieurs Sites : {0}. Choisissez-en un avec le bouton Site.</sys:String>
     <sys:String x:Key="Str_Loc_Switch">Basculer</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Ignorer</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">Carte réseau différente</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">Cette analyse enregistrée a été configurée sur {0}, mais cette analyse passerait par {1}. KillerScan ne peut pas encore choisir la carte réseau, il utilisera donc la route choisie par Windows. Analyser quand même ?</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">aucune carte réseau connue</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">Carte réseau non connectée</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">Cette analyse est configurée pour utiliser {0}, qui n’est pas connectée. Analyser plutôt avec la carte réseau choisie par Windows ?</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} n’est pas sur le réseau de {1} ({2}). Choisissez Automatique sous Carte réseau pour l’analyser.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Site</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Carte réseau</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Enregistrer les résultats dans le Site</sys:String>
@@ -572,4 +572,6 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Options_snmp">Description SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Nom NetBIOS</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Analyse approfondie : identifier les ports inconnus (jamais les ports d’imprimante)</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">Carte réseau</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">Automatique (choix de Windows)</sys:String>
 </ResourceDictionary>

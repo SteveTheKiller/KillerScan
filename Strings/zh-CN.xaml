@@ -376,9 +376,9 @@
     <sys:String x:Key="Str_Loc_SuggestMany">曾在多个站点中见过此网络的网关：{0}。请通过“站点”按钮选择一个。</sys:String>
     <sys:String x:Key="Str_Loc_Switch">切换</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">忽略</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">不同的网卡</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">此已保存的扫描是在 {0} 上设置的，但本次扫描将通过 {1} 发出。KillerScan 目前无法选择网卡，因此将使用 Windows 选择的路由。仍要扫描吗？</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">无已知网卡</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">网卡未连接</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">此扫描设置为使用 {0}，但该网卡未连接。要改用 Windows 选择的网卡进行扫描吗？</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} 不在 {1} 的网络（{2}）中。请在“网卡”下选择“自动”以扫描它。</sys:String>
     <sys:String x:Key="Str_Rep_Location">站点</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">网卡</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">将结果保存到站点</sys:String>
@@ -572,4 +572,6 @@
     <sys:String x:Key="Str_Options_snmp">SNMP 描述</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS 名称</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">深度扫描：识别未知端口（从不探测打印机端口）</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">网卡</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">自动（由 Windows 选择）</sys:String>
 </ResourceDictionary>

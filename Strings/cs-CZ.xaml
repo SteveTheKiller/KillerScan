@@ -374,9 +374,9 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Loc_SuggestMany">Brána této sítě byla zjištěna ve více Lokalitách: {0}. Vyberte jednu tlačítkem Lokalita.</sys:String>
     <sys:String x:Key="Str_Loc_Switch">Přepnout</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Zavřít</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">Jiný síťový adaptér</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">Tento uložený sken byl nastaven na {0}, ale toto skenování by šlo přes {1}. KillerScan zatím neumí adaptér zvolit, proto použije trasu, kterou vybere Windows. Přesto skenovat?</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">žádný známý adaptér</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">Síťový adaptér není připojen</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">Tento sken je nastaven na adaptér {0}, který není připojen. Skenovat místo toho přes adaptér, který vybere Windows?</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} není v síti adaptéru {1} ({2}). Pro skenování zvolte Automaticky v nabídce Síťový adaptér.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Lokalita</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adaptér</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Uložit výsledky do Lokality</sys:String>
@@ -570,4 +570,6 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Options_snmp">Popis SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Název NetBIOS</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Hloubkový sken: identifikovat neznámé porty (nikdy porty tiskáren)</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">Síťový adaptér</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">Automaticky (vybere Windows)</sys:String>
 </ResourceDictionary>

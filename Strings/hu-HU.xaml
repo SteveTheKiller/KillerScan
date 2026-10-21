@@ -392,9 +392,9 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Loc_SuggestMany">Ennek a hálózatnak az átjárója több Helyszínen is szerepelt: {0}. Válasszon egyet a Helyszín gombbal.</sys:String>
     <sys:String x:Key="Str_Loc_Switch">Váltás</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Elvetés</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">Eltérő hálózati adapter</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">Ezt a mentett vizsgálatot ezen állították be: {0}, de ez a vizsgálat ezen keresztül menne ki: {1}. A KillerScan még nem tud adaptert választani, ezért a Windows által választott útvonalat használja. Mégis elindítja a vizsgálatot?</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">nincs ismert adapter</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">A hálózati adapter nincs csatlakoztatva</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">Ez a vizsgálat ezt az adaptert használja: {0}, de az nincs csatlakoztatva. Helyette a Windows által választott adapterrel indítja el a vizsgálatot?</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} nincs ennek az adapternek a hálózatán: {1} ({2}). A vizsgálathoz válassza az Automatikus elemet a Hálózati adapter menüben.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Helyszín</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adapter</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Eredmények mentése a Helyszínre</sys:String>
@@ -588,4 +588,6 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Options_snmp">SNMP-leírás</sys:String>
     <sys:String x:Key="Str_Options_netbios">NetBIOS-név</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Mélyvizsgálat: ismeretlen portok azonosítása (nyomtatóportok soha)</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">Hálózati adapter</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">Automatikus (a Windows választ)</sys:String>
 </ResourceDictionary>

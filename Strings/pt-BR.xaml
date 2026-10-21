@@ -418,9 +418,9 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Loc_SuggestMany">O gateway desta rede foi visto em mais de um Local: {0}. Escolha um pelo botão Local.</sys:String>
     <sys:String x:Key="Str_Loc_Switch">Mudar</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Dispensar</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">Adaptador de rede diferente</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">Esta verificação salva foi configurada em {0}, mas esta verificação sairia por {1}. O KillerScan ainda não consegue escolher o adaptador, então usará a rota que o Windows escolher. Verificar mesmo assim?</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">nenhum adaptador conhecido</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">Adaptador de rede não conectado</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">Esta verificação está configurada para usar {0}, que não está conectado. Verificar usando o adaptador que o Windows escolher?</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} não está na rede de {1} ({2}). Escolha Automático em Adaptador de rede para verificá-lo.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Local</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adaptador</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Salvar resultados no Local</sys:String>
@@ -614,4 +614,6 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Options_snmp">Descrição SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Nome NetBIOS</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Varredura profunda: identificar portas desconhecidas (nunca portas de impressora)</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">Adaptador de rede</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">Automático (o Windows escolhe)</sys:String>
 </ResourceDictionary>

@@ -351,9 +351,9 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Loc_SuggestMany">Prehod tega omrežja je bil zaznan v več Lokacijah: {0}. Izberi eno z gumbom Lokacija.</sys:String>
     <sys:String x:Key="Str_Loc_Switch">Preklopi</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Opusti</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">Drug omrežni vmesnik</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">Ta shranjeni pregled je bil nastavljen na {0}, ta pregled pa bi šel prek {1}. KillerScan vmesnika še ne more izbrati, zato bo uporabil pot, ki jo izbere Windows. Vseeno izvedem pregled?</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">ni znanega vmesnika</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">Omrežni vmesnik ni povezan</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">Ta pregled je nastavljen za uporabo vmesnika {0}, ki ni povezan. Namesto tega izvedem pregled z vmesnikom, ki ga izbere Windows?</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} ni v omrežju vmesnika {1} ({2}). Za pregled izberi Samodejno pod Omrežni vmesnik.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Lokacija</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Vmesnik</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Shrani rezultate v Lokacijo</sys:String>
@@ -549,4 +549,6 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Options_snmp">Opis SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Ime NetBIOS</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Globinsko skeniranje: prepoznaj neznana vrata (nikoli vrat tiskalnikov)</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">Omrežni vmesnik</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">Samodejno (izbere Windows)</sys:String>
 </ResourceDictionary>

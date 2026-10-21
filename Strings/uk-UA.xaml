@@ -418,9 +418,9 @@
     <sys:String x:Key="Str_Loc_SuggestMany">Шлюз цієї мережі бачили в кількох локаціях: {0}. Виберіть одну за допомогою кнопки «Локація».</sys:String>
     <sys:String x:Key="Str_Loc_Switch">Перейти</sys:String>
     <sys:String x:Key="Str_Loc_Dismiss">Закрити</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterTitle">Інший мережевий адаптер</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterMismatch">Це збережене сканування налаштовано на {0}, але це сканування піде через {1}. KillerScan поки не вміє вибирати адаптер, тому використає маршрут, який вибере Windows. Сканувати все одно?</sys:String>
-    <sys:String x:Key="Str_Loc_AdapterUnknown">немає відомого адаптера</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterTitle">Мережевий адаптер не підключено</sys:String>
+    <sys:String x:Key="Str_Loc_AdapterMissing">Це сканування налаштовано на використання {0}, але цей адаптер не підключено. Сканувати натомість через адаптер, який вибере Windows?</sys:String>
+    <sys:String x:Key="Str_St_AdapterOffLink">{0} не перебуває в мережі адаптера {1} ({2}). Щоб просканувати його, виберіть «Автоматично» в меню «Мережевий адаптер».</sys:String>
     <sys:String x:Key="Str_Rep_Location">Локація</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Адаптер</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Зберегти результати в локацію</sys:String>
@@ -614,4 +614,6 @@
     <sys:String x:Key="Str_Options_snmp">Опис SNMP</sys:String>
     <sys:String x:Key="Str_Options_netbios">Ім’я NetBIOS</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Глибоке сканування: визначати невідомі порти (ніколи порти принтерів)</sys:String>
+    <sys:String x:Key="Str_Options_Adapter">Мережевий адаптер</sys:String>
+    <sys:String x:Key="Str_Options_AdapterAuto">Автоматично (вибирає Windows)</sys:String>
 </ResourceDictionary>
