@@ -54,6 +54,11 @@ namespace KillerScan
             KillerFamily.Accessibility.AccessibleControls.Initialize();
             KillerFamily.Theming.AccentShadow.Initialize();
             base.OnStartup(e);
+            if (e.Args.Length > 0 && string.Equals(e.Args[0], "/apply-verified-update", StringComparison.OrdinalIgnoreCase))
+            {
+                Shutdown(Services.TrustedUpdate.Apply(e.Args));
+                return;
+            }
             if (e.Args.Length > 0 && string.Equals(e.Args[0], "/complete-uninstall", StringComparison.OrdinalIgnoreCase))
             {
                 Shutdown(e.Args.Length == 2 ? Services.UninstallCompletion.Complete(e.Args[1])

@@ -73,6 +73,8 @@ Chocolatey:
 choco install killerscan
 ```
 
+For managed removal, exit codes and elevated-update requirements, see [deployment and removal](docs/deployment.md).
+
 ## Build from source
 
 ```powershell

@@ -18,7 +18,14 @@ namespace KillerScan.Services
             VerifiedHashes[Path.GetFullPath(path)] = sha256;
         }
 
-        internal static string Command(string download, string target, bool elevated,
+        internal static string VerifiedHash(string download)
+        {
+            if (!VerifiedHashes.TryGetValue(Path.GetFullPath(download), out string? expected))
+                throw new InvalidDataException("The update has no retained verification hash.");
+            return expected;
+        }
+
+        internal static string Script(string download, string target, bool elevated,
             string releasesUrl, string displayName, string? version = null, string? hive = null,
             string? reopen = null)
         {
@@ -48,8 +55,15 @@ namespace KillerScan.Services
             script.AppendLine("Elevated = " + (elevated ? "$true" : "$false")).AppendLine("}");
             script.AppendLine(Operations);
             script.AppendLine("if (Invoke-UpdateImagePublication $plan $ops) { exit 0 } else { exit 1 }");
+            return script.ToString();
+        }
+
+        internal static string Command(string download, string target, bool elevated,
+            string releasesUrl, string displayName, string? version = null, string? hive = null,
+            string? reopen = null)
+        {
             using var compressed = new MemoryStream();
-            byte[] source = Encoding.UTF8.GetBytes(script.ToString());
+            byte[] source = Encoding.UTF8.GetBytes(Script(download, target, elevated, releasesUrl, displayName, version, hive, reopen));
             using (var gzip = new GZipStream(compressed, CompressionLevel.Optimal, leaveOpen: true))
                 gzip.Write(source, 0, source.Length);
             string bootstrap = "$stream=[IO.MemoryStream]::new([Convert]::FromBase64String('"
@@ -60,7 +74,7 @@ namespace KillerScan.Services
                 @"WindowsPowerShell\v1.0\powershell.exe");
             string command = "\"" + powershell.Replace("%", "%%") + "\" -NoProfile -NonInteractive -Command \"" + bootstrap + "\"";
             if (command.Length > 7500)
-                throw new IOException("The update helper command is too long. Download retained at: " + download + ". Report: " + report);
+                throw new IOException("The update helper command is too long. Download retained at: " + download + ". Report: " + Path.GetFullPath(download) + ".recovery.txt");
             return command;
         }
 

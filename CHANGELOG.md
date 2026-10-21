@@ -8,6 +8,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 - Installation cleanup preserves unrelated files and folders; registered silent uninstall waits for owned removal and reports failures.
+- Elevated updates use the signed installed helper and verify the release identity, digest and publisher in protected staging.
 - Preference and history saves preserve existing files on failure, keep unsaved edits for retry, and report when changes could not be saved.
 - Concurrent app instances preserve saved scans and retention changes instead of overwriting newer history.
 - Vendor database updates preserve the prior complete file on failure and keep lookups available throughout reloads.

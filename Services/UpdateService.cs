@@ -112,14 +112,26 @@ namespace KillerScan.Services
         /// not writable by a normal user, so the swap has to run elevated. The copy result is
         /// checked: without that, an unelevated swap fails silently and relaunches the OLD exe, and
         /// the app appears to update to the same version with no error.</summary>
-        internal static void StartSwap(string newExe, string? newVersion = null)
+        internal sealed class Platform
         {
+            internal Func<string, bool> CanWrite = CanWriteTo;
+            internal Func<ProcessStartInfo, Process?> Start = Process.Start;
+        }
+
+        internal static void StartSwap(string newExe, string? newVersion = null, Platform? platform = null)
+        {
+            platform ??= new Platform();
             var curExe = Process.GetCurrentProcess().MainModule!.FileName;
             var pid    = Process.GetCurrentProcess().Id;
             var bat    = Path.Combine(Path.GetTempPath(),
                                       $"{AppInfo.DisplayName}_update_{Guid.NewGuid():N}.bat");
 
-            bool needsElevation = !CanWriteTo(Path.GetDirectoryName(curExe)!);
+            bool needsElevation = !platform.CanWrite(Path.GetDirectoryName(curExe)!);
+            if (needsElevation || KillerFamily.Deployment.InstallerExitCodes.IsElevated())
+            {
+                TrustedUpdate.Start(newExe, newVersion, platform);
+                return;
+            }
 
             string system = Environment.GetFolderPath(Environment.SpecialFolder.System);
             string tasklist = Path.Combine(system, "tasklist.exe").Replace("%", "%%");
@@ -159,9 +171,7 @@ namespace KillerScan.Services
                 WorkingDirectory = Path.GetTempPath(),
                 UseShellExecute = true
             };
-            if (needsElevation) psi.Verb = "runas";   // triggers the UAC prompt
-
-            if (Process.Start(psi) is null)
+            if (platform.Start(psi) is null)
                 throw new IOException("The update helper did not start. Download retained at: " + newExe);
         }
 

@@ -25,6 +25,14 @@ When owned-image removal or registration changes fail inside the removal transac
 
 The interactive registered command keeps the uninstall confirmation. The legacy /uninstall entry point confirms, starts the completion owner and exits so cleanup can continue. Automation must use QuietUninstallString to obtain the final outcome.
 
+## Elevated updates
+
+Automatic elevated updates run only through the protected all-users installation. The installed helper validates its directory ownership, parent process identity, retained SHA-256, product name, requested newer assembly version and signing certificate. It copies the download into protected staging and verifies those protected bytes before publication. The publication command contains immutable code and waits for the exact parent/helper instances to exit.
+
+The incoming release must validate with the same signing certificate as the installed app. Certificate rotation, an unsigned installation, an untrusted installation directory or a portable copy requiring elevation uses the manual download path instead. A canceled or rejected handoff preserves the downloaded file.
+
+The original download has a recovery report naming the protected staging and report locations. Publication failures retain complete recovery files and the manual release URL. A completed handoff means the publication helper started; actual publication can still fail afterward, so retain its report when investigating an update.
+
 ## Validation boundary
 
 Controlled filesystem, process-boundary and generated-command checks cover the implementation. Actual machine/user installation, UAC cancellation, another administrator account, denied registry access, read-only/disconnected storage, concurrent deployment and payload/input tampering require the coordinated disposable Windows VM. They are not established by a passing build or command parser.
