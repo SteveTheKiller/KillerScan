@@ -6,40 +6,41 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.8.4] - Unreleased
 
-### Changed
-- Updated the app and engine JSON dependency to 10.0.13.
-- Updated and pinned the build/release actions to current compatible stable versions.
-- Clarified sent-byte upload throughput and its acknowledgment requirement in the app, engine and website documentation.
-
 ### Fixed
-- Balanced the Technical page columns by moving the glossary to the left.
-- Terminal combining marks, wide characters and common emoji clusters keep consistent columns through drawing, editing, copying and resizing.
-- Terminal output exposes readable text, selection and caret ranges to accessibility tools, with a visible keyboard focus outline.
-- Closed website accent pickers stay out of keyboard and accessibility navigation, and return focus to their trigger when dismissed.
-- Repeated same-version Publish refreshes the source ZIP and fails clearly if the archive cannot be replaced.
-- Release monitoring includes KillerScan.Engine on NuGet and reports missing or failed publication.
-- Release dependency checks stop on restore or audit failure, malformed results, missing engine coverage and vulnerable packages.
+- Installation cleanup preserves unrelated files and folders; registered silent uninstall waits for owned removal and reports failures.
 - Preference and history saves preserve existing files on failure, keep unsaved edits for retry, and report when changes could not be saved.
 - Concurrent app instances preserve saved scans and retention changes instead of overwriting newer history.
-- Demo device types and SSH usernames stay in memory without reading or changing saved real-device values.
-- Keep Alive and Diagnose add new targets to a running watch without resetting existing cards or counters.
-- HTTP fingerprints follow bounded redirects only on the scanned IP, preserving local panels without contacting or labeling another device.
 - Vendor database updates preserve the prior complete file on failure and keep lookups available throughout reloads.
 - Executable installation and self-updates verify complete copies and preserve recovery files after replacement failures. Update reports support non-English folders.
 - Reports keep the scanned target, timestamp and captured results when pending input or live results change during export.
-- Export menus, shortcuts and tooltips match the active view, with one filtered CSV action for Services.
+- Demo device types and SSH usernames stay in memory without reading or changing saved real-device values.
 - Scan history includes empty results and final automatic deep-profile results, with canceled or partial runs labeled.
+- HTTP fingerprints follow bounded redirects only on the scanned IP, preserving local panels without contacting or labeling another device.
 - SNMP fingerprints preserve long descriptions and reject malformed or mismatched response identities.
+- The public subnet helper rejects IPv6 addresses and malformed CIDR suffixes before expanding hosts.
+- Terminal tables display escaped network control characters without changing raw scan data or JSON exports.
+- Terminal combining marks, wide characters and common emoji clusters keep consistent columns through drawing, editing, copying and resizing.
 - Stopping a scan cancels active HTTP and TLS fingerprint connections and prevents probes of later ports.
 - Stopping during MAC resolution returns promptly, skips queued lookups and keeps native work bounded across scans.
-- The public subnet helper rejects IPv6 addresses and malformed CIDR suffixes before expanding hosts.
 - Terminal title sequences accept BEL and ESC-backslash terminators across split reads and preserve UTF-8 titles.
-- Terminal tables display escaped network control characters without changing raw scan data or JSON exports.
+- Keep Alive and Diagnose add new targets to a running watch without resetting existing cards or counters.
+- Export menus, shortcuts and tooltips match the active view, with one filtered CSV action for Services.
+- Terminal output exposes readable text, selection and caret ranges to accessibility tools, with a visible keyboard focus outline.
+- Closed website accent pickers stay out of keyboard and accessibility navigation, and return focus to their trigger when dismissed.
 - A silent install or update that finds KillerScan running exits with 1618, which Intune, Configuration Manager and RMM tools retry, instead of a general failure.
+- Release dependency checks stop on restore or audit failure, malformed results, missing engine coverage and vulnerable packages.
+- Repeated same-version Publish refreshes the source ZIP and fails clearly if the archive cannot be replaced.
+- Release monitoring includes KillerScan.Engine on NuGet and reports missing or failed publication.
 - Chocolatey publishing reports failure when validation is still failing after a retry.
 - Window resize minimums stay within the current monitor's work area on small or scaled displays.
 - The shortcuts card shows shadows at its edges when more content is out of view.
 - Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.
+- Balanced the Technical page columns by moving the glossary to the left.
+
+### Changed
+- Updated the app and engine JSON dependency to 10.0.13.
+- Updated and pinned the build/release actions to current compatible stable versions.
+- Clarified sent-byte upload throughput and its acknowledgment requirement in the app, engine and website documentation.
 
 ## [1.8.3] - 2026-10-19
 

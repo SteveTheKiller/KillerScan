@@ -141,7 +141,7 @@ namespace KillerScan.Services
             || (path.Length >= 3 && char.IsLetter(path[0]) && path[1] == ':'
                 && (path[2] == Path.DirectorySeparatorChar || path[2] == Path.AltDirectorySeparatorChar));
 
-        private static void BroadcastEnvironmentChange()
+        internal static void BroadcastEnvironmentChange()
         {
             // Explorer rereads the environment on this broadcast, so terminals opened from the
             // desktop after setup see the new PATH without signing out.
