@@ -84,6 +84,29 @@ namespace KillerScan.Engine
         public static Func<string, string?>? ManualTypeLookup { get; set; }
 
         /// <summary>
+        /// The adapter this scanner's probes are sent from, or null to let Windows pick the
+        /// route. While set, targets outside the adapter's network are refused.
+        /// </summary>
+        public ScanBinding? Binding { get; set; }
+
+        /// <summary>Tests only: the NetBIOS port and the deep sweep's port list.</summary>
+        internal static int? UdpPortOverride { get; set; }
+        internal static int[]? DeepPortsOverride { get; set; }
+
+        // Applies the binding to this run, after checking every target is on the adapter's network.
+        private void BeginRun(IEnumerable<IPAddress> targets)
+        {
+            if (Binding is { } binding)
+            {
+                var outside = targets.FirstOrDefault(address => !binding.Contains(address));
+                if (outside != null)
+                    throw new ArgumentException(
+                        $"{outside} is not on {binding.InterfaceName}'s network ({binding.Network}). A bound scan only reaches its own network.");
+            }
+            ScanSource.Current = Binding;
+        }
+
+        /// <summary>
         /// Runs on every finished device before it is reported, so the host can apply saved
         /// preferences such as a user-given name. Set once by the host.
         /// </summary>
@@ -167,6 +190,7 @@ namespace KillerScan.Engine
                     TargetError.TooLarge => $"The targets cover {parsed.Detail} addresses; the ceiling is {ScanTargets.MaxAddresses:N0}.",
                     _ => $"\"{parsed.Detail}\" is not a CIDR block, host, or range."
                 }, nameof(cidr));
+            BeginRun(parsed.Addresses);
             ct.ThrowIfCancellationRequested();
             if (options.ReverseDns) FlushLocalDnsCache();
             _mdns = [];
@@ -209,9 +233,7 @@ namespace KillerScan.Engine
                     bool alive = false;
                     if (options.Icmp)
                     {
-                        using var ping = new Ping();
-                        var reply = await ping.SendPingAsync(addr, 500);
-                        alive = reply.Status == IPStatus.Success;
+                        alive = (await ScanSource.PingAsync(addr, 500)).Success;
                     }
                     // ICMP is commonly blocked (Windows Firewall default), and ARP can't reach a host
                     // across a routed/VPN link, so a silent host isn't necessarily down. Fall back to a
@@ -472,10 +494,8 @@ namespace KillerScan.Engine
             {
                 try
                 {
-                    using var ping = new Ping();
-                    var reply = await ping.SendPingAsync(addr, 400);
-                    if (reply.Status == IPStatus.Success && reply.Options != null)
-                        device.Ttl = reply.Options.Ttl;
+                    var reply = await ScanSource.PingAsync(addr, 400);
+                    if (reply.Success && reply.Ttl > 0) device.Ttl = reply.Ttl;
                 }
                 catch { }
             }) : Task.CompletedTask;
@@ -485,7 +505,7 @@ namespace KillerScan.Engine
             {
                 try
                 {
-                    using var client = new TcpClient();
+                    using var client = ScanSource.Tcp();
                     var connectTask = client.ConnectAsync(addr, port);
                     if (await Task.WhenAny(connectTask, Task.Delay(200, token)) == connectTask
                         && client.Connected)
@@ -564,6 +584,7 @@ namespace KillerScan.Engine
                 throw new ArgumentOutOfRangeException(nameof(portConcurrency), portConcurrency, "Port concurrency must be at least 1.");
             if (ip == null || !IPAddress.TryParse(ip, out var addr) || addr.AddressFamily != AddressFamily.InterNetwork)
                 throw new ArgumentException($"\"{ip}\" is not an IPv4 address.", nameof(ip));
+            BeginRun([addr]);
             ct.ThrowIfCancellationRequested();
             if (flushLocalDnsCache && options.ReverseDns) FlushLocalDnsCache();
             var device = new NetworkDevice
@@ -582,10 +603,8 @@ namespace KillerScan.Engine
             {
                 try
                 {
-                    using var ping = new Ping();
-                    var reply = await ping.SendPingAsync(addr, 800);
-                    if (reply.Status == IPStatus.Success && reply.Options != null)
-                        device.Ttl = reply.Options.Ttl;
+                    var reply = await ScanSource.PingAsync(addr, 800);
+                    if (reply.Success && reply.Ttl > 0) device.Ttl = reply.Ttl;
                 }
                 catch { }
             }, ct) : Task.CompletedTask;
@@ -593,7 +612,7 @@ namespace KillerScan.Engine
             // Exhaustive TCP sweep. Bounded concurrency keeps the open-socket count sane;
             // each port gets a generous timeout and one retry so slow/loaded hosts still answer.
             using var gate = new SemaphoreSlim(portConcurrency);
-            var portTasks = (options.Ports ? DeepPortList : Array.Empty<int>()).Select(async port =>
+            var portTasks = (options.Ports ? DeepPortsOverride ?? DeepPortList : Array.Empty<int>()).Select(async port =>
             {
                 await gate.WaitAsync(ct);
                 try
@@ -662,7 +681,7 @@ namespace KillerScan.Engine
         {
             try
             {
-                using var client = new TcpClient();
+                using var client = ScanSource.Tcp();
                 var connect = client.ConnectAsync(addr, port);
                 if (await Task.WhenAny(connect, Task.Delay(timeoutMs)) == connect && client.Connected)
                     return true;
@@ -1065,13 +1084,7 @@ namespace KillerScan.Engine
                     .Select(p => (port: p, https: TlsLikelyPorts.Contains(p))));
             }
 
-            using var handler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
-                AllowAutoRedirect = false,
-                // A system or PAC proxy would answer in the device's place.
-                UseProxy = false,
-            };
+            using var handler = CreateFingerprintHandler();
             using var client = new HttpClient(handler)
             {
                 Timeout = TimeSpan.FromMilliseconds(deep ? 1000 : 1500),
@@ -1104,11 +1117,55 @@ namespace KillerScan.Engine
             ct.ThrowIfCancellationRequested();
         }
 
+        // Direct (no proxy, which would answer in the device's place), no automatic redirects,
+        // and, for a bound run, connections made from the adapter's address.
+        private static HttpMessageHandler CreateFingerprintHandler()
+        {
+#if NET
+            if (ScanSource.Current is { } binding)
+            {
+                var local = binding.LocalAddress;
+                return new SocketsHttpHandler
+                {
+                    AllowAutoRedirect = false,
+                    UseProxy = false,
+                    SslOptions = { RemoteCertificateValidationCallback = (_, _, _, _) => true },
+                    ConnectCallback = async (context, token) =>
+                    {
+                        var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) { NoDelay = true };
+                        try
+                        {
+                            socket.Bind(new IPEndPoint(local, 0));
+                            await socket.ConnectAsync(context.DnsEndPoint, token);
+                            return new NetworkStream(socket, ownsSocket: true);
+                        }
+                        catch { socket.Dispose(); throw; }
+                    }
+                };
+            }
+#endif
+            return new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
+                AllowAutoRedirect = false,
+                // A system or PAC proxy would answer in the device's place.
+                UseProxy = false,
+            };
+        }
+
         private static async Task<HttpResponseMessage?> GetDeviceResponseAsync(HttpClient client, Uri uri, IPAddress address, CancellationToken ct)
         {
             for (int hop = 0; hop <= 2; hop++)
             {
                 ct.ThrowIfCancellationRequested();
+#if NETFRAMEWORK
+                // .NET Framework's handler connects through the URI's service point, whose bind
+                // delegate chooses the local address. It is set for every request so an unbound
+                // run never inherits a binding left on a shared service point.
+                var local = ScanSource.Current?.LocalAddress;
+                ServicePointManager.FindServicePoint(uri).BindIPEndPointDelegate =
+                    local == null ? null : (_, _, _) => new IPEndPoint(local, 0);
+#endif
                 var response = await client.GetAsync(uri, ct);
                 int status = (int)response.StatusCode;
                 if (status < 300 || status >= 400) return response;
@@ -1132,7 +1189,7 @@ namespace KillerScan.Engine
         {
             try
             {
-                using var tcp = new TcpClient();
+                using var tcp = ScanSource.Tcp();
                 var connect = tcp.ConnectAsync(addr, 22);
                 if (await Task.WhenAny(connect, Task.Delay(1000)) != connect || !tcp.Connected)
                     return;
@@ -1172,7 +1229,7 @@ namespace KillerScan.Engine
                 if (!device.OpenPorts.Contains(port)) continue;
                 try
                 {
-                    using var tcp = new TcpClient();
+                    using var tcp = ScanSource.Tcp();
                     using var cancellation = ct.Register(() => tcp.Dispose());
                     var connect = tcp.ConnectAsync(addr, port);
                     if (await AwaitWithCancellation(Task.WhenAny(connect, Task.Delay(1500, ct)), ct) != connect)
@@ -1200,7 +1257,7 @@ namespace KillerScan.Engine
         /// UDP NetBIOS name service query (NBSTAT, port 137). Returns the machine's
         /// NetBIOS name for any Windows host that answers NBT, even when SMB is locked down.
         /// </summary>
-        public static Task ProbeNetbiosAsync(NetworkDevice device, IPAddress addr) => ProbeNetbiosAsync(device, addr, 137);
+        public static Task ProbeNetbiosAsync(NetworkDevice device, IPAddress addr) => ProbeNetbiosAsync(device, addr, UdpPortOverride ?? 137);
 
         // Windows NetBT owns UDP 137 on this machine, so fixtures pass their own port.
         internal static async Task ProbeNetbiosAsync(NetworkDevice device, IPAddress addr, int port)
@@ -1225,7 +1282,7 @@ namespace KillerScan.Engine
             int transactionId = (identity[0] << 8) | identity[1];
             try
             {
-                using var udp = new UdpClient();
+                using var udp = ScanSource.Udp();
                 udp.Client.SendTimeout = 500;
                 udp.Client.ReceiveTimeout = 800;
                 udp.Connect(addr, port);
@@ -1268,7 +1325,7 @@ namespace KillerScan.Engine
             int requestId = (identity[0] << 24) | (identity[1] << 16) | (identity[2] << 8) | identity[3];
             try
             {
-                using var udp = new UdpClient();
+                using var udp = ScanSource.Udp();
                 udp.Client.SendTimeout = 500;
                 udp.Client.ReceiveTimeout = 1000;
                 udp.Connect(addr, 161);
@@ -1294,7 +1351,7 @@ namespace KillerScan.Engine
             {
                 try
                 {
-                    using var client = new TcpClient();
+                    using var client = ScanSource.Tcp();
                     var connect = client.ConnectAsync(addr, port);
                     if (await Task.WhenAny(connect, Task.Delay(300)) == connect && client.Connected)
                         return true;
@@ -1310,6 +1367,6 @@ namespace KillerScan.Engine
         /// <summary>
         /// Get MAC address of a host using ARP.
         /// </summary>
-        private static string GetMacAddress(IPAddress addr) => NetworkPlatform.Current.ResolveMac(addr);
+        private static string GetMacAddress(IPAddress addr) => ScanSource.ResolveMac(addr);
     }
 }

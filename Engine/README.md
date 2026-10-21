@@ -45,6 +45,8 @@ Deep probes connect to unknown open ports without sending data. Set `ScanOptions
 
 `NetworkScanner.ManualTypeLookup` and `NetworkScanner.DeviceCompleted` apply to every scanner. A host that keeps separate saved data per site can instead set `ManualTypes` and `Completed` on each scanner instance; when set, they replace the static hooks for that scanner.
 
+To scan from a particular adapter, set `NetworkScanner.Binding` to a `ScanBinding` (see `ScanBinding.Available()` and `ScanBinding.Find(nameOrAddress)`). Pings, TCP and UDP probes, HTTP and TLS fingerprints, ARP and mDNS/SSDP discovery are then sent from that adapter's address. A bound scan only reaches the adapter's own network: any target outside it is refused with `ArgumentException` before traffic is sent. Name lookups still go through the system resolver to its DNS servers. Bound pings use the Windows ICMP API.
+
 Pass an immutable `ScanOptions` as the third argument to `ScanSubnetAsync` or
 `DeepProbeHostAsync` to select discovery and fingerprint checks. Existing overloads
 retain enabled defaults. See [scan settings](../docs/scan-options.md) for dependencies.

@@ -33,6 +33,13 @@ namespace KillerScan.Engine
         ];
 
         /// <summary>Multicast-query mDNS, collect responses for ~listenMs, map source IP -> services + name.</summary>
+        // Sends this socket's multicast queries out of the adapter that owns the address.
+        private static void SendOn(UdpClient udp, IPAddress local)
+        {
+            try { udp.Client.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastInterface, local.GetAddressBytes()); }
+            catch (SocketException) { }
+        }
+
         public static async Task<Dictionary<string, MdnsInfo>> CollectMdnsAsync(CancellationToken ct, int listenMs = 1500)
         {
             var map = new Dictionary<string, MdnsInfo>(StringComparer.OrdinalIgnoreCase);
@@ -42,7 +49,13 @@ namespace KillerScan.Engine
                 udp.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 udp.Client.Bind(new IPEndPoint(IPAddress.Any, 5353));
                 var group = IPAddress.Parse("224.0.0.251");
-                try { udp.JoinMulticastGroup(group); } catch { }
+                // A bound scan asks and listens on its own adapter only.
+                if (ScanSource.Current is { } binding)
+                {
+                    SendOn(udp, binding.LocalAddress);
+                    try { udp.JoinMulticastGroup(group, binding.LocalAddress); } catch { }
+                }
+                else try { udp.JoinMulticastGroup(group); } catch { }
                 var dest = new IPEndPoint(group, 5353);
 
                 foreach (var q in MdnsQueries)
@@ -74,7 +87,9 @@ namespace KillerScan.Engine
             {
                 using var udp = new UdpClient();
                 udp.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                udp.Client.Bind(new IPEndPoint(IPAddress.Any, 0));
+                var local = ScanSource.Current?.LocalAddress;
+                udp.Client.Bind(new IPEndPoint(local ?? IPAddress.Any, 0));
+                if (local != null) SendOn(udp, local);
                 var dest = new IPEndPoint(IPAddress.Parse("239.255.255.250"), 1900);
                 var msearch = Encoding.ASCII.GetBytes(
                     "M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\nMAN: \"ssdp:discover\"\r\nMX: 1\r\nST: ssdp:all\r\n\r\n");

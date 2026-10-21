@@ -51,14 +51,18 @@ namespace KillerScan.Engine
             return cache;
         }
 
-        public string ResolveMac(IPAddress address)
+        public string ResolveMac(IPAddress address) => ResolveMacFrom(address, null);
+
+        /// <summary>ARP from a given local address, which makes Windows ask on that adapter.</summary>
+        internal string ResolveMacFrom(IPAddress address, IPAddress? source)
         {
             try
             {
                 byte[] mac = new byte[6];
                 int macLen = mac.Length;
                 int ipInt = BitConverter.ToInt32(address.GetAddressBytes(), 0);
-                int result = SendARP(ipInt, 0, mac, ref macLen);
+                int sourceInt = source == null ? 0 : BitConverter.ToInt32(source.GetAddressBytes(), 0);
+                int result = SendARP(ipInt, sourceInt, mac, ref macLen);
                 if (result == 0)
                 {
                     string macStr = string.Join(":", mac.Select(b => b.ToString("X2")));
