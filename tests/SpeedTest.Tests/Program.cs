@@ -61,6 +61,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--demo-stores" })) { DemoStoreTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--osc-parser" })) { OscParserTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--terminal-safety" })) { TerminalSafetyTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--terminal-paste" })) { TerminalPasteTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--scan-lifecycle" })) { await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.Length == 4 && args[0] == "--history-writer") { HistoryRetentionTests.WriteConcurrent(args[1], args[2], args[3]); return 0; }
             if (args.SequenceEqual(new[] { "--scan-presentation" })) { await ScanPresentation(); return 0; }

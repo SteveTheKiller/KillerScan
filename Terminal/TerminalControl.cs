@@ -906,9 +906,8 @@ namespace KillerScan.Terminal
             {
                 if (!Clipboard.ContainsText()) return;
 
-                string text = Clipboard.GetText().Replace("\r\n", "\r").Replace('\n', '\r');
-
-                Send(_buf.BracketedPaste ? Csi + "200~" + text + Csi + "201~" : text);
+                string framed = TerminalPaste.Frame(Clipboard.GetText(), _buf.BracketedPaste);
+                if (framed.Length > 0) Send(framed);
                 _scroll = 0;
             }
             catch { /* another app holding the clipboard is not our problem */ }
