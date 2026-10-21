@@ -51,7 +51,8 @@ internal static class ReleaseUiTests
         xml.Load(Path.Combine(directory!.FullName, "App.xaml"));
         string dictionary = xml.DocumentElement!.FirstChild!.FirstChild!.OuterXml
             .Replace("clr-namespace:KillerScan.Controls", "clr-namespace:KillerScan.Controls;assembly=KillerScan")
-            .Replace("clr-namespace:KillerFamily.Layout\"", "clr-namespace:KillerFamily.Layout;assembly=KillerScan\"");
+            .Replace("clr-namespace:KillerFamily.Layout\"", "clr-namespace:KillerFamily.Layout;assembly=KillerScan\"")
+            .Replace("clr-namespace:KillerFamily.Controls\"", "clr-namespace:KillerFamily.Controls;assembly=KillerScan\"");
         // Preserve compiled-XAML glyph references through the .NET Framework loose parser.
         foreach (char glyph in dictionary.Where(c => c >= 0xE000 && c <= 0xF8FF).Distinct().ToArray())
             dictionary = dictionary.Replace(glyph.ToString(), "&#x" + ((int)glyph).ToString("X4") + ";");

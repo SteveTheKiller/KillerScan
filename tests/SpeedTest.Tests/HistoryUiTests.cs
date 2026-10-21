@@ -85,7 +85,8 @@ internal static partial class HistoryUiTests
         Require(directory != null, "Application resource source exists.");
         var xml = new XmlDocument(); xml.Load(Path.Combine(directory!.FullName, "App.xaml"));
         var dictionary = xml.DocumentElement!.FirstChild!.FirstChild!.OuterXml.Replace("clr-namespace:KillerScan.Controls", "clr-namespace:KillerScan.Controls;assembly=KillerScan")
-            .Replace("clr-namespace:KillerFamily.Layout\"", "clr-namespace:KillerFamily.Layout;assembly=KillerScan\"");
+            .Replace("clr-namespace:KillerFamily.Layout\"", "clr-namespace:KillerFamily.Layout;assembly=KillerScan\"")
+            .Replace("clr-namespace:KillerFamily.Controls\"", "clr-namespace:KillerFamily.Controls;assembly=KillerScan\"");
         var context = new ParserContext { BaseUri = new Uri("pack://application:,,,/KillerScan;component/") };
         context.XmlnsDictionary.Add("", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
         context.XmlnsDictionary.Add("x", "http://schemas.microsoft.com/winfx/2006/xaml");
