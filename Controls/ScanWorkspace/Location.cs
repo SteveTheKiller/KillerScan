@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -94,6 +95,11 @@ namespace KillerScan.Controls
             LocationLabel.Text = LocationName;
             System.Windows.Automation.AutomationProperties.SetName(LocationButton,
                 Loc("Str_Loc_Title") + ": " + LocationName);
+            // The notes are a glance away on the button, so the gateway or the person to call
+            // is visible without opening anything.
+            string notes = _location.Info is { } info ? (LocationService.Find(info.Id)?.Notes ?? info.Notes).Trim() : string.Empty;
+            LocationButton.ToolTip = notes.Length == 0 ? Loc("Str_Loc_Title") + ": " + LocationName
+                : Loc("Str_Loc_Title") + ": " + LocationName + "\n\n" + notes;
         }
 
         private void LocationButton_Click(object sender, RoutedEventArgs e)
@@ -161,14 +167,92 @@ namespace KillerScan.Controls
             bool editable = !IsScanning && (LocationService.Loaded || _location.IsShared);
             menu.Items.Add(MenuText("Str_Loc_SaveScan", SaveScan, editable && _loadedScanName != null));
             menu.Items.Add(MenuText("Str_Loc_SaveAs", SaveScanAs, editable));
-            if (LocationService.Loaded && LocationService.LoadError == null && !DemoMode)
+            if (LocationService.Editable && !DemoMode)
             {
+                bool own = _location.Info != null && !_location.IsShared;
                 menu.Items.Add(new Separator());
                 menu.Items.Add(MenuText("Str_Loc_New", CreateLocation, !IsScanning));
-                menu.Items.Add(MenuText("Str_Loc_Rename", RenameLocation, _location.Info != null));
+                menu.Items.Add(MenuText("Str_Loc_Rename", RenameLocation, own));
+                menu.Items.Add(MenuText("Str_Loc_Notes", EditNotes, own));
+                menu.Items.Add(new Separator());
+                menu.Items.Add(MenuText("Str_Loc_Export", ExportLocation, own));
+                menu.Items.Add(MenuText("Str_Loc_Import", ImportLocation, !IsScanning));
                 menu.Items.Add(MenuText("Str_Loc_Manage", () => ManageLocationsRequested?.Invoke(this, EventArgs.Empty)));
             }
             return menu;
+        }
+
+        private void EditNotes()
+        {
+            if (_location.Info is not { } info) return;
+            string current = LocationService.Find(info.Id)?.Notes ?? info.Notes;
+            var dialog = new InputDialog(Loc("Str_Loc_Notes"), LocationName, Loc("Str_Loc_NotesLabel"), current,
+                Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
+            dialog.UseMultipleLines();
+            dialog.ShowDialog();
+            if (!dialog.Confirmed) return;
+            if (!LocationService.SetNotes(info, dialog.Value ?? string.Empty))
+                PersistenceFeedback.Check(false, () => LocationService.SetNotes(info, dialog.Value ?? string.Empty), () => LocationService.SaveError);
+            UpdateLocationLabel();
+        }
+
+        private void ExportLocation()
+        {
+            if (_location.Info is not { } info) return;
+            var choice = new ConfirmDialog(Loc("Str_Loc_Export"), Loc("Str_Loc_ExportDetail"), Loc("Str_Loc_ExportButton"),
+                Loc("Str_Btn_Cancel"), Loc("Str_Loc_ExportUsernames"), false) { Owner = Window.GetWindow(this) };
+            choice.ShowDialog();
+            if (!choice.Confirmed) return;
+            bool usernames = ((CheckBox)choice.FindName("Check1")).IsChecked == true;
+            var dialog = new FileDialog(FileDialogMode.Save)
+            {
+                Filter = Loc("Str_Loc_FileFilter") + "|*" + LocationTransfer.Extension,
+                FileName = SafeFileName(LocationName) + LocationTransfer.Extension,
+                DefaultExt = LocationTransfer.Extension,
+                AddExtension = true
+            };
+            if (ShowExportDialog(dialog) != true) return;
+            try
+            {
+                var bytes = LocationService.Export(info, usernames) ?? throw new IOException(LocationService.LoadError ?? "Locations are unavailable.");
+                ExportFile.Write(dialog.FileName, stream => stream.Write(bytes, 0, bytes.Length));
+                StatusText.Text = string.Format(Loc("Str_St_Exported"), System.IO.Path.GetFileName(dialog.FileName));
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Text.Json.JsonException)
+            {
+                MessageBox.Show(Window.GetWindow(this), string.Format(Loc("Str_Err_Export"), ex.Message), AppInfo.DisplayName,
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ImportLocation()
+        {
+            var dialog = new FileDialog(FileDialogMode.Open) { Filter = Loc("Str_Loc_FileFilter") + "|*" + LocationTransfer.Extension };
+            if (dialog.ShowDialog(Window.GetWindow(this)) != true) return;
+            byte[] bytes;
+            try { bytes = System.IO.File.ReadAllBytes(dialog.FileName); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { ShowImportError(ex.Message); return; }
+            if (!LocationService.Import(bytes, out var imported, out string? error) || imported == null)
+            {
+                ShowImportError(error ?? string.Empty);
+                return;
+            }
+            SetLocation(LocationService.Get(imported));
+            StatusText.Text = string.Format(Loc("Str_Loc_Imported"), imported.Name);
+            // Same name as an existing Location is allowed, so offer a rename straight away.
+            if (LocationService.Items.Count(item => string.Equals(item.Name, imported.Name, StringComparison.CurrentCultureIgnoreCase)) > 1)
+                RenameLocation();
+        }
+
+        private void ShowImportError(string message) =>
+            MessageBox.Show(Window.GetWindow(this), string.Format(Loc("Str_Loc_ImportFailed"), message), AppInfo.DisplayName,
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+
+        private static string SafeFileName(string name)
+        {
+            var invalid = System.IO.Path.GetInvalidFileNameChars();
+            string clean = new string(name.Select(c => invalid.Contains(c) ? '_' : c).ToArray()).Trim();
+            return clean.Length == 0 ? "Location" : clean;
         }
 
         /// <summary>Loads a saved scan's targets and settings without starting it.</summary>

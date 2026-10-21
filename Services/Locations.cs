@@ -178,7 +178,8 @@ namespace KillerScan.Services
             })) throw new IOException(_store.Error ?? "The Locations catalog could not be saved.");
         }
 
-        internal string DirectoryFor(LocationInfo info) => Path.Combine(_root, "locations", info.Id);
+        internal string LocationsDirectory => Path.Combine(_root, "locations");
+        internal string DirectoryFor(LocationInfo info) => Path.Combine(LocationsDirectory, info.Id);
 
         public LocationData Open(LocationInfo info) => LocationData.Open(info, DirectoryFor(info));
 

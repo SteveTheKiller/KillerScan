@@ -396,6 +396,16 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Manage Locations...</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Stop the scan before changing Location.</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Locations could not be set up, so KillerScan is using your existing devices, saved scans and history as before.&#10;&#10;{0}&#10;&#10;Nothing was changed or removed. KillerScan will try again the next time it starts.</sys:String>
+    <sys:String x:Key="Str_Loc_Notes">Location notes...</sys:String>
+    <sys:String x:Key="Str_Loc_NotesLabel">Notes (Ctrl+Enter saves)</sys:String>
+    <sys:String x:Key="Str_Loc_Export">Export Location...</sys:String>
+    <sys:String x:Key="Str_Loc_ExportDetail">Saves this Location's name, notes, saved scans, device names, approvals, known devices, device types and history to one file you can import on another PC.</sys:String>
+    <sys:String x:Key="Str_Loc_ExportButton">Export</sys:String>
+    <sys:String x:Key="Str_Loc_ExportUsernames">Include remembered SSH usernames (passwords are never stored)</sys:String>
+    <sys:String x:Key="Str_Loc_Import">Import Location...</sys:String>
+    <sys:String x:Key="Str_Loc_Imported">Imported Location {0}.</sys:String>
+    <sys:String x:Key="Str_Loc_ImportFailed">The Location could not be imported. Nothing was added.&#10;&#10;{0}</sys:String>
+    <sys:String x:Key="Str_Loc_FileFilter">KillerScan Location</sys:String>
     <sys:String x:Key="Str_Tip_Scan">{0} devices, {1} with open ports</sys:String>
     <sys:String x:Key="Str_Tip_Watch">Watching {0} targets, {1} not replying</sys:String>
     <sys:String x:Key="Str_Tip_History">{0} at {1}, {2} devices recorded</sys:String>

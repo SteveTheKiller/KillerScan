@@ -22,6 +22,7 @@ internal static class LocationTests
             Isolation(Path.Combine(root, "isolation"));
             KnownAndApproved(Path.Combine(root, "known"));
             CommandLine(Path.Combine(root, "cli"));
+            Transfer(Path.Combine(root, "transfer"));
         }
         finally
         {
@@ -204,6 +205,56 @@ internal static class LocationTests
             [.. devices, Device("10.1.0.3", "00:00:00:00:01:03")], quick: false, err, quiet: false, keyed: false);
         Require(err.ToString().Contains("1 devices are new"), "A later command-line scan reports devices new since the baseline.");
         Require(data.History.Entries.Last().TargetKey == "10.1.0.0/24", "Command-line history keeps the full targets.");
+    }
+
+    private static void Transfer(string root)
+    {
+        var catalog = new LocationCatalog(root);
+        catalog.Load("Unassigned");
+        catalog.Create("Acme Dental", out var acme);
+        catalog.SetNotes(acme!.Id, "Gateway 10.2.0.1\nVLAN 20 is phones");
+        acme = catalog.Items.Single(item => item.Id == acme.Id);
+        var data = catalog.Open(acme);
+        var device = Device("10.2.0.5", "00:00:00:00:02:05");
+        data.Devices.SetName(device, "Reception");
+        data.Devices.Observe([device]);
+        data.Devices.SetTrusted(device, true);
+        data.Overrides.Set(device.MacAddress, "Printer");
+        data.Logins.Set(device.MacAddress, device.IpAddress, "admin");
+        data.SavedScans.Save(new ScanProfile { Name = "Office LAN", Target = "10.2.0.0/24", DeepScanAfter = true });
+        data.History.Record("10.2.0.0/24", [device]);
+
+        string withoutUsers = System.Text.Encoding.UTF8.GetString(LocationTransfer.Export(acme, catalog.DirectoryFor(acme), includeUsernames: false));
+        Require(!withoutUsers.Contains("admin") && withoutUsers.Contains("Reception") && withoutUsers.Contains("VLAN 20"),
+            "Exporting leaves out SSH usernames unless asked, and keeps names and notes.");
+        byte[] withUsers = LocationTransfer.Export(acme, catalog.DirectoryFor(acme), includeUsernames: true);
+        Require(System.Text.Encoding.UTF8.GetString(withUsers).Contains("admin"), "The checkbox adds SSH usernames.");
+
+        Require(LocationTransfer.Import(catalog, withUsers, out var imported, out string? error) && imported != null, "A Location imports: " + error);
+        Require(imported!.Id != acme.Id && imported.Name == "Acme Dental" && imported.Notes.Contains("VLAN 20"),
+            "Import always creates a new Location, even with the same name, and keeps its notes.");
+        var copy = catalog.Open(imported);
+        Require(copy.Devices.GetName(device) == "Reception" && copy.Devices.IsTrusted(device) && copy.Devices.HasBaseline &&
+            copy.Overrides.Get(device.MacAddress) == "Printer" && copy.Logins.Get(device.MacAddress, device.IpAddress) == "admin" &&
+            copy.SavedScans.Items.Single().DeepScanAfter && copy.History.Entries.Count == 1,
+            "The imported Location has the names, approvals, baseline, types, usernames, saved scans and history.");
+        copy.Devices.SetName(device, "Changed in the copy");
+        Require(data.Devices.GetName(device) == "Reception", "The import is independent of the original.");
+
+        foreach (var (label, json) in new[]
+        {
+            ("newer version", "{\"Format\":\"KillerScan.Location\",\"Version\":2,\"Name\":\"X\",\"Files\":{}}"),
+            ("wrong format", "{\"Format\":\"Something.Else\",\"Version\":1,\"Name\":\"X\",\"Files\":{}}"),
+            ("unexpected file", "{\"Format\":\"KillerScan.Location\",\"Version\":1,\"Name\":\"X\",\"Files\":{\"..\\\\evil.json\":{}}}"),
+            ("malformed", "{broken"),
+        })
+        {
+            int before = catalog.Items.Count;
+            Require(!LocationTransfer.Import(catalog, System.Text.Encoding.UTF8.GetBytes(json), out _, out string? refused) && refused != null &&
+                catalog.Items.Count == before, "An import is refused without adding a Location: " + label);
+        }
+        Require(!File.Exists(Path.Combine(root, "evil.json")) && !File.Exists(Path.Combine(root, "locations", "evil.json")),
+            "A refused import writes nothing outside its Location.");
     }
 
     private static void Require(bool condition, string message)

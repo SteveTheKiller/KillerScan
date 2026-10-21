@@ -90,6 +90,21 @@ namespace KillerScan.Services
         public static bool Rename(LocationInfo info, string name) => Notify(_catalog != null && _fallback == null && _catalog.Rename(info.Id, name));
         public static bool SetNotes(LocationInfo info, string notes) => Notify(_catalog != null && _fallback == null && _catalog.SetNotes(info.Id, notes));
 
+        /// <summary>Whether Locations can be created, renamed, exported and imported right now.</summary>
+        public static bool Editable => Loaded && !DemoData.Enabled && _catalog != null && _fallback == null && _catalog.LoadError == null;
+
+        public static byte[]? Export(LocationInfo info, bool includeUsernames) =>
+            Editable ? LocationTransfer.Export(Find(info.Id) ?? info, _catalog!.DirectoryFor(info), includeUsernames) : null;
+
+        public static bool Import(byte[] bytes, out LocationInfo? imported, out string? error)
+        {
+            imported = null;
+            if (!Editable) { error = LoadError ?? "Locations are unavailable."; return false; }
+            bool ok = LocationTransfer.Import(_catalog!, bytes, out imported, out error);
+            if (ok) Changed?.Invoke(null, EventArgs.Empty);
+            return ok;
+        }
+
         /// <summary>Remembers a Location's last targets and settings. Quiet: nothing on screen depends on it.</summary>
         public static void SetLastUsed(LocationInfo info, string targets, ScanOptions options)
         {

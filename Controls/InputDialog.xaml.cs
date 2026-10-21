@@ -48,8 +48,29 @@ namespace KillerScan.Controls
         // this the dialog would need a mouse for its only field.
         private void ValueBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)       { OK_Click(this, new RoutedEventArgs()); e.Handled = true; }
+            if (e.Key == Key.Enter && !ValueBox.AcceptsReturn) { OK_Click(this, new RoutedEventArgs()); e.Handled = true; }
             else if (e.Key == Key.Escape) { Cancel_Click(this, new RoutedEventArgs()); e.Handled = true; }
+        }
+
+        /// <summary>A taller box that keeps line breaks, for free text such as Location notes.</summary>
+        internal void UseMultipleLines()
+        {
+            ValueBox.AcceptsReturn = true;
+            ValueBox.TextWrapping = TextWrapping.Wrap;
+            ValueBox.MinHeight = 140;
+            ValueBox.MaxHeight = 320;
+            ValueBox.VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Auto;
+            ValueBox.VerticalContentAlignment = VerticalAlignment.Top;
+            Width = 440;
+            // Enter is a new line here, so Ctrl+Enter confirms. The box would take Enter first.
+            ValueBox.PreviewKeyDown += (_, e) =>
+            {
+                if (e.Key == Key.Enter && Keyboard.Modifiers == ModifierKeys.Control)
+                {
+                    OK_Click(this, new RoutedEventArgs());
+                    e.Handled = true;
+                }
+            };
         }
 
         private void OK_Click(object sender, RoutedEventArgs e)
