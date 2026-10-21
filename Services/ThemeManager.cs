@@ -370,6 +370,13 @@ namespace KillerScan.Services
             if (!newDict.Contains("FooterBackgroundBrush"))
                 newDict["FooterBackgroundBrush"] = newDict["BackgroundBrush"];
             newDict["OverlayWindowBrush"] = newDict["BackgroundBrush"];
+            // Their 1px edges. A single border color over a gradient surface reads as one end's
+            // color stuck to the other end (Delirium's red border under its purple side), so a
+            // gradient surface gets a gradient edge: the same stops lifted toward white. A solid
+            // surface keeps the border it always had.
+            Brush? gradientEdge = newDict["BackgroundBrush"] is LinearGradientBrush surface ? LiftedEdge(surface) : null;
+            newDict["OverlayEdgeBrush"] = gradientEdge ?? newDict["AppBorderBrush"];
+            newDict["OverlayRuleBrush"] = gradientEdge ?? newDict["PaneBorderBrush"];
             if (!newDict.Contains("WordmarkAccentShadowOpacity")) newDict["WordmarkAccentShadowOpacity"] = 0.0;
             if (!hasExplicitComboHighlightText)
                 newDict["ComboHighlightTextBrush"] = newDict["PrimaryBrush"];
@@ -393,6 +400,28 @@ namespace KillerScan.Services
             var merged = Application.Current.Resources.MergedDictionaries;
             if (merged.Count > 0) merged[0] = target;
             else merged.Add(target);
+        }
+
+        /// <summary>
+        /// The surface gradient with every stop mixed one fifth of the way to white, which lands
+        /// near each gradient theme's own border tone at that end, as KillerShell's card edge does.
+        /// </summary>
+        internal static LinearGradientBrush LiftedEdge(LinearGradientBrush surface)
+        {
+            var edge = new LinearGradientBrush
+            {
+                StartPoint = surface.StartPoint,
+                EndPoint = surface.EndPoint,
+                MappingMode = surface.MappingMode,
+                SpreadMethod = surface.SpreadMethod,
+                ColorInterpolationMode = surface.ColorInterpolationMode,
+            };
+            static byte Lift(byte channel) => (byte)(channel + (255 - channel) / 5);
+            foreach (var stop in surface.GradientStops)
+                edge.GradientStops.Add(new GradientStop(
+                    Color.FromArgb(255, Lift(stop.Color.R), Lift(stop.Color.G), Lift(stop.Color.B)), stop.Offset));
+            edge.Freeze();
+            return edge;
         }
     }
 }

@@ -119,7 +119,8 @@ namespace KillerFamily.Accessibility
                 "MenuTextBrush", "TextFooter", "FilenameBrush", "CaptionTextBrush", "DialogCaptionTextBrush",
                 "OverlayCloseBrush", "CaptionGlyphBrush", "ComboTextBrush", "OutlineRestBrush", "OutlineBtnBrush", "RadioAccent",
                 "RadioHoverFgBrush", "ScrollThumbBrush", "ScrollThumbHoverBrush", "AccentLogo", "HeaderLineBrush",
-                "CardBorderBrush", "PaneBorderBrush", "AppBorderBrush", "InputBorderBrush", "InputHoverBrush",
+                "CardBorderBrush", "PaneBorderBrush", "AppBorderBrush", "OverlayEdgeBrush", "OverlayRuleBrush",
+                "InputBorderBrush", "InputHoverBrush",
                 "MenuBorderBrush", "MenuSeparatorBrush", "ButtonEdgeBrush", "WindowEdgeBrush", "DialogFrameBrush",
                 "SurfaceButtonEdgeBrush", "KsCatFile", "KsCatTools", "KsCatEdit", "KsCatNav", "KsCatView",
                 "KsCatSearch", "KsCatHelp", "KsCatOcr", "KsCatAppt", "KsCatTabs");

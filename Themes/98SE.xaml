@@ -94,7 +94,7 @@
     <Thickness x:Key="ScanAboutContentMargin">18,30,18,18</Thickness>
     <Thickness x:Key="ShortcutsContentMargin">24,30,24,20</Thickness>
     <Thickness x:Key="ShortcutsScrollBleed">0,0,-22,-18</Thickness>
-    <Thickness x:Key="ShortcutsScrollInset">0,0,22,18</Thickness>
+    <Thickness x:Key="ShortcutsScrollInset">0,0,22,10</Thickness>
     <sys:Double x:Key="AboutCloseWidth">18</sys:Double>
     <sys:Double x:Key="AboutCloseHeight">16</sys:Double>
     <Thickness x:Key="AboutCloseMargin">0,4,4,0</Thickness>

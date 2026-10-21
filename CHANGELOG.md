@@ -55,7 +55,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Release monitoring includes KillerScan.Engine on NuGet and reports missing or failed publication.
 - Chocolatey publishing reports failure when validation is still failing after a retry.
 - Window resize minimums stay within the current monitor's work area on small or scaled displays.
-- The shortcuts card shows shadows at its edges when more content is out of view.
+- The shortcuts card shows shadows at its edges when more content is out of view. Its border follows gradient themes, and its hint sits centered closer to the bottom edge.
 - Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.
 - File pickers use theme content colors and app icons; 98SE dialogs have full bevels and compact fields. Text buttons, menus, tooltips and shortcuts use the embedded interface font, including separate windows.
 - Film grain has crisper specks and fades midtones across app and website themes without dimming bright highlights.

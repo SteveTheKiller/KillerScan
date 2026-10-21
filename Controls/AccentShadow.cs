@@ -11,6 +11,75 @@ using System.Windows.Media.Effects;
 
 namespace KillerFamily.Theming
 {
+    /// <summary>Uses the logo color for headings with a thin, contrasting edge around the text.</summary>
+    public static class HeadingAccent
+    {
+        public static readonly DependencyProperty EnabledProperty = DependencyProperty.RegisterAttached(
+            "Enabled", typeof(bool), typeof(HeadingAccent), new PropertyMetadata(false, OnEnabledChanged));
+
+        public static bool GetEnabled(DependencyObject element) => (bool)element.GetValue(EnabledProperty);
+        public static void SetEnabled(DependencyObject element, bool value) => element.SetValue(EnabledProperty, value);
+
+        private static readonly IValueConverter Converter = new HeadingOutlineConverter();
+
+        private static void OnEnabledChanged(DependencyObject element, DependencyPropertyChangedEventArgs args)
+        {
+            if (element is not TextBlock text) return;
+            text.Loaded -= RefreshOutline;
+            text.SizeChanged -= RefreshOutline;
+            if (!(bool)args.NewValue)
+            {
+                text.ClearValue(TextBlock.ForegroundProperty);
+                text.ClearValue(UIElement.EffectProperty);
+                return;
+            }
+            text.SetResourceReference(TextBlock.ForegroundProperty, "AccentLogo");
+            text.SetBinding(UIElement.EffectProperty, new Binding(nameof(TextBlock.Foreground))
+            {
+                RelativeSource = RelativeSource.Self,
+                Converter = Converter,
+                ConverterParameter = text,
+            });
+            text.Loaded += RefreshOutline;
+            text.SizeChanged += RefreshOutline;
+        }
+
+        private static void RefreshOutline(object sender, RoutedEventArgs args) =>
+            ((TextBlock)sender).GetBindingExpression(UIElement.EffectProperty)?.UpdateTarget();
+
+        private sealed class HeadingOutlineConverter : IValueConverter
+        {
+            public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (SystemParameters.HighContrast || value is not SolidColorBrush brush) return null;
+                // A black or white edge always provides at least 4.5:1 against an opaque color.
+                // Keep the family Yellow outline when it also meets that threshold.
+                double luminance = Luminance(brush.Color);
+                double darkContrast = (luminance + 0.05) / 0.05;
+                double lightContrast = 1.05 / (luminance + 0.05);
+                Color rim = darkContrast >= lightContrast ? Colors.Black : Colors.White;
+                double gray = Luminance(AccentShadow.RimColor);
+                double grayContrast = (Math.Max(luminance, gray) + 0.05) / (Math.Min(luminance, gray) + 0.05);
+                if (AccentShadow.Applies(brush) && grayContrast >= 4.5) rim = AccentShadow.RimColor;
+                double scale = parameter is Visual visual ? VisualTreeHelper.GetDpi(visual).DpiScaleX : 1.0;
+                var effect = new AccentShadow.Outline(rim, Math.Max(1.0, scale));
+                if (effect.CanFreeze) effect.Freeze();
+                return effect;
+            }
+
+            private static double Luminance(Color color) =>
+                0.2126 * Linear(color.R) + 0.7152 * Linear(color.G) + 0.0722 * Linear(color.B);
+
+            private static double Linear(byte channel)
+            {
+                double value = channel / 255.0;
+                return value <= 0.04045 ? value / 12.92 : Math.Pow((value + 0.055) / 1.055, 2.4);
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;
+        }
+    }
+
     /// <summary>
     /// Light with the Yellow accent keeps its accent yellow and draws a thin gray outline around every
     /// yellow text and glyph so it reads on the light surfaces. A theme turns it on by giving

@@ -853,7 +853,7 @@
                      FlyoutCornerRadius with 0,0,4,4 - a dropdown shape that hangs off a button, so
                      this centered card came out with square top corners. PanelCornerRadius is 6 on
                      every flat theme and 0 on 98SE, which is the shape a card wants. -->
-                <Border Background="{DynamicResource OverlayWindowBrush}" BorderBrush="{DynamicResource AppBorderBrush}"
+                <Border Background="{DynamicResource OverlayWindowBrush}" BorderBrush="{DynamicResource OverlayEdgeBrush}"
                         BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
                     <Grid>
                         <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}"
@@ -926,7 +926,7 @@
                                         <StackPanel x:Name="ShortcutRightColumn" Grid.Column="2"/>
                                     </Grid>
                                     <TextBlock x:Name="ShortcutsHint" Foreground="{DynamicResource MutedTextBrush}"
-                                               FontSize="11" TextWrapping="Wrap" Margin="0,14,0,0"/>
+                                               FontSize="11" TextWrapping="Wrap" TextAlignment="Center" Margin="0,10,0,0"/>
                                 </StackPanel>
                             </ScrollViewer>
                             <Viewbox x:Name="ShortcutMapHost" Grid.Row="1" Visibility="Collapsed"
