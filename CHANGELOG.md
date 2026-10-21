@@ -42,6 +42,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Topology and Services no longer redraw everything for each device a scan finds. Updates are grouped, so a large scan stays responsive with either view open.
 - Topology devices can be used from the keyboard. Arrow keys move between devices, Space selects and Ctrl+Space adds to the selection, Shift+arrow keys move a device, and screen readers announce each device and whether it is selected. Focus stays on the same device when the diagram updates.
 - The device table's MAC column is never narrower than a full address in the current font, so a dragged or older saved width can no longer cut addresses off.
+- A device name lookup that never answers no longer holds up a scan. Each lookup gets three seconds, and stalled lookups are capped so they cannot pile up.
 - Keep Alive and Diagnose add new targets to a running watch without resetting existing cards or counters.
 - Export menus, shortcuts and tooltips match the active view, with one filtered CSV action for Services.
 - Terminal output exposes readable text, selection and caret ranges to accessibility tools, with a visible keyboard focus outline.

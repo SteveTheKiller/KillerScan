@@ -368,10 +368,37 @@ namespace KillerScan.Engine
         /// <summary>
         /// Probe a single host for hostname, open ports, fingerprints, and device type.
         /// </summary>
+        // Windows name lookups cannot be canceled and some never answer. Each lookup gets a time
+        // budget, after which the device simply has no name and the scan moves on. A lookup that
+        // is still running keeps its slot until it really returns, so a network full of silent
+        // resolvers can tie up at most this many threads; beyond that, devices go unnamed.
+        private static readonly TimeSpan HostnameBudget = TimeSpan.FromSeconds(3);
+        internal const int MaxPendingHostnameLookups = 64;
+        private static readonly SemaphoreSlim HostnameSlots = new(MaxPendingHostnameLookups, MaxPendingHostnameLookups);
+
+        /// <summary>Replaces the reverse-then-forward lookup in tests.</summary>
+        internal static Func<IPAddress, Task<string>>? HostnameResolverOverride { get; set; }
+
         private static async Task<string> ResolveVerifiedHostnameAsync(IPAddress addr)
+        {
+            var deadline = Task.Delay(HostnameBudget);
+            var slot = HostnameSlots.WaitAsync();
+            if (await Task.WhenAny(slot, deadline) != slot)
+            {
+                // Release a slot this abandoned wait may still be granted later.
+                _ = slot.ContinueWith(_ => HostnameSlots.Release(), TaskScheduler.Default);
+                return string.Empty;
+            }
+            var lookup = LookupHostnameAsync(addr);
+            _ = lookup.ContinueWith(_ => HostnameSlots.Release(), TaskScheduler.Default);
+            return await Task.WhenAny(lookup, deadline) == lookup ? await lookup : string.Empty;
+        }
+
+        private static async Task<string> LookupHostnameAsync(IPAddress addr)
         {
             try
             {
+                if (HostnameResolverOverride is { } resolve) return await resolve(addr) ?? string.Empty;
                 var reverse = await Dns.GetHostEntryAsync(addr);
                 string hostname = reverse.HostName?.Trim() ?? string.Empty;
                 if (hostname.Length == 0 || string.Equals(

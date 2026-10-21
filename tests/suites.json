@@ -6,7 +6,7 @@
     "ci": [
       "--vendor-db", "--vendor-snapshot", "--subnet", "--fingerprint-cancellation", "--http-redirects",
       "--mac-cancellation", "--snmp", "--upload-accounting", "--scan-options", "--safe-probes", "--netbios",
-      "--api-contract"
+      "--api-contract", "--dns-budget"
     ],
     "excluded": {}
   },
