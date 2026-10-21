@@ -66,7 +66,8 @@ internal static class SafeProbeTests
                     Interlocked.Increment(ref requests);
                     var stream = client.GetStream();
                     var buffer = new byte[4096];
-                    try { await stream.ReadAsync(buffer, 0, buffer.Length); } catch { continue; }
+                    // One read is enough to know a request arrived; the reply never depends on it.
+                    try { if (await stream.ReadAsync(buffer, 0, buffer.Length) <= 0) continue; } catch { continue; }
                     byte[] reply = System.Text.Encoding.ASCII.GetBytes(
                         "HTTP/1.1 200 OK\r\nServer: Proxy-Fixture\r\nContent-Type: text/html\r\nContent-Length: 30\r\nConnection: close\r\n\r\n<title>Proxy page</title>     ");
                     try { await stream.WriteAsync(reply, 0, reply.Length); } catch { }

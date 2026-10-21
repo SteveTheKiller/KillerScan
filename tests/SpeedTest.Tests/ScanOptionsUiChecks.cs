@@ -28,10 +28,12 @@ internal static class ScanOptionsUiChecks
         menu?.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
         Require(menu != null && menu.IsOpen && ReferenceEquals(menu.PlacementTarget, button),
             "Scan settings opens from its own button.");
-        Require(menu!.Items.OfType<MenuItem>().Count(item => item.IsCheckable) == 13,
-            "All thirteen probe choices are available.");
-        Require(menu.Items.OfType<MenuItem>().Where(item => item.IsCheckable).All(item => item.IsChecked),
-            "All probe choices start enabled.");
+        var probes = menu!.Items.OfType<MenuItem>().Where(item => item.IsCheckable && item.Tag is string).ToList();
+        Require(probes.Count == 13, "All thirteen probe choices are available.");
+        Require(probes.All(item => item.IsChecked), "All probe choices start enabled.");
+        var unknownPorts = menu.Items.OfType<MenuItem>().Where(item => item.IsCheckable && item.Tag is null).ToList();
+        Require(unknownPorts.Count == 1 && !unknownPorts[0].IsChecked,
+            "Fingerprinting unknown ports is one separate choice that starts off.");
         menu.IsOpen = false;
 
         var profile = JsonSerializer.Deserialize<ScanProfile>(
@@ -46,22 +48,26 @@ internal static class ScanOptionsUiChecks
         menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
         Require(!menu.Items.OfType<MenuItem>().Single(item => Equals(item.Tag, "http")).IsChecked,
             "Running a saved profile restores its disabled HTTP check.");
-        var choices = menu.Items.OfType<MenuItem>().Where(item => item.IsCheckable)
+        var choices = menu.Items.OfType<MenuItem>().Where(item => item.IsCheckable && item.Tag is string)
             .ToDictionary(item => (string)item.Tag);
+        var unknown = menu.Items.OfType<MenuItem>().Single(item => item.IsCheckable && item.Tag is null);
+        unknown.IsChecked = true;
+        unknown.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        Require(unknown.IsChecked && unknown.IsEnabled, "Fingerprinting unknown ports can be turned on.");
         choices["ports"].IsChecked = false;
         choices["ports"].RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
         Require(!choices["http"].IsEnabled && !choices["tls"].IsEnabled && !choices["ssh"].IsEnabled
-            && choices["snmp"].IsEnabled && choices["netbios"].IsEnabled,
+            && choices["snmp"].IsEnabled && choices["netbios"].IsEnabled && !unknown.IsEnabled,
             "Disabling ports makes only port-dependent checks unavailable.");
         menu.Items.OfType<MenuItem>().Last().RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
-        Require(choices.Values.All(item => item.IsChecked && item.IsEnabled),
-            "Restore defaults immediately updates every visible check.");
+        Require(choices.Values.All(item => item.IsChecked && item.IsEnabled) && !unknown.IsChecked && unknown.IsEnabled,
+            "Restore defaults immediately updates every visible check and turns unknown-port fingerprinting off.");
         menu.IsOpen = false;
         workspace.LoadProfile(JsonSerializer.Deserialize<ScanProfile>("{\"Target\":\"127.0.0.1\",\"Options\":null}")!);
         button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
         menu = button.ContextMenu;
         menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
-        Require(menu.Items.OfType<MenuItem>().Where(item => item.IsCheckable).All(item => item.IsChecked),
+        Require(menu.Items.OfType<MenuItem>().Where(item => item.IsCheckable && item.Tag is string).All(item => item.IsChecked),
             "A legacy or null-options profile retains enabled defaults.");
         menu.IsOpen = false;
     }

@@ -137,7 +137,8 @@ internal static class ReleaseUiTests
                     == (string)app.FindResource("Str_Options_Title"), locale + ": scan settings accessible label follows the language.");
                 settingsButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                 foreach (var item in settingsButton.ContextMenu.Items.OfType<MenuItem>().Where(item => item.IsCheckable))
-                    Require(item.Header is string label && label == (string)app.FindResource("Str_Options_" + item.Tag),
+                    // Untagged is the unknown-port choice, which sits outside ScanOptions.Features.
+                    Require(item.Header is string label && label == (string)app.FindResource("Str_Options_" + (item.Tag as string ?? "ProbeUnknownPorts")),
                         locale + ": every scan setting has a translated label.");
                 settingsButton.ContextMenu.IsOpen = false;
                 if (locale is "SlSI" or "De") CaptureSettings(locale);
