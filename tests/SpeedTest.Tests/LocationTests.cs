@@ -278,7 +278,7 @@ internal static class LocationTests
         catalog.Create("Shop", out var shop);
         Require(catalog.AddGatewayMac(acme!.Id, "aa-bb-cc-00-00-01") && catalog.AddGatewayMac(annex!.Id, "AA:BB:CC:00:00:01") &&
             catalog.AddGatewayMac(shop!.Id, "AA:BB:CC:00:00:02"), "Gateway MACs are recorded per Location.");
-        catalog.AddGatewayMac(shop.Id, "aa:bb:cc:00:00:02");
+        catalog.AddGatewayMac(shop!.Id, "aa:bb:cc:00:00:02");
         var reloaded = new LocationCatalog(root);
         reloaded.Load("Unassigned");
         Require(reloaded.Items.Single(item => item.Id == shop.Id).GatewayMacs.Count == 1, "The same gateway is recorded once, in any format.");
