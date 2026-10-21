@@ -4,6 +4,7 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <sys:Double x:Key="GrainOpacity">0.24</sys:Double>
+    <sys:Boolean x:Key="GrainHighlightsOnly">True</sys:Boolean>
     <sys:Double x:Key="IconShadowOpacity">0.9</sys:Double>
 
     <!-- App-specific geometry only - see Dark.xaml. -->

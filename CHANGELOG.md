@@ -37,6 +37,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Window resize minimums stay within the current monitor's work area on small or scaled displays.
 - The shortcuts card shows shadows at its edges when more content is out of view.
 - Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.
+- Text buttons, menus, tooltips and shortcuts use the embedded interface font, including separate windows.
+- Film grain has crisper specks and fades midtones across app and website themes without dimming bright highlights.
 - Balanced the Technical page columns by moving the glossary to the left.
 
 ### Changed
