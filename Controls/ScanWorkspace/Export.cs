@@ -133,7 +133,7 @@ namespace KillerScan.Controls
             {
                 string csv = ReportExport.BuildCsv(ActiveDevices);
                 if (ShowExportDialog(dlg) != true) return;
-                File.WriteAllText(dlg.FileName, csv, Encoding.UTF8);
+                ExportFile.WriteText(dlg.FileName, csv, Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }
             catch (Exception ex)
@@ -161,7 +161,7 @@ namespace KillerScan.Controls
                     text.AppendLine(string.Join(",", ReportExport.CsvField(row.Service), ReportExport.CsvField(row.Port.ToString()),
                         ReportExport.CsvField(row.DeviceName), ReportExport.CsvField(row.IpAddress), ReportExport.CsvField(row.DeviceTypeDisplay)));
                 if (ShowExportDialog(dlg) != true) return;
-                File.WriteAllText(dlg.FileName, text.ToString(), Encoding.UTF8);
+                ExportFile.WriteText(dlg.FileName, text.ToString(), Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }
             catch (Exception ex)
@@ -181,7 +181,7 @@ namespace KillerScan.Controls
                     ActiveDevices, _active.ScannedSubnet, ThemeManager.Current.ToString().ToLowerInvariant(),
                     _active.ScannedAt, _active.Completion);
                 if (ShowExportDialog(dlg) != true) return;
-                File.WriteAllText(dlg.FileName, html, Encoding.UTF8);
+                ExportFile.WriteText(dlg.FileName, html, Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }
             catch (Exception ex)

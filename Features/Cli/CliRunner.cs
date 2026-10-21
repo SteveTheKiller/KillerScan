@@ -549,7 +549,7 @@ namespace KillerScan.Features.Cli
                     string full = Path.GetFullPath(exportPath);
                     string? dir = Path.GetDirectoryName(full);
                     if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
-                    File.WriteAllText(full, body, new UTF8Encoding(false));
+                    ExportFile.WriteText(full, body, new UTF8Encoding(false));
                     if (!quiet) err.WriteLine(PaintErr("Wrote " + full, AnsiGood));
                 }
                 catch (Exception ex) { err.WriteLine(PaintErr("Error: could not write the export - " + Flatten(ex.Message), AnsiBad)); return 1; }

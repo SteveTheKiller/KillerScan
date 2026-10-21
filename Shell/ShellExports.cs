@@ -57,7 +57,7 @@ namespace KillerScan.Shell
             try
             {
                 if (format == "png") SaveElementPng(watch.CardsVisual, dlg.FileName);
-                else File.WriteAllText(dlg.FileName, format switch
+                else ExportFile.WriteText(dlg.FileName, format switch
                 {
                     "html" => watch.BuildHtml(),
                     "txt"  => watch.BuildText(),
@@ -84,7 +84,7 @@ namespace KillerScan.Shell
             };
             if (dlg.ShowDialog(this) != true) return;
 
-            try { File.WriteAllText(dlg.FileName, terminal.GetText(), new UTF8Encoding(false)); }
+            try { ExportFile.WriteText(dlg.FileName, terminal.GetText(), new UTF8Encoding(false)); }
             catch (Exception ex) when (ex is not OutOfMemoryException)
             {
                 MessageBox.Show(string.Format(Loc("Str_Err_Export"), ex.Message),
@@ -126,8 +126,7 @@ namespace KillerScan.Shell
             bitmap.Render(drawing);
             var encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bitmap));
-            using var stream = File.Create(path);
-            encoder.Save(stream);
+            ExportFile.Write(path, encoder.Save);
         }
     }
 }

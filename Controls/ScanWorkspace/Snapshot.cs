@@ -47,7 +47,7 @@ namespace KillerScan.Controls
 
             try
             {
-                if (format == SnapshotFormat.Svg) File.WriteAllText(dlg.FileName, BuildTopologySvg(), new UTF8Encoding(false));
+                if (format == SnapshotFormat.Svg) ExportFile.WriteText(dlg.FileName, BuildTopologySvg(), new UTF8Encoding(false));
                 else WriteTopologyRaster(dlg.FileName, format);
                 // System.IO.Path spelled out: System.Windows.Shapes.Path is in scope here too,
                 // because this file draws the connectors.
@@ -110,8 +110,7 @@ namespace KillerScan.Controls
                 ? new JpegBitmapEncoder { QualityLevel = 92 }
                 : new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bitmap));
-            using var stream = File.Create(path);
-            encoder.Save(stream);
+            ExportFile.Write(path, encoder.Save);
         }
 
         /// <summary>

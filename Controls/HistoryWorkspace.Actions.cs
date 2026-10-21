@@ -149,7 +149,7 @@ namespace KillerScan.Controls
             var dialog = new FileDialog(FileDialogMode.Save) { Filter = Loc("Str_Filter_Csv") + "|*.csv",
                 DefaultExt = ".csv", AddExtension = true, FileName = "KillerScan_History_" + _entry.ScannedAt.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture) + ".csv" };
             if (dialog.ShowDialog(Window.GetWindow(this)) != true) return;
-            try { File.WriteAllText(dialog.FileName, BuildCsv(), new UTF8Encoding(true)); }
+            try { ExportFile.WriteText(dialog.FileName, BuildCsv(), new UTF8Encoding(true)); }
             catch (Exception ex) when (ex is not OutOfMemoryException)
             { HistorySummary.Text = string.Format(Loc("Str_Err_Export"), ex.Message); }
         }
