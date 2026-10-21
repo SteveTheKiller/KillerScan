@@ -19,6 +19,10 @@ internal static class LocationTests
             Migration(Path.Combine(root, "migrate"));
             InterruptedMigration(Path.Combine(root, "interrupted"));
             CorruptCatalog(Path.Combine(root, "corrupt"));
+            UnusableCatalog(Path.Combine(root, "unusable"));
+            UnreadableAfterMigration(Path.Combine(root, "stale"));
+            ConcurrentMigration(Path.Combine(root, "concurrent"));
+            LeftoverUnassigned(Path.Combine(root, "leftover"));
             Isolation(Path.Combine(root, "isolation"));
             KnownAndApproved(Path.Combine(root, "known"));
             CommandLine(Path.Combine(root, "cli"));
@@ -108,6 +112,76 @@ internal static class LocationTests
         Require(catalog.LoadError != null && catalog.Items.Count == 0, "A corrupt catalog is reported, not replaced by a new migration.");
         Require(File.ReadAllText(Path.Combine(root, "locations.json")) == "{broken", "The corrupt catalog keeps its bytes.");
         Require(!catalog.Create("New site", out _), "Nothing is added to a catalog that could not be read.");
+    }
+
+    // A catalog that parses but cannot be used, from a newer version or holding a literal null,
+    // is reported like a corrupt one. It used to escape as an exception and stop the app.
+    private static void UnusableCatalog(string root)
+    {
+        foreach (string content in new[] { "{\"Version\":2,\"Locations\":[]}", "null" })
+        {
+            Directory.CreateDirectory(root);
+            File.WriteAllText(Path.Combine(root, "locations.json"), content);
+            var catalog = new LocationCatalog(root);
+            catalog.Load("Unassigned");
+            Require(catalog.LoadError != null && catalog.Items.Count == 0 && !catalog.Create("New site", out _),
+                "An unusable catalog is reported and changes nothing: " + content);
+            Require(File.ReadAllText(Path.Combine(root, "locations.json")) == content, "The unusable catalog keeps its bytes: " + content);
+        }
+    }
+
+    // After migration the app-wide files are a stale backup. When the catalog cannot be read,
+    // the app runs Temporary scans rather than writing to them.
+    private static void UnreadableAfterMigration(string root)
+    {
+        SeedLegacy(root);
+        var originals = StoreFiles.ToDictionary(name => name, name => File.ReadAllBytes(Path.Combine(root, name)));
+        File.WriteAllText(Path.Combine(root, "locations.json"), "{broken");
+        string previous = LocationService.Root;
+        try
+        {
+            LocationService.Root = root;
+            LocationService.Load("Unassigned");
+            var data = LocationService.Get(new LocationInfo { Id = LocationCatalog.UnassignedId, Name = "Unassigned" });
+            Require(LocationService.LoadError != null && !LocationService.Editable && LocationService.Items.Count == 0 && data.IsTemporary,
+                "An unreadable catalog after migration gives Temporary scans and reports why.");
+            data.Devices.SetName(Device("192.168.1.10"), "Typed while broken");
+            data.History.Record("192.168.1.0/24", [Device("192.168.1.10")]);
+            foreach (var pair in originals)
+                Require(File.ReadAllBytes(Path.Combine(root, pair.Key)).SequenceEqual(pair.Value), "The stale " + pair.Key + " is never written.");
+        }
+        finally { LocationService.Root = previous; }
+    }
+
+    // Two windows starting together migrate once, and the data they both see is intact.
+    private static void ConcurrentMigration(string root)
+    {
+        SeedLegacy(root);
+        var catalogs = new[] { new LocationCatalog(root), new LocationCatalog(root) };
+        var threads = catalogs.Select(catalog => new System.Threading.Thread(() => catalog.Load("Unassigned"))).ToList();
+        threads.ForEach(thread => thread.Start());
+        threads.ForEach(thread => thread.Join());
+        foreach (var catalog in catalogs)
+            Require(catalog.LoadError == null && catalog.Items.Count == 1 && catalog.Items[0].Id == LocationCatalog.UnassignedId,
+                "Both windows see one Unassigned Location: " + catalog.LoadError);
+        Require(catalogs[0].Open(catalogs[0].Items[0]).Devices.GetName(Device("192.168.1.10")) == "Front desk PC",
+            "The migrated data survives two windows starting together.");
+        Require(!Directory.Exists(Path.Combine(root, "locations", ".deleted")), "A single migration sets nothing aside.");
+    }
+
+    // A folder left by a migration that stopped before the catalog is set aside, never deleted.
+    private static void LeftoverUnassigned(string root)
+    {
+        SeedLegacy(root);
+        string leftover = Path.Combine(root, "locations", LocationCatalog.UnassignedId);
+        Directory.CreateDirectory(leftover);
+        File.WriteAllText(Path.Combine(leftover, "marker.txt"), "written after the earlier move");
+        var catalog = new LocationCatalog(root);
+        catalog.Load("Unassigned");
+        Require(catalog.LoadError == null && catalog.Open(catalog.Items.Single()).Devices.GetName(Device("192.168.1.10")) == "Front desk PC",
+            "Migration still completes over a leftover folder.");
+        var kept = Directory.GetDirectories(Path.Combine(root, "locations", ".deleted"), LocationCatalog.UnassignedId + "-*").Single();
+        Require(File.ReadAllText(Path.Combine(kept, "marker.txt")) == "written after the earlier move", "The leftover folder is kept under .deleted.");
     }
 
     private static void Isolation(string root)
@@ -283,6 +357,9 @@ internal static class LocationTests
             ("wrong format", "{\"Format\":\"Something.Else\",\"Version\":1,\"Name\":\"X\",\"Files\":{}}"),
             ("unexpected file", "{\"Format\":\"KillerScan.Location\",\"Version\":1,\"Name\":\"X\",\"Files\":{\"..\\\\evil.json\":{}}}"),
             ("malformed", "{broken"),
+            ("null store", "{\"Format\":\"KillerScan.Location\",\"Version\":1,\"Name\":\"X\",\"Files\":{\"devices.json\":null}}"),
+            ("number store", "{\"Format\":\"KillerScan.Location\",\"Version\":1,\"Name\":\"X\",\"Files\":{\"profiles.json\":5}}"),
+            ("unreadable store", "{\"Format\":\"KillerScan.Location\",\"Version\":1,\"Name\":\"X\",\"Files\":{\"history.json\":{\"Entries\":5}}}"),
         })
         {
             int before = catalog.Items.Count;

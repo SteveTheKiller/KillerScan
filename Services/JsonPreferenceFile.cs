@@ -25,9 +25,15 @@ namespace KillerScan.Services
         internal void Load()
         {
             try { Value = Read(); Error = null; }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or ArgumentException)
+            catch (Exception ex) when (IsUnreadable(ex))
             { Value = _create(); Error = ex.Message; }
         }
+
+        // InvalidDataException covers a file that parses but is not usable: a literal null, or a
+        // normalizer refusing it, such as a newer format version. It is reported like any other
+        // unreadable file instead of escaping to the caller and stopping the app.
+        private static bool IsUnreadable(Exception ex) =>
+            ex is IOException or UnauthorizedAccessException or JsonException or ArgumentException or InvalidDataException;
 
         internal bool Change(Action<T> mutation, bool memoryOnly = false)
         {
@@ -58,7 +64,7 @@ namespace KillerScan.Services
                 }
                 finally { if (owned) mutex.ReleaseMutex(); }
             }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or ArgumentException)
+            catch (Exception ex) when (IsUnreadable(ex))
             { Error = ex.Message; return false; }
         }
 

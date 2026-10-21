@@ -41,11 +41,24 @@ namespace KillerScan.Services
             }
             _catalog = new LocationCatalog(Root);
             _catalog.Load(unassignedName);
-            if (_catalog.LoadError != null)
+            // Another window replacing the catalog can make one read fail; a moment later it reads.
+            for (int retry = 0; retry < 3 && _catalog.LoadError != null && _catalog.Published; retry++)
             {
-                _fallback = LocationData.Shared(new LocationInfo { Id = LocationCatalog.UnassignedId, Name = unassignedName });
-                DevicePreferences.Load(); DeviceOverrides.Load(); DeviceLogins.Load(); ScanProfiles.Load(); ScanHistory.Load();
+                System.Threading.Thread.Sleep(150);
+                _catalog.Load(unassignedName);
             }
+            if (_catalog.LoadError == null) return;
+            if (_catalog.Published)
+            {
+                // After migration the app-wide files are a stale backup, so writing there would
+                // split a site's data in two. Until the catalog reads again, scans are Temporary:
+                // nothing is read or saved, and LoadError says why.
+                _fallback = LocationData.Temporary();
+                return;
+            }
+            // Migration has not happened yet: the app-wide files are still the live data.
+            _fallback = LocationData.Shared(new LocationInfo { Id = LocationCatalog.UnassignedId, Name = unassignedName });
+            DevicePreferences.Load(); DeviceOverrides.Load(); DeviceLogins.Load(); ScanProfiles.Load(); ScanHistory.Load();
         }
 
         /// <summary>The data for a Location, shared by every tab that has it open.</summary>

@@ -59,6 +59,13 @@ namespace KillerScan.Services
                 error = "This Location file contains something other than Location data.";
                 return false;
             }
+            // Every saved file is a JSON object or list. Anything else, such as null, is refused
+            // here rather than becoming a Location that cannot be opened.
+            if (files.Values.Any(value => value.ValueKind is not (JsonValueKind.Object or JsonValueKind.Array)))
+            {
+                error = "This Location file is damaged.";
+                return false;
+            }
 
             string staging = Path.Combine(catalog.LocationsDirectory, ".import-" + Guid.NewGuid().ToString("N"));
             try
@@ -69,6 +76,12 @@ namespace KillerScan.Services
                     byte[] content = Encoding.UTF8.GetBytes(pair.Value.GetRawText());
                     JsonPreferenceFile<object>.Publish(Path.Combine(staging, pair.Key.ToLowerInvariant()), content);
                 }
+                // Open the staged copy the way the app will. A file the stores cannot read is
+                // refused before the catalog changes, so no unusable Location is ever listed.
+                string? unreadable;
+                try { unreadable = LocationData.Open(new LocationInfo { Id = "import", Name = file.Name! }, staging).ReadError; }
+                catch (Exception ex) { unreadable = ex.Message; }
+                if (unreadable != null) { error = "This Location file is damaged. " + unreadable; return false; }
                 if (!catalog.Create(file.Name!, out var created) || created == null)
                 {
                     error = catalog.SaveError ?? catalog.LoadError ?? "The Location could not be added.";

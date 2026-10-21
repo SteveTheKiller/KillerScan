@@ -96,6 +96,9 @@ namespace KillerScan.Services
             return data;
         }
 
+        /// <summary>The first store that could not be read when this Location was opened, if any.</summary>
+        internal string? ReadError => Devices.SaveError ?? Overrides.SaveError ?? Logins.SaveError ?? SavedScans.SaveError ?? History.LoadError;
+
         private void Load()
         {
             Devices.Load();
@@ -149,12 +152,37 @@ namespace KillerScan.Services
                 LoadError = _store.Error;
                 return;
             }
-            try { Migrate(unassignedName); }
+            try { MigrateOnce(unassignedName); }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
                 // The app keeps using the original files; the next start tries again.
                 LoadError = ex.Message;
             }
+        }
+
+        // Two windows starting together would otherwise both migrate, and the second could
+        // delete the folder the first had just published. One named mutex per catalog path
+        // serializes them, and whoever waits finds the catalog already there and just loads it.
+        private void MigrateOnce(string unassignedName)
+        {
+            using var hash = System.Security.Cryptography.SHA256.Create();
+            string key = BitConverter.ToString(hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(_path.ToUpperInvariant()))).Replace("-", "");
+            using var mutex = new System.Threading.Mutex(false, "Global\\KillerScan.Migrate." + key);
+            bool owned = false;
+            try
+            {
+                try { owned = mutex.WaitOne(TimeSpan.FromSeconds(30)); }
+                catch (System.Threading.AbandonedMutexException) { owned = true; }
+                if (!owned) throw new IOException("Another KillerScan window is still moving your data into Locations. Restart KillerScan to try again.");
+                if (File.Exists(_path))
+                {
+                    _store.Load();
+                    LoadError = _store.Error;
+                    return;
+                }
+                Migrate(unassignedName);
+            }
+            finally { if (owned) mutex.ReleaseMutex(); }
         }
 
         // Copy into a staging folder, verify every byte, move it into place, then publish the
@@ -177,7 +205,14 @@ namespace KillerScan.Services
                     if (!File.ReadAllBytes(source).SequenceEqual(File.ReadAllBytes(copy)))
                         throw new IOException("The copy of " + name + " did not match the original.");
                 }
-                if (Directory.Exists(target)) Directory.Delete(target, true);
+                // A folder already here is left by a migration interrupted after the move but
+                // before the catalog. It is set aside, never deleted, in case anything wrote to it.
+                if (Directory.Exists(target))
+                {
+                    string deleted = Path.Combine(locations, ".deleted");
+                    Directory.CreateDirectory(deleted);
+                    Directory.Move(target, Path.Combine(deleted, UnassignedId + "-" + DateTime.Now.ToString("yyyyMMdd-HHmmss-fff")));
+                }
                 Directory.Move(staging, target);
             }
             if (!_store.Change(value =>
@@ -186,6 +221,9 @@ namespace KillerScan.Services
                     value.Locations.Add(new LocationInfo { Id = UnassignedId, Name = unassignedName });
             })) throw new IOException(_store.Error ?? "The Locations catalog could not be saved.");
         }
+
+        /// <summary>True once migration has published the catalog, even if it cannot be read now.</summary>
+        internal bool Published => File.Exists(_path);
 
         internal string LocationsDirectory => Path.Combine(_root, "locations");
         internal string DirectoryFor(LocationInfo info) => Path.Combine(LocationsDirectory, info.Id);
