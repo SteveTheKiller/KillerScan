@@ -87,6 +87,8 @@ namespace KillerScan.Controls
             if (sender is MenuItem mi && mi.Tag is string type)
             {
                 PersistenceFeedback.Check(_location.Overrides.Set(d.MacAddress, type), _location.Overrides.Save, () => _location.Overrides.SaveError);
+                // The automatic result stays on record next to the manual type.
+                d.Recognition = NetworkScanner.AssessDevice(d, mac => _location.Overrides.Get(mac));
                 d.DeviceType = type;
                 _filteredView?.Refresh();
                 if (_showTopology) RefreshTopology();
@@ -98,11 +100,33 @@ namespace KillerScan.Controls
         {
             var d = GetSelectedDevice(); if (d == null || string.IsNullOrEmpty(d.MacAddress)) return;
             PersistenceFeedback.Check(_location.Overrides.Set(d.MacAddress, null), _location.Overrides.Save, () => _location.Overrides.SaveError);
-            d.DeviceType = NetworkScanner.ClassifyDevice(d, mac => _location.Overrides.Get(mac));
+            d.Recognition = NetworkScanner.AssessDevice(d, mac => _location.Overrides.Get(mac));
+            d.DeviceType = d.Recognition.Type;
             _filteredView?.Refresh();
             if (_showTopology) RefreshTopology();
             StatusText.Text = string.Format(Loc("Str_St_OverrideCleared"), d.MacAddress);
         }
+
+        private void TypeCell_ToolTipOpening(object sender, ToolTipEventArgs e)
+        {
+            if (sender is not DataGridCell { DataContext: NetworkDevice device } cell) { e.Handled = true; return; }
+            cell.ToolTip = RecognitionText.Tooltip(device.Recognition);
+        }
+
+        /// <summary>
+        /// Shows why the selected device has its type. It only reads what the scan already
+        /// recorded: opening it sends nothing to the device.
+        /// </summary>
+        internal void WhyType_Click(object sender, RoutedEventArgs e)
+        {
+            var d = GetSelectedDevice(); if (d == null) return;
+            var show = ShowRecognition ?? ((heading, detail) =>
+                new ConfirmDialog(heading, detail, Loc("Str_Sys_Close"), string.Empty) { Owner = Window.GetWindow(this) }.ShowDialog());
+            show(RecognitionText.Heading(d), RecognitionText.Detail(d));
+        }
+
+        /// <summary>Test hook: replaces the window that shows a device's evidence.</summary>
+        internal Action<string, string>? ShowRecognition { get; set; }
 
         private void RenameDevice_Click(object sender, RoutedEventArgs e)
         {

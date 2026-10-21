@@ -94,6 +94,42 @@
     <sys:String x:Key="Str_Ctx_SshAs">SSH как...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Задать тип устройства</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Сбросить переопределение</sys:String>
+    <!-- Recognition evidence: why a device has its type. -->
+    <sys:String x:Key="Str_Rec_Menu">Почему этот тип?</sys:String>
+    <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Low">Низкая уверенность</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Medium">Средняя уверенность</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_High">Высокая уверенность</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Manual">Задано вручную</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_None">признаки не записаны</sys:String>
+    <sys:String x:Key="Str_Rec_None">Для этого устройства не записано ни одного признака.</sys:String>
+    <sys:String x:Key="Str_Rec_Evidence">Признаки</sys:String>
+    <sys:String x:Key="Str_Rec_Alternatives">Также возможно</sys:String>
+    <sys:String x:Key="Str_Rec_More">и еще {0}</sys:String>
+    <sys:String x:Key="Str_Rec_Conflict">Другой тип набрал близкий балл, поэтому уверенность снижена.</sys:String>
+    <sys:String x:Key="Str_Rec_Automatic">Автоматический результат: {0} ({1})</sys:String>
+    <sys:String x:Key="Str_Rec_Caveat">Уверенность показывает, насколько признаки соответствуют типу. Это не вероятность, и устройство может сообщать о себе что угодно.</sys:String>
+    <sys:String x:Key="Str_RecSrc_hostname">Имя</sys:String>
+    <sys:String x:Key="Str_RecSrc_vendor">Производитель MAC</sys:String>
+    <sys:String x:Key="Str_RecSrc_ports">Открытые порты</sys:String>
+    <sys:String x:Key="Str_RecSrc_ttl">TTL</sys:String>
+    <sys:String x:Key="Str_RecSrc_http">Веб-страница</sys:String>
+    <sys:String x:Key="Str_RecSrc_tls">Сертификат TLS</sys:String>
+    <sys:String x:Key="Str_RecSrc_ssh">Баннер SSH</sys:String>
+    <sys:String x:Key="Str_RecSrc_snmp">SNMP</sys:String>
+    <sys:String x:Key="Str_RecSrc_netbios">Имя NetBIOS</sys:String>
+    <sys:String x:Key="Str_RecSrc_mdns">Служба mDNS</sys:String>
+    <sys:String x:Key="Str_RecSrc_ssdp">Сервер UPnP</sys:String>
+    <sys:String x:Key="Str_RecRule_gateway">Windows использует его как основной шлюз</sys:String>
+    <sys:String x:Key="Str_RecRule_gateway-dns">Windows использует его как основной шлюз и DNS-сервер</sys:String>
+    <sys:String x:Key="Str_RecRule_private-mac-few-ports">Частный (случайный) MAC-адрес и мало открытых портов, типично для телефонов и планшетов</sys:String>
+    <sys:String x:Key="Str_RecRule_ssh-port">Порт 22 (SSH) открыт</sys:String>
+    <sys:String x:Key="Str_RecRule_windows-ports">Открыты порты общего доступа к файлам Windows или удаленного рабочего стола</sys:String>
+    <sys:String x:Key="Str_RecRule_web-port">Открыт веб-порт</sys:String>
+    <sys:String x:Key="Str_RecRule_pc-vendor-no-ports">MAC-адрес производителя ПК и нет открытых портов, типично для спящего компьютера</sys:String>
+    <sys:String x:Key="Str_RecRule_no-ports-with-mac">Отвечает в сети, но не имеет открытых портов, типично для устройств умного дома</sys:String>
+    <sys:String x:Key="Str_RecRule_no-evidence">Ничего идентифицирующего не найдено</sys:String>
+    <sys:String x:Key="Str_RecRule_open-ports-only">Есть открытые порты, но ни один не соответствует известному типу</sys:String>
 
     <!-- SSH username prompt ({0} is the device, filled in by the app) -->
     <sys:String x:Key="Str_Ssh_Head">Подключение к {0} по SSH</sys:String>

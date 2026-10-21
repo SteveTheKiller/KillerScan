@@ -94,6 +94,42 @@
     <sys:String x:Key="Str_Ctx_SshAs">SSH як...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Задати тип пристрою</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Скинути заміну</sys:String>
+    <!-- Recognition evidence: why a device has its type. -->
+    <sys:String x:Key="Str_Rec_Menu">Чому цей тип?</sys:String>
+    <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Low">Низька впевненість</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Medium">Середня впевненість</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_High">Висока впевненість</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Manual">Задано вручну</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_None">ознак не записано</sys:String>
+    <sys:String x:Key="Str_Rec_None">Для цього пристрою не записано жодної ознаки.</sys:String>
+    <sys:String x:Key="Str_Rec_Evidence">Ознаки</sys:String>
+    <sys:String x:Key="Str_Rec_Alternatives">Також можливо</sys:String>
+    <sys:String x:Key="Str_Rec_More">і ще {0}</sys:String>
+    <sys:String x:Key="Str_Rec_Conflict">Інший тип набрав близький бал, тому впевненість знижено.</sys:String>
+    <sys:String x:Key="Str_Rec_Automatic">Автоматичний результат: {0} ({1})</sys:String>
+    <sys:String x:Key="Str_Rec_Caveat">Впевненість показує, наскільки ознаки відповідають типу. Це не ймовірність, і пристрій може повідомляти про себе що завгодно.</sys:String>
+    <sys:String x:Key="Str_RecSrc_hostname">Ім’я</sys:String>
+    <sys:String x:Key="Str_RecSrc_vendor">Виробник MAC</sys:String>
+    <sys:String x:Key="Str_RecSrc_ports">Відкриті порти</sys:String>
+    <sys:String x:Key="Str_RecSrc_ttl">TTL</sys:String>
+    <sys:String x:Key="Str_RecSrc_http">Вебсторінка</sys:String>
+    <sys:String x:Key="Str_RecSrc_tls">Сертифікат TLS</sys:String>
+    <sys:String x:Key="Str_RecSrc_ssh">Банер SSH</sys:String>
+    <sys:String x:Key="Str_RecSrc_snmp">SNMP</sys:String>
+    <sys:String x:Key="Str_RecSrc_netbios">Ім’я NetBIOS</sys:String>
+    <sys:String x:Key="Str_RecSrc_mdns">Служба mDNS</sys:String>
+    <sys:String x:Key="Str_RecSrc_ssdp">Сервер UPnP</sys:String>
+    <sys:String x:Key="Str_RecRule_gateway">Windows використовує його як основний шлюз</sys:String>
+    <sys:String x:Key="Str_RecRule_gateway-dns">Windows використовує його як основний шлюз і DNS-сервер</sys:String>
+    <sys:String x:Key="Str_RecRule_private-mac-few-ports">Приватна (випадкова) MAC-адреса та мало відкритих портів, типово для телефонів і планшетів</sys:String>
+    <sys:String x:Key="Str_RecRule_ssh-port">Порт 22 (SSH) відкрито</sys:String>
+    <sys:String x:Key="Str_RecRule_windows-ports">Відкрито порти спільного доступу до файлів Windows або віддаленого робочого стола</sys:String>
+    <sys:String x:Key="Str_RecRule_web-port">Відкрито вебпорт</sys:String>
+    <sys:String x:Key="Str_RecRule_pc-vendor-no-ports">MAC-адреса виробника ПК і жодного відкритого порту, типово для комп’ютера в режимі сну</sys:String>
+    <sys:String x:Key="Str_RecRule_no-ports-with-mac">Відповідає в мережі, але не має відкритих портів, типово для пристроїв розумного дому</sys:String>
+    <sys:String x:Key="Str_RecRule_no-evidence">Не знайдено нічого, що ідентифікує пристрій</sys:String>
+    <sys:String x:Key="Str_RecRule_open-ports-only">Має відкриті порти, але жоден не відповідає відомому типу</sys:String>
 
     <!-- SSH username prompt ({0} is the device, filled in by the app) -->
     <sys:String x:Key="Str_Ssh_Head">Підключитися до {0} через SSH</sys:String>

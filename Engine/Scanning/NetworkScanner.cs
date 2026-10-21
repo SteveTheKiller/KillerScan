@@ -123,7 +123,8 @@ namespace KillerScan.Engine
 
         private void Finish(NetworkDevice device)
         {
-            device.DeviceType = ClassifyDevice(device, ManualTypes ?? ManualTypeLookup);
+            device.Recognition = AssessDevice(device, ManualTypes ?? ManualTypeLookup);
+            device.DeviceType = device.Recognition.Type;
             (Completed ?? DeviceCompleted)?.Invoke(device);
         }
 
@@ -795,7 +796,8 @@ namespace KillerScan.Engine
         /// <summary>
         /// Weighted-score classifier. Each signal contributes points to candidate
         /// device types; the highest-scoring type above the threshold wins.
-        /// Hostname and manual overrides short-circuit before scoring.
+        /// A manual type and the default gateway role decide before scoring; a hostname
+        /// keyword is a heavy hint that clearer protocol evidence can still outvote.
         ///
         /// Signal strength rough guide:
         ///   15+  strong positive (protocol banner, TLS cert, specific HTTP title)
@@ -806,13 +808,48 @@ namespace KillerScan.Engine
         public static string ClassifyDevice(NetworkDevice device) => ClassifyDevice(device, ManualTypeLookup);
 
         /// <summary>Classifies with the given manual types instead of <see cref="ManualTypeLookup"/>.</summary>
-        public static string ClassifyDevice(NetworkDevice device, Func<string, string?>? manualTypes)
+        public static string ClassifyDevice(NetworkDevice device, Func<string, string?>? manualTypes) =>
+            AssessDevice(device, manualTypes).Type;
+
+        /// <summary>
+        /// The type, the signals behind it, close alternatives and a confidence grade. Reads only
+        /// the fields already on <paramref name="device"/>: it sends nothing and changes nothing.
+        /// </summary>
+        public static DeviceRecognition AssessDevice(NetworkDevice device, Func<string, string?>? manualTypes)
         {
-            // 1. Manual override always wins.
+            var automatic = AssessAutomatic(device);
             var manual = manualTypes?.Invoke(device.MacAddress);
             if (manual != null)
-                return manual;
+            {
+                automatic.Type = manual;
+                automatic.Confidence = RecognitionConfidence.Manual;
+            }
+            return automatic;
+        }
 
+        /// <summary>Types that are refinements of each other, so one scoring close to another is not a conflict.</summary>
+        private static readonly string[][] RelatedTypes =
+        [
+            ["Windows", "Windows Server"],
+            ["Network", "Router", "Switch/AP"],
+            ["iPhone", "Apple Device", "Apple TV"],
+            ["Smart TV", "Media Streamer", "Apple TV", "Apple Device"],
+        ];
+
+        private static bool Related(string a, string b) =>
+            a == b || RelatedTypes.Any(group => group.Contains(a) && group.Contains(b));
+
+        // Observed values can be long or hostile; evidence keeps a bounded, single-line copy.
+        private static string Clip(string value)
+        {
+            var clean = new string([.. value.Select(c => char.IsControl(c) ? ' ' : c)]).Trim();
+            return clean.Length <= 80 ? clean : clean[..80];
+        }
+
+        private static string PortList(params int[] ports) => string.Join(", ", ports);
+
+        private static DeviceRecognition AssessAutomatic(NetworkDevice device)
+        {
             var ports = device.OpenPorts;
             string host = device.Hostname.ToLowerInvariant();
             string title = device.HttpTitle.ToLowerInvariant();
@@ -823,77 +860,101 @@ namespace KillerScan.Engine
             string nbName = device.NetbiosName.ToLowerInvariant();
             string ssdp = device.SsdpServer.ToLowerInvariant();
 
-            // 1b. The default gateway is the router. Surface that role (plus DNS when it serves it),
-            //     ahead of the port heuristics that would otherwise label it just "DNS Server".
+            DeviceRecognition Decided(string type, RecognitionConfidence confidence, string source, string detail) => new()
+            {
+                Type = type,
+                Confidence = confidence,
+                AutomaticType = type,
+                AutomaticConfidence = confidence,
+                Signals = [new RecognitionSignal { Source = source, Detail = detail }],
+            };
+
+            // 1. The default gateway is the router. Surface that role (plus DNS when it serves it),
+            //    ahead of the port heuristics that would otherwise label it just "DNS Server".
+            //    Windows' own routing table says so, which is firmer than anything the device reports.
             if (!string.IsNullOrEmpty(GatewayIp) && device.IpAddress == GatewayIp)
             {
                 // Only "Router/DNS" when the gateway IS the configured DNS server. A router that just
                 // has port 53 open (forwarding) but points DNS at a Pi-hole stays plain "Router".
                 bool isDnsServer = !string.IsNullOrEmpty(DnsIp) && device.IpAddress == DnsIp;
-                return isDnsServer ? "Router/DNS" : "Router";
+                return Decided(isDnsServer ? "Router/DNS" : "Router", RecognitionConfidence.High,
+                    RecognitionSources.Gateway, isDnsServer ? "gateway-dns" : "gateway");
             }
 
-            // 2. Hostname keyword short-circuit (explicit user-set suffix beats scoring).
+            // 2. Score candidate types from all signals.
+            var scores = new Dictionary<string, int>();
+            var signals = new List<(string Type, RecognitionSignal Signal)>();
+            void Add(string type, int s, string source, string detail)
+            {
+                scores[type] = scores.TryGetValue(type, out int total) ? total + s : s;
+                signals.Add((type, new RecognitionSignal { Source = source, Detail = Clip(detail), Weight = s }));
+            }
+
+            // Hostname keywords are a heavy hint: a name someone chose usually says what the
+            // device is, but a clear protocol answer that disagrees can still win.
             foreach (var (pattern, type) in HostnameKeywords)
             {
                 if (host.Contains(pattern))
-                    return type;
+                {
+                    Add(type, 20, RecognitionSources.Hostname, device.Hostname);
+                    break;
+                }
             }
 
-            // 3. OUI vendor with known-bad corrections.
+            // OUI vendor with known-bad corrections.
             string vendor = device.Vendor.ToLowerInvariant();
+            string vendorShown = device.Vendor;
             if (!string.IsNullOrEmpty(device.MacAddress) && device.MacAddress.Length >= 8)
             {
                 string prefix = device.MacAddress[..8].ToUpperInvariant();
                 if (OuiBadMap.TryGetValue(prefix, out var corrected))
+                {
                     vendor = corrected.ToLowerInvariant();
-            }
-
-            // 4. Score candidate types from all signals.
-            var scores = new Dictionary<string, int>();
-            void Add(string type, int s)
-            {
-                if (scores.ContainsKey(type))
-                    scores[type] += s;
-                else
-                    scores[type] = s;
+                    vendorShown = corrected;
+                }
             }
 
             bool hasWorkstationPorts = ports.Contains(3389) || ports.Contains(445);
             bool hasPrintProtocol = ports.Contains(9100) || ports.Contains(515) || ports.Contains(631);
             bool hasActiveDirectoryPorts = ports.Contains(88) && ports.Contains(389) && ports.Contains(445);
+            const string P = RecognitionSources.Ports, V = RecognitionSources.Vendor, H = RecognitionSources.Http,
+                T = RecognitionSources.Tls, S = RecognitionSources.Ssh, N = RecognitionSources.Snmp;
+            string Open(params int[] wanted) => PortList([.. wanted.Where(ports.Contains)]);
 
             // -- Hypervisor --
-            if (ports.Contains(8006)) Add("Hypervisor", 15);
-            if (title.Contains("proxmox")) Add("Hypervisor", 15);
-            if (tls.Contains("vmware") || title.Contains("vmware esxi")) Add("Hypervisor", 15);
-            if (ports.Contains(902) && ports.Contains(443) && !hasWorkstationPorts) Add("Hypervisor", 10);
-            if (ports.Contains(2179) && (ports.Contains(5985) || ports.Contains(5986)) && !hasWorkstationPorts) Add("Hypervisor", 8);
-            if (tls.Contains("xenserver") || title.Contains("xenserver")) Add("Hypervisor", 15);
+            if (ports.Contains(8006)) Add("Hypervisor", 15, P, "8006");
+            if (title.Contains("proxmox")) Add("Hypervisor", 15, H, device.HttpTitle);
+            if (tls.Contains("vmware")) Add("Hypervisor", 15, T, device.TlsSubject);
+            else if (title.Contains("vmware esxi")) Add("Hypervisor", 15, H, device.HttpTitle);
+            if (ports.Contains(902) && ports.Contains(443) && !hasWorkstationPorts) Add("Hypervisor", 10, P, "902, 443");
+            if (ports.Contains(2179) && (ports.Contains(5985) || ports.Contains(5986)) && !hasWorkstationPorts) Add("Hypervisor", 8, P, Open(2179, 5985, 5986));
+            if (tls.Contains("xenserver")) Add("Hypervisor", 15, T, device.TlsSubject);
+            else if (title.Contains("xenserver")) Add("Hypervisor", 15, H, device.HttpTitle);
 
             // -- Windows workstation --
-            if (ports.Contains(3389) && ports.Contains(445)) Add("Windows", 6);
-            if (server.Contains("microsoft-iis")) Add("Windows", 6);
-            if (!string.IsNullOrEmpty(nbName) && ports.Contains(445)) Add("Windows", 4);
-            if (device.Ttl is >= 120 and <= 128 && ports.Contains(445)) Add("Windows", 3);
+            if (ports.Contains(3389) && ports.Contains(445)) Add("Windows", 6, P, "3389, 445");
+            if (server.Contains("microsoft-iis")) Add("Windows", 6, H, device.HttpServer);
+            if (!string.IsNullOrEmpty(nbName) && ports.Contains(445)) Add("Windows", 4, RecognitionSources.NetBios, device.NetbiosName);
+            if (device.Ttl is >= 120 and <= 128 && ports.Contains(445)) Add("Windows", 3, RecognitionSources.Ttl, device.Ttl.ToString()!);
 
             // -- Windows Server --
             if (ports.Contains(3389) && ports.Contains(445) && (ports.Contains(80) || ports.Contains(443) || ports.Contains(53)))
-                Add("Windows Server", 6);
-            if (hasActiveDirectoryPorts) Add("Windows Server", 20);
-            if (ports.Contains(53) && ports.Contains(88) && ports.Contains(389)) Add("Windows Server", 16);
+                Add("Windows Server", 6, P, Open(3389, 445, 80, 443, 53));
+            if (hasActiveDirectoryPorts) Add("Windows Server", 20, P, "88, 389, 445");
+            if (ports.Contains(53) && ports.Contains(88) && ports.Contains(389)) Add("Windows Server", 16, P, "53, 88, 389");
             if (ports.Contains(445) && (ports.Contains(636) || ports.Contains(3268) || ports.Contains(3269)))
-                Add("Windows Server", 14);
-            if (ports.Contains(135) && ports.Contains(445) && ports.Contains(3389)) Add("Windows Server", 8);
-            if (title.Contains("exchange") || server.Contains("exchange")) Add("Windows Server", 10);
-            if (snmp.Contains("windows server")) Add("Windows Server", 15);
+                Add("Windows Server", 14, P, Open(445, 636, 3268, 3269));
+            if (ports.Contains(135) && ports.Contains(445) && ports.Contains(3389)) Add("Windows Server", 8, P, "135, 445, 3389");
+            if (title.Contains("exchange")) Add("Windows Server", 10, H, device.HttpTitle);
+            else if (server.Contains("exchange")) Add("Windows Server", 10, H, device.HttpServer);
+            if (snmp.Contains("windows server")) Add("Windows Server", 15, N, device.SnmpDescr);
 
             // -- Linux / SSH --
             // Windows boxes with OpenSSH Server advertise "OpenSSH_for_Windows" -- score Windows, not Linux.
             bool sshIsWindows = ssh.Contains("for_windows");
-            if (sshIsWindows) Add("Windows", 15);
-            if (!sshIsWindows && (ssh.StartsWith("ssh-2.0-openssh") || ssh.StartsWith("ssh-1.99-openssh"))) Add("Linux/SSH", 8);
-            if (device.Ttl is >= 60 and <= 64 && ports.Contains(22) && !sshIsWindows) Add("Linux/SSH", 3);
+            if (sshIsWindows) Add("Windows", 15, S, device.SshBanner);
+            if (!sshIsWindows && (ssh.StartsWith("ssh-2.0-openssh") || ssh.StartsWith("ssh-1.99-openssh"))) Add("Linux/SSH", 8, S, device.SshBanner);
+            if (device.Ttl is >= 60 and <= 64 && ports.Contains(22) && !sshIsWindows) Add("Linux/SSH", 3, RecognitionSources.Ttl, device.Ttl.ToString()!);
 
             // -- Network gear (switches, routers, firewalls, APs) --
             bool isNetworkVendor = vendor.Contains("cisco") || vendor.Contains("ubiquiti")
@@ -902,48 +963,49 @@ namespace KillerScan.Engine
                 || vendor.Contains("juniper") || vendor.Contains("mikrotik") || vendor.Contains("gl technologies")
                 || vendor.Contains("gl.inet") || vendor.Contains("draytek") || vendor.Contains("zyxel")
                 || vendor.Contains("linksys") || vendor.Contains("sonicwall") || vendor.Contains("watchguard");
-            if (isNetworkVendor) Add("Network", 8);
-            if (ssh.Contains("cisco") || ssh.Contains("routeros") || ssh.Contains("mikrotik")) Add("Network", 15);
+            if (isNetworkVendor) Add("Network", 8, V, vendorShown);
+            if (ssh.Contains("cisco") || ssh.Contains("routeros") || ssh.Contains("mikrotik")) Add("Network", 15, S, device.SshBanner);
             if (title.Contains("unifi") || title.Contains("fortigate") || title.Contains("sonicwall")
-                || title.Contains("pfsense") || title.Contains("opnsense") || title.Contains("mikrotik")) Add("Network", 15);
-            if (snmp.Contains("cisco ios") || snmp.Contains("juniper") || snmp.Contains("fortigate")) Add("Network", 12);
+                || title.Contains("pfsense") || title.Contains("opnsense") || title.Contains("mikrotik")) Add("Network", 15, H, device.HttpTitle);
+            if (snmp.Contains("cisco ios") || snmp.Contains("juniper") || snmp.Contains("fortigate")) Add("Network", 12, N, device.SnmpDescr);
 
             // Router vs Switch/AP disambiguation within network gear.
-            if (isNetworkVendor && ports.Contains(53)) Add("Router", 10);
-            if (isNetworkVendor && ports.Contains(161) && !ports.Contains(53)) Add("Switch/AP", 8);
+            if (isNetworkVendor && ports.Contains(53)) Add("Router", 10, P, "53");
+            if (isNetworkVendor && ports.Contains(161) && !ports.Contains(53)) Add("Switch/AP", 8, P, "161");
 
             // -- Printer --
             bool isPrinterVendor = vendor.Contains("canon") || vendor.Contains("epson")
                 || vendor.Contains("brother") || vendor.Contains("xerox") || vendor.Contains("lexmark")
                 || vendor.Contains("ricoh") || vendor.Contains("konica") || vendor.Contains("kyocera");
             // HP vendor alone is ambiguous (laptops, servers, printers). Only trust with printer ports.
-            if (ports.Contains(9100)) Add("Printer", 10);
-            if (!hasActiveDirectoryPorts && (ports.Contains(515) || ports.Contains(631))) Add("Printer", 4);
-            if (isPrinterVendor && hasPrintProtocol) Add("Printer", 12);
-            if (isPrinterVendor && ports.Count <= 3) Add("Printer", 6);
-            if (vendor.Contains("hewlett packard") && ports.Contains(9100)) Add("Printer", 12);
-            if (snmp.Contains("laserjet") || snmp.Contains("officejet") || snmp.Contains("printer")) Add("Printer", 15);
-            if (title.Contains("embedded web server") || title.Contains("web image monitor")) Add("Printer", 10);
+            if (ports.Contains(9100)) Add("Printer", 10, P, "9100");
+            if (!hasActiveDirectoryPorts && (ports.Contains(515) || ports.Contains(631))) Add("Printer", 4, P, Open(515, 631));
+            if (isPrinterVendor && hasPrintProtocol) Add("Printer", 12, V, vendorShown);
+            if (isPrinterVendor && ports.Count <= 3) Add("Printer", 6, V, vendorShown);
+            if (vendor.Contains("hewlett packard") && ports.Contains(9100)) Add("Printer", 12, V, vendorShown);
+            if (snmp.Contains("laserjet") || snmp.Contains("officejet") || snmp.Contains("printer")) Add("Printer", 15, N, device.SnmpDescr);
+            if (title.Contains("embedded web server") || title.Contains("web image monitor")) Add("Printer", 10, H, device.HttpTitle);
 
             // -- NAS --
             if (vendor.Contains("synology") || vendor.Contains("qnap") || vendor.Contains("asustor")
                 || vendor.Contains("drobo") || vendor.Contains("buffalo") || vendor.Contains("terramaster"))
-                Add("NAS", 12);
+                Add("NAS", 12, V, vendorShown);
             if (title.Contains("diskstation") || title.Contains("synology") || title.Contains("dsm "))
-                Add("NAS", 15);
+                Add("NAS", 15, H, device.HttpTitle);
             if (title.Contains("qts") || title.Contains("qnap") || title.Contains("truenas") || title.Contains("freenas"))
-                Add("NAS", 15);
-            if (ports.Contains(548)) Add("NAS", 4);
+                Add("NAS", 15, H, device.HttpTitle);
+            if (ports.Contains(548)) Add("NAS", 4, P, "548");
 
             // -- Apple iDevice (iPhone / iPad) --
             bool isApple = vendor.Contains("apple");
             // Port 62078 is the Apple iDevice sync/tether port -- exclusively iPhones and iPads.
             // Score regardless of OUI so randomized-MAC iDevices are still caught.
-            if (ports.Contains(62078)) Add("iPhone", 15);
-            if (isApple && ports.Contains(62078)) Add("iPhone", 5);  // OUI bonus
-            if (isApple && ports.Count <= 2) Add("iPhone", 6);
-            if (device.MdnsServices.Any(s => s.Contains("_airplay") || s.Contains("_raop") || s.Contains("_airport")))
-                Add("Apple Device", 10);
+            if (ports.Contains(62078)) Add("iPhone", 15, P, "62078");
+            if (isApple && ports.Contains(62078)) Add("iPhone", 5, V, vendorShown);  // OUI bonus
+            if (isApple && ports.Count <= 2) Add("iPhone", 6, V, vendorShown);
+            string? FirstSvc(params string[] wanted) => device.MdnsServices.FirstOrDefault(s => wanted.Any(s.Contains));
+            if (FirstSvc("_airplay", "_raop", "_airport") is { } appleSvc)
+                Add("Apple Device", 10, RecognitionSources.Mdns, appleSvc);
 
             // -- Android / Mobile --
             bool isMobileVendor = vendor.Contains("samsung") || vendor.Contains("oneplus")
@@ -952,16 +1014,16 @@ namespace KillerScan.Engine
                 || vendor.Contains("lg electronics") || vendor.Contains("google")
                 || vendor.Contains("bbk electronics") || vendor.Contains("realme")
                 || vendor.Contains("nothing technology") || vendor.Contains("fairphone");
-            if (isMobileVendor && ports.Count <= 3) Add("Android", 8);
+            if (isMobileVendor && ports.Count <= 3) Add("Android", 8, V, vendorShown);
 
             // -- Surveillance camera --
             if (vendor.Contains("hikvision") || vendor.Contains("dahua") || vendor.Contains("axis")
                 || vendor.Contains("amcrest") || vendor.Contains("reolink") || vendor.Contains("foscam"))
-                Add("Camera", 12);
+                Add("Camera", 12, V, vendorShown);
             if (title.Contains("hikvision") || title.Contains("dahua") || title.Contains("camera")
                 || title.Contains("dvr") || title.Contains("nvr") || title.Contains("ipcam"))
-                Add("Camera", 12);
-            if (ports.Contains(554)) Add("Camera", 4);
+                Add("Camera", 12, H, device.HttpTitle);
+            if (ports.Contains(554)) Add("Camera", 4, P, "554");
 
             // -- IoT / smart home --
             if (vendor.Contains("espressif") || vendor.Contains("tuya") || vendor.Contains("sonoff")
@@ -969,47 +1031,83 @@ namespace KillerScan.Engine
                 || vendor.Contains("signify") || vendor.Contains("lutron") || vendor.Contains("wemo")
                 || vendor.Contains("wyze") || vendor.Contains("aqara") || vendor.Contains("linkplay")
                 || vendor.Contains("wiim") || vendor.Contains("govee"))
-                Add("IoT", 10);
+                Add("IoT", 10, V, vendorShown);
 
             // -- Home Assistant --
-            if (ports.Contains(8123)) Add("Home Assistant", 12);
-            if (title.Contains("home assistant") || host.Contains("homeassistant") || host.Contains("home-assistant"))
-                Add("Home Assistant", 15);
+            if (ports.Contains(8123)) Add("Home Assistant", 12, P, "8123");
+            if (title.Contains("home assistant")) Add("Home Assistant", 15, H, device.HttpTitle);
 
             // -- DNS server (Pi-hole, AdGuard, BIND) --
-            if (title.Contains("pi-hole") || title.Contains("pihole")) Add("DNS Server", 15);
-            if (title.Contains("adguard")) Add("DNS Server", 15);
-            if (ports.Contains(53) && ports.Contains(80) && !isNetworkVendor) Add("DNS Server", 6);
+            if (title.Contains("pi-hole") || title.Contains("pihole")) Add("DNS Server", 15, H, device.HttpTitle);
+            if (title.Contains("adguard")) Add("DNS Server", 15, H, device.HttpTitle);
+            if (ports.Contains(53) && ports.Contains(80) && !isNetworkVendor) Add("DNS Server", 6, P, "53, 80");
 
             // -- mDNS (Bonjour) service types: the strongest, most specific signals --
-            bool HasSvc(string s) => device.MdnsServices.Any(x => x.Contains(s));
-            if (HasSvc("_googlecast")) Add("Smart TV", 14);
-            if (HasSvc("_printer") || HasSvc("_ipp") || HasSvc("_pdl-datastream")) Add("Printer", 14);
-            if (HasSvc("_sonos") || HasSvc("_spotify-connect")) Add("Media Streamer", 12);
-            if (HasSvc("_airplay") || HasSvc("_raop")) Add("Media Streamer", 8);
-            if (HasSvc("_hap") || HasSvc("_homekit") || HasSvc("_hue")) Add("IoT", 10);
+            const string M = RecognitionSources.Mdns;
+            if (FirstSvc("_googlecast") is { } cast) Add("Smart TV", 14, M, cast);
+            if (FirstSvc("_printer", "_ipp", "_pdl-datastream") is { } print) Add("Printer", 14, M, print);
+            if (FirstSvc("_sonos", "_spotify-connect") is { } speaker) Add("Media Streamer", 12, M, speaker);
+            if (FirstSvc("_airplay", "_raop") is { } airplay) Add("Media Streamer", 8, M, airplay);
+            if (FirstSvc("_hap", "_homekit", "_hue") is { } home) Add("IoT", 10, M, home);
 
             // -- SSDP / UPnP SERVER string --
-            if (ssdp.Contains("roku")) Add("Smart TV", 12);
-            if (ssdp.Contains("synology") || ssdp.Contains("qnap")) Add("NAS", 12);
-            if (ssdp.Contains("plex")) Add("Media Streamer", 12);
-            if (ssdp.Contains("sonos") || ssdp.Contains("dlna") || ssdp.Contains("mediaserver")) Add("Media Streamer", 8);
-            if (ssdp.Contains("samsung") && ssdp.Contains("tv")) Add("Smart TV", 10);
+            const string U = RecognitionSources.Ssdp;
+            if (ssdp.Contains("roku")) Add("Smart TV", 12, U, device.SsdpServer);
+            if (ssdp.Contains("synology") || ssdp.Contains("qnap")) Add("NAS", 12, U, device.SsdpServer);
+            if (ssdp.Contains("plex")) Add("Media Streamer", 12, U, device.SsdpServer);
+            if (ssdp.Contains("sonos") || ssdp.Contains("dlna") || ssdp.Contains("mediaserver")) Add("Media Streamer", 8, U, device.SsdpServer);
+            if (ssdp.Contains("samsung") && ssdp.Contains("tv")) Add("Smart TV", 10, U, device.SsdpServer);
 
             // -- New ports --
-            if (ports.Contains(32400)) Add("Media Streamer", 12);          // Plex
-            if (ports.Contains(1883) || ports.Contains(8883)) Add("IoT", 6); // MQTT brokers
+            if (ports.Contains(32400)) Add("Media Streamer", 12, P, "32400");          // Plex
+            if (ports.Contains(1883) || ports.Contains(8883)) Add("IoT", 6, P, Open(1883, 8883)); // MQTT brokers
 
             // -- Generic web device (catch-all) --
-            if (ports.Contains(80) || ports.Contains(443) || ports.Contains(8080)) Add("Web Device", 2);
+            if (ports.Contains(80) || ports.Contains(443) || ports.Contains(8080)) Add("Web Device", 2, P, Open(80, 443, 8080));
 
-            // Pick highest-scoring candidate above threshold.
-            if (scores.Count > 0)
+            // Pick highest-scoring candidate above threshold. Ties go to the type scored first,
+            // which is the order of the rules above, so the result does not depend on hashing.
+            var ranked = scores.Select((pair, order) => (pair.Key, pair.Value, order))
+                .OrderByDescending(entry => entry.Value).ThenBy(entry => entry.order).ToList();
+            if (ranked.Count > 0 && ranked[0].Value >= 6)
             {
-                var winner = scores.OrderByDescending(kvp => kvp.Value).First();
-                if (winner.Value >= 6)
-                    // Generic "Network" gear with no Router/Switch disambiguation is most likely a switch/AP.
-                    return winner.Key == "Network" ? "Switch/AP" : winner.Key;
+                var (winner, score, _) = ranked[0];
+                // Generic "Network" gear with no Router/Switch disambiguation is most likely a switch/AP.
+                string shown = winner == "Network" ? "Switch/AP" : winner;
+                // Signals for a refinement of the winner support it too: the network-vendor hint
+                // behind "Router" counts toward Network gear.
+                var support = signals.Where(s => Related(s.Type == "Network" ? "Switch/AP" : s.Type, shown)).Select(s => s.Signal)
+                    .OrderByDescending(s => s.Weight).ToList();
+                var others = ranked.Skip(1).Where(entry => entry.Value >= 6 && entry.Key != "Web Device")
+                    .Select(entry => new RecognitionCandidate { Type = entry.Key == "Network" ? "Switch/AP" : entry.Key, Score = entry.Value })
+                    .Where(candidate => candidate.Type != shown).Take(3).ToList();
+                bool conflict = others.Any(candidate => !Related(candidate.Type, shown) && candidate.Score * 3 >= score * 2);
+
+                int protocols = support.Select(s => s.Source).Where(RecognitionSources.IsProtocol).Distinct().Count();
+                var confidence = protocols >= 2 ? RecognitionConfidence.High
+                    : protocols == 1 || score >= 15 ? RecognitionConfidence.Medium
+                    : RecognitionConfidence.Low;
+                // A close, unrelated rival takes one step off: the evidence disagrees with itself.
+                if (conflict && confidence != RecognitionConfidence.Low) confidence--;
+
+                return new DeviceRecognition
+                {
+                    Type = shown,
+                    Confidence = confidence,
+                    AutomaticType = shown,
+                    AutomaticConfidence = confidence,
+                    Signals = support,
+                    Alternatives = others,
+                    Conflict = conflict,
+                };
+            }
+
+            // Nothing cleared the threshold: fall back to a broad guess, always Low.
+            DeviceRecognition Guess(string type, string rule)
+            {
+                var guess = Decided(type, RecognitionConfidence.Low, RecognitionSources.Fallback, rule);
+                guess.Signals.AddRange(signals.Select(s => s.Signal).OrderByDescending(s => s.Weight));
+                return guess;
             }
 
             // Randomized / locally-administered MAC with no responsive ports is almost
@@ -1020,12 +1118,12 @@ namespace KillerScan.Engine
             {
                 localAdminMac = (firstByte & 0x02) != 0;
             }
-            if (localAdminMac && ports.Count <= 3) return "Mobile";
+            if (localAdminMac && ports.Count <= 3) return Guess("Mobile", RecognitionRules.PrivateMacFewPorts);
 
             // Fallback heuristics when no candidate cleared threshold.
-            if (ports.Contains(22)) return "Linux/SSH";
-            if (ports.Contains(445) || ports.Contains(3389)) return "Windows";
-            if (ports.Contains(80) || ports.Contains(443)) return "Web Device";
+            if (ports.Contains(22)) return Guess("Linux/SSH", RecognitionRules.SshPort);
+            if (ports.Contains(445) || ports.Contains(3389)) return Guess("Windows", RecognitionRules.WindowsPorts);
+            if (ports.Contains(80) || ports.Contains(443)) return Guess("Web Device", RecognitionRules.WebPort);
             // Known PC/workstation makers with no open ports are idle/standby computers, not IoT.
             // (A business micro in modern standby still answers ARP but blocks every inbound TCP port.)
             bool isPcVendor = vendor.Contains("dell") || vendor.Contains("hewlett") || vendor.Contains("hp inc")
@@ -1033,14 +1131,14 @@ namespace KillerScan.Engine
                 || vendor.Contains("asrock") || vendor.Contains("gigabyte") || vendor.Contains("giga-byte")
                 || vendor.Contains("framework") || vendor.Contains("fujitsu") || vendor.Contains("acer")
                 || vendor.Contains("clevo");
-            if (ports.Count == 0 && isPcVendor) return "Windows";
+            if (ports.Count == 0 && isPcVendor) return Guess("Windows", RecognitionRules.PcVendorNoPorts);
 
             // Responds to ARP/ping but exposes zero TCP ports -- almost always a
             // smart bulb, plug, sensor, or other IoT endpoint. Even with a blank
             // OUI (Govee and similar use unregistered prefixes), IoT beats Unknown.
-            if (ports.Count == 0 && !string.IsNullOrEmpty(device.MacAddress)) return "IoT";
-            if (ports.Count == 0) return "Unknown";
-            return "Other";
+            if (ports.Count == 0 && !string.IsNullOrEmpty(device.MacAddress)) return Guess("IoT", RecognitionRules.NoPortsWithMac);
+            if (ports.Count == 0) return Guess("Unknown", RecognitionRules.NoEvidence);
+            return Guess("Other", RecognitionRules.OpenPortsOnly);
         }
 
         // ===================================================================

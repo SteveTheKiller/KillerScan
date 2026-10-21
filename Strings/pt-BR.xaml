@@ -94,6 +94,42 @@
     <sys:String x:Key="Str_Ctx_SshAs">SSH como...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Definir tipo de dispositivo</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Limpar substituição</sys:String>
+    <!-- Recognition evidence: why a device has its type. -->
+    <sys:String x:Key="Str_Rec_Menu">Por que este tipo?</sys:String>
+    <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Low">Confiança baixa</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Medium">Confiança média</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_High">Confiança alta</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Manual">Definido manualmente</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_None">nenhuma evidência registrada</sys:String>
+    <sys:String x:Key="Str_Rec_None">Nenhuma evidência foi registrada para este dispositivo.</sys:String>
+    <sys:String x:Key="Str_Rec_Evidence">Evidências</sys:String>
+    <sys:String x:Key="Str_Rec_Alternatives">Também possível</sys:String>
+    <sys:String x:Key="Str_Rec_More">e mais {0}</sys:String>
+    <sys:String x:Key="Str_Rec_Conflict">Outro tipo obteve pontuação próxima a esta, então a confiança foi reduzida.</sys:String>
+    <sys:String x:Key="Str_Rec_Automatic">Resultado automático: {0} ({1})</sys:String>
+    <sys:String x:Key="Str_Rec_Caveat">A confiança indica o quanto as evidências se ajustam ao tipo. Não é uma probabilidade, e um dispositivo pode informar qualquer coisa sobre si mesmo.</sys:String>
+    <sys:String x:Key="Str_RecSrc_hostname">Nome</sys:String>
+    <sys:String x:Key="Str_RecSrc_vendor">Fabricante MAC</sys:String>
+    <sys:String x:Key="Str_RecSrc_ports">Portas abertas</sys:String>
+    <sys:String x:Key="Str_RecSrc_ttl">TTL</sys:String>
+    <sys:String x:Key="Str_RecSrc_http">Página web</sys:String>
+    <sys:String x:Key="Str_RecSrc_tls">Certificado TLS</sys:String>
+    <sys:String x:Key="Str_RecSrc_ssh">Banner SSH</sys:String>
+    <sys:String x:Key="Str_RecSrc_snmp">SNMP</sys:String>
+    <sys:String x:Key="Str_RecSrc_netbios">Nome NetBIOS</sys:String>
+    <sys:String x:Key="Str_RecSrc_mdns">Serviço mDNS</sys:String>
+    <sys:String x:Key="Str_RecSrc_ssdp">Servidor UPnP</sys:String>
+    <sys:String x:Key="Str_RecRule_gateway">O Windows o usa como gateway padrão</sys:String>
+    <sys:String x:Key="Str_RecRule_gateway-dns">O Windows o usa como gateway padrão e servidor DNS</sys:String>
+    <sys:String x:Key="Str_RecRule_private-mac-few-ports">Um endereço MAC privado (aleatório) e poucas portas abertas, típico de celulares e tablets</sys:String>
+    <sys:String x:Key="Str_RecRule_ssh-port">A porta 22 (SSH) está aberta</sys:String>
+    <sys:String x:Key="Str_RecRule_windows-ports">Portas de compartilhamento de arquivos do Windows ou da Área de Trabalho Remota estão abertas</sys:String>
+    <sys:String x:Key="Str_RecRule_web-port">Uma porta web está aberta</sys:String>
+    <sys:String x:Key="Str_RecRule_pc-vendor-no-ports">Um endereço MAC de fabricante de PC e nenhuma porta aberta, típico de um computador em suspensão</sys:String>
+    <sys:String x:Key="Str_RecRule_no-ports-with-mac">Responde na rede, mas não tem portas abertas, típico de dispositivos de casa inteligente</sys:String>
+    <sys:String x:Key="Str_RecRule_no-evidence">Nada que o identifique foi encontrado</sys:String>
+    <sys:String x:Key="Str_RecRule_open-ports-only">Tem portas abertas, mas nenhuma corresponde a um tipo conhecido</sys:String>
 
     <!-- SSH username prompt ({0} is the device, filled in by the app) -->
     <sys:String x:Key="Str_Ssh_Head">Conectar a {0} por SSH</sys:String>

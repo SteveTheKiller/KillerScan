@@ -80,7 +80,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - `/scan` and `/probe` take `/skip <checks>`, and the PowerShell `scan` and `probe` commands take `-Skip`, to turn off the same checks Scan settings offers. The terminal's Scan button uses the current Scan settings.
 - `/scan` and `/probe` take `/adapter <name or address>`, and the PowerShell commands take `-Adapter`, to send every probe from one adapter. An unknown adapter, or a target that is neither on its network nor routed through it, is a usage error, and the terminal's Scan button uses the adapter chosen in Scan settings.
 
+- Each device type now explains itself. Hover over the type for its confidence (Low, Medium, High or Set manually) and its strongest evidence, or right-click and choose Why This Type? (Ctrl+I) for every signal, its source, close alternatives and any conflict. Opening it sends nothing to the device. A manual type keeps the automatic result alongside, HTML reports show the same summary on hover, and CLI JSON carries the full evidence.
+- Device CSV exports add Confidence and Evidence columns after the existing six.
+
 ### Changed
+- A name containing a device keyword, such as "synology" or "pihole", is now heavy evidence rather than the final word, so clearer protocol answers can outvote it. A UniFi or UBNT name now shows Switch/AP instead of the generic Network type.
 - Trusted devices are now called approved devices, and approving is always a choice you make.
 - Command-line scans without `/location` no longer apply saved device names or types, and save nothing.
 - Updated the app and engine JSON dependency to 10.0.13.

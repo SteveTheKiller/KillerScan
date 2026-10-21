@@ -58,10 +58,13 @@ namespace KillerScan.Services
         internal static string BuildCsv(IEnumerable<NetworkDevice> devices)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("IP Address,Hostname,MAC Address,Vendor,Type,Open Ports");
+            // Confidence and Evidence come last, so scripts that read the first six columns by
+            // position keep working.
+            sb.AppendLine("IP Address,Hostname,MAC Address,Vendor,Type,Open Ports,Confidence,Evidence");
             foreach (var d in devices.OrderBy(d => d.IpSortKey))
                 sb.AppendLine(string.Join(",", CsvField(d.IpAddress), CsvField(d.Hostname),
-                    CsvField(d.MacAddress), CsvField(d.Vendor), CsvField(d.DeviceType), CsvField(d.OpenPortsDisplay)));
+                    CsvField(d.MacAddress), CsvField(d.Vendor), CsvField(d.DeviceType), CsvField(d.OpenPortsDisplay),
+                    CsvField(d.Recognition?.Confidence.ToString()), CsvField(RecognitionText.Csv(d.Recognition))));
             return sb.ToString();
         }
 
@@ -193,7 +196,8 @@ namespace KillerScan.Services
                     $"<td class='vendor'>{Esc(d.Vendor)}</td>" +
                     // The CLASS above keeps the English slug (that is what the CSS matches); only
                     // the visible cell is translated.
-                    $"<td class='{cls}'>{Esc(Controls.DeviceTypeConverter.Display(d.DeviceType))}</td>" +
+                    // Hovering the type shows the same evidence summary as the app's tooltip.
+                    $"<td class='{cls}' title='{Esc(RecognitionText.Tooltip(d.Recognition))}'>{Esc(Controls.DeviceTypeConverter.Display(d.DeviceType))}</td>" +
                     $"<td class='mono'>{Esc(d.OpenPortsDisplay)}</td></tr>");
             }
             sb.AppendLine("</tbody></table></div>");

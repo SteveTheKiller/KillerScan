@@ -82,8 +82,12 @@
     <Style x:Key="IpCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DarkDataGridCell}">
         <Setter Property="AutomationProperties.Name" Value="{Binding IpAddress}"/>
     </Style>
+    <!-- The tooltip text is built when it opens, so it always shows the device's current evidence. -->
     <Style x:Key="DeviceTypeCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource DarkDataGridCell}">
         <Setter Property="AutomationProperties.Name" Value="{Binding DeviceTypeDisplay}"/>
+        <Setter Property="ToolTip" Value=" "/>
+        <Setter Property="ToolTipService.ShowDuration" Value="60000"/>
+        <EventSetter Event="ToolTipOpening" Handler="TypeCell_ToolTipOpening"/>
     </Style>
     <!-- A blank cell would read out as the row's type name, so an empty host name, MAC address
          or vendor is read as unknown. -->
@@ -549,6 +553,9 @@
                             </MenuItem>
                             <MenuItem Header="{DynamicResource Str_Ctx_ClearOverride}" InputGestureText="Ctrl+Alt+T" Click="ClearOverride_Click">
                                 <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE894;"/></MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="WhyTypeMenuItem" Header="{DynamicResource Str_Rec_Menu}" InputGestureText="Ctrl+I" Click="WhyType_Click">
+                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE946;"/></MenuItem.Icon>
                             </MenuItem>
                         </ContextMenu>
                     </DataGrid.ContextMenu>

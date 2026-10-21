@@ -24,6 +24,12 @@ namespace KillerScan.Engine
         public static Func<string, string>? DeviceTypeDisplayResolver { get; set; }
         public List<int> OpenPorts { get; set; } = [];
 
+        /// <summary>
+        /// Why the device got its type, set with <see cref="DeviceType"/> by the scanner.
+        /// Null for devices that were never assessed, such as older saved results.
+        /// </summary>
+        public DeviceRecognition? Recognition { get; set; }
+
         // -- Active fingerprint fields (populated by scanner) --
         public int? Ttl { get; set; }
         public string HttpTitle { get; set; } = string.Empty;

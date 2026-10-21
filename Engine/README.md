@@ -11,7 +11,7 @@ It targets `net48` and `net10.0`. KillerScan bundles the engine DLL into its sin
 | Targets | `ScanTargets.Parse` accepts CIDR blocks, single hosts and ranges, separated by commas |
 | Scanning | `NetworkScanner.ScanSubnetAsync`, `NetworkScanner.DeepProbeHostAsync` |
 | Results | `NetworkDevice` |
-| Classification | `NetworkScanner.ClassifyDevice` |
+| Classification | `NetworkScanner.ClassifyDevice`, `NetworkScanner.AssessDevice` |
 | Vendors | `OuiLookup`, `VendorDbUpdater` |
 | Local network | `LocalNetwork.Detect`, `ConnectionChecks` |
 | Speed test | `KillerScan.Engine.SpeedTest.SpeedTestEngine` |
@@ -56,6 +56,8 @@ retain enabled defaults. See [scan settings](../docs/scan-options.md) for depend
 `StatusChanged` reports a `ScanStatus`, which carries a `ScanStage` plus a count or a target label. The engine never produces translated text. `ScanStatus.ToString()` gives plain English for logs and tools.
 
 Stored values such as `NetworkDevice.DeviceType` and the randomized-MAC vendor marker stay in English, because they are written to CSV and matched by filters. A host can translate the device type for display by setting `NetworkDevice.DeviceTypeDisplayResolver`.
+
+Every scanned device also carries `NetworkDevice.Recognition`: the signals behind its type (each with a stable source such as `ports`, `mdns` or `snmp`, the value seen and its weight), close alternatives, whether an unrelated type scored close, and a confidence of `Low`, `Medium`, `High` or `Manual`. Confidence is a grade, not a probability, and protocol values are self-reported, so even High does not authenticate a device. `NetworkScanner.AssessDevice(device, manualTypes)` produces the same result from the fields already on a device without sending anything. It is null on devices that were never assessed. See [docs/recognition.md](../docs/recognition.md) for the grading rules.
 
 ## Host hooks
 

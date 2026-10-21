@@ -94,6 +94,42 @@
     <sys:String x:Key="Str_Ctx_SshAs">SSH as...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Set Device Type</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Clear Override</sys:String>
+    <!-- Recognition evidence: why a device has its type. -->
+    <sys:String x:Key="Str_Rec_Menu">Why This Type?</sys:String>
+    <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Low">Low confidence</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Medium">Medium confidence</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_High">High confidence</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Manual">Set manually</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_None">no evidence recorded</sys:String>
+    <sys:String x:Key="Str_Rec_None">No evidence was recorded for this device.</sys:String>
+    <sys:String x:Key="Str_Rec_Evidence">Evidence</sys:String>
+    <sys:String x:Key="Str_Rec_Alternatives">Also possible</sys:String>
+    <sys:String x:Key="Str_Rec_More">and {0} more</sys:String>
+    <sys:String x:Key="Str_Rec_Conflict">Another type scored close to this one, so confidence was lowered.</sys:String>
+    <sys:String x:Key="Str_Rec_Automatic">Automatic result: {0} ({1})</sys:String>
+    <sys:String x:Key="Str_Rec_Caveat">Confidence says how well the evidence fits the type. It is not a probability, and a device can report anything about itself.</sys:String>
+    <sys:String x:Key="Str_RecSrc_hostname">Name</sys:String>
+    <sys:String x:Key="Str_RecSrc_vendor">MAC vendor</sys:String>
+    <sys:String x:Key="Str_RecSrc_ports">Open ports</sys:String>
+    <sys:String x:Key="Str_RecSrc_ttl">TTL</sys:String>
+    <sys:String x:Key="Str_RecSrc_http">Web page</sys:String>
+    <sys:String x:Key="Str_RecSrc_tls">TLS certificate</sys:String>
+    <sys:String x:Key="Str_RecSrc_ssh">SSH banner</sys:String>
+    <sys:String x:Key="Str_RecSrc_snmp">SNMP</sys:String>
+    <sys:String x:Key="Str_RecSrc_netbios">NetBIOS name</sys:String>
+    <sys:String x:Key="Str_RecSrc_mdns">mDNS service</sys:String>
+    <sys:String x:Key="Str_RecSrc_ssdp">UPnP server</sys:String>
+    <sys:String x:Key="Str_RecRule_gateway">Windows uses it as the default gateway</sys:String>
+    <sys:String x:Key="Str_RecRule_gateway-dns">Windows uses it as the default gateway and DNS server</sys:String>
+    <sys:String x:Key="Str_RecRule_private-mac-few-ports">A private (randomized) MAC address and few open ports, typical of phones and tablets</sys:String>
+    <sys:String x:Key="Str_RecRule_ssh-port">Port 22 (SSH) is open</sys:String>
+    <sys:String x:Key="Str_RecRule_windows-ports">Windows file sharing or Remote Desktop ports are open</sys:String>
+    <sys:String x:Key="Str_RecRule_web-port">A web port is open</sys:String>
+    <sys:String x:Key="Str_RecRule_pc-vendor-no-ports">A PC maker's MAC address and no open ports, typical of a sleeping computer</sys:String>
+    <sys:String x:Key="Str_RecRule_no-ports-with-mac">Answers on the network but has no open ports, typical of smart-home devices</sys:String>
+    <sys:String x:Key="Str_RecRule_no-evidence">Nothing identifying was found</sys:String>
+    <sys:String x:Key="Str_RecRule_open-ports-only">Has open ports, but none that match a known type</sys:String>
 
     <!-- SSH username prompt ({0} is the device, filled in by the app) -->
     <sys:String x:Key="Str_Ssh_Head">Connect to {0} over SSH</sys:String>

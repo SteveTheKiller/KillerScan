@@ -268,7 +268,7 @@ namespace KillerScan.Services
                 name += ".lan";
             }
 
-            return new NetworkDevice
+            var device = new NetworkDevice
             {
                 IpAddress  = $"{net}.{host}",
                 Hostname   = name,
@@ -277,6 +277,12 @@ namespace KillerScan.Services
                 DeviceType = t.Type,
                 OpenPorts  = ports
             };
+            // The demo's evidence is the real classifier's view of the invented fields. Where
+            // that disagrees with the preset type, the preset reads as a manual type, as it would
+            // if a technician had set it.
+            var automatic = NetworkScanner.AssessDevice(device, null);
+            device.Recognition = automatic.Type == t.Type ? automatic : NetworkScanner.AssessDevice(device, _ => t.Type);
+            return device;
         }
     }
 }

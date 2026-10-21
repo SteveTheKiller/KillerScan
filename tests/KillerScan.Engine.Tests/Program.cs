@@ -23,12 +23,14 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--api-contract" })) { await ApiContractTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--dns-budget" })) { await DnsBudgetTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--binding" })) { await BindingTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--recognition" })) { await RecognitionTests.Run(); return 0; }
             await Run("Scan options preserve defaults and validate feature choices", ScanOptionsTests.Run);
             await Run("Targets parse ranges, de-duplicate overlaps and refuse bad input", Targets);
             await Run("The address ceiling counts unique addresses and keeps first-seen order", TargetCeiling);
             await Run("CIDR expansion excludes the network and broadcast addresses", Subnet);
             await Run("ARP output parsing keeps IPv4 entries with full MAC addresses", ArpParsing);
             await Run("Classifier honors manual types, the gateway, DNS and hostname rules", Classifier);
+            await Run("Recognition grades a labeled corpus and records its evidence", RecognitionTests.Run);
             await Run("Bundled vendor database loads from the engine assembly", Vendors);
             await Run("Status text is English, numeric and free of double hyphens", StatusText);
             await Run("Quick scan reports stages, devices and host hooks through a fake platform", QuickScan);

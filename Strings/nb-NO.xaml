@@ -94,6 +94,42 @@
     <sys:String x:Key="Str_Ctx_SshAs">SSH som...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Angi enhetstype</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Fjern overstyring</sys:String>
+    <!-- Recognition evidence: why a device has its type. -->
+    <sys:String x:Key="Str_Rec_Menu">Hvorfor denne typen?</sys:String>
+    <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Low">Lav sikkerhet</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Medium">Middels sikkerhet</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_High">Høy sikkerhet</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Manual">Angitt manuelt</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_None">ingen holdepunkter registrert</sys:String>
+    <sys:String x:Key="Str_Rec_None">Ingen holdepunkter ble registrert for denne enheten.</sys:String>
+    <sys:String x:Key="Str_Rec_Evidence">Holdepunkter</sys:String>
+    <sys:String x:Key="Str_Rec_Alternatives">Også mulig</sys:String>
+    <sys:String x:Key="Str_Rec_More">og {0} til</sys:String>
+    <sys:String x:Key="Str_Rec_Conflict">En annen type fikk nesten like høy poengsum, så sikkerheten ble senket.</sys:String>
+    <sys:String x:Key="Str_Rec_Automatic">Automatisk resultat: {0} ({1})</sys:String>
+    <sys:String x:Key="Str_Rec_Caveat">Sikkerheten viser hvor godt holdepunktene passer typen. Den er ikke en sannsynlighet, og en enhet kan oppgi hva som helst om seg selv.</sys:String>
+    <sys:String x:Key="Str_RecSrc_hostname">Navn</sys:String>
+    <sys:String x:Key="Str_RecSrc_vendor">MAC-produsent</sys:String>
+    <sys:String x:Key="Str_RecSrc_ports">Åpne porter</sys:String>
+    <sys:String x:Key="Str_RecSrc_ttl">TTL</sys:String>
+    <sys:String x:Key="Str_RecSrc_http">Nettside</sys:String>
+    <sys:String x:Key="Str_RecSrc_tls">TLS-sertifikat</sys:String>
+    <sys:String x:Key="Str_RecSrc_ssh">SSH-banner</sys:String>
+    <sys:String x:Key="Str_RecSrc_snmp">SNMP</sys:String>
+    <sys:String x:Key="Str_RecSrc_netbios">NetBIOS-navn</sys:String>
+    <sys:String x:Key="Str_RecSrc_mdns">mDNS-tjeneste</sys:String>
+    <sys:String x:Key="Str_RecSrc_ssdp">UPnP-server</sys:String>
+    <sys:String x:Key="Str_RecRule_gateway">Windows bruker den som standard gateway</sys:String>
+    <sys:String x:Key="Str_RecRule_gateway-dns">Windows bruker den som standard gateway og DNS-server</sys:String>
+    <sys:String x:Key="Str_RecRule_private-mac-few-ports">En privat (tilfeldig) MAC-adresse og få åpne porter, typisk for telefoner og nettbrett</sys:String>
+    <sys:String x:Key="Str_RecRule_ssh-port">Port 22 (SSH) er åpen</sys:String>
+    <sys:String x:Key="Str_RecRule_windows-ports">Porter for Windows-fildeling eller Eksternt skrivebord er åpne</sys:String>
+    <sys:String x:Key="Str_RecRule_web-port">En webport er åpen</sys:String>
+    <sys:String x:Key="Str_RecRule_pc-vendor-no-ports">En MAC-adresse fra en PC-produsent og ingen åpne porter, typisk for en datamaskin i hvilemodus</sys:String>
+    <sys:String x:Key="Str_RecRule_no-ports-with-mac">Svarer på nettverket, men har ingen åpne porter, typisk for smarthusenheter</sys:String>
+    <sys:String x:Key="Str_RecRule_no-evidence">Ingenting identifiserende ble funnet</sys:String>
+    <sys:String x:Key="Str_RecRule_open-ports-only">Har åpne porter, men ingen som passer en kjent type</sys:String>
 
     <!-- SSH username prompt ({0} is the device, filled in by the app) -->
     <sys:String x:Key="Str_Ssh_Head">Koble til {0} via SSH</sys:String>

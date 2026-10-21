@@ -64,6 +64,7 @@ namespace KillerScan.Controls
             else if (ctrl && !shift && !alt && key == Key.E) action = () => Export("csv");
             else if (ctrl && shift && !alt && key == Key.E) action = () => Export("html");
             else if (ctrl && !shift && !alt && key == Key.R) action = RescanSelected;
+            else if (ctrl && !shift && !alt && key == Key.I && !text && !_showServices) action = () => WhyType_Click(this, new RoutedEventArgs());
             // Ctrl+G, not an F key: arranging the topology is a thing you do repeatedly while
             // looking at it, so it sits with the other Ctrl chords rather than up on the F row.
             else if (ctrl && !shift && !alt && key == Key.G) action = CycleTopologyOrder;

@@ -94,6 +94,42 @@
     <sys:String x:Key="Str_Ctx_SshAs">SSH mint...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Eszköztípus beállítása</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Felülbírálás törlése</sys:String>
+    <!-- Recognition evidence: why a device has its type. -->
+    <sys:String x:Key="Str_Rec_Menu">Miért ez a típus?</sys:String>
+    <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Low">Alacsony megbízhatóság</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Medium">Közepes megbízhatóság</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_High">Magas megbízhatóság</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Manual">Kézzel beállítva</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_None">nincs rögzített bizonyíték</sys:String>
+    <sys:String x:Key="Str_Rec_None">Ehhez az eszközhöz nincs rögzített bizonyíték.</sys:String>
+    <sys:String x:Key="Str_Rec_Evidence">Bizonyítékok</sys:String>
+    <sys:String x:Key="Str_Rec_Alternatives">Szintén lehetséges</sys:String>
+    <sys:String x:Key="Str_Rec_More">és még {0}</sys:String>
+    <sys:String x:Key="Str_Rec_Conflict">Egy másik típus hasonló pontszámot ért el, ezért a megbízhatóság csökkent.</sys:String>
+    <sys:String x:Key="Str_Rec_Automatic">Automatikus eredmény: {0} ({1})</sys:String>
+    <sys:String x:Key="Str_Rec_Caveat">A megbízhatóság azt mutatja, mennyire illenek a bizonyítékok a típushoz. Ez nem valószínűség, és egy eszköz bármit állíthat magáról.</sys:String>
+    <sys:String x:Key="Str_RecSrc_hostname">Név</sys:String>
+    <sys:String x:Key="Str_RecSrc_vendor">MAC-gyártó</sys:String>
+    <sys:String x:Key="Str_RecSrc_ports">Nyitott portok</sys:String>
+    <sys:String x:Key="Str_RecSrc_ttl">TTL</sys:String>
+    <sys:String x:Key="Str_RecSrc_http">Weboldal</sys:String>
+    <sys:String x:Key="Str_RecSrc_tls">TLS-tanúsítvány</sys:String>
+    <sys:String x:Key="Str_RecSrc_ssh">SSH-azonosító üzenet</sys:String>
+    <sys:String x:Key="Str_RecSrc_snmp">SNMP</sys:String>
+    <sys:String x:Key="Str_RecSrc_netbios">NetBIOS-név</sys:String>
+    <sys:String x:Key="Str_RecSrc_mdns">mDNS-szolgáltatás</sys:String>
+    <sys:String x:Key="Str_RecSrc_ssdp">UPnP-kiszolgáló</sys:String>
+    <sys:String x:Key="Str_RecRule_gateway">A Windows alapértelmezett átjáróként használja</sys:String>
+    <sys:String x:Key="Str_RecRule_gateway-dns">A Windows alapértelmezett átjáróként és DNS-kiszolgálóként használja</sys:String>
+    <sys:String x:Key="Str_RecRule_private-mac-few-ports">Privát (véletlenszerű) MAC-cím és kevés nyitott port, ami telefonokra és táblagépekre jellemző</sys:String>
+    <sys:String x:Key="Str_RecRule_ssh-port">A 22-es port (SSH) nyitva van</sys:String>
+    <sys:String x:Key="Str_RecRule_windows-ports">Windows-fájlmegosztási vagy Távoli asztal portok vannak nyitva</sys:String>
+    <sys:String x:Key="Str_RecRule_web-port">Egy webes port nyitva van</sys:String>
+    <sys:String x:Key="Str_RecRule_pc-vendor-no-ports">Egy PC-gyártó MAC-címe és nincs nyitott port, ami alvó számítógépre jellemző</sys:String>
+    <sys:String x:Key="Str_RecRule_no-ports-with-mac">Válaszol a hálózaton, de nincs nyitott portja, ami okosotthon-eszközökre jellemző</sys:String>
+    <sys:String x:Key="Str_RecRule_no-evidence">Nem található azonosító adat</sys:String>
+    <sys:String x:Key="Str_RecRule_open-ports-only">Vannak nyitott portjai, de egyik sem illik ismert típushoz</sys:String>
 
     <!-- SSH username prompt ({0} is the device, filled in by the app) -->
     <sys:String x:Key="Str_Ssh_Head">Csatlakozzon a következőhöz: {0} SSH-n keresztül</sys:String>

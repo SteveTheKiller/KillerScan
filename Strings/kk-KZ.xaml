@@ -94,6 +94,42 @@
     <sys:String x:Key="Str_Ctx_SshAs">SSH атымен кіру...</sys:String>
     <sys:String x:Key="Str_Ctx_SetType">Құрылғы түрін орнату</sys:String>
     <sys:String x:Key="Str_Ctx_ClearOverride">Қайта анықтауды тазалау</sys:String>
+    <!-- Recognition evidence: why a device has its type. -->
+    <sys:String x:Key="Str_Rec_Menu">Неге бұл түр?</sys:String>
+    <sys:String x:Key="Str_Rec_Heading">{0} ({1})</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Low">Төмен сенімділік</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Medium">Орташа сенімділік</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_High">Жоғары сенімділік</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_Manual">Қолмен орнатылған</sys:String>
+    <sys:String x:Key="Str_Rec_Conf_None">дәлел жазылмаған</sys:String>
+    <sys:String x:Key="Str_Rec_None">Бұл құрылғы үшін ешқандай дәлел жазылмаған.</sys:String>
+    <sys:String x:Key="Str_Rec_Evidence">Дәлелдер</sys:String>
+    <sys:String x:Key="Str_Rec_Alternatives">Басқа мүмкін түрлер</sys:String>
+    <sys:String x:Key="Str_Rec_More">және тағы {0}</sys:String>
+    <sys:String x:Key="Str_Rec_Conflict">Басқа түр осыған жақын ұпай жинады, сондықтан сенімділік төмендетілді.</sys:String>
+    <sys:String x:Key="Str_Rec_Automatic">Автоматты нәтиже: {0} ({1})</sys:String>
+    <sys:String x:Key="Str_Rec_Caveat">Сенімділік дәлелдердің түрге қаншалықты сәйкес келетінін көрсетеді. Бұл ықтималдық емес, және құрылғы өзі туралы кез келген нәрсені хабарлай алады.</sys:String>
+    <sys:String x:Key="Str_RecSrc_hostname">Атауы</sys:String>
+    <sys:String x:Key="Str_RecSrc_vendor">MAC өндірушісі</sys:String>
+    <sys:String x:Key="Str_RecSrc_ports">Ашық порттар</sys:String>
+    <sys:String x:Key="Str_RecSrc_ttl">TTL</sys:String>
+    <sys:String x:Key="Str_RecSrc_http">Веб-бет</sys:String>
+    <sys:String x:Key="Str_RecSrc_tls">TLS сертификаты</sys:String>
+    <sys:String x:Key="Str_RecSrc_ssh">SSH баннері</sys:String>
+    <sys:String x:Key="Str_RecSrc_snmp">SNMP</sys:String>
+    <sys:String x:Key="Str_RecSrc_netbios">NetBIOS атауы</sys:String>
+    <sys:String x:Key="Str_RecSrc_mdns">mDNS қызметі</sys:String>
+    <sys:String x:Key="Str_RecSrc_ssdp">UPnP сервері</sys:String>
+    <sys:String x:Key="Str_RecRule_gateway">Windows оны әдепкі шлюз ретінде пайдаланады</sys:String>
+    <sys:String x:Key="Str_RecRule_gateway-dns">Windows оны әдепкі шлюз және DNS сервері ретінде пайдаланады</sys:String>
+    <sys:String x:Key="Str_RecRule_private-mac-few-ports">Жеке (кездейсоқ) MAC мекенжайы және аз ашық порттар, телефондар мен планшеттерге тән</sys:String>
+    <sys:String x:Key="Str_RecRule_ssh-port">22 порты (SSH) ашық</sys:String>
+    <sys:String x:Key="Str_RecRule_windows-ports">Windows файлдарын ортақ пайдалану немесе қашықтағы жұмыс үстелі порттары ашық</sys:String>
+    <sys:String x:Key="Str_RecRule_web-port">Веб порт ашық</sys:String>
+    <sys:String x:Key="Str_RecRule_pc-vendor-no-ports">ДК өндірушісінің MAC мекенжайы және ашық порттар жоқ, ұйқы режиміндегі компьютерге тән</sys:String>
+    <sys:String x:Key="Str_RecRule_no-ports-with-mac">Желіде жауап береді, бірақ ашық порттары жоқ, ақылды үй құрылғыларына тән</sys:String>
+    <sys:String x:Key="Str_RecRule_no-evidence">Анықтайтын ештеңе табылмады</sys:String>
+    <sys:String x:Key="Str_RecRule_open-ports-only">Ашық порттары бар, бірақ олардың ешқайсысы белгілі түрге сәйкес келмейді</sys:String>
 
     <!-- SSH username prompt ({0} is the device, filled in by the app) -->
     <sys:String x:Key="Str_Ssh_Head">{0} құрылғысына SSH арқылы қосылу</sys:String>
