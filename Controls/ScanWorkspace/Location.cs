@@ -271,11 +271,13 @@ namespace KillerScan.Controls
             LocationSuggestion.Visibility = Visibility.Collapsed;
         }
 
-        private void EditNotes()
+        private void EditNotes() { if (_location.Info is { } info) EditNotes(info); }
+
+        internal void EditNotes(LocationInfo info)
         {
-            if (_location.Info is not { } info) return;
-            string current = LocationService.Find(info.Id)?.Notes ?? info.Notes;
-            var dialog = new InputDialog(Loc("Str_Loc_Notes"), LocationName, Loc("Str_Loc_NotesLabel"), current,
+            var latest = LocationService.Find(info.Id) ?? info;
+            string current = latest.Notes;
+            var dialog = new InputDialog(Loc("Str_Loc_Notes"), latest.Name, Loc("Str_Loc_NotesLabel"), current,
                 Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
             dialog.UseMultipleLines();
             dialog.ShowDialog();
@@ -283,11 +285,14 @@ namespace KillerScan.Controls
             if (!LocationService.SetNotes(info, dialog.Value ?? string.Empty))
                 PersistenceFeedback.Check(false, () => LocationService.SetNotes(info, dialog.Value ?? string.Empty), () => LocationService.SaveError);
             UpdateLocationLabel();
+            LocationChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        private void ExportLocation()
+        private void ExportLocation() { if (_location.Info is { } info) ExportLocation(info); }
+
+        internal void ExportLocation(LocationInfo info)
         {
-            if (_location.Info is not { } info) return;
+            string locationName = LocationService.Find(info.Id)?.Name ?? info.Name;
             var choice = new ConfirmDialog(Loc("Str_Loc_Export"), Loc("Str_Loc_ExportDetail"), Loc("Str_Loc_ExportButton"),
                 Loc("Str_Btn_Cancel"), Loc("Str_Loc_ExportUsernames"), false) { Owner = Window.GetWindow(this) };
             choice.ShowDialog();
@@ -296,7 +301,7 @@ namespace KillerScan.Controls
             var dialog = new FileDialog(FileDialogMode.Save)
             {
                 Filter = Loc("Str_Loc_FileFilter") + "|*" + LocationTransfer.Extension,
-                FileName = SafeFileName(LocationName) + LocationTransfer.Extension,
+                FileName = SafeFileName(locationName) + LocationTransfer.Extension,
                 DefaultExt = LocationTransfer.Extension,
                 AddExtension = true
             };
@@ -313,6 +318,33 @@ namespace KillerScan.Controls
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        /// <summary>
+        /// Deletes a Location after asking. Its files move to locations\.deleted rather than being
+        /// erased. If this workspace is in it, the workspace becomes a Temporary scan.
+        /// </summary>
+        internal void DeleteLocation(LocationInfo info)
+        {
+            bool here = _location.Info?.Id == info.Id;
+            if (here && IsScanning) { StatusText.Text = Loc("Str_Loc_Busy"); return; }
+            string name = LocationService.Find(info.Id)?.Name ?? info.Name;
+            var confirm = new ConfirmDialog(Loc("Str_Loc_DeleteTitle"), string.Format(Loc("Str_Loc_DeleteDetail"), name),
+                Loc("Str_Loc_DeleteButton"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
+            confirm.ShowDialog();
+            if (!confirm.Confirmed) return;
+            if (!LocationService.Delete(info, out _))
+            {
+                PersistenceFeedback.Check(false, () => false, () => LocationService.SaveError ?? LocationService.LoadError);
+                return;
+            }
+            if (here) SetLocation(LocationData.Temporary());
+            else LocationChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>Switches to a Location chosen in the Locations sidebar.</summary>
+        internal bool OpenLocation(LocationInfo info) => SetLocation(LocationService.Get(info));
+
+        internal void NewLocation() => CreateLocation();
 
         private void ImportLocation()
         {
@@ -408,9 +440,9 @@ namespace KillerScan.Controls
             return true;
         }
 
-        private string? AskName(string titleKey, string current)
+        private string? AskName(string titleKey, string current, string? detail = null)
         {
-            var dialog = new InputDialog(Loc(titleKey), LocationName, Loc("Str_Rename_Label"), current,
+            var dialog = new InputDialog(Loc(titleKey), detail ?? LocationName, Loc("Str_Rename_Label"), current,
                 Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
             dialog.ShowDialog();
             return dialog.Confirmed && !string.IsNullOrWhiteSpace(dialog.Value) ? dialog.Value.Trim() : null;
@@ -463,9 +495,13 @@ namespace KillerScan.Controls
                 PersistenceFeedback.Check(false, () => false, () => LocationService.SaveError ?? LocationService.LoadError);
         }
 
-        private void RenameLocation()
+        private void RenameLocation() { if (_location.Info is { } info) RenameLocation(info); }
+
+        /// <summary>Renames any Location, from this menu or the Locations sidebar. The ID and data stay put.</summary>
+        internal void RenameLocation(LocationInfo info)
         {
-            if (_location.Info is not { } info || AskName("Str_Loc_Rename", LocationName) is not { } name) return;
+            string current = LocationService.Find(info.Id)?.Name ?? info.Name;
+            if (AskName("Str_Loc_Rename", current, current) is not { } name) return;
             if (!LocationService.Rename(info, name))
                 PersistenceFeedback.Check(false, () => LocationService.Rename(info, name), () => LocationService.SaveError);
             UpdateLocationLabel();

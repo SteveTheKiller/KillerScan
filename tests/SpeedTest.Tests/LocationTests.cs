@@ -24,6 +24,7 @@ internal static class LocationTests
             CommandLine(Path.Combine(root, "cli"));
             Transfer(Path.Combine(root, "transfer"));
             Suggestions(Path.Combine(root, "suggest"));
+            Deletion(Path.Combine(root, "delete"));
         }
         finally
         {
@@ -277,6 +278,25 @@ internal static class LocationTests
             "A gateway seen by two Locations suggests both and picks neither.");
         Require(LocationCatalog.Matching(reloaded.Items, "").Count == 0 && LocationCatalog.Matching(reloaded.Items, "AA:BB:CC:00:00:09").Count == 0,
             "No gateway MAC, or an unseen one, suggests nothing.");
+    }
+
+    private static void Deletion(string root)
+    {
+        var catalog = new LocationCatalog(root);
+        catalog.Load("Unassigned");
+        catalog.Create("Old site", out var old);
+        catalog.Create("Keep", out var keep);
+        var data = catalog.Open(old!);
+        data.Devices.SetName(Device("10.3.0.1"), "Old router");
+        string folder = catalog.DirectoryFor(old!);
+        Require(catalog.Delete(old!.Id, out string? kept) && kept != null, "A Location can be deleted.");
+        Require(catalog.Items.Single().Id == keep!.Id, "Deleting removes only that Location from the list.");
+        Require(!Directory.Exists(folder) && File.ReadAllText(Path.Combine(kept!, "devices.json")).Contains("Old router"),
+            "Its files are moved aside, not erased.");
+        var reloaded = new LocationCatalog(root);
+        reloaded.Load("Unassigned");
+        Require(reloaded.Items.Count == 1, "The deletion survives a restart.");
+        Require(!reloaded.Delete("no-such-id", out _), "Deleting an unknown Location changes nothing.");
     }
 
     private static void Require(bool condition, string message)

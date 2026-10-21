@@ -123,13 +123,23 @@ namespace KillerScan.Shell
 
         private void SetSidebarSection(string section, bool fade)
         {
-            var incoming = section == "profiles" ? (FrameworkElement)ProfilesList : HistoryList;
-            var outgoing = section == "profiles" ? (FrameworkElement)HistoryList : ProfilesList;
+            FrameworkElement ListFor(string name) => name switch
+            {
+                "profiles" => ProfilesList,
+                "locations" => LocationsList,
+                _ => HistoryList
+            };
+            var incoming = ListFor(section);
+            var outgoing = ListFor(_sidebarSection);
             _sidebarSection = section;
-            SidebarSectionIcon.Text = ((char)(section == "profiles" ? 0xE728 : 0xE81C)).ToString();
+            SidebarSectionIcon.Text = ((char)(section switch { "profiles" => 0xE728, "locations" => 0xE707, _ => 0xE81C })).ToString();
             SidebarHeading.SetResourceReference(TextBlock.TextProperty,
-                section == "profiles" ? "Str_Profiles_Title" : "Str_History_Title");
+                section switch { "profiles" => "Str_Profiles_Title", "locations" => "Str_Loc_ManageTitle", _ => "Str_History_Title" });
             SaveProfileButton.Visibility = section == "profiles" ? Visibility.Visible : Visibility.Collapsed;
+            NewLocationButton.Visibility = section == "locations" ? Visibility.Visible : Visibility.Collapsed;
+            // Every list but the incoming one is hidden, whichever was showing before.
+            foreach (var list in new FrameworkElement[] { HistoryList, ProfilesList, LocationsList })
+                if (list != incoming && list != outgoing) list.Visibility = Visibility.Collapsed;
             RefreshSidebarSection();
             UpdateSidebarRailTags();
 
@@ -151,6 +161,7 @@ namespace KillerScan.Shell
         private void RefreshSidebarSection()
         {
             if (_sidebarSection == "profiles") RefreshProfilesList();
+            else if (_sidebarSection == "locations") RefreshLocationsList();
             else RefreshHistoryList();
         }
 

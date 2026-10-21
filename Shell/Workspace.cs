@@ -165,10 +165,11 @@ namespace KillerScan.Shell
                 {
                     RefreshHistoryList();
                     RefreshProfilesList();
+                    RefreshLocationsList();
                     if (_workspaceView == "history") ShowHistoryEntry();
                     UpdateWorkspaceStatus();
                 };
-                _scanWorkspace.ManageLocationsRequested += (_, _) => ProfilesButton_Click(this, new RoutedEventArgs());
+                _scanWorkspace.ManageLocationsRequested += (_, _) => ShowLocationsSection();
                 // Everything bound with DynamicResource follows a language change on its own. The
                 // status line and the device count do not: they are composed in code and stored,
                 // so they are re-stated here from the state the workspace is in.

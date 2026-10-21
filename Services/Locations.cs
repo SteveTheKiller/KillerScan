@@ -202,6 +202,29 @@ namespace KillerScan.Services
             return true;
         }
 
+        /// <summary>
+        /// Removes a Location from the list and moves its folder to locations\.deleted, so a
+        /// mistaken delete can be recovered by hand. <paramref name="kept"/> is where it went.
+        /// </summary>
+        public bool Delete(string id, out string? kept)
+        {
+            kept = null;
+            if (LoadError != null || Items.FirstOrDefault(item => item.Id == id) is not { } info) return false;
+            if (!_store.Change(value => value.Locations.RemoveAll(item => item.Id == id))) return false;
+            string folder = DirectoryFor(info);
+            if (!Directory.Exists(folder)) return true;
+            string deleted = Path.Combine(LocationsDirectory, ".deleted");
+            Directory.CreateDirectory(deleted);
+            kept = Path.Combine(deleted, id + "-" + DateTime.Now.ToString("yyyyMMdd-HHmmss"));
+            try { Directory.Move(folder, kept); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                // The Location is already off the list; its files simply stay where they were.
+                kept = folder;
+            }
+            return true;
+        }
+
         public bool Rename(string id, string name) => Update(id, item => item.Name = name.Trim());
         public bool SetCustomer(string id, string customer) => Update(id, item => item.Customer = customer.Trim());
         public bool SetNotes(string id, string notes) => Update(id, item => item.Notes = notes);

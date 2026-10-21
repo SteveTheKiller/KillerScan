@@ -88,6 +88,15 @@ namespace KillerScan.Services
             return ok;
         }
 
+        public static bool Delete(LocationInfo info, out string? kept)
+        {
+            kept = null;
+            if (!Editable || !_catalog!.Delete(info.Id, out kept)) return false;
+            Open.Remove(info.Id);
+            Changed?.Invoke(null, EventArgs.Empty);
+            return true;
+        }
+
         public static bool Rename(LocationInfo info, string name) => Notify(_catalog != null && _fallback == null && _catalog.Rename(info.Id, name));
         public static bool SetNotes(LocationInfo info, string notes) => Notify(_catalog != null && _fallback == null && _catalog.SetNotes(info.Id, notes));
 

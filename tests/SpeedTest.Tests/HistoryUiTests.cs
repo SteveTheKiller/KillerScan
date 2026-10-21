@@ -111,6 +111,8 @@ internal static partial class HistoryUiTests
             ((Action?)localeManager.GetField("LocaleChanged", Static)!.GetValue(null))?.Invoke();
         }
         Theme("Black"); Locale("EnUS");
+        // The main window loads Locations at startup; keep that away from the real app data.
+        KillerScan.Services.LocationService.Root = Path.Combine(Path.GetTempPath(), "KillerScan-ui-locations-" + Guid.NewGuid().ToString("N"));
         if (Isolated != null) { Isolated(); return; }
         if (lifecycleOnly) { ScanLifecycleTests.Run(); return; }
         if (settingsOnly)
@@ -512,7 +514,7 @@ internal static partial class HistoryUiTests
             Require(heading.Text == (string)Application.Current.FindResource("Str_Profiles_Title") && icon.Text == "\uE728" &&
                 Row(home).ActualHeight > 0, name + ": the shared heading and profile rows remain localized.");
         }
-        locale("EnUS"); Require(heading.Text == "Scan Profiles", "English profile heading uses the approved capitalization.");
+        locale("EnUS"); Require(heading.Text == "Saved scans", "English saved-scans heading uses the approved capitalization.");
         foreach (double scale in new[] { 1.0, 1.5, 2.5 })
         {
             Call(window, "ApplyAppScale", scale, false);
