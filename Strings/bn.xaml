@@ -505,4 +505,22 @@
     <sys:String x:Key="Str_Scroll_PageRight">এক পৃষ্ঠা ডানে</sys:String>
     <sys:String x:Key="Str_SaveFailed">পরিবর্তনগুলো সংরক্ষণ করা যায়নি। এই সেশনে সেগুলো এখনও উপলভ্য আছে। আবার সংরক্ষণ করার চেষ্টা করবেন?&#10;&#10;{0}</sys:String>
     <sys:String x:Key="Str_History_Partial">আংশিক স্ক্যান</sys:String>
+
+    <!-- Scan settings -->
+    <sys:String x:Key="Str_Options_Title">স্ক্যান সেটিংস</sys:String>
+    <sys:String x:Key="Str_Options_Detail">এই ট্যাবে প্রযোজ্য; প্রোফাইলে সংরক্ষিত হয়। কম পরীক্ষা করলে ফলাফল কম হতে পারে। HTTP, TLS ও SSH-এর জন্য পোর্ট স্ক্যান প্রয়োজন; SNMP ও NetBIOS-এর জন্য নয়।</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">ডিফল্টে ফিরুন (সব সক্রিয়)</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">প্রতিবেশী ক্যাশ পড়ুন</sys:String>
+    <sys:String x:Key="Str_Options_arp">ARP দিয়ে MAC ঠিকানা বের করুন</sys:String>
+    <sys:String x:Key="Str_Options_icmp">ICMP দিয়ে শনাক্তকরণ ও TTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">বিকল্প হিসেবে TCP দিয়ে শনাক্তকরণ</sys:String>
+    <sys:String x:Key="Str_Options_dns">যাচাইকৃত রিভার্স DNS (ও স্থানীয় DNS ক্যাশ খালি করা)</sys:String>
+    <sys:String x:Key="Str_Options_mdns">mDNS দিয়ে অতিরিক্ত তথ্য</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">SSDP দিয়ে অতিরিক্ত তথ্য</sys:String>
+    <sys:String x:Key="Str_Options_ports">TCP পোর্ট স্ক্যান</sys:String>
+    <sys:String x:Key="Str_Options_http">HTTP/HTTPS শিরোনাম ও সার্ভার</sys:String>
+    <sys:String x:Key="Str_Options_tls">TLS সার্টিফিকেটের বিবরণ</sys:String>
+    <sys:String x:Key="Str_Options_ssh">SSH ব্যানার</sys:String>
+    <sys:String x:Key="Str_Options_snmp">SNMP বর্ণনা</sys:String>
+    <sys:String x:Key="Str_Options_netbios">NetBIOS নাম</sys:String>
 </ResourceDictionary>

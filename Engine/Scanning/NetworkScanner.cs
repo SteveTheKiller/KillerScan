@@ -135,10 +135,17 @@ namespace KillerScan.Engine
         /// <summary>
         /// Scan all hosts in the given subnet using ARP + ping combined approach.
         /// </summary>
-        public virtual async Task<List<NetworkDevice>> ScanSubnetAsync(string cidr, CancellationToken ct, bool fullScan = true)
+        public virtual Task<List<NetworkDevice>> ScanSubnetAsync(string cidr, CancellationToken ct, bool fullScan = true) =>
+            ScanSubnetAsync(cidr, ct, new ScanOptions(), fullScan);
+
+        public virtual async Task<List<NetworkDevice>> ScanSubnetAsync(
+            string cidr, CancellationToken ct, ScanOptions options, bool fullScan = true)
         {
+            if (options == null) throw new ArgumentNullException(nameof(options));
             ct.ThrowIfCancellationRequested();
-            FlushLocalDnsCache();
+            if (options.ReverseDns) FlushLocalDnsCache();
+            _mdns = [];
+            _ssdp = [];
             // ScanTargets handles one or many comma-separated targets (CIDR, single host, or a
             // range) and de-duplicates overlaps. The UI validates the same string before getting
             // here, so a parse failure at this point yields an empty list rather than throwing.
@@ -156,7 +163,7 @@ namespace KillerScan.Engine
             var discoveredHosts = new System.Collections.Concurrent.ConcurrentDictionary<string, (IPAddress Addr, string Mac)>();
 
             // Grab existing ARP cache first (instant, catches IoT devices)
-            var arpCache = GetArpCache();
+            var arpCache = options.NeighborCache ? GetArpCache() : new Dictionary<string, string>();
             var addressSet = new HashSet<string>(addresses.Select(a => a.ToString()));
             foreach (var entry in arpCache)
             {
@@ -166,8 +173,10 @@ namespace KillerScan.Engine
 
             // Kick off network-wide service discovery (mDNS + SSDP) to run alongside the ping sweep;
             // results are awaited before the probe phase and mapped to hosts by source IP.
-            var mdnsTask = _discovery.CollectMdnsAsync(ct);
-            var ssdpTask = _discovery.CollectSsdpAsync(ct);
+            var mdnsTask = options.Mdns ? _discovery.CollectMdnsAsync(ct)
+                : Task.FromResult(new Dictionary<string, MulticastDiscovery.MdnsInfo>());
+            var ssdpTask = options.Ssdp ? _discovery.CollectSsdpAsync(ct)
+                : Task.FromResult(new Dictionary<string, string>());
 
             // Fast parallel ping sweep (async, no blocking ARP calls)
             var semaphore = new SemaphoreSlim(200);
@@ -176,9 +185,10 @@ namespace KillerScan.Engine
                 await semaphore.WaitAsync(ct);
                 try
                 {
-                    bool alive;
-                    using (var ping = new Ping())
+                    bool alive = false;
+                    if (options.Icmp)
                     {
+                        using var ping = new Ping();
                         var reply = await ping.SendPingAsync(addr, 500);
                         alive = reply.Status == IPStatus.Success;
                     }
@@ -186,7 +196,7 @@ namespace KillerScan.Engine
                     // across a routed/VPN link, so a silent host isn't necessarily down. Fall back to a
                     // quick TCP connect on a few common ports - anything that answers is alive even when
                     // it drops ping. This is what closes the "20 found vs 200 real" gap over a VPN.
-                    if (!alive)
+                    if (!alive && options.TcpLiveness)
                         alive = await TcpAliveAsync(addr);
                     if (alive)
                         discoveredHosts.TryAdd(addr.ToString(), (addr, ""));
@@ -206,7 +216,7 @@ namespace KillerScan.Engine
             // Second ARP cache read: the ping wave stimulates ARP responses from devices
             // that are too slow (or don't reply to ICMP at all). Reading the cache again
             // catches them without requiring a second full scan.
-            var arpCache2 = GetArpCache();
+            var arpCache2 = options.NeighborCache ? GetArpCache() : new Dictionary<string, string>();
             foreach (var entry in arpCache2)
             {
                 if (addressSet.Contains(entry.Key))
@@ -219,7 +229,7 @@ namespace KillerScan.Engine
             {
                 var addr = IPAddress.Parse(ip);
                 string mac = discoveredHosts[ip].Mac;
-                if (string.IsNullOrEmpty(mac))
+                if (options.Arp && string.IsNullOrEmpty(mac))
                     mac = await ResolveMacAsync(addr, ct);
                 ct.ThrowIfCancellationRequested();
                 discoveredHosts[ip] = (addr, mac);
@@ -274,7 +284,7 @@ namespace KillerScan.Engine
                     await probeSemaphore.WaitAsync(ct);
                     try
                     {
-                        var device = await ProbeHostAsync(entry.Addr, entry.Mac, ct);
+                        var device = await ProbeHostAsync(entry.Addr, entry.Mac, ct, options);
                         ct.ThrowIfCancellationRequested();
                         ReportDeviceFound(device);
                         int done = Interlocked.Increment(ref completed);
@@ -301,7 +311,8 @@ namespace KillerScan.Engine
                         {
                             IpAddress = entry.Addr.ToString(),
                             MacAddress = entry.Mac,
-                            Hostname = await AwaitWithCancellation(ResolveVerifiedHostnameAsync(entry.Addr), ct)
+                            Hostname = options.ReverseDns
+                                ? await AwaitWithCancellation(ResolveVerifiedHostnameAsync(entry.Addr), ct) : string.Empty
                         };
 
                         if (!string.IsNullOrEmpty(entry.Mac))
@@ -394,7 +405,8 @@ namespace KillerScan.Engine
             return await task;
         }
 
-        private async Task<NetworkDevice> ProbeHostAsync(IPAddress addr, string cachedMac, CancellationToken token)
+        private async Task<NetworkDevice> ProbeHostAsync(
+            IPAddress addr, string cachedMac, CancellationToken token, ScanOptions options)
         {
             token.ThrowIfCancellationRequested();
             var device = new NetworkDevice
@@ -404,12 +416,12 @@ namespace KillerScan.Engine
             };
 
             // Resolve hostname + capture TTL (OS family hint) in parallel with port scan.
-            var dnsTask = Task.Run(async () =>
+            var dnsTask = options.ReverseDns ? Task.Run(async () =>
             {
                 device.Hostname = await ResolveVerifiedHostnameAsync(addr);
-            });
+            }) : Task.CompletedTask;
 
-            var ttlTask = Task.Run(async () =>
+            var ttlTask = options.Icmp ? Task.Run(async () =>
             {
                 try
                 {
@@ -419,10 +431,10 @@ namespace KillerScan.Engine
                         device.Ttl = reply.Options.Ttl;
                 }
                 catch { }
-            });
+            }) : Task.CompletedTask;
 
             // Port scan (parallel, short timeout)
-            var portTasks = ProbePorts.Select(async port =>
+            var portTasks = (options.Ports ? ProbePorts : Array.Empty<int>()).Select(async port =>
             {
                 try
                 {
@@ -450,26 +462,26 @@ namespace KillerScan.Engine
                 device.Vendor = ResolveVendor(device.MacAddress);
 
             // Attach network-wide discovery results + name fallback (reverse DNS -> mDNS .local name).
-            if (_mdns.TryGetValue(device.IpAddress, out var md))
+            if (options.Mdns && _mdns.TryGetValue(device.IpAddress, out var md))
             {
                 device.MdnsServices = [.. md.Services];
                 if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(md.Name))
                     device.Hostname = md.Name;
             }
-            if (_ssdp.TryGetValue(device.IpAddress, out var srv))
+            if (options.Ssdp && _ssdp.TryGetValue(device.IpAddress, out var srv))
                 device.SsdpServer = srv;
 
             // -- Fingerprint probes: run in parallel, each is gated on relevant open ports --
             var fpTasks = new List<Task>();
-            if (device.OpenPorts.Any(p => p == 80 || p == 443 || p == 8006 || p == 8080 || p == 8443 || p == 5000 || p == 5001 || p == 8123))
+            if (options.Http && device.OpenPorts.Any(p => p == 80 || p == 443 || p == 8006 || p == 8080 || p == 8443 || p == 5000 || p == 5001 || p == 8123))
                 fpTasks.Add(ProbeHttpAsync(device, addr, ct: token));
-            if (device.OpenPorts.Contains(22))
+            if (options.Ssh && device.OpenPorts.Contains(22))
                 fpTasks.Add(ProbeSshBannerAsync(device, addr));
-            if (device.OpenPorts.Any(p => p == 443 || p == 8443 || p == 8006 || p == 902))
+            if (options.Tls && device.OpenPorts.Any(p => p == 443 || p == 8443 || p == 8006 || p == 902))
                 fpTasks.Add(ProbeTlsCertAsync(device, addr, ct: token));
             // NetBIOS + SNMP are UDP -- we probe regardless of TCP state (ports 137/161 UDP).
-            fpTasks.Add(ProbeNetbiosAsync(device, addr));
-            fpTasks.Add(ProbeSnmpAsync(device, addr));
+            if (options.Netbios) fpTasks.Add(ProbeNetbiosAsync(device, addr));
+            if (options.Snmp) fpTasks.Add(ProbeSnmpAsync(device, addr));
 
             await AwaitWithCancellation(Task.WhenAll(fpTasks), token);
 
@@ -492,26 +504,32 @@ namespace KillerScan.Engine
         // per host) on purpose - it targets one host on demand, not a whole /24.
         // Reuses the last full scan's multicast (mDNS/SSDP) results for naming.
         // -------------------------------------------------------------------
-        public virtual async Task<NetworkDevice> DeepProbeHostAsync(
+        public virtual Task<NetworkDevice> DeepProbeHostAsync(
             string ip, CancellationToken ct, int portConcurrency = 256,
+            bool flushLocalDnsCache = true) =>
+            DeepProbeHostAsync(ip, ct, new ScanOptions(), portConcurrency, flushLocalDnsCache);
+
+        public virtual async Task<NetworkDevice> DeepProbeHostAsync(
+            string ip, CancellationToken ct, ScanOptions options, int portConcurrency = 256,
             bool flushLocalDnsCache = true)
         {
+            if (options == null) throw new ArgumentNullException(nameof(options));
             ct.ThrowIfCancellationRequested();
-            if (flushLocalDnsCache) FlushLocalDnsCache();
+            if (flushLocalDnsCache && options.ReverseDns) FlushLocalDnsCache();
             var addr = IPAddress.Parse(ip);
             var device = new NetworkDevice
             {
                 IpAddress  = ip,
                 // Fresh MAC via ARP.
-                MacAddress = await ResolveMacAsync(addr, ct)
+                MacAddress = options.Arp ? await ResolveMacAsync(addr, ct) : string.Empty
             };
 
             // Hostname + TTL alongside the port sweep.
-            var dnsTask = Task.Run(async () =>
+            var dnsTask = options.ReverseDns ? Task.Run(async () =>
             {
                 device.Hostname = await ResolveVerifiedHostnameAsync(addr);
-            }, ct);
-            var ttlTask = Task.Run(async () =>
+            }, ct) : Task.CompletedTask;
+            var ttlTask = options.Icmp ? Task.Run(async () =>
             {
                 try
                 {
@@ -521,12 +539,12 @@ namespace KillerScan.Engine
                         device.Ttl = reply.Options.Ttl;
                 }
                 catch { }
-            }, ct);
+            }, ct) : Task.CompletedTask;
 
             // Exhaustive TCP sweep. Bounded concurrency keeps the open-socket count sane;
             // each port gets a generous timeout and one retry so slow/loaded hosts still answer.
             using var gate = new SemaphoreSlim(portConcurrency);
-            var portTasks = DeepPortList.Select(async port =>
+            var portTasks = (options.Ports ? DeepPortList : Array.Empty<int>()).Select(async port =>
             {
                 await gate.WaitAsync(ct);
                 try
@@ -547,24 +565,26 @@ namespace KillerScan.Engine
                 device.Vendor = ResolveVendor(device.MacAddress);
 
             // Reuse the last full scan's network-wide multicast results for naming.
-            if (_mdns.TryGetValue(ip, out var md))
+            if (options.Mdns && _mdns.TryGetValue(ip, out var md))
             {
                 device.MdnsServices = [.. md.Services];
                 if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(md.Name))
                     device.Hostname = md.Name;
             }
-            if (_ssdp.TryGetValue(ip, out var srv))
+            if (options.Ssdp && _ssdp.TryGetValue(ip, out var srv))
                 device.SsdpServer = srv;
 
             // Full fingerprint pass. Deep mode widens HTTP/TLS to every open port (not just the
             // standard web/TLS ones), so services on non-standard ports still get fingerprinted.
-            var fpTasks = new List<Task> { ProbeNetbiosAsync(device, addr), ProbeSnmpAsync(device, addr) };
+            var fpTasks = new List<Task>();
+            if (options.Netbios) fpTasks.Add(ProbeNetbiosAsync(device, addr));
+            if (options.Snmp) fpTasks.Add(ProbeSnmpAsync(device, addr));
             if (device.OpenPorts.Count > 0)
             {
-                fpTasks.Add(ProbeHttpAsync(device, addr, deep: true, ct: ct));
-                fpTasks.Add(ProbeTlsCertAsync(device, addr, deep: true, ct: ct));
+                if (options.Http) fpTasks.Add(ProbeHttpAsync(device, addr, deep: true, ct: ct));
+                if (options.Tls) fpTasks.Add(ProbeTlsCertAsync(device, addr, deep: true, ct: ct));
             }
-            if (device.OpenPorts.Contains(22))
+            if (options.Ssh && device.OpenPorts.Contains(22))
                 fpTasks.Add(ProbeSshBannerAsync(device, addr));
             await AwaitWithCancellation(Task.WhenAll(fpTasks), ct);
             ct.ThrowIfCancellationRequested();

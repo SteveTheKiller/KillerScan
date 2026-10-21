@@ -521,4 +521,22 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Egy oldallal jobbra</sys:String>
     <sys:String x:Key="Str_SaveFailed">A módosításokat nem sikerült menteni. Ebben a munkamenetben továbbra is elérhetők. Megpróbálja újra menteni?&#10;&#10;{0}</sys:String>
     <sys:String x:Key="Str_History_Partial">Részleges vizsgálat</sys:String>
+
+    <!-- Scan settings -->
+    <sys:String x:Key="Str_Options_Title">Vizsgálati beállítások</sys:String>
+    <sys:String x:Key="Str_Options_Detail">Erre a lapra érvényesek, és a profilokkal együtt menthetők. Kevesebb ellenőrzés kevesebb eredményt adhat. A HTTP, TLS és SSH portvizsgálatot igényel; az SNMP és NetBIOS nem.</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">Alapértékek visszaállítása (minden engedélyezve)</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">Szomszédgyorsítótár olvasása</sys:String>
+    <sys:String x:Key="Str_Options_arp">MAC-cím feloldása ARP segítségével</sys:String>
+    <sys:String x:Key="Str_Options_icmp">ICMP-felderítés és TTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">Tartalék felderítés TCP segítségével</sys:String>
+    <sys:String x:Key="Str_Options_dns">Ellenőrzött fordított DNS (és a helyi DNS-gyorsítótár ürítése)</sys:String>
+    <sys:String x:Key="Str_Options_mdns">Kiegészítő adatok mDNS segítségével</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">Kiegészítő adatok SSDP segítségével</sys:String>
+    <sys:String x:Key="Str_Options_ports">TCP-portok vizsgálata</sys:String>
+    <sys:String x:Key="Str_Options_http">HTTP/HTTPS-oldalcím és kiszolgáló</sys:String>
+    <sys:String x:Key="Str_Options_tls">TLS-tanúsítvány részletei</sys:String>
+    <sys:String x:Key="Str_Options_ssh">SSH-azonosító üzenet</sys:String>
+    <sys:String x:Key="Str_Options_snmp">SNMP-leírás</sys:String>
+    <sys:String x:Key="Str_Options_netbios">NetBIOS-név</sys:String>
 </ResourceDictionary>

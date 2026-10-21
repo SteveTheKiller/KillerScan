@@ -505,4 +505,22 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Una página hacia la derecha</sys:String>
     <sys:String x:Key="Str_SaveFailed">No se pudieron guardar los cambios. Siguen disponibles durante esta sesión. ¿Intentar guardarlos de nuevo?&#10;&#10;{0}</sys:String>
     <sys:String x:Key="Str_History_Partial">Escaneo parcial</sys:String>
+
+    <!-- Scan settings -->
+    <sys:String x:Key="Str_Options_Title">Configuración del análisis</sys:String>
+    <sys:String x:Key="Str_Options_Detail">Se aplica a esta pestaña y se guarda en los perfiles. Menos comprobaciones pueden reducir los resultados. HTTP, TLS y SSH requieren análisis de puertos; SNMP y NetBIOS no.</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">Restaurar valores predeterminados (todo activado)</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">Leer caché de vecinos</sys:String>
+    <sys:String x:Key="Str_Options_arp">Resolver dirección MAC mediante ARP</sys:String>
+    <sys:String x:Key="Str_Options_icmp">Detección por ICMP y TTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">Detección alternativa por TCP</sys:String>
+    <sys:String x:Key="Str_Options_dns">DNS inverso verificado (y vaciar caché DNS local)</sys:String>
+    <sys:String x:Key="Str_Options_mdns">Datos adicionales por mDNS</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">Datos adicionales por SSDP</sys:String>
+    <sys:String x:Key="Str_Options_ports">Análisis de puertos TCP</sys:String>
+    <sys:String x:Key="Str_Options_http">Título y servidor HTTP/HTTPS</sys:String>
+    <sys:String x:Key="Str_Options_tls">Detalles del certificado TLS</sys:String>
+    <sys:String x:Key="Str_Options_ssh">Mensaje de identificación SSH</sys:String>
+    <sys:String x:Key="Str_Options_snmp">Descripción SNMP</sys:String>
+    <sys:String x:Key="Str_Options_netbios">Nombre NetBIOS</sys:String>
 </ResourceDictionary>

@@ -24,12 +24,12 @@ internal static class ReleaseUiTests
         protected override void OnStartup(StartupEventArgs e) { }
     }
 
-    public static Task Run()
+    public static Task Run(bool scanOptionsOnly = false)
     {
         Exception? failure = null;
         var thread = new Thread(() =>
         {
-            try { Capture(); }
+            try { Capture(scanOptionsOnly); }
             catch (Exception ex) { failure = ex; }
             finally { Dispatcher.CurrentDispatcher.InvokeShutdown(); }
         });
@@ -40,7 +40,7 @@ internal static class ReleaseUiTests
         return Task.CompletedTask;
     }
 
-    private static void Capture()
+    private static void Capture(bool scanOptionsOnly)
     {
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", Static)!.SetValue(null, assembly);
@@ -52,6 +52,9 @@ internal static class ReleaseUiTests
         string dictionary = xml.DocumentElement!.FirstChild!.FirstChild!.OuterXml
             .Replace("clr-namespace:KillerScan.Controls", "clr-namespace:KillerScan.Controls;assembly=KillerScan")
             .Replace("clr-namespace:KillerFamily.Layout\"", "clr-namespace:KillerFamily.Layout;assembly=KillerScan\"");
+        // Preserve compiled-XAML glyph references through the .NET Framework loose parser.
+        foreach (char glyph in dictionary.Where(c => c >= 0xE000 && c <= 0xF8FF).Distinct().ToArray())
+            dictionary = dictionary.Replace(glyph.ToString(), "&#x" + ((int)glyph).ToString("X4") + ";");
         var context = new ParserContext { BaseUri = new Uri("pack://application:,,,/KillerScan;component/") };
         context.XmlnsDictionary.Add("", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
         context.XmlnsDictionary.Add("x", "http://schemas.microsoft.com/winfx/2006/xaml");
@@ -86,6 +89,67 @@ internal static class ReleaseUiTests
         ((UIElement)window.FindName("RootGrid")).Opacity = 1;
         var output = Path.Combine(Path.GetTempPath(), "KillerScan-release-ui-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(output);
+        if (scanOptionsOnly)
+        {
+            var scanWorkspace = (KillerScan.Controls.ScanWorkspace)window.GetType().GetField("_scanWorkspace", Instance)!.GetValue(window)!;
+            Render(root, 1200, 780);
+            ScanOptionsUiChecks.Run(scanWorkspace);
+            var settingsButton = (Button)scanWorkspace.FindName("ScanOptionsButton");
+            void Pump()
+            {
+                var frame = new DispatcherFrame();
+                Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,
+                    new Action(() => frame.Continue = false));
+                Dispatcher.PushFrame(frame);
+            }
+            void CaptureSettings(string name, int windowWidth = 1200)
+            {
+                Pump();
+                Save(Render(root, windowWidth, 780), Path.Combine(output, name + ".png"));
+                var buttonBounds = settingsButton.TransformToAncestor(root).TransformBounds(new Rect(settingsButton.RenderSize));
+                Require(buttonBounds.Width > 0 && buttonBounds.Left >= 0 && buttonBounds.Right <= windowWidth,
+                    name + ": the complete scan settings button remains inside the window.");
+                settingsButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                var settingsMenu = settingsButton.ContextMenu;
+                settingsMenu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
+                Pump();
+                settingsMenu.Measure(new Size(650, 900));
+                int width = (int)Math.Ceiling(settingsMenu.DesiredSize.Width);
+                int height = (int)Math.Ceiling(settingsMenu.DesiredSize.Height);
+                Require(width > 100 && height > 100, "Scan settings menu measures visible content.");
+                Save(Render(settingsMenu, width, height), Path.Combine(output, name + "-menu.png"));
+                settingsMenu.IsOpen = false;
+                Pump();
+            }
+            foreach (string theme in Enum.GetNames(themeType))
+            {
+                Theme(theme, theme == "SE98" ? "Blue" : "Orange");
+                window.GetType().GetMethod("ApplyFlatChrome", Instance)!.Invoke(window, null);
+                CaptureSettings(theme);
+            }
+            Theme("Black", "Orange");
+            foreach (string locale in Enum.GetNames(localeType))
+            {
+                Locale(locale);
+                Pump();
+                Render(root, 1200, 780);
+                Require(System.Windows.Automation.AutomationProperties.GetName(settingsButton)
+                    == (string)app.FindResource("Str_Options_Title"), locale + ": scan settings accessible label follows the language.");
+                settingsButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                foreach (var item in settingsButton.ContextMenu.Items.OfType<MenuItem>().Where(item => item.IsCheckable))
+                    Require(item.Header is string label && label == (string)app.FindResource("Str_Options_" + item.Tag),
+                        locale + ": every scan setting has a translated label.");
+                settingsButton.ContextMenu.IsOpen = false;
+                if (locale is "SlSI" or "De") CaptureSettings(locale);
+            }
+            Locale("SlSI");
+            CaptureSettings("SlSI-narrow", 800);
+            window.GetType().GetMethod("ApplyAppScale", Instance)!.Invoke(window, new object[] { 1.5, false });
+            CaptureSettings("SlSI-scale150");
+            Console.WriteLine("PASS: scan settings button, menu, profile JSON, defaults, dependencies, 13 themes and 20 locales.");
+            Console.WriteLine("Offscreen scan settings UI: " + output);
+            return;
+        }
         var samples = new List<(string Label, BitmapSource Image)>();
         int states = 0;
         foreach (string theme in Enum.GetNames(themeType))
@@ -157,6 +221,7 @@ internal static class ReleaseUiTests
         var menuSurface = new Border { Child = columnsPanel, Background = (Brush)app.FindResource("MenuBackgroundBrush") };
         Save(Render(menuSurface, 450, 420), Path.Combine(output, "LanguageMenu.png"));
         var workspace = (KillerScan.Controls.ScanWorkspace)window.GetType().GetField("_scanWorkspace", Instance)!.GetValue(window)!;
+        ScanOptionsUiChecks.Run(workspace);
         workspace.SetView("services");
         Render(root, 1200, 780);
         CheckServiceMenu(workspace, root, output);

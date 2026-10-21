@@ -547,4 +547,22 @@
     <sys:String x:Key="Str_Scroll_PageRight">Бір бет оңға</sys:String>
     <sys:String x:Key="Str_SaveFailed">Өзгерістерді сақтау мүмкін болмады. Олар осы сеанс кезінде қолжетімді болып қалады. Қайта сақтап көресіз бе?&#10;&#10;{0}</sys:String>
     <sys:String x:Key="Str_History_Partial">Ішінара сканерлеу</sys:String>
+
+    <!-- Scan settings -->
+    <sys:String x:Key="Str_Options_Title">Сканерлеу параметрлері</sys:String>
+    <sys:String x:Key="Str_Options_Detail">Осы қойындыға қолданылады және профильдерде сақталады. Тексерулер азайса, нәтижелер де азаюы мүмкін. HTTP, TLS және SSH үшін порттарды сканерлеу қажет; SNMP және NetBIOS үшін қажет емес.</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">Әдепкі мәндерді қалпына келтіру (бәрі қосулы)</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">Көршілер кэшін оқу</sys:String>
+    <sys:String x:Key="Str_Options_arp">MAC мекенжайын ARP арқылы анықтау</sys:String>
+    <sys:String x:Key="Str_Options_icmp">ICMP арқылы анықтау және TTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">TCP арқылы балама анықтау</sys:String>
+    <sys:String x:Key="Str_Options_dns">Тексерілген кері DNS (және жергілікті DNS кэшін тазалау)</sys:String>
+    <sys:String x:Key="Str_Options_mdns">mDNS арқылы қосымша мәліметтер</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">SSDP арқылы қосымша мәліметтер</sys:String>
+    <sys:String x:Key="Str_Options_ports">TCP порттарын сканерлеу</sys:String>
+    <sys:String x:Key="Str_Options_http">HTTP/HTTPS тақырыбы мен сервері</sys:String>
+    <sys:String x:Key="Str_Options_tls">TLS сертификатының мәліметтері</sys:String>
+    <sys:String x:Key="Str_Options_ssh">SSH баннері</sys:String>
+    <sys:String x:Key="Str_Options_snmp">SNMP сипаттамасы</sys:String>
+    <sys:String x:Key="Str_Options_netbios">NetBIOS атауы</sys:String>
 </ResourceDictionary>

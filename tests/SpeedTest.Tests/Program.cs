@@ -68,6 +68,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--menu-separators" })) { await MenuSeparatorThemeTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--startup-fade" })) { await StartupFadeTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--release-ui" })) { await ReleaseUiTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--scan-options-ui" })) { await ReleaseUiTests.Run(scanOptionsOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--history-ui" })) { await HistoryUiTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--history-settings-ui" })) { await HistoryUiTests.Run(true); return 0; }
             if (args.SequenceEqual(new[] { "--history-table-ui" })) { await HistoryUiTests.Run(tableOnly: true); return 0; }

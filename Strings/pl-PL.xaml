@@ -490,4 +490,22 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Strona w prawo</sys:String>
     <sys:String x:Key="Str_SaveFailed">Nie udało się zapisać zmian. Nadal są dostępne w tej sesji. Spróbować zapisać ponownie?&#10;&#10;{0}</sys:String>
     <sys:String x:Key="Str_History_Partial">Skanowanie częściowe</sys:String>
+
+    <!-- Scan settings -->
+    <sys:String x:Key="Str_Options_Title">Ustawienia skanowania</sys:String>
+    <sys:String x:Key="Str_Options_Detail">Dotyczą tej karty i są zapisywane w profilach. Mniej sprawdzeń może ograniczyć wyniki. HTTP, TLS i SSH wymagają skanowania portów; SNMP i NetBIOS nie.</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">Przywróć domyślne (wszystko włączone)</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">Odczyt pamięci podręcznej sąsiadów</sys:String>
+    <sys:String x:Key="Str_Options_arp">Ustalanie adresu MAC przez ARP</sys:String>
+    <sys:String x:Key="Str_Options_icmp">Wykrywanie przez ICMP i TTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">Zapasowe wykrywanie przez TCP</sys:String>
+    <sys:String x:Key="Str_Options_dns">Zweryfikowany odwrotny DNS (i opróżnienie lokalnej pamięci DNS)</sys:String>
+    <sys:String x:Key="Str_Options_mdns">Dodatkowe informacje przez mDNS</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">Dodatkowe informacje przez SSDP</sys:String>
+    <sys:String x:Key="Str_Options_ports">Skanowanie portów TCP</sys:String>
+    <sys:String x:Key="Str_Options_http">Tytuł strony i serwer HTTP/HTTPS</sys:String>
+    <sys:String x:Key="Str_Options_tls">Szczegóły certyfikatu TLS</sys:String>
+    <sys:String x:Key="Str_Options_ssh">Baner SSH</sys:String>
+    <sys:String x:Key="Str_Options_snmp">Opis SNMP</sys:String>
+    <sys:String x:Key="Str_Options_netbios">Nazwa NetBIOS</sys:String>
 </ResourceDictionary>

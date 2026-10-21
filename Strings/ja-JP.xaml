@@ -516,4 +516,22 @@
     <sys:String x:Key="Str_Scroll_PageRight">1 ページ右へ</sys:String>
     <sys:String x:Key="Str_SaveFailed">変更を保存できませんでした。このセッションでは引き続き利用できます。もう一度保存しますか？&#10;&#10;{0}</sys:String>
     <sys:String x:Key="Str_History_Partial">未完了のスキャン</sys:String>
+
+    <!-- Scan settings -->
+    <sys:String x:Key="Str_Options_Title">スキャン設定</sys:String>
+    <sys:String x:Key="Str_Options_Detail">このタブに適用され、プロファイルに保存されます。チェックを減らすと結果が少なくなる場合があります。HTTP、TLS、SSHにはポートスキャンが必要です。SNMPとNetBIOSには不要です。</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">既定値に戻す（すべて有効）</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">近隣キャッシュを読み取る</sys:String>
+    <sys:String x:Key="Str_Options_arp">ARPでMACアドレスを解決</sys:String>
+    <sys:String x:Key="Str_Options_icmp">ICMPによる検出とTTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">代替手段としてTCPで検出</sys:String>
+    <sys:String x:Key="Str_Options_dns">検証済みの逆引きDNS（ローカルDNSキャッシュも消去）</sys:String>
+    <sys:String x:Key="Str_Options_mdns">mDNSによる追加情報</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">SSDPによる追加情報</sys:String>
+    <sys:String x:Key="Str_Options_ports">TCPポートスキャン</sys:String>
+    <sys:String x:Key="Str_Options_http">HTTP/HTTPSのタイトルとサーバー</sys:String>
+    <sys:String x:Key="Str_Options_tls">TLS証明書の詳細</sys:String>
+    <sys:String x:Key="Str_Options_ssh">SSHバナー</sys:String>
+    <sys:String x:Key="Str_Options_snmp">SNMPの説明</sys:String>
+    <sys:String x:Key="Str_Options_netbios">NetBIOS名</sys:String>
 </ResourceDictionary>

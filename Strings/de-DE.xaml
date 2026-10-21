@@ -506,4 +506,22 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Seite nach rechts</sys:String>
     <sys:String x:Key="Str_SaveFailed">Die Änderungen konnten nicht gespeichert werden. Sie bleiben für diese Sitzung verfügbar. Erneut speichern?&#10;&#10;{0}</sys:String>
     <sys:String x:Key="Str_History_Partial">Unvollständiger Scan</sys:String>
+
+    <!-- Scan settings -->
+    <sys:String x:Key="Str_Options_Title">Scaneinstellungen</sys:String>
+    <sys:String x:Key="Str_Options_Detail">Gelten für diesen Tab; werden in Profilen gespeichert. Weniger Prüfungen können weniger Ergebnisse liefern. HTTP, TLS und SSH benötigen einen Portscan; SNMP und NetBIOS nicht.</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">Standardwerte wiederherstellen (alles aktiviert)</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">Nachbarcache lesen</sys:String>
+    <sys:String x:Key="Str_Options_arp">MAC-Adresse über ARP ermitteln</sys:String>
+    <sys:String x:Key="Str_Options_icmp">ICMP-Erkennung und TTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">TCP-Erkennung als Rückfalloption</sys:String>
+    <sys:String x:Key="Str_Options_dns">Verifiziertes Reverse-DNS (und lokalen DNS-Cache leeren)</sys:String>
+    <sys:String x:Key="Str_Options_mdns">Zusatzinformationen über mDNS</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">Zusatzinformationen über SSDP</sys:String>
+    <sys:String x:Key="Str_Options_ports">TCP-Portscan</sys:String>
+    <sys:String x:Key="Str_Options_http">HTTP/HTTPS-Seitentitel und Server</sys:String>
+    <sys:String x:Key="Str_Options_tls">TLS-Zertifikatdetails</sys:String>
+    <sys:String x:Key="Str_Options_ssh">SSH-Banner</sys:String>
+    <sys:String x:Key="Str_Options_snmp">SNMP-Beschreibung</sys:String>
+    <sys:String x:Key="Str_Options_netbios">NetBIOS-Name</sys:String>
 </ResourceDictionary>

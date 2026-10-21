@@ -39,6 +39,10 @@ Events are raised on worker threads, so a UI host marshals them to its own threa
 
 Canceling the token ends the scan with an `OperationCanceledException`.
 
+Pass an immutable `ScanOptions` as the third argument to `ScanSubnetAsync` or
+`DeepProbeHostAsync` to select discovery and fingerprint checks. Existing overloads
+retain enabled defaults. See [scan settings](../docs/scan-options.md) for dependencies.
+
 ## Status and localization
 
 `StatusChanged` reports a `ScanStatus`, which carries a `ScanStage` plus a count or a target label. The engine never produces translated text. `ScanStatus.ToString()` gives plain English for logs and tools.

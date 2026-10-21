@@ -12,6 +12,7 @@ namespace KillerScan.Models
         public CancellationTokenSource? Cts { get; set; }
 
         public string SubnetText { get; set; } = subnet;
+        public ScanOptions Options { get; set; } = new();
         public string Status { get; set; } = "Ready";
         public double Progress { get; set; }
 

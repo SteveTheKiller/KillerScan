@@ -482,4 +482,22 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
 
 {0}</sys:String>
     <sys:String x:Key="Str_History_Partial">Delni pregled</sys:String>
+
+    <!-- Scan settings -->
+    <sys:String x:Key="Str_Options_Title">Nastavitve pregleda</sys:String>
+    <sys:String x:Key="Str_Options_Detail">Veljajo za ta zavihek in se shranijo v profile. Manj preverjanj lahko pomeni manj rezultatov. HTTP, TLS in SSH zahtevajo pregled vrat; SNMP in NetBIOS ga ne.</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">Obnovi privzeto (vse omogočeno)</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">Preberi predpomnilnik sosedov</sys:String>
+    <sys:String x:Key="Str_Options_arp">Razreši naslov MAC prek ARP</sys:String>
+    <sys:String x:Key="Str_Options_icmp">Odkrivanje z ICMP in TTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">Nadomestno odkrivanje prek TCP</sys:String>
+    <sys:String x:Key="Str_Options_dns">Preverjeno povratno iskanje DNS (in izprazni lokalni predpomnilnik DNS)</sys:String>
+    <sys:String x:Key="Str_Options_mdns">Dodatne informacije prek mDNS</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">Dodatne informacije prek SSDP</sys:String>
+    <sys:String x:Key="Str_Options_ports">Pregled vrat TCP</sys:String>
+    <sys:String x:Key="Str_Options_http">Naslov strani in strežnik HTTP/HTTPS</sys:String>
+    <sys:String x:Key="Str_Options_tls">Podrobnosti potrdila TLS</sys:String>
+    <sys:String x:Key="Str_Options_ssh">Pozdravno sporočilo SSH</sys:String>
+    <sys:String x:Key="Str_Options_snmp">Opis SNMP</sys:String>
+    <sys:String x:Key="Str_Options_netbios">Ime NetBIOS</sys:String>
 </ResourceDictionary>

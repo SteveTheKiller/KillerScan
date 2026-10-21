@@ -35,6 +35,7 @@ namespace KillerScan.Controls
         /// <summary>Raised once a finished scan has been written to the history store.</summary>
         public event EventHandler? HistoryRecorded;
         internal ScanSession Session => _active;
+        internal ScanOptions Options => _active.Options;
         public NetworkDevice? SelectedDevice => GetSelectedDevice();
         public string Targets { get => SubnetInput.Text; set => SubnetInput.Text = value; }
         public bool IsScanning => _active.IsScanning || _rescanCts != null;
@@ -72,6 +73,8 @@ namespace KillerScan.Controls
             _active = new ScanSession(SubnetInput.Text, scanner)
             { Status = string.Format(Loc("Str_Status_Ready"), OuiLookup.Count.ToString("N0")) };
             WireSession(_active);
+            ScanOptionsMenu.Attach(ScanOptionsButton, () => _active.Options,
+                value => { if (!_disposed && !IsScanning) _active.Options = value; });
             ActivateSession();
             StartVendorNoticeTimer();
             RestoreColumnLayout();
@@ -86,6 +89,7 @@ namespace KillerScan.Controls
             DeepScanAllButton.IsVisibleChanged += (_, _) => FitToolbarInputs();
             // A language switch changes these buttons' widths without resizing the bar.
             ScanBtn.SizeChanged += (_, _) => FitToolbarInputs();
+            ScanOptionsButton.SizeChanged += (_, _) => FitToolbarInputs();
             DeepScanAllButton.SizeChanged += (_, _) => FitToolbarInputs();
             TopologyOrderButton.IsVisibleChanged += (_, _) => FitToolbarInputs();
             SubnetInput.TextChanged += (_, _) => { _active.SubnetText = Targets; StateChanged?.Invoke(this, EventArgs.Empty); };
@@ -183,9 +187,15 @@ namespace KillerScan.Controls
         internal void RunProfile(ScanProfile profile)
         {
             if (_disposed || IsScanning) return;
-            Targets = profile.Target;
+            LoadProfile(profile);
             _runDeepAfterScan = profile.DeepScanAfter;
             Scan();
+        }
+        internal void LoadProfile(ScanProfile profile)
+        {
+            if (_disposed || IsScanning) return;
+            Targets = profile.Target;
+            _active.Options = profile.Options ?? new ScanOptions();
         }
         internal void LoadSnapshot(string target, IEnumerable<NetworkDevice> devices, DateTimeOffset? scannedAt = null)
         {

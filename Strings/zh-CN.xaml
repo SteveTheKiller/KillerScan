@@ -505,4 +505,22 @@
     <sys:String x:Key="Str_Scroll_PageRight">向右翻页</sys:String>
     <sys:String x:Key="Str_SaveFailed">无法保存更改。这些更改在当前会话中仍然可用。是否重新尝试保存？&#10;&#10;{0}</sys:String>
     <sys:String x:Key="Str_History_Partial">未完成的扫描</sys:String>
+
+    <!-- Scan settings -->
+    <sys:String x:Key="Str_Options_Title">扫描设置</sys:String>
+    <sys:String x:Key="Str_Options_Detail">应用于当前标签页，并保存在配置中。减少检查可能会减少结果。HTTP、TLS 和 SSH 需要扫描端口；SNMP 和 NetBIOS 则不需要。</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">恢复默认值（全部启用）</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">读取邻居缓存</sys:String>
+    <sys:String x:Key="Str_Options_arp">通过 ARP 解析 MAC 地址</sys:String>
+    <sys:String x:Key="Str_Options_icmp">ICMP 发现与 TTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">备用 TCP 发现</sys:String>
+    <sys:String x:Key="Str_Options_dns">经验证的反向 DNS（并清空本地 DNS 缓存）</sys:String>
+    <sys:String x:Key="Str_Options_mdns">通过 mDNS 补充信息</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">通过 SSDP 补充信息</sys:String>
+    <sys:String x:Key="Str_Options_ports">TCP 端口扫描</sys:String>
+    <sys:String x:Key="Str_Options_http">HTTP/HTTPS 标题与服务器</sys:String>
+    <sys:String x:Key="Str_Options_tls">TLS 证书详情</sys:String>
+    <sys:String x:Key="Str_Options_ssh">SSH 欢迎信息</sys:String>
+    <sys:String x:Key="Str_Options_snmp">SNMP 描述</sys:String>
+    <sys:String x:Key="Str_Options_netbios">NetBIOS 名称</sys:String>
 </ResourceDictionary>

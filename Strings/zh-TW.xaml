@@ -505,4 +505,22 @@
     <sys:String x:Key="Str_Scroll_PageRight">向右翻頁</sys:String>
     <sys:String x:Key="Str_SaveFailed">無法儲存變更。這些變更在目前工作階段中仍可使用。是否重新嘗試儲存？&#10;&#10;{0}</sys:String>
     <sys:String x:Key="Str_History_Partial">未完成的掃描</sys:String>
+
+    <!-- Scan settings -->
+    <sys:String x:Key="Str_Options_Title">掃描設定</sys:String>
+    <sys:String x:Key="Str_Options_Detail">套用至目前分頁，並儲存於設定檔中。減少檢查可能會減少結果。HTTP、TLS 和 SSH 需要掃描連接埠；SNMP 和 NetBIOS 則不需要。</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">還原預設值（全部啟用）</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">讀取鄰居快取</sys:String>
+    <sys:String x:Key="Str_Options_arp">透過 ARP 解析 MAC 位址</sys:String>
+    <sys:String x:Key="Str_Options_icmp">ICMP 探索與 TTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">備用 TCP 探索</sys:String>
+    <sys:String x:Key="Str_Options_dns">已驗證的反向 DNS（並清空本機 DNS 快取）</sys:String>
+    <sys:String x:Key="Str_Options_mdns">透過 mDNS 補充資訊</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">透過 SSDP 補充資訊</sys:String>
+    <sys:String x:Key="Str_Options_ports">TCP 連接埠掃描</sys:String>
+    <sys:String x:Key="Str_Options_http">HTTP/HTTPS 標題與伺服器</sys:String>
+    <sys:String x:Key="Str_Options_tls">TLS 憑證詳細資料</sys:String>
+    <sys:String x:Key="Str_Options_ssh">SSH 歡迎訊息</sys:String>
+    <sys:String x:Key="Str_Options_snmp">SNMP 描述</sys:String>
+    <sys:String x:Key="Str_Options_netbios">NetBIOS 名稱</sys:String>
 </ResourceDictionary>

@@ -15,6 +15,9 @@ namespace KillerScan.Controls
 
         private void UpdateDeepScanButton()
         {
+            ScanOptionsButton.IsEnabled = !IsScanning;
+            if (IsScanning && ScanOptionsButton.ContextMenu != null)
+                ScanOptionsButton.ContextMenu.IsOpen = false;
             if (DeepScanAllButton == null) return;
             DeepScanAllButton.Visibility = !DemoMode && ActiveDevices.Count > 0 && _active.Cts == null
                 ? Visibility.Visible
@@ -63,7 +66,8 @@ namespace KillerScan.Controls
             ScanProgress.Value = 0;
             ScanProgress.Visibility = Visibility.Visible;
             int done = 0;
-            NetworkScanner.FlushLocalDnsCache();
+            var options = s.Options;
+            if (options.ReverseDns) NetworkScanner.FlushLocalDnsCache();
 
             try
             {
@@ -76,7 +80,7 @@ namespace KillerScan.Controls
                     try
                     {
                         fresh = await scanner.DeepProbeHostAsync(
-                            old.IpAddress, ct, flushLocalDnsCache: false);
+                            old.IpAddress, ct, options, flushLocalDnsCache: false);
                         ct.ThrowIfCancellationRequested();
                     }
                     catch (OperationCanceledException) { throw; }
@@ -120,6 +124,7 @@ namespace KillerScan.Controls
             int done = 0;
             int refreshed = 0;
             var completion = ScanCompletion.Partial;
+            var options = s.Options;
 
             ScanBtn.IsEnabled = false;
             ScanProgress.Value = 0;
@@ -128,14 +133,14 @@ namespace KillerScan.Controls
             StateChanged?.Invoke(this, EventArgs.Empty);
             try
             {
-                NetworkScanner.FlushLocalDnsCache();
+                if (options.ReverseDns) NetworkScanner.FlushLocalDnsCache();
                 var tasks = targets.Select(async old =>
                 {
                     await hostGate.WaitAsync(ct);
                     try
                     {
                         var fresh = await scanner.DeepProbeHostAsync(
-                            old.IpAddress, ct, 128, flushLocalDnsCache: false);
+                            old.IpAddress, ct, options, 128, flushLocalDnsCache: false);
                         ct.ThrowIfCancellationRequested();
                         int idx = s.Devices.IndexOf(old);
                         if (idx >= 0)

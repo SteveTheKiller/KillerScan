@@ -113,6 +113,14 @@
 <Button x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}" Style="{StaticResource OutlineButton}" Click="ScanBtn_Click" FontSize="12" Padding="10,3" Margin="0,2,6,2">
 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Btn_Scan}"/><Run Text=" (F5)"/></TextBlock></Button.ToolTip>
 </Button>
+<Button x:Name="ScanOptionsButton" AutomationProperties.Name="{DynamicResource Str_Options_Title}"
+        ToolTip="{DynamicResource Str_Options_Title}" Style="{StaticResource OutlineButton}"
+        FontSize="12" Padding="8,3" Margin="0,2,6,2">
+    <StackPanel Orientation="Horizontal">
+        <a11y:Glyph Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="0,0,5,0" VerticalAlignment="Center"/>
+        <TextBlock Text="{DynamicResource Str_Options_Title}" VerticalAlignment="Center"/>
+    </StackPanel>
+</Button>
 <Button x:Name="DeepScanAllButton" Content="{DynamicResource Str_Btn_DeepScanAll}" Style="{StaticResource OutlineButton}" Click="DeepScanAll_Click" Visibility="Collapsed" FontSize="12" Padding="8,3" Margin="0,2,10,2"/>
 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,8,2">
 <TextBlock Text="{DynamicResource Str_Lbl_Local}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,0,5,0"/>

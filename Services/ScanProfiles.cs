@@ -8,6 +8,7 @@ namespace KillerScan.Services
         public string Name { get; set; } = string.Empty;
         public string Target { get; set; } = string.Empty;
         public bool DeepScanAfter { get; set; }
+        public ScanOptions Options { get; set; } = new();
 
         /// <summary>What a screen reader announces for the profile's row in the profiles list.</summary>
         public override string ToString() => Name + ", " + Target;
@@ -24,7 +25,12 @@ namespace KillerScan.Services
         private static JsonPreferenceFile<List<ScanProfile>> CreateStore() => new(FilePath, () => [], items =>
         {
             items.RemoveAll(item => item == null);
-            foreach (var item in items) { item.Name ??= string.Empty; item.Target ??= string.Empty; }
+            foreach (var item in items)
+            {
+                item.Name ??= string.Empty;
+                item.Target ??= string.Empty;
+                item.Options ??= new ScanOptions();
+            }
             return items;
         });
 
@@ -41,7 +47,11 @@ namespace KillerScan.Services
 
         public static bool Save(ScanProfile profile)
         {
-            var saved = new ScanProfile { Name = profile.Name, Target = profile.Target, DeepScanAfter = profile.DeepScanAfter };
+            var saved = new ScanProfile
+            {
+                Name = profile.Name, Target = profile.Target, DeepScanAfter = profile.DeepScanAfter,
+                Options = profile.Options ?? new ScanOptions()
+            };
             return _store.Change(items =>
             {
                 items.RemoveAll(item => string.Equals(item.Name, saved.Name, StringComparison.OrdinalIgnoreCase));

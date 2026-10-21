@@ -17,6 +17,7 @@ Part of [killertools.net](https://killertools.net).
 
 ## Features
 
+- **Scan settings**, beside Scan, lets each tab choose its discovery and fingerprint checks. Choices also apply to deep rescans and are saved with profiles. [Probe choices and dependencies](docs/scan-options.md).
 - Permanent Devices, Services, Topology, Keep Alive and Terminal views sit on the right of the toolbar. Each keeps its own state, a right-click menu sets icon size and caption placement, and buttons that do not fit overflow into a menu rather than squeezing the input bar.
 - Embedded terminals run PowerShell, ping, and SSH using the system clients, preferring PowerShell 7 where it is installed. They use KillerShell's font, palette and prompt, and the prompt unpacks to a file you can edit and keeps your version across upgrades. The KillerScripts module travels inside the EXE, so it is there on a machine you cannot install anything on. Closing a terminal ends its process.
 - Keep Alive (F9) watches up to 16 devices at once, each as a status card with a latency sparkline, packet loss, its own checks on banded rows, and its own event log. Right-click a card to copy the address, run diagnostics, reset its counters, or drop it from the run. Checks start for the whole set as soon as a run begins.

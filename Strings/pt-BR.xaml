@@ -547,4 +547,22 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Uma página à direita</sys:String>
     <sys:String x:Key="Str_SaveFailed">Não foi possível salvar as alterações. Elas continuam disponíveis nesta sessão. Tentar salvar novamente?&#10;&#10;{0}</sys:String>
     <sys:String x:Key="Str_History_Partial">Verificação parcial</sys:String>
+
+    <!-- Scan settings -->
+    <sys:String x:Key="Str_Options_Title">Configurações de verificação</sys:String>
+    <sys:String x:Key="Str_Options_Detail">Aplicam-se a esta aba e são salvas nos perfis. Menos testes podem reduzir os resultados. HTTP, TLS e SSH exigem verificação de portas; SNMP e NetBIOS não.</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">Restaurar padrões (tudo ativado)</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">Ler cache de vizinhos</sys:String>
+    <sys:String x:Key="Str_Options_arp">Resolver endereço MAC via ARP</sys:String>
+    <sys:String x:Key="Str_Options_icmp">Descoberta por ICMP e TTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">Descoberta alternativa por TCP</sys:String>
+    <sys:String x:Key="Str_Options_dns">DNS reverso verificado (e limpar cache DNS local)</sys:String>
+    <sys:String x:Key="Str_Options_mdns">Informações adicionais via mDNS</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">Informações adicionais via SSDP</sys:String>
+    <sys:String x:Key="Str_Options_ports">Verificação de portas TCP</sys:String>
+    <sys:String x:Key="Str_Options_http">Título e servidor HTTP/HTTPS</sys:String>
+    <sys:String x:Key="Str_Options_tls">Detalhes do certificado TLS</sys:String>
+    <sys:String x:Key="Str_Options_ssh">Banner SSH</sys:String>
+    <sys:String x:Key="Str_Options_snmp">Descrição SNMP</sys:String>
+    <sys:String x:Key="Str_Options_netbios">Nome NetBIOS</sys:String>
 </ResourceDictionary>

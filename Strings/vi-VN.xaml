@@ -486,4 +486,22 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Sang phải một trang</sys:String>
     <sys:String x:Key="Str_SaveFailed">Không thể lưu thay đổi. Các thay đổi vẫn có sẵn trong phiên này. Thử lưu lại?&#10;&#10;{0}</sys:String>
     <sys:String x:Key="Str_History_Partial">Quét chưa hoàn tất</sys:String>
+
+    <!-- Scan settings -->
+    <sys:String x:Key="Str_Options_Title">Cài đặt quét</sys:String>
+    <sys:String x:Key="Str_Options_Detail">Áp dụng cho thẻ này và được lưu trong hồ sơ. Ít phép kiểm tra hơn có thể cho ít kết quả hơn. HTTP, TLS và SSH cần quét cổng; SNMP và NetBIOS thì không.</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">Khôi phục mặc định (bật tất cả)</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">Đọc bộ nhớ đệm láng giềng</sys:String>
+    <sys:String x:Key="Str_Options_arp">Phân giải địa chỉ MAC qua ARP</sys:String>
+    <sys:String x:Key="Str_Options_icmp">Phát hiện qua ICMP và TTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">Phát hiện dự phòng qua TCP</sys:String>
+    <sys:String x:Key="Str_Options_dns">DNS ngược đã xác minh (và xóa bộ nhớ đệm DNS cục bộ)</sys:String>
+    <sys:String x:Key="Str_Options_mdns">Thông tin bổ sung qua mDNS</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">Thông tin bổ sung qua SSDP</sys:String>
+    <sys:String x:Key="Str_Options_ports">Quét cổng TCP</sys:String>
+    <sys:String x:Key="Str_Options_http">Tiêu đề và máy chủ HTTP/HTTPS</sys:String>
+    <sys:String x:Key="Str_Options_tls">Chi tiết chứng chỉ TLS</sys:String>
+    <sys:String x:Key="Str_Options_ssh">Thông điệp chào SSH</sys:String>
+    <sys:String x:Key="Str_Options_snmp">Mô tả SNMP</sys:String>
+    <sys:String x:Key="Str_Options_netbios">Tên NetBIOS</sys:String>
 </ResourceDictionary>

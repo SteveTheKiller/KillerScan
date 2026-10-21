@@ -505,4 +505,22 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Bir sayfa sağa</sys:String>
     <sys:String x:Key="Str_SaveFailed">Değişiklikler kaydedilemedi. Bu oturumda kullanılabilir olmaya devam ederler. Yeniden kaydetmek ister misiniz?&#10;&#10;{0}</sys:String>
     <sys:String x:Key="Str_History_Partial">Kısmi tarama</sys:String>
+
+    <!-- Scan settings -->
+    <sys:String x:Key="Str_Options_Title">Tarama ayarları</sys:String>
+    <sys:String x:Key="Str_Options_Detail">Bu sekmeye uygulanır ve profillere kaydedilir. Daha az denetim daha az sonuç verebilir. HTTP, TLS ve SSH için bağlantı noktası taraması gerekir; SNMP ve NetBIOS için gerekmez.</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">Varsayılanları geri yükle (tümü etkin)</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">Komşu önbelleğini oku</sys:String>
+    <sys:String x:Key="Str_Options_arp">ARP ile MAC adresini çözümle</sys:String>
+    <sys:String x:Key="Str_Options_icmp">ICMP keşfi ve TTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">Alternatif TCP keşfi</sys:String>
+    <sys:String x:Key="Str_Options_dns">Doğrulanmış ters DNS (ve yerel DNS önbelleğini temizleme)</sys:String>
+    <sys:String x:Key="Str_Options_mdns">mDNS ile ek bilgiler</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">SSDP ile ek bilgiler</sys:String>
+    <sys:String x:Key="Str_Options_ports">TCP bağlantı noktası taraması</sys:String>
+    <sys:String x:Key="Str_Options_http">HTTP/HTTPS başlığı ve sunucusu</sys:String>
+    <sys:String x:Key="Str_Options_tls">TLS sertifika ayrıntıları</sys:String>
+    <sys:String x:Key="Str_Options_ssh">SSH karşılama mesajı</sys:String>
+    <sys:String x:Key="Str_Options_snmp">SNMP açıklaması</sys:String>
+    <sys:String x:Key="Str_Options_netbios">NetBIOS adı</sys:String>
 </ResourceDictionary>

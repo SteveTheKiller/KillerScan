@@ -42,6 +42,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Balanced the Technical page columns by moving the glossary to the left.
 
 ### Added
+- Scan settings beside Scan selects discovery and fingerprint checks, saves them with profiles, and applies them to normal and deep scans. (#6) (Thanks @MrCodeLabs)
 - Added Slovenian across the app, installation prompts, website and help. (#5) (Thanks @MrCodeLabs)
 
 ### Changed

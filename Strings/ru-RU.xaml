@@ -531,4 +531,22 @@
     <sys:String x:Key="Str_Scroll_PageRight">На страницу вправо</sys:String>
     <sys:String x:Key="Str_SaveFailed">Не удалось сохранить изменения. Они остаются доступны в этом сеансе. Попробовать сохранить снова?&#10;&#10;{0}</sys:String>
     <sys:String x:Key="Str_History_Partial">Неполное сканирование</sys:String>
+
+    <!-- Scan settings -->
+    <sys:String x:Key="Str_Options_Title">Настройки сканирования</sys:String>
+    <sys:String x:Key="Str_Options_Detail">Применяются к этой вкладке и сохраняются в профилях. Меньше проверок может дать меньше результатов. HTTP, TLS и SSH требуют сканирования портов; SNMP и NetBIOS не требуют.</sys:String>
+    <sys:String x:Key="Str_Options_Defaults">Восстановить значения по умолчанию (всё включено)</sys:String>
+    <sys:String x:Key="Str_Options_neighbor-cache">Чтение кэша соседей</sys:String>
+    <sys:String x:Key="Str_Options_arp">Определение MAC-адреса через ARP</sys:String>
+    <sys:String x:Key="Str_Options_icmp">Обнаружение по ICMP и TTL</sys:String>
+    <sys:String x:Key="Str_Options_tcp-liveness">Резервное обнаружение по TCP</sys:String>
+    <sys:String x:Key="Str_Options_dns">Проверенный обратный DNS (и очистка локального кэша DNS)</sys:String>
+    <sys:String x:Key="Str_Options_mdns">Дополнительные сведения через mDNS</sys:String>
+    <sys:String x:Key="Str_Options_ssdp">Дополнительные сведения через SSDP</sys:String>
+    <sys:String x:Key="Str_Options_ports">Сканирование TCP-портов</sys:String>
+    <sys:String x:Key="Str_Options_http">Заголовок страницы и сервер HTTP/HTTPS</sys:String>
+    <sys:String x:Key="Str_Options_tls">Сведения о сертификате TLS</sys:String>
+    <sys:String x:Key="Str_Options_ssh">Баннер SSH</sys:String>
+    <sys:String x:Key="Str_Options_snmp">Описание SNMP</sys:String>
+    <sys:String x:Key="Str_Options_netbios">Имя NetBIOS</sys:String>
 </ResourceDictionary>

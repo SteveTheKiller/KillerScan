@@ -22,6 +22,11 @@ internal static class ScanLifecycleTests
         }
         public override Task<NetworkDevice> DeepProbeHostAsync(string ip, CancellationToken token,
             int portConcurrency = 256, bool flushLocalDnsCache = true) => PendingDeep?.Invoke(ip, token) ?? DeepResult!(ip);
+        public override Task<List<NetworkDevice>> ScanSubnetAsync(string target, CancellationToken token,
+            ScanOptions options, bool fullScan = true) => ScanSubnetAsync(target, token, fullScan);
+        public override Task<NetworkDevice> DeepProbeHostAsync(string ip, CancellationToken token,
+            ScanOptions options, int portConcurrency = 256, bool flushLocalDnsCache = true) =>
+            DeepProbeHostAsync(ip, token, portConcurrency, flushLocalDnsCache);
     }
 
     internal static void Run()
@@ -119,10 +124,14 @@ internal static class ScanLifecycleTests
                 { new() { IpAddress = "192.0.2.1", OpenPorts = [80] } }));
             workspace.RunProfile(new ScanProfile { Target = "192.0.2.1", DeepScanAfter = true });
             Require(workspace.IsScanning && ScanHistory.Entries.Count == 4, "An automatic profile remains active and unsaved while its deep phase is pending.");
+            var settings = (System.Windows.Controls.Button)workspace.FindName("ScanOptionsButton");
+            Require(!settings.IsEnabled && !settings.ContextMenu.IsOpen,
+                "Scan settings stay locked throughout an automatic deep scan.");
             ExportSnapshotTests.CheckPartial(workspace);
             workspace.RunProfile(new ScanProfile { Target = "192.0.2.1", DeepScanAfter = true });
             workspace.Stop();
             PumpUntil(() => !workspace.IsScanning);
+            Require(settings.IsEnabled, "Stopping a deep scan makes scan settings available again.");
             Require(ScanHistory.Entries.Count == 5 && recorded == 4 && ScanHistory.Entries.Last().Completion == ScanCompletion.Canceled,
                 "Stop cancels the active deep phase, rejects a rapid rerun, and records one canceled run.");
             pending = new TaskCompletionSource<NetworkDevice>(TaskCreationOptions.RunContinuationsAsynchronously);
