@@ -60,6 +60,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The shortcuts card shows shadows at its edges when more content is out of view. Its border follows gradient themes, and its hint sits centered closer to the bottom edge.
 - Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.
 - File pickers use theme content colors and app icons; 98SE dialogs have full bevels and compact fields. Text buttons, menus, tooltips and shortcuts use the embedded interface font, including separate windows.
+- 98SE menu highlights follow the selected accent.
 - Film grain has crisper specks and fades midtones across app and website themes without dimming bright highlights.
 - Balanced the Technical page columns by moving the glossary to the left.
 

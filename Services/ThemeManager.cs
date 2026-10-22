@@ -380,6 +380,8 @@ namespace KillerScan.Services
             if (!newDict.Contains("WordmarkAccentShadowOpacity")) newDict["WordmarkAccentShadowOpacity"] = 0.0;
             if (!hasExplicitComboHighlightText)
                 newDict["ComboHighlightTextBrush"] = newDict["PrimaryBrush"];
+            // Classic menu highlights follow the chosen accent after its overlay is merged.
+            if (theme == Theme.SE98) newDict["MenuHoverBrush"] = newDict["PrimaryBrush"];
             // A hovered menu or list item takes the accent for its text, nudged lighter or darker
             // only as far as it takes to read at 4.5:1 on that theme's hover fill. 98SE keeps its
             // Win98 highlight text.
