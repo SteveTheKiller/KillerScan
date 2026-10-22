@@ -559,3 +559,66 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !menu.hidden) { close(); btn.focus(); } });
   fit();
 })();
+/* Film Grain: the same switch as the app's theme menu and KillerTools, on the family Alt+Shift+G chord.
+   On by default; off sets data-grain="off", which empties --grain on every grained surface. */
+(function () {
+  'use strict';
+  var root = document.documentElement;
+  var KEY = 'film-grain';
+  var LABELS = {
+    en: 'Film Grain', bn: 'ফিল্ম গ্রেইন', cs: 'Filmové zrno', de: 'Filmkorn', es: 'Grano de película',
+    fr: 'Grain de film', hu: 'Filmszemcse', it: 'Grana pellicola', ja: 'フィルムグレイン',
+    kk: 'Пленка түйіршігі', nb: 'Filmkorn', no: 'Filmkorn', pl: 'Ziarno filmowe', pt: 'Granulação de filme',
+    ru: 'Зернистость плёнки', sl: 'Filmska zrnatost', tr: 'Film greni', uk: 'Зернистість плівки',
+    vi: 'Hạt phim', 'zh-hant': '底片顆粒', 'zh-hans': '胶片颗粒'
+  };
+  var box = null, text = null;
+  function apply(on) {
+    root.setAttribute('data-grain', on ? 'on' : 'off');
+    if (box) box.checked = on;
+  }
+  function set(on) {
+    apply(on);
+    try { localStorage.setItem(KEY, on ? 'on' : 'off'); } catch (e) {}
+  }
+  function label() {
+    var lang = (root.getAttribute('lang') || 'en').toLowerCase();
+    if (lang.indexOf('zh') === 0) lang = /hant|tw|hk/.test(lang) ? 'zh-hant' : 'zh-hans';
+    else lang = lang.split('-')[0];
+    return LABELS[lang] || LABELS.en;
+  }
+  function localize() {
+    if (!text) return;
+    text.textContent = label();
+    text.parentNode.title = label() + ' (Alt+Shift+G)';
+  }
+  var saved = 'on';
+  try { saved = localStorage.getItem(KEY) || 'on'; } catch (e) {}
+  apply(saved !== 'off');
+
+  var group = document.querySelector('.topbar .tgrp');
+  if (group) {
+    var sep = document.createElement('div');
+    sep.className = 'tgrp-sep';
+    sep.setAttribute('aria-hidden', 'true');
+    var row = document.createElement('label');
+    row.className = 'tgrp-grain';
+    box = document.createElement('input');
+    box.type = 'checkbox';
+    box.checked = saved !== 'off';
+    box.addEventListener('change', function () { set(box.checked); });
+    text = document.createElement('span');
+    row.appendChild(box);
+    row.appendChild(text);
+    group.appendChild(sep);
+    group.appendChild(row);
+    localize();
+    new MutationObserver(localize).observe(root, { attributes: true, attributeFilter: ['lang'] });
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.altKey && e.shiftKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyG') {
+      e.preventDefault();
+      if (!e.repeat) set(root.getAttribute('data-grain') === 'off');
+    }
+  });
+})();

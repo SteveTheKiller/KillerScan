@@ -109,7 +109,7 @@ html[data-theme="light"] .page-title { text-shadow: none; }
 
 /* ---- Top bar (single app-style chrome bar) ---- */
 .topbar { position: relative; flex: 0 0 auto; z-index: 100; display: flex; align-items: center; gap: 14px; flex-wrap: nowrap; padding: 8px 16px 0; background: var(--sidebar); }
-.topbar::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url('grain.png?v=2') repeat fixed; background-size: 256px 256px; opacity: 1; }
+.topbar::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: var(--grain-img) repeat fixed; background-size: 256px 256px; opacity: 1; }
 .topbar > * { position: relative; z-index: 1; }
 .tb-home { display: inline-flex; align-items: center; gap: 9px; color: var(--text); }
 .tb-home:hover { filter: none; }
@@ -154,7 +154,7 @@ html[data-theme="light"] .acc[data-accent="yellow"] { background: #EAD900 !impor
 .lang-toggle svg { width: 100%; height: 100%; display: block; }
 .lang-toggle:hover { border-color: var(--accent); }
 .lang-menu { position: absolute; top: 140%; right: 0; min-width: 168px; background: var(--modal); border: 1px solid var(--border); border-radius: 8px; padding: 5px; box-shadow: 0 12px 28px rgba(0,0,0,0.5); z-index: 110; }
-.lang-menu::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url('grain.png?v=2') repeat; background-size: 256px 256px; opacity: 1; border-radius: inherit; }
+.lang-menu::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: var(--grain-img) repeat; background-size: 256px 256px; opacity: 1; border-radius: inherit; }
 .lang-menu > * { position: relative; z-index: 1; }
 .lang-menu[hidden] { display: none; }
 .lang-item { display: block; width: 100%; text-align: left; background: none; border: 0; color: var(--text); font: inherit; font-size: 13px; padding: 7px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
@@ -186,17 +186,17 @@ body.compact-sidebar .outline a:hover { color: var(--text); background: color-mi
 .mcp-limit-list { display: grid; gap: 6px; margin: 8px 0; padding-left: 22px; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
 .mcp-limit-list li::marker { color: var(--accent); }
 .shell:has(.mcp-page-grid) .outline a:hover { color: var(--text); background: color-mix(in srgb, var(--accent) 10%, transparent); filter: none; }
-.shell::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url('grain.png?v=2') repeat fixed; background-size: 256px 256px; opacity: 1; }
+.shell::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: var(--grain-img) repeat fixed; background-size: 256px 256px; opacity: 1; }
 @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
 /* Inset rounded pane (killertools.net MenuLayout treatment): 8px chrome gutter on the window edges, 2px hugging the sidebar, none above the statusbar.
    The pane carries its own frame line + outward shadow (z 6: above the sidebar and the statusbar chrome, below the statusbar text at z 7),
    and clips the inner scroller so the scrollbar lives INSIDE the rounded pane. */
-.content { min-width: 0; min-height: 0; overflow: hidden; position: relative; z-index: 6; margin: 8px 2px 0 8px; border: 1px solid var(--pane-border); border-radius: 14px; box-shadow: 0 6px 14px 0 rgba(0,0,0,0.5); background-color: var(--bg); background-image: url('grain.png?v=2'); background-repeat: repeat; background-size: 256px 256px; background-attachment: fixed; animation: pageFadeIn .28s ease both; }
+.content { min-width: 0; min-height: 0; overflow: hidden; position: relative; z-index: 6; margin: 8px 2px 0 8px; border: 1px solid var(--pane-border); border-radius: 14px; box-shadow: 0 6px 14px 0 rgba(0,0,0,0.5); background-color: var(--bg); background-image: var(--grain-img); background-repeat: repeat; background-size: 256px 256px; background-attachment: fixed; animation: pageFadeIn .28s ease both; }
 .content-scroll { height: 100%; overflow-y: auto; scroll-behavior: smooth; }
 
 /* ---- Sidebar (the app's docked pane) ---- */
 .sidebar { position: relative; height: calc(100% - 8px); margin-top: 8px; min-height: 0; background: var(--sidebar); display: flex; flex-direction: column; z-index: 5; }
-.sidebar::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url('grain.png?v=2') repeat fixed; background-size: 256px 256px; opacity: 1; }
+.sidebar::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: var(--grain-img) repeat fixed; background-size: 256px 256px; opacity: 1; }
 .sidebar { background: transparent; }
 .sidebar::before { background: none; }
 .sb-thumbs { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 12px; }
@@ -227,7 +227,7 @@ body.compact-sidebar .outline a:hover { color: var(--text); background: color-mi
 
 /* ---- Status bar footer (matches the app) ---- */
 .statusbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 3px 16px; background: var(--sidebar); font-family: Consolas, monospace; font-size: 11.5px; color: var(--footer-text); position: relative; flex: 0 0 auto; }
-.statusbar::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: url('grain.png?v=2') repeat fixed; background-size: 256px 256px; opacity: 1; }
+.statusbar::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: var(--grain-img) repeat fixed; background-size: 256px 256px; opacity: 1; }
 /* Resize-grip dots in the window corner, matching the app chrome (grain owns ::after) */
 .statusbar::before { content: ""; position: absolute; right: 5px; bottom: 5px; width: 2px; height: 2px; background: var(--footer-text); box-shadow: -4px 0 var(--footer-text), -8px 0 var(--footer-text), 0 -4px var(--footer-text), -4px -4px var(--footer-text), 0 -8px var(--footer-text); opacity: .8; pointer-events: none; z-index: 7; }
 .statusbar > * { position: relative; z-index: 7; }
@@ -289,9 +289,9 @@ body.compact-sidebar .outline a:hover { color: var(--text); background: color-mi
 .outline::-webkit-scrollbar-track-piece { background: transparent !important; }
 
 @media (max-width: 1320px) {
-  .topbar { flex-wrap: nowrap; padding-bottom: 8px; }
+  .topbar { flex-wrap: nowrap; } /* no bottom padding: the pane's 8px top margin is the only gap, so the buttons' shadows land on the pane */
   .theme-toggle { display: inline-flex; flex: 0 0 auto; }
-  .topbar .tgrp { display: none; position: absolute; top: calc(100% + 7px); right: 12px; z-index: 120; width: 170px; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 12px; border: 1px solid var(--border); border-radius: 9px; background: var(--modal) url('grain.png?v=2') repeat; background-size: 256px 256px; box-shadow: 0 10px 28px rgba(0,0,0,0.48); }
+  .topbar .tgrp { display: none; position: absolute; top: calc(100% + 7px); right: 12px; z-index: 120; width: 170px; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 12px; border: 1px solid var(--border); border-radius: 9px; background: var(--modal) var(--grain-img) repeat; background-size: 256px 256px; box-shadow: 0 10px 28px rgba(0,0,0,0.48); }
   .topbar .tgrp.open { display: flex; }
 }
 
@@ -368,7 +368,7 @@ html[data-theme="light"] .tb-mcp-accent { text-shadow: none; }
 .acc-pop .acc-pop-label { font-size: 11px; font-family: Consolas, monospace; color: var(--muted); margin-right: 1px; }
 
 /* ============ Landing hero info block (replaces the terminal) ============ */
-.hero-info { background: color-mix(in srgb, var(--modal) 80%, transparent) url('grain.png?v=2') repeat; background-size: 256px 256px; -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); border: 1px solid var(--pane-border); border-left: 2px solid var(--tab-edge); border-right: 2px solid var(--tab-edge); border-radius: 8px; box-shadow: 0 14px 32px rgba(0,0,0,0.4); padding: 15px 14px; font-family: Consolas, monospace; font-size: 13px; line-height: 1.9; flex: 0 0 auto; width: max-content; max-width: 100%; transition: transform 0.12s, box-shadow 0.15s, border-color 0.12s; }
+.hero-info { background: color-mix(in srgb, var(--modal) 80%, transparent) var(--grain-img) repeat; background-size: 256px 256px; -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); border: 1px solid var(--pane-border); border-left: 2px solid var(--tab-edge); border-right: 2px solid var(--tab-edge); border-radius: 8px; box-shadow: 0 14px 32px rgba(0,0,0,0.4); padding: 15px 14px; font-family: Consolas, monospace; font-size: 13px; line-height: 1.9; flex: 0 0 auto; width: max-content; max-width: 100%; transition: transform 0.12s, box-shadow 0.15s, border-color 0.12s; }
 .hero-info:hover { border-left-color: var(--accent); border-right-color: var(--accent); }
 .hero-info:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0,0,0,0.5); border-top-color: var(--dragline); border-bottom-color: var(--dragline); }
 .hero-info .row { display: flex; gap: 8px; }
@@ -378,7 +378,7 @@ html[data-theme="light"] .tb-mcp-accent { text-shadow: none; }
 .hero-info .note { width: 0; min-width: 100%; margin-top: 11px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 13px; line-height: 1.55; color: var(--muted); }
 
 /* ============ About page ============ */
-.about-card { background: var(--modal) url('grain.png?v=2') repeat; background-size: 256px 256px; border: 1px solid var(--pane-border); border-radius: 10px; padding: 22px 24px; margin-bottom: 18px; }
+.about-card { background: var(--modal) var(--grain-img) repeat; background-size: 256px 256px; border: 1px solid var(--pane-border); border-radius: 10px; padding: 22px 24px; margin-bottom: 18px; }
 .about-card, .hero-info, .feature-card { border-top: 2px solid var(--sel, var(--accent)); }
 .about-card h2 { font-size: 19px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
 .about-card p { color: var(--muted); font-size: 14.5px; line-height: 1.7; margin-bottom: 11px; }
@@ -418,7 +418,7 @@ html[data-theme="light"] .tech-sec h3 { text-shadow: none; }
 .feature-card a { color: var(--accent); font-weight: 600; }
 .diagram { margin: 20px 0 6px; padding: 14px 16px; border: 1px solid var(--pane-border); border-radius: 10px; background: var(--modal); }
 /* Technical cards match the app's textured context-menu surface. */
-.codeblock, .cli-demo, .diagram { background: var(--modal) url('grain.png?v=2') repeat; background-size: 256px 256px; }
+.codeblock, .cli-demo, .diagram { background: var(--modal) var(--grain-img) repeat; background-size: 256px 256px; }
 html:not([data-theme="light"]) .codeblock { background-color: color-mix(in srgb, var(--modal) 65%, #000); border-color: color-mix(in srgb, var(--text) 28%, var(--modal)); border-left-color: var(--accent); }
 .diagram svg { width: 100%; height: auto; display: block; cursor: zoom-in; }
 .diagram figcaption { font-size: 12.5px; line-height: 1.55; color: var(--muted); margin-top: 10px; }
@@ -456,7 +456,7 @@ html[data-theme="cyanotic"] .spec-table th { background: var(--chrome); color: v
 .accent-bar { position: fixed; left: 0; right: 0; top: 44px; z-index: 102; display: flex; justify-content: center; pointer-events: none; opacity: 0; transform: translateY(-12px); transition: opacity 0.18s ease, transform 0.18s ease; }
 .accent-bar.show { opacity: 1; transform: translateY(0); }
 .accent-bar .pill { position: relative; overflow: hidden; pointer-events: auto; display: inline-flex; align-items: center; gap: 11px; background: var(--surface); border: 1px solid var(--pane-border); border-radius: 3px; padding: 8px 13px; box-shadow: 0 0 18px 1px rgba(0,0,0,0.45), 0 14px 30px rgba(0,0,0,0.5); }
-.accent-bar .pill::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url('grain.png?v=2') repeat; background-size: 256px 256px; opacity: 1; border-radius: inherit; }
+.accent-bar .pill::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: var(--grain-img) repeat; background-size: 256px 256px; opacity: 1; border-radius: inherit; }
 .accent-bar .pill > * { position: relative; z-index: 1; }
 .accent-bar .pill .grip { width: 9px; height: 18px; background-image: radial-gradient(var(--muted) 1.1px, transparent 1.4px); background-size: 4.5px 6px; background-position: 0 1px; opacity: 0.55; cursor: grab; }
 .accent-bar .pill .grip:active { cursor: grabbing; }
@@ -537,7 +537,7 @@ html[data-theme="cyanotic"] .spec-table th { background: var(--chrome); color: v
 /* Use the compact theme picker at every width. */
 .theme-toggle { display: inline-flex; flex: 0 0 26px; width: 26px; height: 26px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; background: none; }
 .theme-toggle:hover, .theme-toggle[aria-expanded="true"] { border-color: var(--accent); box-shadow: none; }
-.topbar .tgrp { display: none; position: absolute; top: calc(100% + 7px); right: 12px; z-index: 120; width: 170px; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 12px; border: 1px solid var(--border); border-radius: 9px; background: var(--modal) url('grain.png?v=2') repeat; background-size: 256px 256px; box-shadow: 0 10px 28px rgba(0,0,0,0.48); }
+.topbar .tgrp { display: none; position: absolute; top: calc(100% + 7px); right: 12px; z-index: 120; width: 170px; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 12px; border: 1px solid var(--border); border-radius: 9px; background: var(--modal) var(--grain-img) repeat; background-size: 256px 256px; box-shadow: 0 10px 28px rgba(0,0,0,0.48); }
 .topbar .tgrp.open { display: flex; }
 
 /* Wrap only when the current labels and controls need another line. */
@@ -801,3 +801,17 @@ html[data-yellow-outline] .mcp-download:focus-visible {
 .tb-more-menu > a img { width: 22px; height: 22px; }
 .tb-more-menu > a svg { width: 18px; height: 18px; }
 html[data-yellow-outline] .tb-more-menu > a { text-shadow: none !important; }
+
+/* Film grain: the KillerTools tiles per theme family (Black keeps its highlight tile). The Film
+   Grain switch in the theme flyout (Alt+Shift+G) sets data-grain="off" to flatten every surface. */
+:root { --grain-img:url('/grain-a17.png'); }
+html[data-theme="light"] { --grain-img:url('/grain-a28.png'); }
+html[data-theme="hc"] { --grain-img:url('/grain-a17-highlights.png'); }
+html[data-grain="off"] { --grain-img:none; }
+.tgrp-sep { flex-basis: 100%; height: 1px; margin: 2px 0; background: linear-gradient(90deg, transparent, var(--border), transparent); }
+.tgrp-grain { flex-basis: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 7px; font-family: var(--kt-font-ui); font-size: 14px; color: var(--text); cursor: pointer; user-select: none; }
+.tgrp-grain input { width: 15px; height: 15px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+
+/* Hero info box: one plain border at rest; on hover it lifts and the whole border turns accent. */
+.hero-info { border: 1px solid var(--pane-border); }
+.hero-info:hover { border-color: var(--accent); }

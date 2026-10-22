@@ -4,7 +4,7 @@
 .js .feature-carousel .feature-grid {
   display: block;
   min-height: 190px;
-  background: var(--modal) url('grain.png') repeat;
+  background: var(--modal) var(--grain-img) repeat;
   background-size: 256px 256px;
   border: 1px solid var(--pane-border);
   border-left: 3px solid var(--accent);

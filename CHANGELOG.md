@@ -61,7 +61,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.
 - File pickers use theme content colors and app icons; 98SE dialogs have full bevels and compact fields. Text buttons, menus, tooltips and shortcuts use the embedded interface font, including separate windows.
 - 98SE menu highlights follow the selected accent.
-- Film grain has crisper specks and fades midtones across app and website themes without dimming bright highlights.
+- Film grain has crisper specks and fades midtones across app themes without dimming bright highlights.
+- The website's film grain is lighter, matching KillerTools, and the theme menu can turn it off (Alt+Shift+G). The top bar no longer leaves extra space above the page on narrower windows, and the release details box lifts with an accent border on hover.
 - Balanced the Technical page columns by moving the glossary to the left.
 
 ### Added
