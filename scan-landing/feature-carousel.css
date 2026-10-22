@@ -7,7 +7,8 @@
   background: var(--modal) var(--grain-img) repeat;
   background-size: 256px 256px;
   border: 1px solid var(--pane-border);
-  border-left: 3px solid var(--accent);
+  border-left: 2px solid var(--tab-edge);
+  border-right: 2px solid var(--tab-edge);
   border-radius: 7px;
   box-shadow: 0 12px 26px rgba(0,0,0,.26);
   overflow: hidden;
