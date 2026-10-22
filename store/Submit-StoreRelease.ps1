@@ -99,6 +99,15 @@ $package = $packages[0]
 Write-Host "  Package $($package.packageId): $($package.packageUrl)"
 if ($PreflightOnly) { Write-Host "  Store preflight OK."; return }
 
+# Sync translated listings before submitting the installer, including newly added languages.
+$listingScript = Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) 'KillerHarness\scripts\StoreUpdate.ps1'
+if (-not (Test-Path -LiteralPath $listingScript)) { throw "Store listing updater is missing: $listingScript" }
+$listingArgs = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $listingScript,
+    '-App', 'KillerScan', '-ListingsOnly', '-StoreProductId', $ProductId, '-StoreDirectory', $PSScriptRoot)
+if (-not $DryRun) { $listingArgs += '-DraftOnly' }
+& powershell @listingArgs
+if ($LASTEXITCODE -ne 0) { throw 'Store listing sync failed. The installer was not submitted.' }
+
 if ($package.packageUrl -eq $PackageUrl) {
     Write-Host "  The draft already points at this installer."
 } elseif ($DryRun) {
