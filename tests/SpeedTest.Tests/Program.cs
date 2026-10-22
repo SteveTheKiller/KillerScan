@@ -33,6 +33,7 @@ internal static class Program
             {
                 InstallationCleanupTests.Run();
                 UpdateHandoffTests.Run();
+                UpdateHelperLaunchTests.Run();
                 return 0;
             }
             if (args.SequenceEqual(new[] { "--loopback-headers" })) { await LoopbackHeaders(); return 0; }

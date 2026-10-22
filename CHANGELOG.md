@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Fixed
 - In 98SE, long paths in the file dialog no longer run under the recent-locations arrow.
 - Machine update and uninstall helpers reject unsafe inherited permissions before creating elevated staging.
+- Per-user and portable updates no longer run their helper from a script in the temp folder.
 - Installation cleanup preserves unrelated files and folders; registered silent uninstall waits for owned removal and reports failures.
 - Elevated updates use the signed installed helper and verify the release identity, digest and publisher in protected staging.
 - Preference and history saves preserve existing files on failure, keep unsaved edits for retry, and report when changes could not be saved.

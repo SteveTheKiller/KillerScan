@@ -1,10 +1,10 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -103,7 +103,7 @@ namespace KillerScan.Services
             return path;
         }
 
-        /// <summary>Starts a helper batch that waits for this process to exit, swaps
+        /// <summary>Starts a helper that waits for this process to exit, swaps
         /// <paramref name="newExe"/> over the running exe and relaunches it. Throws if the helper
         /// cannot be started, including when the user declines the UAC prompt (Win32 1223) - the
         /// caller must only shut down once this returns.
@@ -123,8 +123,6 @@ namespace KillerScan.Services
             platform ??= new Platform();
             var curExe = Process.GetCurrentProcess().MainModule!.FileName;
             var pid    = Process.GetCurrentProcess().Id;
-            var bat    = Path.Combine(Path.GetTempPath(),
-                                      $"{AppInfo.DisplayName}_update_{Guid.NewGuid():N}.bat");
 
             bool needsElevation = !platform.CanWrite(Path.GetDirectoryName(curExe)!);
             if (needsElevation || KillerFamily.Deployment.InstallerExitCodes.IsElevated())
@@ -133,46 +131,28 @@ namespace KillerScan.Services
                 return;
             }
 
-            string system = Environment.GetFolderPath(Environment.SpecialFolder.System);
-            string tasklist = Path.Combine(system, "tasklist.exe").Replace("%", "%%");
-            string find = Path.Combine(system, "find.exe").Replace("%", "%%");
-            string ping = Path.Combine(system, "ping.exe").Replace("%", "%%");
-            string notepad = Convert.ToBase64String(Encoding.UTF8.GetBytes(Path.Combine(system, "notepad.exe")));
-            string report = Convert.ToBase64String(Encoding.UTF8.GetBytes(Path.GetFullPath(newExe) + ".recovery.txt"));
-            string displayScript = "$ErrorActionPreference='Stop';$start=New-Object Diagnostics.ProcessStartInfo;"
-                + "$start.UseShellExecute=$true;$start.FileName=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('" + notepad + "'));"
-                + "$report=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('" + report + "'));"
-                + "$start.Arguments='\"'+$report+'\"';$process=[Diagnostics.Process]::Start($start);"
-                + "if($null -eq $process){throw 'The update recovery report did not open.'};$process.Dispose();";
-            string displayPowerShell = Path.Combine(system, @"WindowsPowerShell\v1.0\powershell.exe").Replace("%", "%%");
-            string displayCommand = "\"" + displayPowerShell + "\" -NoProfile -NonInteractive -EncodedCommand "
-                + Convert.ToBase64String(Encoding.Unicode.GetBytes(displayScript));
-            string publication = UpdateImagePublication.Command(newExe, curExe, needsElevation,
-                ReleasesUrl, AppInfo.DisplayName, newVersion, RegistryHiveFor(curExe));
-
-            File.WriteAllText(bat,
-                "@echo off\r\n" +
-                "setlocal DisableDelayedExpansion\r\n" +
-                ":wait\r\n" +
-                $"\"{tasklist}\" /fi \"PID eq {pid}\" 2>nul | \"{find}\" \"{pid}\" >nul\r\n" +
-                $"if not errorlevel 1 ( \"{ping}\" -n 2 127.0.0.1 >nul & goto wait )\r\n" +
-                publication + " >\"%~dpn0.helper.log\" 2>&1\r\n" +
-                "if errorlevel 1 goto failed\r\n" +
-                "goto cleanup\r\n" +
-                ":failed\r\n" +
-                displayCommand + " >\"%~dpn0.display.log\" 2>&1\r\n" +
-                ":cleanup\r\n" +
-                "del \"%~f0\" >nul 2>&1\r\n");
-
-            var psi = new ProcessStartInfo(
-                Path.Combine(system, "cmd.exe"), $"/d /v:off /c \"{Path.GetFileName(bat)}\"")
-            {
-                WindowStyle = ProcessWindowStyle.Hidden,
-                WorkingDirectory = Path.GetTempPath(),
-                UseShellExecute = true
-            };
+            // The whole helper travels in the process command line, so no file the user account can
+            // write is read after it starts. A failed publication opens the recovery report.
+            string script = "$ErrorActionPreference = 'Stop'\nwhile (Get-Process -Id " + pid.ToString(CultureInfo.InvariantCulture)
+                + " -ErrorAction SilentlyContinue) { Start-Sleep -Milliseconds 500 }\n"
+                + UpdateImagePublication.Script(newExe, curExe, false, ReleasesUrl, AppInfo.DisplayName,
+                    newVersion, RegistryHiveFor(curExe), showReport: true);
+            var psi = HelperStart(script);
             if (platform.Start(psi) is null)
                 throw new IOException("The update helper did not start. Download retained at: " + newExe);
+        }
+
+        /// <summary>Starts Windows PowerShell directly with the whole unelevated helper in its command line.</summary>
+        internal static ProcessStartInfo HelperStart(string script)
+        {
+            string system = Environment.GetFolderPath(Environment.SpecialFolder.System);
+            return new ProcessStartInfo(Path.Combine(system, @"WindowsPowerShell\v1.0\powershell.exe"),
+                ImmutablePowerShell.Arguments(script))
+            {
+                WindowStyle = ProcessWindowStyle.Hidden,
+                WorkingDirectory = system,
+                UseShellExecute = true
+            };
         }
 
         /// <summary>"HKCU" when <paramref name="exePath"/> is the per-user install,

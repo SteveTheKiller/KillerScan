@@ -1,0 +1,112 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using KillerScan.Services;
+
+/// <summary>
+/// Runs the real unelevated self-update helper through the same launch the app uses, with a copy of cmd.exe
+/// standing in for the downloaded update. Relaunch and the recovery report are recorded instead of opened.
+/// The elevated path is the trusted machine helper, covered by <see cref="UpdateHandoffTests"/>.
+/// </summary>
+internal static class UpdateHelperLaunchTests
+{
+    private static readonly byte[] Original = Encoding.UTF8.GetBytes("original inert application image");
+
+    internal static void Run()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "KillerScan-update-helper-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        try
+        {
+            byte[] standIn = File.ReadAllBytes(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
+            LaunchShape(root, standIn);
+
+            var ran = Case(root, "verified", standIn, standIn);
+            Require(ran.Exit == 0 && ran.Target.SequenceEqual(standIn) && ran.Relaunched && !ran.ReportShown && !ran.DownloadLeft,
+                "A verified update is published from the command-line helper and relaunched: " + ran);
+            var swapped = Case(root, "swapped", standIn.Concat(new byte[] { 0 }).ToArray(), standIn);
+            Require(swapped.Exit != 0 && swapped.Target.SequenceEqual(Original) && !swapped.Relaunched && swapped.ReportShown,
+                "A download replaced after verification is refused and its recovery report is shown: " + swapped);
+            Console.WriteLine("PASS the unelevated update helper publishes only the verified image and refuses a swapped download.");
+        }
+        finally
+        {
+            try { Directory.Delete(root, true); } catch (IOException) { } catch (UnauthorizedAccessException) { }
+        }
+    }
+
+    private static void LaunchShape(string root, byte[] standIn)
+    {
+        if (KillerFamily.Deployment.InstallerExitCodes.IsElevated())
+        {
+            Console.WriteLine("SKIP the unelevated update launch shape needs an unelevated test process.");
+            return;
+        }
+        string download = Path.Combine(root, "launch.exe");
+        File.WriteAllBytes(download, standIn);
+        UpdateImagePublication.RememberVerified(download, Hash(standIn));
+        ProcessStartInfo? captured = null;
+        try
+        {
+            UpdateService.StartSwap(download, "9.9.9", new UpdateService.Platform
+            {
+                CanWrite = _ => true,
+                Start = start => { captured = start; return null; }
+            });
+        }
+        catch (IOException) { }
+        Require(captured is { UseShellExecute: true } start && start.Verb.Length == 0
+            && start.FileName.EndsWith(@"WindowsPowerShell\v1.0\powershell.exe", StringComparison.OrdinalIgnoreCase)
+            && !start.Arguments.Contains(".bat") && start.WorkingDirectory == Environment.GetFolderPath(Environment.SpecialFolder.System),
+            "An unelevated update starts PowerShell directly instead of a batch file in the temp folder");
+        string script = UninstallCommandTests.Decode(captured!.Arguments);
+        UninstallCommandTests.Parse(script);
+        Require(script.Contains("Invoke-UpdateImagePublication") && script.Contains("ShowReport = $true"),
+            "The unelevated helper carries the publication script and shows its recovery report on failure");
+        Require(File.ReadAllBytes(download).SequenceEqual(standIn), "Building the helper leaves the verified download untouched");
+        Console.WriteLine("PASS an unelevated update launches PowerShell with its whole helper in the command line.");
+    }
+
+    private sealed class Outcome
+    {
+        internal int Exit;
+        internal byte[] Target = Array.Empty<byte>();
+        internal bool Relaunched, ReportShown, DownloadLeft;
+        public override string ToString() => "exit " + Exit + ", relaunched " + Relaunched + ", report shown " + ReportShown;
+    }
+
+    private static Outcome Case(string root, string name, byte[] download, byte[] verified)
+    {
+        string folder = Path.Combine(root, name);
+        Directory.CreateDirectory(folder);
+        string target = Path.Combine(folder, "KillerScan.exe");
+        string path = Path.Combine(folder, "download.exe");
+        File.WriteAllBytes(target, Original);
+        File.WriteAllBytes(path, download);
+        UpdateImagePublication.RememberVerified(path, Hash(verified));
+        string relaunched = Path.Combine(folder, "relaunched.txt");
+        string shown = Path.Combine(folder, "report-shown.txt");
+        string overrides = "$ops.Relaunch = { param($plan) [IO.File]::WriteAllText('" + relaunched + "', 'yes') }\n" +
+            "$ops.ShowReport = { param($path) [IO.File]::WriteAllText('" + shown + "', $path) }";
+        string script = UpdateImagePublication.Script(path, target, false, "https://example.invalid/releases", "KillerScan",
+            showReport: true, overrides: overrides);
+        using var process = Process.Start(UpdateService.HelperStart(script)) ?? throw new IOException("The update helper did not start.");
+        if (!process.WaitForExit(60000)) { process.Kill(); throw new TimeoutException("The update helper did not finish."); }
+        return new Outcome { Exit = process.ExitCode, Target = File.ReadAllBytes(target), Relaunched = File.Exists(relaunched),
+            ReportShown = File.Exists(shown), DownloadLeft = File.Exists(path) };
+    }
+
+    private static string Hash(byte[] bytes)
+    {
+        using var sha256 = SHA256.Create();
+        return BitConverter.ToString(sha256.ComputeHash(bytes)).Replace("-", "");
+    }
+
+    private static void Require(bool condition, string message)
+    {
+        if (!condition) throw new InvalidOperationException(message);
+    }
+}
