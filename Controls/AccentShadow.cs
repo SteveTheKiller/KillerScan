@@ -11,7 +11,7 @@ using System.Windows.Media.Effects;
 
 namespace KillerFamily.Theming
 {
-    /// <summary>Uses the logo color for headings with a thin, contrasting edge around the text.</summary>
+    /// <summary>Uses the logo color for headings, raised with the family bevel.</summary>
     public static class HeadingAccent
     {
         public static readonly DependencyProperty EnabledProperty = DependencyProperty.RegisterAttached(
@@ -51,29 +51,9 @@ namespace KillerFamily.Theming
         {
             public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                if (SystemParameters.HighContrast || value is not SolidColorBrush brush) return null;
-                // A black or white edge always provides at least 4.5:1 against an opaque color.
-                // Keep the family Yellow outline when it also meets that threshold.
-                double luminance = Luminance(brush.Color);
-                double darkContrast = (luminance + 0.05) / 0.05;
-                double lightContrast = 1.05 / (luminance + 0.05);
-                Color rim = darkContrast >= lightContrast ? Colors.Black : Colors.White;
-                double gray = Luminance(AccentShadow.RimColor);
-                double grayContrast = (Math.Max(luminance, gray) + 0.05) / (Math.Min(luminance, gray) + 0.05);
-                if (AccentShadow.Applies(brush) && grayContrast >= 4.5) rim = AccentShadow.RimColor;
-                double scale = parameter is Visual visual ? VisualTreeHelper.GetDpi(visual).DpiScaleX : 1.0;
-                var effect = new AccentShadow.Outline(rim, Math.Max(1.0, scale));
-                if (effect.CanFreeze) effect.Freeze();
-                return effect;
-            }
-
-            private static double Luminance(Color color) =>
-                0.2126 * Linear(color.R) + 0.7152 * Linear(color.G) + 0.0722 * Linear(color.B);
-
-            private static double Linear(byte channel)
-            {
-                double value = channel / 255.0;
-                return value <= 0.04045 ? value / 12.92 : Math.Pow((value + 0.055) / 1.055, 2.4);
+                // Raised lettering in the heading's own color, not a dark edge around it (Bevel.cs).
+                if (SystemParameters.HighContrast || value is not SolidColorBrush || parameter is not TextBlock text) return null;
+                return Bevel.For(text, text.FontSize);
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;

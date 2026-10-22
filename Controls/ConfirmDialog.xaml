@@ -1,6 +1,7 @@
 <Window x:Class="KillerScan.Controls.ConfirmDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:theme="clr-namespace:KillerFamily.Theming"
         xmlns:icons="clr-namespace:KillerScan.Controls"
         xmlns:kui="clr-namespace:KillerScan.Controls"
         Title="KillerScan"
@@ -66,7 +67,7 @@
                                 <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}"><Run Text="Killer" Foreground="#D8000000"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Scan" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="#D8000000"/></TextBlock>
                             </StackPanel>
                             <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}" Margin="1,2,0,0" IsHitTestVisible="False" Opacity="{DynamicResource WordmarkAccentShadowOpacity}"><TextBlock.Effect><BlurEffect Radius="3"/></TextBlock.Effect><Run Text="Killer" Foreground="Transparent"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Scan" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="#D8000000"/></TextBlock>
-                            <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Scan" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
+                            <TextBlock theme:Bevel.Enabled="True" FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Scan" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
                         </Grid>
                         </StackPanel>
                         <TextBlock Text="KillerScan" Margin="6,0,0,0" VerticalAlignment="Center"

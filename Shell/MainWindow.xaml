@@ -1,6 +1,7 @@
 <Window x:Class="KillerScan.Shell.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:theme="clr-namespace:KillerFamily.Theming"
         xmlns:a11y="clr-namespace:KillerFamily.Accessibility"
         xmlns:icons="clr-namespace:KillerScan.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -123,7 +124,7 @@
                             <TextBlock.Effect><BlurEffect Radius="3"/></TextBlock.Effect>
                             <Run Text="Killer" Foreground="Transparent"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Scan" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="#D8000000"/>
                         </TextBlock>
-                        <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Scan" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
+                        <TextBlock theme:Bevel.Enabled="True" FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Scan" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
                     </Grid>
                     <!-- On the wordmark baseline in Killer Sans, like KillerPDF's titlebar filename. -->
                     <TextBlock x:Name="SubtitleText" Text="{DynamicResource Str_Subtitle}" Foreground="{DynamicResource MutedTextBrush}"
@@ -1014,7 +1015,7 @@
                                                    Opacity="{DynamicResource WordmarkShadowOpacity}"><TextBlock.Effect><BlurEffect Radius="2"/></TextBlock.Effect><Run Text="Killer" FontSize="17.21" Foreground="#C0000000"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Scan" FontSize="25.85" Foreground="#C0000000"/></TextBlock>
                                         <TextBlock FontFamily="{DynamicResource WordmarkFont}" Margin="1,2,0,0" IsHitTestVisible="False"
                                                    Opacity="{DynamicResource WordmarkAccentShadowOpacity}"><TextBlock.Effect><BlurEffect Radius="3"/></TextBlock.Effect><Run Text="Killer" FontSize="17.21" Foreground="Transparent"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Scan" FontSize="25.85" Foreground="#D8000000"/></TextBlock>
-                                        <TextBlock FontFamily="{DynamicResource WordmarkFont}"><Run Text="Killer" FontSize="17.21" Foreground="{DynamicResource TextBrush}"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Scan" FontSize="25.85" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
+                                        <TextBlock theme:Bevel.Enabled="True" FontFamily="{DynamicResource WordmarkFont}"><Run Text="Killer" FontSize="17.21" Foreground="{DynamicResource TextBrush}"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Scan" FontSize="25.85" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
                                     </Grid>
                                     <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"><Run Text="{DynamicResource Str_About_DescA}"/><Run Text="GPLv3 "/><Hyperlink NavigateUri="https://killertools.net" RequestNavigate="AboutLink_Navigate" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None">Killer Tools</Hyperlink><Run Text="{DynamicResource Str_About_DescB}"/></TextBlock>
                                 </StackPanel>

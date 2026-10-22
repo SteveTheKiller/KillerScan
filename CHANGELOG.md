@@ -94,6 +94,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Updated and pinned the build/release actions to current compatible stable versions.
 - Clarified sent-byte upload throughput and its acknowledgment requirement in the app, engine and website documentation.
 
+### Changed
+
+- Wordmarks and headings are raised with a subtle bevel in their own color instead of a dark outline; wordmarks keep their drop shadow. The Dark theme's red accent is the brand red again instead of a pink tint.
+
 ## [1.8.3] - 2026-10-19
 
 ### Changed
