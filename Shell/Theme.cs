@@ -150,7 +150,9 @@ namespace KillerScan.Shell
             {
                 if (content.Parent is Panel parent) parent.Children.Remove(content);
                 oldPopup.IsOpen = false;
-                content.Margin = new Thickness(12, 10, 3, 10);
+                // Hover rows sit 4px in from both menu edges: 12 left less the row's -8, and
+                // 2 right plus the row's own 2.
+                content.Margin = new Thickness(12, 10, 2, 10);
 
                 var itemStyle = new Style(typeof(MenuItem));
                 var itemTemplate = new ControlTemplate(typeof(MenuItem));

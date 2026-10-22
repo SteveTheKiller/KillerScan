@@ -216,9 +216,11 @@
                                         ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/>
                         </Border.Background>
                     </Border>
+                    <!-- The theme column fills the menu (*) so the hover rows reach across
+                         when the menu is wider than the list; the margin is set in Theme.cs. -->
                     <Grid x:Name="ThemeMenuContent">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
@@ -231,7 +233,7 @@
                              Order is presentation, deliberately NOT the enum's order, and matches
                              KillerShell and KillerNotes so the family lists themes the same way.
                              98SE slots in after Black when it lands. -->
-                        <StackPanel x:Name="ThemeRadios" Grid.Column="0" Width="120">
+                        <StackPanel x:Name="ThemeRadios" Grid.Column="0" MinWidth="120">
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Dark"      Content="{DynamicResource Str_Theme_Dark}"      Checked="ThemeRadio_Checked"/>
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Light"     Content="{DynamicResource Str_Theme_Light}"     Checked="ThemeRadio_Checked"/>
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Black"     Content="{DynamicResource Str_Theme_Black}"     Checked="ThemeRadio_Checked"/>

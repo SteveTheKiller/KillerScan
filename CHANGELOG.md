@@ -97,6 +97,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Changed
 
 - Wordmarks and headings are raised with a subtle bevel in their own color instead of a dark outline; wordmarks keep their drop shadow. The Dark theme's red accent is the brand red again instead of a pink tint.
+- Theme menu hover rows reach the right edge with the same inset as the left.
 
 ## [1.8.3] - 2026-10-19
 
