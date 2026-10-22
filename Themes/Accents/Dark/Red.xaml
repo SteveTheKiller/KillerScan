@@ -12,6 +12,10 @@
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#2A0D0D" po:Freeze="True"/>
     <LinearGradientBrush x:Key="SelectionBg"         po:Freeze="True" StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#753838" Offset="0"/><GradientStop Color="#4E1010" Offset="1"/></LinearGradientBrush>
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#2A0D0D" po:Freeze="True"/>
+    <!-- Hover fills a step deeper with white text: dark text on the red gradient's lower half
+         and white on its upper half both miss 4.5:1. -->
+    <SolidColorBrush x:Key="OutlineHoverFillBaseBrush" Color="#C4453F" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlineHoverTextBrush" Color="#FFFFFF" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbBrush"      Color="#55EA524C" po:Freeze="True"/>
     <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#E0E0E0"/>
     <SolidColorBrush x:Key="AccentLogo"        Color="#DD504B" po:Freeze="True"/>
