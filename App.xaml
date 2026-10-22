@@ -1132,11 +1132,11 @@
                                 <!-- Hover uses the menu wash and its contrast text brush. -->
                                 <Trigger Property="IsHighlighted" Value="True">
                                     <Setter TargetName="bg" Property="Background" Value="{DynamicResource MenuHoverBrush}"/>
-                                    <Setter Property="Foreground" Value="{DynamicResource ComboHighlightTextBrush}"/>
-                                    <Setter TargetName="Gesture" Property="Foreground" Value="{DynamicResource ComboHighlightTextBrush}"/>
-                                    <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ComboHighlightTextBrush}"/>
-                                    <Setter TargetName="ico" Property="TextElement.Foreground" Value="{DynamicResource ComboHighlightTextBrush}"/>
-                                    <Setter TargetName="check" Property="Foreground" Value="{DynamicResource ComboHighlightTextBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource MenuHoverTextBrush}"/>
+                                    <Setter TargetName="Gesture" Property="Foreground" Value="{DynamicResource MenuHoverTextBrush}"/>
+                                    <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource MenuHoverTextBrush}"/>
+                                    <Setter TargetName="ico" Property="TextElement.Foreground" Value="{DynamicResource MenuHoverTextBrush}"/>
+                                    <Setter TargetName="check" Property="Foreground" Value="{DynamicResource MenuHoverTextBrush}"/>
                                 </Trigger>
                                 <!-- Collapse the shortcut column when there is no gesture, so items
                                      without one do not reserve its 24px margin as phantom padding. -->
@@ -1441,7 +1441,7 @@
                                          black-on-navy was unreadable. Family rule from CLAUDE.md:
                                          the Combo token, never PrimaryBrush, because 98SE's
                                          PrimaryBrush IS that navy. -->
-                                    <Setter Property="Foreground" Value="{DynamicResource ComboHighlightTextBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource MenuHoverTextBrush}"/>
                                 </Trigger>
                                 <Trigger Property="IsChecked" Value="True">
                                     <Setter TargetName="dot" Property="Visibility" Value="Visible"/>
@@ -1506,7 +1506,7 @@
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="bd" Property="Background" Value="{DynamicResource MenuHoverBrush}"/>
-                                    <Setter Property="Foreground" Value="{DynamicResource ComboHighlightTextBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource MenuHoverTextBrush}"/>
                                 </Trigger>
                                 <Trigger Property="IsChecked" Value="True">
                                     <Setter TargetName="dot" Property="Visibility" Value="Visible"/>

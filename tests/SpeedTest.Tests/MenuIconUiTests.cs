@@ -155,7 +155,7 @@ internal static partial class HistoryUiTests
                 item.SetCurrentValue(UIElement.IsEnabledProperty, true);
                 typeof(MenuItem).GetProperty("IsHighlighted")!.SetValue(item, true);
                 surface.UpdateLayout();
-                var expected = (Brush)app.FindResource(picker ? "TextBrush" : "ComboHighlightTextBrush");
+                var expected = (Brush)app.FindResource(picker ? "TextBrush" : "MenuHoverTextBrush");
                 if (icon is TextBlock highlighted)
                     Require(highlighted.Foreground.ToString() == expected.ToString(), label + " follows the highlighted foreground.");
                 typeof(MenuItem).GetProperty("IsHighlighted")!.SetValue(item, false);

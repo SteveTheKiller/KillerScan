@@ -380,6 +380,15 @@ namespace KillerScan.Services
             if (!newDict.Contains("WordmarkAccentShadowOpacity")) newDict["WordmarkAccentShadowOpacity"] = 0.0;
             if (!hasExplicitComboHighlightText)
                 newDict["ComboHighlightTextBrush"] = newDict["PrimaryBrush"];
+            // A hovered menu or list item takes the accent for its text, nudged lighter or darker
+            // only as far as it takes to read at 4.5:1 on that theme's hover fill. 98SE keeps its
+            // Win98 highlight text.
+            newDict["MenuHoverTextBrush"] =
+                newDict.Contains("UseDialogCaption") && newDict["UseDialogCaption"] is true
+                    || newDict["PrimaryBrush"] is not SolidColorBrush hoverAccent
+                    || newDict["MenuHoverBrush"] is not SolidColorBrush hoverFill
+                ? newDict["ComboHighlightTextBrush"]
+                : Frozen(ColorContrast.ReadableOn(hoverAccent.Color, hoverFill.Color, 4.5));
             // A palette can fill buttons with a deeper shade than its accent text (PrimaryFillBaseBrush).
             newDict["PrimaryFillBrush"] = ButtonFill(newDict.Contains("PrimaryFillBaseBrush") ? newDict["PrimaryFillBaseBrush"] : newDict["PrimaryBrush"], theme == Theme.SE98);
             newDict["OutlineHoverBrush"] = ButtonFill(newDict.Contains("OutlineHoverFillBaseBrush") ? newDict["OutlineHoverFillBaseBrush"] : newDict["OutlineHoverBrush"], theme == Theme.SE98);
