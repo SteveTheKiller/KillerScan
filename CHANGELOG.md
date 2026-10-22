@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ## [1.8.4] - Unreleased
 
 ### Fixed
+- Website carousel and slide descriptions are translated in every supported language.
 - In 98SE, long paths in the file dialog no longer run under the recent-locations arrow.
 - Machine update and uninstall helpers reject unsafe inherited permissions before creating elevated staging.
 - Per-user and portable updates no longer run their helper from a script in the temp folder.
