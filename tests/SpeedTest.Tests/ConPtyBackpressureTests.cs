@@ -43,7 +43,32 @@ internal static class ConPtyBackpressureTests
             Require(slow.Text == expected, "Queued input arrives complete and in order.");
             Require(!writer.Enqueue(new byte[TerminalInputWriter.MaxPendingBytes + 1]), "Input beyond the queue cap is refused, not held.");
         }
-        Console.WriteLine("PASS: terminal input is written in order off the UI thread, and a 16 MB paste queues at once.");
+        // Input the queue refuses is reported, not dropped silently. The control needs an STA thread.
+        Exception? failure = null;
+        var sta = new Thread(() =>
+        {
+            try
+            {
+                var terminal = new KillerScan.Terminal.TerminalControl();
+                try
+                {
+                    terminal.Start("cmd.exe /d /c ping -n 60 127.0.0.1 >nul", Environment.CurrentDirectory);
+                    int refused = 0;
+                    terminal.InputRefused += () => refused++;
+                    terminal.Send("dir");
+                    Require(refused == 0, "Ordinary input is queued without a refusal.");
+                    terminal.Send(new string('x', TerminalInputWriter.MaxPendingBytes + 1));
+                    Require(refused == 1, "Input past the queue cap raises InputRefused instead of vanishing.");
+                }
+                finally { terminal.Dispose(); }
+            }
+            catch (Exception ex) { failure = ex; }
+        });
+        sta.SetApartmentState(ApartmentState.STA);
+        sta.Start();
+        if (!sta.Join(TimeSpan.FromSeconds(60))) throw new InvalidOperationException("The refused-input check finishes within a minute.");
+        if (failure != null) throw failure;
+        Console.WriteLine("PASS: terminal input is written in order off the UI thread, a 16 MB paste queues at once, and refused input is reported.");
     }
 
     private sealed class SlowStream : Stream

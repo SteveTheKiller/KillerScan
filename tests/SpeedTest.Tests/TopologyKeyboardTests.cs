@@ -43,7 +43,12 @@ internal static class TopologyKeyboardTests
                 "Selecting a node through accessibility selects its device.");
 
             Require(nodes[0].Focus() && nodes[0].IsKeyboardFocused, "A node takes keyboard focus.");
+            Require(nodes.Count(KeyboardNavigation.GetIsTabStop) == 1 && KeyboardNavigation.GetIsTabStop(nodes[0]),
+                "The diagram is one Tab stop: only the focused device takes Tab.");
+            nodes[0].MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+            Require(Keyboard.FocusedElement is not Border { Tag: NetworkDevice }, "Tab from a device leaves the diagram rather than visiting every device.");
             var start = nodes[0];
+            start.Focus();
             foreach (var key in new[] { Key.Right, Key.Down, Key.Left, Key.Up })
             {
                 var before = Keyboard.FocusedElement;

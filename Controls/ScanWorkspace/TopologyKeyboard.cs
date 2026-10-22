@@ -66,9 +66,24 @@ namespace KillerScan.Controls
             AutomationProperties.SetName(border, string.IsNullOrWhiteSpace(detail) ? title : title + ", " + detail);
             if (border.Tag is not NetworkDevice device) return;
             border.Focusable = true;
-            KeyboardNavigation.SetIsTabStop(border, true);
             border.KeyDown += TopologyNode_KeyDown;
-            border.GotKeyboardFocus += (_, _) => _topologyFocusIp = device.IpAddress;
+            border.GotKeyboardFocus += (_, _) =>
+            {
+                _topologyFocusIp = device.IpAddress;
+                UpdateTopologyTabStop();
+            };
+        }
+
+        /// <summary>
+        /// The diagram is one Tab stop, like a list: only the device last focused (or the first
+        /// one) takes Tab, the arrow keys move between devices, and the next Tab leaves the
+        /// diagram instead of visiting every device on the way out.
+        /// </summary>
+        private void UpdateTopologyTabStop()
+        {
+            var nodes = TopologyCanvas.Children.OfType<Border>().Where(b => b.Tag is NetworkDevice).ToList();
+            var current = nodes.FirstOrDefault(b => ((NetworkDevice)b.Tag).IpAddress == _topologyFocusIp) ?? nodes.FirstOrDefault();
+            foreach (var node in nodes) KeyboardNavigation.SetIsTabStop(node, node == current);
         }
 
         private void TopologyNode_KeyDown(object sender, KeyEventArgs e)
@@ -131,6 +146,7 @@ namespace KillerScan.Controls
         /// <summary>After a rebuild, gives keyboard focus back to the node that had it.</summary>
         private void RestoreTopologyFocus(bool hadFocus)
         {
+            UpdateTopologyTabStop();
             if (!hadFocus || _topologyFocusIp == null) return;
             TopologyCanvas.Children.OfType<Border>()
                 .FirstOrDefault(b => b.Tag is NetworkDevice d && d.IpAddress == _topologyFocusIp)?.Focus();
