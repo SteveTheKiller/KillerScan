@@ -96,6 +96,8 @@
     <SolidColorBrush x:Key="Syn_Keyword" Color="#0000ff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
     <SolidColorBrush x:Key="TitleBarBrush" Color="#cccccc" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <!-- Close X: darker red than DangerRed so the X keeps 3:1 on the gray bar. -->
+    <SolidColorBrush x:Key="CaptionCloseBrush" Color="#A81C1C" po:Freeze="True"/>
 
     <SolidColorBrush x:Key="AppBorderBrush" Color="#b0b0b0" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 

@@ -97,6 +97,8 @@
     <SolidColorBrush x:Key="RadioHoverFgBrush" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
     <SolidColorBrush x:Key="TitleBarBrush" Color="#3b3642" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <!-- Close X: brighter red than DangerRed so the X keeps 3:1 on this bar. -->
+    <SolidColorBrush x:Key="CaptionCloseBrush" Color="#FF8A8A" po:Freeze="True"/>
 
     <!-- Shortcut categories. One color per group, shared by the F1 list headings and the
          keyboard map's keycaps, so a section reads the same in both views. -->
