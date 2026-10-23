@@ -16,6 +16,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Elevated updates use the signed installed helper and verify the release identity, digest and publisher in protected staging.
 - Preference and history saves preserve existing files on failure, keep unsaved edits for retry, and report when changes could not be saved.
 - Concurrent app instances preserve saved scans and retention changes instead of overwriting newer history.
+- File dialogs stay responsive on slow or crowded folders, cancel stale loads and identify incomplete listings.
 - Vendor database updates preserve the prior complete file on failure and keep lookups available throughout reloads.
 - Executable installation and self-updates verify complete copies and preserve recovery files after replacement failures. Update reports support non-English folders.
 - Reports keep the scanned target, timestamp and captured results when pending input or live results change during export.
