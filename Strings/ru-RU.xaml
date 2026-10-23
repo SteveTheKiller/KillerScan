@@ -529,4 +529,16 @@
     <sys:String x:Key="Str_Scroll_PageDown">На страницу вниз</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">На страницу влево</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">На страницу вправо</sys:String>
+    <sys:String x:Key="Str_Location_Title">Местоположение</sys:String>
+    <sys:String x:Key="Str_Location_Busy">Перед сменой местоположения остановите текущее сканирование или команду терминала.</sys:String>
+    <sys:String x:Key="Str_Location_Legacy">Прежние данные (не назначены)</sys:String>
+    <sys:String x:Key="Str_Location_New">Новое местоположение...</sys:String>
+    <sys:String x:Key="Str_Location_Rename">Переименовать местоположение...</sys:String>
+    <sys:String x:Key="Str_Location_Switch">Сменить местоположение</sys:String>
+    <sys:String x:Key="Str_Location_Explicit">Выберите имя самостоятельно. Местоположение никогда не определяется по диапазонам IP или именам сетей Wi-Fi.</sys:String>
+    <sys:String x:Key="Str_Location_Clear">Смена местоположения очищает текущие результаты и закрывает неактивный терминал и представления мониторинга. Сохранённые данные остаются в исходном местоположении.</sys:String>
+    <sys:String x:Key="Str_Location_InvalidName">Имя местоположения должно содержать от 1 до 80 символов без управляющих символов.</sys:String>
+    <sys:String x:Key="Str_Location_DuplicateName">Местоположение с таким именем уже существует. Выберите другое имя.</sys:String>
+    <sys:String x:Key="Str_Location_SelectionError">Это местоположение недоступно или не может быть изменено. Выберите существующее местоположение.</sys:String>
+    <sys:String x:Key="Str_Location_DataError">Не удалось прочитать или сохранить данные местоположения. Перед продолжением закройте другие экземпляры KillerScan и проверьте права доступа к файлам или восстановите резервную копию.</sys:String>
 </ResourceDictionary>

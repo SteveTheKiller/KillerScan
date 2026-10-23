@@ -13,7 +13,7 @@ namespace KillerScan.Engine
     // multicast, so a few queries reach the whole LAN at once; responses are mapped back to hosts
     // by source IP. Everything is best-effort and wrapped in try/catch - a parse error or a blocked
     // socket just yields no data, never a crash.
-    public static class MulticastDiscovery
+    public static partial class MulticastDiscovery
     {
         public sealed class MdnsInfo
         {

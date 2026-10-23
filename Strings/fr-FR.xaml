@@ -503,4 +503,16 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Scroll_PageDown">Page vers le bas</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Page vers la gauche</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Page vers la droite</sys:String>
+    <sys:String x:Key="Str_Location_Title">Emplacement</sys:String>
+    <sys:String x:Key="Str_Location_Busy">Arrêtez l&apos;analyse ou la commande de terminal en cours avant de changer d&apos;emplacement.</sys:String>
+    <sys:String x:Key="Str_Location_Legacy">Anciennes données (non affectées)</sys:String>
+    <sys:String x:Key="Str_Location_New">Nouvel emplacement...</sys:String>
+    <sys:String x:Key="Str_Location_Rename">Renommer l&apos;emplacement...</sys:String>
+    <sys:String x:Key="Str_Location_Switch">Changer d&apos;emplacement</sys:String>
+    <sys:String x:Key="Str_Location_Explicit">Choisissez un nom. Les emplacements ne sont jamais déduits des plages IP ni des noms de réseaux Wi-Fi.</sys:String>
+    <sys:String x:Key="Str_Location_Clear">Le changement d&apos;emplacement efface les résultats actuels et ferme le terminal inactif et les vues de surveillance. Les données enregistrées restent dans leur emplacement d&apos;origine.</sys:String>
+    <sys:String x:Key="Str_Location_InvalidName">Utilisez un nom d&apos;emplacement de 1 à 80 caractères, sans caractères de contrôle.</sys:String>
+    <sys:String x:Key="Str_Location_DuplicateName">Un emplacement porte déjà ce nom. Choisissez un autre nom.</sys:String>
+    <sys:String x:Key="Str_Location_SelectionError">Cet emplacement est indisponible ou ne peut pas être modifié. Choisissez un emplacement existant.</sys:String>
+    <sys:String x:Key="Str_Location_DataError">Impossible de lire ou d&apos;enregistrer les données de l&apos;emplacement. Fermez les autres instances de KillerScan et vérifiez les droits d&apos;accès aux fichiers ou restaurez une sauvegarde avant de continuer.</sys:String>
 </ResourceDictionary>

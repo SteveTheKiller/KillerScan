@@ -65,6 +65,8 @@ function ConvertTo-KsDevice {
         Netbios  = $Device.NetbiosName
         Mdns     = @($Device.MdnsServices)
         Ssdp     = $Device.SsdpServer
+        LocationId = $Device.LocationId
+        LocationName = $Device.LocationName
     }
     $out.PSObject.TypeNames.Insert(0, 'KillerScan.Device')
     $out
@@ -92,12 +94,23 @@ function scan {
         [switch]$Quick,
 
         # Seconds to allow the whole scan.
-        [int]$Timeout
+        [int]$Timeout,
+
+        # Disable application-level probes; see killerscan /help for names.
+        [ValidateSet('neighbor-cache','arp','icmp','tcp-liveness','dns','mdns','ssdp','ports','http','tls','ssh','snmp','netbios')]
+        [string[]]$Skip,
+        [string]$InterfaceId,
+        [string]$SourceIp,
+        [string]$LocationId = $env:KS_LOCATION_ID
     )
 
     $arguments = @('/scan')
     if ($Target)  { $arguments += ($Target -join ',') }
     if ($Quick)   { $arguments += '/quick' }
+    if ($InterfaceId) { $arguments += @('/interface', $InterfaceId) }
+    if ($SourceIp) { $arguments += @('/source-ip', $SourceIp) }
+    if ($LocationId) { $arguments += @('/location', $LocationId) }
+    if ($Skip)    { $arguments += @('/skip', ($Skip -join ',')) }
     if ($Timeout) { $arguments += @('/timeout', $Timeout) }
     $arguments += @('/json', '/quiet')
 
@@ -116,10 +129,20 @@ function probe {
         [Parameter(Position = 0, Mandatory = $true)]
         [string]$Target,
 
-        [int]$Timeout
+        [int]$Timeout,
+
+        [ValidateSet('neighbor-cache','arp','icmp','tcp-liveness','dns','mdns','ssdp','ports','http','tls','ssh','snmp','netbios')]
+        [string[]]$Skip,
+        [string]$InterfaceId,
+        [string]$SourceIp,
+        [string]$LocationId = $env:KS_LOCATION_ID
     )
 
     $arguments = @('/probe', $Target)
+    if ($InterfaceId) { $arguments += @('/interface', $InterfaceId) }
+    if ($SourceIp) { $arguments += @('/source-ip', $SourceIp) }
+    if ($LocationId) { $arguments += @('/location', $LocationId) }
+    if ($Skip) { $arguments += @('/skip', ($Skip -join ',')) }
     if ($Timeout) { $arguments += @('/timeout', $Timeout) }
     $arguments += @('/json', '/quiet')
 

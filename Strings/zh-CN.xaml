@@ -503,4 +503,16 @@
     <sys:String x:Key="Str_Scroll_PageDown">向下翻页</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">向左翻页</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">向右翻页</sys:String>
+    <sys:String x:Key="Str_Location_Title">位置</sys:String>
+    <sys:String x:Key="Str_Location_Busy">更改位置前，请停止当前扫描或终端命令。</sys:String>
+    <sys:String x:Key="Str_Location_Legacy">旧数据（未分配）</sys:String>
+    <sys:String x:Key="Str_Location_New">新建位置...</sys:String>
+    <sys:String x:Key="Str_Location_Rename">重命名位置...</sys:String>
+    <sys:String x:Key="Str_Location_Switch">更改位置</sys:String>
+    <sys:String x:Key="Str_Location_Explicit">请自行选择名称。位置绝不会根据 IP 范围或 Wi-Fi 名称推断。</sys:String>
+    <sys:String x:Key="Str_Location_Clear">更改位置会清除当前结果，并关闭空闲终端和监控视图。已保存的数据仍保留在原位置。</sys:String>
+    <sys:String x:Key="Str_Location_InvalidName">位置名称须为 1 到 80 个字符，且不含控制字符。</sys:String>
+    <sys:String x:Key="Str_Location_DuplicateName">已存在同名位置。请选择其他名称。</sys:String>
+    <sys:String x:Key="Str_Location_SelectionError">此位置不可用或无法更改。请选择现有位置。</sys:String>
+    <sys:String x:Key="Str_Location_DataError">无法读取或保存位置数据。继续前，请关闭其他 KillerScan 实例，检查文件权限或恢复备份。</sys:String>
 </ResourceDictionary>

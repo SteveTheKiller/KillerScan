@@ -90,6 +90,7 @@ namespace KillerScan.Shell
                     return;
                 }
                 EnsureBundledModules();
+                Environment.SetEnvironmentVariable("KS_LOCATION_ID", Services.Locations.Current.Id);
                 string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 if (command != null) terminal.Start(command, home);
                 else

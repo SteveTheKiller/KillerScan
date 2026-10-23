@@ -48,7 +48,7 @@ namespace KillerScan.Shell
             var dlg = new FileDialog(FileDialogMode.Save)
             {
                 Filter = Loc(filterKey) + "|*" + extension,
-                FileName = $"KillerScan_KeepAlive_{DateTime.Now:yyyyMMdd_HHmmss}{extension}",
+                FileName = $"KillerScan_KeepAlive_{Locations.Current.Id}_{DateTime.Now:yyyyMMdd_HHmmss}{extension}",
                 DefaultExt = extension,
                 AddExtension = true
             };
@@ -59,8 +59,8 @@ namespace KillerScan.Shell
                 if (format == "png") SaveElementPng(watch.CardsVisual, dlg.FileName);
                 else File.WriteAllText(dlg.FileName, format switch
                 {
-                    "html" => watch.BuildHtml(),
-                    "txt"  => watch.BuildText(),
+                    "html" => watch.BuildHtml().Replace("</h1>", "</h1><p>" + System.Net.WebUtility.HtmlEncode(Locations.Current.Name + " (" + Locations.Current.Id + ")") + "</p>"),
+                    "txt"  => "Location: " + Locations.Current.Name + " (" + Locations.Current.Id + ")\n" + watch.BuildText(),
                     _      => watch.BuildCsv(),
                 }, new UTF8Encoding(false));
             }
@@ -78,13 +78,13 @@ namespace KillerScan.Shell
             var dlg = new FileDialog(FileDialogMode.Save)
             {
                 Filter = Loc("Str_Filter_Text") + "|*.txt",
-                FileName = $"KillerScan_Terminal_{DateTime.Now:yyyyMMdd_HHmmss}.txt",
+                FileName = $"KillerScan_Terminal_{Locations.Current.Id}_{DateTime.Now:yyyyMMdd_HHmmss}.txt",
                 DefaultExt = ".txt",
                 AddExtension = true
             };
             if (dlg.ShowDialog(this) != true) return;
 
-            try { File.WriteAllText(dlg.FileName, terminal.GetText(), new UTF8Encoding(false)); }
+            try { File.WriteAllText(dlg.FileName, "Location: " + Locations.Current.Name + " (" + Locations.Current.Id + ")\n" + terminal.GetText(), new UTF8Encoding(false)); }
             catch (Exception ex) when (ex is not OutOfMemoryException)
             {
                 MessageBox.Show(string.Format(Loc("Str_Err_Export"), ex.Message),

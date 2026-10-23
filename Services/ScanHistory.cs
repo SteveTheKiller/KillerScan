@@ -7,6 +7,8 @@ namespace KillerScan.Services
     {
         public DateTimeOffset ScannedAt { get; set; }
         public string Target { get; set; } = string.Empty;
+        public string LocationId { get; set; } = LocationCatalog.LegacyId;
+        public string LocationName { get; set; } = "Legacy data";
         public List<HistoricalDevice> Devices { get; set; } = [];
 
         /// <summary>What a screen reader announces for the entry's row in the history list.</summary>
@@ -34,10 +36,9 @@ namespace KillerScan.Services
 
     internal static class ScanHistory
     {
-        private static readonly string FilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "KillerScan", "history.json");
+        private static string FilePath => Locations.DataFile("history.json");
         private static HistoryArchive _archive = new(FilePath);
+        internal static bool IsReadable => DemoData.Enabled || _archive.IsReadable;
         private static List<ScanHistoryEntry> _entries = [];
         private static HistoryRetention _demoRetention = new(HistoryRetentionMode.Count);
 
@@ -68,7 +69,7 @@ namespace KillerScan.Services
             int index = _entries.IndexOf(entry);
             ScanHistoryEntry? previous = index > 0
                 ? _entries.Take(index).LastOrDefault(candidate =>
-                    string.Equals(candidate.Target, entry.Target, StringComparison.OrdinalIgnoreCase))
+                    candidate.LocationId == entry.LocationId && string.Equals(candidate.Target, entry.Target, StringComparison.OrdinalIgnoreCase))
                 : null;
             return Compare(entry, previous);
         }
@@ -79,7 +80,9 @@ namespace KillerScan.Services
             // on somebody's actual machine, so the fabricated network must not touch their file.
             if (DemoData.Enabled) { _entries = []; _demoRetention = new(HistoryRetentionMode.Count); return; }
             _archive = new(FilePath);
-            _archive.Load(DateTimeOffset.Now);
+            _archive.LoadForLocation(DateTimeOffset.Now, Locations.Current.Id);
+            if (_archive.Entries.Any(entry => entry.LocationId != Locations.Current.Id))
+                throw new InvalidDataException("History belongs to a different location. Keep the file and restore the correct location data.");
             _entries = _archive.Entries;
         }
 
@@ -88,19 +91,25 @@ namespace KillerScan.Services
         {
             if (!DemoData.Enabled) return;
             _entries = [.. entries];
+            foreach (var entry in _entries) { entry.LocationId = Locations.Current.Id; entry.LocationName = Locations.Current.Name; }
             _demoRetention = new(HistoryRetentionMode.SaveAll);
         }
 
         public static ScanComparison Record(string target, IEnumerable<NetworkDevice> devices)
         {
+            var snapshot = devices.ToList();
+            if (snapshot.Any(device => device.LocationId != null && device.LocationId != Locations.Current.Id))
+                throw new InvalidOperationException("Scan results belong to a different location.");
             var current = new ScanHistoryEntry
             {
                 ScannedAt = DateTimeOffset.Now,
                 Target = target,
-                Devices = [.. devices.Select(ToHistorical).OrderBy(device => device.IpAddress)]
+                LocationId = Locations.Current.Id,
+                LocationName = Locations.Current.Name,
+                Devices = [.. snapshot.Select(ToHistorical).OrderBy(device => device.IpAddress)]
             };
             var previous = _entries.LastOrDefault(entry =>
-                string.Equals(entry.Target, target, StringComparison.OrdinalIgnoreCase));
+                entry.LocationId == current.LocationId && string.Equals(entry.Target, target, StringComparison.OrdinalIgnoreCase));
             var comparison = Compare(current, previous);
             if (DemoData.Enabled) _entries = _demoRetention.Retained(_entries.Concat([current]), current.ScannedAt);
             else
@@ -113,7 +122,7 @@ namespace KillerScan.Services
 
         private static ScanComparison Compare(ScanHistoryEntry current, ScanHistoryEntry? previous)
         {
-            if (previous == null)
+            if (previous == null || previous.LocationId != current.LocationId)
                 return new ScanComparison(current, null, current.Devices, [], []);
 
             var before = previous.Devices.GroupBy(device => device.Identity, StringComparer.OrdinalIgnoreCase)

@@ -504,4 +504,16 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Scroll_PageDown">Seite nach unten</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Seite nach links</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Seite nach rechts</sys:String>
+    <sys:String x:Key="Str_Location_Title">Standort</sys:String>
+    <sys:String x:Key="Str_Location_Busy">Beende den laufenden Scan oder Terminalbefehl, bevor du den Standort wechselst.</sys:String>
+    <sys:String x:Key="Str_Location_Legacy">Bisherige Daten (nicht zugeordnet)</sys:String>
+    <sys:String x:Key="Str_Location_New">Neuer Standort...</sys:String>
+    <sys:String x:Key="Str_Location_Rename">Standort umbenennen...</sys:String>
+    <sys:String x:Key="Str_Location_Switch">Standort wechseln</sys:String>
+    <sys:String x:Key="Str_Location_Explicit">Wähle selbst einen Namen. Standorte werden niemals aus IP-Bereichen oder WLAN-Namen abgeleitet.</sys:String>
+    <sys:String x:Key="Str_Location_Clear">Ein Standortwechsel löscht die aktuellen Ergebnisse und schließt das inaktive Terminal und die Überwachungsansichten. Gespeicherte Daten bleiben ihrem ursprünglichen Standort zugeordnet.</sys:String>
+    <sys:String x:Key="Str_Location_InvalidName">Verwende einen Standortnamen mit 1 bis 80 Zeichen ohne Steuerzeichen.</sys:String>
+    <sys:String x:Key="Str_Location_DuplicateName">Ein Standort mit diesem Namen existiert bereits. Wähle einen anderen Namen.</sys:String>
+    <sys:String x:Key="Str_Location_SelectionError">Dieser Standort ist nicht verfügbar oder kann nicht geändert werden. Wähle einen vorhandenen Standort.</sys:String>
+    <sys:String x:Key="Str_Location_DataError">Standortdaten konnten nicht gelesen oder gespeichert werden. Schließe andere KillerScan-Instanzen und prüfe die Dateiberechtigungen oder stelle eine Sicherung wieder her, bevor du fortfährst.</sys:String>
 </ResourceDictionary>

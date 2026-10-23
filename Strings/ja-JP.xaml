@@ -514,4 +514,16 @@
     <sys:String x:Key="Str_Scroll_PageDown">1 ページ下へ</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">1 ページ左へ</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">1 ページ右へ</sys:String>
+    <sys:String x:Key="Str_Location_Title">拠点</sys:String>
+    <sys:String x:Key="Str_Location_Busy">拠点を変更する前に、実行中のスキャンまたはターミナルのコマンドを停止してください。</sys:String>
+    <sys:String x:Key="Str_Location_Legacy">従来のデータ（未割り当て）</sys:String>
+    <sys:String x:Key="Str_Location_New">新しい拠点...</sys:String>
+    <sys:String x:Key="Str_Location_Rename">拠点名を変更...</sys:String>
+    <sys:String x:Key="Str_Location_Switch">拠点を変更</sys:String>
+    <sys:String x:Key="Str_Location_Explicit">名前は自分で指定してください。IP 範囲や Wi-Fi 名から拠点が自動判定されることはありません。</sys:String>
+    <sys:String x:Key="Str_Location_Clear">拠点を変更すると現在の結果が消去され、待機中のターミナルと監視ビューが閉じます。保存済みのデータは元の拠点に残ります。</sys:String>
+    <sys:String x:Key="Str_Location_InvalidName">拠点名は制御文字を含まない 1～80 文字で指定してください。</sys:String>
+    <sys:String x:Key="Str_Location_DuplicateName">この名前の拠点はすでに存在します。別の名前を指定してください。</sys:String>
+    <sys:String x:Key="Str_Location_SelectionError">この拠点は利用できないか、変更できません。既存の拠点を選択してください。</sys:String>
+    <sys:String x:Key="Str_Location_DataError">拠点データを読み取りまたは保存できませんでした。続行する前に、他の KillerScan を終了し、ファイルのアクセス権を確認するか、バックアップを復元してください。</sys:String>
 </ResourceDictionary>

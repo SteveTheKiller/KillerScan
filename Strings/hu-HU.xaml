@@ -519,4 +519,16 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Scroll_PageDown">Egy oldallal lejjebb</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Egy oldallal balra</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Egy oldallal jobbra</sys:String>
+    <sys:String x:Key="Str_Location_Title">Helyszín</sys:String>
+    <sys:String x:Key="Str_Location_Busy">Helyszínváltás előtt állítsd le a folyamatban lévő vizsgálatot vagy terminálparancsot.</sys:String>
+    <sys:String x:Key="Str_Location_Legacy">Korábbi adatok (nincs hozzárendelve)</sys:String>
+    <sys:String x:Key="Str_Location_New">Új helyszín...</sys:String>
+    <sys:String x:Key="Str_Location_Rename">Helyszín átnevezése...</sys:String>
+    <sys:String x:Key="Str_Location_Switch">Helyszínváltás</sys:String>
+    <sys:String x:Key="Str_Location_Explicit">Válassz nevet. A helyszínt a program soha nem következteti ki IP-tartományokból vagy Wi-Fi-nevekből.</sys:String>
+    <sys:String x:Key="Str_Location_Clear">A helyszínváltás törli az aktuális eredményeket, és bezárja az inaktív terminált és a megfigyelési nézeteket. A mentett adatok az eredeti helyszínen maradnak.</sys:String>
+    <sys:String x:Key="Str_Location_InvalidName">A helyszín neve 1 és 80 karakter közötti lehet, vezérlőkarakterek nélkül.</sys:String>
+    <sys:String x:Key="Str_Location_DuplicateName">Már létezik ilyen nevű helyszín. Válassz másik nevet.</sys:String>
+    <sys:String x:Key="Str_Location_SelectionError">Ez a helyszín nem érhető el vagy nem módosítható. Válassz egy meglévő helyszínt.</sys:String>
+    <sys:String x:Key="Str_Location_DataError">A helyszín adatai nem olvashatók vagy menthetők. A folytatás előtt zárd be a KillerScan többi példányát, és ellenőrizd a fájljogosultságokat, vagy állíts vissza egy biztonsági másolatot.</sys:String>
 </ResourceDictionary>

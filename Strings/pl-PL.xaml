@@ -488,4 +488,16 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Scroll_PageDown">Strona w dół</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Strona w lewo</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Strona w prawo</sys:String>
+    <sys:String x:Key="Str_Location_Title">Lokalizacja</sys:String>
+    <sys:String x:Key="Str_Location_Busy">Przed zmianą lokalizacji zatrzymaj trwające skanowanie lub polecenie terminala.</sys:String>
+    <sys:String x:Key="Str_Location_Legacy">Dotychczasowe dane (nieprzypisane)</sys:String>
+    <sys:String x:Key="Str_Location_New">Nowa lokalizacja...</sys:String>
+    <sys:String x:Key="Str_Location_Rename">Zmień nazwę lokalizacji...</sys:String>
+    <sys:String x:Key="Str_Location_Switch">Zmień lokalizację</sys:String>
+    <sys:String x:Key="Str_Location_Explicit">Wybierz własną nazwę. Lokalizacje nigdy nie są ustalane na podstawie zakresów IP ani nazw sieci Wi-Fi.</sys:String>
+    <sys:String x:Key="Str_Location_Clear">Zmiana lokalizacji usuwa bieżące wyniki i zamyka nieaktywny terminal oraz widoki monitorowania. Zapisane dane pozostają w pierwotnej lokalizacji.</sys:String>
+    <sys:String x:Key="Str_Location_InvalidName">Nazwa lokalizacji musi mieć od 1 do 80 znaków i nie może zawierać znaków sterujących.</sys:String>
+    <sys:String x:Key="Str_Location_DuplicateName">Lokalizacja o tej nazwie już istnieje. Wybierz inną nazwę.</sys:String>
+    <sys:String x:Key="Str_Location_SelectionError">Ta lokalizacja jest niedostępna lub nie można jej zmienić. Wybierz istniejącą lokalizację.</sys:String>
+    <sys:String x:Key="Str_Location_DataError">Nie można odczytać lub zapisać danych lokalizacji. Przed kontynuowaniem zamknij inne instancje KillerScan i sprawdź uprawnienia do plików lub przywróć kopię zapasową.</sys:String>
 </ResourceDictionary>

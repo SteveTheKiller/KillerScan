@@ -28,7 +28,11 @@ namespace KillerScan.Controls
             FooterNetSpeed.Text   = Segment(demo.LinkSpeedText);
 
             _active.Devices.Clear();
-            foreach (var d in demo.Devices) _active.Devices.Add(d);
+            foreach (var d in demo.Devices)
+            {
+                d.LocationId = Locations.Current.Id; d.LocationName = Locations.Current.Name;
+                _active.Devices.Add(d);
+            }
 
             _active.ScannedSubnet = demo.Subnet;
             RefreshDeviceCount();

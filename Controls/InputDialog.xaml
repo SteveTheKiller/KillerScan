@@ -67,7 +67,7 @@
                             <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Scan" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
                         </Grid>
                         </StackPanel>
-                        <TextBlock Text="{DynamicResource Str_Ssh_Title}" Margin="6,0,0,0" VerticalAlignment="Center"
+                        <TextBlock x:Name="PlainTitleText" Text="{Binding Text, ElementName=HeadingText}" Margin="6,0,0,0" VerticalAlignment="Center"
                                    Visibility="{DynamicResource InputDialogPlainTitleVisibility}"
                                    FontFamily="Tahoma" FontSize="11" FontWeight="Bold"
                                    Foreground="{DynamicResource ChromeTextBrush}"/>

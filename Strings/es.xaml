@@ -503,4 +503,16 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Scroll_PageDown">Una página hacia abajo</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Una página hacia la izquierda</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Una página hacia la derecha</sys:String>
+    <sys:String x:Key="Str_Location_Title">Ubicación</sys:String>
+    <sys:String x:Key="Str_Location_Busy">Detén el análisis o comando de terminal actual antes de cambiar de ubicación.</sys:String>
+    <sys:String x:Key="Str_Location_Legacy">Datos anteriores (sin asignar)</sys:String>
+    <sys:String x:Key="Str_Location_New">Nueva ubicación...</sys:String>
+    <sys:String x:Key="Str_Location_Rename">Cambiar nombre de ubicación...</sys:String>
+    <sys:String x:Key="Str_Location_Switch">Cambiar ubicación</sys:String>
+    <sys:String x:Key="Str_Location_Explicit">Elige un nombre. Las ubicaciones nunca se deducen de rangos IP ni de nombres de redes Wi-Fi.</sys:String>
+    <sys:String x:Key="Str_Location_Clear">Cambiar de ubicación borra los resultados actuales y cierra la terminal inactiva y las vistas de supervisión. Los datos guardados permanecen en su ubicación original.</sys:String>
+    <sys:String x:Key="Str_Location_InvalidName">Usa un nombre de ubicación de entre 1 y 80 caracteres, sin caracteres de control.</sys:String>
+    <sys:String x:Key="Str_Location_DuplicateName">Ya existe una ubicación con este nombre. Elige otro nombre.</sys:String>
+    <sys:String x:Key="Str_Location_SelectionError">Esta ubicación no está disponible o no se puede cambiar. Elige una ubicación existente.</sys:String>
+    <sys:String x:Key="Str_Location_DataError">No se pudieron leer o guardar los datos de la ubicación. Cierra otras instancias de KillerScan y revisa los permisos de los archivos o restaura una copia de seguridad antes de continuar.</sys:String>
 </ResourceDictionary>

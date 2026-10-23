@@ -503,4 +503,16 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Scroll_PageDown">Bir sayfa aşağı</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Bir sayfa sola</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Bir sayfa sağa</sys:String>
+    <sys:String x:Key="Str_Location_Title">Konum</sys:String>
+    <sys:String x:Key="Str_Location_Busy">Konumu değiştirmeden önce devam eden taramayı veya terminal komutunu durdurun.</sys:String>
+    <sys:String x:Key="Str_Location_Legacy">Eski veriler (atanmamış)</sys:String>
+    <sys:String x:Key="Str_Location_New">Yeni konum...</sys:String>
+    <sys:String x:Key="Str_Location_Rename">Konumu yeniden adlandır...</sys:String>
+    <sys:String x:Key="Str_Location_Switch">Konumu değiştir</sys:String>
+    <sys:String x:Key="Str_Location_Explicit">Bir ad seçin. Konumlar hiçbir zaman IP aralıklarından veya Wi-Fi adlarından çıkarılmaz.</sys:String>
+    <sys:String x:Key="Str_Location_Clear">Konum değiştirmek mevcut sonuçları temizler ve boşta olan terminal ile izleme görünümlerini kapatır. Kaydedilmiş veriler asıl konumlarında kalır.</sys:String>
+    <sys:String x:Key="Str_Location_InvalidName">Kontrol karakterleri içermeyen, 1 ila 80 karakter uzunluğunda bir konum adı kullanın.</sys:String>
+    <sys:String x:Key="Str_Location_DuplicateName">Bu ada sahip bir konum zaten var. Başka bir ad seçin.</sys:String>
+    <sys:String x:Key="Str_Location_SelectionError">Bu konum kullanılamıyor veya değiştirilemiyor. Mevcut bir konum seçin.</sys:String>
+    <sys:String x:Key="Str_Location_DataError">Konum verileri okunamadı veya kaydedilemedi. Devam etmeden önce diğer KillerScan örneklerini kapatın ve dosya izinlerini kontrol edin veya bir yedeği geri yükleyin.</sys:String>
 </ResourceDictionary>

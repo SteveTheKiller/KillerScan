@@ -22,14 +22,16 @@ namespace KillerScan.Services
     /// </summary>
     internal static class DeviceLogins
     {
-        private static readonly string FilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "KillerScan", "logins.json");
+        private static string FilePath => Locations.DataFile("logins.json");
+        private static bool _readable = true;
+        internal static bool IsReadable => _readable;
 
         private static Dictionary<string, string> _logins = new(StringComparer.OrdinalIgnoreCase);
 
         public static void Load()
         {
+            _logins = new(StringComparer.OrdinalIgnoreCase); _readable = true;
+            if (DemoData.Enabled) return;
             try
             {
                 if (!File.Exists(FilePath)) return;
@@ -38,18 +40,19 @@ namespace KillerScan.Services
                 if (loaded != null)
                     _logins = new Dictionary<string, string>(loaded, StringComparer.OrdinalIgnoreCase);
             }
-            catch { }
+            catch { _readable = false; }
         }
 
         public static void Save()
         {
+            if (DemoData.Enabled || !_readable) return;
             try
             {
                 var dir = Path.GetDirectoryName(FilePath)!;
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
                 var options = new JsonSerializerOptions { WriteIndented = true };
-                File.WriteAllText(FilePath, JsonSerializer.Serialize(_logins, options));
+                LocationCatalog.WriteAtomic(FilePath, JsonSerializer.Serialize(_logins, options));
             }
             catch { }
         }

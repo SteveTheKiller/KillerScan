@@ -545,4 +545,16 @@
     <sys:String x:Key="Str_Scroll_PageDown">Бір бет төмен</sys:String>
     <sys:String x:Key="Str_Scroll_PageLeft">Бір бет солға</sys:String>
     <sys:String x:Key="Str_Scroll_PageRight">Бір бет оңға</sys:String>
+    <sys:String x:Key="Str_Location_Title">Орналасу орны</sys:String>
+    <sys:String x:Key="Str_Location_Busy">Орналасу орнын өзгертпес бұрын ағымдағы сканерлеуді немесе терминал пәрменін тоқтатыңыз.</sys:String>
+    <sys:String x:Key="Str_Location_Legacy">Бұрынғы деректер (тағайындалмаған)</sys:String>
+    <sys:String x:Key="Str_Location_New">Жаңа орналасу орны...</sys:String>
+    <sys:String x:Key="Str_Location_Rename">Орналасу орнының атын өзгерту...</sys:String>
+    <sys:String x:Key="Str_Location_Switch">Орналасу орнын ауыстыру</sys:String>
+    <sys:String x:Key="Str_Location_Explicit">Атауды өзіңіз таңдаңыз. Орналасу орны IP ауқымдары немесе Wi-Fi атаулары бойынша ешқашан анықталмайды.</sys:String>
+    <sys:String x:Key="Str_Location_Clear">Орналасу орнын ауыстыру ағымдағы нәтижелерді тазартып, бос тұрған терминал мен бақылау көріністерін жабады. Сақталған деректер бастапқы орналасу орнында қалады.</sys:String>
+    <sys:String x:Key="Str_Location_InvalidName">Басқару таңбалары жоқ, ұзындығы 1-ден 80 таңбаға дейінгі орналасу орнының атауын пайдаланыңыз.</sys:String>
+    <sys:String x:Key="Str_Location_DuplicateName">Осындай атауы бар орналасу орны бұрыннан бар. Басқа атауды таңдаңыз.</sys:String>
+    <sys:String x:Key="Str_Location_SelectionError">Бұл орналасу орны қолжетімсіз немесе оны өзгерту мүмкін емес. Бар орналасу орнын таңдаңыз.</sys:String>
+    <sys:String x:Key="Str_Location_DataError">Орналасу орнының деректерін оқу немесе сақтау мүмкін болмады. Жалғастырмас бұрын KillerScan бағдарламасының басқа даналарын жауып, файл рұқсаттарын тексеріңіз немесе сақтық көшірмені қалпына келтіріңіз.</sys:String>
 </ResourceDictionary>
