@@ -96,6 +96,7 @@
     <!-- File picker folder tree connecting lines, KillerPDF's value. -->
     <SolidColorBrush x:Key="TreeLineBrush" Color="#156140" po:Freeze="True"/>
     <SolidColorBrush x:Key="AccentLogo" Color="#e0d49a"/>
+    <SolidColorBrush x:Key="TabActiveRingBrush" Color="#e0d49a"/>
     <SolidColorBrush x:Key="RadioAccent"    Color="#e0d49a" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionAccent" Color="#138a42" po:Freeze="True"/>
     <sys:Double x:Key="PaneShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.6</sys:Double>
