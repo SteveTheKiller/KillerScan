@@ -39,6 +39,10 @@ Events are raised on worker threads, so a UI host marshals them to its own threa
 
 Canceling the token ends the scan with an `OperationCanceledException`.
 
+Pass an immutable `ScanOptions` as the third argument to either scan method to disable
+specific discovery or fingerprint probes. Existing overloads enable all defaults.
+See [scan options](../docs/scan-options.md) for dependencies, JSON compatibility and CLI use.
+
 ## Status and localization
 
 `StatusChanged` reports a `ScanStatus`, which carries a `ScanStage` plus a count or a target label. The engine never produces translated text. `ScanStatus.ToString()` gives plain English for logs and tools.

@@ -49,6 +49,7 @@ namespace KillerScan.Controls
             Add("Str_Ctx_CopyMac", "Ctrl+Shift+C", "mac", 0xE8C8);
             Add("Str_Ctx_CopyHost", "Ctrl+Alt+C", "host", 0xE8C8);
             Add("Str_History_CopyDetails", "Ctrl+Shift+Y", "details", 0xE8C8);
+            Add("Str_Evidence_Title", "Ctrl+I", "evidence", 0xE946);
             menu.Items.Add(new Separator());
             Add("Str_Export_Csv", "Ctrl+E", "export", 0xE896);
             Add("Str_History_ViewChanges", "Ctrl+Shift+H", "changes", 0xE8FD);
@@ -64,6 +65,7 @@ namespace KillerScan.Controls
                     item.IsEnabled = action switch
                     {
                         "ip" or "mac" or "host" or "details" => grid != null && CopyValue(action).Length > 0,
+                        "evidence" => grid != null && SelectedHistoryDevice != null,
                         "export" => _entry != null && VisibleGrid.Items.Count > 0,
                         "changes" => _entry != null && _showAll,
                         "all" => _entry != null && !_showAll,
@@ -98,6 +100,12 @@ namespace KillerScan.Controls
 
         private async void ExecuteAction(string action)
         {
+            if (action == "evidence" && SelectedHistoryDevice is { } selected)
+            {
+                new DeviceEvidenceWindow(new NetworkDevice { IpAddress = selected.IpAddress, Hostname = selected.Hostname,
+                    DeviceType = selected.DeviceType, Identification = selected.Identification }) { Owner = Window.GetWindow(this) }.ShowDialog();
+                return;
+            }
             if (action == "changes" || action == "all") { SetView(action == "all"); VisibleGrid.Focus(); return; }
             if (action == "current") { CurrentScanRequested?.Invoke(); return; }
             if (action == "sidebar") { SidebarRequested?.Invoke(); return; }
@@ -119,13 +127,15 @@ namespace KillerScan.Controls
         {
             static string Cell(string value) => ReportExport.CsvField(value);
             var lines = new List<string> { string.Join(",", new[] { "Str_History_Change", "Str_Col_Ip", "Str_Col_DeviceName",
-                "Str_Col_Mac", "Str_Col_Vendor", "Str_Col_Type", "Str_Col_Ports" }.Select(key => Cell(Loc(key)))) };
+                "Str_Col_Mac", "Str_Col_Vendor", "Str_Col_Type", "Str_Col_Ports" }.Select(key => Cell(Loc(key)))) + ",Location ID,Location,Identification JSON" };
             foreach (object row in VisibleGrid.Items)
             {
                 var device = row is HistoryChangeRow change ? change.Device : ((HistoryDeviceRow)row).Device;
                 lines.Add(string.Join(",", new[] { row is HistoryChangeRow changed ? changed.Change : "",
                     device.IpAddress, device.Hostname, device.MacAddress, device.Vendor,
-                    DeviceTypeConverter.Display(device.DeviceType), string.Join(", ", device.OpenPorts) }.Select(Cell)));
+                    DeviceTypeConverter.Display(device.DeviceType), string.Join(", ", device.OpenPorts),
+                    _entry?.LocationId ?? "", _entry?.LocationName ?? "",
+                    device.Identification == null ? "" : System.Text.Json.JsonSerializer.Serialize(device.Identification) }.Select(Cell)));
             }
             return string.Join(Environment.NewLine, lines) + Environment.NewLine;
         }
@@ -163,6 +173,7 @@ namespace KillerScan.Controls
                 (Key.C, ModifierKeys.Control | ModifierKeys.Shift) => "mac",
                 (Key.C, ModifierKeys.Control | ModifierKeys.Alt) => "host",
                 (Key.Y, ModifierKeys.Control | ModifierKeys.Shift) => "details",
+                (Key.I, ModifierKeys.Control) => "evidence",
                 (Key.E, ModifierKeys.Control) => "export",
                 (Key.H, ModifierKeys.Control | ModifierKeys.Shift) => _showAll ? "changes" : "all",
                 (Key.F6, ModifierKeys.None) => "current",

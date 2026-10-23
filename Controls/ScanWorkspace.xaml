@@ -5,7 +5,7 @@
          colors serves both. The triggers match the raw English type, which is why
          ServiceRow carries the raw value and localizes separately for its CSV. -->
     <DataTemplate x:Key="DeviceTypeCell">
-
+        <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding DeviceType, Converter={StaticResource DeviceTypeLoc}}" FontWeight="Medium">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
@@ -76,6 +76,8 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
+            <TextBlock Text="{Binding Identification, Converter={StaticResource IdentificationConfidence}}" FontSize="10" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center"/>
+        </StackPanel>
         </DataTemplate>
     <!-- Template cells have no text of their own for UI Automation, which otherwise reads them
          out as the row's type name and a column number. -->
@@ -114,6 +116,12 @@
 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Btn_Scan}"/><Run Text=" (F5)"/></TextBlock></Button.ToolTip>
 </Button>
 <Button x:Name="DeepScanAllButton" Content="{DynamicResource Str_Btn_DeepScanAll}" Style="{StaticResource OutlineButton}" Click="DeepScanAll_Click" Visibility="Collapsed" FontSize="12" Padding="8,3" Margin="0,2,10,2"/>
+<Button x:Name="ScanOptionsButton" Content="&#xE713;" FontFamily="Segoe MDL2 Assets"
+        AutomationProperties.Name="{DynamicResource Str_Options_Title}" ToolTip="{DynamicResource Str_Options_Title}"
+        Style="{StaticResource OutlineButton}" Padding="6,3" Margin="0,2,6,2"/>
+<Button x:Name="InterfaceSelectionButton" Content="&#xE774;" FontFamily="Segoe MDL2 Assets"
+        AutomationProperties.Name="{DynamicResource Str_Interface_Title}" ToolTip="{DynamicResource Str_Interface_Title}"
+        Style="{StaticResource OutlineButton}" Padding="6,3" Margin="0,2,6,2"/>
 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,8,2">
 <TextBlock Text="{DynamicResource Str_Lbl_Local}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,0,5,0"/>
 <TextBlock x:Name="LocalIpLabel" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11"/>
@@ -397,6 +405,9 @@
 
                     <DataGrid.ContextMenu>
                         <ContextMenu>
+                            <MenuItem Header="{DynamicResource Str_Evidence_Title}" InputGestureText="Ctrl+I" Click="Evidence_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE946;"/></MenuItem.Icon>
+                            </MenuItem>
                             <MenuItem x:Name="RescanMenuItem" Header="{DynamicResource Str_Ctx_RescanOne}" InputGestureText="Ctrl+R" Click="RescanSelected_Click">
                                 <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE72C;"/></MenuItem.Icon>
                             </MenuItem>
@@ -687,6 +698,9 @@
                           CellStyle="{StaticResource DarkDataGridCell}">
                     <DataGrid.ContextMenu>
                         <ContextMenu>
+                            <MenuItem Header="{DynamicResource Str_Evidence_Title}" InputGestureText="Ctrl+I" Tag="Evidence" Click="ServiceMenu_Click">
+                                <MenuItem.Icon><TextBlock Style="{StaticResource MenuIcon}" Text="&#xE946;"/></MenuItem.Icon>
+                            </MenuItem>
                             <MenuItem Header="{DynamicResource Str_Services_CopyEndpoint}" InputGestureText="Ctrl+Shift+C" Tag="CopyEndpoint" Click="ServiceMenu_Click">
                                 <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
                             </MenuItem>

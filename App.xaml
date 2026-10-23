@@ -36,6 +36,7 @@
             <!-- Device type: stored English value in, localized label out. Display only - nothing
                  that persists, colors, filters or exports goes through it (DeviceTypeConverter). -->
             <controls:DeviceTypeConverter x:Key="DeviceTypeLoc"/>
+            <controls:IdentificationConfidenceConverter x:Key="IdentificationConfidence"/>
             <controls:VendorConverter x:Key="VendorLoc"/>
             <controls:TrustMarkConverter x:Key="TrustMark"/>
 

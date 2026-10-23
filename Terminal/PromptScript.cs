@@ -31,8 +31,7 @@ namespace KillerScan.Shell
         private static string PromptDefaultPath => Path.Combine(PromptDir, "KillerPrompt.default.ps1");
 
         private static string PromptDir => Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "KillerScan", "prompt");
+            Services.Locations.DataRoot, "prompt");
 
         // ═══════════════════════════════════════════════════════════
         //  UNPACK

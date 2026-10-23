@@ -147,8 +147,16 @@ namespace KillerScan
             Services.ThemeManager.Initialize();
             Services.FilmGrain.Initialize();   // after the theme, before the window is built
             ShutdownMode = ShutdownMode.OnLastWindowClose;
-            MainWindow = new Shell.MainWindow(uiScanTarget, startUiScan);
-            MainWindow.Show();
+            try
+            {
+                MainWindow = new Shell.MainWindow(uiScanTarget, startUiScan);
+                MainWindow.Show();
+            }
+            catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException or System.Text.Json.JsonException)
+            {
+                MessageBox.Show(Services.Locations.ErrorText(ex), L("Str_Location_Title", "Location"), MessageBoxButton.OK, MessageBoxImage.Error);
+                Shutdown(1);
+            }
         }
 
         // ============================================================
@@ -323,6 +331,7 @@ namespace KillerScan
         {
             try
             {
+                if (Services.IsolatedSettings.Enabled) return Services.IsolatedSettings.Get(name);
                 using var key = Registry.CurrentUser.OpenSubKey(@"Software\KillerScan\Settings");
                 return key?.GetValue(name) as string;
             }
@@ -333,6 +342,7 @@ namespace KillerScan
         {
             try
             {
+                if (Services.IsolatedSettings.Enabled) { Services.IsolatedSettings.Set(name, value); return; }
                 using var key = Registry.CurrentUser.CreateSubKey(@"Software\KillerScan\Settings");
                 key?.SetValue(name, value);
             }
@@ -343,6 +353,7 @@ namespace KillerScan
         {
             try
             {
+                if (Services.IsolatedSettings.Enabled) { Services.IsolatedSettings.Set(name, null); return; }
                 using var key = Registry.CurrentUser.OpenSubKey(@"Software\KillerScan\Settings", writable: true);
                 key?.DeleteValue(name, throwOnMissingValue: false);
             }

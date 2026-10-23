@@ -8,14 +8,16 @@ namespace KillerScan.Services
     /// </summary>
     public static class DeviceOverrides
     {
-        private static readonly string FilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "KillerScan", "overrides.json");
+        private static string FilePath => Locations.DataFile("overrides.json");
+        private static bool _readable = true;
+        internal static bool IsReadable => _readable;
 
         private static Dictionary<string, string> _overrides = new(StringComparer.OrdinalIgnoreCase);
 
         public static void Load()
         {
+            _overrides = new(StringComparer.OrdinalIgnoreCase); _readable = true;
+            if (DemoData.Enabled) return;
             try
             {
                 if (!File.Exists(FilePath)) return;
@@ -24,18 +26,19 @@ namespace KillerScan.Services
                 if (loaded != null)
                     _overrides = new Dictionary<string, string>(loaded, StringComparer.OrdinalIgnoreCase);
             }
-            catch { }
+            catch { _readable = false; }
         }
 
         public static void Save()
         {
+            if (DemoData.Enabled || !_readable) return;
             try
             {
                 var dir = Path.GetDirectoryName(FilePath)!;
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
                 var options = new JsonSerializerOptions { WriteIndented = true };
-                File.WriteAllText(FilePath, JsonSerializer.Serialize(_overrides, options));
+                LocationCatalog.WriteAtomic(FilePath, JsonSerializer.Serialize(_overrides, options));
             }
             catch { }
         }
@@ -70,6 +73,12 @@ namespace KillerScan.Services
         {
             if (string.IsNullOrEmpty(mac)) return false;
             return _overrides.ContainsKey(mac.ToUpperInvariant());
+        }
+
+        internal static Func<string, string?> CaptureLookup()
+        {
+            var types = new Dictionary<string, string>(_overrides, StringComparer.OrdinalIgnoreCase);
+            return mac => !string.IsNullOrEmpty(mac) && types.TryGetValue(mac, out string? value) ? value : null;
         }
     }
 }

@@ -39,7 +39,7 @@ namespace KillerScan.Controls
             var dlg = new FileDialog(FileDialogMode.Save)
             {
                 Filter = filter,
-                FileName = $"KillerScan_Topology_{DateTime.Now:yyyyMMdd_HHmmss}{extension}",
+                FileName = $"KillerScan_Topology_{Locations.Current.Id}_{DateTime.Now:yyyyMMdd_HHmmss}{extension}",
                 DefaultExt = extension,
                 AddExtension = true
             };
@@ -131,6 +131,8 @@ namespace KillerScan.Controls
                .Append("\" width=\"").Append(width.ToString("0.##", ci))
                .Append("\" height=\"").Append(height.ToString("0.##", ci)).Append("\">\n");
 
+            svg.Append("<title>").Append(System.Security.SecurityElement.Escape(Locations.Current.Name)).Append("</title><metadata>")
+                .Append(System.Security.SecurityElement.Escape(Locations.Current.Id)).Append("</metadata>\n");
             // Connectors first so the boxes sit on top of them, matching the canvas.
             foreach (var line in TopologyCanvas.Children.OfType<Line>())
             {

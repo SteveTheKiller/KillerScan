@@ -138,7 +138,8 @@ namespace KillerScan.Features.Cli
             "/sort", "--sort", "/filter", "--filter", "/type", "--type",
             "/vendor-filter", "--vendor-filter", "/ports", "--ports", "/limit", "--limit",
             "/timeout", "--timeout", "/theme", "--theme", "/count", "--count",
-            "/interval", "--interval", "/max-hops", "--max-hops"
+            "/interval", "--interval", "/max-hops", "--max-hops", "/skip", "--skip",
+            "/interface", "--interface", "/source-ip", "--source-ip", "/location", "--location"
         ];
 
         private static readonly string[] FlagOptions =
@@ -161,10 +162,12 @@ namespace KillerScan.Features.Cli
             exitCode = 0;
             if (args is null || args.Length == 0) return false;
             args = KillerFamily.CommandLine.CommandLineEntry.GetArguments(args,
-                ["scan", "probe", "network", "vendor", "ping", "trace", "diagnose", "watch", "speedtest", "version"], "--") ?? args;
+                ["scan", "probe", "network", "interfaces", "locations", "vendor", "ping", "trace", "diagnose", "watch", "speedtest", "version"], "--") ?? args;
             string? command = args.FirstOrDefault(a => IsHelp(a) || IsVersion(a) ||
                 Eq(a, "/scan") || Eq(a, "--scan") || Eq(a, "/probe") || Eq(a, "--probe") ||
                 Eq(a, "/network") || Eq(a, "--network") || Eq(a, "/vendor") || Eq(a, "--vendor") ||
+                Eq(a, "/interfaces") || Eq(a, "--interfaces") ||
+                Eq(a, "/locations") || Eq(a, "--locations") ||
                 Eq(a, "/ping") || Eq(a, "--ping") || Eq(a, "/trace") || Eq(a, "--trace") ||
                 Eq(a, "/diagnose") || Eq(a, "--diagnose") || Eq(a, "/watch") || Eq(a, "--watch") ||
                 Eq(a, "/speedtest") || Eq(a, "--speedtest"));
@@ -188,6 +191,10 @@ namespace KillerScan.Features.Cli
             {
                 var (positionals, options, parseError) = ParseArgs(args, command);
                 if (parseError != null) { err.WriteLine(PaintErr("Error: " + parseError, AnsiBad)); exitCode = 2; }
+                else if (Eq(command, "/locations") || Eq(command, "--locations"))
+                    exitCode = RunLocations(positionals, options, @out, err);
+                else if (Eq(command, "/interfaces") || Eq(command, "--interfaces"))
+                    exitCode = RunInterfaces(positionals, options, @out, err);
                 else if (Eq(command, "/network") || Eq(command, "--network"))
                     exitCode = RunNetwork(positionals, options, @out, err);
                 else if (Eq(command, "/vendor") || Eq(command, "--vendor"))
@@ -221,6 +228,25 @@ namespace KillerScan.Features.Cli
             @out.WriteLine("SUBNET     " + net.Subnet);
             @out.WriteLine("GATEWAY    " + (net.Gateway.Length == 0 ? "-" : net.Gateway));
             @out.WriteLine("DNS        " + (net.Dns.Length == 0 ? "-" : net.Dns));
+            return 0;
+        }
+
+        private static int RunLocations(List<string> positionals, Dictionary<string, string> options, TextWriter output, TextWriter error)
+        {
+            if (positionals.Count > 0 || !Only(options, "/json", "--json")) return Usage(error, "/locations accepts only /json.");
+            if (Has(options, "/json", "--json")) output.WriteLine(JsonSerializer.Serialize(Locations.Catalog.Items));
+            else foreach (var location in Locations.Catalog.Items) output.WriteLine(location.Id + "  " + location.Name);
+            return 0;
+        }
+
+        private static int RunInterfaces(List<string> positionals, Dictionary<string, string> options, TextWriter output, TextWriter error)
+        {
+            if (positionals.Count > 0 || !Only(options, "/json", "--json")) return Usage(error, "/interfaces accepts only /json.");
+            var interfaces = LocalNetwork.Enumerate().Where(n => n.InterfaceLabel is "Ethernet" or "Wi-Fi").Select(n => new
+            { Id = n.AdapterId, Name = n.AdapterName, Kind = n.InterfaceLabel, Address = n.LocalIp, n.Subnet, Index = n.InterfaceIndex,
+                CanBind = !n.Wireless || n.ConnectionIdentity.Length > 0 }).ToArray();
+            if (Has(options, "/json", "--json")) output.WriteLine(JsonSerializer.Serialize(interfaces));
+            else foreach (var net in interfaces) output.WriteLine(net.Id + "  " + net.Address + "  " + net.Kind + "  " + net.Name + (net.CanBind ? "" : "  [identity unavailable]"));
             return 0;
         }
 
@@ -397,6 +423,23 @@ namespace KillerScan.Features.Cli
             bool terminalProgress = Has(options, "/terminal-progress");
             bool noHeader = Has(options, "/no-header", "--no-header");
             bool failEmpty = Has(options, "/fail-empty", "--fail-empty");
+            ScanBinding? binding = null;
+            string? interfaceId = Value(options, "/interface", "--interface");
+            string? sourceIp = Value(options, "/source-ip", "--source-ip");
+            if ((interfaceId == null) != (sourceIp == null)) return Usage(err, "/interface and /source-ip must be supplied together.");
+            if (interfaceId != null)
+            {
+                if (Has(options, "/demo", "--demo")) return Usage(err, "Demo mode does not accept a real interface.");
+                try { binding = ScanBinding.Resolve(interfaceId, sourceIp!); }
+                catch (NetworkBindingException ex) { return Usage(err, ex.Message, 1); }
+            }
+            var scanOptions = new ScanOptions();
+            string? skip = Value(options, "/skip", "--skip");
+            if (skip != null)
+            {
+                try { scanOptions = scanOptions.Without(skip); }
+                catch (ArgumentException) { return Usage(err, "/skip needs comma-separated names: " + string.Join(", ", ScanOptions.Features) + "."); }
+            }
             string? exportPath = Value(options, "/export", "--export", "/output", "--output");
             var (format, formatFromExtension) = ResolveFormat(options, Value(options, "/format", "--format"), exportPath);
             if (format.Length == 0) return Usage(err, "format must be table, csv, json, or html, with only one format selected.");
@@ -418,11 +461,15 @@ namespace KillerScan.Features.Cli
             {
                 if (targetText.Length == 0)
                 {
-                    var local = LocalNetwork.Detect();
-                    if (local is null) return Usage(err, "no active IPv4 network was found. Give a target such as /scan 192.168.1.0/24.");
-                    targetText = local.Subnet;
+                    var local = binding == null ? LocalNetwork.Detect() : null;
+                    if (binding != null) targetText = binding.Subnet;
+                    else
+                    {
+                        if (local is null) return Usage(err, "no active IPv4 network was found. Give a target such as /scan 192.168.1.0/24.");
+                        targetText = local.Subnet;
+                    }
                 }
-                else LocalNetwork.Detect();
+                else if (binding == null) LocalNetwork.Detect();
                 parsed = ScanTargets.Parse(targetText);
                 if (!parsed.Ok) return Usage(err, parsed.Error == TargetError.TooLarge
                     ? $"that is {parsed.Detail} addresses; the ceiling is {ScanTargets.MaxAddresses:N0}."
@@ -439,14 +486,22 @@ namespace KillerScan.Features.Cli
             int[]? ports = ParsePorts(Value(options, "/ports", "--ports"));
             if (ports != null && ports.Length == 0) return Usage(err, "/ports must be comma-separated numbers from 1 to 65535.");
 
+            string? locationId = Value(options, "/location", "--location");
+            if (demo && locationId != null) return Usage(err, "Demo mode does not use saved locations.");
+            if (!demo)
+            {
+                locationId ??= Environment.GetEnvironmentVariable("KS_LOCATION_ID") ?? LocationCatalog.LegacyId;
+                if (!LocationCatalog.ValidId(locationId) || !Locations.Catalog.Contains(locationId)) return Usage(err, "Unknown location. Use /locations to list existing IDs.");
+                if (!Locations.TrySelect(locationId, remember: false)) return Usage(err, "Stop the running scan before changing location.");
+            }
+            using var locationRun = demo ? null : Locations.BeginRun();
             OuiLookup.Load();
-            DeviceOverrides.Load();
             using var cts = new CancellationTokenSource();
             if (timeout > 0) cts.CancelAfter(TimeSpan.FromSeconds(timeout));
             void OnCancel(object? sender, ConsoleCancelEventArgs e) { e.Cancel = true; cts.Cancel(); }
             try { Console.CancelKeyPress += OnCancel; } catch { }
 
-            var scanner = new NetworkScanner();
+            var scanner = demo ? new NetworkScanner() : EngineHost.CreateScanner(binding);
             if (terminalProgress)
             {
                 int found = 0;
@@ -493,13 +548,14 @@ namespace KillerScan.Features.Cli
                 spinner?.Dispose(); spinner = null;
                 try { Console.CancelKeyPress -= OnCancel; } catch { }
                 devices = [.. demoScan!.Devices];
+                DemoData.AddIdentification(devices);
             }
             else
             try
             {
                 Task<List<NetworkDevice>> operation = probe
-                    ? ProbeAsListAsync(scanner, probeIp!.ToString(), cts.Token)
-                    : scanner.ScanSubnetAsync(targetText, cts.Token, fullScan: !quick);
+                    ? ProbeAsListAsync(scanner, probeIp!.ToString(), cts.Token, scanOptions)
+                    : scanner.ScanSubnetAsync(targetText, cts.Token, scanOptions, fullScan: !quick);
                 if (timeout > 0)
                 {
                     var deadline = Task.Delay(TimeSpan.FromSeconds(timeout));
@@ -538,7 +594,7 @@ namespace KillerScan.Features.Cli
             // only because the /export extension picked it - the FILE gets that format, but raw
             // CSV on a live console helps nobody. An EXPLICIT /csv, /json or /format choice is
             // honored on stdout as-is (that is the scripting contract), just without colors.
-            string body = Render(format, devices, label, theme, noHeader);
+            string body = Render(format, devices, label, theme, noHeader, demo ? null : Locations.Current);
             bool showTable = _outAnsi && (format == "table" || formatFromExtension);
             if (!quiet)
                 @out.WriteLine(showTable ? Table(devices, !noHeader, ansi: true) : body);
@@ -565,9 +621,9 @@ namespace KillerScan.Features.Cli
         }
 
         private static async Task<List<NetworkDevice>> ProbeAsListAsync(
-            NetworkScanner scanner, string ip, CancellationToken cancellationToken)
+            NetworkScanner scanner, string ip, CancellationToken cancellationToken, ScanOptions options)
         {
-            return [await scanner.DeepProbeHostAsync(ip, cancellationToken)];
+            return [await scanner.DeepProbeHostAsync(ip, cancellationToken, options)];
         }
 
         private static List<NetworkDevice> ApplyFilters(List<NetworkDevice> devices,
@@ -599,11 +655,11 @@ namespace KillerScan.Features.Cli
         }
 
         private static string Render(string format, List<NetworkDevice> devices, string label,
-                                     string theme, bool noHeader) => format switch
+                                     string theme, bool noHeader, ScanLocation? location = null) => format switch
         {
-            "csv" => Csv(devices, !noHeader),
+            "csv" => ReportExport.BuildLocationCsv(devices, location, !noHeader),
             "json" => JsonSerializer.Serialize(devices, new JsonSerializerOptions { WriteIndented = true }),
-            "html" => ReportExport.BuildHtml(devices, label, theme.ToLowerInvariant()),
+            "html" => ReportExport.BuildLocationHtml(devices, label, theme.ToLowerInvariant(), location),
             _ => Table(devices, !noHeader),
         };
 
@@ -693,6 +749,8 @@ namespace KillerScan.Features.Cli
             "  killerscan uiscan [targets]      open the interface and begin scanning",
             "  killerscan probe <IPv4>          deep-probe one host, including ports 1-1024",
             "  killerscan network               show the detected interface, subnet, gateway, and DNS",
+            "  killerscan interfaces [/json]    list IPv4 interface IDs and source addresses",
+            "  killerscan locations [/json]     list explicit location IDs and names",
             "  killerscan vendor <MAC>          look up a MAC address in the offline OUI database",
             "  killerscan ping <target>         send a bounded set of ICMP checks",
             "  killerscan trace <target>        trace the network path to an IPv4 target",
@@ -702,6 +760,11 @@ namespace KillerScan.Features.Cli
             "  killerscan version               print the version             /help  show this text", "",
             "SCAN AND PROBE OPTIONS",
             "  /quick                 discovery only; skip fingerprinting and the full port pass",
+            "  /skip <name,name,...>  disable scan/probe operations (also accepts --skip)",
+            "  /interface <id> /source-ip <IPv4>  pin scan/probe to an explicit Windows interface",
+            "  /location <id>         use saved data for that explicit location",
+            "                         GUI terminals inherit it; external CLI defaults to legacy",
+            "                         " + string.Join(", ", ScanOptions.Features),
             "  /progress              write status and progress every 5% to stderr",
             "  /timeout <seconds>     cancel the operation after a deadline",
             "  /filter <text>         keep rows matching any displayed or fingerprint field",
@@ -746,7 +809,13 @@ namespace KillerScan.Features.Cli
                 if (a.StartsWith("/", StringComparison.Ordinal) || a.StartsWith("-", StringComparison.Ordinal))
                 {
                     if (ValueOptions.Any(o => Eq(o, a)))
-                    { if (i + 1 >= args.Length) return (positionals, options, a + " needs a value."); options[a] = args[++i]; }
+                    {
+                        if (i + 1 >= args.Length) return (positionals, options, a + " needs a value.");
+                        string value = args[++i];
+                        if (Eq(a, "/skip") || Eq(a, "--skip"))
+                            options["/skip"] = options.TryGetValue("/skip", out var skipped) ? skipped + "," + value : value;
+                        else options[a] = value;
+                    }
                     else if (FlagOptions.Any(o => Eq(o, a))) options[a] = "";
                     else return (positionals, options, "unknown option " + a + ".");
                 }

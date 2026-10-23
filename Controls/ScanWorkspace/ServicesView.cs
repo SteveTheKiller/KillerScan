@@ -63,6 +63,7 @@ namespace KillerScan.Controls
             /// the template does its own localization on the way to the screen.
             /// </summary>
             public string DeviceType { get; init; } = string.Empty;
+            public DeviceIdentification? Identification { get; init; }
             /// <summary>The localized type, for the CSV export, which writes what you can read.</summary>
             public string DeviceTypeDisplay { get; init; } = string.Empty;
             public uint IpSortKey { get; init; }
@@ -75,6 +76,7 @@ namespace KillerScan.Controls
                 Hostname = device.Hostname,
                 IpAddress = device.IpAddress,
                 DeviceType = device.DeviceType,
+                Identification = device.Identification,
                 DeviceTypeDisplay = Controls.DeviceTypeConverter.Display(device.DeviceType),
                 IpSortKey = device.IpSortKey
             };

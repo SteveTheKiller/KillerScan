@@ -9,6 +9,19 @@ namespace KillerScan.Engine
         public string MacAddress { get; set; } = string.Empty;
         public string Vendor { get; set; } = string.Empty;
         public string DeviceType { get; set; } = "Unknown";
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public DeviceIdentification? Identification { get; set; }
+        internal DateTimeOffset? ObservationStartedAtUtc { get; set; }
+        internal DateTimeOffset? ObservationCompletedAtUtc { get; set; }
+        internal DateTimeOffset? MdnsObservedAtUtc { get; set; }
+        internal DateTimeOffset? SsdpObservedAtUtc { get; set; }
+        internal string RecognitionScope { get; set; } = "external";
+        internal string HostnameSource { get; set; } = "";
+        internal string[] RecognitionDisabledFeatures { get; set; } = [];
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public string? LocationId { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public string? LocationName { get; set; }
 
         /// <summary>
         /// The type as it appears on screen. Sorting the Type column reads this rather than the

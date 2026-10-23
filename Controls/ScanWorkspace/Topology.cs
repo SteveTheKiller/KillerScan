@@ -322,7 +322,7 @@ namespace KillerScan.Controls
         private void AddNetworkNode(double x, double y)
         {
             string subnet = string.IsNullOrWhiteSpace(ActiveSubnet) ? SubnetInput.Text : ActiveSubnet;
-            AddNode(x, y, Loc("Str_Topology_Network"), subnet, "PrimaryBrush", null);
+            AddNode(x, y, Services.Locations.Current.Name, subnet, "PrimaryBrush", null);
         }
 
         private void AddRoleNode(double x, double y, string role, string value, string brushKey,

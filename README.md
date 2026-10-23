@@ -9,6 +9,7 @@ One-click, fast network scanner built for field techs.
 - mDNS/SSDP service discovery
 - MAC vendor lookup across the full IEEE OUI registries
 - Weighted-score device classifier
+- [Recognition evidence and confidence](docs/device-identification.md), with observed sources, times, manual provenance and explicitly reported models
 
 Single portable EXE. The only requirement is .NET Framework 4.8, which Windows 10 (version 1903 and later) and Windows 11 already include.
 Free, open-source, GPLv3.
@@ -23,6 +24,9 @@ Part of [killertools.net](https://killertools.net).
 - Topology (F8) infers how the network fits together and draws devices as movable, multi-selectable boxes in four arrangement modes, cycled with Ctrl+G or picked directly with Ctrl+1 through Ctrl+4. Connectors stay attached to boxes you move, and the arranged view exports at full resolution as a picture or as editable SVG.
 - Deep Scan runs a cancellable rescan of all discovered hosts, or the selection with Ctrl+R, probing ports 1-1024 plus the additional service ports to improve hostnames, services and classifications.
 - Scan history (Ctrl+H) compares each scan against the last run of the same target for added, missing and changed devices, or shows the saved run in full, and supports trusted-device baselines with alerts for unknown devices. A marker beside each address says whether the device is trusted. Scan profiles (Ctrl+Shift+P) remember targets you can load or run, optionally following with Deep Scan. Both share a sliding sidebar that opens from the icon rail and resizes by dragging.
+- [Scan options](docs/scan-options.md) control discovery, DNS, multicast, port scanning and individual fingerprints per tab, persist with profiles, and work in the CLI and built-in PowerShell module through `/skip` / `-Skip`. Defaults preserve existing behavior.
+- [Explicit IPv4 interface selection](docs/network-interface.md) pins scans to an Ethernet/Wi-Fi source on Windows, limits targets to its subnet and cancels on link changes. Profiles, CLI and terminal scans support the same choice; Automatic retains system routing.
+- [Explicit locations](docs/locations.md) separate history, saved device names/types, trust, SSH usernames and scan profiles even when different sites use the same IP/MAC addresses. Location identity is chosen manually and included in exports; legacy data is backed up and kept in its own unassigned group.
 - A service-centric view (F7) organizes results by discovered service, port and device.
 - Manual device names and classifications both persist across restarts and rescans.
 - Self-installer: launch the EXE to install to `%LOCALAPPDATA%\Programs\KillerScan\` with Start Menu and optional desktop shortcut, or tick "Install for all users" to install to Program Files for every account on the PC (the only path that asks for admin), or just run it portable with no install. An installed copy is added to PATH, so a new terminal can run it as `KillerScan` from any directory

@@ -24,12 +24,12 @@ internal static class ReleaseUiTests
         protected override void OnStartup(StartupEventArgs e) { }
     }
 
-    public static Task Run()
+    public static Task Run(bool evidenceOnly = false)
     {
         Exception? failure = null;
         var thread = new Thread(() =>
         {
-            try { Capture(); }
+            try { Capture(evidenceOnly); }
             catch (Exception ex) { failure = ex; }
             finally { Dispatcher.CurrentDispatcher.InvokeShutdown(); }
         });
@@ -40,7 +40,7 @@ internal static class ReleaseUiTests
         return Task.CompletedTask;
     }
 
-    private static void Capture()
+    internal static KillerScan.App CreateApplication()
     {
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", Static)!.SetValue(null, assembly);
@@ -60,6 +60,13 @@ internal static class ReleaseUiTests
         context.XmlnsDictionary.Add("snap", "clr-namespace:KillerFamily.Windowing;assembly=KillerScan");
         context.XmlnsDictionary.Add("kl", "clr-namespace:KillerFamily.Layout;assembly=KillerScan");
         app.Resources = (ResourceDictionary)XamlReader.Parse(dictionary, context);
+        return app;
+    }
+
+    private static void Capture(bool evidenceOnly)
+    {
+        var app = CreateApplication();
+        var assembly = typeof(KillerScan.App).Assembly;
         var manager = assembly.GetType("KillerScan.Services.ThemeManager", true)!;
         var themeType = assembly.GetType("KillerScan.Services.Theme", true)!;
         var accentType = assembly.GetType("KillerScan.Services.Accent", true)!;
@@ -87,6 +94,8 @@ internal static class ReleaseUiTests
         ((UIElement)window.FindName("RootGrid")).Opacity = 1;
         var output = Path.Combine(Path.GetTempPath(), "KillerScan-release-ui-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(output);
+        EvidenceUiChecks.Run(window, (element, name) => Save(Render(element, 820, 600), Path.Combine(output, name)));
+        if (evidenceOnly) { Console.WriteLine("Evidence UI: " + output); window.Close(); return; }
         var samples = new List<(string Label, BitmapSource Image)>();
         int states = 0;
         foreach (string theme in Enum.GetNames(themeType))
@@ -158,6 +167,22 @@ internal static class ReleaseUiTests
         var menuSurface = new Border { Child = columnsPanel, Background = (Brush)app.FindResource("MenuBackgroundBrush") };
         Save(Render(menuSurface, 450, 420), Path.Combine(output, "LanguageMenu.png"));
         var workspace = (KillerScan.Controls.ScanWorkspace)window.GetType().GetField("_scanWorkspace", Instance)!.GetValue(window)!;
+        ScanOptionsUiChecks.Run(workspace);
+        InterfaceUiChecks.Run(workspace);
+        LocationUiChecks.Run(window, workspace, () => Save(Render(root, 1200, 780), Path.Combine(output, "Location.png")));
+        Locale("EnUS");
+        var scanOptions = ((Button)workspace.FindName("ScanOptionsButton")).ContextMenu;
+        foreach (var item in scanOptions.Items.OfType<MenuItem>())
+            if (item.Tag is string) item.IsChecked = true;
+        var optionEntries = scanOptions.Items.Cast<UIElement>().ToArray();
+        scanOptions.Items.Clear();
+        var optionSurface = new StackPanel { Background = (Brush)app.FindResource("MenuBackgroundBrush") };
+        foreach (var entry in optionEntries) optionSurface.Children.Add(entry);
+        Save(Render(optionSurface, 570, 720), Path.Combine(output, "ScanOptions.png"));
+        Require(optionSurface.Children.Cast<FrameworkElement>().All(entry => entry.ActualHeight + entry.TranslatePoint(new Point(), optionSurface).Y <= 720),
+            "Every scan option fits the rendered menu.");
+        optionSurface.Children.Clear();
+        foreach (var entry in optionEntries) scanOptions.Items.Add(entry);
         workspace.SetView("services");
         Render(root, 1200, 780);
         CheckServiceMenu(workspace, root, output);
@@ -215,7 +240,7 @@ internal static class ReleaseUiTests
         Require(!ReferenceEquals(grid.ContextMenu, devicesGrid.ContextMenu), "Services have their own context menu.");
         var actions = grid.ContextMenu.Items.OfType<MenuItem>().ToDictionary(item => (string)item.Tag);
         Require(actions.Keys.OrderBy(value => value).SequenceEqual(new[] { "Browser", "CopyEndpoint", "CopyHost", "CopyIp", "CopyPort",
-            "CopyService", "Export", "Rdp", "SelectAll", "Ssh", "SshAs" }.OrderBy(value => value)),
+            "CopyService", "Evidence", "Export", "Rdp", "SelectAll", "Ssh", "SshAs" }.OrderBy(value => value)),
             "The service menu contains service actions and excludes device trust, renaming, MAC copying and type overrides.");
         var original = ((IEnumerable<KillerScan.Engine.NetworkDevice>)type.GetProperty("ScannedDevices", Instance)!.GetValue(workspace)!).ToArray();
         string originalTarget = workspace.Targets;

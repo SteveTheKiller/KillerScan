@@ -80,6 +80,7 @@ namespace KillerScan.Controls
             if (action.StartsWith("Copy", StringComparison.Ordinal)) CopyServiceText(action);
             else if (action == "SelectAll") ServicesGrid.SelectAll();
             else if (action == "Export") ExportServicesCsv_Click(sender, e);
+            else if (action == "Evidence") Evidence_Click(sender, e);
             else RaiseServiceAction(action);
         }
 

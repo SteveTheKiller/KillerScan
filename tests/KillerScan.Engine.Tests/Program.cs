@@ -14,10 +14,24 @@ internal static class Program
             await Run("CIDR expansion excludes the network and broadcast addresses", Subnet);
             await Run("ARP output parsing keeps IPv4 entries with full MAC addresses", ArpParsing);
             await Run("Classifier honors manual types, the gateway, DNS and hostname rules", Classifier);
+            await Run("Recognition keeps weak names, OUI and silent hosts uncertain", RecognitionTests.WeakSignals);
+            await Run("Recognition requires corroboration and exposes contradictory evidence", RecognitionTests.CorroborationAndConflict);
+            await Run("Reported models require explicit declarations and bounded evidence", RecognitionTests.ModelsAndUntrustedValues);
+            await Run("Manual labels, frozen inference, timestamps and JSON remain distinct", RecognitionTests.ManualAndSnapshots);
+            await Run("Full, quick and deep scans retain provenance and cached timestamps", RecognitionTests.ScanProvenance);
             await Run("Bundled vendor database loads from the engine assembly", Vendors);
             await Run("Status text is English, numeric and free of double hyphens", StatusText);
             await Run("Quick scan reports stages, devices and host hooks through a fake platform", QuickScan);
             await Run("A canceled token stops the scan", Canceled);
+            await Run("Disabled probes start no I/O in full, quick or deep mode", ScanOptionsTests.DisabledProbes);
+            await Run("Default API behavior and per-scan enrichment isolation", ScanOptionsTests.CompatibilityAndIsolation);
+            await Run("Scan options preserve old JSON defaults and immutable choices", ScanOptionsTests.ProfileSerialization);
+            await Run("Concurrent scanners isolate instance preferences from static location callbacks", LocationHostTests.InstancePreferences);
+            await Run("Explicit interface scope and disconnects fail closed across scan paths", InterfaceBindingTests.ScopeAndDisconnect);
+            await Run("Real loopback TCP/UDP sockets pin source, index and received scope", InterfaceBindingTests.PinnedSockets);
+            await Run("Source-bound native ICMP and per-interface classification", InterfaceBindingTests.BoundIcmpAndClassification);
+            await Run("Bound HTTP fingerprints retain results and never follow redirects", InterfaceBindingTests.BoundHttp);
+            await Run("Bound DNS uses adapter sockets and verifies PTR against A", InterfaceBindingTests.BoundDnsRoundTrip);
             await Run("Full scan preserves HTTP results, manual classification and saved names", EngineBehaviorTests.FullScan);
             await Run("HTTP fingerprint extracts the controlled title and Server header", EngineBehaviorTests.HttpFingerprintResults);
             await Run("Stop cancels a deep probe before device completion", EngineBehaviorTests.DeepProbeCancellation);
@@ -86,7 +100,7 @@ internal static class Program
             try { NetworkScanner.GetAddressesInSubnet(cidr); }
             catch (ArgumentOutOfRangeException ex)
             {
-                rejected = ex.ParamName == "cidr" && ex.Message.Contains("65,536", StringComparison.Ordinal);
+                rejected = ex.ParamName == "cidr" && ex.Message.Contains(ScanTargets.MaxAddresses.ToString("N0"), StringComparison.Ordinal);
             }
             Require(rejected, cidr + " should be rejected before its hosts are allocated");
         }
@@ -208,7 +222,8 @@ internal static class Program
             scanner.ProgressChanged += p => lastProgress = p;
 
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60));
-            var devices = await scanner.ScanSubnetAsync("127.0.0.1", cts.Token, fullScan: false);
+            var devices = await scanner.ScanSubnetAsync("127.0.0.1", cts.Token,
+                new ScanOptions().Without("mdns,ssdp"), fullScan: false);
 
             Require(fake.Flushes == 1, "Scan should flush the DNS cache once");
             Require(devices.Count == 1 && found.Count == 1, "Loopback should be found once, got " + devices.Count);

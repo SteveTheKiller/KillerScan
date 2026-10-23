@@ -55,13 +55,18 @@ namespace KillerScan.Services
         internal static string CsvField(string? value) =>
             "\"" + SpreadsheetSafeValue(value).Replace("\"", "\"\"") + "\"";
 
-        internal static string BuildCsv(IEnumerable<NetworkDevice> devices)
+        internal static string BuildCsv(IEnumerable<NetworkDevice> devices) => BuildLocationCsv(devices, null);
+
+        internal static string BuildLocationCsv(IEnumerable<NetworkDevice> devices, ScanLocation? location, bool header = true)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("IP Address,Hostname,MAC Address,Vendor,Type,Open Ports");
+            if (header) sb.AppendLine("IP Address,Hostname,MAC Address,Vendor,Type,Open Ports" + (location == null ? "" : ",Location ID,Location") + ",Recognition confidence,Reported model,Identification JSON");
             foreach (var d in devices.OrderBy(d => d.IpSortKey))
                 sb.AppendLine(string.Join(",", CsvField(d.IpAddress), CsvField(d.Hostname),
-                    CsvField(d.MacAddress), CsvField(d.Vendor), CsvField(d.DeviceType), CsvField(d.OpenPortsDisplay)));
+                    CsvField(d.MacAddress), CsvField(d.Vendor), CsvField(d.DeviceType), CsvField(d.OpenPortsDisplay)) +
+                    (location == null ? "" : "," + CsvField(location.Id) + "," + CsvField(location.Name)) + "," +
+                    CsvField(d.Identification?.EffectiveConfidence) + "," + CsvField(d.Identification?.ReportedModel) + "," +
+                    CsvField(d.Identification == null ? "" : System.Text.Json.JsonSerializer.Serialize(d.Identification)));
             return sb.ToString();
         }
 
@@ -70,7 +75,10 @@ namespace KillerScan.Services
         /// click-to-sort columns. <paramref name="themeKey"/> is the theme the report opens in,
         /// lower-case ("dark", "black", ...); every app palette is embedded either way.
         /// </summary>
-        internal static string BuildHtml(IEnumerable<NetworkDevice> devices, string subnetText, string themeKey)
+        internal static string BuildHtml(IEnumerable<NetworkDevice> devices, string subnetText, string themeKey) =>
+            BuildLocationHtml(devices, subnetText, themeKey, null);
+
+        internal static string BuildLocationHtml(IEnumerable<NetworkDevice> devices, string subnetText, string themeKey, ScanLocation? location)
         {
             string current = string.IsNullOrEmpty(themeKey) ? "dark" : themeKey.ToLowerInvariant();
             var list = devices.OrderBy(d => d.IpSortKey).ToList();
@@ -149,6 +157,7 @@ namespace KillerScan.Services
             sb.AppendLine($"<p class='meta'>{Esc(L("Str_Rep_Subnet", "Subnet"))} <b>{Esc(subnetText)}</b> &middot; {Esc(L("Str_Rep_Scanned", "Scanned"))} <b>{DateTime.Now:yyyy-MM-dd HH:mm}</b> &middot; <b>{list.Count}</b> {Esc(L("Str_Rep_Devices", "devices"))}</p>");
 
             // The report's headers reuse the grid's own column keys, so the two never disagree.
+            if (location != null) sb.AppendLine($"<p class='meta'>{Esc(L("Str_Location_Title", "Location"))}: <b>{Esc(location.Name)}</b> ({Esc(location.Id)})</p>");
             sb.AppendLine("<div class='tablewrap'><table id='tbl'><thead><tr>");
             // Each header holds a real button, so it takes keyboard focus and sorts on Enter and Space.
             sb.AppendLine($"<th data-type='num'><button type='button' class='sortbtn'>{Esc(L("Str_Col_Ip", "IP Address"))} <span class='arrow' aria-hidden='true'></span></button></th>");
@@ -169,7 +178,9 @@ namespace KillerScan.Services
                     $"<td class='vendor'>{Esc(d.Vendor)}</td>" +
                     // The CLASS above keeps the English slug (that is what the CSS matches); only
                     // the visible cell is translated.
-                    $"<td class='{cls}'>{Esc(Controls.DeviceTypeConverter.Display(d.DeviceType))}</td>" +
+                    $"<td class='{cls}'>{Esc(Controls.DeviceTypeConverter.Display(d.DeviceType))}" +
+                    $"<details><summary>{Esc(L("Str_Evidence_Title", "Recognition evidence"))}: {Esc(IdentificationText.Confidence(d.Identification))}</summary>" +
+                    $"<pre style='white-space:pre-wrap'>{Esc(IdentificationText.Describe(d))}</pre></details></td>" +
                     $"<td class='mono'>{Esc(d.OpenPortsDisplay)}</td></tr>");
             }
             sb.AppendLine("</tbody></table></div>");
