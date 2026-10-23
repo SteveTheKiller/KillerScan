@@ -40,6 +40,8 @@ namespace KillerScan.Controls
             if (_active.Cts != null) { Stop(); return; }
             if (_rescanCts != null) return;
             if (DemoMode) { GenerateDemoScan(); return; }
+            try { PrepareScanner(); }
+            catch (NetworkBindingException ex) { StatusText.Text = ex.Message; return; }
             var targets = ScanTargets.Parse(Targets);
             if (!targets.Ok)
             {
@@ -70,9 +72,10 @@ namespace KillerScan.Controls
             RefreshDeviceCount();
             StateChanged?.Invoke(this, EventArgs.Empty);
             bool completed = false;
+            var options = _active.Options;
             try
             {
-                await _active.Scanner.ScanSubnetAsync(_active.SubnetText, cts.Token, fullScan: true);
+                await _active.Scanner.ScanSubnetAsync(_active.SubnetText, cts.Token, options, fullScan: true);
                 completed = !cts.IsCancellationRequested && !_disposed;
                 if (completed && _active.Devices.Count > 0)
                 {
