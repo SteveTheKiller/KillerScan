@@ -301,6 +301,7 @@
     <sys:String x:Key="Str_About_UpdateHeading">{0} {1} жүктеп орнату керек пе?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Қолданба автоматты түрде жабылып, қайта ашылады.</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateCheck">Іске қосылғанда жаңартуларды тексеру</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Мәзірлерде пернелер тіркесімін көрсету</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateHeading">{0} {1} қолжетімді</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateDetail">Оны қазір жүктеп, орнатқыңыз келе ме? Қолданба автоматты түрде жабылып, қайта ашылады.</sys:String>
     <sys:String x:Key="Str_About_UpdateNow">Жаңарту</sys:String>

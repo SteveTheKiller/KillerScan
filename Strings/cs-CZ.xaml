@@ -285,6 +285,7 @@
     <sys:String x:Key="Str_About_UpdateHeading">Stáhnout a nainstalovat {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Aplikace se zavře a znovu se automaticky spustí.</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateCheck">Kontrolovat aktualizace při spuštění</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Zobrazovat zkratky v nabídkách</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateHeading">Je k dispozici {0} {1}</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateDetail">Chcete jej nyní stáhnout a nainstalovat? Aplikace se zavře a automaticky znovu otevře.</sys:String>
     <sys:String x:Key="Str_About_UpdateNow">Aktualizovat</sys:String>

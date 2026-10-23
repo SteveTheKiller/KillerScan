@@ -301,6 +301,7 @@
     <sys:String x:Key="Str_About_UpdateHeading">Laste ned og installere {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Appen lukkes og åpnes på nytt automatisk.</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateCheck">Se etter oppdateringer ved oppstart</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Vis hurtigtaster i menyer</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateHeading">{0} {1} er tilgjengelig</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateDetail">Vil du laste den ned og installere den nå? Appen lukkes og åpnes på nytt automatisk.</sys:String>
     <sys:String x:Key="Str_About_UpdateNow">Oppdater</sys:String>

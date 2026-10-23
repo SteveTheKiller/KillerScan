@@ -156,6 +156,7 @@ namespace KillerScan
             OfferInstallConflictRepair();
 
             // Restore the saved theme before building the main window.
+            KillerFamily.Layout.ShortcutHints.Initialize(GetSetting, SetSetting);
             Services.ThemeManager.Initialize();
             Services.FilmGrain.Initialize();   // after the theme, before the window is built
             ShutdownMode = ShutdownMode.OnLastWindowClose;

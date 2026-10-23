@@ -314,6 +314,7 @@
     <sys:String x:Key="Str_About_UpdateHeading">Letölti és telepíti a következőt: {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Az alkalmazás bezárul, és automatikusan újraindul.</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateCheck">Frissítések keresése indításkor</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Billentyűparancsok megjelenítése a menükben</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateHeading">Elérhető a {0} {1}</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateDetail">Szeretnéd most letölteni és telepíteni? Az alkalmazás automatikusan bezárul és újraindul.</sys:String>
     <sys:String x:Key="Str_About_UpdateNow">Frissítés</sys:String>

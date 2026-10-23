@@ -287,6 +287,7 @@
     <sys:String x:Key="Str_About_UpdateHeading">Télécharger et installer {0} {1} ?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">L'application se fermera et redémarrera automatiquement.</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateCheck">Rechercher les mises à jour au démarrage</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Afficher les raccourcis dans les menus</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateHeading">{0} {1} est disponible</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateDetail">Voulez-vous le télécharger et l'installer maintenant ? L'application se fermera et rouvrira automatiquement.</sys:String>
     <sys:String x:Key="Str_About_UpdateNow">Mettre à jour</sys:String>

@@ -261,6 +261,7 @@
     <sys:String x:Key="Str_About_UpdateHeading">Prenesem in namestim {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Program se bo samodejno zaprl in ponovno odprl.</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateCheck">Ob zagonu preveri posodobitve</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Prikaži bližnjice v menijih</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateHeading">Na voljo je {0} {1}</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateDetail">Želiš posodobitev prenesti in namestiti zdaj? Program se bo samodejno zaprl in ponovno odprl.</sys:String>
     <sys:String x:Key="Str_About_UpdateNow">Posodobi</sys:String>

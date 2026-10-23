@@ -272,6 +272,7 @@
     <sys:String x:Key="Str_About_UpdateHeading">Pobrać i zainstalować {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Aplikacja zamknie się i uruchomi ponownie automatycznie.</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateCheck">Sprawdzaj aktualizacje przy uruchamianiu</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Pokazuj skróty w menu</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateHeading">Dostępny jest {0} {1}</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateDetail">Czy chcesz go teraz pobrać i zainstalować? Aplikacja zamknie się i otworzy ponownie automatycznie.</sys:String>
     <sys:String x:Key="Str_About_UpdateNow">Aktualizuj</sys:String>

@@ -299,6 +299,7 @@
     <sys:String x:Key="Str_About_UpdateHeading">Download and install {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">The app will close and reopen automatically.</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateCheck">Check for updates on startup</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Show Shortcuts in Menus</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateHeading">{0} {1} is available</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateDetail">Would you like to download and install it now? The app will close and reopen automatically.</sys:String>
     <sys:String x:Key="Str_About_UpdateNow">Update</sys:String>

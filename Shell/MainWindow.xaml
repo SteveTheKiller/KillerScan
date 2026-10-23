@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:theme="clr-namespace:KillerFamily.Theming"
         xmlns:a11y="clr-namespace:KillerFamily.Accessibility"
+        xmlns:kl="clr-namespace:KillerFamily.Layout"
         xmlns:icons="clr-namespace:KillerScan.Controls"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -1125,6 +1126,11 @@
                                 <CheckBox x:Name="AboutStartupUpdateCheck"
                                           Content="{DynamicResource Str_About_StartupUpdateCheck}"
                                           FontSize="11" Click="AboutStartupUpdateCheck_Click"/>
+                                <CheckBox x:Name="AboutShowShortcutsInMenus" FontSize="11" Margin="0,6,0,0"
+                                          MaxWidth="{Binding ActualWidth, ElementName=AboutInfoGrid}"
+                                          IsChecked="{Binding Source={x:Static kl:ShortcutHints.Current}, Path=Enabled, Mode=TwoWay}">
+                                    <TextBlock Text="{DynamicResource Str_About_ShowShortcutsInMenus}" TextWrapping="Wrap"/>
+                                </CheckBox>
                             </StackPanel>
 
                             <!-- Update notice: shown only when a newer release is found -->

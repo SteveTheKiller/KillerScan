@@ -287,6 +287,7 @@
     <sys:String x:Key="Str_About_UpdateHeading">{0} {1} herunterladen und installieren?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Die App wird geschlossen und automatisch neu gestartet.</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateCheck">Beim Start nach Updates suchen</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Tastenkürzel in Menüs anzeigen</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateHeading">{0} {1} ist verfügbar</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateDetail">Möchten Sie diese Version jetzt herunterladen und installieren? Die App wird geschlossen und automatisch neu geöffnet.</sys:String>
     <sys:String x:Key="Str_About_UpdateNow">Aktualisieren</sys:String>

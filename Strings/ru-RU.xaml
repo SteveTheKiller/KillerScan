@@ -301,6 +301,7 @@
     <sys:String x:Key="Str_About_UpdateHeading">Загрузить и установить {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Приложение автоматически закроется и снова откроется.</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateCheck">Проверять обновления при запуске</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Показывать сочетания клавиш в меню</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateHeading">Доступен {0} {1}</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateDetail">Хотите скачать и установить его сейчас? Приложение закроется и снова откроется автоматически.</sys:String>
     <sys:String x:Key="Str_About_UpdateNow">Обновить</sys:String>

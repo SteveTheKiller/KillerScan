@@ -265,6 +265,7 @@
     <sys:String x:Key="Str_About_UpdateHeading">Tải xuống và cài đặt {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Ứng dụng sẽ tự động đóng và mở lại.</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateCheck">Kiểm tra cập nhật khi khởi động</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Hiển thị phím tắt trong menu</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateHeading">Phiên bản {0} {1} đã có sẵn</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateDetail">Bạn có muốn tải xuống và cài đặt ngay bây giờ không? Ứng dụng sẽ tự động đóng và mở lại.</sys:String>
     <sys:String x:Key="Str_About_UpdateNow">Cập nhật</sys:String>

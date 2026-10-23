@@ -287,6 +287,7 @@
     <sys:String x:Key="Str_About_UpdateHeading">{0} {1} ডাউনলোড করে ইনস্টল করবেন?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">অ্যাপটি বন্ধ হয়ে স্বয়ংক্রিয়ভাবে আবার চালু হবে।</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateCheck">অ্যাপ চালু হলে আপডেট পরীক্ষা করুন</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">মেনুতে শর্টকাট দেখান</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateHeading">{0} {1} উপলব্ধ</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateDetail">এখনই এটি ডাউনলোড করে ইনস্টল করবেন? অ্যাপটি বন্ধ হয়ে স্বয়ংক্রিয়ভাবে আবার খুলবে।</sys:String>
     <sys:String x:Key="Str_About_UpdateNow">আপডেট</sys:String>

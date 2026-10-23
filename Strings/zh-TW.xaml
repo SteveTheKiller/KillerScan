@@ -287,6 +287,7 @@
     <sys:String x:Key="Str_About_UpdateHeading">下載並安裝 {0} {1}？</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">應用程式將關閉並自動重新開啟。</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateCheck">啟動時檢查更新</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">在功能表中顯示快速鍵</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateHeading">{0} {1} 已推出</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateDetail">要立即下載並安裝嗎？應用程式將關閉並自動重新開啟。</sys:String>
     <sys:String x:Key="Str_About_UpdateNow">更新</sys:String>

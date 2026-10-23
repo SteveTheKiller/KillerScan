@@ -287,6 +287,7 @@
     <sys:String x:Key="Str_About_UpdateHeading">{0} {1} indirilip yüklensin mi?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Uygulama kapanacak ve otomatik olarak yeniden açılacak.</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateCheck">Başlangıçta güncellemeleri denetle</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Menülerde kısayolları göster</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateHeading">{0} {1} kullanılabilir</sys:String>
     <sys:String x:Key="Str_About_StartupUpdateDetail">Şimdi indirip yüklemek ister misiniz? Uygulama kapanacak ve otomatik olarak yeniden açılacak.</sys:String>
     <sys:String x:Key="Str_About_UpdateNow">Güncelle</sys:String>
