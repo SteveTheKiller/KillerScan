@@ -721,8 +721,8 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="CheckBox">
-                            <StackPanel Orientation="Horizontal" Background="Transparent">
-                                <Grid Width="15" Height="15" VerticalAlignment="Center"><Border x:Name="box" CornerRadius="{DynamicResource SmallCornerRadius}"
+                            <DockPanel Background="Transparent" LastChildFill="True">
+                                <Grid DockPanel.Dock="Left" Width="15" Height="15" VerticalAlignment="Center"><Border x:Name="box" CornerRadius="{DynamicResource SmallCornerRadius}"
                                         Background="{DynamicResource SurfaceBrush}"
                                         BorderBrush="{DynamicResource InputBorderBrush}" BorderThickness="1">
                                     <TextBlock x:Name="check" Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="10"
@@ -730,7 +730,7 @@
                                                HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
                                 </Border><Border IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelDarkBrush}" BorderThickness="{DynamicResource PaneBevelLightThickness}"/><Border IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelLightBrush}" BorderThickness="{DynamicResource PaneBevelDarkThickness}"/><Border IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}" BorderBrush="{DynamicResource PaneBevelDark2Brush}" BorderThickness="{DynamicResource PaneBevel2LightThickness}"/><Border IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}" BorderBrush="{DynamicResource PaneBevelLight2Brush}" BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/></Grid>
                                 <ContentPresenter Margin="7,0,0,0" VerticalAlignment="Center"/>
-                            </StackPanel>
+                            </DockPanel>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="box" Property="BorderBrush" Value="{DynamicResource InputHoverBrush}"/>

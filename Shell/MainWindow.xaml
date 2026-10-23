@@ -1122,16 +1122,21 @@
                             </Grid>
 
                             <!-- About options sit below the identity pane, the startup check first. -->
-                            <StackPanel Margin="0,12,0,0" HorizontalAlignment="Left">
+                            <Grid Margin="0,12,0,0" Width="{Binding ActualWidth, ElementName=AboutInfoGrid}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
                                 <CheckBox x:Name="AboutStartupUpdateCheck"
-                                          Content="{DynamicResource Str_About_StartupUpdateCheck}"
-                                          FontSize="11" Click="AboutStartupUpdateCheck_Click"/>
-                                <CheckBox x:Name="AboutShowShortcutsInMenus" FontSize="11" Margin="0,6,0,0"
-                                          MaxWidth="{Binding ActualWidth, ElementName=AboutInfoGrid}"
+                                          FontSize="11" Click="AboutStartupUpdateCheck_Click">
+                                    <TextBlock Text="{DynamicResource Str_About_StartupUpdateCheck}" TextWrapping="Wrap"/>
+                                </CheckBox>
+                                <CheckBox x:Name="AboutShowShortcutsInMenus" Grid.Column="2" FontSize="11"
                                           IsChecked="{Binding Source={x:Static kl:ShortcutHints.Current}, Path=Enabled, Mode=TwoWay}">
                                     <TextBlock Text="{DynamicResource Str_About_ShowShortcutsInMenus}" TextWrapping="Wrap"/>
                                 </CheckBox>
-                            </StackPanel>
+                            </Grid>
 
                             <!-- Update notice: shown only when a newer release is found -->
                             <Button x:Name="AboutUpdateButton" Style="{StaticResource OutlineButton}" Padding="14,7" Visibility="Collapsed" Margin="0,14,0,0"
