@@ -10,12 +10,13 @@ using KillerScan.Services;
 
 namespace KillerScan.Controls
 {
-    public sealed class ScanDeviceActionEventArgs(NetworkDevice device, string action, bool beside, int? servicePort = null) : EventArgs
+    public sealed class ScanDeviceActionEventArgs(NetworkDevice device, string action, bool beside, int? servicePort = null, AccessEndpoint? access = null) : EventArgs
     {
         public NetworkDevice Device { get; } = device;
         public string Action { get; } = action;
         public bool Beside { get; } = beside;
         public int? ServicePort { get; } = servicePort;
+        public AccessEndpoint? Access { get; } = access;
     }
 
     public partial class ScanWorkspace : UserControl, IDisposable
@@ -35,6 +36,7 @@ namespace KillerScan.Controls
         /// <summary>Raised once a finished scan has been written to the history store.</summary>
         public event EventHandler? HistoryRecorded;
         internal ScanSession Session => _active;
+        internal ScanOptions Options => _active.Options;
         public NetworkDevice? SelectedDevice => GetSelectedDevice();
         public string Targets { get => SubnetInput.Text; set => SubnetInput.Text = value; }
         public bool IsScanning => _active.IsScanning || _rescanCts != null;
@@ -69,6 +71,10 @@ namespace KillerScan.Controls
             _active = new ScanSession(SubnetInput.Text)
             { Status = string.Format(Loc("Str_Status_Ready"), OuiLookup.Count.ToString("N0")) };
             WireSession(_active);
+            ScanOptionsMenu.Attach(ScanOptionsButton, () => _active.Options,
+                value => { if (!IsScanning) _active.Options = value; });
+            NetworkInterfaceMenu.Attach(InterfaceSelectionButton, () => SelectedAdapterId,
+                () => SelectedSourceAddress, (id, address) => SelectInterface(id, address));
             ActivateSession();
             StartVendorNoticeTimer();
             RestoreColumnLayout();
@@ -180,9 +186,18 @@ namespace KillerScan.Controls
         internal void RunProfile(ScanProfile profile)
         {
             if (_disposed || IsScanning) return;
-            Targets = profile.Target;
+            if (profile.LocationId != LocationId) return;
+            LoadProfile(profile);
             _runDeepAfterScan = profile.DeepScanAfter;
             Scan();
+        }
+        internal void LoadProfile(ScanProfile profile)
+        {
+            if (_disposed || IsScanning) return;
+            if (profile.LocationId != LocationId) return;
+            SelectInterface(profile.InterfaceId, profile.SourceAddress, updateTarget: false);
+            Targets = profile.Target;
+            _active.Options = profile.Options ?? new ScanOptions();
         }
         internal void LoadSnapshot(string target, IEnumerable<NetworkDevice> devices)
         {

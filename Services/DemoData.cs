@@ -45,6 +45,26 @@ namespace KillerScan.Services
         /// </summary>
         internal static DemoScan? Current;
 
+        internal static void AddIdentification(IEnumerable<NetworkDevice> devices)
+        {
+            foreach (var device in devices)
+            {
+                string preset = device.DeviceType;
+                if (preset == "Printer")
+                { device.HttpTitle = "Embedded Web Server; model=DemoPrinter42"; device.SnmpDescr = "Printer; model=DemoPrinter42"; }
+                if (preset == "Hypervisor")
+                { device.HttpTitle = "VMware ESXi"; device.TlsSubject = "CN=VMware ESXi"; }
+                NetworkScanner.IdentifyDevice(device);
+                device.Access = DeviceAccess.ForDevice(device).ToList();
+                if (preset == "Printer" && device.OpenPorts.Contains(80))
+                {
+                    device.Access.RemoveAll(endpoint => endpoint.Port == 80);
+                    device.Access.Add(new AccessEndpoint { Protocol = "http", Port = 80, Verification = "HttpResponse", HttpStatus = 200, Authentication = "LoginPage" });
+                }
+                if (device.DeviceType != preset) DeviceIdentification.ApplyManualType(device, preset);
+            }
+        }
+
         private static readonly string[] Subnets =
             ["10.0.0", "10.10.10", "172.16.4", "192.168.0", "192.168.1", "192.168.50"];
 

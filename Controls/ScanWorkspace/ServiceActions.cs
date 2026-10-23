@@ -14,18 +14,13 @@ namespace KillerScan.Controls
         internal static Uri? ServiceBrowserUri(string ip, int port)
         {
             if (!IPAddress.TryParse(ip, out var address)) return null;
-            string? scheme = port switch
-            {
-                443 or 5001 or 8006 or 8443 => "https",
-                80 or 5000 or 5357 or 8080 or 8123 or 32400 => "http",
-                _ => null
-            };
+            string? scheme = DeviceAccess.SuggestedWebProtocol(port);
             return scheme == null ? null : new UriBuilder(scheme, address.ToString(), port).Uri;
         }
 
         private static bool CanOpenService(ServiceRow row, string action) => action switch
         {
-            "Browser" => ServiceBrowserUri(row.IpAddress, row.Port) != null,
+            "Browser" => row.BrowserAddress != null,
             "Ssh" or "SshAs" => row.Port == 22,
             "Rdp" => row.Port == 3389,
             _ => false
@@ -80,6 +75,8 @@ namespace KillerScan.Controls
             if (action.StartsWith("Copy", StringComparison.Ordinal)) CopyServiceText(action);
             else if (action == "SelectAll") ServicesGrid.SelectAll();
             else if (action == "Export") ExportServicesCsv_Click(sender, e);
+            else if (action == "Evidence") Evidence_Click(sender, e);
+            else if (action == "Access") Access_Click(sender, e);
             else RaiseServiceAction(action);
         }
 

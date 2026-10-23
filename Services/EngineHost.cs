@@ -12,5 +12,25 @@ namespace KillerScan.Services
             NetworkScanner.DeviceCompleted = DevicePreferences.Apply;
             NetworkDevice.DeviceTypeDisplayResolver = Controls.DeviceTypeConverter.Display;
         }
+
+        internal static NetworkScanner CreateScanner(ScanBinding? binding = null)
+        {
+            var scanner = binding == null ? new NetworkScanner() : new NetworkScanner(binding);
+            CapturePreferences(scanner);
+            return scanner;
+        }
+
+        internal static void CapturePreferences(NetworkScanner scanner)
+        {
+            // Freeze the location's data for this scanner, including the empty case. A later
+            // location choice cannot redirect an in-flight completion into another store.
+            scanner.ManualTypeResolver = DeviceOverrides.CaptureLookup();
+            var apply = DevicePreferences.CaptureApply();
+            var location = Locations.Current;
+            scanner.DeviceFinalizer = device =>
+            {
+                apply(device); device.LocationId = location.Id; device.LocationName = location.Name;
+            };
+        }
     }
 }

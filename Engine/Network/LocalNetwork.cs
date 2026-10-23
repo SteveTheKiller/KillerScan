@@ -12,6 +12,9 @@ namespace KillerScan.Engine
         public string LocalIp = "";
         public string Gateway = "";
         public string Dns = "";
+        public string AdapterId = "";
+        public int InterfaceIndex;
+        public string ConnectionIdentity = "";
         /// <summary>"Wi-Fi", "Ethernet", or the raw interface type for anything else.</summary>
         public string InterfaceLabel = "";
         public bool Wireless;
@@ -45,6 +48,19 @@ namespace KillerScan.Engine
         /// </summary>
         public static LocalNet? Detect()
         {
+            var net = Enumerate().FirstOrDefault();
+            if (net != null)
+            {
+                NetworkScanner.GatewayIp = net.Gateway;
+                NetworkScanner.DnsIp = net.Dns;
+            }
+            return net;
+        }
+
+        /// <summary>One entry per active IPv4 address. Does not change classifier globals.</summary>
+        public static IReadOnlyList<LocalNet> Enumerate()
+        {
+            var result = new List<LocalNet>();
             try
             {
                 var candidates = NetworkInterface.GetAllNetworkInterfaces()
@@ -60,64 +76,67 @@ namespace KillerScan.Engine
                 foreach (var iface in candidates)
                 {
                     var props = iface.GetIPProperties();
-                    var unicast = props.UnicastAddresses
-                        .FirstOrDefault(a => a.Address.AddressFamily == AddressFamily.InterNetwork);
-                    if (unicast == null) continue;
-
-                    var ip = unicast.Address;
-                    var mask = unicast.IPv4Mask;
-                    var ipBytes = ip.GetAddressBytes();
-                    var maskBytes = mask.GetAddressBytes();
-                    var netBytes = new byte[4];
-                    for (int i = 0; i < 4; i++)
-                        netBytes[i] = (byte)(ipBytes[i] & maskBytes[i]);
-                    int prefix = 0;
-                    foreach (byte b in maskBytes)
-                        for (int bit = 7; bit >= 0; bit--)
-                            if ((b & (1 << bit)) != 0) prefix++;
-                            else goto done;
-                    done:
-
-                    bool wireless = iface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211;
-                    var net = new LocalNet
+                    foreach (var unicast in props.UnicastAddresses.Where(a => a.Address.AddressFamily == AddressFamily.InterNetwork))
                     {
-                        Subnet   = $"{new IPAddress(netBytes)}/{prefix}",
-                        LocalIp  = ip.ToString(),
-                        Wireless = wireless,
-                        // Description is the hardware name Windows shows in Network Connections;
-                        // Name is whatever the adapter has been renamed to locally.
-                        AdapterName = iface.Description ?? "",
-                        LinkSpeed   = SafeSpeed(iface),
-                        InterfaceLabel = iface.NetworkInterfaceType switch
+
+                        var ip = unicast.Address;
+                        var mask = unicast.IPv4Mask;
+                        var ipBytes = ip.GetAddressBytes();
+                        var maskBytes = mask.GetAddressBytes();
+                        var netBytes = new byte[4];
+                        for (int i = 0; i < 4; i++)
+                            netBytes[i] = (byte)(ipBytes[i] & maskBytes[i]);
+                        int prefix = 0;
+                        foreach (byte b in maskBytes)
+                            for (int bit = 7; bit >= 0; bit--)
+                                if ((b & (1 << bit)) != 0) prefix++;
+                                else goto done;
+                        done:
+
+                        bool wireless = iface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211;
+                        var net = new LocalNet
                         {
-                            NetworkInterfaceType.Wireless80211 => "Wi-Fi",
-                            NetworkInterfaceType.Ethernet      => "Ethernet",
-                            _                                  => iface.NetworkInterfaceType.ToString()
-                        },
-                    };
+                            Subnet   = $"{new IPAddress(netBytes)}/{prefix}",
+                            LocalIp  = ip.ToString(),
+                            AdapterId = iface.Id,
+                            InterfaceIndex = props.GetIPv4Properties()?.Index ?? 0,
+                            Wireless = wireless,
+                            // Description is the hardware name Windows shows in Network Connections;
+                            // Name is whatever the adapter has been renamed to locally.
+                            AdapterName = iface.Description ?? "",
+                            LinkSpeed   = SafeSpeed(iface),
+                            InterfaceLabel = iface.NetworkInterfaceType switch
+                            {
+                                NetworkInterfaceType.Wireless80211 => "Wi-Fi",
+                                NetworkInterfaceType.Ethernet      => "Ethernet",
+                                _                                  => iface.NetworkInterfaceType.ToString()
+                            },
+                        };
 
-                    var gw = props.GatewayAddresses
-                        .FirstOrDefault(g => g.Address.AddressFamily == AddressFamily.InterNetwork);
-                    if (gw != null)
-                    {
-                        net.Gateway = gw.Address.ToString();
-                        NetworkScanner.GatewayIp = net.Gateway;   // so the classifier flags the router
+                        var gw = props.GatewayAddresses
+                            .FirstOrDefault(g => g.Address.AddressFamily == AddressFamily.InterNetwork);
+                        if (gw != null)
+                        {
+                            net.Gateway = gw.Address.ToString();
+                        }
+
+                        var dns = props.DnsAddresses
+                            .FirstOrDefault(d => d.AddressFamily == AddressFamily.InterNetwork);
+                        if (dns != null)
+                        {
+                            net.Dns = dns.ToString();
+                            // Distinguishes a real DNS server from a router that just forwards.
+                        }
+
+                        // SSID/BSSID is required for explicitly bound Wi-Fi scans, so a same-address
+                        // reconnection to a different network cannot look like the original link.
+                        net.ConnectionIdentity = wireless ? WindowsLinkIdentity.Read(iface.Id) : "wired";
+                        result.Add(net);
                     }
-
-                    var dns = props.DnsAddresses
-                        .FirstOrDefault(d => d.AddressFamily == AddressFamily.InterNetwork);
-                    if (dns != null)
-                    {
-                        net.Dns = dns.ToString();
-                        // Distinguishes a real DNS server from a router that just forwards.
-                        NetworkScanner.DnsIp = net.Dns;
-                    }
-
-                    return net;
                 }
             }
             catch { }
-            return null;
+            return result;
         }
 
         /// <summary>

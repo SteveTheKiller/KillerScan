@@ -164,7 +164,7 @@ namespace KillerScan.Shell
                 export.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, "Str_TT_Export");
                 RailButtons.Children.Insert(0, export);
                 ApplyToolbarAppearance();
-                _scanWorkspace.DeviceAction += (_, e) => WorkspaceDeviceAction(e.Device, e.Action, e.ServicePort);
+                _scanWorkspace.DeviceAction += (_, e) => WorkspaceDeviceAction(e.Device, e.Action, e.ServicePort, e.Access);
                 _scanWorkspace.ShellExportRequested += ShellExport;
                 // Everything bound with DynamicResource follows a language change on its own. The
                 // status line and the device count do not: they are composed in code and stored,
@@ -447,21 +447,22 @@ namespace KillerScan.Shell
             UpdateWorkspaceStatus();
         }
 
-        private void WorkspaceDeviceAction(NetworkDevice device, string action, int? servicePort = null)
+        private void WorkspaceDeviceAction(NetworkDevice device, string action, int? servicePort = null, AccessEndpoint? access = null)
         {
-            try { RunWorkspaceDeviceAction(device, action, servicePort); }
+            try { RunWorkspaceDeviceAction(device, action, servicePort, access); }
             catch (System.ComponentModel.Win32Exception ex) { StatusText.Text = ex.Message; }
             catch (InvalidOperationException ex) { StatusText.Text = ex.Message; }
         }
 
-        private void RunWorkspaceDeviceAction(NetworkDevice device, string action, int? servicePort = null)
+        private void RunWorkspaceDeviceAction(NetworkDevice device, string action, int? servicePort = null, AccessEndpoint? access = null)
         {
             if (!IPAddress.TryParse(device.IpAddress, out var address)) return;
             string ip = address.ToString();
             if (action == "Watch" || action == "Diagnose") { OpenNetworkTool(device, action == "Diagnose"); return; }
             if (action == "Browser")
             {
-                string? url = servicePort.HasValue ? ScanWorkspace.ServiceBrowserUri(ip, servicePort.Value)?.AbsoluteUri : "http://" + ip;
+                var endpoint = access ?? DeviceAccess.Web(device, servicePort);
+                string? url = endpoint != null && endpoint.Protocol is "http" or "https" ? DeviceAccess.Address(ip, endpoint) : null;
                 if (url != null) Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                 return;
             }

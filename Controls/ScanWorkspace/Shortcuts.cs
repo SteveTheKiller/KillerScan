@@ -53,7 +53,8 @@ namespace KillerScan.Controls
                 ResultsGrid.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
                 ResultsGrid.ContextMenu.IsOpen = true; e.Handled = true; return;
             }
-            if (!text && modifiers == ModifierKeys.None && key == Key.F2) action = () => RenameDevice_Click(this, new RoutedEventArgs());
+            if (!text && modifiers == ModifierKeys.Control && key == Key.I) action = () => Evidence_Click(this, new RoutedEventArgs());
+            else if (!text && modifiers == ModifierKeys.None && key == Key.F2) action = () => RenameDevice_Click(this, new RoutedEventArgs());
             else if (!text && modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.B) action = () => TrustDevice_Click(this, new RoutedEventArgs());
             else if (!text && modifiers == (ModifierKeys.Control | ModifierKeys.Alt) && key == Key.N) action = () => ClearDeviceName_Click(this, new RoutedEventArgs());
             else if (!text && modifiers == (ModifierKeys.Control | ModifierKeys.Alt) && key == Key.T) action = () => ClearOverride_Click(this, new RoutedEventArgs());

@@ -15,6 +15,16 @@ namespace KillerScan.Controls
 
         private void UpdateDeepScanButton()
         {
+            if (InterfaceSelectionButton != null)
+            {
+                InterfaceSelectionButton.IsEnabled = !IsScanning;
+                if (IsScanning && InterfaceSelectionButton.ContextMenu != null) InterfaceSelectionButton.ContextMenu.IsOpen = false;
+            }
+            if (ScanOptionsButton != null)
+            {
+                ScanOptionsButton.IsEnabled = !IsScanning;
+                if (IsScanning && ScanOptionsButton.ContextMenu != null) ScanOptionsButton.ContextMenu.IsOpen = false;
+            }
             if (DeepScanAllButton == null) return;
             DeepScanAllButton.Visibility = !DemoMode && ActiveDevices.Count > 0 && _active.Cts == null
                 ? Visibility.Visible
@@ -53,6 +63,9 @@ namespace KillerScan.Controls
                 .ToList();
             if (targets.Count == 0) return;
 
+            using var locationRun = Locations.BeginRun();
+            EngineHost.CapturePreferences(_active.Scanner);
+
             var s = _active;
             var scanner = s.Scanner;
             _rescanCts = new CancellationTokenSource();
@@ -63,7 +76,8 @@ namespace KillerScan.Controls
             ScanProgress.Value = 0;
             ScanProgress.Visibility = Visibility.Visible;
             int done = 0;
-            NetworkScanner.FlushLocalDnsCache();
+            var options = s.Options;
+            if (options.ReverseDns && scanner.Binding == null) NetworkScanner.FlushLocalDnsCache();
 
             try
             {
@@ -76,10 +90,11 @@ namespace KillerScan.Controls
                     try
                     {
                         fresh = await scanner.DeepProbeHostAsync(
-                            old.IpAddress, ct, flushLocalDnsCache: false);
+                            old.IpAddress, ct, options, flushLocalDnsCache: false);
                         ct.ThrowIfCancellationRequested();
                     }
                     catch (OperationCanceledException) { throw; }
+                    catch (NetworkBindingException) { _rescanCts.Cancel(); throw; }
                     catch { done++; ScanProgress.Value = done * 100.0 / targets.Count; continue; }
 
                     int idx = s.Devices.IndexOf(old);
@@ -91,6 +106,7 @@ namespace KillerScan.Controls
                 StatusText.Text = string.Format(Loc("Str_St_RescanDone"), targets.Count);
             }
             catch (OperationCanceledException) { if (!_disposed) StatusText.Text = Loc("Str_St_ScanCanceled"); }
+            catch (NetworkBindingException ex) { if (!_disposed) StatusText.Text = ex.Message; }
             finally
             {
                 _rescanCts.Dispose();
@@ -108,6 +124,9 @@ namespace KillerScan.Controls
             }
             if (_disposed || _active.Cts != null || ActiveDevices.Count == 0) return;
 
+            using var locationRun = Locations.BeginRun();
+            EngineHost.CapturePreferences(_active.Scanner);
+
             var s = _active;
             var scanner = s.Scanner;
             var targets = s.Devices.OrderBy(d => d.IpSortKey).ToList();
@@ -122,7 +141,8 @@ namespace KillerScan.Controls
             ScanProgress.Visibility = Visibility.Visible;
             UpdateDeepScanButton();
             StateChanged?.Invoke(this, EventArgs.Empty);
-            NetworkScanner.FlushLocalDnsCache();
+            var options = s.Options;
+            if (options.ReverseDns && scanner.Binding == null) NetworkScanner.FlushLocalDnsCache();
 
             try
             {
@@ -132,7 +152,7 @@ namespace KillerScan.Controls
                     try
                     {
                         var fresh = await scanner.DeepProbeHostAsync(
-                            old.IpAddress, ct, 128, flushLocalDnsCache: false);
+                            old.IpAddress, ct, options, 128, flushLocalDnsCache: false);
                         ct.ThrowIfCancellationRequested();
                         int idx = s.Devices.IndexOf(old);
                         if (idx >= 0)
@@ -142,6 +162,7 @@ namespace KillerScan.Controls
                         }
                     }
                     catch (OperationCanceledException) { throw; }
+                    catch (NetworkBindingException) { _rescanCts.Cancel(); throw; }
                     catch { }
                     finally
                     {
@@ -163,6 +184,7 @@ namespace KillerScan.Controls
             {
                 if (!_disposed) StatusText.Text = Loc("Str_St_ScanCanceled");
             }
+            catch (NetworkBindingException ex) { if (!_disposed) StatusText.Text = ex.Message; }
             finally
             {
                 _rescanCts.Dispose();

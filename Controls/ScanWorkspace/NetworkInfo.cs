@@ -10,6 +10,11 @@ namespace KillerScan.Controls
             if (net is null) return;
 
             SubnetInput.Text    = net.Subnet;
+            ShowNetworkInfo(net);
+        }
+
+        private void ShowNetworkInfo(LocalNet net)
+        {
             LocalIpLabel.Text   = net.LocalIp;
             InterfaceLabel.Text = net.InterfaceLabel switch
             {
@@ -19,8 +24,8 @@ namespace KillerScan.Controls
             };
             InterfaceIcon.Text = InterfaceGlyph(net.Wireless);
 
-            if (net.Gateway.Length > 0) GatewayLabel.Text = net.Gateway;
-            if (net.Dns.Length > 0)     DnsLabel.Text     = net.Dns;
+            GatewayLabel.Text = net.Gateway;
+            DnsLabel.Text = net.Dns;
 
             FooterNetLabel.Text   = net.LocalIp;
             FooterNetAdapter.Text = Segment(net.AdapterName);

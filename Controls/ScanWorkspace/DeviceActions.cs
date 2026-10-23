@@ -12,6 +12,31 @@ namespace KillerScan.Controls
     {
         private NetworkDevice? GetSelectedDevice() => ResultsGrid.SelectedItem as NetworkDevice;
 
+        internal NetworkDevice? EvidenceDevice => _showServices
+            ? (ServicesGrid.CurrentItem as ServiceRow ?? ServicesGrid.SelectedItem as ServiceRow) is { } row && ServicesGrid.SelectedItems.Contains(row)
+                ? ActiveDevices.FirstOrDefault(item => item.IpAddress == row.IpAddress) : null
+            : ResultsGrid.CurrentItem is NetworkDevice current && ResultsGrid.SelectedItems.Contains(current) ? current : GetSelectedDevice();
+
+        private void Evidence_Click(object sender, RoutedEventArgs e)
+        {
+            if (EvidenceDevice is { } device)
+                new DeviceEvidenceWindow(device) { Owner = Window.GetWindow(this) }.ShowDialog();
+        }
+
+        private void Access_Click(object sender, RoutedEventArgs e)
+        {
+            if (EvidenceDevice is not { } device) return;
+            new DeviceAccessWindow(device, endpoint => OpenAccess(device, endpoint), CopyDeviceText)
+                { Owner = Window.GetWindow(this) }.ShowDialog();
+        }
+
+        internal void OpenAccess(NetworkDevice device, AccessEndpoint endpoint)
+        {
+            if (DeviceAccess.Address(device.IpAddress, endpoint) == null) return;
+            string? action = endpoint.Protocol switch { "http" or "https" => "Browser", "ssh" => "Ssh", "rdp" => "Rdp", _ => null };
+            if (action != null) DeviceAction?.Invoke(this, new ScanDeviceActionEventArgs(device, action, false, endpoint.Port, endpoint));
+        }
+
         private void ResultsGrid_RightClick(object sender, MouseButtonEventArgs e)
         {
             var row = ItemsControl.ContainerFromElement(ResultsGrid, e.OriginalSource as DependencyObject) as DataGridRow;
@@ -87,7 +112,7 @@ namespace KillerScan.Controls
             if (sender is MenuItem mi && mi.Tag is string type)
             {
                 DeviceOverrides.Set(d.MacAddress, type);
-                d.DeviceType = type;
+                DeviceIdentification.ApplyManualType(d, type);
                 _filteredView?.Refresh();
                 if (_showTopology) RefreshTopology();
                 StatusText.Text = string.Format(Loc("Str_St_OverrideSet"), d.MacAddress, type);
@@ -98,7 +123,7 @@ namespace KillerScan.Controls
         {
             var d = GetSelectedDevice(); if (d == null || string.IsNullOrEmpty(d.MacAddress)) return;
             DeviceOverrides.Set(d.MacAddress, null);
-            d.DeviceType = NetworkScanner.ClassifyDevice(d);
+            DeviceIdentification.ApplyManualType(d, null);
             _filteredView?.Refresh();
             if (_showTopology) RefreshTopology();
             StatusText.Text = string.Format(Loc("Str_St_OverrideCleared"), d.MacAddress);
