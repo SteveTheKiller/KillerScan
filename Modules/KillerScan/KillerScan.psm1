@@ -92,12 +92,17 @@ function scan {
         [switch]$Quick,
 
         # Seconds to allow the whole scan.
-        [int]$Timeout
+        [int]$Timeout,
+
+        # Disable application-level probes; see killerscan /help for names.
+        [ValidateSet('neighbor-cache','arp','icmp','tcp-liveness','dns','mdns','ssdp','ports','http','tls','ssh','snmp','netbios')]
+        [string[]]$Skip
     )
 
     $arguments = @('/scan')
     if ($Target)  { $arguments += ($Target -join ',') }
     if ($Quick)   { $arguments += '/quick' }
+    if ($Skip)    { $arguments += @('/skip', ($Skip -join ',')) }
     if ($Timeout) { $arguments += @('/timeout', $Timeout) }
     $arguments += @('/json', '/quiet')
 
@@ -116,10 +121,14 @@ function probe {
         [Parameter(Position = 0, Mandatory = $true)]
         [string]$Target,
 
-        [int]$Timeout
+        [int]$Timeout,
+
+        [ValidateSet('neighbor-cache','arp','icmp','tcp-liveness','dns','mdns','ssdp','ports','http','tls','ssh','snmp','netbios')]
+        [string[]]$Skip
     )
 
     $arguments = @('/probe', $Target)
+    if ($Skip) { $arguments += @('/skip', ($Skip -join ',')) }
     if ($Timeout) { $arguments += @('/timeout', $Timeout) }
     $arguments += @('/json', '/quiet')
 

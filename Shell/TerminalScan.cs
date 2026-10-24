@@ -14,6 +14,8 @@ namespace KillerScan.Shell
     public partial class MainWindow
     {
         private bool _terminalScanRunning;
+        private ScanOptions _terminalScanOptions = new();
+        private Button? _terminalScanOptionsButton;
         private int _terminalScanCount;
         private double _terminalScanProgress;
         private bool _terminalScanHasStatus;
@@ -58,6 +60,17 @@ namespace KillerScan.Shell
             };
             bar.Children.Add(target);
             bar.Children.Add(button);
+            _terminalScanOptionsButton = new Button
+            {
+                Style = (Style)FindResource("OutlineButton"), Content = "\uE713",
+                FontFamily = new System.Windows.Media.FontFamily("Segoe MDL2 Assets"),
+                Padding = new Thickness(6, 3, 6, 3), Margin = new Thickness(0, 2, 6, 2)
+            };
+            _terminalScanOptionsButton.SetResourceReference(ToolTipProperty, "Str_Options_Title");
+            _terminalScanOptionsButton.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, "Str_Options_Title");
+            Controls.ScanOptionsMenu.Attach(_terminalScanOptionsButton, () => _terminalScanOptions,
+                value => { if (!_terminalScanRunning) _terminalScanOptions = value; });
+            bar.Children.Add(_terminalScanOptionsButton);
             _viewToolbarTargets["terminal"] = target;
             RegisterViewToolbar("terminal", bar);
         }
@@ -67,6 +80,12 @@ namespace KillerScan.Shell
             if (_terminalControl?.HasShell != true || _terminalControl.HasRunningCommand || _terminalExited || _terminalScanRunning) return;
             var terminal = _terminalControl;
             _terminalScanRunning = true;
+            var options = _terminalScanOptions;
+            if (_terminalScanOptionsButton != null)
+            {
+                _terminalScanOptionsButton.IsEnabled = false;
+                _terminalScanOptionsButton.ContextMenu.IsOpen = false;
+            }
             _terminalScanCount = 0;
             _terminalScanProgress = 0;
             _terminalScanHasStatus = true;
@@ -89,7 +108,8 @@ namespace KillerScan.Shell
                 using var process = new Process { StartInfo = new ProcessStartInfo
                 {
                     FileName = Assembly.GetExecutingAssembly().Location,
-                    Arguments = "/scan " + QuoteArgument(target.Trim()) + " /json /progress /terminal-progress",
+                    Arguments = "/scan " + QuoteArgument(target.Trim()) + " /json /progress /terminal-progress" +
+                        (options.DisabledFeatures.Length == 0 ? "" : " /skip " + options.DisabledFeatures),
                     UseShellExecute = false, CreateNoWindow = true,
                     RedirectStandardOutput = true, RedirectStandardError = true
                 } };
@@ -159,6 +179,7 @@ namespace KillerScan.Shell
                 catch (System.IO.IOException) { }
                 catch (ObjectDisposedException) { }
                 _terminalScanRunning = false;
+                if (_terminalScanOptionsButton != null) _terminalScanOptionsButton.IsEnabled = true;
                 if (_terminalScanError != null) { _terminalStatusKey = "Str_Err_Scan"; _terminalStatusArgument = _terminalScanError; }
                 UpdateWorkspaceStatus();
                 UpdateScanLight();

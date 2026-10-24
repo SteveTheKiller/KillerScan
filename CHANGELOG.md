@@ -6,6 +6,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.8.4] - Unreleased
 
+### Added
+- Per-tab scan options for neighbor cache, explicit ARP, ICMP, TCP discovery, DNS, mDNS, SSDP, port scanning and individual HTTP/TLS/SSH/SNMP/NetBIOS fingerprints. Profiles save the choices; scan, quick and deep paths enforce them in the engine. CLI `/skip` and PowerShell `-Skip` provide the same choices. Existing profiles and API calls keep their defaults.
+
 ### Fixed
 - The shortcuts card shows shadows at its edges when more content is out of view.
 

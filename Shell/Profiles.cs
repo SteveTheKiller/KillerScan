@@ -44,7 +44,7 @@ namespace KillerScan.Shell
                 Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
             dialog.ShowDialog();
             if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return;
-            ScanProfiles.Save(new ScanProfile { Name = dialog.Value, Target = scan.Targets.Trim() });
+            ScanProfiles.Save(new ScanProfile { Name = dialog.Value, Target = scan.Targets.Trim(), Options = scan.Options });
             RefreshProfilesList();
         }
 
@@ -52,7 +52,7 @@ namespace KillerScan.Shell
         {
             if (ProfileFor(sender) is not { } profile) return;
             // Loading a saved target also reveals its input without starting a scan.
-            NewScan(profile.Target);
+            NewScan(profile.Target).LoadProfile(profile);
         }
 
         private void ProfileList_Activate(object sender, MouseButtonEventArgs e)
