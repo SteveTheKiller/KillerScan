@@ -6,12 +6,13 @@ namespace KillerScan.Services
 {
     // Mirrors KillerPDF's LocaleManager. en-US.xaml is always the base layer so any locale that
     // omits a key falls back to English; the chosen locale's file is layered on top.
-    internal enum Locale { EnUS, Es, ZhTW, ZhCN, Bn, TrTR, De, Fr, Ja, CsCZ, PlPL, HuHU, ItIT, KkKZ, RuRU, ViVN, UkUA, NbNO, PtBR }
+    internal enum Locale { EnUS, Es, ZhTW, ZhCN, Bn, TrTR, De, Fr, Ja, CsCZ, PlPL, HuHU, ItIT, KkKZ, RuRU, ViVN, UkUA, NbNO, PtBR, SlSI }
 
     internal static class LocaleManager
     {
         private static Locale _current = Locale.EnUS;
         public static Locale Current => _current;
+        public static string LanguageTag { get; private set; } = "en-US";
 
         /// <summary>Call once at startup (after ThemeManager.Initialize) to restore the saved locale.</summary>
         public static void Initialize()
@@ -51,6 +52,7 @@ namespace KillerScan.Services
                 "uk" => Locale.UkUA,
                 "nb" or "no" or "nn" => Locale.NbNO,
                 "pt" => Locale.PtBR,
+                "sl" => Locale.SlSI,
                 _ => Locale.EnUS,
             };
         }
@@ -74,6 +76,7 @@ namespace KillerScan.Services
         private static void ApplyInternal(Locale locale)
         {
             var merged = Application.Current.Resources.MergedDictionaries;
+            LanguageTag = "en-US";
 
             // [0] theme. [1] en-US BASE - always present so any partial locale falls back to English
             // for keys it doesn't translate. [2] the chosen locale's overrides (absent for English).
@@ -100,6 +103,7 @@ namespace KillerScan.Services
                 Locale.UkUA => new Uri("pack://application:,,,/Strings/uk-UA.xaml"),
                 Locale.NbNO => new Uri("pack://application:,,,/Strings/nb-NO.xaml"),
                 Locale.PtBR => new Uri("pack://application:,,,/Strings/pt-BR.xaml"),
+                Locale.SlSI => new Uri("pack://application:,,,/Strings/sl-SI.xaml"),
                 _           => null,   // English: base only
             };
 
@@ -109,6 +113,7 @@ namespace KillerScan.Services
                 {
                     var ov = new ResourceDictionary { Source = overrideUri };
                     if (merged.Count > 2) merged[2] = ov; else merged.Add(ov);
+                    LanguageTag = System.IO.Path.GetFileNameWithoutExtension(overrideUri.AbsolutePath);
                 }
                 catch
                 {

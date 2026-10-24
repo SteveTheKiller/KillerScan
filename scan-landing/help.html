@@ -111,7 +111,7 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <button class="lang-item" data-lang="hu">Magyar</button>
 <button class="lang-item" data-lang="it">Italiano</button>
 <button class="lang-item" data-lang="pt">Portugu&#234;s (Brasil)</button><button class="lang-item" data-lang="ru">&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</button>
-<button class="lang-item" data-lang="tr">Türkçe</button>
+<button class="lang-item" data-lang="sl">Slovenščina</button><button class="lang-item" data-lang="tr">Türkçe</button>
 <button class="lang-item" data-lang="uk">&#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072;</button><button class="lang-item" data-lang="vi">Ti&#7871;ng Vi&#7879;t</button>
 <button class="lang-item" data-lang="zh-cn">&#20013;&#25991; (&#31616;&#20307;)</button>
 <button class="lang-item" data-lang="zh">&#20013;&#25991; (&#32321;&#39636;)</button>
@@ -439,7 +439,7 @@ function kbText(fallback, key){
 }
 function shortcutLocale(){
   var lang=document.documentElement.getAttribute('lang')||'en';
-  var aliases={en:'en-US',pt:'pt-BR',fr:'fr-FR',de:'de-DE',no:'nb-NO',nb:'nb-NO',uk:'uk-UA',ru:'ru-RU',it:'it-IT',cs:'cs-CZ',pl:'pl-PL',hu:'hu-HU',tr:'tr-TR',kk:'kk-KZ',ja:'ja-JP',vi:'vi-VN'};
+  var aliases={en:'en-US',pt:'pt-BR',fr:'fr-FR',de:'de-DE',sl:'sl-SI',no:'nb-NO',nb:'nb-NO',uk:'uk-UA',ru:'ru-RU',it:'it-IT',cs:'cs-CZ',pl:'pl-PL',hu:'hu-HU',tr:'tr-TR',kk:'kk-KZ',ja:'ja-JP',vi:'vi-VN'};
   if(/^zh-Hant/i.test(lang)||lang==='zh'||lang==='zh-TW') return 'zh-TW';
   if(/^zh-Hans/i.test(lang)||/^zh-CN/i.test(lang)) return 'zh-CN';
   return aliases[lang.split('-')[0]]||lang.split('-')[0];
@@ -570,9 +570,9 @@ window.addEventListener('resize', fit);
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 <div class="egg-toast" id="eggToast"></div>
-<script src="ks-i18n.js?v=24"></script>
+<script src="ks-i18n.js?v=20261023-sl"></script>
 <script src="cli-help-i18n.js?v=1"></script>
-<script src="ks.js?v=20261017-contrast"></script>
+<script src="ks.js?v=20261023-contrast-sl"></script>
 <script>
 (function(){
   var items=[].slice.call(document.querySelectorAll('.acc-item'));

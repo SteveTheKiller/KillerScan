@@ -366,8 +366,9 @@
   if (features) new MutationObserver(translateCarousel).observe(features, { childList: true, subtree: true });
   window.addEventListener('resize', fitDiagramLabels);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitDiagramLabels);
-  var LANGS = ['en','cs','es','de','fr','ja','kk','pl','ru','uk','nb','pt','tr','vi','zh','zh-cn','bn','hu','it'];
+  var LANGS = ['en','cs','es','de','fr','ja','kk','pl','ru','uk','nb','pt','tr','vi','zh','zh-cn','bn','hu','it','sl'];
   var FLAGS = {
+    sl: '<svg viewBox="0 0 24 24"><rect width="24" height="8" fill="#fff"/><rect y="8" width="24" height="8" fill="#003da5"/><rect y="16" width="24" height="8" fill="#ed1c24"/><path d="M5 5h7v6c0 3-3.5 5-3.5 5S5 14 5 11z" fill="#003da5" stroke="#ed1c24" stroke-width=".6"/><path d="m5.7 10.5 1.4-2 1.4 1.2 1.4-1.2 1.4 2-2.8 2z" fill="#fff"/></svg>',
     en: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#fff"/><g fill="#b22234"><rect width="24" height="1.85"/><rect y="3.7" width="24" height="1.85"/><rect y="7.4" width="24" height="1.85"/><rect y="11.1" width="24" height="1.85"/><rect y="14.8" width="24" height="1.85"/><rect y="18.5" width="24" height="1.85"/><rect y="22.2" width="24" height="1.8"/></g><rect width="11" height="12.95" fill="#3c3b6e"/></svg>',
     cs: '<svg viewBox="0 0 24 24"><rect width="24" height="12" fill="#fff"/><rect y="12" width="24" height="12" fill="#d7141a"/><polygon points="0,0 12,12 0,24" fill="#11457e"/></svg>',
     es: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#c60b1e"/><rect y="6" width="24" height="12" fill="#ffc400"/></svg>',

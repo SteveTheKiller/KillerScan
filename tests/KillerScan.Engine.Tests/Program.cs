@@ -86,7 +86,7 @@ internal static class Program
             try { NetworkScanner.GetAddressesInSubnet(cidr); }
             catch (ArgumentOutOfRangeException ex)
             {
-                rejected = ex.ParamName == "cidr" && ex.Message.Contains("65,536", StringComparison.Ordinal);
+                rejected = ex.ParamName == "cidr" && ex.Message.Contains(ScanTargets.MaxAddresses.ToString("N0"), StringComparison.Ordinal);
             }
             Require(rejected, cidr + " should be rejected before its hosts are allocated");
         }
