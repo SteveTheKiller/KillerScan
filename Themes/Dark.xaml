@@ -8,7 +8,7 @@
     <!-- The grain inside a pane is clipped to the pane's radius MINUS its 1px border. -->
     <CornerRadius x:Key="PaneGrainCornerRadius">5</CornerRadius>
     <CornerRadius x:Key="TabCornerRadius">5,5,0,0</CornerRadius>
-    <SolidColorBrush x:Key="TextFieldBrush" Color="#333333" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TextFieldBrush" Color="#101010" po:Freeze="True"/>
 
     <!-- Accent -->
     <SolidColorBrush x:Key="PrimaryBrush" Color="#22bb56" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
