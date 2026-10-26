@@ -419,7 +419,15 @@
     // in a script array and are used as alt/title/aria-label - so those follow the language too.
     document.dispatchEvent(new CustomEvent('kscan-languagechange', { detail: { lang: lang } }));
   }
-  function closeLangMenu() { if (langMenu) { langMenu.hidden = true; langToggle.setAttribute('aria-expanded', 'false'); } }
+  // Like the theme flyout and the More menu: Escape closes it, and closing from the keyboard or
+  // by choosing a language puts focus back on the toggle instead of on a now-hidden button.
+  function closeLangMenu(refocus) {
+    if (!langMenu) return;
+    var hadFocus = langMenu.contains(document.activeElement);
+    langMenu.hidden = true;
+    langToggle.setAttribute('aria-expanded', 'false');
+    if (refocus || hadFocus) langToggle.focus();
+  }
   if (langToggle && langMenu) {
     langToggle.addEventListener('click', function (e) {
       e.stopPropagation();
@@ -427,8 +435,11 @@
       langMenu.hidden = !willOpen;
       langToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
     });
-    langItems.forEach(function (b) { b.addEventListener('click', function () { applyLang(b.dataset.lang); closeLangMenu(); }); });
-    document.addEventListener('click', function (e) { if (!langMenu.hidden && !e.target.closest('.lang-switch')) closeLangMenu(); });
+    langItems.forEach(function (b) { b.addEventListener('click', function () { applyLang(b.dataset.lang); closeLangMenu(true); }); });
+    document.addEventListener('click', function (e) { if (!langMenu.hidden && !e.target.closest('.lang-switch')) closeLangMenu(false); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !langMenu.hidden) closeLangMenu(true);
+    });
   }
 
   // ---- Easter egg: click the version number ----
