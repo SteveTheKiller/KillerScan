@@ -20,6 +20,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--scan-options" })) { await ScanOptionsTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--safe-probes" })) { await SafeProbeTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--netbios" })) { await NetbiosTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--mdns" })) { await MdnsTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--api-contract" })) { await ApiContractTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--dns-budget" })) { await DnsBudgetTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--binding" })) { await BindingTests.Run(); return 0; }

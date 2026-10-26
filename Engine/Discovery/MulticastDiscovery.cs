@@ -71,7 +71,9 @@ namespace KillerScan.Engine
                     if (await Task.WhenAny(recv, Task.Delay(300)) != recv) continue;
                     UdpReceiveResult r;
                     try { r = recv.Result; } catch { break; }
-                    try { ParseResponse(r.Buffer, r.RemoteEndPoint.Address.ToString(), map); } catch { }
+                    // The socket listens on every adapter; a bound scan keeps only its own network's replies.
+                    if (ScanSource.Current is not { } bound || bound.Contains(r.RemoteEndPoint.Address))
+                        try { ParseResponse(r.Buffer, r.RemoteEndPoint.Address.ToString(), map); } catch { }
                     recv = udp.ReceiveAsync();
                 }
             }
@@ -144,15 +146,22 @@ namespace KillerScan.Engine
             return ms.ToArray();
         }
 
-        private static void ParseResponse(byte[] buf, string srcIp, Dictionary<string, MdnsInfo> map)
+        /// <summary>
+        /// Adds one mDNS packet to <paramref name="map"/>. Only responses count: another host's query
+        /// can carry known-answer records about someone else. The records describe the address in
+        /// their A record, which is the sender unless a reflector or repeater (UniFi, Avahi, a
+        /// Bonjour gateway) relayed them, so a relayed packet is filed under the address it names.
+        /// </summary>
+        internal static void ParseResponse(byte[] buf, string srcIp, Dictionary<string, MdnsInfo> map)
         {
-            if (buf.Length < 12) return;
+            if (buf.Length < 12 || (buf[2] & 0x80) == 0) return;
             int qd = (buf[4] << 8) | buf[5];
             int total = ((buf[6] << 8) | buf[7]) + ((buf[8] << 8) | buf[9]) + ((buf[10] << 8) | buf[11]);
             int pos = 12;
             for (int i = 0; i < qd; i++) { ReadName(buf, ref pos); pos += 4; if (pos > buf.Length) return; }
 
-            var info = map.TryGetValue(srcIp, out var ex) ? ex : new MdnsInfo();
+            var services = new List<string>();
+            var names = new List<(string Name, string? Address)>();   // Address set for A records
             for (int i = 0; i < total; i++)
             {
                 string name = ReadName(buf, ref pos);
@@ -165,30 +174,38 @@ namespace KillerScan.Engine
 
                 string lname = name.ToLowerInvariant();
                 if (lname.Contains("._tcp.") || lname.Contains("._udp."))
-                    info.Services.Add(lname);
+                    services.Add(lname);
 
-                if (type == 1 && rdlen == 4)                      // A record -> hostname
+                if (type == 1 && rdlen == 4)                      // A record -> hostname for its address
                 {
-                    if (info.Name.Length == 0 && name.EndsWith(".local", StringComparison.OrdinalIgnoreCase))
-                        info.Name = name[..^6];
+                    if (name.EndsWith(".local", StringComparison.OrdinalIgnoreCase))
+                        names.Add((name[..^6], new IPAddress(new[] { buf[rdStart], buf[rdStart + 1], buf[rdStart + 2], buf[rdStart + 3] }).ToString()));
                 }
                 else if (type == 12)                              // PTR -> service instance
                 {
                     int p = rdStart;
                     string ptr = ReadName(buf, ref p).ToLowerInvariant();
-                    if (ptr.Contains("._tcp.") || ptr.Contains("._udp.")) info.Services.Add(ptr);
+                    if (ptr.Contains("._tcp.") || ptr.Contains("._udp.")) services.Add(ptr);
                 }
                 else if (type == 33 && rdlen >= 6)                // SRV -> target host
                 {
                     int p = rdStart + 6;
                     string target = ReadName(buf, ref p);
-                    if (info.Name.Length == 0 && target.EndsWith(".local", StringComparison.OrdinalIgnoreCase))
-                        info.Name = target[..^6];
+                    if (target.EndsWith(".local", StringComparison.OrdinalIgnoreCase)) names.Add((target[..^6], null));
                 }
 
                 pos = rdStart + rdlen;
             }
-            map[srcIp] = info;
+
+            // The sender owns the packet when one of its A records is its own address, or it has none.
+            var addresses = names.Where(n => n.Address != null).Select(n => n.Address!).Distinct().ToList();
+            string subject = addresses.Count == 0 || addresses.Contains(srcIp) ? srcIp : addresses[0];
+            var info = map.TryGetValue(subject, out var ex) ? ex : new MdnsInfo();
+            foreach (var service in services) info.Services.Add(service);
+            if (info.Name.Length == 0)
+                info.Name = names.FirstOrDefault(n => n.Address == subject).Name
+                    ?? names.FirstOrDefault(n => n.Address == null).Name ?? "";
+            if (info.Services.Count > 0 || info.Name.Length > 0) map[subject] = info;
         }
 
         // Reads a DNS name, following 0xC0 compression pointers; leaves pos just past the name.
