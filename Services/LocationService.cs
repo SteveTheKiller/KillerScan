@@ -28,8 +28,11 @@ namespace KillerScan.Services
 
         public static event EventHandler? Changed;
 
+        private static string _unassignedName = string.Empty;
+
         public static void Load(string unassignedName)
         {
+            _unassignedName = unassignedName;
             Open.Clear();
             _fallback = null;
             Loaded = true;
@@ -108,6 +111,18 @@ namespace KillerScan.Services
             Open.Remove(info.Id);
             Changed?.Invoke(null, EventArgs.Empty);
             return true;
+        }
+
+        /// <summary>
+        /// Drops a Location that something outside this process deleted: the catalog is read again,
+        /// so lists stop showing it, and its open data is released so nothing writes into it.
+        /// </summary>
+        public static void Forget(string id)
+        {
+            if (_catalog == null || _fallback != null) return;
+            _catalog.Load(_unassignedName);
+            Open.Remove(id);
+            Changed?.Invoke(null, EventArgs.Empty);
         }
 
         public static bool Rename(LocationInfo info, string name) => Notify(_catalog != null && _fallback == null && _catalog.Rename(info.Id, name));

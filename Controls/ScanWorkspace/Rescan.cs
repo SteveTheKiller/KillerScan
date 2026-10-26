@@ -203,6 +203,7 @@ namespace KillerScan.Controls
                     if (recordProfile)
                     {
                         _scanCompleted = completion == ScanCompletion.Complete;
+                        LeaveDeletedLocation();
                         RecordCompletedRun(options, deep: true, completion);
                     }
                     // A manual Deep Scan All refreshes an existing snapshot; an automatic one is

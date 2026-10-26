@@ -30,6 +30,7 @@ namespace KillerScan.Controls
         private void InitializeLocation()
         {
             _location = LocationService.Initial();
+            _inCatalog = _location.Info is { } initial && LocationService.Find(initial.Id) != null;
             _trustMark.State = MarkFor;
             Resources["TrustMark"] = _trustMark;
         }
@@ -98,6 +99,15 @@ namespace KillerScan.Controls
                 if (!discard) return false;
             }
             if (clear) ClearResults();
+            EnterLocation(data);
+            return true;
+        }
+
+        private bool _inCatalog;
+
+        private void EnterLocation(LocationData data)
+        {
+            _inCatalog = data.Info is { } entered && LocationService.Find(entered.Id) != null;
             _location = data;
             _loadedScanName = null;
             _active.NewIdentities.Clear();
@@ -113,7 +123,58 @@ namespace KillerScan.Controls
             if (_showTopology) RefreshTopology();
             LocationChanged?.Invoke(this, EventArgs.Empty);
             StateChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Moves the tab to a Temporary scan when its Location was deleted, by another window or
+        /// another KillerScan, since the tab opened it. Without this, every later rename, approval
+        /// or recorded scan would quietly recreate the deleted Location's folder, where nothing
+        /// lists it. The results stay on screen, so they can still be saved to a Location.
+        /// Returns true when the tab moved.
+        /// </summary>
+        internal bool LeaveDeletedLocation()
+        {
+            // Only a Location from this process's catalog can be judged against that catalog on disk.
+            if (_disposed || !_inCatalog || _location.Info is not { } info || LocationService.StillExists(info.Id)) return false;
+            EnterLocation(LocationData.Temporary());
+            LocationService.Forget(info.Id);
+            StatusText.Text = string.Format(Loc("Str_Loc_DeletedElsewhere"), info.Name);
             return true;
+        }
+
+        private void OnWindowActivated(object? sender, EventArgs e)
+        {
+            if (!IsScanning) LeaveDeletedLocation();
+        }
+
+        // Another tab in this process deleting the Location raises Changed; a scan in flight
+        // checks again when it records.
+        private void OnLocationsChanged(object? sender, EventArgs e)
+        {
+            if (_deletingHere) return;   // DeleteLocation moves this tab itself
+            if (_location.Info is { } info && LocationService.Find(info.Id) == null && !IsScanning) LeaveDeletedLocation();
+        }
+
+        private bool _deletingHere;
+
+        private Window? _activationSource;
+
+        private void TrackDeletedLocations()
+        {
+            LocationService.Changed += OnLocationsChanged;
+            Loaded += (_, _) =>
+            {
+                if (_activationSource != null) _activationSource.Activated -= OnWindowActivated;
+                _activationSource = Window.GetWindow(this);
+                if (_activationSource != null) _activationSource.Activated += OnWindowActivated;
+            };
+        }
+
+        private void UntrackDeletedLocations()
+        {
+            LocationService.Changed -= OnLocationsChanged;
+            if (_activationSource != null) _activationSource.Activated -= OnWindowActivated;
+            _activationSource = null;
         }
 
         // Back to an empty tab, as if nothing had been scanned yet.
@@ -258,10 +319,14 @@ namespace KillerScan.Controls
         {
             Loaded += (_, _) => CheckLocationSuggestion();
             System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged += OnNetworkAddressChanged;
+            TrackDeletedLocations();
         }
 
-        private void DisposeLocationSuggestions() =>
+        private void DisposeLocationSuggestions()
+        {
             System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged -= OnNetworkAddressChanged;
+            UntrackDeletedLocations();
+        }
 
         private void OnNetworkAddressChanged(object? sender, EventArgs e) =>
             Dispatcher.BeginInvoke(new Action(CheckLocationSuggestion));
@@ -403,7 +468,11 @@ namespace KillerScan.Controls
                 Loc("Str_Loc_DeleteButton"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
             confirm.ShowDialog();
             if (!confirm.Confirmed) return;
-            if (!LocationService.Delete(info, out _))
+            bool deleted;
+            _deletingHere = true;
+            try { deleted = LocationService.Delete(info, out _); }
+            finally { _deletingHere = false; }
+            if (!deleted)
             {
                 PersistenceFeedback.Check(false, () => false, () => LocationService.SaveError ?? LocationService.LoadError);
                 return;

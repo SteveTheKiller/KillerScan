@@ -433,6 +433,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Eliminare {0}? Le sue scansioni salvate, i nomi dei dispositivi, le approvazioni e la cronologia verranno rimossi da KillerScan. I file restano nella cartella "deleted" delle Sedi, quindi possono essere recuperati.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Elimina</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Interrompi la scansione prima di cambiare Sede.</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">La Sede {0} è stata eliminata in un'altra finestra. Questi risultati ora sono una «Scansione temporanea». Per conservarli, scegli «Salva i risultati nella Sede».</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Questo file di Sede supera {0} MB, più di quanto KillerScan importi.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Scartare questi risultati?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">I risultati di questa «Scansione temporanea» non vengono salvati da nessuna parte. Cambiare Sede li cancella. Per conservarli, scegli invece «Salva i risultati nella Sede».</sys:String>

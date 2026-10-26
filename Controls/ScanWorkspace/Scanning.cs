@@ -86,6 +86,8 @@ namespace KillerScan.Controls
                 completed = !cts.IsCancellationRequested && !_disposed;
                 if (completed)
                 {
+                    // Deleted elsewhere while scanning: the results stay, as a Temporary scan.
+                    if (LeaveDeletedLocation()) location = _location;
                     if (!_runDeepAfterScan || _active.Devices.Count == 0) RecordCompletedRun(options, deep: false);
                     NoteKnownDevices(location);
                 }

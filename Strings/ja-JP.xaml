@@ -428,6 +428,7 @@
     <sys:String x:Key="Str_Loc_DeleteDetail">{0} を削除しますか？保存済みスキャン、デバイス名、承認、履歴は KillerScan に表示されなくなります。ファイルはロケーションの "deleted" フォルダーに保持されるため、復元できます。</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">削除</sys:String>
     <sys:String x:Key="Str_Loc_Busy">ロケーションを変更する前にスキャンを停止してください。</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">ロケーション「{0}」は別のウィンドウで削除されました。この結果は「一時スキャン」になりました。残す場合は「結果をロケーションに保存」を選択してください。</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">このロケーションファイルは {0} MB を超えており、KillerScan がインポートできるサイズを上回っています。</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">この結果を破棄しますか？</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">この「一時スキャン」の結果はどこにも保存されていません。ロケーションを変更すると消去されます。残す場合は、代わりに「結果をロケーションに保存」を選択してください。</sys:String>

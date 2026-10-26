@@ -88,6 +88,7 @@ internal static class LocationWorkspaceTests
             Suggestion(Path.Combine(root, "service"));
             AdapterPreference(Path.Combine(root, "adapter"));
             LocationControls(Path.Combine(root, "controls"));
+            DeletedElsewhere(Path.Combine(root, "deleted"));
         }
         finally
         {
@@ -178,6 +179,32 @@ internal static class LocationWorkspaceTests
     }
 
     // The suggestion banner, the Location label, the detail menus and import, beyond scanning.
+    // Another KillerScan deletes the tab's Location. The tab must stop writing there, or the
+    // deleted folder comes back holding work nothing lists.
+    private static void DeletedElsewhere(string root)
+    {
+        LocationService.Root = root;
+        LocationService.Load("Unassigned");
+        Require(LocationService.Create("Gone Site", out var gone), "A Location is created.");
+        var scanner = new SiteScanner();
+        using var workspace = new ScanWorkspace("192.168.1.10", false, scanner);
+        Require(workspace.OpenLocation(gone!), "The tab opens it.");
+        var otherProcess = new LocationCatalog(root);
+        otherProcess.Load("Unassigned");
+        Require(otherProcess.Delete(gone!.Id, out _), "Another KillerScan deletes it.");
+        string folder = Path.Combine(root, "locations", gone.Id);
+        Require(!Directory.Exists(folder), "The deleted Location's folder is gone.");
+
+        // A scan that finishes after the deletion keeps its results as a Temporary scan.
+        workspace.Scan();
+        PumpUntil(() => !workspace.IsScanning);
+        Require(workspace.Location.IsTemporary && workspace.Session.Devices.Count == 1, "The finished scan stays on screen as a Temporary scan.");
+        Require(!Directory.Exists(folder), "Nothing recreates the deleted Location's folder.");
+        Require(LocationService.Find(gone.Id) == null, "The Locations list no longer shows it.");
+        Require(workspace.Status == string.Format((string)Application.Current.FindResource("Str_Loc_DeletedElsewhere"), "Gone Site"),
+            "The status says why the tab moved.");
+    }
+
     private static void LocationControls(string root)
     {
         LocationService.Root = root;

@@ -417,6 +417,7 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">¿Eliminar {0}? Sus escaneos guardados, nombres de dispositivos, aprobaciones e historial se quitarán de KillerScan. Los archivos se conservan en la carpeta "deleted" de las Ubicaciones, así que se pueden recuperar.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Eliminar</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Detenga el escaneo antes de cambiar de Ubicación.</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">La Ubicación {0} se eliminó en otra ventana. Estos resultados son ahora un «Escaneo temporal». Para conservarlos, elija «Guardar resultados en la Ubicación».</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Este archivo de Ubicación supera los {0} MB, más de lo que KillerScan importa.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">¿Descartar estos resultados?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Estos resultados de «Escaneo temporal» no se guardan en ningún sitio. Cambiar de Ubicación los borra. Para conservarlos, elija «Guardar resultados en la Ubicación».</sys:String>
