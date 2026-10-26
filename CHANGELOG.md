@@ -23,6 +23,8 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Concurrent app instances preserve saved scans and retention changes instead of overwriting newer history.
 - File dialogs stay responsive on slow or crowded folders, cancel stale loads and identify incomplete listings.
 - Vendor database updates preserve the prior complete file on failure and keep lookups available throughout reloads.
+- Vendor database updates stop at a size limit, including a small compressed download that would expand without end, and refuse a list redirected away from HTTPS.
+- Host names, page titles, server headers, banners and descriptions a device reports are limited in length, so one reply cannot swell a scan, its history or a report.
 - Executable installation and self-updates verify complete copies and preserve recovery files after replacement failures. Update reports support non-English folders.
 - Reports keep the scanned target, timestamp and captured results when pending input or live results change during export.
 - Demo device types and SSH usernames stay in memory without reading or changing saved real-device values.

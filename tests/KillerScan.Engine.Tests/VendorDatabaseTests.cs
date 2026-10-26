@@ -48,6 +48,39 @@ internal static class VendorDatabaseTests
         }
         finally { Directory.Delete(directory, true); }
         Console.WriteLine("PASS: vendor publication preserves the prior database after partial output.");
+
+        // A small gzip body that expands past the ceiling is refused instead of filling memory.
+        byte[] Gzip(byte[] plain)
+        {
+            using var packed = new MemoryStream();
+            using (var gz = new System.IO.Compression.GZipStream(packed, System.IO.Compression.CompressionMode.Compress, leaveOpen: true))
+                gz.Write(plain, 0, plain.Length);
+            return packed.ToArray();
+        }
+        byte[] bomb = Gzip(new byte[VendorDbUpdater.MaxTextBytes + 1]);
+        Require(bomb.Length < 1024 * 1024, "The expansion fixture should be small on the wire.");
+        bool refused = false;
+        try { VendorDbUpdater.Decode(bomb); } catch (InvalidDataException) { refused = true; }
+        Require(refused, "A gzip body that expands past the vendor database ceiling must be refused.");
+        refused = false;
+        try { VendorDbUpdater.Decode(new byte[VendorDbUpdater.MaxDownloadBytes + 1]); } catch (InvalidDataException) { refused = true; }
+        Require(refused, "A download past the vendor database ceiling must be refused.");
+        Require(VendorDbUpdater.Decode(Gzip(Encoding.UTF8.GetBytes("00:00:0C\tCisco\n"))) == "00:00:0C\tCisco\n"
+                && VendorDbUpdater.Decode(Encoding.UTF8.GetBytes("plain\n")) == "plain\n",
+            "Ordinary gzip and plain lists still decode.");
+        Console.WriteLine("PASS: vendor downloads stop at their size ceilings, compressed or not.");
+
+        // Device-sent text is bounded in length but otherwise kept as sent.
+        var device = new NetworkDevice
+        {
+            HttpTitle = new string('t', 50_000), SnmpDescr = new string('s', 50_000), Hostname = new string('h', 5_000),
+            SshBanner = "SSH-2.0-x\u001b]0;title\u0007", HttpServer = new string('a', 1023) + "😀"
+        };
+        Require(device.HttpTitle.Length == 1024 && device.SnmpDescr.Length == 1024 && device.Hostname.Length == 255,
+            "Device text is capped: " + device.HttpTitle.Length + ", " + device.SnmpDescr.Length + ", " + device.Hostname.Length);
+        Require(device.SshBanner == "SSH-2.0-x\u001b]0;title\u0007", "Short device text keeps its original characters.");
+        Require(device.HttpServer.Length == 1023 && !char.IsHighSurrogate(device.HttpServer[device.HttpServer.Length - 1]), "A cap never splits a surrogate pair.");
+        Console.WriteLine("PASS: device-sent text is length-bounded without rewriting what the device said.");
         return Task.CompletedTask;
     }
 

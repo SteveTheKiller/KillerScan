@@ -5,7 +5,14 @@ namespace KillerScan.Engine
     public class NetworkDevice
     {
         public string IpAddress { get; set; } = string.Empty;
-        public string Hostname { get; set; } = string.Empty;
+
+        // Every value below that a device can choose is length-bounded by DeviceText, whether it
+        // arrives from a probe or from saved history.
+        private string _hostname = string.Empty, _httpTitle = string.Empty, _httpServer = string.Empty,
+            _sshBanner = string.Empty, _tlsSubject = string.Empty, _smbOs = string.Empty, _snmpDescr = string.Empty,
+            _netbiosName = string.Empty, _ssdpServer = string.Empty;
+
+        public string Hostname { get => _hostname; set => _hostname = DeviceText.Clean(value, DeviceText.NameLength); }
         public string MacAddress { get; set; } = string.Empty;
         public string Vendor { get; set; } = string.Empty;
         public string DeviceType { get; set; } = "Unknown";
@@ -38,15 +45,15 @@ namespace KillerScan.Engine
 
         // -- Active fingerprint fields (populated by scanner) --
         public int? Ttl { get; set; }
-        public string HttpTitle { get; set; } = string.Empty;
-        public string HttpServer { get; set; } = string.Empty;
-        public string SshBanner { get; set; } = string.Empty;
-        public string TlsSubject { get; set; } = string.Empty;
-        public string SmbOs { get; set; } = string.Empty;
-        public string SnmpDescr { get; set; } = string.Empty;
-        public string NetbiosName { get; set; } = string.Empty;
+        public string HttpTitle { get => _httpTitle; set => _httpTitle = DeviceText.Clean(value, DeviceText.TextLength); }
+        public string HttpServer { get => _httpServer; set => _httpServer = DeviceText.Clean(value, DeviceText.TextLength); }
+        public string SshBanner { get => _sshBanner; set => _sshBanner = DeviceText.Clean(value, DeviceText.TextLength); }
+        public string TlsSubject { get => _tlsSubject; set => _tlsSubject = DeviceText.Clean(value, DeviceText.TextLength); }
+        public string SmbOs { get => _smbOs; set => _smbOs = DeviceText.Clean(value, DeviceText.TextLength); }
+        public string SnmpDescr { get => _snmpDescr; set => _snmpDescr = DeviceText.Clean(value, DeviceText.TextLength); }
+        public string NetbiosName { get => _netbiosName; set => _netbiosName = DeviceText.Clean(value, DeviceText.NameLength); }
         public List<string> MdnsServices { get; set; } = [];
-        public string SsdpServer { get; set; } = string.Empty;
+        public string SsdpServer { get => _ssdpServer; set => _ssdpServer = DeviceText.Clean(value, DeviceText.TextLength); }
 
         public string OpenPortsDisplay =>
             OpenPorts.Count > 0 ? string.Join(", ", OpenPorts) : "-";
