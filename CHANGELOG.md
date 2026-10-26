@@ -4,7 +4,9 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.8.4] - Unreleased
+## [1.9.0] - Unreleased
+
+Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
 ### Fixed
 - A speed test blocked by a Cloudflare security challenge now says so, and a rejected upload reply shows its status, content type and the start of its body instead of only "invalid response" (#4).

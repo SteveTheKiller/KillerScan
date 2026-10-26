@@ -1,6 +1,6 @@
 # Locations
 
-Status: agreed in planning on October 21, 2026, and built in 1.8.4. "As built" at the end records where the build differs from this plan and what is still open.
+Status: agreed in planning on October 21, 2026, and built in 1.9.0. "As built" at the end records where the build differs from this plan and what is still open.
 
 Locations keep each customer site's saved scans, device names, approvals, history and remembered usernames separate. Today all of that is global and keyed by MAC or IP, so two sites that both use `192.168.1.x` can share names, trust and SSH usernames (review finding BF-003). Locations fix that and replace the Scan Profiles list with Saved scans inside each Location.
 
@@ -116,7 +116,7 @@ The five current stores are global: `profiles.json`, `history.json`, `devices.js
 
 ## As built
 
-Where 1.8.4 differs from the plan above:
+Where 1.9.0 differs from the plan above:
 
 - **One scan workspace.** The app has a single scan workspace rather than tabs, so "the active tab" is that workspace. Its Location drives the History and Saved scans sidebar lists, the status tooltip, SSH usernames and the terminal's Scan button.
 - **Starting Location.** The workspace starts in the Location used last. After migration that is Unassigned, so an upgrade looks the same as before. A fresh install starts as a Temporary scan.

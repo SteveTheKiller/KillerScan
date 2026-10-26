@@ -1,6 +1,6 @@
 # Recognition evidence
 
-Status: built in 1.8.4, following review backlog item B07. The contributor's PR #9 was used as reference only; this code was written fresh.
+Status: built in 1.9.0, following review backlog item B07. The contributor's PR #9 was used as reference only; this code was written fresh.
 
 Every device type in KillerScan now says why. Hover over the type for a short summary, or right-click a device and choose **Why This Type?** (Ctrl+I) for the full list. Opening it reads what the scan already recorded and sends nothing to the device.
 

@@ -1,6 +1,6 @@
 # Device access
 
-Status: built in 1.8.4. The contributor's PR #15 was used as reference only; this code was written fresh.
+Status: built in 1.9.0. The contributor's PR #15 was used as reference only; this code was written fresh.
 
 Right-click a device and choose **Access** to see every way into it, from what the scan recorded. Opening the menu sends nothing. Clicking an endpoint opens it with the existing browser, SSH or Remote Desktop action on that port. An endpoint no app opens (plain TCP) copies its address instead. **Copy Address** at the bottom copies any endpoint's address.
 
