@@ -35,7 +35,7 @@ namespace KillerScan.Services
             {
                 try { Value = Read(); Error = null; }
                 catch (Exception ex) when (IsUnreadable(ex))
-                { Value = _create(); Error = ex.Message; }
+                { Value = _create(); Error = Describe(ex); }
             }
         }
 
@@ -98,8 +98,12 @@ namespace KillerScan.Services
                 finally { if (owned) mutex.ReleaseMutex(); }
             }
             catch (Exception ex) when (IsUnreadable(ex))
-            { Error = ex.Message; return false; }
+            { Error = Describe(ex); return false; }
         }
+
+        // A file that cannot be read refuses every save, because overwriting it would destroy
+        // whatever it held. Naming the file tells the user what to repair, restore or remove.
+        private string Describe(Exception ex) => _path + Environment.NewLine + ex.Message;
 
         private T Read()
         {

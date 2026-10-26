@@ -94,6 +94,10 @@ internal static class PreferencePersistenceTests
                 preferences.GetMethod("SetName")!.Invoke(null, new[] { device, "Fixture name" });
                 if (File.ReadAllText(preferencesFile) != "{unreadable-preferences")
                     throw new InvalidOperationException("Saving a device name must preserve unreadable original bytes.");
+                // The refusal names the file, so the retry prompt says what to repair and where.
+                string? why = (string?)preferences.GetProperty("SaveError")!.GetValue(null);
+                if (why == null || !why.Contains(preferencesFile))
+                    throw new InvalidOperationException("A save refused by an unreadable file names that file: " + why);
             }
             finally { preferencesPath.SetValue(null, originalPreferencesPath); }
 
