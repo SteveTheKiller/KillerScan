@@ -671,7 +671,8 @@ internal static class Program
                     (Action<Exception>)(ex => throw new InvalidOperationException("Shell launch failed", ex)));
                 var windowType = assembly.GetType("KillerScan.Shell.MainWindow", true)!;
                 string promptArgs = (string)windowType.GetMethod("PromptArgs", BindingFlags.Static | BindingFlags.NonPublic)!
-                    .Invoke(null, new[] { terminalType.GetProperty("ManagedShellSetup")!.GetValue(terminal) })!;
+                    .Invoke(null, new[] { terminalType.GetProperty("ManagedShellSetup")!.GetValue(terminal),
+                        terminalType.GetProperty("PromptToken", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(terminal) })!;
                 string palettePath = (string)windowType.GetProperty("PromptPalettePath", BindingFlags.Static | BindingFlags.NonPublic)!.GetValue(null)!;
                 var primary = ((SolidColorBrush)app.FindResource("PrimaryBrush")).Color;
                 Require(File.ReadAllText(palettePath).Contains($"ACCENT=#{primary.R:X2}{primary.G:X2}{primary.B:X2}"),

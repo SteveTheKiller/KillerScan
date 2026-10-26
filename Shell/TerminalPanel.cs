@@ -103,7 +103,7 @@ namespace KillerScan.Shell
                 {
                     string shell = ResolveTerminalShell();
                     terminal.Start(QuoteArgument(shell) + " -NoLogo" + PromptArgs(terminal.ManagedShellSetup +
-                        (string.IsNullOrEmpty(shellCommand) ? "" : "; " + shellCommand)), home);
+                        (string.IsNullOrEmpty(shellCommand) ? "" : "; " + shellCommand), terminal.PromptToken), home);
                 }
             }
             else ShowWorkspaceContent(_terminalControl, "terminal");

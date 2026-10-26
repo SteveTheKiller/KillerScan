@@ -103,7 +103,8 @@ namespace KillerScan.Shell
         /// pass shell text they built themselves; anything carrying user input goes to
         /// TerminalControl.Start as its own executable instead, never through here.
         /// </param>
-        internal static string PromptArgs(string? then = null)
+        /// <param name="token">The terminal's PromptToken, carried by the ready-prompt mark.</param>
+        internal static string PromptArgs(string? then, string token)
         {
             string tail = string.IsNullOrEmpty(then) ? string.Empty : "; " + then;
             bool customPrompt = Environment.GetEnvironmentVariable("KS_PROMPT") != "0";
@@ -125,12 +126,13 @@ namespace KillerScan.Shell
             // RootPath. No double quotes anywhere in the wrapper - it lives inside the
             // double-quoted -Command - and [string][char]27 rather than [char]27 first, because
             // char + multi-char string throws under PowerShell's char arithmetic.
-            const string wrap =
+            if (token.Length == 0 || !token.All(Uri.IsHexDigit)) throw new ArgumentException("The prompt token must be hexadecimal.", nameof(token));
+            string wrap =
                 "$script:KSCwdInner = $function:prompt; " +
                 "function prompt { $q = & $script:KSCwdInner; $l = Get-Location; " +
                 "if ($l.Provider.Name -eq 'FileSystem') " +
                 "{ $q = [string][char]27 + ']9;9;' + $l.ProviderPath + [char]7 + $q }; " +
-                "$q + [string][char]27 + ']133;B' + [char]7 }";
+                "$q + [string][char]27 + ']133;B;" + token + "' + [char]7 }";
 
             string setup = "$env:KS_STATE = '" + PromptPalettePath.Replace("'", "''") + "'; ";
             if (customPrompt && File.Exists(PromptScriptPath)) setup += ". '" + safe + "'; ";

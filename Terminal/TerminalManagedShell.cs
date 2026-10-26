@@ -15,6 +15,9 @@ namespace KillerScan.Terminal
         private NamedPipeServerStream? _bridge;
         private Task _bridgeWrites = Task.CompletedTask;
 
+        /// <summary>The value this session's shell integration marks must carry; see TerminalBuffer.PromptToken.</summary>
+        internal string PromptToken => _buf.PromptToken;
+
         // Output passes through the shell's console, so ConPTY owns its cursor and history.
         public string ManagedShellSetup =>
             NetworkColorSetup +
@@ -26,7 +29,7 @@ namespace KillerScan.Terminal
             "[Console]::Write(([char]27).ToString() + '[H'); " +
             "while ($null -ne ($line = $r.ReadLine())) { [Console]::Write([System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($line))) } " +
             "} finally { $p.Dispose() } }; " +
-            "function global:Invoke-KillerScanSpeedTest { [Console]::Write(([char]27).ToString() + ']133;KillerScan;SpeedTest' + [char]7) }; " +
+            "function global:Invoke-KillerScanSpeedTest { [Console]::Write(([char]27).ToString() + ']133;KillerScan;SpeedTest;" + PromptToken + "' + [char]7) }; " +
             "Set-Alias -Name speedtest -Value Invoke-KillerScanSpeedTest -Scope Global";
 
         public async Task BeginShellManagedSessionAsync(CancellationToken cancellation)

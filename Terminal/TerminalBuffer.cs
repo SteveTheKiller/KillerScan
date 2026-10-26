@@ -83,6 +83,20 @@ namespace KillerScan.Terminal
 
         public TerminalBuffer(int cols, int rows) => Resize(cols, rows);
 
+        /// <summary>
+        /// A random value this session's own prompt wrapper and speedtest command put in their
+        /// private OSC 133 marks. Anything else printed to the terminal, such as a remote SSH host or
+        /// a device banner, cannot know it, so it cannot pose as a ready prompt or ask for a speed test.
+        /// </summary>
+        internal string PromptToken { get; } = NewPromptToken();
+
+        private static string NewPromptToken()
+        {
+            var bytes = new byte[16];
+            using (var random = System.Security.Cryptography.RandomNumberGenerator.Create()) random.GetBytes(bytes);
+            return BitConverter.ToString(bytes).Replace("-", "");
+        }
+
         public Cell[] LineAt(int index)
         {
             if (index < 0) return _screen[0];
@@ -718,8 +732,8 @@ namespace KillerScan.Terminal
             switch (cmd)
             {
                 case 133:
-                    if (data == "B") PromptReady?.Invoke();
-                    else if (data == "KillerScan;SpeedTest") SpeedTestRequested?.Invoke();
+                    if (data == "B;" + PromptToken) PromptReady?.Invoke();
+                    else if (data == "KillerScan;SpeedTest;" + PromptToken) SpeedTestRequested?.Invoke();
                     break;
                 case 0: case 2:
                     Title = data;

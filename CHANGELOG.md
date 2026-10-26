@@ -49,6 +49,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Terminal combining marks, wide characters and common emoji clusters keep consistent columns through drawing, editing, copying and resizing.
 - Stopping a scan cancels active HTTP and TLS fingerprint connections and prevents probes of later ports.
 - Stopping during MAC resolution returns promptly, skips queued lookups and keeps native work bounded across scans.
+- A remote SSH host or a device banner shown in the terminal can no longer pose as a ready prompt or start a speed test. Only the terminal's own shell, which knows a per-session value, can.
 - Terminal title sequences accept BEL and ESC-backslash terminators across split reads and preserve UTF-8 titles.
 - Pasting into the terminal drops control characters other than tab and line breaks, so pasted text can no longer end a bracketed paste early and run the rest as typed commands.
 - A large paste into the terminal no longer freezes the window while the shell is busy. Input is written in the background in order, so a 16 MB paste returns at once instead of blocking for many seconds. Input the terminal cannot take, such as a paste over 64 MB, beeps and says so instead of vanishing.

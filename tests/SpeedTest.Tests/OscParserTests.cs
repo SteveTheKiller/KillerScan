@@ -29,7 +29,7 @@ internal static class OscParserTests
         buffer.TitleChanged += _ => titles++;
         buffer.PromptReady += () => prompts++;
         var live = new VtParser(buffer);
-        byte[] transcript = Encoding.UTF8.GetBytes("\u001b]2;device console\u001b\\\u001b]133;B\u001b\\ready");
+        byte[] transcript = Encoding.UTF8.GetBytes("\u001b]2;device console\u001b\\\u001b]133;B;" + buffer.PromptToken + "\u001b\\ready");
         foreach (byte value in transcript) live.Feed(new[] { value }, 1);
         Require(buffer.Title == "device console" && titles == 1 && prompts == 1,
             "ST dispatch reaches the terminal title and prompt integration exactly once.");

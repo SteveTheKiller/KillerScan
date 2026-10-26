@@ -27,6 +27,7 @@ internal static class TerminalSafetyTests
             Require(plain.Contains("\\x1B") && plain.Contains("\\x0A") && plain.Contains("\\x9B"), "Controls remain visible as escaped evidence.");
             CheckSideEffects(table);
         }
+        ForgedShellMarks();
         var presentation = new TerminalScanPresentation(_ => "Column", () => 512);
         string embedded = presentation.Result(devices);
         string visible = Regex.Replace(embedded, "\u001b\\[(?:0|3[0-7]|1;37|2K)m?", "");
@@ -50,6 +51,27 @@ internal static class TerminalSafetyTests
             parser.Feed(bytes, bytes.Length);
             Require(buffer.Title == "Original title" && actions == 0, "Actual terminal parsing cannot execute a network-supplied title or application OSC command.");
         }
+    }
+
+    /// <summary>A remote host or banner that prints the private shell marks gets nothing; only the
+    /// session's own token makes the prompt ready or starts a speed test.</summary>
+    private static void ForgedShellMarks()
+    {
+        var buffer = new TerminalBuffer(80, 5);
+        var other = new TerminalBuffer(80, 5);
+        int prompts = 0, speedTests = 0;
+        buffer.PromptReady += () => prompts++;
+        buffer.SpeedTestRequested += () => speedTests++;
+        var parser = new VtParser(buffer);
+        void Feed(string text) { byte[] bytes = Encoding.UTF8.GetBytes(text); parser.Feed(bytes, bytes.Length); }
+        Feed("\u001b]133;B\a\u001b]133;KillerScan;SpeedTest\a");
+        Feed("\u001b]133;B;" + other.PromptToken + "\a\u001b]133;KillerScan;SpeedTest;" + other.PromptToken + "\a");
+        Feed("\u001b]133;B;\a\u001b]133;KillerScan;SpeedTest;" + buffer.PromptToken + "x\a");
+        Require(prompts == 0 && speedTests == 0, "Forged or foreign shell marks must not reach the prompt or speed test.");
+        Require(buffer.PromptToken.Length == 32 && buffer.PromptToken != other.PromptToken, "Each terminal gets its own random token.");
+        Feed("\u001b]133;KillerScan;SpeedTest;" + buffer.PromptToken + "\a\u001b]133;B;" + buffer.PromptToken + "\a");
+        Require(prompts == 1 && speedTests == 1, "The session's own marks still work.");
+        Console.WriteLine("PASS: forged shell marks cannot make the prompt ready or start a speed test.");
     }
 
     private static void Require(bool condition, string message) { if (!condition) throw new InvalidOperationException(message); }
