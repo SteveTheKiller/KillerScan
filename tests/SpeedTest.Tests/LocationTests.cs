@@ -196,13 +196,14 @@ internal static class LocationTests
         catalog.Load("Unassigned");
         // Another window holding the catalog's save lock for longer than the 2 s wait.
         string path = Path.GetFullPath(Path.Combine(root, "locations.json"));
-        using var hash = System.Security.Cryptography.SHA256.Create();
-        string key = BitConverter.ToString(hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(path.ToUpperInvariant()))).Replace("-", "");
+        string lockName = KillerScan.Services.ProfileLock.Name("Preferences", path);
+        // Session-scoped, so another account on a shared computer cannot create and hold it.
+        Require(lockName.StartsWith("Local\\KillerScan.Preferences.", StringComparison.Ordinal), "Profile locks are session-scoped: " + lockName);
         var held = new System.Threading.ManualResetEventSlim();
         var release = new System.Threading.ManualResetEventSlim();
         var holder = new System.Threading.Thread(() =>
         {
-            using var mutex = new System.Threading.Mutex(false, "Global\\KillerScan.Preferences." + key);
+            using var mutex = new System.Threading.Mutex(false, lockName);
             mutex.WaitOne();
             held.Set();
             release.Wait();

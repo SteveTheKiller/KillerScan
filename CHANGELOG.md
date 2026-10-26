@@ -21,6 +21,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Per-user and portable updates now require the same publisher signature, product and newer version as all-users updates, instead of only a matching checksum. An all-users update checks the download before copying it into the installation folder, removes a staged copy that fails verification, and accepts the download only from an ordinary file on a local drive.
 - Preference and history saves preserve existing files on failure, keep unsaved edits for retry, and report when changes could not be saved.
 - Concurrent app instances preserve saved scans and retention changes instead of overwriting newer history.
+- On a shared computer, another account can no longer block your settings, history and Locations from saving by holding the locks that protect them.
 - File dialogs stay responsive on slow or crowded folders, cancel stale loads and identify incomplete listings.
 - Vendor database updates preserve the prior complete file on failure and keep lookups available throughout reloads.
 - Vendor database updates stop at a size limit, including a small compressed download that would expand without end, and refuse a list redirected away from HTTPS.

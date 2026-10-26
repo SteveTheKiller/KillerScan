@@ -61,9 +61,7 @@ namespace KillerScan.Services
         {
             try
             {
-                using var hash = SHA256.Create();
-                string key = BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(_path.ToUpperInvariant()))).Replace("-", "");
-                using var mutex = new Mutex(false, "Global\\KillerScan.Preferences." + key);
+                using var mutex = new Mutex(false, ProfileLock.Name("Preferences", _path));
                 bool owned = false;
                 try
                 {

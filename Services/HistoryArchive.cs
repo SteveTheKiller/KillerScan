@@ -152,9 +152,7 @@ namespace KillerScan.Services
 
         private T Locked<T>(Func<T> operation)
         {
-            using var hash = SHA256.Create();
-            string key = BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(_path.ToUpperInvariant()))).Replace("-", "");
-            using var mutex = new Mutex(false, "Global\\KillerScan.History." + key);
+            using var mutex = new Mutex(false, ProfileLock.Name("History", _path));
             bool owned = false;
             try
             {

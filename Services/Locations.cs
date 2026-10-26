@@ -165,9 +165,7 @@ namespace KillerScan.Services
         // serializes them, and whoever waits finds the catalog already there and just loads it.
         private void MigrateOnce(string unassignedName)
         {
-            using var hash = System.Security.Cryptography.SHA256.Create();
-            string key = BitConverter.ToString(hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(_path.ToUpperInvariant()))).Replace("-", "");
-            using var mutex = new System.Threading.Mutex(false, "Global\\KillerScan.Migrate." + key);
+            using var mutex = new System.Threading.Mutex(false, ProfileLock.Name("Migrate", _path));
             bool owned = false;
             try
             {
