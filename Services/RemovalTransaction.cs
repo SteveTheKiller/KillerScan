@@ -27,6 +27,9 @@ namespace KillerScan.Services
                     if (moved) File.Delete(retired);
                     if (File.Exists(image) || File.Exists(retired))
                         throw new IOException("Owned installation files remain. Removal was not completed.");
+                    // Backups left by an upgrade over a running copy are ours too; a missed one only
+                    // keeps the folder, it never fails a removal that already succeeded.
+                    ExecutableDeployment.RemoveRetiredBackups(image);
                 }
                 catch (Exception failure)
                 {

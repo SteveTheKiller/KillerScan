@@ -91,6 +91,20 @@ internal static class ExecutableDeploymentTests
                 File.WriteAllBytes(target, original);
                 ExecutableDeployment.Install(source, target, new ExecutableDeployment.FileOperations { Delete = file => throw new IOException("Cleanup is unavailable.") });
                 Require(File.ReadAllBytes(target).SequenceEqual(incoming), "Cleanup failure must not report a failed completed install.");
+
+                // A backup that was still mapped by the running exe when it was retired is removed by
+                // the next publication. One still in use, and anything not named like a backup, stay.
+                foreach (string file in Directory.GetFiles(directory).Where(p => p != source && p != target)) File.Delete(file);
+                string stale = target + "." + Guid.NewGuid().ToString("N") + ".bak";
+                string busy = target + "." + Guid.NewGuid().ToString("N") + ".bak";
+                string unrelated = target + ".notes.bak";
+                foreach (string file in new[] { stale, busy, unrelated }) File.WriteAllBytes(file, original);
+                using (new FileStream(busy, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    ExecutableDeployment.Install(source, target);
+                Require(!File.Exists(stale) && File.Exists(busy) && File.Exists(unrelated) && File.ReadAllBytes(target).SequenceEqual(incoming),
+                    "Publication removes retired backups that are no longer in use and nothing else.");
+                ExecutableDeployment.RemoveRetiredBackups(target);
+                Require(!File.Exists(busy) && File.Exists(unrelated), "A retired backup goes once its image is released.");
             }
             Console.WriteLine("PASS executable deployment checks, selected partial failure: " + nativeErrorOnly);
         }

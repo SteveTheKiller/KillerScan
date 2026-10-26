@@ -52,8 +52,42 @@ namespace KillerScan.Services
             }
         }
 
+        /// <summary>
+        /// Deletes the backups earlier publications left beside <paramref name="destination"/>. Replacing
+        /// a running exe renames the mapped image to its backup, which cannot be deleted until that
+        /// process exits, so it is cleared by the next publication or uninstall instead. Only regular
+        /// files named exactly "&lt;destination&gt;.&lt;32 hex&gt;.bak" are touched, and one still in use stays.
+        /// </summary>
+        internal static void RemoveRetiredBackups(string destination) => RemoveRetiredBackups(destination, new FileOperations());
+
+        private static void RemoveRetiredBackups(string destination, FileOperations files)
+        {
+            string? directory = Path.GetDirectoryName(destination);
+            if (directory == null || !Directory.Exists(directory)) return;
+            string prefix = Path.GetFileName(destination) + ".";
+            string[] candidates;
+            try { candidates = Directory.GetFiles(directory, prefix + "*.bak"); }
+            catch (IOException) { return; }
+            catch (UnauthorizedAccessException) { return; }
+            foreach (string path in candidates)
+            {
+                string name = Path.GetFileName(path);
+                if (name.Length != prefix.Length + 32 + 4
+                    || !name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
+                    || !Guid.TryParseExact(name.Substring(prefix.Length, 32), "N", out _))
+                    continue;
+                try
+                {
+                    if ((File.GetAttributes(path) & (FileAttributes.ReparsePoint | FileAttributes.Directory)) != 0) continue;
+                }
+                catch { continue; }
+                TryDelete(path, files);
+            }
+        }
+
         private static void Publish(string staged, string destination, FileOperations files, ref bool retainStaged)
         {
+            RemoveRetiredBackups(destination, files);
             string backup = destination + "." + Guid.NewGuid().ToString("N") + ".bak";
             try
             {

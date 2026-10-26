@@ -46,6 +46,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - An all-users install no longer reports failure and skips the relaunch when the per-user copy it replaces has lost its registry entries. That copy's files are still removed, and anything that can't be removed is offered again at the next start.
 - A per-user or portable copy run as administrator can update itself. Before, it downloaded the update and then quietly refused to install it.
 - The per-user update helper waits for KillerScan to close for at most a minute and checks the process start time, so a recycled process ID can no longer leave it waiting forever.
+- An upgrade installed while KillerScan was running (winget, Chocolatey or an RMM tool) no longer leaves a full-size `.bak` copy of the old exe behind for good. The next install, update or uninstall removes it.
 - The PowerShell `scan` and `probe` commands return device objects instead of nothing, and failures, timeouts and usage errors throw with the app's message and exit code. Arguments such as a folder path ending in a backslash reach the app intact.
 - The engine's scan APIs refuse malformed or oversized targets and a port concurrency below 1 before any network or DNS cache work, instead of reporting an empty scan or waiting forever.
 - Saving an export over an existing file keeps the old file intact if the save fails partway. This covers CSV, HTML, SVG, PNG and JPEG exports, history CSV, Keep Alive and terminal saves, and command-line `/export`.
