@@ -119,17 +119,22 @@ namespace KillerScan.Services
         internal sealed class Platform
         {
             internal Func<string, bool> CanWrite = CanWriteTo;
+            internal Func<bool> IsElevated = KillerFamily.Deployment.InstallerExitCodes.IsElevated;
             internal Func<ProcessStartInfo, Process?> Start = Process.Start;
         }
 
         internal static void StartSwap(string newExe, string? newVersion = null, Platform? platform = null)
         {
             platform ??= new Platform();
-            var curExe = Process.GetCurrentProcess().MainModule!.FileName;
-            var pid    = Process.GetCurrentProcess().Id;
+            using var self = Process.GetCurrentProcess();
+            var curExe = self.MainModule!.FileName;
+            string hive = RegistryHiveFor(curExe);
 
+            // The machine install always goes through the trusted helper, elevated or not. A per-user
+            // or portable copy run as administrator can still write its own folder, and the trusted
+            // helper would refuse it, so it takes the same helper an unelevated copy uses.
             bool needsElevation = !platform.CanWrite(Path.GetDirectoryName(curExe)!);
-            if (needsElevation || KillerFamily.Deployment.InstallerExitCodes.IsElevated())
+            if (needsElevation || (hive == "HKLM" && platform.IsElevated()))
             {
                 TrustedUpdate.Start(newExe, newVersion, platform);
                 return;
@@ -137,10 +142,10 @@ namespace KillerScan.Services
 
             // The whole helper travels in the process command line, so no file the user account can
             // write is read after it starts. A failed publication opens the recovery report.
-            string script = "$ErrorActionPreference = 'Stop'\nwhile (Get-Process -Id " + pid.ToString(CultureInfo.InvariantCulture)
-                + " -ErrorAction SilentlyContinue) { Start-Sleep -Milliseconds 500 }\n"
+            string script = "$ErrorActionPreference = 'Stop'\n"
+                + TrustedUpdate.Wait(self.Id, self.StartTime.ToUniversalTime().Ticks) + "\n"
                 + UpdateImagePublication.Script(newExe, curExe, false, ReleasesUrl, AppInfo.DisplayName,
-                    newVersion, RegistryHiveFor(curExe), showReport: true);
+                    newVersion, hive, showReport: true);
             var psi = HelperStart(script);
             if (platform.Start(psi) is null)
                 throw new IOException("The update helper did not start. Download retained at: " + newExe);

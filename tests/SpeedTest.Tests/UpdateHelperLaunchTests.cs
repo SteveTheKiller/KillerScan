@@ -66,7 +66,25 @@ internal static class UpdateHelperLaunchTests
         UninstallCommandTests.Parse(script);
         Require(script.Contains("Invoke-UpdateImagePublication") && script.Contains("ShowReport = $true"),
             "The unelevated helper carries the publication script and shows its recovery report on failure");
+        Require(script.Contains("StartTime.ToUniversalTime().Ticks -eq") && script.Contains("WaitForExit(60000)") && !script.Contains("Get-Process -Id"),
+            "The unelevated helper waits for this process by id and start time, for at most a minute, so a reused id cannot hold it forever");
         Require(File.ReadAllBytes(download).SequenceEqual(standIn), "Building the helper leaves the verified download untouched");
+
+        // A per-user or portable copy run as administrator can write its own folder, so it takes the
+        // same helper instead of the machine-only trusted path, which would refuse it.
+        captured = null;
+        try
+        {
+            UpdateService.StartSwap(download, "9.9.9", new UpdateService.Platform
+            {
+                CanWrite = _ => true,
+                IsElevated = () => true,
+                Start = start => { captured = start; return null; }
+            });
+        }
+        catch (IOException) { }
+        Require(captured is { Verb.Length: 0 } elevated && UninstallCommandTests.Decode(elevated.Arguments).Contains("Invoke-UpdateImagePublication"),
+            "An elevated copy outside Program Files updates through the helper for its own folder");
         Console.WriteLine("PASS an unelevated update launches PowerShell with its whole helper in the command line.");
     }
 

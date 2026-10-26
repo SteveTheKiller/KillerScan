@@ -144,7 +144,9 @@ namespace KillerScan.Services
                 WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System) };
         }
 
-        private static string Wait(int id, long ticks) =>
+        /// <summary>PowerShell that waits up to a minute for one process, identified by id and start
+        /// time so a reused id is never mistaken for it, and exits 1618 if it is still running.</summary>
+        internal static string Wait(int id, long ticks) =>
             "$p=$null;try{$p=[Diagnostics.Process]::GetProcessById(" + id.ToString(CultureInfo.InvariantCulture)
             + ")}catch [ArgumentException]{};if($null -ne $p -and $p.StartTime.ToUniversalTime().Ticks -eq "
             + ticks.ToString(CultureInfo.InvariantCulture) + " -and -not $p.WaitForExit(60000)){exit 1618};";
