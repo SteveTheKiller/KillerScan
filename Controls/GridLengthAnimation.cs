@@ -1,12 +1,17 @@
+using System;
 using System.Windows;
 using System.Windows.Media.Animation;
 
 namespace KillerScan.Controls
 {
     /// <summary>
-    /// Animates a <see cref="GridLength"/> in pixels. WPF ships no such timeline, and the
-    /// family's sliding panels are all column-width tweens, so KillerNotes, KillerShell and
-    /// Killendar each carry this same small class. Ported here for the history sidebar.
+    /// Animates a <see cref="GridLength"/> in pixels. WPF ships no such timeline, and the family's
+    /// sliding panels (sidebar collapse and expand, history and detail panes) are all column-width
+    /// tweens. Set From/To in device-independent pixels and an optional EasingFunction.
+    ///
+    /// EasingFunction is a dependency property, not a plain CLR property: WPF freezes and clones a
+    /// timeline when it starts, and a clone copies dependency properties only, so a CLR easing
+    /// would silently drop and the slide would run linear.
     /// </summary>
     internal sealed class GridLengthAnimation : AnimationTimeline
     {

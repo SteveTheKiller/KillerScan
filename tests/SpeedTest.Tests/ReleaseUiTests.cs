@@ -191,7 +191,7 @@ internal static class ReleaseUiTests
                             Require(flat || border.Background is LinearGradientBrush, theme + "/" + accent + ": outline hover uses a gradient.");
                         }
                         if (style == "OutlineButton" && state == "pressed")
-                            Require(Equals(button.Foreground, app.FindResource("OutlineTextBrush")), "Pressed outline text keeps the family outline text color.");
+                            Require(Equals(button.Foreground, app.FindResource("OutlineHoverTextBrush")), "Pressed outline keeps the accent fill and its text color.");
                     }
                 }
                 var image = Render(panel, 370, 340);

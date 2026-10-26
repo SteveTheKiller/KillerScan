@@ -706,8 +706,10 @@ namespace KillerScan.Services
             // accent text, filling with the accent on hover under the AA-derived label color.
             // 98SE turns it into a real raised gray button - a #c0c0c0 face at rest, lighter on
             // hover, darker when pressed, black text throughout and NO accent anywhere.
-            SetIfAbsent("OutlineFaceBrush", Transparent);          // rest FILL (transparent = outline)
-            Mirror("OutlineRestBrush", "OutlineBtnBrush");         // rest EDGE
+            // Rest is bare, as KillerPDF's buttons always were: no fill and no edge, just the
+            // accent text. Hover and press fill with the accent.
+            SetIfAbsent("OutlineFaceBrush", Transparent);          // rest FILL
+            SetIfAbsent("OutlineRestBrush", Transparent);          // rest EDGE
             Mirror("OutlineTextBrush", "OutlineBtnBrush");         // rest TEXT
             Mirror("OutlineHoverBrush", "OutlineBtnBrush");        // hover FILL
             // OutlineHoverTextBrush is set AFTER the accent overlay, next to OnOutlineBtnBrush -
@@ -729,7 +731,18 @@ namespace KillerScan.Services
             }
             // A palette can fill buttons with a deeper shade than its accent text (PrimaryFillBaseBrush).
             combined["PrimaryFillBrush"] = ButtonFill(combined.Contains("PrimaryFillBaseBrush") ? combined["PrimaryFillBaseBrush"] : combined["PrimaryBrush"]);
-            combined["OutlineHoverBrush"] = ButtonFill(combined.Contains("OutlineHoverFillBaseBrush") ? combined["OutlineHoverFillBaseBrush"] : combined["OutlineHoverBrush"]);
+            object outlineBase = combined.Contains("OutlineHoverFillBaseBrush") ? combined["OutlineHoverFillBaseBrush"] : combined["OutlineHoverBrush"];
+            combined["OutlineHoverBrush"] = ButtonFill(outlineBase);
+            // Pressed is the same accent pushed in: a flat, deeper shade of the hover fill. The old
+            // OutlinePressedBrush wash read as gray against every accent.
+            if (outlineBase is SolidColorBrush pressBase)
+            {
+                var p = pressBase.Color;
+                var pressed = new SolidColorBrush(Color.FromArgb(p.A, (byte)(p.R * 0.72), (byte)(p.G * 0.72), (byte)(p.B * 0.72)));
+                pressed.Freeze();
+                combined["OutlinePressedFillBrush"] = pressed;
+            }
+            else combined["OutlinePressedFillBrush"] = combined["OutlineHoverBrush"];
             SetIfAbsent("PaneBevel2DarkThickness", new Thickness(0));
             SetIfAbsent("PaneBevel2LightThickness", new Thickness(0));
             SetIfAbsent("PaneBevelDark2Brush", Transparent);
@@ -1006,7 +1019,7 @@ namespace KillerScan.Services
 
                 // A Win98 caption button reacted only to being PRESSED, never to hover.
                 if (!combined.Contains("CaptionHoverBrush"))
-                    combined["CaptionHoverBrush"] = flat ? (object)Transparent : combined["RowHoverBrush"];
+                    combined["CaptionHoverBrush"] = flat ? (object)Transparent : combined["OutlineHoverBrush"];
 
                 // A 1px MDL2 stroke disappears against a gray button face at 16px.
                 combined["CaptionGlyphWeight"] = flat ? FontWeights.Bold : FontWeights.Normal;

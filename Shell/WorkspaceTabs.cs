@@ -53,6 +53,10 @@ namespace KillerScan.Shell
             // A language switch changes every caption and the Scan button's width, also without
             // resizing the bar.
             Services.LocaleManager.LocaleChanged += QueueToolbarFit;
+            // Hidden while the five views move to permanent tabs. The buttons stay built because
+            // the view logic tracks the current view through them; F6 to F10 and the View menu
+            // still switch views.
+            _workspaceNavigation.Visibility = Visibility.Collapsed;
         }
 
         private void AddViewButton(string view, string key, string shortcut, Action action)
