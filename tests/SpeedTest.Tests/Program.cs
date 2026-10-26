@@ -91,6 +91,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--locations-sidebar" })) { HistoryUiTests.Isolated = LocationsSidebarTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--location-workspace" })) { HistoryUiTests.Isolated = LocationWorkspaceTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--access-ui" })) { HistoryUiTests.Isolated = AccessUiTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
+            if (args.SequenceEqual(new[] { "--theme-dump" })) { HistoryUiTests.Isolated = ThemeDumpTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--recognition-ui" })) { HistoryUiTests.Isolated = RecognitionUiTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--report-sort" })) { await ReportSortTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--command-line-path" })) { await CommandLinePathTests.Run(); SystemToolsTests.Run(); return 0; }

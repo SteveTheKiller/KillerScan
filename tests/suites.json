@@ -29,6 +29,7 @@
       "--worker-loopback": "Needs Node to run the Worker locally; run it where Node is installed.",
       "--speed-loopback": "Modifier for the default run, not a suite of its own.",
       "--terminal": "Opens the terminal view for manual inspection.",
+      "--theme-dump": "Writes every resolved theme value to KILLERSCAN_THEME_DUMP for before-and-after comparison; passes or fails nothing.",
       "--terminal-memory-child": "Child process started by --terminal-memory.",
       "--history-writer": "Child process started by --history-retention.",
       "---": "Not a flag: a table-separator string in a check."
