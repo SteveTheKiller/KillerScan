@@ -3,7 +3,7 @@
                     xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <sys:Double x:Key="GrainOpacity">0.14</sys:Double>
+    <sys:Double x:Key="GrainOpacity">0.20</sys:Double>
     <sys:Boolean x:Key="GrainHighlightsOnly">True</sys:Boolean>
     <sys:Double x:Key="IconShadowOpacity">0.9</sys:Double>
 
