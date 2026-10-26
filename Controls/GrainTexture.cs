@@ -129,7 +129,7 @@ namespace KillerScan.Controls
 
         /// <summary>
         /// Generates the tile for the current theme and publishes it as the app-level GrainTileBrush.
-        /// App startup calls this too, so dialogs shown before any main window exists (install,
+        /// Call this from App.OnStartup too, so dialogs shown before any main window exists (install,
         /// uninstall, install repair) are textured like the rest of the app. Theme and accent changes
         /// republish it on their own.
         /// </summary>

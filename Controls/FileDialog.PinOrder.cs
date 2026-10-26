@@ -87,7 +87,7 @@ namespace KillerScan.Controls
             var shown = Places.Where(p => p.Pinned).Select(p => p.Path).ToList();
             var hidden = PinnedPaths().Where(p => !shown.Any(s =>
                 s.TrimEnd('\\').Equals(p.TrimEnd('\\'), StringComparison.OrdinalIgnoreCase)));
-            App.SetSetting(PinnedKey, string.Join("|", shown.Concat(hidden)));
+            Services.ThemeManager.SetSetting(PinnedKey, string.Join("|", shown.Concat(hidden)));
         }
     }
 }

@@ -8,6 +8,7 @@ namespace KillerScan.Services
     /// bound to it disappears whatever theme or accent is active. A layer drawn at a fixed
     /// strength (the content pane's own grain) follows FilmGrainVisibility instead. The theme is then
     /// applied again so surfaces that take their grain when the theme changes redraw too.
+    /// Alt+Shift+G toggles it in every app (Shell/ThemeFlyout.cs).
     /// </summary>
     internal static class FilmGrain
     {
@@ -19,7 +20,7 @@ namespace KillerScan.Services
         /// <summary>Restores the saved choice. Called once at startup, after the theme loads.</summary>
         internal static void Initialize()
         {
-            Enabled = App.GetSetting(SettingKey) != "0";
+            Enabled = ThemeManager.GetSetting(SettingKey) != "0";
             SystemParameters.StaticPropertyChanged -= OnSystemColorsChanged;
             SystemParameters.StaticPropertyChanged += OnSystemColorsChanged;
             Publish();
@@ -37,7 +38,7 @@ namespace KillerScan.Services
         {
             if (enabled == Enabled) return;
             Enabled = enabled;
-            App.SetSetting(SettingKey, enabled ? "1" : "0");
+            ThemeManager.SetSetting(SettingKey, enabled ? "1" : "0");
             Publish();
             ThemeManager.Apply(ThemeManager.Current);
         }

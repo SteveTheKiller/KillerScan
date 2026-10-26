@@ -7,7 +7,7 @@ namespace KillerScan.Controls
 {
     // Shows a scroll edge shadow only while more content lies past that edge. Values are the
     // scroll offset and the scrollable extent on one axis; the parameter picks the edge, "Start"
-    // (top or left) or "End" (bottom or right).
+    // (top or left) or "End" (bottom or right). Used by ShadowScrollViewer in Controls.xaml.
     public sealed class ScrollEdgeVisibilityConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

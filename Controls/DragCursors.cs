@@ -14,11 +14,15 @@ namespace KillerScan.Controls
     // These replace Cursors.SizeAll everywhere a surface is grabbed and
     // MOVED. A resize (splitter, corner handle) keeps its directional
     // cursor: the hand says "carry this", not "stretch this".
+    //
+    // Needs Resources/open_hand.cur and Resources/closed_hand.cur built
+    // as Resource in the csproj.
     // ============================================================
     internal static class DragCursors
     {
         private static Cursor? _open;
         private static Cursor? _closed;
+        private static Cursor? _dragOverride;
 
         /// <summary>Hover state: shown on any surface that can be picked up.</summary>
         public static Cursor Open => _open ??= Load("open_hand.cur");
@@ -26,13 +30,14 @@ namespace KillerScan.Controls
         /// <summary>Held state: shown for the whole duration of a drag.</summary>
         public static Cursor Closed => _closed ??= Load("closed_hand.cur");
 
-        /// <summary>Takes the cursor over for the duration of a drag. Global rather than
-        /// per-element because a drag runs under a mouse capture, and the pointer regularly
-        /// leaves the grabbed element while it is being carried.</summary>
-        public static void BeginDrag()
+        /// <summary>Takes the cursor over for the duration of a drag. A caller can use the
+        /// system hand where the custom cursor's size or hotspot does not fit the control.
+        /// The override remains visible when a captured pointer leaves the grabbed element.</summary>
+        public static void BeginDrag(Cursor? cursor = null)
         {
             ArmSafetyNet();
-            Mouse.OverrideCursor = Closed;
+            _dragOverride = cursor ?? Closed;
+            Mouse.OverrideCursor = _dragOverride;
         }
 
         /// <summary>Hands the cursor back. Safe to call when no drag is running, so it can be
@@ -43,11 +48,13 @@ namespace KillerScan.Controls
         /// places that can run while no drag is in progress.</summary>
         public static void EndDrag()
         {
-            if (ReferenceEquals(Mouse.OverrideCursor, _closed)) Mouse.OverrideCursor = null;
+            if (_dragOverride is not null && ReferenceEquals(Mouse.OverrideCursor, _dragOverride))
+                Mouse.OverrideCursor = null;
+            _dragOverride = null;
         }
 
-        // The override is app-wide, so ONE drag path that fails to release it leaves the closed
-        // hand on screen for the rest of the session and hovering never shows the open hand
+        // The override is app-wide, so ONE drag path that fails to release it leaves the drag
+        // cursor on screen for the rest of the session and hovering never shows the normal cursor
         // again. Losing activation means no drag of ours can still be running, so it is a safe
         // and total backstop for any path that slips through - including the app being switched
         // away from mid-gesture.
