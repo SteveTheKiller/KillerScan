@@ -301,15 +301,20 @@ namespace KillerScan.Engine.SpeedTest
                                 });
                             }
                         }
-                        catch (SpeedTestException ex) when (!stop.IsCancellationRequested)
+                        catch (SpeedTestException ex)
                         {
-                            if (ex.Kind == SpeedTestFailureKind.RateLimited)
+                            switch (LatencyFailure(ex, stop.IsCancellationRequested))
                             {
-                                Interlocked.CompareExchange(ref counters.Failure, ex, null);
-                                stop.Cancel();
-                                return;
+                                case LatencyFailureAction.FailPhase:
+                                    Interlocked.CompareExchange(ref counters.Failure, ex, null);
+                                    stop.Cancel();
+                                    return;
+                                case LatencyFailureAction.CountSample:
+                                    failedSamples++;
+                                    break;
+                                default:
+                                    return;
                             }
-                            failedSamples++;
                         }
                     }
                 }
@@ -522,6 +527,16 @@ namespace KillerScan.Engine.SpeedTest
                 await LatencyAsync(client, options, token).ConfigureAwait(false);
             }
         }
+
+        internal enum LatencyFailureAction { CountSample, FailPhase, Ignore }
+
+        /// <summary>What a failed loaded-latency sample does to its phase. A failure that lands
+        /// after the phase stopped is ignored, so one late bad reply cannot throw away a finished
+        /// measurement; before that, a rate limit ends the phase and anything else is one failed sample.</summary>
+        internal static LatencyFailureAction LatencyFailure(SpeedTestException ex, bool phaseStopped) =>
+            phaseStopped ? LatencyFailureAction.Ignore
+            : ex.Kind == SpeedTestFailureKind.RateLimited ? LatencyFailureAction.FailPhase
+            : LatencyFailureAction.CountSample;
 
         private static async Task<double> LatencyAsync(HttpClient client, SpeedTestOptions options, CancellationToken token)
         {

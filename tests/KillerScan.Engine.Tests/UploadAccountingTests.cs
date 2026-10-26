@@ -47,6 +47,17 @@ internal static class UploadAccountingTests
             catch (OperationCanceledException) { Require(clock.Elapsed < TimeSpan.FromSeconds(3), "User cancellation ends stalled payload work promptly."); }
         }
         Console.WriteLine("PASS: sent, received and acknowledged upload quantities retain their separate contracts.");
+
+        // A loaded-latency failure that lands after the phase stopped must not fail a finished measurement.
+        var serverError = new SpeedTestException(SpeedTestFailureKind.HttpError, "500");
+        var limited = new SpeedTestException(SpeedTestFailureKind.RateLimited, "429");
+        Require(SpeedTestEngine.LatencyFailure(serverError, phaseStopped: true) == SpeedTestEngine.LatencyFailureAction.Ignore
+                && SpeedTestEngine.LatencyFailure(limited, phaseStopped: true) == SpeedTestEngine.LatencyFailureAction.Ignore,
+            "A latency failure after the phase stopped is ignored.");
+        Require(SpeedTestEngine.LatencyFailure(serverError, phaseStopped: false) == SpeedTestEngine.LatencyFailureAction.CountSample
+                && SpeedTestEngine.LatencyFailure(limited, phaseStopped: false) == SpeedTestEngine.LatencyFailureAction.FailPhase,
+            "During the phase a bad reply is one failed sample and a rate limit ends the phase.");
+        Console.WriteLine("PASS: a late loaded-latency failure leaves a finished phase intact.");
     }
 
     private static SpeedTestOptions Options(Server server) => new()
