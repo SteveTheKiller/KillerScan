@@ -62,6 +62,22 @@ jobs:
             if ($LASTEXITCODE -ne 0) { throw 'Repair commit must be on main.' }
             git diff --exit-code $tag $source -- Engine Resources/oui.txt ':!Engine/KillerScan.Engine.csproj' ':!Engine/README.md' ':!Engine/icon.png'
             if ($LASTEXITCODE -ne 0) { throw 'Engine code differs from the released source.' }
+            # The project file decides what is compiled and which dependency versions ship, so only
+            # its package metadata may change in a repair. Everything else must match the tag.
+            $metadata = 'Title', 'Authors', 'Copyright', 'Description', 'PackageTags', 'PackageProjectUrl',
+              'RepositoryUrl', 'RepositoryType', 'PackageReleaseNotes'
+            function Get-BuildShape([string]$ref) {
+              [xml]$project = (git show "$($ref):Engine/KillerScan.Engine.csproj") -join "`n"
+              if ($LASTEXITCODE -ne 0) { throw "The engine project is missing at $ref." }
+              foreach ($name in $metadata) {
+                foreach ($node in @($project.SelectNodes("/Project/PropertyGroup/$name"))) { [void]$node.ParentNode.RemoveChild($node) }
+              }
+              foreach ($node in @($project.SelectNodes('//comment()'))) { [void]$node.ParentNode.RemoveChild($node) }
+              $project.OuterXml
+            }
+            if ((Get-BuildShape $tag) -ne (Get-BuildShape $source)) {
+              throw 'The engine project differs from the released source beyond package metadata.'
+            }
           }
           git checkout --detach $source
           if ($LASTEXITCODE -ne 0) { throw 'Release source checkout failed.' }
