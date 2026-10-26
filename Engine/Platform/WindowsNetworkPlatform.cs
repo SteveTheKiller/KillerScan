@@ -152,7 +152,11 @@ namespace KillerScan.Engine
                 {
                     string ip = parts[0];
                     string mac = parts[1].Replace('-', ':').ToUpperInvariant();
-                    if (IPAddress.TryParse(ip, out _) && mac.Length == 17 && mac.Contains(':'))
+                    // The group bit marks broadcast (FF:FF:...) and multicast (01:00:5E:...) rows,
+                    // which arp -a always lists but which are never devices.
+                    if (IPAddress.TryParse(ip, out _) && mac.Length == 17 && mac.Contains(':')
+                        && int.TryParse(mac.Substring(0, 2), System.Globalization.NumberStyles.HexNumber, null, out int first)
+                        && (first & 1) == 0)
                         cache[ip] = mac;
                 }
             }

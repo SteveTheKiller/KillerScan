@@ -30,7 +30,7 @@ internal static class Program
             await Run("Targets parse ranges, de-duplicate overlaps and refuse bad input", Targets);
             await Run("The address ceiling counts unique addresses and keeps first-seen order", TargetCeiling);
             await Run("CIDR expansion excludes the network and broadcast addresses", Subnet);
-            await Run("ARP output parsing keeps IPv4 entries with full MAC addresses", ArpParsing);
+            await Run("ARP output parsing keeps IPv4 device entries with full MAC addresses", ArpParsing);
             await Run("Classifier honors manual types, the gateway, DNS and hostname rules", Classifier);
             await Run("Recognition grades a labeled corpus and records its evidence", RecognitionTests.Run);
             await Run("Access records what each endpoint answered", AccessTests.Run);
@@ -138,10 +138,15 @@ internal static class Program
             "  Internet Address      Physical Address      Type\r\n" +
             "  192.168.1.1           00-00-0c-12-34-56     dynamic\r\n" +
             "  192.168.1.255         ff-ff-ff-ff-ff-ff     static\r\n" +
-            "  224.0.0.22            01-00-5e            static\r\n";
+            "  224.0.0.22            01-00-5e            static\r\n" +
+            "  224.0.0.251           01-00-5e-00-00-fb     static\r\n" +
+            "  239.255.255.250       01-00-5e-7f-ff-fa     static\r\n" +
+            "  192.168.1.40          00-11-32-aa-bb-cc     static\r\n";
         var cache = ArpOutput.Parse(output);
         Require(cache.TryGetValue("192.168.1.1", out var mac) && mac == "00:00:0C:12:34:56", "Gateway MAC should normalize");
-        Require(cache.ContainsKey("192.168.1.255"), "Broadcast row is kept as the cache reports it");
+        Require(!cache.ContainsKey("192.168.1.255"), "The broadcast row is not a device");
+        Require(!cache.ContainsKey("224.0.0.251") && !cache.ContainsKey("239.255.255.250"), "Multicast rows are not devices");
+        Require(cache.TryGetValue("192.168.1.40", out mac) && mac == "00:11:32:AA:BB:CC", "A static entry for a real device is kept");
         Require(!cache.ContainsKey("224.0.0.22"), "Short MAC rows are rejected");
         return Task.CompletedTask;
     }
