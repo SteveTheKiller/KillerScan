@@ -348,7 +348,7 @@ if ($fileVersion -notlike "$Version*") {
 # Costura embeds every managed dependency, so the exe alone is the release asset
 # (the site links to releases/latest/download/KillerScan.exe).
 # NOTE: this is the PRE-signature size, used only for the Costura sanity check. The figure
-# published on the landing page is recomputed after signing (step 7b), because Authenticode
+# published on the landing page is recomputed after signing (step 7), because Authenticode
 # adds ~10KB and the site would otherwise advertise a size the downloaded file does not have.
 Step "Verifying single-exe packaging"
 $exeSize = (Get-Item $exe).Length
@@ -408,38 +408,17 @@ if ($SkipSign) {
     Write-Host 'Signed, timestamped, and chain-verified' -ForegroundColor Green
 }
 
-# --- 7. Source bundle (GPL3 family convention) ---
-# The Publish target already runs bundle-source.ps1, but call it again as a safety net:
-# it never overwrites an existing bundle, so this is a no-op when the zip is already there.
-Step "Bundling source"
-& (Join-Path $PSScriptRoot 'build\bundle-source.ps1') -ProjectDir $PSScriptRoot -Version $Version -AppName 'KillerScan' -PublishDir $publishDir
-$srcZip = Join-Path $publishDir "KillerScan-$Version-src.zip"
-if (-not (Test-Path $srcZip)) { Fail "Source bundle not produced: $srcZip (is git installed and is this a repo?)" }
-$srcZipMB = '{0:N2} MB' -f ((Get-Item $srcZip).Length / 1MB)
-Write-Host "Source bundle: $srcZip ($srcZipMB)"
-
-# --- 7b. Checksums (SHA256SUMS.txt) ---
-# The in-app updater (Services/UpdateService.cs DownloadAsync) downloads this asset from the release,
-# next to the exe, and verifies the download against it. WITHOUT it the Update button falls
-# back to just opening the releases page. The updater matches the line starting with
-# KillerScan.exe and takes the LAST whitespace token as the hash, so the padded columns
-# below are fine. Upload it with the exe - gh release create does that in step 11.
-Step "Writing SHA256SUMS.txt"
+# --- 7. Signed exe facts ---
 # Size and hash both come from the exe in its FINAL, signed state - this is the file people
-# actually download, so it is what the landing page must describe.
+# actually download, so it is what the landing page and SHA256SUMS.txt must describe.
+Step "Measuring the signed exe"
 $exeMB    = '{0:N2} MB' -f ((Get-Item $exe).Length / 1MB)
 Write-Host "Signed KillerScan.exe is $exeMB"
 $exeHash  = (Get-FileHash $exe -Algorithm SHA256).Hash
-$srcHash  = (Get-FileHash $srcZip -Algorithm SHA256).Hash
-$sumsFile = Join-Path $publishDir 'SHA256SUMS.txt'
-$sumsLines = @(
-    ('{0,-26} {1}' -f 'KillerScan.exe', $exeHash),
-    ('{0,-26} {1}' -f (Split-Path $srcZip -Leaf), $srcHash)
-)
-Set-Content -Path $sumsFile -Value $sumsLines -Encoding ascii
-Write-Host ($sumsLines -join "`n")
 
-# --- 7c. Landing page + README release info ---
+# --- 7b. Landing page + README release info ---
+# This comes before the source bundle: the README's corresponding-source link must already name
+# this release when the bundle is made, or the zip would carry the previous release's README.
 # killerscan.net is a MANUAL Cloudflare Pages drop, so nothing here deploys. The hero block
 # (version, released, size, sha256), the verEgg footer on every page, and the README's GPL3
 # source-zip link all carry release facts the script already knows, so they are rewritten and
@@ -557,6 +536,32 @@ if ($DryRun) {
         Write-Host 'scan-landing and README already current'
     }
 }
+
+# --- 7c. Source bundle (GPL3 family convention) ---
+# The Publish target bundled once already, before the README commit above. bundle-source.ps1
+# replaces that zip, so the published bundle is built from the same tracked files the tag holds.
+Step "Bundling source"
+& (Join-Path $PSScriptRoot 'build\bundle-source.ps1') -ProjectDir $PSScriptRoot -Version $Version -AppName 'KillerScan' -PublishDir $publishDir
+$srcZip = Join-Path $publishDir "KillerScan-$Version-src.zip"
+if (-not (Test-Path $srcZip)) { Fail "Source bundle not produced: $srcZip (is git installed and is this a repo?)" }
+$srcZipMB = '{0:N2} MB' -f ((Get-Item $srcZip).Length / 1MB)
+Write-Host "Source bundle: $srcZip ($srcZipMB)"
+
+# --- 7d. Checksums (SHA256SUMS.txt) ---
+# The in-app updater (Services/UpdateService.cs DownloadAsync) downloads this asset from the release,
+# next to the exe, and verifies the download against it. WITHOUT it the Update button falls
+# back to just opening the releases page. The updater matches the line starting with
+# KillerScan.exe and takes the LAST whitespace token as the hash, so the padded columns
+# below are fine. Upload it with the exe - gh release create does that in step 10.
+Step "Writing SHA256SUMS.txt"
+$srcHash  = (Get-FileHash $srcZip -Algorithm SHA256).Hash
+$sumsFile = Join-Path $publishDir 'SHA256SUMS.txt'
+$sumsLines = @(
+    ('{0,-26} {1}' -f 'KillerScan.exe', $exeHash),
+    ('{0,-26} {1}' -f (Split-Path $srcZip -Leaf), $srcHash)
+)
+Set-Content -Path $sumsFile -Value $sumsLines -Encoding ascii
+Write-Host ($sumsLines -join "`n")
 
 # --- 8. Release notes from the CHANGELOG section ---
 Step "Extracting release notes from CHANGELOG.md"
