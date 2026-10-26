@@ -68,6 +68,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Repeated same-version Publish refreshes the source ZIP and fails clearly if the archive cannot be replaced.
 - Release monitoring includes KillerScan.Engine on NuGet and reports missing or failed publication.
 - Chocolatey publishing reports failure when validation is still failing after a retry.
+- Chocolatey and WinGet publishing accept only a release whose exe matches its published checksum and carries a valid release signature, skip prereleases, run the WinGet tool only when its hash matches, and treat release tags as data with read-only repository access.
 - Window resize minimums stay within the current monitor's work area on small or scaled displays.
 - The shortcuts card shows shadows at its edges when more content is out of view. Its border follows gradient themes, and its hint sits centered closer to the bottom edge.
 - Sidebar fades leave the scrollbar clear and disappear at the start and end of each list.
