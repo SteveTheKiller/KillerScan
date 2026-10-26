@@ -60,16 +60,29 @@ namespace KillerScan.Controls
             var policy = ReadPolicy();
             if (policy == null)
             {
-                ValidationText.Text = Loc("Str_History_InvalidRetention");
-                ValidationText.Visibility = Visibility.Visible;
+                Refuse(Loc("Str_History_InvalidRetention"), TimeMode.IsChecked == true ? DaysBox : CountBox);
                 return;
             }
             try { if (_apply(policy)) DialogResult = true; }
             catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
             {
-                ValidationText.Text = string.Format(Loc("Str_History_SaveFailed"), ex.Message);
-                ValidationText.Visibility = Visibility.Visible;
+                Refuse(string.Format(Loc("Str_History_SaveFailed"), ex.Message), null);
             }
+        }
+
+        /// <summary>Shows why OK did nothing. The message is announced, because a screen reader
+        /// would otherwise hear silence after Enter, and the field to fix gets focus.</summary>
+        private void Refuse(string message, TextBox? field)
+        {
+            ValidationText.Text = message;
+            ValidationText.Visibility = Visibility.Visible;
+            System.Windows.Automation.AutomationProperties.SetLiveSetting(ValidationText, System.Windows.Automation.AutomationLiveSetting.Assertive);
+            System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(ValidationText)?
+                .RaiseAutomationEvent(System.Windows.Automation.Peers.AutomationEvents.LiveRegionChanged);
+            if (field == null) return;
+            FocusManager.SetFocusedElement(this, field);
+            field.Focus();
+            field.SelectAll();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e) => Close();

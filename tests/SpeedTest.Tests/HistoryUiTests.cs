@@ -726,6 +726,16 @@ internal static partial class HistoryUiTests
         calls = _settingsApplyCalls;
         Call(input, "Cancel_Click", input, new RoutedEventArgs());
         Require(_settingsApplyCalls == calls, "Cancel invokes no settings or history mutation.");
+        // A refused value is announced and the field that needs fixing gets focus, so pressing
+        // Enter on OK is not met with silence by a screen reader.
+        count.IsChecked = true;
+        countBox.Text = "0";
+        save.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        var validation = (TextBlock)input.FindName("ValidationText");
+        Require(_settingsApplyCalls == calls && validation.Visibility == Visibility.Visible
+                && System.Windows.Automation.AutomationProperties.GetLiveSetting(validation) == System.Windows.Automation.AutomationLiveSetting.Assertive
+                && ReferenceEquals(FocusManager.GetFocusedElement(input), countBox),
+            "An invalid retention value is announced and focuses its field.");
         var entryType = assembly.GetType("KillerScan.Services.ScanHistoryEntry", true)!;
         var fixture = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(entryType))!;
         var now = new DateTimeOffset(2026, 10, 8, 12, 0, 0, TimeSpan.Zero);
