@@ -261,7 +261,9 @@ namespace KillerScan.Controls
 
         private SemaphoreSlim? _checkSlots;
 
-        /// <summary>Expands a target's card, adding it to the run if it is not already watched.</summary>
+        /// <summary>Expands a target's card, adding it to the run if it is not already watched. With
+        /// no run going, as on a freshly opened window, it starts one: a card only exists while
+        /// targets are being watched, and Diagnose has to land on one.</summary>
         internal void ShowDetails(string address, IEnumerable<int> ports)
         {
             RememberPorts(address, ports);
@@ -269,6 +271,10 @@ namespace KillerScan.Controls
             if (card == null)
             {
                 IncludeTarget(address);
+                // Start_Click lays out every card before its first await, so they exist on return.
+                if (_run == null && !_closed && IPAddress.TryParse(address, out var wanted)
+                    && ConnectionChecks.TryTargets(Targets.Text, out var listed) && listed.Contains(wanted))
+                    Start_Click(StartButton, new RoutedEventArgs());
                 card = _cards.FirstOrDefault(c => c.Address == address);
                 if (card == null) return;
             }

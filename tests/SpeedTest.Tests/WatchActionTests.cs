@@ -41,6 +41,19 @@ internal static class WatchActionTests
         stop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         PumpUntil(() => start.IsEnabled, TimeSpan.FromSeconds(1));
         Require(!stop.IsEnabled, "Stop ends the updated watch run.");
+
+        // F3 on a window that is not watching anything yet starts the run, so the card appears.
+        using (var fresh = new NetworkToolsWindow("", 1))
+        {
+            var freshCards = (ListBox)fresh.FindName("Cards");
+            var freshStop = (Button)fresh.FindName("StopButton");
+            fresh.ShowDetails("192.0.2.9", new[] { 8080 });
+            var card = freshCards.Items.OfType<WatchCard>().SingleOrDefault(c => c.Address == "192.0.2.9");
+            Require(card != null && ReferenceEquals(freshCards.SelectedItem, card) && card.Checks.Any(row => row.Check == "TCP 8080") && freshStop.IsEnabled,
+                "Diagnose on a fresh Network Tools window starts watching and shows the target's card with its checks.");
+            freshStop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            PumpUntil(() => !freshStop.IsEnabled, TimeSpan.FromSeconds(1));
+        }
         CheckShellCommands();
         Console.WriteLine("PASS: active Keep Alive and Diagnose requests add targets without resetting existing counters.");
     }
