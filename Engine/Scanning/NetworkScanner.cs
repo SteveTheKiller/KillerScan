@@ -557,7 +557,7 @@ namespace KillerScan.Engine
                 fpTasks.Add(ProbeHttpAsync(device, addr, ct: token));
             if (options.Ssh && device.OpenPorts.Contains(22))
                 fpTasks.Add(ProbeSshBannerAsync(device, addr));
-            if (options.Tls && device.OpenPorts.Any(p => p == 443 || p == 8443 || p == 8006 || p == 902))
+            if (options.Tls && HasStandardTlsPort(device))
                 fpTasks.Add(ProbeTlsCertAsync(device, addr, ct: token));
             // NetBIOS + SNMP are UDP -- we probe regardless of TCP state (ports 137/161 UDP).
             if (options.Netbios) fpTasks.Add(ProbeNetbiosAsync(device, addr));
@@ -1437,12 +1437,20 @@ namespace KillerScan.Engine
             catch { }
         }
 
+        /// <summary>The ports a normal scan reads certificates from, 5001 being Synology DSM HTTPS.</summary>
+        private static readonly int[] StandardTlsPorts = [443, 8443, 8006, 902, 5001];
+
+        /// <summary>Whether a normal scan should run the TLS probe at all. It reads the same list
+        /// the probe walks, so the gate cannot skip a port the probe would have read.</summary>
+        internal static bool HasStandardTlsPort(NetworkDevice device) =>
+            device.OpenPorts.Any(StandardTlsPorts.Contains);
+
         /// <summary>
         /// Pull TLS certificate Subject from the first responsive TLS port.
         /// </summary>
         public static async Task ProbeTlsCertAsync(NetworkDevice device, IPAddress addr, bool deep = false, CancellationToken ct = default)
         {
-            int[] standardTls = [443, 8443, 8006, 902, 5001];
+            int[] standardTls = StandardTlsPorts;
 
             // Normal scan: the known TLS ports only. Deep rescan: attempt a TLS handshake on every
             // open port (a non-TLS port just fails fast), so certs on non-standard ports are caught.

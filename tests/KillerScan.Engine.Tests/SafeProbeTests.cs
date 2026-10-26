@@ -8,6 +8,12 @@ internal static class SafeProbeTests
 {
     internal static async Task Run()
     {
+        // A Synology NAS with only DSM HTTPS open still gets its certificate read in a normal scan.
+        Require(NetworkScanner.HasStandardTlsPort(new NetworkDevice { OpenPorts = [5001] }),
+            "The normal-scan TLS gate must include 5001, like the probe's own port list.");
+        Require(!NetworkScanner.HasStandardTlsPort(new NetworkDevice { OpenPorts = [80, 9100] }),
+            "Plain HTTP and print ports do not start a TLS probe.");
+
         using (var raw = Recorder.TryBind(9100))
         using (var unknown = Recorder.Ephemeral())
         {
