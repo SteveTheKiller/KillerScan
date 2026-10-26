@@ -595,6 +595,8 @@
     <sys:String x:Key="Str_Speed_Tls">Не удалось установить защищённое соединение с тестовым сервером.</sys:String>
     <sys:String x:Key="Str_Speed_RateLimited">Тестовый сервер занят. Попробуйте позже.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Тестовый сервер вернул недопустимый ответ.</sys:String>
+    <sys:String x:Key="Str_Speed_Challenged">Cloudflare заблокировал тест проверкой безопасности.</sys:String>
+    <sys:String x:Key="Str_Speed_Detail">Подробности: {0}</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Передача не удалась. Проверьте соединение и повторите попытку.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Не удалось скопировать результаты. Попробуйте ещё раз.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">В терминале выполняется задача. Остановить её и запустить тест скорости?</sys:String>

@@ -549,6 +549,8 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Speed_Tls">Máy chủ kiểm tra không thể thiết lập kết nối an toàn.</sys:String>
     <sys:String x:Key="Str_Speed_RateLimited">Máy chủ kiểm tra đang bận. Hãy thử lại sau.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Máy chủ kiểm tra trả về phản hồi không hợp lệ.</sys:String>
+    <sys:String x:Key="Str_Speed_Challenged">Cloudflare đã chặn bài kiểm tra bằng một thử thách bảo mật.</sys:String>
+    <sys:String x:Key="Str_Speed_Detail">Chi tiết: {0}</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Truyền dữ liệu thất bại. Hãy kiểm tra kết nối và thử lại.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Không thể sao chép kết quả. Hãy thử lại.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Có tác vụ đang chạy trong terminal. Dừng tác vụ và chạy kiểm tra tốc độ thay thế?</sys:String>

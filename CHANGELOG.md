@@ -7,6 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ## [1.8.4] - Unreleased
 
 ### Fixed
+- A speed test blocked by a Cloudflare security challenge now says so, and a rejected upload reply shows its status, content type and the start of its body instead of only "invalid response" (#4).
 - Website carousel and slide descriptions are translated in every supported language.
 - In 98SE, long paths in the file dialog no longer run under the recent-locations arrow.
 - Black table headers match the content surface, and softer grain keeps dark surfaces from looking gray.

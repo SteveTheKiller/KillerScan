@@ -611,6 +611,8 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Speed_Tls">O servidor de teste não conseguiu estabelecer uma conexão segura.</sys:String>
     <sys:String x:Key="Str_Speed_RateLimited">O servidor de teste está ocupado. Tente novamente mais tarde.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">O servidor de teste retornou uma resposta inválida.</sys:String>
+    <sys:String x:Key="Str_Speed_Challenged">O Cloudflare bloqueou o teste com um desafio de segurança.</sys:String>
+    <sys:String x:Key="Str_Speed_Detail">Detalhes: {0}</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">A transferência falhou. Verifique sua conexão e tente novamente.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Não foi possível copiar os resultados. Tente novamente.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Algo está em execução no terminal. Interrompê-lo e executar o teste de velocidade?</sys:String>

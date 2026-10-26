@@ -18,7 +18,7 @@ namespace KillerScan.Engine.SpeedTest
     }
 
     public enum SpeedTestPhase { IdleLatency, DownloadWarmup, Download, UploadWarmup, Upload, Completed }
-    public enum SpeedTestFailureKind { InvalidConfiguration, Timeout, EndpointUnavailable, TlsFailure, HttpError, RateLimited, InvalidResponse, TransferFailed }
+    public enum SpeedTestFailureKind { InvalidConfiguration, Timeout, EndpointUnavailable, TlsFailure, HttpError, RateLimited, InvalidResponse, TransferFailed, Challenged }
 
     public sealed class SpeedTestException(SpeedTestFailureKind kind, string message, Exception? innerException = null,
         int? statusCode = null, TimeSpan? retryAfter = null) : Exception(message, innerException)

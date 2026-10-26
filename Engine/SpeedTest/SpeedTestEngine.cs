@@ -366,6 +366,12 @@ namespace KillerScan.Engine.SpeedTest
 
         private static void ValidateResponse(HttpResponseMessage response)
         {
+            // Cloudflare marks challenge pages with this header whatever the status, so a bot or WAF
+            // challenge is named instead of reported as an unexplained HTTP error.
+            if (response.Headers.TryGetValues("cf-mitigated", out var mitigated) &&
+                mitigated.Any(value => value.IndexOf("challenge", StringComparison.OrdinalIgnoreCase) >= 0))
+                throw new SpeedTestException(SpeedTestFailureKind.Challenged,
+                    "Cloudflare challenged the request (HTTP " + (int)response.StatusCode + ").", statusCode: (int)response.StatusCode);
             if (response.StatusCode != HttpStatusCode.OK)
                 throw new SpeedTestException((int)response.StatusCode == 429 ? SpeedTestFailureKind.RateLimited : SpeedTestFailureKind.HttpError,
                     "The speed-test endpoint returned HTTP " + (int)response.StatusCode + ".",
@@ -456,7 +462,8 @@ namespace KillerScan.Engine.SpeedTest
                                 System.Globalization.CultureInfo.InvariantCulture, out double duration) && duration >= 0 &&
                             !double.IsInfinity(duration) && !double.IsNaN(duration))));
                 if (body.Length != 0 || !timing || response.Content.Headers.ContentType?.MediaType != "text/plain")
-                    throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "Cloudflare returned an unexpected upload acknowledgment.");
+                    throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse,
+                        "Cloudflare returned an unexpected upload acknowledgment" + Received(response, body));
             }
             else
             {
@@ -466,13 +473,25 @@ namespace KillerScan.Engine.SpeedTest
                     if (json.RootElement.ValueKind != JsonValueKind.Object ||
                         !json.RootElement.TryGetProperty("bytes", out var value) || value.ValueKind != JsonValueKind.Number ||
                         !value.TryGetInt64(out long acknowledged) || acknowledged != expectedBytes)
-                        throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "The endpoint did not acknowledge the exact upload size.");
+                        throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse,
+                            "The endpoint did not acknowledge the exact upload size" + Received(response, body));
                 }
                 catch (JsonException ex)
                 {
-                    throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "The endpoint returned an invalid upload acknowledgment.", ex);
+                    throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse,
+                        "The endpoint returned an invalid upload acknowledgment" + Received(response, body), ex);
                 }
             }
+        }
+
+        /// <summary>What actually came back, on one bounded line, so a proxy or filter that rewrote the
+        /// reply can be identified from the error alone.</summary>
+        private static string Received(HttpResponseMessage response, string body)
+        {
+            string type = response.Content.Headers.ContentType?.MediaType ?? "no content type";
+            string text = new string(body.Select(c => char.IsControl(c) ? ' ' : c).ToArray()).Trim();
+            if (text.Length > 120) text = text.Substring(0, 120) + "...";
+            return ": HTTP " + (int)response.StatusCode + ", " + type + ", " + (text.Length == 0 ? "empty body" : "body \"" + text + "\"") + ".";
         }
 
         private static bool IsCloudflareEndpoint(Uri endpoint) => endpoint.Scheme == Uri.UriSchemeHttps && endpoint.Port == 443 &&

@@ -569,6 +569,8 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Speed_Tls">Impossible d'établir une connexion sécurisée avec le serveur de test.</sys:String>
     <sys:String x:Key="Str_Speed_RateLimited">Le serveur de test est occupé. Réessayez plus tard.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Le serveur de test a renvoyé une réponse invalide.</sys:String>
+    <sys:String x:Key="Str_Speed_Challenged">Cloudflare a bloqué le test par une vérification de sécurité.</sys:String>
+    <sys:String x:Key="Str_Speed_Detail">Détails : {0}</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Le transfert a échoué. Vérifiez votre connexion et réessayez.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Impossible de copier les résultats. Réessayez.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Une tâche est en cours dans le terminal. L’arrêter et lancer le test de vitesse à la place ?</sys:String>

@@ -554,6 +554,8 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Speed_Tls">Nie udało się nawiązać bezpiecznego połączenia z serwerem testowym.</sys:String>
     <sys:String x:Key="Str_Speed_RateLimited">Serwer testowy jest zajęty. Spróbuj ponownie później.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Serwer testowy zwrócił nieprawidłową odpowiedź.</sys:String>
+    <sys:String x:Key="Str_Speed_Challenged">Cloudflare zablokował test weryfikacją bezpieczeństwa.</sys:String>
+    <sys:String x:Key="Str_Speed_Detail">Szczegóły: {0}</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Transfer nie powiódł się. Sprawdź połączenie i spróbuj ponownie.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Nie udało się skopiować wyników. Spróbuj ponownie.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">W terminalu trwa zadanie. Zatrzymać je i uruchomić test prędkości?</sys:String>

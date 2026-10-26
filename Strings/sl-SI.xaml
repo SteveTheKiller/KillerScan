@@ -544,6 +544,8 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Speed_Tls">Varne povezave s preizkusnim strežnikom ni bilo mogoče vzpostaviti.</sys:String>
     <sys:String x:Key="Str_Speed_RateLimited">Preizkusni strežnik je zaseden. Poskusi pozneje.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Preizkusni strežnik je vrnil neveljaven odgovor.</sys:String>
+    <sys:String x:Key="Str_Speed_Challenged">Cloudflare je preizkus blokiral z varnostnim preverjanjem.</sys:String>
+    <sys:String x:Key="Str_Speed_Detail">Podrobnosti: {0}</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Prenos ni uspel. Preveri povezavo in poskusi znova.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Rezultatov ni bilo mogoče kopirati. Poskusi znova.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">V terminalu že poteka opravilo. Ga ustavim in zaženem preizkus hitrosti?</sys:String>

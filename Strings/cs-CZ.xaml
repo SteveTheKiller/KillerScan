@@ -567,6 +567,8 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Speed_Tls">Nelze navázat zabezpečené spojení s testovacím serverem.</sys:String>
     <sys:String x:Key="Str_Speed_RateLimited">Testovací server je zaneprázdněn. Zkuste to později.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Testovací server vrátil neplatnou odpověď.</sys:String>
+    <sys:String x:Key="Str_Speed_Challenged">Cloudflare zablokoval test bezpečnostní výzvou.</sys:String>
+    <sys:String x:Key="Str_Speed_Detail">Podrobnosti: {0}</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Přenos selhal. Zkontrolujte připojení a zkuste to znovu.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Výsledky nelze zkopírovat. Zkuste to znovu.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">V terminálu běží úloha. Zastavit ji a spustit test rychlosti?</sys:String>

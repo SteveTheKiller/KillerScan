@@ -147,6 +147,8 @@ internal static class Program
             await Run("Measured rate limit never retries or waits inside throughput timing", MeasurementRateLimit);
             await Run("Loaded-latency rate limit stops payload traffic", () => Reject(Mode.LoadedRate, SpeedTestFailureKind.RateLimited));
             await Run("HTTP 503 classified as HTTP error", () => Reject(Mode.Unavailable, SpeedTestFailureKind.HttpError));
+            await Run("Cloudflare challenge on upload is named as a challenge", () => Reject(Mode.Challenge, SpeedTestFailureKind.Challenged));
+            await Run("Rejected upload acknowledgment reports what came back", RejectedAckDetail);
             await Run("Stalled response bounded by request timeout", Timeout);
             await Run("No measured download bytes is a failure, not completion", () => Reject(Mode.NoPayload, SpeedTestFailureKind.TransferFailed));
             await Run("Unacknowledged uploads cannot produce a speed result", () => Reject(Mode.NoAck, SpeedTestFailureKind.TransferFailed));
@@ -1037,7 +1039,17 @@ internal static class Program
         Require(result.Download.StreamCount == 4, "Four concurrent streams used");
     }
 
-    private static async Task Reject(Mode mode, SpeedTestFailureKind expected)
+    private static async Task RejectedAckDetail()
+    {
+        var ex = await Reject(Mode.WrongAck, SpeedTestFailureKind.InvalidResponse);
+        Require(ex.Message.Contains("HTTP 200") && ex.Message.Contains("application/json") && ex.Message.Contains("{\"bytes\":"),
+            "Acknowledgment failure names status, content type and body: " + ex.Message);
+        ex = await Reject(Mode.HtmlAck, SpeedTestFailureKind.InvalidResponse);
+        Require(ex.Message.Contains("text/html") && ex.Message.Contains("<html>blocked</html>") && !ex.Message.Contains("\n"),
+            "Non-JSON acknowledgment names content type and a single-line body: " + ex.Message);
+    }
+
+    private static async Task<SpeedTestException> Reject(Mode mode, SpeedTestFailureKind expected)
     {
         using var server = new LoopbackServer(mode);
         var options = Options(server);
@@ -1060,6 +1072,7 @@ internal static class Program
                 + "; elapsedMs=" + clock.ElapsedMilliseconds + "; phases="
                 + string.Join(",", phases.OrderBy(pair => pair.Value).Select(pair => pair.Key + "@" + pair.Value))
                 + "; requests=" + string.Join(",", server.Requests));
+            return ex;
         }
     }
 
@@ -1114,7 +1127,7 @@ internal static class Program
     }
 
     private enum Mode { Normal, SlowDownload, SharedDownload, WrongAck, StringAck, ShortDownload, Compressed, RateLimited, Unavailable, Stall, NoPayload, NoAck,
-        FirstRetry, RepeatedRetry, LongRetry, MeasuredRate, LoadedRate }
+        FirstRetry, RepeatedRetry, LongRetry, MeasuredRate, LoadedRate, Challenge, HtmlAck }
 
     private sealed class LoopbackServer : IDisposable
     {
@@ -1224,10 +1237,18 @@ internal static class Program
                                 Interlocked.Add(ref _uploadBytes, read);
                             }
                             if (_mode == Mode.NoAck) { await Task.Delay(3000, _stop.Token); return; }
+                            if (_mode == Mode.Challenge || _mode == Mode.HtmlAck)
+                            {
+                                byte[] page = Encoding.UTF8.GetBytes("<html>blocked</html>\n");
+                                await WriteHeader(stream, _mode == Mode.Challenge ? "403 Forbidden" : "200 OK", page.Length,
+                                    "Content-Type: text/html; charset=UTF-8\r\n" + (_mode == Mode.Challenge ? "cf-mitigated: challenge\r\n" : ""));
+                                await stream.WriteAsync(page, 0, page.Length, _stop.Token);
+                                continue;
+                            }
                             string json = _mode == Mode.StringAck ? "{\"bytes\":\"wrong\"}" :
                                 "{\"bytes\":" + (_mode == Mode.WrongAck ? requested + 1 : requested) + "}";
                             byte[] response = Encoding.UTF8.GetBytes(json);
-                            await WriteHeader(stream, "200 OK", response.Length);
+                            await WriteHeader(stream, "200 OK", response.Length, "Content-Type: application/json; charset=utf-8\r\n");
                             await stream.WriteAsync(response, 0, response.Length, _stop.Token);
                         }
                         else

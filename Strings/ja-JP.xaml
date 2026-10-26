@@ -580,6 +580,8 @@
     <sys:String x:Key="Str_Speed_Tls">テストサーバーとの安全な接続を確立できませんでした。</sys:String>
     <sys:String x:Key="Str_Speed_RateLimited">テストサーバーが混雑しています。後でもう一度お試しください。</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">テストサーバーから無効な応答が返されました。</sys:String>
+    <sys:String x:Key="Str_Speed_Challenged">Cloudflare がセキュリティチャレンジでテストをブロックしました。</sys:String>
+    <sys:String x:Key="Str_Speed_Detail">詳細: {0}</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">転送に失敗しました。接続を確認して再試行してください。</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">結果をコピーできませんでした。再試行してください。</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">ターミナルで処理が実行中です。停止して速度テストを実行しますか？</sys:String>

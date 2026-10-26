@@ -585,6 +585,8 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Speed_Tls">Nem sikerült biztonságos kapcsolatot létrehozni a tesztkiszolgálóval.</sys:String>
     <sys:String x:Key="Str_Speed_RateLimited">A tesztkiszolgáló foglalt. Próbálja újra később.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">A tesztkiszolgáló érvénytelen választ adott.</sys:String>
+    <sys:String x:Key="Str_Speed_Challenged">A Cloudflare biztonsági ellenőrzéssel blokkolta a tesztet.</sys:String>
+    <sys:String x:Key="Str_Speed_Detail">Részletek: {0}</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Az átvitel sikertelen. Ellenőrizze a kapcsolatot, és próbálja újra.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Nem sikerült másolni az eredményeket. Próbálja újra.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">A terminálban egy feladat fut. Leállítja, és helyette elindítja a sebességtesztet?</sys:String>

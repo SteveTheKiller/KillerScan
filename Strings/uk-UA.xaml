@@ -611,6 +611,8 @@
     <sys:String x:Key="Str_Speed_Tls">Тестовий сервер не зміг установити безпечне з'єднання.</sys:String>
     <sys:String x:Key="Str_Speed_RateLimited">Тестовий сервер зайнятий. Спробуйте пізніше.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Тестовий сервер повернув недійсну відповідь.</sys:String>
+    <sys:String x:Key="Str_Speed_Challenged">Cloudflare заблокував тест перевіркою безпеки.</sys:String>
+    <sys:String x:Key="Str_Speed_Detail">Подробиці: {0}</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Передавання не вдалося. Перевірте з'єднання й повторіть спробу.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Не вдалося скопіювати результати. Спробуйте ще раз.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">У терміналі щось виконується. Зупинити це й запустити тест швидкості?</sys:String>

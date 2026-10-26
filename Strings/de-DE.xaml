@@ -570,6 +570,8 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Speed_Tls">Es konnte keine sichere Verbindung zum Testserver hergestellt werden.</sys:String>
     <sys:String x:Key="Str_Speed_RateLimited">Der Testserver ist ausgelastet. Versuchen Sie es später erneut.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Der Testserver hat eine ungültige Antwort gesendet.</sys:String>
+    <sys:String x:Key="Str_Speed_Challenged">Cloudflare hat den Test mit einer Sicherheitsprüfung blockiert.</sys:String>
+    <sys:String x:Key="Str_Speed_Detail">Details: {0}</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Die Übertragung ist fehlgeschlagen. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Die Ergebnisse konnten nicht kopiert werden. Versuchen Sie es erneut.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Im Terminal läuft bereits ein Vorgang. Diesen beenden und stattdessen den Geschwindigkeitstest starten?</sys:String>

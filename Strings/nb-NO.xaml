@@ -611,6 +611,8 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Speed_Tls">Testserveren kunne ikke opprette en sikker tilkobling.</sys:String>
     <sys:String x:Key="Str_Speed_RateLimited">Testserveren er opptatt. Prøv igjen senere.</sys:String>
     <sys:String x:Key="Str_Speed_BadResponse">Testserveren returnerte et ugyldig svar.</sys:String>
+    <sys:String x:Key="Str_Speed_Challenged">Cloudflare blokkerte testen med en sikkerhetskontroll.</sys:String>
+    <sys:String x:Key="Str_Speed_Detail">Detaljer: {0}</sys:String>
     <sys:String x:Key="Str_Speed_TransferFailed">Overføringen mislyktes. Sjekk tilkoblingen og prøv igjen.</sys:String>
     <sys:String x:Key="Str_Speed_ClipboardFailed">Kunne ikke kopiere resultatene. Prøv igjen.</sys:String>
     <sys:String x:Key="Str_Speed_ReplaceRunning">Noe kjører i terminalen. Stoppe det og kjøre hastighetstesten i stedet?</sys:String>

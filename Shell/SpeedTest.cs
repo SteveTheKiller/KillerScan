@@ -104,11 +104,17 @@ namespace KillerScan.Shell
                     SpeedTestFailureKind.EndpointUnavailable => "Str_Speed_Unreachable",
                     SpeedTestFailureKind.TlsFailure => "Str_Speed_Tls",
                     SpeedTestFailureKind.RateLimited => "Str_Speed_RateLimited",
+                    SpeedTestFailureKind.Challenged => "Str_Speed_Challenged",
                     SpeedTestFailureKind.InvalidResponse or SpeedTestFailureKind.HttpError => "Str_Speed_BadResponse",
                     _ => "Str_Speed_TransferFailed"
                 } : "Str_Speed_TransferFailed";
                 Status(key);
                 Line(Loc(key) + "\r\n", 31);
+                // The engine's reason names what came back, so a filtered or rewritten reply can be
+                // identified from a screenshot. It stays in English, like the CLI's error output.
+                if (ex is SpeedTestException { Kind: SpeedTestFailureKind.Challenged or SpeedTestFailureKind.InvalidResponse
+                    or SpeedTestFailureKind.HttpError } detail)
+                    Line(string.Format(Loc("Str_Speed_Detail"), detail.Message) + "\r\n");
             }
             finally
             {
