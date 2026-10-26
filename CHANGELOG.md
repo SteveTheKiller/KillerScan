@@ -130,6 +130,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Updated and pinned the build/release actions to current compatible stable versions.
 - Clarified sent-byte upload throughput and its acknowledgment requirement in the app, engine and website documentation.
 - Hovered menu and list items show their text in the theme accent, lightened or darkened only as far as needed to stay readable on the hover fill.
+- The speed-test server's loopback check (`server\speedtest\engine-loopback.ps1`) runs again. It still looked for the speed-test engine under its name from before the engine split.
 - The deployment guide explains that automatic updates and the registered uninstall do not work where Windows PowerShell runs in Constrained Language Mode, and how to update and remove KillerScan there.
 - Wordmarks and headings are raised with a subtle bevel in their own color instead of a dark outline; wordmarks keep their drop shadow. The Dark theme's red accent is the brand red again instead of a pink tint.
 - Theme menu hover rows reach the right edge with the same inset as the left.

@@ -12,13 +12,20 @@ if (-not $Endpoint.IsAbsoluteUri -or -not $Endpoint.IsLoopback -or $Endpoint.Sch
     throw 'This integration check only accepts a loopback HTTP endpoint.'
 }
 $assemblyPath = (Resolve-Path -LiteralPath $AppPath).ProviderPath
-[void][Reflection.Assembly]::LoadFrom($assemblyPath)
-$options = New-Object KillerScan.Services.SpeedTest.SpeedTestOptions
+# The speed test lives in KillerScan.Engine. A Debug build keeps that DLL beside the exe; a
+# Release build embeds it, so point -AppPath at a Debug build or at the engine's own output.
+$enginePath = if ([IO.Path]::GetFileName($assemblyPath) -eq 'KillerScan.Engine.dll') { $assemblyPath }
+              else { Join-Path (Split-Path -Parent $assemblyPath) 'KillerScan.Engine.dll' }
+if (-not (Test-Path -LiteralPath $enginePath)) {
+    throw "KillerScan.Engine.dll was not found beside $assemblyPath. Use a Debug build or pass -AppPath to the engine's net48 KillerScan.Engine.dll."
+}
+[void][Reflection.Assembly]::LoadFrom($enginePath)
+$options = New-Object KillerScan.Engine.SpeedTest.SpeedTestOptions
 $options.Endpoint = $Endpoint
 $options.ByteBudgetPerPhase = [long]$BudgetMiB * 1024 * 1024
 $options.PhaseDuration = [TimeSpan]::FromSeconds($PhaseSeconds)
 $options.WarmupDuration = [TimeSpan]::FromSeconds($WarmupSeconds)
-$engine = New-Object KillerScan.Services.SpeedTest.SpeedTestEngine
+$engine = New-Object KillerScan.Engine.SpeedTest.SpeedTestEngine
 $pending = $engine.RunAsync($options, $null, [Threading.CancellationToken]::None)
 $result = $pending.GetAwaiter().GetResult()
 if ($result.IdleLatencySamples.Count -ne $options.IdleLatencySampleCount) { throw 'Missing idle latency samples.' }
@@ -30,6 +37,7 @@ foreach ($phase in @($result.Download, $result.Upload)) {
 [ordered]@{
     Endpoint = $result.Endpoint.AbsoluteUri
     App = $assemblyPath
+    Engine = $enginePath
     ElapsedSeconds = $result.Elapsed.TotalSeconds
     IdleSamples = $result.IdleLatencySamples.Count
     IdleLatencyMs = $result.IdleLatencyMs

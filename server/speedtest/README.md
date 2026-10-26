@@ -42,7 +42,7 @@ node loopback.mjs
 powershell.exe -NoProfile -File ./engine-loopback.ps1
 ```
 
-The check loads `bin/Debug/net48/KillerScan.exe` without opening the app and transfers up to 32 MiB per direction. Its parameters can select another compiled app or the production timing and budget: `-BudgetMiB 3072 -PhaseSeconds 10 -WarmupSeconds 6`. The adapter's local-only `/__adapter_stats` reports request counts and statuses; it is not part of the deployed Worker. Stop the adapter with Ctrl+C. Local throughput is a compatibility check, not an internet speed result. The Node adapter does not emulate Cloudflare rate counters or edge encoding.
+The check loads the `KillerScan.Engine.dll` beside `bin/Debug/net48/KillerScan.exe` without opening the app and transfers up to 32 MiB per direction. A Release build embeds the engine, so `-AppPath` takes a Debug build or the engine's own net48 DLL. Its parameters can also select the production timing and budget: `-BudgetMiB 3072 -PhaseSeconds 10 -WarmupSeconds 6`. The adapter's local-only `/__adapter_stats` reports request counts and statuses; it is not part of the deployed Worker. Stop the adapter with Ctrl+C. Local throughput is a compatibility check, not an internet speed result. The Node adapter does not emulate Cloudflare rate counters or edge encoding.
 
 For a local Workers runtime, use Wrangler 4.36.0 or newer:
 
