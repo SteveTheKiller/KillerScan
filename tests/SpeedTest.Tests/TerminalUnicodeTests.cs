@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text;
 using KillerScan.Terminal;
 
@@ -51,6 +52,28 @@ internal static class TerminalUnicodeTests
         Write(noWrapFeed, "\u001b[?7labc\u2764\ufe0f");
         Require(noWrap.CursorRow == 0 && noWrap.CursorCol == 3 && noWrap.LineAt(0)[3].Text == "\u2764\ufe0f", "Disabled wrapping preserves an edge emoji cluster safely.");
         Console.WriteLine("PASS: UTF-8 parser preserves terminal widths for accents, CJK, supplementary and emoji clusters.");
+
+        // Colon sub-parameters from bat, delta or neovim are consumed whole instead of leaking text.
+        var colon = new TerminalBuffer(16, 2); var colonFeed = new VtParser(colon);
+        Write(colonFeed, "\u001b[38:2::255:0:0mA\u001b[4:3mB\u001b[0mC");
+        Require(colon.CursorCol == 3 && colon.LineAt(0)[0].Ch == 'A' && colon.LineAt(0)[1].Ch == 'B' && colon.LineAt(0)[2].Ch == 'C',
+            "Colon SGR sequences print nothing of their own: col " + colon.CursorCol);
+        Console.WriteLine("PASS: colon sub-parameter sequences are consumed without printing their tails.");
+
+        // After narrowing, a row keeps its wider cells for horizontal scroll; erasing must reach them.
+        var narrowed = new TerminalBuffer(8, 2); var narrowedFeed = new VtParser(narrowed);
+        Write(narrowedFeed, "ABCDEFGH");
+        narrowed.Resize(4, 2);
+        Write(narrowedFeed, "\u001b[H\u001b[K");
+        var row = narrowed.LineAt(narrowed.ScrollbackCount);
+        Require(row.Length == 8 && row.All(cell => cell.Ch == 0), "Erase in line clears the cells beyond a narrowed pane.");
+        var cleared = new TerminalBuffer(8, 2); var clearedFeed = new VtParser(cleared);
+        Write(clearedFeed, "ABCDEFGH");
+        cleared.Resize(4, 2);
+        Write(clearedFeed, "\u001b[2J");
+        Require(Enumerable.Range(cleared.ScrollbackCount, 2).All(r => cleared.LineAt(r).All(cell => cell.Ch == 0)),
+            "Clearing the screen leaves no stale text beyond the visible width.");
+        Console.WriteLine("PASS: erasing after a narrowing resize clears hidden columns too.");
     }
     private static void Write(VtParser parser, string text)
     { byte[] bytes = Encoding.UTF8.GetBytes(text); parser.Feed(bytes, bytes.Length); }

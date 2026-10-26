@@ -568,12 +568,14 @@ namespace KillerScan.Terminal
             _pendingWrap = false;
             switch (mode)
             {
+                // A row can be wider than the pane after narrowing (its old cells stay reachable by
+                // horizontal scroll), so "to the end" means the row's own end, not the visible width.
                 case 0:
-                    ClearRun(_screen[CursorRow], CursorCol, Cols - 1);
-                    for (int r = CursorRow + 1; r < Rows; r++) ClearRun(_screen[r], 0, Cols - 1);
+                    ClearRun(_screen[CursorRow], CursorCol, _screen[CursorRow].Length - 1);
+                    for (int r = CursorRow + 1; r < Rows; r++) ClearRun(_screen[r], 0, _screen[r].Length - 1);
                     break;
                 case 1:
-                    for (int r = 0; r < CursorRow; r++) ClearRun(_screen[r], 0, Cols - 1);
+                    for (int r = 0; r < CursorRow; r++) ClearRun(_screen[r], 0, _screen[r].Length - 1);
                     ClearRun(_screen[CursorRow], 0, CursorCol);
                     break;
                 case 3:
@@ -591,9 +593,9 @@ namespace KillerScan.Terminal
         {
             _pendingWrap = false;
             var line = _screen[CursorRow];
-            if (mode == 0) ClearRun(line, CursorCol, Cols - 1);
+            if (mode == 0) ClearRun(line, CursorCol, line.Length - 1);
             else if (mode == 1) ClearRun(line, 0, CursorCol);
-            else ClearRun(line, 0, Cols - 1);
+            else ClearRun(line, 0, line.Length - 1);
             Version++;
         }
 
@@ -601,7 +603,7 @@ namespace KillerScan.Terminal
         {
             if (wholeClusters && from >= 0 && from < line.Length && line[from].Ch < 0) from--;
             if (wholeClusters && to >= 0 && to < line.Length && line[to].Width == 2) to++;
-            for (int c = Math.Max(0, from); c <= Math.Min(to, Cols - 1); c++)
+            for (int c = Math.Max(0, from); c <= Math.Min(to, line.Length - 1); c++)
             {
                 line[c].Ch = 0;
                 line[c].Cluster = null;
@@ -664,7 +666,7 @@ namespace KillerScan.Terminal
 
         private void EraseChars(int n)
         {
-            ClearRun(_screen[CursorRow], CursorCol, CursorCol + Math.Max(1, n) - 1);
+            ClearRun(_screen[CursorRow], CursorCol, Math.Min(CursorCol + Math.Max(1, n) - 1, Cols - 1));
             Version++;
         }
 

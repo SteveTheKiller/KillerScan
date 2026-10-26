@@ -109,6 +109,7 @@ namespace KillerScan.Terminal
                     if (b < 0x20) { _h.Execute(b); break; }
                     if (b >= 0x3C && b <= 0x3F) { _prefix = (char)b; _state = S.CsiParam; break; }
                     if (b == ';' || (b >= '0' && b <= '9')) { _state = S.CsiParam; Param(b); break; }
+                    if (b == ':') { _state = S.CsiIgnore; break; }
                     if (b < 0x30) { _inter = (char)b; _state = S.CsiInt; break; }
                     Csi(b);
                     break;
@@ -116,6 +117,10 @@ namespace KillerScan.Terminal
                 case S.CsiParam:
                     if (b < 0x20) { _h.Execute(b); break; }
                     if (b == ';' || (b >= '0' && b <= '9')) { Param(b); break; }
+                    // Colon sub-parameters (ESC[38:2::255:0:0m truecolor, ESC[4:3m curly underline)
+                    // are not read as plain parameters, where "4:3" would mean underline plus italic.
+                    // The whole sequence is consumed so its tail never prints as text.
+                    if (b == ':') { _state = S.CsiIgnore; break; }
                     if (b >= 0x3C && b <= 0x3F) { _state = S.CsiIgnore; break; }   // prefix after params is malformed
                     if (b < 0x30) { _inter = (char)b; _state = S.CsiInt; break; }
                     Csi(b);

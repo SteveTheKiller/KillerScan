@@ -48,6 +48,8 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - The per-user update helper waits for KillerScan to close for at most a minute and checks the process start time, so a recycled process ID can no longer leave it waiting forever.
 - Command-line errors show in the console when only the output is redirected, as in `killerscan /scan /json > devices.json`. Before, a mistyped option left an empty file and no message.
 - Diagnose (F3) on a Network Tools window that isn't watching anything yet starts watching and opens the device's card. Before, it only added the address to the target box.
+- The terminal no longer prints stray text such as `2::255:0:0m` from tools that send colors and underline styles in the colon form (bat, delta, neovim). Those particular styles are skipped for now.
+- Clearing the terminal or a line after making the pane narrower also clears the text beyond the new width, so old output no longer turns up when you scroll sideways.
 - An upgrade installed while KillerScan was running (winget, Chocolatey or an RMM tool) no longer leaves a full-size `.bak` copy of the old exe behind for good. The next install, update or uninstall removes it.
 - Uninstalling an all-users copy from Settings asks whether you're sure before the administrator prompt, not after it, and the question no longer runs as administrator.
 - When an all-users update can't be installed, KillerScan opens again on the version you had instead of staying closed with nothing said.
