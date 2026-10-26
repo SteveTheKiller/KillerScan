@@ -138,4 +138,4 @@ Where 1.8.4 differs from the plan above:
 Still open:
 - **Notes in reports.** Notes stay out of reports, as planned; there is no report option yet.
 - **Retention.** Each Location keeps its own retention setting, copied at migration. The History settings dialog changes the current Location's only.
-- **Real-app checks.** Migration, the picker, the banner and the adapter prompt are covered by automated checks with scratch folders, but none has yet been run against a real install's data or on hardware with several adapters.
+- **Real-app checks.** Migration, the picker, the banner and the adapter prompt are covered by automated checks with scratch folders. On 2026-10-26 migration also ran against a copy of a real 1.8.3 install's data: 47 history entries, one saved scan and the device names moved into Unassigned in 85 ms, the original files stayed byte-identical, and a second start found the same Location. The picker, banner and adapter prompt have not yet been run on hardware with several adapters.
