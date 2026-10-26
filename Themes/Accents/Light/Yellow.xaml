@@ -13,13 +13,14 @@
     <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#F2C500" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#FFD94D" po:Freeze="True"/>
     <LinearGradientBrush x:Key="SelectionBg" StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#FFF5A3" Offset="0"/><GradientStop Color="#FFD43B" Offset="1"/></LinearGradientBrush>
-
-    <SolidColorBrush x:Key="SelectionFg"         Color="#24231C" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionFg"        Color="#24231C" po:Freeze="True"/>
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#FFF5A3" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#88707070" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TabEdgeBrush"        Color="#99F2C500" po:Freeze="True"/>
   <SolidColorBrush x:Key="SelectionAccent" Color="#F2C500"/>
   <SolidColorBrush x:Key="RadioAccent" Color="#F2C500"/>
     <SolidColorBrush x:Key="AccentLogo" Color="#F2C500" po:Freeze="True"/>
     <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#262626" po:Freeze="True"/>
+    <SolidColorBrush x:Key="GridSelectedTextBrush" Color="#24231C" po:Freeze="True"/>
     <sys:Double x:Key="WordmarkAccentShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.9</sys:Double>
 </ResourceDictionary>

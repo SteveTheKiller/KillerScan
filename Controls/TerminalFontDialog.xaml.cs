@@ -15,7 +15,7 @@ namespace KillerScan.Controls
         public TerminalFontDialog(string font, double size)
         {
             InitializeComponent();
-            if (TryFindResource("InputDialogPlainTitleVisibility") is Visibility.Visible)
+            if (TryFindResource("DialogPlainTitleVisibility") is Visibility.Visible)
             {
                 // Keep the dropdowns and preview on the theme's recessed content surface.
                 Resources["PaneBrush"] = FindResource("ListPaneBrush");

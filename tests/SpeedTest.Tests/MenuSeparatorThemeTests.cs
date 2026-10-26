@@ -32,7 +32,8 @@ internal static class MenuSeparatorThemeTests
             }
         }
 
-        var styles = XDocument.Load(Path.Combine(root, "App.xaml")).Descendants(w + "Style")
+        // The separator styles come from the family control styles (the KillerUI template).
+        var styles = XDocument.Load(Path.Combine(root, "Controls", "Controls.xaml")).Descendants(w + "Style")
             .Where(style => (string?)style.Attribute("TargetType") == "Separator").ToList();
         var menu = styles.Single(style => (string?)style.Attribute(x + "Key") == "{x:Static MenuItem.SeparatorStyleKey}");
         var generic = styles.Single(style => style.Attribute(x + "Key") == null);
@@ -42,10 +43,10 @@ internal static class MenuSeparatorThemeTests
         Require(Background(generic) == "{DynamicResource MenuBorderBrush}", "Generic separators must retain their original brush.");
 
         string source = File.ReadAllText(Path.Combine(root, "Services", "ThemeManager.cs"));
-        const string fallback = "Complete(\"MenuSeparatorBrush\", newDict[\"MenuBorderBrush\"]);";
+        const string fallback = "Mirror(\"MenuSeparatorBrush\", \"MenuBorderBrush\");";
         Require(source.Contains(fallback), "Menu separators must retain the previous fallback.");
         Require(source.IndexOf(fallback, StringComparison.Ordinal) >
-            source.IndexOf("target[key] = accentDict[key];", StringComparison.Ordinal),
+            source.IndexOf("combined[key] = accentDict[key];", StringComparison.Ordinal),
             "The fallback must use the fully merged accent palette.");
         return Task.CompletedTask;
     }

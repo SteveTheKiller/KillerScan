@@ -1,25 +1,8 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
-    <!-- 98SE family - BLUE accent, the Windows 98 navy. This is the DEFAULT accent for 98SE, and
-         it is an overlay rather than the base because ThemeManager treats Accent.Green as the
-         no-overlay case for every family. Values from KillerShell's Accents/98SE/Blue.xaml. -->
-    <LinearGradientBrush x:Key="TitleBarBrush" StartPoint="0,0" EndPoint="1,0" po:Freeze="True">
-        <GradientStop Color="#000080" Offset="0"/><GradientStop Color="#1084d0" Offset="1"/>
-    </LinearGradientBrush>
-    <SolidColorBrush x:Key="PrimaryBrush"        Color="#000080" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#1084d0" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#000060" po:Freeze="True"/>
-    <SolidColorBrush x:Key="HeaderLineBrush"     Color="#000080" po:Freeze="True"/>
-    <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#000080" po:Freeze="True"/>
-    <SolidColorBrush x:Key="SelectionBg"         Color="#000080" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#000080" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RowAltBrush" Color="#08000000" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
-    <!-- Hovered row text. 98SE hovers a light gray row, so this is a dark accent tint rather than
-         the pale one the dark families use. -->
-    <SolidColorBrush x:Key="TableHoverTextBrush" Color="#000080" po:Freeze="True"/>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+  <LinearGradientBrush x:Key="TitleBarBrush" StartPoint="0,0" EndPoint="1,0" po:Freeze="True"><GradientStop Color="#000080" Offset="0"/><GradientStop Color="#1084d0" Offset="1"/></LinearGradientBrush>
+  <SolidColorBrush x:Key="PrimaryBrush" Color="#000080"/><SolidColorBrush x:Key="PrimaryHoverBrush" Color="#1084d0"/><SolidColorBrush x:Key="PrimaryPressedBrush" Color="#000060"/><SolidColorBrush x:Key="OutlineBtnBrush" Color="#000080"/><SolidColorBrush x:Key="HeaderLineBrush" Color="#000080"/><SolidColorBrush x:Key="SelectionBg" Color="#000080"/><SolidColorBrush x:Key="SelectionAccent" Color="#000080"/><SolidColorBrush x:Key="RadioAccent" Color="#000080"/>
+  <SolidColorBrush x:Key="RowSelectedBrush" Color="#000080"/>
+  <SolidColorBrush x:Key="TextSelectionBrush" Color="#000080"/>
     <SolidColorBrush x:Key="AccentLogo" Color="#000080"/>
-    <SolidColorBrush x:Key="SelectionAccent" Color="#000080"/>
-    <SolidColorBrush x:Key="RadioAccent" Color="#000080"/>
     <LinearGradientBrush x:Key="DialogTitleBarBrush" StartPoint="0,0" EndPoint="1,0" po:Freeze="True"><GradientStop Color="#000080" Offset="0"/><GradientStop Color="#1084d0" Offset="1"/></LinearGradientBrush>
 </ResourceDictionary>

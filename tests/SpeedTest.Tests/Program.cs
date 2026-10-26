@@ -469,6 +469,7 @@ internal static class Program
                 // process before any pack resources load, so the real theme loader resolves them.
                 typeof(Application).GetField("_resourceAssembly", BindingFlags.NonPublic | BindingFlags.Static)!
                     .SetValue(null, typeof(KillerScan.App).Assembly);
+                KillerScan.Services.AppTheme.Configure();
                 var app = new TestApplication();
                 SynchronizationContext.SetSynchronizationContext(new System.Windows.Threading.DispatcherSynchronizationContext());
                 var xml = new XmlDocument();

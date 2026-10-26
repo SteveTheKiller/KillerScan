@@ -103,6 +103,7 @@ internal static class TopologyTests
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", Static)!.SetValue(null, assembly);
         var app = new TestApplication();
+        KillerScan.Services.AppTheme.Configure();
         var directory = TestRepository.Find();
         Require(directory != null, "Resource source is available.");
         var xml = new XmlDocument();

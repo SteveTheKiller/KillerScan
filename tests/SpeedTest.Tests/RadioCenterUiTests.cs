@@ -49,6 +49,7 @@ internal static class RadioCenterUiTests
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", BindingFlags.NonPublic | BindingFlags.Static)!.SetValue(null, assembly);
         var app = new TestApplication();
+        KillerScan.Services.AppTheme.Configure();
         var xml = new XmlDocument();
         xml.Load(Path.Combine(directory.FullName, "App.xaml"));
         string dictionary = xml.DocumentElement!.FirstChild!.FirstChild!.OuterXml

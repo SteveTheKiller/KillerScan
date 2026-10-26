@@ -55,7 +55,7 @@
                     <Grid>
                         <!-- The app icon leads the caption, as it does in the main title bar. -->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0"
-                                    Visibility="{DynamicResource InputDialogWordmarkVisibility}">
+                                    Visibility="{DynamicResource DialogWordmarkVisibility}">
                         <icons:AppIcon x:Name="TitleIcon" Width="27" Height="27"
                                VerticalAlignment="Center" Margin="0,0,7,0"
                                RenderOptions.BitmapScalingMode="NearestNeighbor"/>
@@ -71,7 +71,7 @@
                         </Grid>
                         </StackPanel>
                         <TextBlock Text="KillerScan" Margin="6,0,0,0" VerticalAlignment="Center"
-                                   Visibility="{DynamicResource InputDialogPlainTitleVisibility}"
+                                   Visibility="{DynamicResource DialogPlainTitleVisibility}"
                                    FontFamily="Tahoma" FontSize="11" FontWeight="Bold"
                                    Foreground="{DynamicResource ChromeTextBrush}"/>
                         <Button Content="{DynamicResource AboutCloseGlyph}" Click="Cancel_Click" AutomationProperties.Name="{DynamicResource Str_Sys_Close}"

@@ -2,13 +2,15 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <SolidColorBrush x:Key="TextFieldBrush" Color="#101010" po:Freeze="True"/>
 
     <sys:Double x:Key="GrainOpacity">0.24</sys:Double>
     <sys:Double x:Key="IconShadowOpacity">0.9</sys:Double>
-    <!-- The grain inside a pane is clipped to the pane's radius MINUS its 1px border. -->
-    <CornerRadius x:Key="PaneGrainCornerRadius">5</CornerRadius>
-    <CornerRadius x:Key="TabCornerRadius">5,5,0,0</CornerRadius>
-    <SolidColorBrush x:Key="TextFieldBrush" Color="#101010" po:Freeze="True"/>
+
+    <!-- Text-stroke shadows behind button labels. Light nulls these: any Effect
+         rasterizes ClearType, so on a light surface the label just looks blurry. -->
+    <DropShadowEffect x:Key="TextStroke"     Color="Black" BlurRadius="3" ShadowDepth="0.8" Direction="270" Opacity="0.7"/>
+    <DropShadowEffect x:Key="TextStrokeSoft" Color="Black" BlurRadius="2" ShadowDepth="0.6" Direction="270" Opacity="0.45"/>
 
     <!-- Accent -->
     <SolidColorBrush x:Key="PrimaryBrush" Color="#22bb56" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
@@ -29,6 +31,12 @@
     <SolidColorBrush x:Key="PaneBrush" Color="#3a3a3a" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="TableHeaderBrush" Color="#333333" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="CardBorderBrush" Color="#4a4a4a" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <SolidColorBrush x:Key="TreeLineBrush"       Color="#3d3d3d" po:Freeze="True"/>
+    <SolidColorBrush x:Key="WarnBrush"           Color="#d9a218" po:Freeze="True"/>
+    <!-- The status dot's "all fine" green. A real traffic light needs three fixed colors; using
+         the accent here meant "fine" was whatever accent you had picked (MainWindow.xaml.cs
+         ApplyStatusTone). Muted on purpose - it sits in the footer permanently. -->
+    <SolidColorBrush x:Key="OkBrush"             Color="#3fb950" po:Freeze="True"/>
     <SolidColorBrush x:Key="PaneBorderBrush" Color="#555555" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
     <!-- Text -->
@@ -47,11 +55,18 @@
     <!-- Inputs / menus / scrollbar -->
 <SolidColorBrush x:Key="InputBorderBrush" Color="#2e2e2e" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#141414" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+<SolidColorBrush x:Key="TerminalBackgroundBrush" Color="#3a3a3a" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 <SolidColorBrush x:Key="MenuBorderBrush" Color="#404040" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="MenuTextBrush"       Color="#a3a3a3" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuHoverBrush" Color="#404040" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#0d2a18" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#5522bb56" po:Freeze="True"/>
+
+    <!-- Resting accent edge: the accent at 40%, for a lip that has to read as accent-colored
+         without claiming to be the live thing. The active tab of the UNFOCUSED pane uses it,
+         the same way the site's feature cards carry a dim tab-edge until hovered. Every
+         accent overlay redefines it, or picking an accent would leave this one behind. -->
+    <SolidColorBrush x:Key="TabEdgeBrush"        Color="#6622bb56" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#22bb56" po:Freeze="True"/>
 
     <!-- Device-type label colors (bright, for dark panes) -->
@@ -71,6 +86,17 @@
     <SolidColorBrush x:Key="TypeSmarttv"    Color="#E0A0E0" po:Freeze="True"/>
     <SolidColorBrush x:Key="TypeMedia"      Color="#70C0E0" po:Freeze="True"/>
 
+    <!-- Shortcut categories. One color per group, shared by the list headings and the keyboard
+         map's keycap borders (KeyboardMapOverlay.cs), so a key's color tells you what it does
+         before you read the caption. -->
+    <SolidColorBrush x:Key="KsCatFile"      Color="#00fff9" po:Freeze="True"/>
+    <SolidColorBrush x:Key="KsCatNav"       Color="#8c1eff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="KsCatView"      Color="#f222ff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="KsCatSearch"    Color="#00b3ff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="KsCatEdit"      Color="#ff2975" po:Freeze="True"/>
+    <SolidColorBrush x:Key="KsCatTabs"      Color="#ffd319" po:Freeze="True"/>
+    <SolidColorBrush x:Key="KsCatHelp"      Color="#39ff14" po:Freeze="True"/>
+
     <CornerRadius x:Key="WindowCornerRadius" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">7</CornerRadius>
 
     <CornerRadius x:Key="PanelCornerRadius" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">6</CornerRadius>
@@ -87,17 +113,6 @@
 
     <SolidColorBrush x:Key="AppBorderBrush" Color="#3f3f3f" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
-    <!-- Shortcut categories. One color per group, shared by the F1 list headings and the
-         keyboard map's keycaps, so a section reads the same in both views. -->
-    <SolidColorBrush x:Key="KsCatViews" Color="#00fff9" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
-    <SolidColorBrush x:Key="KsCatScan" Color="#39ff14" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
-    <SolidColorBrush x:Key="KsCatDevice" Color="#ffd319" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
-    <SolidColorBrush x:Key="KsCatTopology" Color="#f222ff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
-    <SolidColorBrush x:Key="KsCatToolbar" Color="#00b3ff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
-    <SolidColorBrush x:Key="KsCatApp" Color="#ff901f" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
-
-    <!-- File picker folder tree connecting lines, KillerPDF's value. -->
-    <SolidColorBrush x:Key="TreeLineBrush" Color="#3d3d3d" po:Freeze="True"/>
     <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#E0E0E0"/>
     <SolidColorBrush x:Key="AccentLogo"     Color="#1ea54c" po:Freeze="True"/>
     <SolidColorBrush x:Key="RadioAccent"    Color="#22bb56" po:Freeze="True"/>

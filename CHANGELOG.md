@@ -133,6 +133,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - About groups settings in two columns and can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts.
 
 ### Changed
+- KillerScan now shares the family's theme engine, control styles and palettes with KillerShell and the KillerUI template, so its colors, grain and geometry match the rest of the family. Visible differences: dialogs, the footer and the title bar use the family spacing, combo boxes and Light's text fields use the family field colors, menus fade in, the window has the family 1px edge, the close button is gray until hovered, selected table rows use the family highlight, and 98SE uses the family's thinner bevels and smaller caption buttons.
 - Light is shades of gray with nothing white: the background, sidebar and footer are the darkest gray (#cccccc), menus and bars a step lighter, then panes, then fields.
 - Open in Browser opens the web port that actually answered, HTTPS first, instead of always `http://` on port 80. The Services view opens a port with the scheme it answered with, including on non-standard ports.
 - A name containing a device keyword, such as "synology" or "pihole", is now heavy evidence rather than the final word, so clearer protocol answers can outvote it. A UniFi or UBNT name now shows Switch/AP instead of the generic Network type.

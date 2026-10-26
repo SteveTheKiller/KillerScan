@@ -1,0 +1,68 @@
+<!-- KillerScans own theme values: keys only KillerScans views use. ThemeManager.AppTokens
+     (Services/AppTheme.cs) merges the 98SE values over the family palette. -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <Thickness x:Key="ScanTitleBarPadding">2,0,0,0</Thickness>
+    <Thickness x:Key="ScanCaptionButtonsMargin">0,3,3,0</Thickness>
+    <DrawingBrush x:Key="ScanContentPaneBrush" Viewport="0,0,2,2"
+                  ViewportUnits="Absolute" TileMode="Tile" Stretch="None">
+        <DrawingBrush.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="#ffffff" Geometry="M0,0 H2 V2 H0 Z"/>
+                <GeometryDrawing Brush="#f2f2f2" Geometry="M0,0 H1 V1 H0 Z M1,1 H2 V2 H1 Z"/>
+            </DrawingGroup>
+        </DrawingBrush.Drawing>
+    </DrawingBrush>
+    <sys:Double x:Key="ScanFrameBandSize">0</sys:Double>
+    <LinearGradientBrush x:Key="ScanFrameTopBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#dfdfdf" Offset="0"/><GradientStop Color="#ffffff" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ScanFrameLeftBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#dfdfdf" Offset="0"/><GradientStop Color="#ffffff" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ScanFrameRightBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#808080" Offset="0"/><GradientStop Color="#000000" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ScanFrameBottomBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#808080" Offset="0"/><GradientStop Color="#000000" Offset="1"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ScanOuterKeylineBrush" Color="#00000000" po:Freeze="True"/>
+    <Thickness x:Key="ScanOuterKeylineThickness">0</Thickness>
+    <sys:Double x:Key="ScanPaneBandSize">0</sys:Double>
+    <LinearGradientBrush x:Key="ScanPaneTopBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#808080" Offset="0"/><GradientStop Color="#000000" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ScanPaneLeftBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#808080" Offset="0"/><GradientStop Color="#000000" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ScanPaneRightBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#ffffff" Offset="0"/><GradientStop Color="#808080" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ScanPaneBottomBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#ffffff" Offset="0"/><GradientStop Color="#808080" Offset="1"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ExportButtonBackground" Color="#c0c0c0" po:Freeze="True"/>
+    <Visibility x:Key="RailSeparatorVisibility">Collapsed</Visibility>
+    <GridLength x:Key="RailColumnWidth">20</GridLength>
+    <sys:Double x:Key="RailWidth">20</sys:Double>
+    <Thickness x:Key="RailSeparatorMargin">0</Thickness>
+    <Thickness x:Key="DevicesPaneMargin">0,0,2,0</Thickness>
+    <Thickness x:Key="ScanAboutContentMargin">8,30,8,18</Thickness>
+    <Thickness x:Key="ShortcutsScrollBleed">0,0,-22,-18</Thickness>
+    <Thickness x:Key="ShortcutsScrollInset">0,0,22,10</Thickness>
+    <SolidColorBrush x:Key="TopologyNodeHoverTextBrush" Color="#FFFFFF" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TableHoverTextBrush" Color="#1c5527" />
+    <Thickness x:Key="PaneEdgeThickness">0</Thickness>
+    <SolidColorBrush x:Key="WatchUpBrush" Color="#007000" />
+    <SolidColorBrush x:Key="WatchDownBrush" Color="#AA0000" />
+    <SolidColorBrush x:Key="WatchIdleBrush" Color="#808080" />
+    <SolidColorBrush x:Key="WatchLogBrush" Color="#ffffff" />
+    <SolidColorBrush x:Key="KsCatViews" Color="#009e99" />
+    <SolidColorBrush x:Key="KsCatScan" Color="#128c07" />
+    <SolidColorBrush x:Key="KsCatDevice" Color="#a67c00" />
+    <SolidColorBrush x:Key="KsCatTopology" Color="#a316b5" />
+    <SolidColorBrush x:Key="KsCatToolbar" Color="#0077b3" />
+    <SolidColorBrush x:Key="KsCatApp" Color="#cc6a00" />
+</ResourceDictionary>

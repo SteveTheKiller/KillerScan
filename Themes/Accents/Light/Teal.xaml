@@ -9,9 +9,11 @@
     <SolidColorBrush x:Key="OutlineBtnBrush"     Color="#0B6C69" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#0B6C69" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#0B6C69" po:Freeze="True"/>
-    <LinearGradientBrush x:Key="SelectionBg"         po:Freeze="True" StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#1A827E" Offset="0"/><GradientStop Color="#006A66" Offset="1"/></LinearGradientBrush>
+    <LinearGradientBrush x:Key="SelectionBg"        po:Freeze="True" StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#1A827E" Offset="0"/><GradientStop Color="#006A66" Offset="1"/></LinearGradientBrush>
+    <SolidColorBrush x:Key="SelectionFg"        Color="#FFFFFF" po:Freeze="True"/>
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#D5F1F0" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#880B6C69" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TabEdgeBrush"        Color="#660B6C69" po:Freeze="True"/>
     <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#1A1A1A"/>
     <SolidColorBrush x:Key="AccentLogo"        Color="#0D827E" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionAccent" Color="#0B6C69" po:Freeze="True"/>

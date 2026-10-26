@@ -45,6 +45,7 @@ internal static class ReleaseUiTests
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", Static)!.SetValue(null, assembly);
         var app = new TestApplication();
+        KillerScan.Services.AppTheme.Configure();
         var directory = TestRepository.Find();
         Require(directory != null, "App resource source exists.");
         var xml = new XmlDocument();
@@ -115,6 +116,12 @@ internal static class ReleaseUiTests
                 settingsMenu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
                 Pump();
                 settingsMenu.Measure(new Size(650, 900));
+                // The family menu fades in from 0 when it opens; render its settled state.
+                if (settingsMenu.Template.FindName("MenuRoot", settingsMenu) is UIElement menuRoot)
+                {
+                    menuRoot.BeginAnimation(UIElement.OpacityProperty, null);
+                    menuRoot.Opacity = 1;
+                }
                 int width = (int)Math.Ceiling(settingsMenu.DesiredSize.Width);
                 int height = (int)Math.Ceiling(settingsMenu.DesiredSize.Height);
                 Require(width > 100 && height > 100, "Scan settings menu measures visible content.");
@@ -184,7 +191,7 @@ internal static class ReleaseUiTests
                             Require(flat || border.Background is LinearGradientBrush, theme + "/" + accent + ": outline hover uses a gradient.");
                         }
                         if (style == "OutlineButton" && state == "pressed")
-                            Require(Equals(button.Foreground, app.FindResource("SelectionFg")), "Pressed outline text follows selection contrast.");
+                            Require(Equals(button.Foreground, app.FindResource("OutlineTextBrush")), "Pressed outline text keeps the family outline text color.");
                     }
                 }
                 var image = Render(panel, 370, 340);

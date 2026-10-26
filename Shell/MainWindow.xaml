@@ -823,7 +823,7 @@
                 <Rectangle Canvas.Left="6"  Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
                 <Rectangle Canvas.Left="10" Canvas.Top="10" Width="2" Height="2" Fill="{DynamicResource DimTextBrush}"/>
             </Canvas>
-            <Canvas Visibility="{DynamicResource GripHatchVisibility}">
+            <Canvas Visibility="{DynamicResource GripLinesVisibility}">
                 <Canvas.Resources>
                     <Style TargetType="Line">
                         <Setter Property="StrokeThickness" Value="1"/>

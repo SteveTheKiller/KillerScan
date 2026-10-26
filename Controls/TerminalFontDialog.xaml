@@ -64,7 +64,7 @@
 
                         <!-- The app icon leads the caption and the wordmark sits on the main title bar's geometry. -->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0"
-                                    Visibility="{DynamicResource InputDialogWordmarkVisibility}">
+                                    Visibility="{DynamicResource DialogWordmarkVisibility}">
                         <kui:AppIcon Width="25" Height="25" VerticalAlignment="Center" Margin="0,0,7,0"
                                RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                         <Grid VerticalAlignment="Center" Margin="0,-18,0,-22">
@@ -79,7 +79,7 @@
                         </Grid>
                         </StackPanel>
                         <TextBlock Text="{DynamicResource Str_Term_Font}" Margin="6,0,0,0" VerticalAlignment="Center"
-                                   Visibility="{DynamicResource InputDialogPlainTitleVisibility}"
+                                   Visibility="{DynamicResource DialogPlainTitleVisibility}"
                                    FontFamily="Tahoma" FontSize="11" FontWeight="Bold"
                                    Foreground="{DynamicResource ChromeTextBrush}"/>
 

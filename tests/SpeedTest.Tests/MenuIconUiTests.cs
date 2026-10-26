@@ -130,14 +130,16 @@ internal static partial class HistoryUiTests
                     int codepoint = char.ConvertToUtf32(glyph.Text, 0);
                     Require(font.CharacterToGlyphMap.ContainsKey(codepoint), label + " exists in the installed font: U+" + codepoint.ToString("X4"));
                 }
-                bool picker = item.Template.FindName("IconPresenter", item) is ContentPresenter;
-                var presenter = (ContentPresenter)item.Template.FindName(picker ? "IconPresenter" : "ico", item);
+                // The file picker's sort menu keeps its own wider gutter; every other menu uses the
+                // family MenuItem, whose icon presenter is IconPresenter (KillerScan's old one was "ico").
+                bool picker = name == "Sort";
+                var presenter = (ContentPresenter)(item.Template.FindName("IconPresenter", item) ?? item.Template.FindName("ico", item));
                 Require(presenter.Visibility == Visibility.Visible && icon.ActualWidth > 0 && icon.ActualHeight > 0, label + " renders its icon.");
                 var grid = (Grid)presenter.Parent;
                 Require(grid.ColumnDefinitions[0].ActualWidth == (picker ? 18 : 16), label + " keeps a fixed icon gutter.");
                 if (item.HasItems)
                 {
-                    var arrow = (TextBlock)item.Template.FindName("arrow", item);
+                    var arrow = (TextBlock)(item.Template.FindName("SubArrow", item) ?? item.Template.FindName("arrow", item));
                     Require(arrow.Text == "\uE76C" && arrow.Visibility == Visibility.Visible, label + " renders the submenu chevron.");
                 }
                 string gesture = item.InputGestureText;
@@ -145,7 +147,8 @@ internal static partial class HistoryUiTests
                 if (item.IsCheckable)
                 {
                     item.SetCurrentValue(MenuItem.IsCheckedProperty, true); surface.UpdateLayout();
-                    var check = (TextBlock)item.Template.FindName(picker ? "CheckGlyph" : "check", item);
+                    // Family MenuItem: "Check". The picker's own items: "CheckGlyph".
+                    var check = (TextBlock)(item.Template.FindName("Check", item) ?? item.Template.FindName("CheckGlyph", item));
                     Require(check.Text == "\uE73E" && check.Visibility == Visibility.Visible && presenter.Visibility == Visibility.Collapsed,
                         label + " replaces the icon with a checkmark.");
                     Require(item.ActualHeight == rowHeight && grid.ColumnDefinitions[0].ActualWidth == (picker ? 18 : 16),
@@ -160,7 +163,10 @@ internal static partial class HistoryUiTests
                     Require(highlighted.Foreground.ToString() == expected.ToString(), label + " follows the highlighted foreground.");
                 typeof(MenuItem).GetProperty("IsHighlighted")!.SetValue(item, false);
                 item.SetCurrentValue(UIElement.IsEnabledProperty, false); surface.UpdateLayout();
-                Require(Math.Abs(item.Opacity - (picker ? 0.45 : 0.4)) < 0.001, label + " dims disabled glyphs with its row.");
+                // The family MenuItem dims its row border (MenuBd, which holds the icon); the picker
+                // dims the whole item. Either way the glyph dims with its row.
+                double dimmed = item.Opacity * ((item.Template.FindName("MenuBd", item) as UIElement)?.Opacity ?? 1);
+                Require(Math.Abs(dimmed - (picker ? 0.45 : 0.4)) < 0.001, label + " dims disabled glyphs with its row.");
                 Require(item.InputGestureText == gesture, label + " retains its shortcut text.");
                 item.SetCurrentValue(UIElement.IsEnabledProperty, enabled[item]);
                 item.SetCurrentValue(MenuItem.IsCheckedProperty, checks[item]);

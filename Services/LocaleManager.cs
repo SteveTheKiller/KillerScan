@@ -80,10 +80,14 @@ namespace KillerScan.Services
             var merged = Application.Current.Resources.MergedDictionaries;
             LanguageTag = "en-US";
 
-            // [0] theme. [1] en-US BASE - always present so any partial locale falls back to English
-            // for keys it doesn't translate. [2] the chosen locale's overrides (absent for English).
-            if (merged.Count > 1)
-                merged[1] = new ResourceDictionary { Source = new Uri("pack://application:,,,/Strings/en-US.xaml") };
+            // The en-US BASE is always present so any partial locale falls back to English for keys
+            // it doesn't translate, and the chosen locale's overrides sit directly after it (absent
+            // for English). The base is found by its source rather than a fixed slot, because the
+            // theme and the family control styles are merged ahead of it.
+            int baseIndex = StringsBaseIndex(merged);
+            int overrideIndex = baseIndex + 1;
+            if (merged.Count > baseIndex)
+                merged[baseIndex] = new ResourceDictionary { Source = new Uri("pack://application:,,,/Strings/en-US.xaml") };
 
             Uri? overrideUri = locale switch
             {
@@ -114,7 +118,7 @@ namespace KillerScan.Services
                 try
                 {
                     var ov = new ResourceDictionary { Source = overrideUri };
-                    if (merged.Count > 2) merged[2] = ov; else merged.Add(ov);
+                    if (merged.Count > overrideIndex) merged[overrideIndex] = ov; else merged.Add(ov);
                     // The string files are named by tag, except Spanish, Bengali and the like
                     // whose file names are bare language codes, which are valid tags too.
                     LanguageTag = System.IO.Path.GetFileNameWithoutExtension(overrideUri.AbsolutePath);
@@ -122,13 +126,23 @@ namespace KillerScan.Services
                 catch
                 {
                     // Locale file not present yet (or invalid) - stay on the English base instead of crashing.
-                    if (merged.Count > 2) merged.RemoveAt(2);
+                    if (merged.Count > overrideIndex) merged.RemoveAt(overrideIndex);
                 }
             }
-            else if (merged.Count > 2)
+            else if (merged.Count > overrideIndex)
             {
-                merged.RemoveAt(2);
+                merged.RemoveAt(overrideIndex);
             }
+        }
+
+        /// <summary>Where the English string base is merged. Slot 1 if it cannot be found, which
+        /// is where it sat before the family control styles were merged ahead of it.</summary>
+        private static int StringsBaseIndex(System.Collections.ObjectModel.Collection<ResourceDictionary> merged)
+        {
+            for (int i = 0; i < merged.Count; i++)
+                if (merged[i].Source?.OriginalString.EndsWith("Strings/en-US.xaml", StringComparison.OrdinalIgnoreCase) == true)
+                    return i;
+            return 1;
         }
     }
 }

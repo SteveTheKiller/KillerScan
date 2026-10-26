@@ -32,6 +32,16 @@ internal static partial class HistoryUiTests
     private static object? Field(object target, string name) => target.GetType().GetField(name, Instance)!.GetValue(target);
     private static void Require(bool condition, string message) { _checks++; if (!condition) throw new InvalidOperationException(message); }
 
+    private static IEnumerable<DependencyObject> Descendants(DependencyObject root)
+    {
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+        {
+            var child = VisualTreeHelper.GetChild(root, i);
+            yield return child;
+            foreach (var nested in Descendants(child)) yield return nested;
+        }
+    }
+
     /// <summary>Runs one other check inside this suite's app host instead of the history checks.</summary>
     internal static Action? Isolated;
 
@@ -81,6 +91,7 @@ internal static partial class HistoryUiTests
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", Static)!.SetValue(null, assembly);
         var app = new TestApplication();
+        KillerScan.Services.AppTheme.Configure();
         var directory = TestRepository.Find();
         Require(directory != null, "Application resource source exists.");
         var xml = new XmlDocument(); xml.Load(Path.Combine(directory!.FullName, "App.xaml"));
@@ -670,8 +681,9 @@ internal static partial class HistoryUiTests
                 context + ": content stays within the compact card without overlapping buttons.");
             foreach (var selection in new[] { timeOption, countOption, (RadioButton)dialog.FindName("AllMode") })
             {
+                // The label is the template's ContentPresenter; it must carry no bitmap effect.
                 Require(ReferenceEquals(selection.Style, dialog.FindResource("ThemeRadio")) &&
-                    selection.Template.FindName("label", selection) is ContentPresenter label && label.Effect == null,
+                    Descendants(selection).OfType<ContentPresenter>().FirstOrDefault() is ContentPresenter label && label.Effect == null,
                     context + ": selection uses the existing family template without a label bitmap effect.");
             }
             Require(dialog.UseLayoutRounding && dialog.SnapsToDevicePixels &&
@@ -679,7 +691,7 @@ internal static partial class HistoryUiTests
                 TextOptions.GetTextRenderingMode(dialog) == TextRenderingMode.ClearType &&
                 ((UIElement)dialog.FindName("DialogCard")).Effect == null,
                 context + ": sharp family text configuration is local to the dialog and the shadow is a sibling.");
-            if (Equals(dialog.FindResource("InputDialogWordmarkVisibility"), Visibility.Visible))
+            if (Equals(dialog.FindResource("DialogWordmarkVisibility"), Visibility.Visible))
                 Require(Bounds(caption).Bottom <= Bounds(rows).Top && Bounds(caption).Right <= Bounds((Button)dialog.FindName("CaptionCloseButton")).Left,
                     context + ": the localized inline caption clears the close control and body.");
         }
