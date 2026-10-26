@@ -34,7 +34,30 @@ internal static class CommandLinePathTests
             Environment.CurrentDirectory = previous;
             Directory.Delete(install);
         }
+        ConsoleAttach();
         return Task.CompletedTask;
+    }
+
+    // `killerscan /scan /json > devices.json` must still attach the console for its errors, and
+    // must keep the file handle it was given for the data.
+    private static void ConsoleAttach()
+    {
+        const int Out = -11, Err = -12;
+        IntPtr file = new IntPtr(0x100), pipe = new IntPtr(0x200), console = new IntPtr(0x300);
+        foreach (var (outRedirected, errRedirected) in new[] { (true, false), (false, true), (false, false), (true, true) })
+        {
+            var handles = new System.Collections.Generic.Dictionary<int, IntPtr> { [Out] = outRedirected ? file : console, [Err] = errRedirected ? pipe : console };
+            bool attached = false;
+            KillerScan.Features.Cli.CliRunner.AttachKeepingRedirects(
+                id => id == Out ? outRedirected : errRedirected,
+                id => handles[id],
+                (id, handle) => handles[id] = handle,
+                () => { attached = true; handles[Out] = console; handles[Err] = console; return true; });
+            Require(attached == !(outRedirected && errRedirected),
+                "The console is attached whenever a stream still needs it: out " + outRedirected + ", err " + errRedirected);
+            Require(handles[Out] == (outRedirected ? file : console) && handles[Err] == (errRedirected ? pipe : console),
+                "Redirected handles survive the attach: out " + outRedirected + ", err " + errRedirected);
+        }
     }
 
     private static void Require(bool condition, string message)

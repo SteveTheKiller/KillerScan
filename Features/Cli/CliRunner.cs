@@ -25,6 +25,8 @@ namespace KillerScan.Features.Cli
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern IntPtr GetStdHandle(int nStdHandle);
         [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool SetStdHandle(int nStdHandle, IntPtr hHandle);
+        [DllImport("kernel32.dll", SetLastError = true)]
         private static extern uint GetFileType(IntPtr hFile);
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
@@ -919,14 +921,30 @@ namespace KillerScan.Features.Cli
         private static string Clip(string? value, int max) => (value ?? "").Length <= max ? value ?? "" : value![..(max - 3)] + "...";
         private static string Flatten(string? value) => TerminalText.Escape(value).Trim();
 
+        /// <summary>
+        /// Attaches the parent console whenever stdout or stderr still needs it, so
+        /// <c>killerscan /scan /json &gt; devices.json</c> keeps its errors on screen. Inherited pipe
+        /// and file handles are preserved: attaching can replace them with console handles, which
+        /// would leave a downstream process with no scan data, so each redirected handle is put back.
+        /// </summary>
+        internal static void AttachKeepingRedirects(Func<int, bool> isRedirected, Func<int, IntPtr> get,
+            Action<int, IntPtr> set, Func<bool> attach)
+        {
+            bool outRedirected = isRedirected(StdOutputHandle), errRedirected = isRedirected(StdErrorHandle);
+            if (outRedirected && errRedirected) return;
+            IntPtr savedOut = outRedirected ? get(StdOutputHandle) : IntPtr.Zero;
+            IntPtr savedErr = errRedirected ? get(StdErrorHandle) : IntPtr.Zero;
+            if (!attach()) return;
+            if (outRedirected) set(StdOutputHandle, savedOut);
+            if (errRedirected) set(StdErrorHandle, savedErr);
+        }
+
         private static (TextWriter, TextWriter) OpenConsole()
         {
             try
             {
-                // Preserve inherited pipe or file handles. Attaching first can replace them with
-                // console handles, which leaves a downstream process with no scan data.
-                if (!IsRedirected(StdOutputHandle) && !IsRedirected(StdErrorHandle))
-                    AttachConsole(AttachParentProcess);
+                AttachKeepingRedirects(IsRedirected, GetStdHandle, (id, handle) => SetStdHandle(id, handle),
+                    () => AttachConsole(AttachParentProcess));
                 _outAnsi = TryEnableVt(StdOutputHandle);
                 _errAnsi = TryEnableVt(StdErrorHandle);
                 var @out = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };

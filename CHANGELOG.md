@@ -46,6 +46,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - An all-users install no longer reports failure and skips the relaunch when the per-user copy it replaces has lost its registry entries. That copy's files are still removed, and anything that can't be removed is offered again at the next start.
 - A per-user or portable copy run as administrator can update itself. Before, it downloaded the update and then quietly refused to install it.
 - The per-user update helper waits for KillerScan to close for at most a minute and checks the process start time, so a recycled process ID can no longer leave it waiting forever.
+- Command-line errors show in the console when only the output is redirected, as in `killerscan /scan /json > devices.json`. Before, a mistyped option left an empty file and no message.
 - An upgrade installed while KillerScan was running (winget, Chocolatey or an RMM tool) no longer leaves a full-size `.bak` copy of the old exe behind for good. The next install, update or uninstall removes it.
 - Uninstalling an all-users copy from Settings asks whether you're sure before the administrator prompt, not after it, and the question no longer runs as administrator.
 - When an all-users update can't be installed, KillerScan opens again on the version you had instead of staying closed with nothing said.
