@@ -145,12 +145,8 @@ namespace KillerScan.Services
             string image = Path.Combine(directory, "KillerScan.exe");
             foreach (var process in Process.GetProcessesByName("KillerScan"))
                 using (process)
-                    try
-                    {
-                        if (string.Equals(process.MainModule?.FileName, image, StringComparison.OrdinalIgnoreCase))
-                            throw new Win32Exception(KillerFamily.Deployment.InstallerExitCodes.Busy);
-                    }
-                    catch (InvalidOperationException) { /* Exited before inspection. */ }
+                    if (RunsImage(() => process.MainModule?.FileName, image))
+                        throw new Win32Exception(KillerFamily.Deployment.InstallerExitCodes.Busy);
             using (var registration = new Registration(machine))
                 RemovalTransaction.Run(directory, registration.Remove, registration.Restore, CommandLinePath.BroadcastEnvironmentChange);
             string menu = Path.Combine(Environment.GetFolderPath(machine
@@ -158,12 +154,23 @@ namespace KillerScan.Services
             InstallationFiles.RemoveEmpty(menu);
         }
 
+        /// <summary>Whether a process is running <paramref name="image"/>. A process that exited
+        /// first, or that belongs to another user or session and cannot be inspected, is a different
+        /// image as far as this installation is concerned, so it never blocks removal.</summary>
+        internal static bool RunsImage(Func<string?> mainModule, string image)
+        {
+            try { return string.Equals(mainModule(), image, StringComparison.OrdinalIgnoreCase); }
+            catch (InvalidOperationException) { return false; }
+            catch (Win32Exception) { return false; }
+        }
+
         private static string Data(string value) => "[Text.Encoding]::Unicode.GetString([Convert]::FromBase64String('"
             + Convert.ToBase64String(Encoding.Unicode.GetBytes(value)) + "'))";
 
         private sealed class Registration : IDisposable
         {
-            private readonly RegistryKey _product, _uninstall, _environment;
+            private readonly RegistryKey? _product, _uninstall;
+            private readonly RegistryKey _environment;
             private readonly Values _productValues, _uninstallValues, _path;
             private readonly string _directory;
             private readonly List<(string Path, byte[] Bytes)> _shortcuts = new();
@@ -173,8 +180,10 @@ namespace KillerScan.Services
             {
                 _directory = InstallDirectory(machine);
                 var hive = machine ? Registry.LocalMachine : Registry.CurrentUser;
-                _product = hive.OpenSubKey(ProductKey, writable: true) ?? throw new IOException("The installation marker is unavailable.");
-                _uninstall = hive.OpenSubKey(UninstallKey, writable: true) ?? throw new IOException("The uninstall registration is unavailable.");
+                // A copy placed by hand, a half-finished install or a registry cleaner can leave the
+                // files without these keys. A missing key has nothing to unregister; the files still go.
+                _product = hive.OpenSubKey(ProductKey, writable: true);
+                _uninstall = hive.OpenSubKey(UninstallKey, writable: true);
                 _environment = hive.OpenSubKey(machine ? @"SYSTEM\CurrentControlSet\Control\Session Manager\Environment" : "Environment", writable: true)
                     ?? throw new IOException("The environment registration is unavailable.");
                 _productValues = new Values(_product, ProductValues);
@@ -227,29 +236,31 @@ namespace KillerScan.Services
             public void Dispose()
             {
                 foreach (var pin in _pins) pin.Dispose();
-                _environment.Dispose(); _uninstall.Dispose(); _product.Dispose();
+                _environment.Dispose(); _uninstall?.Dispose(); _product?.Dispose();
             }
         }
 
         private sealed class Values
         {
-            private readonly RegistryKey _key;
+            private readonly RegistryKey? _key;
             private readonly Dictionary<string, (object? Value, RegistryValueKind Kind)> _values = new();
-            internal Values(RegistryKey key, string[] names)
+            /// <summary>A null key is an absent registration: nothing to remove and nothing to restore.</summary>
+            internal Values(RegistryKey? key, string[] names)
             {
                 _key = key;
+                if (key == null) return;
                 foreach (string name in names)
                 {
                     object? value = key.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
                     _values.Add(name, (value, value == null ? RegistryValueKind.None : key.GetValueKind(name)));
                 }
             }
-            internal void Remove() { foreach (string name in _values.Keys) _key.DeleteValue(name, false); }
+            internal void Remove() { foreach (string name in _values.Keys) _key!.DeleteValue(name, false); }
             internal void Restore()
             {
                 foreach (var value in _values)
-                    if (value.Value.Value == null) _key.DeleteValue(value.Key, false);
-                    else _key.SetValue(value.Key, value.Value.Value, value.Value.Kind);
+                    if (value.Value.Value == null) _key!.DeleteValue(value.Key, false);
+                    else _key!.SetValue(value.Key, value.Value.Value, value.Value.Kind);
             }
         }
     }

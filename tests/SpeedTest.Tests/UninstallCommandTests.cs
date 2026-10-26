@@ -26,6 +26,15 @@ internal static class UninstallCommandTests
                 }
             }
         Console.WriteLine("PASS Windows PowerShell parses all user/machine, silent/interactive completion commands.");
+
+        // Another user's KillerScan cannot be inspected; it is a different image, not a reason to abort.
+        const string image = @"C:\Users\me\AppData\Local\Programs\KillerScan\KillerScan.exe";
+        if (UninstallCompletion.RunsImage(() => throw new System.ComponentModel.Win32Exception(5), image)
+            || UninstallCompletion.RunsImage(() => throw new InvalidOperationException("exited"), image)
+            || UninstallCompletion.RunsImage(() => @"C:\Users\other\AppData\Local\Programs\KillerScan\KillerScan.exe", image)
+            || !UninstallCompletion.RunsImage(() => image.ToUpperInvariant(), image))
+            throw new InvalidOperationException("Only a readable process running the owned image blocks uninstall.");
+        Console.WriteLine("PASS an unreadable KillerScan process from another session does not block uninstall.");
         InstallationTrustPolicyTests.Run();
     }
 

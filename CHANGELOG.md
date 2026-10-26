@@ -42,6 +42,8 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - A normal scan reads the certificate from a Synology NAS that only answers on DSM's HTTPS port 5001. Before, only a deep rescan did.
 - A bad latency reply that arrives just as a speed-test phase ends no longer throws away the finished download or upload measurement.
 - Port checks and discovery listeners that time out no longer leave thousands of unhandled socket errors behind for .NET to report later. One deep probe of a single host used to leave about 2,000.
+- Uninstalling, or moving from a per-user to an all-users install, works on a shared PC while another user has KillerScan open. Their copy can't be inspected, and before this the whole uninstall gave up because of it.
+- An all-users install no longer reports failure and skips the relaunch when the per-user copy it replaces has lost its registry entries. That copy's files are still removed, and anything that can't be removed is offered again at the next start.
 - The PowerShell `scan` and `probe` commands return device objects instead of nothing, and failures, timeouts and usage errors throw with the app's message and exit code. Arguments such as a folder path ending in a backslash reach the app intact.
 - The engine's scan APIs refuse malformed or oversized targets and a port concurrency below 1 before any network or DNS cache work, instead of reporting an empty scan or waiting forever.
 - Saving an export over an existing file keeps the old file intact if the save fails partway. This covers CSV, HTML, SVG, PNG and JPEG exports, history CSV, Keep Alive and terminal saves, and command-line `/export`.

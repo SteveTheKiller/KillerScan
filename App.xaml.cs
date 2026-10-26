@@ -252,8 +252,11 @@ namespace KillerScan
 
                 // One install only: drop the per-user copy now that a machine-wide one exists.
                 // Done from THIS (unelevated) process so it removes the invoking user's profile
-                // copy, which an elevated process might not resolve to.
-                RemovePerUserInstall();
+                // copy, which an elevated process might not resolve to. The machine install already
+                // succeeded, so a copy that cannot be removed (no registration, files in use) must not
+                // turn that into a reported failure; the conflict prompt offers it again at next start.
+                try { RemovePerUserInstall(); }
+                catch (Exception error) { Debug.WriteLine("Per-user cleanup after machine install: " + error.Message); }
 
                 Process.Start(new ProcessStartInfo(MachineInstallExe));
                 Application.Current.Shutdown();
