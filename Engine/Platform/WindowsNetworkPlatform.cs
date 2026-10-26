@@ -44,26 +44,40 @@ namespace KillerScan.Engine
         /// </summary>
         internal IReadOnlyDictionary<string, string> ReadNeighborCacheOn(IPAddress local) => RunArp("-a -N " + local);
 
+        /// <summary>
+        /// The arp.exe start info. The full System32 path and working directory matter: a bare name
+        /// makes Windows look in the application folder and the current folder first, so a portable
+        /// copy run from Downloads would start any arp.exe that happened to sit beside it.
+        /// </summary>
+        internal static ProcessStartInfo ArpStart(string arguments)
+        {
+            string system = Environment.GetFolderPath(Environment.SpecialFolder.System);
+            return new ProcessStartInfo(Path.Combine(system, "arp.exe"), arguments)
+            {
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = system
+            };
+        }
+
         private static IReadOnlyDictionary<string, string> RunArp(string arguments)
         {
-            var cache = new Dictionary<string, string>();
             try
             {
-                var psi = new ProcessStartInfo("arp", arguments)
+                using var proc = Process.Start(ArpStart(arguments));
+                if (proc == null) return new Dictionary<string, string>();
+                // Read asynchronously so the deadline bounds a stalled arp.exe instead of the read.
+                var output = proc.StandardOutput.ReadToEndAsync();
+                if (!proc.WaitForExit(3000))
                 {
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-                using var proc = Process.Start(psi);
-                if (proc == null) return cache;
-
-                string output = proc.StandardOutput.ReadToEnd();
-                proc.WaitForExit(3000);
-                return ArpOutput.Parse(output);
+                    try { proc.Kill(); } catch { }
+                    return new Dictionary<string, string>();
+                }
+                return output.Wait(1000) ? ArpOutput.Parse(output.Result) : new Dictionary<string, string>();
             }
             catch { }
-            return cache;
+            return new Dictionary<string, string>();
         }
 
         public string ResolveMac(IPAddress address) => ResolveMacFrom(address, null);

@@ -93,7 +93,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--access-ui" })) { HistoryUiTests.Isolated = AccessUiTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--recognition-ui" })) { HistoryUiTests.Isolated = RecognitionUiTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--report-sort" })) { await ReportSortTests.Run(); return 0; }
-            if (args.SequenceEqual(new[] { "--command-line-path" })) { await CommandLinePathTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--command-line-path" })) { await CommandLinePathTests.Run(); SystemToolsTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--executable-deployment" })) { await ExecutableDeploymentTests.Run(); return 0; }
             if (args.Length == 2 && args[0] == "--executable-deployment" && int.TryParse(args[1], out int publicationError)
                 && (publicationError == 1176 || publicationError == 1177)) { await ExecutableDeploymentTests.RunPartial(publicationError); return 0; }
@@ -113,6 +113,7 @@ internal static class Program
                 await Run("CSV exports keep spreadsheet formulas inert", CsvExportTests.Run);
                 await Run("HTML report columns sort from the keyboard and expose aria-sort", ReportSortTests.Run);
                 await Run("PATH registration adds and removes only the install folder", CommandLinePathTests.Run);
+                await Run("Device actions start Windows tools by full path", () => { SystemToolsTests.Run(); return Task.CompletedTask; });
                 await Run("Executable deployment verifies staging and preserves recovery files", ExecutableDeploymentTests.Run);
                 await Run("Owned cleanup preserves unrelated files and completion commands parse", () =>
                 { InstallationCleanupTests.Run(); return Task.CompletedTask; });

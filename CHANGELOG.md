@@ -17,6 +17,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Per-user and portable updates no longer run their helper from a script in the temp folder.
 - Installation cleanup preserves unrelated files and folders; registered silent uninstall waits for owned removal and reports failures.
 - Elevated updates use the signed installed helper and verify the release identity, digest and publisher in protected staging.
+- Scans, Remote Desktop, and SSH or ping in their own window start arp, mstsc, ping and Windows' ssh from System32, so a program with the same name beside a portable copy can never run in their place. A stalled arp no longer holds up a scan, and reading the device table no longer pauses the window as a scan starts.
 - Per-user and portable updates now require the same publisher signature, product and newer version as all-users updates, instead of only a matching checksum. An all-users update checks the download before copying it into the installation folder, removes a staged copy that fails verification, and accepts the download only from an ordinary file on a local drive.
 - Preference and history saves preserve existing files on failure, keep unsaved edits for retry, and report when changes could not be saved.
 - Concurrent app instances preserve saved scans and retention changes instead of overwriting newer history.

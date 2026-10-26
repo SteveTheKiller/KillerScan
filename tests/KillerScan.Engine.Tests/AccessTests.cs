@@ -105,6 +105,15 @@ internal static class AccessTests
         var perAdapter = ArpOutput.Parse("\r\nInterface: 192.168.8.10 --- 0x15\r\n  Internet Address      Physical Address      Type\r\n  192.168.8.1           94-83-c4-a4-78-82     dynamic\r\n");
         Require(perAdapter.Count == 1 && perAdapter["192.168.8.1"] == "94:83:C4:A4:78:82", "A single adapter's ARP table parses like the full one.");
 
+        // arp.exe is named by its System32 path, so a copy beside a portable exe is never started.
+        string system = Environment.GetFolderPath(Environment.SpecialFolder.System);
+#pragma warning disable CA1416 // The engine runner only executes on Windows.
+        var arp = WindowsNetworkPlatform.ArpStart("-a");
+#pragma warning restore CA1416
+        Require(string.Equals(arp.FileName, Path.Combine(system, "arp.exe"), StringComparison.OrdinalIgnoreCase)
+                && string.Equals(arp.WorkingDirectory, system, StringComparison.OrdinalIgnoreCase) && !arp.UseShellExecute,
+            "arp.exe starts from System32 by full path: " + arp.FileName);
+
         string json = JsonSerializer.Serialize(new AccessEndpoint { Protocol = "https", Port = 443, Evidence = AccessEvidence.HttpResponse, Login = AccessLogin.LoginForm });
         Require(json.Contains("\"HttpResponse\"") && json.Contains("\"LoginForm\""), "JSON uses readable evidence and login names: " + json);
 

@@ -208,8 +208,10 @@ namespace KillerScan.Engine
             StatusChanged?.Invoke(new ScanStatus(ScanStage.Discovering, addresses.Count, label));
             var discoveredHosts = new System.Collections.Concurrent.ConcurrentDictionary<string, (IPAddress Addr, string Mac)>();
 
-            // Grab existing ARP cache first (instant, catches IoT devices)
-            var arpCache = options.NeighborCache ? GetArpCache() : new Dictionary<string, string>();
+            // Grab existing ARP cache first (catches IoT devices). It starts arp.exe, so it runs on the
+            // pool: this is still the synchronous start of the scan, on the caller's UI thread.
+            IReadOnlyDictionary<string, string> arpCache = options.NeighborCache
+                ? await Task.Run(GetArpCache, ct) : new Dictionary<string, string>();
             var addressSet = new HashSet<string>(addresses.Select(a => a.ToString()));
             foreach (var entry in arpCache)
             {
@@ -260,7 +262,8 @@ namespace KillerScan.Engine
             // Second ARP cache read: the ping wave stimulates ARP responses from devices
             // that are too slow (or don't reply to ICMP at all). Reading the cache again
             // catches them without requiring a second full scan.
-            var arpCache2 = options.NeighborCache ? GetArpCache() : new Dictionary<string, string>();
+            IReadOnlyDictionary<string, string> arpCache2 = options.NeighborCache
+                ? await Task.Run(GetArpCache, ct) : new Dictionary<string, string>();
             foreach (var entry in arpCache2)
             {
                 if (addressSet.Contains(entry.Key))

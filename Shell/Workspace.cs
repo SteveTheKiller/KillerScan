@@ -469,7 +469,12 @@ namespace KillerScan.Shell
                 if (url != null) Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                 return;
             }
-            if (action == "Rdp") { Process.Start(new ProcessStartInfo("mstsc.exe", "/v:" + (servicePort.HasValue ? ScanWorkspace.ServiceEndpoint(ip, servicePort.Value) : ip)) { UseShellExecute = true }); return; }
+            if (action == "Rdp")
+            {
+                Process.Start(new ProcessStartInfo(SystemTools.Path("mstsc.exe"), "/v:" + (servicePort.HasValue ? ScanWorkspace.ServiceEndpoint(ip, servicePort.Value) : ip))
+                { UseShellExecute = true, WorkingDirectory = SystemTools.WorkingDirectory });
+                return;
+            }
             string command;
             if (action.StartsWith("Ssh", StringComparison.Ordinal))
             {
@@ -492,7 +497,8 @@ namespace KillerScan.Shell
             if (action.EndsWith("External", StringComparison.Ordinal))
             {
                 int separator = command.IndexOf(' ');
-                Process.Start(new ProcessStartInfo(command[..separator], command[(separator + 1)..]) { UseShellExecute = true });
+                Process.Start(new ProcessStartInfo(SystemTools.Path(command[..separator]), command[(separator + 1)..])
+                { UseShellExecute = true, WorkingDirectory = SystemTools.WorkingDirectory });
             }
             // Ping runs inside the styled shell, which is what tints the replies. SSH does not:
             // its command line carries a username the user typed, and that has to reach the
