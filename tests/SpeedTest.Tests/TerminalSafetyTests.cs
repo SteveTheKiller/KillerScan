@@ -10,9 +10,30 @@ using KillerScan.Terminal;
 
 internal static class TerminalSafetyTests
 {
+    // Each KillerScan run writes palette-<pid>.txt for its shells; exited runs' files are swept.
+    private static void PromptPalettes()
+    {
+        string folder = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "KillerScan-palettes-" + Guid.NewGuid().ToString("N"));
+        System.IO.Directory.CreateDirectory(folder);
+        try
+        {
+            string File(string name) { string path = System.IO.Path.Combine(folder, name); System.IO.File.WriteAllText(path, "ACCENT=#000000\n"); return path; }
+            string self = File("palette-10.txt"), alive = File("palette-20.txt"), exited = File("palette-30.txt");
+            string reused = File("palette-40.txt"), unrelated = File("palette-notes.txt");
+            var starts = new Dictionary<int, DateTime?> { [20] = DateTime.UtcNow.AddHours(-1), [40] = DateTime.UtcNow.AddHours(1) };
+            KillerScan.Shell.MainWindow.SweepPromptPalettes(folder, 10, pid => starts.TryGetValue(pid, out var start) ? start : null);
+            Require(System.IO.File.Exists(self) && System.IO.File.Exists(alive) && System.IO.File.Exists(unrelated)
+                    && !System.IO.File.Exists(exited) && !System.IO.File.Exists(reused),
+                "Palette files of exited or reused process IDs are swept; running copies' files and other files stay.");
+        }
+        finally { System.IO.Directory.Delete(folder, true); }
+        Console.WriteLine("PASS: prompt palette files from exited KillerScan runs are swept.");
+    }
+
     internal static void Run()
     {
-        string hostile = "node\u001b[2J\u001b[H\u001b]2;spoof\a\u001b]133;KillerScan;SpeedTest\a\r\ninjected\t\u009b31m";
+        PromptPalettes();
+        string hostile ="node\u001b[2J\u001b[H\u001b]2;spoof\a\u001b]133;KillerScan;SpeedTest\a\r\ninjected\t\u009b31m";
         var device = new NetworkDevice { IpAddress = "192.0.2.1", Hostname = hostile, MacAddress = hostile,
             Vendor = hostile, DeviceType = hostile, OpenPorts = new List<int> { 22 } };
         var devices = new List<NetworkDevice> { device };

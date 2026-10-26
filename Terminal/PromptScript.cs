@@ -142,6 +142,48 @@ namespace KillerScan.Shell
         internal static string PromptPalettePath => Path.Combine(PromptDir, "palette-" +
             System.Diagnostics.Process.GetCurrentProcess().Id + ".txt");
 
+        private static bool _palettesSwept;
+
+        /// <summary>
+        /// Deletes palette files left by KillerScan processes that have exited. Each running copy
+        /// writes its own palette-&lt;pid&gt;.txt and nothing removes it, so without this the folder
+        /// gains a file per launch. A file is kept only while its PID is a KillerScan process that
+        /// started before the file was last written, so a reused PID does not keep a stale file.
+        /// </summary>
+        internal static void SweepPromptPalettes(string directory, int self, Func<int, DateTime?> killerScanStartUtc)
+        {
+            string[] files;
+            try { files = Directory.GetFiles(directory, "palette-*.txt"); }
+            catch (IOException) { return; }
+            catch (UnauthorizedAccessException) { return; }
+            foreach (string file in files)
+            {
+                string id = Path.GetFileNameWithoutExtension(file).Substring("palette-".Length);
+                if (!int.TryParse(id, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out int pid) || pid == self) continue;
+                try
+                {
+                    DateTime? started = killerScanStartUtc(pid);
+                    if (started is { } start && start <= File.GetLastWriteTimeUtc(file)) continue;
+                    File.Delete(file);
+                }
+                catch (IOException) { }
+                catch (UnauthorizedAccessException) { }
+            }
+        }
+
+        private static DateTime? KillerScanStartUtc(int pid)
+        {
+            try
+            {
+                using var process = System.Diagnostics.Process.GetProcessById(pid);
+                return string.Equals(process.ProcessName, "KillerScan", StringComparison.OrdinalIgnoreCase)
+                    ? process.StartTime.ToUniversalTime() : null;
+            }
+            catch (ArgumentException) { return null; }               // not running
+            catch (InvalidOperationException) { return null; }       // exited while being read
+            catch (System.ComponentModel.Win32Exception) { return DateTime.MinValue; }   // another user's: keep
+        }
+
         internal static void WritePromptPalette()
         {
             var palette = Terminal.TerminalPalette.For(Terminal.TerminalSkin.Default);
@@ -149,6 +191,11 @@ namespace KillerScan.Shell
             try
             {
                 Directory.CreateDirectory(PromptDir);
+                if (!_palettesSwept)
+                {
+                    _palettesSwept = true;
+                    SweepPromptPalettes(PromptDir, System.Diagnostics.Process.GetCurrentProcess().Id, KillerScanStartUtc);
+                }
                 WriteIfDifferent(PromptPalettePath, "ACCENT=" + Hex(palette.Cursor) +
                     "\nFG=" + Hex(palette.Foreground) + "\nMUTED=" + Hex(palette.Ansi[7]) +
                     "\nDIM=" + Hex(palette.Ansi[8]) + "\nOK=" + Hex(palette.Ansi[2]) +
