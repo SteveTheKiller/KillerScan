@@ -120,8 +120,40 @@ internal static class PreferencePersistenceTests
             if (faultStore.Value["committed"] != "original" || faultStore.Value["pending"] != "retry me")
                 throw new InvalidOperationException("Retry publishes the full original plus intended mutation.");
             if (Directory.EnumerateFiles(scratch, "*.tmp").Any()) throw new InvalidOperationException("Failed and successful preference writes clean up temporary siblings.");
+
+            // A Location import on a pool thread and the UI thread write one catalog at the same
+            // time. Neither may report the file busy or lose the other's change.
+            string shared = Path.Combine(scratch, "catalog.json");
+            var importing = new JsonPreferenceFile<Dictionary<string, string>>(shared, () => new(), value => value,
+                (stream, bytes) => { System.Threading.Thread.Sleep(5); stream.Write(bytes, 0, bytes.Length); });
+            var window = new JsonPreferenceFile<Dictionary<string, string>>(shared, () => new(), value => value);
+            importing.Load(); window.Load();
+            var failures = new System.Collections.Concurrent.ConcurrentQueue<string>();
+            void Writer(JsonPreferenceFile<Dictionary<string, string>> store, string prefix)
+            {
+                for (int i = 0; i < 40; i++)
+                {
+                    string key = prefix + i;
+                    try
+                    {
+                        // A slow mutation keeps Save replaying the pending list while the other thread adds to it.
+                        Action<Dictionary<string, string>> mutation = value => { System.Threading.Thread.Sleep(1); lock (value) value[key] = "x"; };
+                        bool saved = i % 2 == 0 ? store.Commit(mutation) : store.Change(mutation);
+                        if (!saved) failures.Enqueue(key + ": " + store.Error);
+                    }
+                    catch (Exception error) { failures.Enqueue(key + ": " + error.GetType().Name); }
+                }
+            }
+            var background = System.Threading.Tasks.Task.Run(() => Writer(importing, "import-"));
+            var sameStore = System.Threading.Tasks.Task.Run(() => Writer(importing, "same-store-"));
+            Writer(window, "ui-");
+            background.Wait(); sameStore.Wait();
+            window.Load();
+            if (!failures.IsEmpty || window.Value.Count != 120)
+                throw new InvalidOperationException("Concurrent in-process saves must all land: " + window.Value.Count + " saved, "
+                    + string.Join("; ", failures.Take(3)));
         }
         finally { Directory.Delete(scratch, true); }
-        Console.WriteLine("PASS: preference saves preserve unreadable originals.");
+        Console.WriteLine("PASS: preference saves preserve unreadable originals and serialize writers in one process.");
     }
 }

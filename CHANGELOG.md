@@ -52,6 +52,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Clearing the terminal or a line after making the pane narrower also clears the text beyond the new width, so old output no longer turns up when you scroll sideways.
 - The terminal's prompt palette files no longer pile up in `%LOCALAPPDATA%\KillerScan\prompt`, one per launch. Each start removes the files left by copies that have closed.
 - With a screen reader running, a terminal holding a long scrollback no longer stutters. Text positions are worked out once per change instead of from the first line on every update and query.
+- Starting or finishing a scan while a Location import is still running no longer loses changes to the Locations list, and can no longer crash the app.
 - An upgrade installed while KillerScan was running (winget, Chocolatey or an RMM tool) no longer leaves a full-size `.bak` copy of the old exe behind for good. The next install, update or uninstall removes it.
 - Uninstalling an all-users copy from Settings asks whether you're sure before the administrator prompt, not after it, and the question no longer runs as administrator.
 - When an all-users update can't be installed, KillerScan opens again on the version you had instead of staying closed with nothing said.

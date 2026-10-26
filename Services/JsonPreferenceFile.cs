@@ -14,19 +14,29 @@ namespace KillerScan.Services
         private readonly Func<T, T> _normalize;
         private readonly Action<Stream, byte[]>? _write;
         private readonly List<Action<T>> _pending = [];
+        // The named mutex keeps other processes out, but it is owned per thread. A Location import
+        // on a pool thread and the UI thread can both write one store, so every store for the same
+        // file in this process also takes this lock: pending changes are never replayed while
+        // another thread adds to them, and no thread waits out the mutex timeout on its own process.
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, object> Gates = new(StringComparer.OrdinalIgnoreCase);
+        private readonly object _gate;
         internal T Value { get; private set; }
         internal string? Error { get; private set; }
 
         internal JsonPreferenceFile(string path, Func<T> create, Func<T, T> normalize, Action<Stream, byte[]>? write = null)
         {
             _path = Path.GetFullPath(path); _create = create; _normalize = normalize; _write = write; Value = create();
+            _gate = Gates.GetOrAdd(_path, _ => new object());
         }
 
         internal void Load()
         {
-            try { Value = Read(); Error = null; }
-            catch (Exception ex) when (IsUnreadable(ex))
-            { Value = _create(); Error = ex.Message; }
+            lock (_gate)
+            {
+                try { Value = Read(); Error = null; }
+                catch (Exception ex) when (IsUnreadable(ex))
+                { Value = _create(); Error = ex.Message; }
+            }
         }
 
         // InvalidDataException covers a file that parses but is not usable: a literal null, or a
@@ -37,10 +47,13 @@ namespace KillerScan.Services
 
         internal bool Change(Action<T> mutation, bool memoryOnly = false)
         {
-            mutation(Value);
-            if (memoryOnly) return true;
-            _pending.Add(mutation);
-            return Save();
+            lock (_gate)
+            {
+                mutation(Value);
+                if (memoryOnly) return true;
+                _pending.Add(mutation);
+                return Save();
+            }
         }
 
         /// <summary>
@@ -51,13 +64,21 @@ namespace KillerScan.Services
         /// </summary>
         internal bool Commit(Action<T> mutation)
         {
-            _pending.Add(mutation);
-            if (Save()) return true;
-            _pending.Remove(mutation);
-            return false;
+            lock (_gate)
+            {
+                _pending.Add(mutation);
+                if (Save()) return true;
+                _pending.Remove(mutation);
+                return false;
+            }
         }
 
         internal bool Save()
+        {
+            lock (_gate) return SaveLocked();
+        }
+
+        private bool SaveLocked()
         {
             try
             {
