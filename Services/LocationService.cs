@@ -50,7 +50,7 @@ namespace KillerScan.Services
                 System.Threading.Thread.Sleep(150);
                 _catalog.Load(unassignedName);
             }
-            if (_catalog.LoadError == null) return;
+            if (_catalog.LoadError == null) { MigrateSavedScans(); return; }
             if (_catalog.Published)
             {
                 // After migration the app-wide files are a stale backup, so writing there would
@@ -62,6 +62,38 @@ namespace KillerScan.Services
             // Migration has not happened yet: the app-wide files are still the live data.
             _fallback = LocationData.Shared(new LocationInfo { Id = LocationCatalog.UnassignedId, Name = unassignedName });
             DevicePreferences.Load(); DeviceOverrides.Load(); DeviceLogins.Load(); ScanProfiles.Load(); ScanHistory.Load();
+        }
+
+        /// <summary>
+        /// Saved scans and Locations were two names for one idea: a named place with its target
+        /// and settings. A saved scan's name never reached the Location button, so a window
+        /// running "Home" still said Unassigned (Steve, 2026-10-26). Every saved scan, in any
+        /// Location, now becomes a Location of its own carrying its target, settings and adapter, and is
+        /// removed only once that Location exists. A name already taken by a Location keeps that
+        /// Location and fills in its target if it had none. Runs on every load; with nothing
+        /// left to move it does nothing.
+        /// </summary>
+        private static void MigrateSavedScans()
+        {
+            if (!Editable) return;
+            foreach (var owner in Items.ToList())
+            {
+                var data = Get(owner);
+                foreach (var scan in data.SavedScans.Items.ToList())
+                {
+                    if (scan.Name.Trim().Length == 0) continue;
+                    var existing = Items.FirstOrDefault(item =>
+                        string.Equals(item.Name, scan.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
+                    if (existing == null)
+                    {
+                        if (!Create(scan.Name.Trim(), out existing) || existing == null) continue;
+                        SetLastUsed(existing, scan.Target, scan.Options, scan.Adapter ?? string.Empty);
+                    }
+                    else if (existing.LastTargets.Trim().Length == 0)
+                        SetLastUsed(existing, scan.Target, scan.Options, scan.Adapter ?? string.Empty);
+                    data.SavedScans.Delete(scan);
+                }
+            }
         }
 
         /// <summary>The data for a Location, shared by every tab that has it open.</summary>
@@ -83,8 +115,10 @@ namespace KillerScan.Services
             if (!Loaded) return LocationData.Shared();
             if (DemoData.Enabled) return LocationData.Shared();
             string? last = App.GetSetting("LastLocation");
+            // Every scan is unsaved until it is saved into a Location, and unsaved scans keep their
+            // history in Unassigned. There is no Temporary start any more (Steve, 2026-10-26).
             var info = Items.FirstOrDefault(item => item.Id == last)
-                ?? (last == null ? Items.FirstOrDefault(item => item.Id == LocationCatalog.UnassignedId) : null);
+                ?? Items.FirstOrDefault(item => item.Id == LocationCatalog.UnassignedId);
             return info == null ? LocationData.Temporary() : Get(info);
         }
 
@@ -157,9 +191,9 @@ namespace KillerScan.Services
         }
 
         /// <summary>Remembers a Location's last targets and settings. Quiet: nothing on screen depends on it.</summary>
-        public static void SetLastUsed(LocationInfo info, string targets, ScanOptions options)
+        public static void SetLastUsed(LocationInfo info, string targets, ScanOptions options, string adapter = "")
         {
-            if (_catalog != null && _fallback == null) _catalog.SetLastUsed(info.Id, targets, options);
+            if (_catalog != null && _fallback == null) _catalog.SetLastUsed(info.Id, targets, options, adapter);
         }
 
         private static bool Notify(bool changed)

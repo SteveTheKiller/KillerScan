@@ -14,7 +14,6 @@ namespace KillerScan.Controls
         private readonly TrustMarkConverter _trustMark = new();
 
         /// <summary>The name of the saved scan last loaded here, which Save updates in place.</summary>
-        private string? _loadedScanName;
 
         /// <summary>The Location this tab's names, approvals, history and saved scans belong to.</summary>
         internal LocationData Location => _location;
@@ -109,12 +108,12 @@ namespace KillerScan.Controls
         {
             _inCatalog = data.Info is { } entered && LocationService.Find(entered.Id) != null;
             _location = data;
-            _loadedScanName = null;
             _active.NewIdentities.Clear();
             if (data.Info is { } info && LocationService.Find(info.Id) is { } current && current.LastTargets.Length > 0)
             {
                 Targets = current.LastTargets;
                 _active.Options = current.LastOptions ?? new ScanOptions();
+                AdapterChoice = current.LastAdapter ?? string.Empty;
             }
             LocationService.Remember(data);
             ApplyLocationHooks();
@@ -211,7 +210,15 @@ namespace KillerScan.Controls
                 : Loc("Str_Loc_Title") + ": " + LocationName + "\n\n" + notes;
         }
 
+        // Locations live in the sidebar (Shell/LocationsSidebar.cs): a click opens it. The quick
+        // dropdown stays on right-click for switching without leaving the table.
         private void LocationButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!LocationButton.IsEnabled) return;
+            ManageLocationsRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OpenLocationMenu()
         {
             if (!LocationButton.IsEnabled) return;
             var menu = BuildLocationMenu();
@@ -219,15 +226,19 @@ namespace KillerScan.Controls
             menu.IsOpen = true;
         }
 
+        /// <summary>The sidebar's footer links.</summary>
+        internal void ImportLocationFromSidebar() { if (!IsScanning) ImportLocation(); }
+
         private void LocationButton_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             e.Handled = true;
-            LocationButton_Click(sender, new RoutedEventArgs());
+            OpenLocationMenu();
         }
 
-        private MenuItem MenuText(string key, Action click, bool enabled = true)
+        private MenuItem MenuText(string key, Action click, bool enabled = true, int glyph = 0, string gesture = "")
         {
-            var item = new MenuItem { IsEnabled = enabled };
+            var item = new MenuItem { IsEnabled = enabled, InputGestureText = gesture };
+            if (glyph != 0) item.Icon = MenuGlyph.Create(glyph);
             item.SetResourceReference(HeaderedItemsControl.HeaderProperty, key);
             item.Click += (_, _) => click();
             return item;
@@ -236,7 +247,10 @@ namespace KillerScan.Controls
         private ContextMenu BuildLocationMenu()
         {
             var menu = new ContextMenu { PlacementTarget = LocationButton, Placement = PlacementMode.Bottom, VerticalOffset = 4 };
-            foreach (var info in LocationService.Items.OrderBy(item => item.Name, StringComparer.CurrentCultureIgnoreCase))
+            // Unassigned is not a place, so it is never listed or switched to; scans run without a
+            // Location still keep their results in Scan history.
+            foreach (var info in LocationService.Items.Where(item => item.Id != LocationCatalog.UnassignedId)
+                         .OrderBy(item => item.Name, StringComparer.CurrentCultureIgnoreCase))
             {
                 var captured = info;
                 var item = new MenuItem
@@ -247,29 +261,6 @@ namespace KillerScan.Controls
                 };
                 item.Click += (_, _) => SetLocation(LocationService.Get(captured));
                 menu.Items.Add(item);
-            }
-            if (LocationService.Loaded && !DemoMode)
-            {
-                var temporary = new MenuItem { IsCheckable = true, IsChecked = _location.IsTemporary };
-                temporary.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Loc_Temporary");
-                temporary.Click += (_, _) => SetLocation(LocationData.Temporary());
-                menu.Items.Add(temporary);
-            }
-
-            var saved = _location.SavedScans.Items.OrderBy(item => item.Name, StringComparer.CurrentCultureIgnoreCase).ToList();
-            if (saved.Count > 0)
-            {
-                menu.Items.Add(new Separator());
-                var heading = new MenuItem { IsEnabled = false };
-                heading.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Loc_SavedScans");
-                menu.Items.Add(heading);
-                foreach (var scan in saved)
-                {
-                    var captured = scan;
-                    var item = new DetailMenuItem { Header = scan.Name, InputGestureText = scan.Target };
-                    item.Click += (_, _) => LoadSavedScan(captured);
-                    menu.Items.Add(item);
-                }
             }
 
             if (_location.IsTemporary && _location.History.Entries.Count > 0 && LocationService.Items.Count > 0 && !DemoMode)
@@ -287,21 +278,19 @@ namespace KillerScan.Controls
                 menu.Items.Add(saveTo);
             }
 
-            menu.Items.Add(new Separator());
-            bool editable = !IsScanning && (LocationService.Loaded || _location.IsShared);
-            menu.Items.Add(MenuText("Str_Loc_SaveScan", SaveScan, editable && _loadedScanName != null));
-            menu.Items.Add(MenuText("Str_Loc_SaveAs", SaveScanAs, editable));
             if (LocationService.Editable && !DemoMode)
             {
                 bool own = _location.Info != null && !_location.IsShared;
                 menu.Items.Add(new Separator());
-                menu.Items.Add(MenuText("Str_Loc_New", CreateLocation, !IsScanning));
-                menu.Items.Add(MenuText("Str_Loc_Rename", RenameLocation, own));
-                menu.Items.Add(MenuText("Str_Loc_Notes", EditNotes, own));
+                // Icons and shortcuts like every other family menu; only the actions that have a
+                // shortcut show one (Shell/Shortcuts.cs).
+                menu.Items.Add(MenuText("Str_Loc_New", CreateLocation, !IsScanning, 0xE710, "Ctrl+Alt+S"));
+                menu.Items.Add(MenuText("Str_Loc_Rename", RenameLocation, own, 0xE8AC));
+                menu.Items.Add(MenuText("Str_Loc_Notes", EditNotes, own, 0xE70B));
                 menu.Items.Add(new Separator());
-                menu.Items.Add(MenuText("Str_Loc_Export", ExportLocation, own));
-                menu.Items.Add(MenuText("Str_Loc_Import", ImportLocation, !IsScanning));
-                menu.Items.Add(MenuText("Str_Loc_Manage", () => ManageLocationsRequested?.Invoke(this, EventArgs.Empty)));
+                menu.Items.Add(MenuText("Str_Loc_Export", ExportLocation, own, 0xEDE1));
+                menu.Items.Add(MenuText("Str_Loc_Import", ImportLocation, !IsScanning, 0xE8B5));
+                menu.Items.Add(MenuText("Str_Loc_Manage", () => ManageLocationsRequested?.Invoke(this, EventArgs.Empty), true, 0xE707, "Ctrl+Shift+P"));
             }
             return menu;
         }
@@ -352,25 +341,51 @@ namespace KillerScan.Controls
         {
             if (_disposed || DemoMode || !LocationService.Editable) return;
             int check = ++_suggestionCheck;
-            string mac;
+            string mac, subnet;
             try
             {
-                mac = await System.Threading.Tasks.Task.Run(() =>
+                (mac, subnet) = await System.Threading.Tasks.Task.Run(() =>
                 {
-                    string gateway = LocalNetwork.Detect()?.Gateway ?? string.Empty;
-                    return gateway.Length > 0 && NetworkPlatform.Current.ReadNeighborCache().TryGetValue(gateway, out var known) ? known : string.Empty;
+                    var net = LocalNetwork.Detect();
+                    string gateway = net?.Gateway ?? string.Empty;
+                    string found = gateway.Length > 0 && NetworkPlatform.Current.ReadNeighborCache().TryGetValue(gateway, out var known) ? known : string.Empty;
+                    return (found, net?.Subnet ?? string.Empty);
                 });
             }
-            catch (Exception ex) when (ex is not OutOfMemoryException) { mac = string.Empty; }
+            catch (Exception ex) when (ex is not OutOfMemoryException) { mac = string.Empty; subnet = string.Empty; }
             if (_disposed || check != _suggestionCheck) return;
+            if (TryAssignRecognizedLocation(mac, subnet)) return;
             ShowLocationSuggestion(mac);
+        }
+
+        /// <summary>
+        /// A window still on Unassigned, with nothing on screen, takes the one Location that
+        /// recognizes this network: by the gateway's MAC first, and when no Location has recorded
+        /// that yet, by the local subnet matching a Location's last scanned target. Two or more
+        /// matches still go to the banner, and a Location the user picked is never overridden.
+        /// </summary>
+        private bool TryAssignRecognizedLocation(string gatewayMac, string subnet)
+        {
+            // Unassigned is a catalog entry with its own id, not a missing one, so that is the test.
+            // Results on screen do not block it: they are Unassigned's own, kept in its history.
+            bool unassigned = _location.Info == null ? _location.IsShared : _location.Info.Id == LocationCatalog.UnassignedId;
+            if (!unassigned || IsScanning) return false;
+            var places = LocationService.Items.Where(item => item.Id != LocationCatalog.UnassignedId).ToList();
+            var matches = LocationCatalog.Matching(places, gatewayMac);
+            if (matches.Count == 0 && subnet.Length > 0)
+                matches = places
+                    .Where(item => string.Equals(item.LastTargets.Trim(), subnet, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            return matches.Count == 1 && SetLocation(LocationService.Get(matches[0]));
         }
 
         internal void ShowLocationSuggestion(string gatewayMac)
         {
             _lastGatewayMac = gatewayMac;
+            // Unassigned is the default bucket, not a place: it is never offered (it collected
+            // this gateway from scans run before a Location existed).
             var matches = LocationCatalog.Matching(LocationService.Items, gatewayMac)
-                .Where(item => item.Id != _location.Info?.Id).ToList();
+                .Where(item => item.Id != _location.Info?.Id && item.Id != LocationCatalog.UnassignedId).ToList();
             bool show = matches.Count > 0 && !DismissedGateways.Contains(LocationInfo.NormalizeMac(gatewayMac))
                 && !LocationCatalog.Matching(LocationService.Items, gatewayMac).Any(item => item.Id == _location.Info?.Id);
             _suggestedGateway = LocationInfo.NormalizeMac(gatewayMac);
@@ -551,16 +566,6 @@ namespace KillerScan.Controls
             return clean.Length == 0 ? "Location" : clean;
         }
 
-        /// <summary>Loads a saved scan's targets and settings without starting it.</summary>
-        internal void LoadSavedScan(ScanProfile scan)
-        {
-            if (_disposed || IsScanning) return;
-            LoadProfile(scan);
-            _loadedScanName = scan.Name;
-            AdapterChoice = scan.Adapter ?? string.Empty;
-            FocusTargets();
-        }
-
         /// <summary>
         /// The adapter this tab scans from, by its Windows name, or empty to let Windows choose.
         /// A saved scan restores its own choice; Scan settings changes it.
@@ -661,41 +666,6 @@ namespace KillerScan.Controls
                 Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
             dialog.ShowDialog();
             return dialog.Confirmed && !string.IsNullOrWhiteSpace(dialog.Value) ? dialog.Value.Trim() : null;
-        }
-
-        private void SaveScan()
-        {
-            if (_loadedScanName == null) { SaveScanAs(); return; }
-            var store = _location.SavedScans;
-            PersistenceFeedback.Check(store.SaveEdited(_loadedScanName, Targets.Trim(), _active.Options, _adapterChoice), store.Retry, () => store.SaveError);
-            LocationChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void SaveScanAs()
-        {
-            if (AskName("Str_Loc_SaveAs", _loadedScanName ?? string.Empty) is not { } name) return;
-            var store = _location.SavedScans;
-            bool exists = store.Items.Any(item => string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
-            if (exists && !string.Equals(name, _loadedScanName, StringComparison.OrdinalIgnoreCase))
-            {
-                var confirm = new ConfirmDialog(Loc("Str_Loc_SaveAs"), string.Format(Loc("Str_Loc_ReplaceScan"), name),
-                    Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
-                confirm.ShowDialog();
-                if (!confirm.Confirmed) return;
-            }
-            SaveScanAs(name);
-        }
-
-        /// <summary>
-        /// Saves the current targets, settings and adapter choice under a name in this Location.
-        /// </summary>
-        internal bool SaveScanAs(string name)
-        {
-            var store = _location.SavedScans;
-            bool saved = PersistenceFeedback.Check(store.SaveEdited(name, Targets.Trim(), _active.Options, _adapterChoice), store.Retry, () => store.SaveError);
-            _loadedScanName = name;
-            LocationChanged?.Invoke(this, EventArgs.Empty);
-            return saved;
         }
 
         private void CreateLocation()

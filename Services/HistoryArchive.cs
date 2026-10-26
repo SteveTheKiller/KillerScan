@@ -115,6 +115,32 @@ namespace KillerScan.Services
             }
         }
 
+        /// <summary>
+        /// Deletes one run, matched by when it ran and what it scanned: entries are read fresh from
+        /// the file each time, so the caller's object is never the stored one.
+        /// </summary>
+        internal bool Remove(ScanHistoryEntry entry)
+        {
+            try
+            {
+                return Locked(() =>
+                {
+                    ReadCurrent(); EnsureReadable();
+                    var kept = Entries.Where(item => item.ScannedAt != entry.ScannedAt || item.Target != entry.Target).ToList();
+                    if (kept.Count == Entries.Count) return false;
+                    Persist(kept, Policy);
+                    Entries = kept;
+                    SaveError = null;
+                    return true;
+                });
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                SaveError = ex.Message;
+                return false;
+            }
+        }
+
         internal bool Append(ScanHistoryEntry entry, DateTimeOffset now)
         {
             _pending.Add(entry);

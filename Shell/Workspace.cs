@@ -12,10 +12,9 @@ namespace KillerScan.Shell
     public partial class MainWindow
     {
         private readonly Grid _workspaceBody = new();
-        private readonly StackPanel _workspaceNavigation = new() { Orientation = Orientation.Horizontal };
         private readonly Grid _workspaceToolbar = new();
+        private readonly Grid _toolbarSurface = new() { UseLayoutRounding = true, Background = Brushes.Transparent };
         private readonly Grid _workspaceSummary = new() { Visibility = Visibility.Collapsed, UseLayoutRounding = true };
-        private readonly Dictionary<string, Button> _viewButtons = [];
         private ScanWorkspace? _scanWorkspace;
         private FrameworkElement? _selectedWorkspace;
         private string _workspaceView = "scan";
@@ -23,30 +22,30 @@ namespace KillerScan.Shell
 
         private void InitializeWorkspace()
         {
+            // Toolbar, summary, top tab slot, the pane, bottom tab slot (Shell/WorkspaceTabs.cs).
+            WorkspaceHost.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             WorkspaceHost.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             WorkspaceHost.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             WorkspaceHost.RowDefinitions.Add(new RowDefinition());
+            WorkspaceHost.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             // Supplemental view information sits above the existing table frame.
             foreach (UIElement child in WorkspaceHost.Children)
-                if (Grid.GetRow(child) == 1) Grid.SetRow(child, 2);
+                if (Grid.GetRow(child) == 1) Grid.SetRow(child, 3);
             Grid.SetRow(_workspaceSummary, 1);
             WorkspaceHost.Children.Add(_workspaceSummary);
             BuildWorkspaceNavigation();
             _workspaceToolbar.ColumnDefinitions.Add(new ColumnDefinition());
-            _workspaceToolbar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            Grid.SetColumn(_workspaceNavigation, 1);
-            _workspaceToolbar.Children.Add(_workspaceNavigation);
             // Transparent, not a colour of its own. The window paints the background across its
             // full width, so letting it through keeps one continuous gradient; painting the brush
             // here restarted the ramp inside the content column, and painting a flat tone instead
             // just moved the seam to where the bar met the margins beside the pane.
-            var toolbarSurface = new Grid { UseLayoutRounding = true, Background = Brushes.Transparent };
+            var toolbarSurface = _toolbarSurface;
             // No grain of its own either. The chrome strip behind this whole row already carries
             // one, and it shows through now that the bar is transparent; adding a second here
             // doubled the texture over the toolbar. The strip sits below the controls, so the
             // subnet box still reads as a field rather than as textured background.
             toolbarSurface.Children.Add(_workspaceToolbar);
-            WorkspaceHost.Children.Add(toolbarSurface);
+            TitleToolbarHost.Child = toolbarSurface;
             TerminalLayout.Children.Add(_workspaceBody);
             TerminalLayout.SizeChanged += (_, _) => ClipWorkspaceSurface();
             NewScan(_startupScanTarget ?? string.Empty);
@@ -63,8 +62,25 @@ namespace KillerScan.Shell
             toolbar.VerticalAlignment = VerticalAlignment.Center;
             Grid.SetColumn(toolbar, 0);
             _viewToolbars[view] = toolbar;
+            FitToTitleBar(toolbar);
             _workspaceToolbar.Children.Add(toolbar);
             UpdateViewToolbar();
+        }
+
+        /// <summary>
+        /// The bars were laid out for their own 34px row and now ride in the 32px title bar (22px
+        /// on 98SE), where their 2px margins and 3px padding clipped the address box's text top
+        /// and bottom. Vertical margins go and vertical padding drops to 1px, so every control
+        /// fits whatever height the caption has.
+        /// </summary>
+        private static void FitToTitleBar(FrameworkElement element)
+        {
+            element.Margin = new Thickness(element.Margin.Left, 0, element.Margin.Right, 0);
+            if (element is Control c)
+                c.Padding = new Thickness(c.Padding.Left, Math.Min(c.Padding.Top, 1), c.Padding.Right, Math.Min(c.Padding.Bottom, 1));
+            if (element is Panel panel)
+                foreach (var child in panel.Children.OfType<FrameworkElement>()) FitToTitleBar(child);
+            else if (element is Decorator { Child: FrameworkElement inner } && element is not Control) FitToTitleBar(inner);
         }
 
         private void UpdateViewToolbar()
@@ -73,6 +89,9 @@ namespace KillerScan.Shell
             string key = ActiveScan != null ? "scan" : _workspaceView;
             foreach (var pair in _viewToolbars)
                 pair.Value.Visibility = pair.Key == key ? Visibility.Visible : Visibility.Collapsed;
+            // A view with no bar of its own (the terminal) gets the row back.
+            _toolbarSurface.Visibility = _viewToolbars.ContainsKey(key) ? Visibility.Visible : Visibility.Collapsed;
+            TitleTools.Visibility = key == "scan" ? Visibility.Visible : Visibility.Collapsed;
             // The bars are different widths, so what fits beside them changes with the view.
             FitToolbarViews();
         }
@@ -103,7 +122,13 @@ namespace KillerScan.Shell
                 scanToolbar.Margin = new Thickness(8, 0, 0, 0);
                 _viewToolbarTargets["scan"] = (FrameworkElement)_scanWorkspace.FindName("SubnetInput");
                 RegisterViewToolbar("scan", scanToolbar);
-                InitializeTerminalScanToolbar((TextBox)_scanWorkspace.FindName("SubnetInput"));
+                // The filter lives in the title bar's right end, like KillerShell's search.
+                foreach (string name in new[] { "FilterToggleButton", "FilterBox" })
+                {
+                    var part = (FrameworkElement)_scanWorkspace.FindName(name);
+                    ((Panel)part.Parent).Children.Remove(part);
+                    TitleTools.Children.Add(part);
+                }
                 var networkDetails = new StackPanel();
                 foreach (string name in new[] { "LocalIpLabel", "GatewayLabel", "DnsLabel", "InterfaceLabel" })
                 {
@@ -157,14 +182,12 @@ namespace KillerScan.Shell
                 export.SetResourceReference(StyleProperty, "RailButton");
                 export.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, "Str_TT_Export");
                 RailButtons.Children.Insert(0, export);
-                ApplyToolbarAppearance();
                 _scanWorkspace.DeviceAction += (_, e) => WorkspaceDeviceAction(e.Device, e.Action, e.ServicePort);
                 _scanWorkspace.ShellExportRequested += ShellExport;
                 // The sidebar lists belong to the workspace's Location, so they follow it.
                 _scanWorkspace.LocationChanged += (_, _) =>
                 {
                     RefreshHistoryList();
-                    RefreshProfilesList();
                     RefreshLocationsList();
                     if (_workspaceView == "history") ShowHistoryEntry();
                     UpdateWorkspaceStatus();
@@ -218,10 +241,7 @@ namespace KillerScan.Shell
         private void UpdateScanLight()
         {
             if (ScanLight == null) return;
-            var state = _workspaceView == "terminal" && _terminalScanHasStatus
-                ? (_terminalScanRunning ? Controls.ScanIndicator.Scanning : _terminalScanError == null && _terminalStatusKey != "Str_St_ScanCanceled"
-                    ? Controls.ScanIndicator.Complete : Controls.ScanIndicator.Idle)
-                : _scanWorkspace?.Indicator ?? Controls.ScanIndicator.Idle;
+            var state = _scanWorkspace?.Indicator ?? Controls.ScanIndicator.Idle;
             (string fill, string key) = state switch
             {
                 Controls.ScanIndicator.Scanning => ("#D0453A", "Str_Light_Scanning"),
@@ -358,15 +378,6 @@ namespace KillerScan.Shell
                 bool hide = _workspaceView is "terminal" or "history" || string.IsNullOrEmpty(count.Text) || StatusText.Text.Contains(count.Text);
                 count.Visibility = hide ? Visibility.Collapsed : Visibility.Visible;
                 DeviceCountFooter.Visibility = hide ? Visibility.Collapsed : Visibility.Visible;
-            }
-            bool terminalCount = _workspaceView == "terminal" && _terminalScanHasStatus;
-            _terminalDeviceCount.Visibility = terminalCount ? Visibility.Visible : Visibility.Collapsed;
-            if (terminalCount)
-            {
-                _terminalDeviceCount.Text = string.Format(Loc("Str_Count_Found"), _terminalScanCount);
-                DeviceCountFooter.Visibility = Visibility.Visible;
-                ScanProgress.Value = _terminalScanProgress;
-                ScanProgress.Visibility = _terminalScanRunning ? Visibility.Visible : Visibility.Collapsed;
             }
             FitFooterStatus();
         }
@@ -509,9 +520,24 @@ namespace KillerScan.Shell
 
         private void ClipWorkspaceSurface()
         {
-            double radius = DevicesPane.CornerRadius.BottomLeft;
-            if (TerminalLayout.ActualWidth > 0 && TerminalLayout.ActualHeight > 0)
-                TerminalLayout.Clip = new RectangleGeometry(new Rect(0, 0, TerminalLayout.ActualWidth, TerminalLayout.ActualHeight), radius, radius);
+            // Per corner: the pane squares the corners on the side its tabs join, and the content
+            // (the table header included) has to square with it.
+            double w = TerminalLayout.ActualWidth, h = TerminalLayout.ActualHeight;
+            if (w <= 0 || h <= 0) return;
+            var c = DevicesPane.CornerRadius;
+            var figure = new PathFigure { StartPoint = new Point(c.TopLeft, 0), IsClosed = true };
+            void Corner(Point line, Point end, double radius)
+            {
+                figure.Segments.Add(new LineSegment(line, false));
+                if (radius > 0) figure.Segments.Add(new ArcSegment(end, new Size(radius, radius), 0, false, SweepDirection.Clockwise, false));
+            }
+            Corner(new Point(w - c.TopRight, 0), new Point(w, c.TopRight), c.TopRight);
+            Corner(new Point(w, h - c.BottomRight), new Point(w - c.BottomRight, h), c.BottomRight);
+            Corner(new Point(c.BottomLeft, h), new Point(0, h - c.BottomLeft), c.BottomLeft);
+            Corner(new Point(0, c.TopLeft), new Point(c.TopLeft, 0), c.TopLeft);
+            var clip = new PathGeometry(new[] { figure });
+            clip.Freeze();
+            TerminalLayout.Clip = clip;
         }
 
         private static string QuoteArgument(string value)

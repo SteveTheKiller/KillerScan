@@ -105,6 +105,35 @@ namespace KillerScan.Shell
         /// Newest first. Each entry keeps the store it came from, so its baseline is picked from
         /// its own Location, and is labeled with that Location when every Location is listed.
         /// </summary>
+        // Any run can be deleted from the list: right-click Delete, or the Delete key.
+        private void InitHistoryDelete()
+        {
+            var delete = new MenuItem { InputGestureText = "Delete", Icon = MenuGlyph.Create(0xE74D) };
+            delete.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Loc_DeleteButton");
+            delete.Click += (_, _) => DeleteSelectedHistoryEntry();
+            HistoryList.ContextMenu = new ContextMenu { Items = { delete } };
+            HistoryList.PreviewMouseRightButtonDown += (_, e) =>
+            {
+                if (ItemsControl.ContainerFromElement(HistoryList, e.OriginalSource as DependencyObject) is ListBoxItem row)
+                    row.IsSelected = true;
+            };
+            HistoryList.ContextMenuOpening += (_, e) => { if (HistoryList.SelectedItem is not ScanHistoryEntry) e.Handled = true; };
+            HistoryList.PreviewKeyDown += (_, e) =>
+            {
+                if (e.Key != System.Windows.Input.Key.Delete || System.Windows.Input.Keyboard.Modifiers != System.Windows.Input.ModifierKeys.None) return;
+                DeleteSelectedHistoryEntry();
+                e.Handled = true;
+            };
+        }
+
+        private void DeleteSelectedHistoryEntry()
+        {
+            if (HistoryList.SelectedItem is not ScanHistoryEntry entry) return;
+            var store = entry.Owner ?? ShellLocation.History;
+            PersistenceFeedback.Check(store.Remove(entry), store.Retry, () => store.SaveError);
+            RefreshHistoryList();
+        }
+
         private List<ScanHistoryEntry> HistoryEntries()
         {
             var sources = _historyAllLocations && LocationService.Loaded && !DemoData.Enabled && LocationService.Items.Count > 0

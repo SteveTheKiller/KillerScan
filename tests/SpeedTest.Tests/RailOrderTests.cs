@@ -13,7 +13,7 @@ using KillerScan.Shell;
 internal static class RailOrderTests
 {
     private static readonly string[] Edge = ["ThemeButton", "LangButton", "ShortcutsButton"];
-    private static readonly string[] Movable = ["SpeedTestButton", "ProfilesButton", "HistoryButton"];
+    private static readonly string[] Movable = ["SpeedTestButton", "LocationsButton", "HistoryButton"];
 
     public static Task Run()
     {
@@ -29,13 +29,13 @@ internal static class RailOrderTests
     private static void Check()
     {
         Same(RailOrder.Arrange(Movable, Edge, null),
-            ["SpeedTestButton", "ProfilesButton", "HistoryButton", "ShortcutsButton", "LangButton", "ThemeButton"],
+            ["SpeedTestButton", "LocationsButton", "HistoryButton", "ShortcutsButton", "LangButton", "ThemeButton"],
             "The default rail ends with shortcuts, language and theme, theme outermost.");
-        Same(RailOrder.Arrange(Movable, Edge, "HistoryButton,SpeedTestButton,ProfilesButton"),
-            ["HistoryButton", "SpeedTestButton", "ProfilesButton", "ShortcutsButton", "LangButton", "ThemeButton"],
+        Same(RailOrder.Arrange(Movable, Edge, "HistoryButton,SpeedTestButton,LocationsButton"),
+            ["HistoryButton", "SpeedTestButton", "LocationsButton", "ShortcutsButton", "LangButton", "ThemeButton"],
             "A saved order rearranges only the movable buttons.");
         Same(RailOrder.Arrange(Movable, Edge, "ThemeButton,Gone,HistoryButton,SpeedTestButton,HistoryButton"),
-            ["HistoryButton", "ProfilesButton", "SpeedTestButton", "ShortcutsButton", "LangButton", "ThemeButton"],
+            ["HistoryButton", "LocationsButton", "SpeedTestButton", "ShortcutsButton", "LangButton", "ThemeButton"],
             "Saved edge buttons, unknown names and repeats are ignored.");
         foreach (string? empty in new[] { null, "", " , ," })
             Same(RailOrder.Arrange(Movable, Edge, empty), RailOrder.Arrange(Movable, Edge, null), "An empty saved order is the default.");
@@ -51,9 +51,9 @@ internal static class RailOrderTests
             rail.Children.Add(new Button { Name = name, Margin = name == "ThemeButton" ? new Thickness(0) : new Thickness(0, 0, 0, 10) });
         string? saved = null;
         RailOrder.Attach(rail, Edge.Select(n => Find(rail, n)).ToList(), Movable.Select(n => Find(rail, n)).ToList(),
-            "ProfilesButton,HistoryButton,SpeedTestButton", value => saved = value);
+            "LocationsButton,HistoryButton,SpeedTestButton", value => saved = value);
         Same(rail.Children.OfType<FrameworkElement>().Select(e => e.Name).ToArray(),
-            ["Spacer", "ProfilesButton", "HistoryButton", "SpeedTestButton", "ShortcutsButton", "LangButton", "ThemeButton"],
+            ["Spacer", "LocationsButton", "HistoryButton", "SpeedTestButton", "ShortcutsButton", "LangButton", "ThemeButton"],
             "The saved order is restored with the edge buttons at the bottom.");
         Require(Find(rail, "ThemeButton").Margin == new Thickness(0) && Find(rail, "SpeedTestButton").Margin.Bottom == 10,
             "Each button keeps its own gap.");

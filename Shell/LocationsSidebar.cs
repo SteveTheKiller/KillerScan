@@ -18,6 +18,8 @@ namespace KillerScan.Shell
             public override string ToString() => Detail.Length == 0 ? Name : Name + ", " + Detail;
         }
 
+        private void LocationsButton_Click(object sender, RoutedEventArgs e) => ShowLocationsSection();
+
         private void ShowLocationsSection()
         {
             ShortcutsOverlay.Visibility = Visibility.Collapsed;
@@ -31,6 +33,7 @@ namespace KillerScan.Shell
         {
             string? current = ShellLocation.Info?.Id;
             var rows = LocationService.Items
+                .Where(item => item.Id != LocationCatalog.UnassignedId)   // not a place (Location.cs)
                 .OrderBy(item => item.Name, StringComparer.CurrentCultureIgnoreCase)
                 .Select(item => new LocationRow
                 {
@@ -83,5 +86,6 @@ namespace KillerScan.Shell
         private void LocationExport_Click(object sender, RoutedEventArgs e) { if (LocationFor(sender) is { } row) _scanWorkspace?.ExportLocation(row.Info); }
         private void LocationDelete_Click(object sender, RoutedEventArgs e) { if (LocationFor(sender) is { } row) _scanWorkspace?.DeleteLocation(row.Info); }
         private void NewLocation_Click(object sender, RoutedEventArgs e) => _scanWorkspace?.NewLocation();
+        private void ImportLocation_Click(object sender, RoutedEventArgs e) => _scanWorkspace?.ImportLocationFromSidebar();
     }
 }

@@ -444,9 +444,6 @@ namespace KillerScan.Terminal
             dc.Pop();
 
             if (_palette.Scanlines) DrawScanlines(dc);
-            if (IsKeyboardFocused && ActualWidth > 2 && ActualHeight > 2)
-                dc.DrawRectangle(null, new Pen(new SolidColorBrush(_palette.Foreground), 1),
-                    new Rect(0.5, 0.5, ActualWidth - 1, ActualHeight - 1));
         }
 
         private void DrawBackgrounds(DrawingContext dc, Cell[] line, double y)

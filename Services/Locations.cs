@@ -13,9 +13,10 @@ namespace KillerScan.Services
         public string Customer { get; set; } = string.Empty;
         public string Notes { get; set; } = string.Empty;
 
-        /// <summary>The targets and settings of the last scan run here, restored when it is picked.</summary>
+        /// <summary>The targets, settings and adapter of the last scan run here, restored when it is picked.</summary>
         public string LastTargets { get; set; } = string.Empty;
         public ScanOptions? LastOptions { get; set; }
+        public string LastAdapter { get; set; } = string.Empty;
 
         /// <summary>
         /// Gateway MAC addresses seen by completed scans here, normalized. They only ever suggest
@@ -285,8 +286,8 @@ namespace KillerScan.Services
             return normalized.Length == 0 ? [] : items.Where(item => item.GatewayMacs.Contains(normalized)).ToList();
         }
 
-        public bool SetLastUsed(string id, string targets, ScanOptions options) =>
-            Update(id, item => { item.LastTargets = targets; item.LastOptions = options; });
+        public bool SetLastUsed(string id, string targets, ScanOptions options, string adapter) =>
+            Update(id, item => { item.LastTargets = targets; item.LastOptions = options; item.LastAdapter = adapter; });
 
         private bool Update(string id, Action<LocationInfo> change) =>
             LoadError == null && _store.Commit(value =>

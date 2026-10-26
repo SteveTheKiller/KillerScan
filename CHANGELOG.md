@@ -9,6 +9,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
 ### Fixed
+- Dialogs have their padding back, and their title bars, icons and buttons match the rest of the family.
+- A window on a network a Location knows now opens in that Location, matched by gateway or by subnet.
 - A speed test blocked by a Cloudflare security challenge now says so, and a rejected upload reply shows its status, content type and the start of its body instead of only "invalid response" (#4).
 - Website carousel and slide descriptions are translated in every supported language.
 - In 98SE, long paths in the file dialog no longer run under the recent-locations arrow.
@@ -108,6 +110,8 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Balanced the Technical page columns by moving the glossary to the left.
 
 ### Added
+- Delete a scan from Scan history with right-click Delete or the Delete key.
+- Hold Alt and drag anywhere in a window to move it.
 - Speed test, Saved scans and History can be dragged into any order on the rail, and the order is kept. Theme, language and shortcuts stay at the bottom edge, as in the other Killer apps.
 - Scan settings beside Scan selects discovery and fingerprint checks, saves them with profiles, and applies them to normal and deep scans. (#6) (Thanks @MrCodeLabs)
 - Added Slovenian across the app, installation prompts, website and help. (#5) (Thanks @MrCodeLabs)
@@ -133,6 +137,12 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - About groups settings in two columns and can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts.
 
 ### Changed
+- The five views are permanent tabs below the table, or above it from the tab menu (Alt+Shift+Up and Alt+Shift+Down).
+- The scan bar moved into the title bar, the filter sits beside the window buttons, and topology settings moved into the topology pane.
+- Saved scans are Locations now: each saved scan became a Location with its target, settings and adapter. The Location button opens the Locations sidebar, which carries New and Import.
+- Unsaved scans keep their history without appearing as a Location, and Temporary scan is gone.
+- Topology cards are sized to their text, centered, and drawn in the tab shape with a fading accent edge.
+- Buttons are bare until hovered, fill with the accent on hover and press, and Malaise uses peach for selection.
 - KillerScan now shares the family's theme engine, control styles and palettes with KillerShell and the KillerUI template, so its colors, grain and geometry match the rest of the family. Visible differences: dialogs, the footer and the title bar use the family spacing, combo boxes and Light's text fields use the family field colors, menus fade in, the window has the family 1px edge, the close button is gray until hovered, selected table rows use the family highlight, and 98SE uses the family's thinner bevels and smaller caption buttons.
 - Light is shades of gray with nothing white: the background, sidebar and footer are the darkest gray (#cccccc), menus and bars a step lighter, then panes, then fields.
 - Open in Browser opens the web port that actually answered, HTTPS first, instead of always `http://` on port 80. The Services view opens a port with the scheme it answered with, including on non-standard ports.

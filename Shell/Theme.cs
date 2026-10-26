@@ -90,7 +90,6 @@ namespace KillerScan.Shell
             var wordmark = flat ? Visibility.Collapsed : Visibility.Visible;
             var plain    = flat ? Visibility.Visible   : Visibility.Collapsed;
             if (FindName("LogoBar")      is UIElement lb) lb.Visibility = wordmark;
-            if (FindName("SubtitleText") is UIElement st) st.Visibility = wordmark;
             if (FindName("PlainTitle")   is UIElement pt) pt.Visibility = plain;
 
             // The icon shrinks with the bar; 27px does not fit a 22px caption.
@@ -107,9 +106,12 @@ namespace KillerScan.Shell
             chrome?.CaptionHeight = h;
         }
 
-        private void AccentSwatch_Click(object sender, RoutedEventArgs e)
+        // KillerShell's accent pills: AccentDot borders (AccentSwatchCornerRadius) stretched down
+        // the strip. They were ThemeSwatch buttons, whose template is an Ellipse, so stretching
+        // them drew tall ovals instead of the family's pills.
+        private void AccentStripDot_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (sender is Button b && b.Tag is string name && Enum.TryParse<Accent>(name, out var accent))
+            if (sender is Border b && b.Tag is string name && Enum.TryParse<Accent>(name, out var accent))
             {
                 ThemeManager.ApplyAccent(ThemeManager.Current, accent);
                 UpdateThemeSwatchSelection();   // ring colors follow the accent
@@ -202,7 +204,7 @@ namespace KillerScan.Shell
         private bool _stripOpen;
         private const double AccentStripWidth = 39;
         private const double AccentStripSlideMs = 180;
-        private Button[] StripDots =>
+        private Border[] StripDots =>
             [AccentStripDot0, AccentStripDot1, AccentStripDot2, AccentStripDot3, AccentStripDot4, AccentStripDot5, AccentStripDot6, AccentStripDot7];
 
         // Each pill shows its accent the way a selection does: the palette's own SelectionBg

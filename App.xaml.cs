@@ -53,6 +53,7 @@ namespace KillerScan
         {
             KillerFamily.Accessibility.AccessibleControls.Initialize();
             KillerFamily.Theming.AccentShadow.Initialize();
+            Controls.AltDrag.Register();   // Alt+drag moves any window (Controls/AltDrag.cs)
             Services.AppTheme.Configure();
             base.OnStartup(e);
             if (e.Args.Length > 0 && string.Equals(e.Args[0], "/apply-verified-update", StringComparison.OrdinalIgnoreCase))

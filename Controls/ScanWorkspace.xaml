@@ -129,8 +129,7 @@
         ToolTip="{DynamicResource Str_Options_Title}" Style="{StaticResource OutlineButton}"
         FontSize="12" Padding="8,3" Margin="0,2,6,2">
     <StackPanel Orientation="Horizontal">
-        <a11y:Glyph Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="0,0,5,0" VerticalAlignment="Center"/>
-        <TextBlock Text="{DynamicResource Str_Options_Title}" VerticalAlignment="Center"/>
+        <a11y:Glyph Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center"/>
     </StackPanel>
 </Button>
 <Button x:Name="DeepScanAllButton" Content="{DynamicResource Str_Btn_DeepScanAll}" Style="{StaticResource OutlineButton}" Click="DeepScanAll_Click" Visibility="Collapsed" FontSize="12" Padding="8,3" Margin="0,2,10,2"/>
@@ -208,34 +207,6 @@
                             </Grid>
                         </Grid>
                     </Border>
-                    <Button x:Name="TopologyOrderButton" Visibility="Collapsed" Style="{StaticResource OutlineButton}"
-                            FontFamily="Segoe MDL2 Assets" Content="&#xE713;" Width="26" Height="26" Padding="0"
-                            Margin="0,2,6,2" Click="TopologyOrderButton_Click">
-                        <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Topology_Settings}"/><Run Text=" (Shift+F10)"/></TextBlock></Button.ToolTip>
-                        <Button.ContextMenu>
-                            <ContextMenu PreviewMouseWheel="Menu_ForwardWheelToGrid">
-                                <MenuItem Header="{DynamicResource Str_TT_TopologyOrder}">
-                                    <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8CB;"/></MenuItem.Icon>
-                                    <MenuItem x:Name="TopologyRoleItem" Header="{DynamicResource Str_Topology_Role}"
-                                              Tag="Role" InputGestureText="Ctrl+1" IsCheckable="True" Click="TopologyOrderItem_Click">
-                                        <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE902;"/></MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem x:Name="TopologyTypeItem" Header="{DynamicResource Str_Col_Type}"
-                                              Tag="Type" InputGestureText="Ctrl+2" IsCheckable="True" Click="TopologyOrderItem_Click">
-                                        <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8EC;"/></MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem x:Name="TopologyIpItem" Header="{DynamicResource Str_Col_Ip}"
-                                              Tag="Ip" InputGestureText="Ctrl+3" IsCheckable="True" Click="TopologyOrderItem_Click">
-                                        <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE774;"/></MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem x:Name="TopologyVendorItem" Header="{DynamicResource Str_Col_Vendor}"
-                                              Tag="Vendor" InputGestureText="Ctrl+4" IsCheckable="True" Click="TopologyOrderItem_Click">
-                                        <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8EC;"/></MenuItem.Icon>
-                                    </MenuItem>
-                                </MenuItem>
-                            </ContextMenu>
-                        </Button.ContextMenu>
-                    </Button>
                     <TextBlock x:Name="DeviceCount"
                                Text="" TextTrimming="CharacterEllipsis" MaxWidth="180"
                                Foreground="{DynamicResource MutedTextBrush}"
@@ -350,10 +321,13 @@
 
 </StackPanel>
 </Grid>
-<!-- Offers the Location this network belongs to. It never switches by itself. -->
-<Border x:Name="LocationSuggestion" Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,6" Padding="10,6"
+<!-- Offers the Location this network belongs to. A popup floating over the foot of the table,
+     not a row of its own: as a row it pushed the whole table down while it showed. -->
+<Border x:Name="LocationSuggestion" Grid.Row="2" Visibility="Collapsed" Margin="16,0,16,16" Padding="10,6"
+        VerticalAlignment="Bottom" HorizontalAlignment="Center" MaxWidth="720" Panel.ZIndex="50"
+        Effect="{DynamicResource BarShadowEffect}"
         Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1"
-        CornerRadius="{DynamicResource PanelCornerRadius}">
+        CornerRadius="{DynamicResource ControlCornerRadius}">
     <!-- Docked right, Dismiss is declared first so it sits at the far right; the tab order still
          reaches Switch, the main choice, first. -->
     <DockPanel KeyboardNavigation.TabNavigation="Local">
@@ -790,6 +764,37 @@
                                     MouseRightButtonDown="TopologyBackground_RightClick"/>
                         </Grid>
                     </ScrollViewer>
+                    <!-- The topology's own settings, in the pane's bottom-right corner rather than in
+                         the title bar beside Scan settings, where two gears read as one. -->
+                    <Button x:Name="TopologyOrderButton" Visibility="Collapsed" Style="{StaticResource OutlineButton}"
+                            FontFamily="Segoe MDL2 Assets" Content="&#xE713;" Width="26" Height="26" Padding="0"
+                            Margin="0,0,10,10" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                            Panel.ZIndex="5" Click="TopologyOrderButton_Click">
+                        <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Topology_Settings}"/><Run Text=" (Shift+F10)"/></TextBlock></Button.ToolTip>
+                        <Button.ContextMenu>
+                            <ContextMenu PreviewMouseWheel="Menu_ForwardWheelToGrid">
+                                <MenuItem Header="{DynamicResource Str_TT_TopologyOrder}">
+                                    <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8CB;"/></MenuItem.Icon>
+                                    <MenuItem x:Name="TopologyRoleItem" Header="{DynamicResource Str_Topology_Role}"
+                                              Tag="Role" InputGestureText="Ctrl+1" IsCheckable="True" Click="TopologyOrderItem_Click">
+                                        <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE902;"/></MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem x:Name="TopologyTypeItem" Header="{DynamicResource Str_Col_Type}"
+                                              Tag="Type" InputGestureText="Ctrl+2" IsCheckable="True" Click="TopologyOrderItem_Click">
+                                        <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8EC;"/></MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem x:Name="TopologyIpItem" Header="{DynamicResource Str_Col_Ip}"
+                                              Tag="Ip" InputGestureText="Ctrl+3" IsCheckable="True" Click="TopologyOrderItem_Click">
+                                        <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE774;"/></MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem x:Name="TopologyVendorItem" Header="{DynamicResource Str_Col_Vendor}"
+                                              Tag="Vendor" InputGestureText="Ctrl+4" IsCheckable="True" Click="TopologyOrderItem_Click">
+                                        <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8EC;"/></MenuItem.Icon>
+                                    </MenuItem>
+                                </MenuItem>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
                 </Grid>
             </Grid>
         </Border>

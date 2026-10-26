@@ -30,7 +30,9 @@ namespace KillerScan.Controls
         private double TopologyScale => double.Parse(_topologyOptions["NodeScale"], CultureInfo.InvariantCulture) / 100;
         private double TopologyFontSize => double.Parse(_topologyOptions["FontSize"], CultureInfo.InvariantCulture);
         private double TopologyNodeWidth => 126 * TopologyScale;
-        private double TopologyNodeHeight => Math.Max(40 * TopologyScale, TopologyFontSize * 2.8 + 9);
+        // Just the two lines, the 3px ring and 2px of air: no fixed floor, so a card only grows
+        // when the topology font does.
+        private double TopologyNodeHeight => Math.Ceiling(TopologyFontSize * 2.66 + 7);
         private bool TopologyHorizontal => _topologyOptions["Orientation"] == "Horizontal";
 
         private void LoadTopologySettings()

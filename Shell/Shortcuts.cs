@@ -24,7 +24,7 @@ namespace KillerScan.Shell
             ("Ctrl + Shift + T", "Str_Sc_Terminal",        "Views"),
             ("Ctrl + H",        "Str_History_Title",        "Views"),
             ("Ctrl + Alt + R",  "Str_History_Settings",     "Views"),
-            ("Ctrl + Shift + P", "Str_Profiles_Title",      "Views"),
+            ("Ctrl + Shift + P", "Str_Loc_ManageTitle",     "Views"),
             ("F4",              "Str_TT_SpeedTest",         "Views"),
 
             ("F5",              "Str_Sc_Scan",              "Scan"),
@@ -61,11 +61,7 @@ namespace KillerScan.Shell
             ("Ctrl + Alt + P",   "Str_Services_CopyPort",    "Device"),
             ("Ctrl + Shift + H", "Str_History_ToggleView",   "Views"),
             ("Ctrl + Shift + Y", "Str_History_CopyDetails",  "Device"),
-            ("Enter",           "Str_Profiles_Run",         "Views"),
-            ("Ctrl + L",        "Str_Profiles_Load",        "Views"),
-            ("Delete",          "Str_Profiles_Delete",      "Views"),
-            ("Ctrl + Alt + D",   "Str_Profiles_Deep",        "Views"),
-            ("Ctrl + Alt + S",   "Str_Profiles_Save",        "Views"),
+            ("Ctrl + Alt + S",   "Str_Loc_NewTitle",         "Views"),
             ("Ctrl + C",        "Str_Watch_CopyAddress",    "Device"),
             ("F3",              "Str_Diag_Refresh",          "Device"),
             ("Ctrl + R",        "Str_Watch_ResetStats",     "Device"),
@@ -82,12 +78,8 @@ namespace KillerScan.Shell
             ("Ctrl + 3",        "Str_Col_Ip",               "Topology"),
             ("Ctrl + 4",        "Str_Col_Vendor",           "Topology"),
 
-            ("Ctrl + Shift + 1", "Str_Toolbar_SmallIcons",  "Toolbar"),
-            ("Ctrl + Shift + 2", "Str_Toolbar_LargeIcons",  "Toolbar"),
-            ("Ctrl + Shift + 3", "Str_Toolbar_TextNone",    "Toolbar"),
-            ("Ctrl + Shift + 4", "Str_Toolbar_TextBeside",  "Toolbar"),
-            ("Ctrl + Shift + 5", "Str_Toolbar_TextUnder",   "Toolbar"),
-            ("Ctrl + Shift + 6", "Str_Toolbar_TextOnly",    "Toolbar"),
+            ("Alt + Shift + Up",   "Str_Layout_TabsTop",    "Views"),
+            ("Alt + Shift + Down", "Str_Layout_TabsBottom", "Views"),
 
             ("Ctrl + Shift + +", "Str_Sc_AppBigger",        "App"),
             ("Ctrl + Shift + -", "Str_Sc_AppSmaller",       "App"),
@@ -129,7 +121,10 @@ namespace KillerScan.Shell
             // shortcut handler can redirect Menu / Shift+F10 into the saved rows.
             if (HistoryButton.IsKeyboardFocusWithin &&
                 (key == Key.Apps || (key == Key.F10 && modifiers == ModifierKeys.Shift))) return;
-            if (HandleProfileShortcut(e, modifiers)) return;
+            // Ctrl+Alt+S saved a scan; saved scans are Locations now, so it makes a new one.
+            if (key == Key.S && modifiers == (ModifierKeys.Control | ModifierKeys.Alt)
+                && Keyboard.FocusedElement is not TextBox and not KillerScan.Terminal.TerminalControl)
+            { NewLocation_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
             if (_workspaceView == "history" && _historyWorkspace?.HandleShortcut(
                 key, modifiers, Keyboard.FocusedElement is TextBox) == true)
             { e.Handled = true; return; }
@@ -140,11 +135,6 @@ namespace KillerScan.Shell
             bool alt = modifiers.HasFlag(ModifierKeys.Alt);
             if (ctrl && !alt)
             {
-                if (shift && key >= Key.D1 && key <= Key.D6)
-                {
-                    SelectToolbarAppearance((int)key - (int)Key.D1 + 1);
-                    e.Handled = true; return;
-                }
                 if (key == Key.T)
                 {
                     if (shift) ToggleTerminalPanel(); else NewScan();
@@ -175,6 +165,11 @@ namespace KillerScan.Shell
             if (ctrl && alt && !shift && key == Key.H)
             {
                 _scanWorkspace?.Export("svg");
+                e.Handled = true; return;
+            }
+            if (alt && shift && !ctrl && key is Key.Up or Key.Down)
+            {
+                SetTabPlacement(key == Key.Down);
                 e.Handled = true; return;
             }
             if (alt && shift && !ctrl && key == Key.G)
@@ -235,7 +230,7 @@ namespace KillerScan.Shell
                 {
                     // Profiles gave up F10 to the Terminal view. It sits with history
                     // instead: both are panels beside your work rather than views.
-                    case Key.P: ProfilesButton_Click(this, new RoutedEventArgs()); e.Handled = true; return;
+                    case Key.P: ShowLocationsSection(); e.Handled = true; return;
                     case Key.OemPlus: case Key.Add:
                         ApplyAppScale(_appScale + 0.05, persist: true); e.Handled = true; return;
                     case Key.OemMinus: case Key.Subtract:
@@ -373,7 +368,6 @@ namespace KillerScan.Shell
                 return $"{Loc("Str_TT_TopologyOrder")} {Loc(descriptionKey)}";
             string? scope = descriptionKey.StartsWith("Str_Term_", StringComparison.Ordinal) ? "Str_Workspace_Terminal"
                 : descriptionKey.StartsWith("Str_Services_Copy", StringComparison.Ordinal) ? "Str_Services_Title"
-                : descriptionKey.StartsWith("Str_Profiles_", StringComparison.Ordinal) && descriptionKey != "Str_Profiles_Title" ? "Str_Profiles_Title"
                 : descriptionKey.StartsWith("Str_Watch_", StringComparison.Ordinal) || descriptionKey == "Str_Diag_Refresh" ? "Str_View_KeepAlive"
                 : descriptionKey is "Str_History_CopyDetails" or "Str_History_ToggleView" ? "Str_History_Title" : null;
             return scope == null ? Loc(descriptionKey) : Loc(scope) + ": " + Loc(descriptionKey);

@@ -17,7 +17,7 @@ namespace KillerScan.Shell
 
         private void InitSidebarFades()
         {
-            foreach (var list in new[] { HistoryList, ProfilesList })
+            foreach (var list in new[] { HistoryList })
             {
                 // ScrollChanged fires on scroll, when the list is refilled and when the viewport
                 // resizes, so it covers every case once the list is on screen.
@@ -39,7 +39,6 @@ namespace KillerScan.Shell
         private void UpdateSidebarFades()
         {
             UpdateSidebarFade(HistoryList);
-            UpdateSidebarFade(ProfilesList);
         }
 
         private static void UpdateSidebarFade(ListBox list)

@@ -73,7 +73,7 @@ namespace KillerScan.Controls
             UpdateTopologyOrderUi();
             TopologyOrderButton.ContextMenu.PlacementTarget = TopologyOrderButton;
             TopologyOrderButton.ContextMenu.Placement =
-                System.Windows.Controls.Primitives.PlacementMode.Bottom;
+                System.Windows.Controls.Primitives.PlacementMode.Top;
             TopologyOrderButton.ContextMenu.IsOpen = true;
         }
 
@@ -367,7 +367,9 @@ namespace KillerScan.Controls
 
         private Border AddNode(double x, double y, string title, string detail, string brushKey, NetworkDevice? device)
         {
-            var accent = new Border { Height = 2 };
+            // Kept for the SVG export (Snapshot.cs), which draws the type colour from it; on screen
+            // the card's own ring carries that colour now (TopologyNode).
+            var accent = new Border { Height = 2, Visibility = Visibility.Collapsed };
             accent.SetResourceReference(Border.BackgroundProperty, brushKey);
 
             var titleBlock = new TextBlock
@@ -376,8 +378,8 @@ namespace KillerScan.Controls
                 FontSize = TopologyFontSize,
                 FontFamily = _topologyOptions["Font"] == "Default" ? FontFamily : new FontFamily(_topologyOptions["Font"]),
                 FontWeight = FontWeights.SemiBold,
-                TextTrimming = TextTrimming.CharacterEllipsis,
-                Margin = new Thickness(6, 2, 6, 0)
+                Margin = new Thickness(6, 1, 6, 0),
+                HorizontalAlignment = HorizontalAlignment.Center
             };
             titleBlock.SetResourceReference(TextBlock.ForegroundProperty, "TopologyNodeTextBrush");
 
@@ -385,9 +387,9 @@ namespace KillerScan.Controls
             {
                 Text = detail,
                 FontFamily = new FontFamily(_topologyOptions["Font"] == "Default" ? "Consolas" : _topologyOptions["Font"]),
-                FontSize = TopologyFontSize - 1,
-                TextTrimming = TextTrimming.CharacterEllipsis,
-                Margin = new Thickness(6, 0, 6, 2)
+                FontSize = TopologyFontSize,
+                Margin = new Thickness(6, 0, 6, 0),
+                HorizontalAlignment = HorizontalAlignment.Center
             };
             detailBlock.SetResourceReference(TextBlock.ForegroundProperty, "TopologyNodeTextBrush");
             detailBlock.Opacity = 0.78;
@@ -399,19 +401,15 @@ namespace KillerScan.Controls
 
             var border = new TopologyNode(this)
             {
-                Width = TopologyNodeWidth,
-                Height = TopologyNodeHeight,
-                CornerRadius = new CornerRadius(3),
-                BorderThickness = new Thickness(1),
                 Child = stack,
-                Tag = device
+                Tag = device,
+                RingKey = brushKey
             };
             // Topology nodes have their own two keys rather than borrowing the menu surface. A
             // node has to separate from the pane behind it, which a menu never has to do, and on
             // the near-black themes those two needs pull in opposite directions. Themes that do
             // not set them fall back to the menu brushes, so nothing else moves.
             border.SetResourceReference(Border.BackgroundProperty, "TopologyNodeBrush");
-            border.SetResourceReference(Border.BorderBrushProperty, "TopologyNodeBorderBrush");
             if (device != null)
             {
                 border.Cursor = DragCursors.Open;   // a node is picked up and carried
@@ -424,10 +422,19 @@ namespace KillerScan.Controls
                 border.MouseLeave += TopologyNode_MouseLeave;
             }
 
-            Canvas.SetLeft(border, x - TopologyNodeWidth / 2);
-            Canvas.SetTop(border, y - TopologyNodeHeight / 2);
             Panel.SetZIndex(border, 2);
             TopologyCanvas.Children.Add(border);
+            // Each card is exactly as wide as its longer line, name or IP, with the same 6px on
+            // both sides, and as tall as its two lines: nothing trims and nothing pads. Measured
+            // AFTER it joins the canvas, because the app's text styles only reach it there and a
+            // card measured before that came out narrower than it draws. The size is then pinned
+            // so placement, dragging, keyboard focus and the SVG export read the real box.
+            border.RefreshRing();
+            border.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            border.Width = Math.Ceiling(border.DesiredSize.Width);
+            border.Height = Math.Ceiling(border.DesiredSize.Height);
+            Canvas.SetLeft(border, x - border.Width / 2);
+            Canvas.SetTop(border, y - border.Height / 2);
             UpdateTopologyNodeSelection(border);
             MakeTopologyNodeKeyboardReady(border, title, detail);
             return border;
@@ -478,15 +485,15 @@ namespace KillerScan.Controls
         {
             foreach (var item in _topologyDragStarts)
             {
-                double left = Math.Max(0, Math.Min(TopologyCanvas.Width - TopologyNodeWidth,
+                double left = Math.Max(0, Math.Min(TopologyCanvas.Width - item.Key.Width,
                     item.Value.X + delta.X));
-                double top = Math.Max(0, Math.Min(TopologyCanvas.Height - TopologyNodeHeight,
+                double top = Math.Max(0, Math.Min(TopologyCanvas.Height - item.Key.Height,
                     item.Value.Y + delta.Y));
                 Canvas.SetLeft(item.Key, left);
                 Canvas.SetTop(item.Key, top);
 
                 if (item.Key.Tag is not NetworkDevice device) continue;
-                var center = new Point(left + TopologyNodeWidth / 2, top + TopologyNodeHeight / 2);
+                var center = new Point(left + item.Key.Width / 2, top + item.Key.Height / 2);
                 _topologyPositions[device.IpAddress] = center;
                 if (_topologyLinks.TryGetValue(device.IpAddress, out var link))
                 {
@@ -536,9 +543,7 @@ namespace KillerScan.Controls
         private void UpdateTopologyNodeSelection(Border border)
         {
             bool selected = border.Tag is NetworkDevice device && ResultsGrid.SelectedItems.Contains(device);
-            border.BorderThickness = new Thickness(selected ? 2 : 1);
-            border.SetResourceReference(Border.BorderBrushProperty,
-                selected ? "PrimaryBrush" : "TopologyNodeBorderBrush");
+            if (border is TopologyNode node) node.Selected = selected;
         }
 
         private static void TopologyNode_MouseEnter(object sender, MouseEventArgs e)

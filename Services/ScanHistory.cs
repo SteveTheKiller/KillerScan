@@ -146,6 +146,15 @@ namespace KillerScan.Services
 
         internal HistoryRetention Retention => MemoryOnly ? _demoRetention : _archive.Policy;
 
+        /// <summary>Deletes one run from this history (the history sidebar's right-click Delete).</summary>
+        internal bool Remove(ScanHistoryEntry entry)
+        {
+            if (MemoryOnly) return _entries.Remove(entry);
+            bool removed = _archive.Remove(entry);
+            _entries = _archive.Entries;
+            return removed;
+        }
+
         internal bool ApplyRetention(HistoryRetention policy, Func<int, bool> confirmRemoval)
         {
             if (MemoryOnly)

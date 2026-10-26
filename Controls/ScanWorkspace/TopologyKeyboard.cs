@@ -6,6 +6,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace KillerScan.Controls
 {
@@ -13,9 +14,51 @@ namespace KillerScan.Controls
     /// A topology box. Device boxes take keyboard focus and appear to screen readers as list
     /// items named after their device, with the same selection as the device table.
     /// </summary>
-    internal sealed class TopologyNode(ScanWorkspace owner) : Border
+    /// <summary>
+    /// A topology card in the family's active-tab shape (Controls/TabSurfaceBorder.cs): TabRadius
+    /// top corners and a TabStripeThickness ring in the device type's colour, full across the top
+    /// and fading down the sides, like the active tab's TabActiveRingFadeBrush. Selected cards
+    /// wear the accent instead. The ring is rebuilt when the theme changes, since the colours do.
+    /// </summary>
+    internal sealed class TopologyNode : TabSurfaceBorder
     {
-        internal ScanWorkspace Owner { get; } = owner;
+        internal ScanWorkspace Owner { get; }
+        internal string RingKey { get; set; } = "TopologyNodeBorderBrush";
+        private bool _selected;
+
+        internal TopologyNode(ScanWorkspace owner)
+        {
+            Owner = owner;
+            CornerRadius = new CornerRadius(3, 3, 0, 0);
+            Loaded += (_, _) => { Services.ThemeManager.ThemeChanged += RefreshRing; RefreshRing(); };
+            Unloaded += (_, _) => Services.ThemeManager.ThemeChanged -= RefreshRing;
+        }
+
+        internal bool Selected
+        {
+            get => _selected;
+            set { if (_selected == value) return; _selected = value; RefreshRing(); }
+        }
+
+        internal void RefreshRing()
+        {
+            BorderThickness = TryFindResource("TabStripeThickness") is Thickness t ? t : new Thickness(1, 3, 1, 0);
+            BorderBrush = Fade(TryFindResource(_selected ? "PrimaryBrush" : RingKey) as Brush);
+        }
+
+        /// <summary>ThemeManager's TabActiveRingFadeBrush recipe applied to any colour.</summary>
+        private static Brush? Fade(Brush? brush)
+        {
+            if (brush is not SolidColorBrush solid) return brush;
+            var c = solid.Color;
+            var fade = new LinearGradientBrush { StartPoint = new Point(0, 0), EndPoint = new Point(0, 1) };
+            fade.GradientStops.Add(new GradientStop(c, 0));
+            fade.GradientStops.Add(new GradientStop(c, 0.3));
+            fade.GradientStops.Add(new GradientStop(Color.FromArgb(0, c.R, c.G, c.B), 1));
+            fade.Freeze();
+            return fade;
+        }
+
         protected override AutomationPeer OnCreateAutomationPeer() => new TopologyNodePeer(this);
     }
 
@@ -130,7 +173,7 @@ namespace KillerScan.Controls
         /// </summary>
         private Border? NearestTopologyNode(Border from, Vector direction)
         {
-            Point Center(Border b) => new(Canvas.GetLeft(b) + TopologyNodeWidth / 2, Canvas.GetTop(b) + TopologyNodeHeight / 2);
+            Point Center(Border b) => new(Canvas.GetLeft(b) + b.Width / 2, Canvas.GetTop(b) + b.Height / 2);
             var origin = Center(from);
             return TopologyCanvas.Children.OfType<Border>()
                 .Where(b => b != from && b.Tag is NetworkDevice)

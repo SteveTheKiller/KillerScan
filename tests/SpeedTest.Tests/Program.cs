@@ -76,7 +76,6 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--history-ui" })) { await HistoryUiTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--history-settings-ui" })) { await HistoryUiTests.Run(true); return 0; }
             if (args.SequenceEqual(new[] { "--history-table-ui" })) { await HistoryUiTests.Run(tableOnly: true); return 0; }
-            if (args.SequenceEqual(new[] { "--profiles-ui" })) { await HistoryUiTests.Run(profilesOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--menu-icons-ui" })) { await HistoryUiTests.Run(menusOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--topology" })) { await TopologyTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--report-language" })) { HistoryUiTests.Isolated = ReportLanguageTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }

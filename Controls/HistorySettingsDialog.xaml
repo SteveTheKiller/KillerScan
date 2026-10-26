@@ -63,10 +63,10 @@
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                         <!-- The app icon leads the caption, as it does in the main title bar. -->
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="14,0,0,0"
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="{DynamicResource DialogTitleBarPadding}"
                                     Visibility="{DynamicResource DialogWordmarkVisibility}">
-                        <icons:AppIcon x:Name="TitleIcon" Width="27" Height="27"
-                               VerticalAlignment="Center" Margin="0,0,7,0"
+                        <icons:AppIcon x:Name="TitleIcon" Width="{DynamicResource TitleIconSize}" Height="{DynamicResource TitleIconSize}"
+                               VerticalAlignment="Center" Margin="{DynamicResource TitleIconMargin}"
                                RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                         <Grid VerticalAlignment="Center" Margin="0,-18,0,-22">
                             <Grid.RenderTransform><TranslateTransform Y="-5"/></Grid.RenderTransform>

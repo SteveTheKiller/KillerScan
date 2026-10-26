@@ -326,11 +326,10 @@ internal static class LocationWorkspaceTests
             settings.ContextMenu.IsOpen = false;
             Require(workspace.AdapterChoice == "Ethernet" && scanner.Binding == ethernet, "Choosing an adapter binds the tab's scanner.");
 
-            Require(workspace.SaveScanAs("Office LAN"), "A scan can be saved in its Location.");
-            Require(site.SavedScans.Items.Single().Adapter == "Ethernet", "Saving records the chosen adapter.");
             workspace.Scan();
             PumpUntil(() => !workspace.IsScanning && site.History.Entries.Count == 1);
             Require(site.History.Entries.Single().Adapter == "Ethernet", "A bound run records its adapter.");
+            Require(LocationService.Find(site.Info!.Id)?.LastAdapter == "Ethernet", "The Location remembers the adapter of its last run.");
 
             // The fake platform routes 10.0.0.1 through Wi-Fi, not the bound Ethernet.
             workspace.Targets = "10.0.0.0/24";
@@ -339,18 +338,6 @@ internal static class LocationWorkspaceTests
                 workspace.Status == string.Format((string)Application.Current.FindResource("Str_St_AdapterOffLink"), "10.0.0.1", "Ethernet", "192.168.1.0/24"),
                 "A target outside the adapter's network is refused with a clear status.");
 
-            workspace.AdapterChoice = string.Empty;
-            workspace.LoadSavedScan(site.SavedScans.Items.Single());
-            Require(workspace.AdapterChoice == "Ethernet" && workspace.Targets == "192.168.1.0/24", "Loading a saved scan restores its adapter.");
-
-            // Save in place records the adapter chosen now, including going back to Automatic.
-            var save = typeof(ScanWorkspace).GetMethod("SaveScan", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
-            workspace.AdapterChoice = string.Empty;
-            save.Invoke(workspace, null);
-            Require(site.SavedScans.Items.Single().Adapter.Length == 0, "Save records a change back to Automatic.");
-            workspace.AdapterChoice = "Ethernet";
-            save.Invoke(workspace, null);
-            Require(site.SavedScans.Items.Single().Adapter == "Ethernet", "Save records a newly chosen adapter.");
 
             connected = false;
             string? asked = null;

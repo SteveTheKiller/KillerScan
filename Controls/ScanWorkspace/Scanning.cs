@@ -79,7 +79,7 @@ namespace KillerScan.Controls
             // The run belongs to the Location it started in; switching is locked until it ends.
             var location = _location;
             _active.NewIdentities.Clear();
-            if (location.Info != null) LocationService.SetLastUsed(location.Info, _active.SubnetText, options);
+            if (location.Info != null) LocationService.SetLastUsed(location.Info, _active.SubnetText, options, _adapterChoice);
             try
             {
                 await _active.Scanner.ScanSubnetAsync(_active.SubnetText, cts.Token, options, fullScan: true);

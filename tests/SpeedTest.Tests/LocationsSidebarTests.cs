@@ -32,9 +32,8 @@ internal static class LocationsSidebarTests
         var heading = (TextBlock)window.FindName("SidebarHeading");
         Require(list.Visibility == Visibility.Visible && heading.Text == (string)Application.Current.FindResource("Str_Loc_ManageTitle"),
             "Manage Locations shows the Locations section under its own heading.");
-        Require(((Button)window.FindName("NewLocationButton")).Visibility == Visibility.Visible &&
-            ((Button)window.FindName("SaveProfileButton")).Visibility == Visibility.Collapsed,
-            "The section offers New Location, not the saved-scan button.");
+        Require(((Button)window.FindName("NewLocationButton")).Visibility == Visibility.Visible,
+            "The section offers New Location.");
         var rows = list.Items.Cast<object>().ToList();
         string Name(object row) => (string)row.GetType().GetProperty("Name")!.GetValue(row)!;
         string Detail(object row) => (string)row.GetType().GetProperty("Detail")!.GetValue(row)!;
@@ -50,11 +49,8 @@ internal static class LocationsSidebarTests
         Require(Name(list.Items.Cast<object>().Single(row => Name(row).Contains("Branch"))) ==
             string.Format((string)Application.Current.FindResource("Str_Loc_Current"), "Branch office"), "The current mark follows the switch.");
 
-        Call(window, "ProfilesButton_Click", window, new RoutedEventArgs());
-        // The lists cross-fade, so check what changes at once: the heading and the buttons.
-        Require(heading.Text == "Saved scans" && ((Button)window.FindName("NewLocationButton")).Visibility == Visibility.Collapsed &&
-            ((Button)window.FindName("SaveProfileButton")).Visibility == Visibility.Visible,
-            "The Saved scans section, under its new title, replaces the Locations section.");
+        Require(window.FindName("ProfilesList") == null && window.FindName("SaveProfileButton") == null,
+            "Saved scans are Locations now: the separate saved-scans section is gone.");
         Console.WriteLine("PASS: the Locations sidebar lists, marks and opens Locations.");
     }
 

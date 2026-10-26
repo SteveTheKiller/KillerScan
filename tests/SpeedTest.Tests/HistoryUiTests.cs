@@ -45,12 +45,12 @@ internal static partial class HistoryUiTests
     /// <summary>Runs one other check inside this suite's app host instead of the history checks.</summary>
     internal static Action? Isolated;
 
-    public static Task Run(bool settingsOnly = false, bool tableOnly = false, bool profilesOnly = false, bool menusOnly = false, bool lifecycleOnly = false)
+    public static Task Run(bool settingsOnly = false, bool tableOnly = false, bool menusOnly = false, bool lifecycleOnly = false)
     {
         Exception? failure = null;
         var thread = new Thread(() =>
         {
-            try { CheckUi(settingsOnly, tableOnly, profilesOnly, menusOnly, lifecycleOnly); } catch (Exception ex) { failure = ex; }
+            try { CheckUi(settingsOnly, tableOnly, menusOnly, lifecycleOnly); } catch (Exception ex) { failure = ex; }
             finally { Dispatcher.CurrentDispatcher.InvokeShutdown(); }
         });
         thread.SetApartmentState(ApartmentState.STA); thread.Start();
@@ -71,14 +71,14 @@ internal static partial class HistoryUiTests
         Console.Write(await output); Require(process.ExitCode == 0, "Isolated history suite: " + await error);
     }
 
-    private static void CheckUi(bool settingsOnly, bool tableOnly, bool profilesOnly, bool menusOnly, bool lifecycleOnly)
+    private static void CheckUi(bool settingsOnly, bool tableOnly, bool menusOnly, bool lifecycleOnly)
     {
         // Settings writes are redirected for this isolated test process, never to the user's app key.
         string scratch = "Software\\KillerScan-HistoryTests-" + Guid.NewGuid().ToString("N");
         using var registry = Registry.CurrentUser.CreateSubKey(scratch);
         var currentUser = new IntPtr(unchecked((int)0x80000001));
         Require(RegOverridePredefKey(currentUser, registry.Handle.DangerousGetHandle()) == 0, "Isolate registry settings.");
-        try { Capture(settingsOnly, tableOnly, profilesOnly, menusOnly, lifecycleOnly); }
+        try { Capture(settingsOnly, tableOnly, menusOnly, lifecycleOnly); }
         finally
         {
             RegOverridePredefKey(currentUser, IntPtr.Zero);
@@ -86,7 +86,7 @@ internal static partial class HistoryUiTests
         }
     }
 
-    private static void Capture(bool settingsOnly, bool tableOnly, bool profilesOnly, bool menusOnly, bool lifecycleOnly)
+    private static void Capture(bool settingsOnly, bool tableOnly, bool menusOnly, bool lifecycleOnly)
     {
         var assembly = typeof(KillerScan.App).Assembly;
         typeof(Application).GetField("_resourceAssembly", Static)!.SetValue(null, assembly);
@@ -139,7 +139,6 @@ internal static partial class HistoryUiTests
         }
         var window = new MainWindow();
         if (menusOnly) { CheckMenuIcons(window, assembly, directory.FullName, Theme); return; }
-        if (profilesOnly) { CheckProfiles(window, assembly, Theme, Locale); return; }
         var historyType = assembly.GetType("KillerScan.Services.ScanHistory", true)!;
         var entryType = assembly.GetType("KillerScan.Services.ScanHistoryEntry", true)!;
         var deviceType = assembly.GetType("KillerScan.Services.HistoricalDevice", true)!;
@@ -409,144 +408,6 @@ internal static partial class HistoryUiTests
         Console.WriteLine("RENDERED: " + output);
     }
 
-    private static void CheckProfiles(MainWindow window, Assembly assembly, Action<string> theme, Action<string> locale)
-    {
-        var store = assembly.GetType("KillerScan.Services.ScanProfiles", true)!;
-        var profileType = assembly.GetType("KillerScan.Services.ScanProfile", true)!;
-        var profiles = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(profileType))!;
-        object Profile(string name, string target, bool deep)
-        {
-            var profile = Activator.CreateInstance(profileType)!;
-            profileType.GetProperty("Name")!.SetValue(profile, name);
-            profileType.GetProperty("Target")!.SetValue(profile, target);
-            profileType.GetProperty("DeepScanAfter")!.SetValue(profile, deep);
-            profiles.Add(profile); return profile;
-        }
-        var home = Profile("Home", "192.0.2.0/24", false);
-        var work = Profile("Work", "198.51.100.0/25", true);
-        // The saved scans live in the shared store's file wrapper; swap its in-memory list.
-        var shared = store.GetProperty("Store", Static)!.GetValue(null)!;
-        var file = shared.GetType().GetField("_store", Instance)!.GetValue(shared)!;
-        file.GetType().GetProperty("Value", Instance)!.SetValue(file, profiles);
-        var scan = (ScanWorkspace)Field(window, "_scanWorkspace")!;
-        Require((bool)Field(scan, "DemoMode")!, "Profile tests cannot launch real network scans.");
-        var root = (FrameworkElement)window.Content;
-        root.Opacity = 1; ((UIElement)window.FindName("RootGrid")).Opacity = 1;
-        var list = (ListBox)window.FindName("ProfilesList");
-        var historyList = (ListBox)window.FindName("HistoryList");
-        var heading = (TextBlock)window.FindName("SidebarHeading");
-        var icon = (TextBlock)window.FindName("SidebarSectionIcon");
-        var group = (Panel)window.FindName("HistorySidebarHeader");
-        var button = (Button)window.FindName("ProfilesButton");
-        string output = Path.Combine(Path.GetTempPath(), "KillerScan-profiles-ui-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(output);
-        BitmapSource Draw(int width = 1200)
-        {
-            Render(root, width, 780); Call(window, "FitToolbarViews");
-            return Render(root, width, 780);
-        }
-        var historyType = assembly.GetType("KillerScan.Services.ScanHistory", true)!;
-        var entryType = assembly.GetType("KillerScan.Services.ScanHistoryEntry", true)!;
-        var reference = Activator.CreateInstance(entryType)!;
-        entryType.GetProperty("ScannedAt")!.SetValue(reference, new DateTimeOffset(2026, 10, 8, 12, 0, 0, TimeSpan.Zero));
-        entryType.GetProperty("Target")!.SetValue(reference, "192.0.2.0/24");
-        var seeded = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(entryType))!;
-        seeded.Add(reference);
-        historyType.GetMethod("SeedDemo", Static)!.Invoke(null, new object[] { seeded });
-        Call(window, "RefreshHistoryList");
-        double HistoryRowHeight()
-        {
-            Call(window, "SetSidebarSection", "history", false); Draw();
-            double height = ((ListBoxItem)historyList.ItemContainerGenerator.ContainerFromIndex(0)).ActualHeight;
-            Call(window, "SetSidebarSection", "profiles", false); Draw();
-            return height;
-        }
-        Call(window, "SetSidebarSection", "profiles", false);
-        Call(window, "OpenSidebar"); Call(window, "ApplySidebarState", false); Draw();
-        ListBoxItem Row(object item) => (ListBoxItem)list.ItemContainerGenerator.ContainerFromItem(item);
-        void Click(object item)
-        {
-            var text = VisualChildren<TextBlock>(Row(item)).First();
-            text.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton.Left)
-                { RoutedEvent = Mouse.PreviewMouseUpEvent });
-            Draw();
-        }
-        var results = (DataGrid)scan.FindName("ResultsGrid");
-        int count = results.Items.Count;
-        Call(window, "ShowHistoryEntry"); Draw();
-        Click(home);
-        Require(scan.Targets == "192.0.2.0/24" && ReferenceEquals(list.SelectedItem, home) &&
-            (string)Field(window, "_workspaceView")! == "scan", "A real routed entry click loads its target and reveals Devices from History.");
-        Require(!scan.IsScanning && results.Items.Count == count && !(bool)Field(scan, "_runDeepAfterScan")!,
-            "A click keeps existing results and does not start or arm scanning.");
-        scan.Targets = "203.0.113.0/24";
-        Click(home);
-        Require(scan.Targets == "192.0.2.0/24", "Clicking the already-selected row reloads a changed target.");
-        Click(work);
-        Require(scan.Targets == "198.51.100.0/25" && ReferenceEquals(list.SelectedItem, work) &&
-            (bool)profileType.GetProperty("DeepScanAfter")!.GetValue(work)! && !(bool)Field(scan, "_runDeepAfterScan")!,
-            "A different row loads its target while preserving its saved deep-run option for explicit Run.");
-        scan.Targets = "203.0.113.0/24";
-        var row = Row(home);
-        row.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton.Right)
-            { RoutedEvent = Mouse.PreviewMouseDownEvent });
-        Require(scan.Targets == "203.0.113.0/24" && ReferenceEquals(list.SelectedItem, home), "Right-click selects its own menu target without loading or scanning.");
-        Require((bool)Call(window, "ExecuteProfileShortcut", Key.L, ModifierKeys.Control, list.SelectedItem)! && scan.Targets == "192.0.2.0/24" && !scan.IsScanning,
-            "The keyboard Load target dispatch applies the selected profile without scanning.");
-        var selected = list.SelectedItem;
-        Call(window, "ToggleSidebar"); Call(window, "ApplySidebarState", false);
-        Call(window, "OpenSidebar"); Call(window, "ApplySidebarState", false); Draw();
-        Require(ReferenceEquals(selected, list.SelectedItem) && scan.Targets == "192.0.2.0/24", "Closing and reopening preserves selection and target without activation.");
-        Call(window, "ShowScanView", "services"); Draw(); Click(home);
-        Require((string)Field(window, "_workspaceView")! == "scan" && scan.View == "devices", "Loading from Services restores normal Devices navigation.");
-        foreach (string name in Enum.GetNames(assembly.GetType("KillerScan.Services.Theme", true)!))
-        {
-            theme(name); Call(window, "ApplyFlatChrome"); Draw();
-            Require(heading.FontSize == 20 && heading.FontFamily.Equals((FontFamily)Application.Current.FindResource("HeadingFont")) &&
-                group.HorizontalAlignment == HorizontalAlignment.Center && icon.Text == "\uE728" &&
-                Equals(button.Content, icon.Text) && icon.FontFamily.Source == "Segoe MDL2 Assets" && icon.FontSize == 16,
-                name + ": Profiles uses the centered History heading format and the same saved-list glyph as its rail.");
-            Require(ReferenceEquals(list.ItemContainerStyle, historyList.ItemContainerStyle) && list.Margin == historyList.Margin,
-                name + ": profile rows use the actual History container style and insets.");
-            double historyRow = HistoryRowHeight();
-            var texts = VisualChildren<TextBlock>(Row(work)).ToArray();
-            Require(texts[0].Text == "Work" && texts[0].FontSize == 13 && texts[0].FontWeight == FontWeights.SemiBold &&
-                Equals(texts[0].Foreground, Application.Current.FindResource("PrimaryBrush")) && texts[1].FontSize == 11 && texts[1].Margin == new Thickness() &&
-                Equals(texts[1].Foreground, Application.Current.FindResource("MutedTextBrush")),
-                name + ": the unselected name and target match History primary and secondary formatting.");
-            Require(historyRow > 0 && Math.Abs(Row(work).ActualHeight - historyRow) < 0.5,
-                name + ": a profile row is exactly as tall as a History row (" + Row(work).ActualHeight + " and " + historyRow + ").");
-            var selectedTexts = VisualChildren<TextBlock>(Row(home)).ToArray();
-            Require(Equals(selectedTexts[0].Foreground, Application.Current.FindResource("SelectionFg")) &&
-                Equals(selectedTexts[1].Foreground, Application.Current.FindResource("SelectionFg")) && selectedTexts[1].Opacity == 0.78,
-                name + ": selection provides the existing readable row feedback.");
-            Save(Draw(), Path.Combine(output, "Profiles-" + name + ".png"));
-        }
-        theme("Black"); Call(window, "ApplyFlatChrome");
-        foreach (string name in Enum.GetNames(assembly.GetType("KillerScan.Services.Locale", true)!))
-        {
-            locale(name); Draw();
-            Require(heading.Text == (string)Application.Current.FindResource("Str_Profiles_Title") && icon.Text == "\uE728" &&
-                Row(home).ActualHeight > 0, name + ": the shared heading and profile rows remain localized.");
-        }
-        locale("EnUS"); Require(heading.Text == "Saved scans", "English saved-scans heading uses the approved capitalization.");
-        foreach (double scale in new[] { 1.0, 1.5, 2.5 })
-        {
-            Call(window, "ApplyAppScale", scale, false);
-            Save(Draw(640), Path.Combine(output, "Profiles-narrow-scale-" + scale + ".png"));
-            Require(list.ActualWidth > 0 && heading.ActualHeight > 0 && Row(home).ActualHeight > 0, "Profiles remains usable at narrow width and zoom " + scale);
-        }
-        Call(window, "ApplyAppScale", 1.0, false);
-        list.SelectedItem = work;
-        Require(scan.Targets == "192.0.2.0/24", "Keyboard selection alone does not change the target or run a scan.");
-        Require((bool)Call(window, "ExecuteProfileShortcut", Key.Enter, ModifierKeys.None, list.SelectedItem)! &&
-            (bool)Field(scan, "_runDeepAfterScan")!, "Enter retains the explicit Run action and its saved deep-scan setting in demo mode.");
-        Require(profiles.Count == 2 && profileType.GetProperty("Name")!.GetValue(home)!.Equals("Home") &&
-            profileType.GetProperty("Target")!.GetValue(work)!.Equals("198.51.100.0/25"), "Loading and navigation preserve saved profile data.");
-        Call(window, "SetSidebarSection", "history", false); Draw();
-        Require(icon.Text == "\uE81C" && heading.Text == (string)Application.Current.FindResource("Str_History_Title"), "Returning to History restores its approved heading and clock glyph.");
-        Console.WriteLine("RENDERED: " + output);
-    }
 
     private static IEnumerable<T> VisualChildren<T>(DependencyObject parent) where T : DependencyObject
     {

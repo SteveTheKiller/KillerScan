@@ -30,8 +30,6 @@ internal static partial class HistoryUiTests
         // and targets. Constructing a terminal or an empty Keep Alive view starts no process or scan.
         var app = Application.Current;
         var menus = new Dictionary<string, ContextMenu>();
-        var profiles = (ListBox)window.FindName("ProfilesList");
-        menus.Add("Profiles", ((FrameworkElement)profiles.ItemTemplate.LoadContent()).ContextMenu);
         var history = new HistoryWorkspace();
         menus.Add("History", ((DataGrid)history.FindName("HistoryChangesGrid")).ContextMenu);
         var terminal = (FrameworkElement)Activator.CreateInstance(assembly.GetType("KillerScan.Terminal.TerminalControl", true)!)!;
@@ -47,7 +45,6 @@ internal static partial class HistoryUiTests
         menus.Add("Devices", ((DataGrid)scan.FindName("ResultsGrid")).ContextMenu);
         menus.Add("Services", ((DataGrid)scan.FindName("ServicesGrid")).ContextMenu);
         menus.Add("Export", ((Button)scan.FindName("ExportButton")).ContextMenu);
-        menus.Add("Toolbar", (ContextMenu)Field(window, "_toolbarMenu")!);
 
         // Load the actual Sort menu with its picker template without navigating user directories.
         app.Resources.MergedDictionaries.Add((ResourceDictionary)Application.LoadComponent(

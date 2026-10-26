@@ -127,11 +127,11 @@
                         </TextBlock>
                         <TextBlock theme:Bevel.Enabled="True" FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Scan" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
                     </Grid>
-                    <!-- On the wordmark baseline in Killer Sans, like KillerPDF's titlebar filename. -->
-                    <TextBlock x:Name="SubtitleText" Text="{DynamicResource Str_Subtitle}" Foreground="{DynamicResource MutedTextBrush}"
-                               FontFamily="{DynamicResource FileNameFont}" FontSize="{DynamicResource FileNameFontSize}"
-                               RenderTransform="{DynamicResource FileNameTransform}" TextOptions.TextFormattingMode="Ideal"
-                               VerticalAlignment="Center" Margin="16,0,0,0"/>
+                    <!-- The active view's own bar (address box, Scan, settings) rides in the title bar
+                         after the wordmark, so the content pane starts right under it
+                         (Shell/Workspace.cs). It took the place of the "Network Scanner" subtitle. -->
+                    <Border x:Name="TitleToolbarHost" VerticalAlignment="Center" Margin="16,0,0,0"
+                            WindowChrome.IsHitTestVisibleInChrome="True"/>
                 </StackPanel>
 
                 <!-- The shortcuts, language and theme buttons used to sit here, left of the
@@ -148,6 +148,9 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top"
                             Margin="{DynamicResource ScanCaptionButtonsMargin}"
                             WindowChrome.IsHitTestVisibleInChrome="True">
+                    <!-- The device filter, where KillerShell keeps its search: left of the window
+                         controls (Shell/Workspace.cs moves it here from the scan bar). -->
+                    <StackPanel x:Name="TitleTools" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <Button Content="&#xE921;" Click="MinimizeBtn_Click" Style="{StaticResource ChromeButton}" ToolTip="{DynamicResource Str_Sys_Minimize}"/>
                     <Button x:Name="MaximizeBtn" Content="&#xE922;" Click="MaximizeBtn_Click" Style="{StaticResource ChromeButton}" ToolTip="{DynamicResource Str_Sys_Maximize}"/>
                     <Button Content="&#xE8BB;" Click="CloseBtn_Click" Style="{StaticResource ChromeCloseButton}" ToolTip="{DynamicResource Str_Sys_Close}"/>
@@ -260,14 +263,14 @@
                                     <RowDefinition Height="*"/><RowDefinition Height="*"/>
                                     <RowDefinition Height="*"/><RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <Button x:Name="AccentStripDot0" Grid.Row="0" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
-                                <Button x:Name="AccentStripDot1" Grid.Row="1" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
-                                <Button x:Name="AccentStripDot2" Grid.Row="2" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
-                                <Button x:Name="AccentStripDot3" Grid.Row="3" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
-                                <Button x:Name="AccentStripDot4" Grid.Row="4" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
-                                <Button x:Name="AccentStripDot5" Grid.Row="5" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
-                                <Button x:Name="AccentStripDot6" Grid.Row="6" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" Click="AccentSwatch_Click"/>
-                                <Button x:Name="AccentStripDot7" Grid.Row="7" Style="{StaticResource ThemeSwatch}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0" Click="AccentSwatch_Click"/>
+                                <Border x:Name="AccentStripDot0" Grid.Row="0" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="AccentStripDot_Click"/>
+                                <Border x:Name="AccentStripDot1" Grid.Row="1" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="AccentStripDot_Click"/>
+                                <Border x:Name="AccentStripDot2" Grid.Row="2" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="AccentStripDot_Click"/>
+                                <Border x:Name="AccentStripDot3" Grid.Row="3" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="AccentStripDot_Click"/>
+                                <Border x:Name="AccentStripDot4" Grid.Row="4" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="AccentStripDot_Click"/>
+                                <Border x:Name="AccentStripDot5" Grid.Row="5" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="AccentStripDot_Click"/>
+                                <Border x:Name="AccentStripDot6" Grid.Row="6" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="AccentStripDot_Click"/>
+                                <Border x:Name="AccentStripDot7" Grid.Row="7" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0" MouseLeftButtonUp="AccentStripDot_Click"/>
                             </Grid>
                         </Grid>
                         <!-- Film Grain: one switch for the grain texture on every surface
@@ -321,13 +324,39 @@
                      width, so a long translation ran off both sides of the sidebar. Here the title
                      gets the width beside the glyph and wraps to a second centered line when the
                      language needs it; short titles still size to their text and stay centered. -->
-                <DockPanel x:Name="HistorySidebarHeader" Grid.Row="0" HorizontalAlignment="Center" Margin="8,0,8,6">
-                    <a11y:Glyph x:Name="SidebarSectionIcon" DockPanel.Dock="Left" Text="&#xE81C;" FontFamily="Segoe MDL2 Assets" FontSize="16" Margin="0,0,6,0"
-                               Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="SidebarHeading" Text="{DynamicResource Str_History_Title}" TextAlignment="Center"
-                               Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource HeadingFont}"
-                               FontSize="20" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                </DockPanel>
+                <StackPanel Grid.Row="0">
+                    <DockPanel x:Name="HistorySidebarHeader" HorizontalAlignment="Center" Margin="8,0,8,6">
+                        <a11y:Glyph x:Name="SidebarSectionIcon" DockPanel.Dock="Left" Text="&#xE81C;" FontFamily="Segoe MDL2 Assets" FontSize="16" Margin="0,0,6,0"
+                                   Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="SidebarHeading" Text="{DynamicResource Str_History_Title}" TextAlignment="Center"
+                                   Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource HeadingFont}"
+                                   FontSize="20" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                    </DockPanel>
+                    <!-- The Locations section's actions, KillerNotes' sidebar bar: a wide accent
+                         "+ New" in the wordmark's Lacquer, then small square buttons. -->
+                    <Grid x:Name="LocationsFooter" Margin="14,0,5,6" Visibility="Collapsed">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="NewLocationButton" Style="{StaticResource PrimaryButton}" Click="NewLocation_Click"
+                                Content="{DynamicResource Str_Loc_NewShort}" HorizontalAlignment="Stretch"
+                                Height="30" MinWidth="34" Padding="6,1" FontFamily="{DynamicResource WordmarkAccentFont}" FontSize="22" FontWeight="Normal"
+                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                            <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Loc_NewTitle}"/><Run Text=" (Ctrl+Alt+S)"/></TextBlock></Button.ToolTip>
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}">
+                                        <TextBlock.RenderTransform><TranslateTransform Y="-2"/></TextBlock.RenderTransform>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+                        <Button Grid.Column="1" Style="{StaticResource SurfaceButton}" FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                Content="&#xE8B5;" Width="40" Height="30" Padding="0" Margin="8,0,0,0" Click="ImportLocation_Click"
+                                ToolTip="{DynamicResource Str_Loc_Import}"/>
+                    </Grid>
+                </StackPanel>
                 <ListBox x:Name="HistoryList" Grid.Row="1" AutomationProperties.Name="{DynamicResource Str_History_Title}" Background="Transparent" BorderThickness="0"
                          Margin="14,0,5,0" HorizontalContentAlignment="Stretch"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -414,66 +443,6 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-                <!-- Second section, sharing the row so the two cross-fade in place. -->
-                <ListBox x:Name="ProfilesList" Grid.Row="1" AutomationProperties.Name="{DynamicResource Str_Profiles_Title}" Background="Transparent" BorderThickness="0"
-                         Margin="14,0,5,0" HorizontalContentAlignment="Stretch" Visibility="Collapsed"
-                         PreviewMouseRightButtonDown="ProfileList_RightClick"
-                         PreviewMouseLeftButtonUp="ProfileList_Activate"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         ItemContainerStyle="{Binding ItemContainerStyle, ElementName=HistoryList}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <StackPanel.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="{DynamicResource Str_Profiles_Run}" InputGestureText="Enter" Click="ProfileRun_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE768;"/></MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Header="{DynamicResource Str_Profiles_Load}" InputGestureText="Ctrl+L" Click="ProfileLoad_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8E5;"/></MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Header="{DynamicResource Str_Profiles_Deep}" IsCheckable="True"
-                                                  InputGestureText="Ctrl+Alt+D" IsChecked="{Binding DeepScanAfter, Mode=OneWay}" Click="ProfileDeep_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE9D9;"/></MenuItem.Icon>
-                                        </MenuItem>
-                                        <Separator/>
-                                        <MenuItem Header="{DynamicResource Str_Profiles_Delete}" InputGestureText="Delete" Click="ProfileDelete_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE74D;"/></MenuItem.Icon>
-                                        </MenuItem>
-                                    </ContextMenu>
-                                </StackPanel.ContextMenu>
-                                <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="SemiBold"
-                                           TextTrimming="CharacterEllipsis" controls:ShrinkToFit.MinScale="0.85">
-                                    <TextBlock.Style>
-                                        <!-- Setter, not an attribute: see the history list above. -->
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                                <TextBlock Text="{Binding Target}" FontSize="11"
-                                           TextTrimming="CharacterEllipsis" controls:ShrinkToFit.MinScale="0.85">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
-                                                    <Setter Property="Opacity" Value="0.78"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
 
                 <!-- Third section: every Location, opened from Manage Locations on the Location button. -->
                 <ListBox x:Name="LocationsList" Grid.Row="1" AutomationProperties.Name="{DynamicResource Str_Loc_ManageTitle}" Background="Transparent" BorderThickness="0"
@@ -541,12 +510,6 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-                <Button x:Name="NewLocationButton" Grid.Row="2" Content="{DynamicResource Str_Loc_NewTitle}"
-                        HorizontalAlignment="Left" Margin="9,8,0,0" FontSize="11" Visibility="Collapsed"
-                        Style="{StaticResource LinkButton}" Click="NewLocation_Click"/>
-                <Button x:Name="SaveProfileButton" Grid.Row="2" Content="{DynamicResource Str_Profiles_Save}"
-                        HorizontalAlignment="Left" Margin="9,8,0,0" FontSize="11" Visibility="Collapsed"
-                        Style="{StaticResource LinkButton}" ToolTip="Ctrl+Alt+S" Click="SaveProfile_Click"/>
             </Grid>
         </Grid>
 
@@ -591,9 +554,10 @@
                     FontSize="15" Click="SpeedTestButton_Click" Margin="0,0,0,10">
                 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_TT_SpeedTest}"/><Run Text=" (F4)"/></TextBlock></Button.ToolTip>
             </Button>
-            <Button x:Name="ProfilesButton" Style="{StaticResource RailButton}" Content="&#xE728;"
-                    FontSize="15" Click="ProfilesButton_Click" Margin="0,0,0,10">
-                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Profiles_Title}"/><Run Text=" (Ctrl+Shift+P)"/></TextBlock></Button.ToolTip>
+            <!-- Locations took the saved-scans slot when the two merged (2026-10-26). -->
+            <Button x:Name="LocationsButton" Style="{StaticResource RailButton}" Content="&#xE707;"
+                    FontSize="15" Click="LocationsButton_Click" Margin="0,0,0,10">
+                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Loc_ManageTitle}"/><Run Text=" (Ctrl+Shift+P)"/></TextBlock></Button.ToolTip>
             </Button>
             <Button x:Name="HistoryButton" Style="{StaticResource RailButton}"
                     Content="&#xE81C;" FontSize="15"

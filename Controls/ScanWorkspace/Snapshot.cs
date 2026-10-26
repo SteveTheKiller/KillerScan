@@ -173,7 +173,7 @@ namespace KillerScan.Controls
                     foreach (var text in stack.Children.OfType<TextBlock>())
                     {
                         textY += text.Margin.Top + text.FontSize;
-                        svg.Append("    <text x=\"").Append((x + 6).ToString("0.##", ci))
+                        svg.Append("    <text text-anchor=\"middle\" x=\"").Append((x + w / 2).ToString("0.##", ci))
                            .Append("\" y=\"").Append(textY.ToString("0.##", ci))
                            .Append("\" font-family=\"").Append(Escape(text.FontFamily?.Source ?? "Segoe UI"))
                            .Append("\" font-size=\"").Append(text.FontSize.ToString("0.##", ci))

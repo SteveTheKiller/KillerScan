@@ -1,5 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
 using KillerScan.Controls;
 using KillerFamily.Accessibility;
 
@@ -7,243 +10,234 @@ namespace KillerScan.Shell
 {
     public partial class MainWindow
     {
-        private enum ToolbarIconSize { Small, Large }
-        private enum ToolbarLabelMode { None, Beside, Under, Only }
-        // Small icons with the caption beside them: the bar also carries the target box, the
-        // scan buttons, filter and arrange, and large icons crowd them out at ordinary widths.
-        private ToolbarIconSize _toolbarIconSize = ToolbarIconSize.Small;
-        private ToolbarLabelMode _toolbarLabelMode = ToolbarLabelMode.Beside;
-        private readonly Dictionary<Button, (string Glyph, string Key)> _viewAppearance = [];
-        private readonly ContextMenu _toolbarMenu = new();
-        private readonly Button _toolbarOverflow = new()
+        // The five views are permanent tabs joined to the content pane, below it by default and
+        // above it on request (KillerShell's placement choice, same strings and shortcuts). The
+        // active tab wears the pane's own fill and edge, open on the side it shares with the pane,
+        // so the pane and its tab read as one sheet; the pane squares its corners on that side.
+        private const double TabRadius = 3.0;   // KillerShell Shell/Tabs.cs
+        private readonly Dictionary<string, Border> _viewTabs = [];
+        // One row, equal shares: the tabs span the pane's full width, as KillerShell's do.
+        private readonly System.Windows.Controls.Primitives.UniformGrid _viewTabStrip = new()
         {
-            Content = "\uE712", FontFamily = new System.Windows.Media.FontFamily("Segoe MDL2 Assets"),
-            FontSize = 14, Width = 36, Height = 34, Margin = new Thickness(8, 0, 8, 0),
-            VerticalAlignment = VerticalAlignment.Center, Visibility = Visibility.Collapsed
+            Rows = 1, UseLayoutRounding = true, SnapsToDevicePixels = true
         };
+        private bool _tabsAtBottom = true;
+
+        // The strip sits in a band that carries KillerShell's TabBandShadow (Controls/FilePane.xaml):
+        // a shadow rising from the pane, darkest at the pane's edge and feathered out at both
+        // ends, so the tabs read as sitting in front of it. The active tab's opaque face covers it.
+        private readonly Grid _viewTabBand = new() { UseLayoutRounding = true };
+        private readonly Border _viewTabBandShadow = new() { IsHitTestVisible = false, RenderTransformOrigin = new Point(0.5, 0.5) };
+
+        private void BuildTabBandShadow()
+        {
+            var fall = new LinearGradientBrush { StartPoint = new Point(0, 0), EndPoint = new Point(0, 1) };
+            fall.GradientStops.Add(new GradientStop(Color.FromArgb(0x00, 0, 0, 0), 0));
+            fall.GradientStops.Add(new GradientStop(Color.FromArgb(0x00, 0, 0, 0), 0.45));
+            fall.GradientStops.Add(new GradientStop(Color.FromArgb(0x59, 0, 0, 0), 1));
+            fall.Freeze();
+            var ends = new LinearGradientBrush { StartPoint = new Point(0, 0), EndPoint = new Point(1, 0) };
+            ends.GradientStops.Add(new GradientStop(Color.FromArgb(0x00, 255, 255, 255), 0));
+            ends.GradientStops.Add(new GradientStop(Color.FromArgb(0xFF, 255, 255, 255), 0.06));
+            ends.GradientStops.Add(new GradientStop(Color.FromArgb(0xFF, 255, 255, 255), 0.94));
+            ends.GradientStops.Add(new GradientStop(Color.FromArgb(0x00, 255, 255, 255), 1));
+            ends.Freeze();
+            _viewTabBandShadow.Background = fall;
+            _viewTabBandShadow.OpacityMask = ends;
+            // 0 on a flat theme, so 98SE's strip stays flat.
+            _viewTabBandShadow.SetResourceReference(UIElement.OpacityProperty, "BarShadowOpacity");
+            _viewTabBand.Children.Add(_viewTabBandShadow);
+            _viewTabBand.Children.Add(_viewTabStrip);
+        }
 
         private void BuildWorkspaceNavigation()
         {
-            if (Enum.TryParse(App.GetSetting("ToolbarIconSize"), out ToolbarIconSize size) && Enum.IsDefined(typeof(ToolbarIconSize), size))
-                _toolbarIconSize = size;
-            if (Enum.TryParse(App.GetSetting("ToolbarLabels"), out ToolbarLabelMode labels) && Enum.IsDefined(typeof(ToolbarLabelMode), labels))
-                _toolbarLabelMode = labels;
-            _workspaceNavigation.Margin = new Thickness(8, 2, 8, 2);
-            AddViewButton("scan", "Str_View_Devices", "F6 / Ctrl+T", () => ShowScanView("devices"));
-            AddViewButton("services", "Str_Services_Title", "F7", () => ServicesButton_Click(this, new RoutedEventArgs()));
-            AddViewButton("topology", "Str_View_Topology", "F8", () => ShowScanView("topology"));
-            AddViewButton("watch", "Str_View_KeepAlive", "F9", () => Watch_Click(this, new RoutedEventArgs()));
-            AddViewButton("terminal", "Str_Workspace_Terminal", "F10 / Ctrl+Shift+T", NewTerminalView);
-            _workspaceToolbar.ContextMenu = _toolbarMenu;
-            _workspaceToolbar.Background = System.Windows.Media.Brushes.Transparent;
-            BuildToolbarMenu();
-            ApplyToolbarAppearance();
-            _toolbarOverflow.SetResourceReference(StyleProperty, "ViewToolbarButton");
-            _toolbarOverflow.SetResourceReference(ToolTipProperty, "Str_Toolbar_Header");
-            _toolbarOverflow.Click += (_, _) => OpenToolbarOverflow();
-            // Last in the strip rather than a sibling layered over it: as its own child of the
-            // toolbar grid it shared a column with these buttons and simply painted on top of them.
-            _workspaceNavigation.Children.Add(_toolbarOverflow);
-            _workspaceToolbar.SizeChanged += (_, _) => FitToolbarViews();
-            // A theme changes button fonts and padding without necessarily resizing the bar, so
-            // the fit that ran mid-switch would otherwise stick (98SE to Dark pushed Topology into
-            // the overflow). Refit once the new theme has laid out.
+            _tabsAtBottom = App.GetSetting("TabsAtBottom") != "0";
+            AddViewTab("scan", "Str_View_Devices", "", "F6 / Ctrl+T", () => ShowScanView("devices"));
+            AddViewTab("services", "Str_Services_Title", "", "F7", () => ServicesButton_Click(this, new RoutedEventArgs()));
+            AddViewTab("topology", "Str_View_Topology", "", "F8", () => ShowScanView("topology"));
+            AddViewTab("watch", "Str_View_KeepAlive", "", "F9", () => Watch_Click(this, new RoutedEventArgs()));
+            AddViewTab("terminal", "Str_Workspace_Terminal", "", "F10 / Ctrl+Shift+T", NewTerminalView);
+            // Above the pane and its sunken-edge layers, so the active tab's fill covers the pane
+            // border where the two join.
+            BuildTabBandShadow();
+            Panel.SetZIndex(_viewTabBand, 12);
+            _viewTabBand.ContextMenu = new ContextMenu();
+            _viewTabBand.ContextMenu.Opened += (_, _) => BuildTabPlacementMenu(_viewTabBand.ContextMenu);
+            WorkspaceHost.Children.Add(_viewTabBand);
+            BuildTabScrollShadow();
+            ApplyTabPlacement();
             Services.ThemeManager.ThemeChanged += () => Dispatcher.BeginInvoke(
-                new Action(FitToolbarViews), System.Windows.Threading.DispatcherPriority.Loaded);
-            // A language switch changes every caption and the Scan button's width, also without
-            // resizing the bar.
-            Services.LocaleManager.LocaleChanged += QueueToolbarFit;
-            // Hidden while the five views move to permanent tabs. The buttons stay built because
-            // the view logic tracks the current view through them; F6 to F10 and the View menu
-            // still switch views.
-            _workspaceNavigation.Visibility = Visibility.Collapsed;
+                new Action(ApplyTabPlacement), System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
-        private void AddViewButton(string view, string key, string shortcut, Action action)
+        private void AddViewTab(string view, string key, string glyph, string shortcut, Action action)
         {
-            var button = new Button
-            {
-                Margin = new Thickness(0, 0, 2, 0), Padding = new Thickness(6, 4, 6, 4),
-                Height = 52, VerticalAlignment = VerticalAlignment.Center
-            };
-            button.SetResourceReference(StyleProperty, "ViewToolbarButton");
-            string glyph = view switch
-            {
-                "scan" => "\uE772",
-                "services" => "\uE8FD",
-                "topology" => "\uE968",
-                "watch" => "\uE9D9",
-                _ => "\uE756"
-            };
-            var content = new StackPanel { HorizontalAlignment = HorizontalAlignment.Center };
+            var label = new TextBlock { FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
+            label.SetResourceReference(TextBlock.TextProperty, key);
+            label.SetResourceReference(TextBlock.FontFamilyProperty, "MonoFont");
+            // Icon at the tab's left edge, title centred in the whole tab.
+            var content = new Grid { VerticalAlignment = VerticalAlignment.Center };
             content.Children.Add(new Glyph
             {
-                Text = glyph, FontFamily = new System.Windows.Media.FontFamily("Segoe MDL2 Assets"),
-                FontSize = 14, HorizontalAlignment = HorizontalAlignment.Center
+                Text = glyph, FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 14,
+                VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Left
             });
-            var label = new TextBlock
-            {
-                FontFamily = new System.Windows.Media.FontFamily("Segoe UI"), FontSize = 10,
-                Margin = new Thickness(0, 2, 0, 0), HorizontalAlignment = HorizontalAlignment.Center,
-                TextAlignment = TextAlignment.Center
-            };
-            label.SetResourceReference(TextBlock.TextProperty, key);
             content.Children.Add(label);
-            button.Content = content;
-            _viewAppearance.Add(button, (glyph, key));
-            button.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, key);
+            // The grain layer sits under the content; only the active tab shows it, because its
+            // opaque fill hides the row's shared grain.
+            var grainLayer = new Border { IsHitTestVisible = false, Opacity = 0, Margin = new Thickness(-14, -6, -16, -6) };
+            grainLayer.SetResourceReference(Border.BackgroundProperty, "GrainTileBrush");
+            // The scroll shadow's share of the active tab: above the fill and grain, below the icon
+            // and title, and inside the accent ring (TabSurfaceBorder clips the child to the face).
+            var shadeLayer = new Border { IsHitTestVisible = false, Margin = grainLayer.Margin, Visibility = Visibility.Collapsed,
+                RenderTransformOrigin = new Point(0.5, 0.5) };
+            shadeLayer.SetResourceReference(UIElement.OpacityProperty, "EdgeFadeOpacity");
+            var body = new Grid();
+            body.Children.Add(grainLayer);
+            body.Children.Add(shadeLayer);
+            body.Children.Add(content);
+            var tab = new TabSurfaceBorder
+            {
+                Child = body, Padding = new Thickness(14, 6, 16, 6), MinWidth = 0,
+                Cursor = Cursors.Hand, Focusable = true, Tag = view
+            };
+            tab.SetResourceReference(TextElement.ForegroundProperty, "MutedTextBrush");
+            tab.SetResourceReference(TabSurfaceBorder.DividerBrushProperty, "PaneEdgeBrush");
+            tab.RenderTransformOrigin = new Point(0.5, 0.5);
+            content.RenderTransformOrigin = new Point(0.5, 0.5);
+            tab.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, key);
             var tip = new TextBlock();
             var caption = new System.Windows.Documents.Run();
             caption.SetResourceReference(System.Windows.Documents.Run.TextProperty, key);
             tip.Inlines.Add(caption);
             tip.Inlines.Add(" (" + shortcut + ")");
-            button.ToolTip = tip;
-            button.Click += (_, _) => action();
-            _viewButtons.Add(view, button);
-            _workspaceNavigation.Children.Add(button);
-        }
-
-        /// <summary>
-        /// Marks the current view the way KillerPDF marks the selected tool: the caller sets
-        /// the button's Background and Foreground by resource reference, so the pair tracks a
-        /// theme swap, and clears them again for the rest. Clearing rather than assigning a
-        /// transparent value matters, because a local Background would outrank the style's
-        /// hover trigger and the inactive buttons would stop lighting up under the pointer.
-        /// </summary>
-        private void UpdateWorkspaceNavigation()
-        {
-            foreach (var pair in _viewButtons)
+            tab.ToolTip = tip;
+            tab.MouseLeftButtonUp += (_, e) => { action(); e.Handled = true; };
+            tab.KeyDown += (_, e) =>
             {
-                if (pair.Key == _workspaceView)
-                {
-                    pair.Value.SetResourceReference(Control.BackgroundProperty, "SelectionBg");
-                    pair.Value.SetResourceReference(Control.ForegroundProperty, "SelectionFg");
-                    // Read by the template, which gives a selected view its own shadow strength.
-                    pair.Value.Tag = "selected";
-                }
-                else
-                {
-                    pair.Value.ClearValue(Control.BackgroundProperty);
-                    pair.Value.ClearValue(Control.ForegroundProperty);
-                    pair.Value.ClearValue(FrameworkElement.TagProperty);
-                }
-            }
+                if (e.Key is not (Key.Enter or Key.Space)) return;
+                action(); e.Handled = true;
+            };
+            _viewTabs.Add(view, tab);
+            _viewTabStrip.Children.Add(tab);
         }
 
-        private void BuildToolbarMenu()
-        {
-            var heading = new MenuItem { IsEnabled = false, Icon = MenuGlyph.Create(0xE713) };
-            heading.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Toolbar_Header");
-            _toolbarMenu.Items.Add(heading);
-            _toolbarMenu.Items.Add(new Separator());
-            AddToolbarChoice(ToolbarIconSize.Small, "Str_Toolbar_SmallIcons", 1);
-            AddToolbarChoice(ToolbarIconSize.Large, "Str_Toolbar_LargeIcons", 2);
-            _toolbarMenu.Items.Add(new Separator());
-            AddToolbarChoice(ToolbarLabelMode.None, "Str_Toolbar_TextNone", 3);
-            AddToolbarChoice(ToolbarLabelMode.Beside, "Str_Toolbar_TextBeside", 4);
-            AddToolbarChoice(ToolbarLabelMode.Under, "Str_Toolbar_TextUnder", 5);
-            AddToolbarChoice(ToolbarLabelMode.Only, "Str_Toolbar_TextOnly", 6);
-        }
+        private static readonly Transform FlipVertical = (Transform)new ScaleTransform(1, -1).GetAsFrozen();
 
-        private void AddToolbarChoice(object value, string key, int shortcut)
+        private void StyleViewTab(Border border)
         {
-            var item = new MenuItem { Tag = value, IsCheckable = true, StaysOpenOnClick = true,
-                InputGestureText = "Ctrl+Shift+" + shortcut, Icon = MenuGlyph.Create(shortcut <= 2 ? 0xE80A : 0xE8D2) };
-            item.SetResourceReference(HeaderedItemsControl.HeaderProperty, key);
-            item.Click += (_, _) => SelectToolbarAppearance(shortcut);
-            _toolbarMenu.Items.Add(item);
-        }
-
-        private void SelectToolbarAppearance(int choice)
-        {
-            if (choice <= 2)
+            // KillerShell's tab, on the kit's TabSurfaceBorder (Controls/TabSurfaceBorder.cs). The
+            // active tab is the page's own fill and grain, ringed in TabActiveRingFadeBrush at
+            // TabStripeThickness, with no shadow over the join: accent across the outer edge, fading down the sides into the
+            // pane edge drawn beneath them, so the tab and the page are one sheet. Inactive tabs
+            // are bare, split by a faded PaneEdgeBrush divider, with no hover state. The control
+            // only knows a top strip, so a bottom strip is the same tab drawn upside down with
+            // its contents turned back (KillerShell's TabPlacementTransform).
+            var tab = (TabSurfaceBorder)border;
+            bool active = (string)tab.Tag == _workspaceView;
+            bool bottom = _tabsAtBottom;
+            var grid = (Grid)tab.Child;
+            var grain = (Border)grid.Children[0];
+            var shade = (UIElement)grid.Children[1];
+            var content = (UIElement)grid.Children[2];
+            tab.RenderTransform = bottom ? FlipVertical : Transform.Identity;
+            content.RenderTransform = bottom ? FlipVertical : Transform.Identity;
+            shade.RenderTransform = bottom ? FlipVertical : Transform.Identity;
+            int index = _viewTabStrip.Children.IndexOf(tab);
+            int last = _viewTabStrip.Children.Count - 1;
+            if (active)
             {
-                if (_toolbarLabelMode == ToolbarLabelMode.Only) return;
-                _toolbarIconSize = choice == 1 ? ToolbarIconSize.Small : ToolbarIconSize.Large;
-                App.SetSetting("ToolbarIconSize", _toolbarIconSize.ToString());
+                tab.CornerRadius = new CornerRadius(TabRadius, TabRadius, 0, 0);
+                // On top of a table (Devices, Services) the tab joins the column header, not the
+                // page, so it takes the header's colour and the two read as one band.
+                bool onHeader = !bottom && (string)tab.Tag is "scan" or "services";
+                tab.SetResourceReference(Border.BackgroundProperty, onHeader ? "TableHeaderBrush" : "ScanContentPaneBrush");
+                tab.SetResourceReference(Border.BorderBrushProperty, "TabActiveRingFadeBrush");
+                tab.SetResourceReference(Border.BorderThicknessProperty, "TabStripeThickness");
+                tab.SetResourceReference(TextElement.ForegroundProperty, "TextBrush");
+                // The column header is matte, so a tab joined to it is too.
+                if (onHeader) grain.Opacity = 0;
+                else grain.SetResourceReference(UIElement.OpacityProperty, "GrainOpacity");
             }
             else
             {
-                _toolbarLabelMode = (ToolbarLabelMode)(choice - 3);
-                App.SetSetting("ToolbarLabels", _toolbarLabelMode.ToString());
+                tab.CornerRadius = new CornerRadius(0);
+                tab.Background = Brushes.Transparent;
+                tab.SetBinding(Border.BorderBrushProperty, new System.Windows.Data.Binding(nameof(TabSurfaceBorder.FadedDividerBrush)) { Source = tab });
+                tab.BorderThickness = index == last ? new Thickness(0) : new Thickness(0, 0, 1, 0);
+                tab.SetResourceReference(TextElement.ForegroundProperty, "MutedTextBrush");
+                grain.Opacity = 0;
             }
-            ApplyToolbarAppearance();
         }
 
-        private void ApplyToolbarAppearance()
+        private void BuildTabPlacementMenu(ContextMenu menu)
         {
-            bool large = _toolbarIconSize == ToolbarIconSize.Large;
-            bool under = _toolbarLabelMode == ToolbarLabelMode.Under;
-            bool only = _toolbarLabelMode == ToolbarLabelMode.Only;
-            bool none = _toolbarLabelMode == ToolbarLabelMode.None;
-            foreach (var entry in _viewAppearance)
+            menu.Items.Clear();
+            void AddChoice(bool bottom)
             {
-                var button = entry.Key;
-                button.Width = none ? (large ? 46 : 36) : double.NaN;
-                button.Height = under ? (large ? 50 : 46) : none ? (large ? 42 : 32) : 34;
-                button.Padding = under ? new Thickness(6, 4, 6, 4) : new Thickness(8, 5, 8, 5);
-                var panel = new StackPanel { Orientation = under ? Orientation.Vertical : Orientation.Horizontal,
-                    HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
-                if (!only) panel.Children.Add(new Glyph { Text = entry.Value.Glyph,
-                    FontFamily = new System.Windows.Media.FontFamily("Segoe MDL2 Assets"), FontSize = large ? 20 : 14,
-                    HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
-                if (!none)
-                {
-                    var caption = new TextBlock { FontFamily = new System.Windows.Media.FontFamily("Segoe UI"),
-                        FontSize = under ? 10 : 12, HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center,
-                        Margin = under ? new Thickness(0, 2, 0, 0) : only ? new Thickness(0) : new Thickness(7, 0, 0, 0) };
-                    caption.SetResourceReference(TextBlock.TextProperty, entry.Value.Key);
-                    panel.Children.Add(caption);
-                }
-                button.Content = panel;
+                var item = new MenuItem { IsCheckable = true, IsChecked = _tabsAtBottom == bottom,
+                    InputGestureText = bottom ? "Alt+Shift+Down" : "Alt+Shift+Up" };
+                item.SetResourceReference(HeaderedItemsControl.HeaderProperty, bottom ? "Str_Layout_TabsBottom" : "Str_Layout_TabsTop");
+                item.Click += (_, _) => SetTabPlacement(bottom);
+                menu.Items.Add(item);
             }
-            // The overflow button shares the strip with the view buttons. It matches their height
-            // and carries no vertical margin, so it appearing never makes the toolbar row taller.
-            _toolbarOverflow.Height = under ? (large ? 50 : 46) : none ? (large ? 42 : 32) : 34;
-            foreach (var item in _toolbarMenu.Items.OfType<MenuItem>())
-            {
-                if (item.Tag is ToolbarIconSize size)
-                {
-                    item.IsChecked = size == _toolbarIconSize;
-                    item.IsEnabled = !only;
-                }
-                else if (item.Tag is ToolbarLabelMode labels) item.IsChecked = labels == _toolbarLabelMode;
-            }
-            FitToolbarViews();
+            AddChoice(false);
+            AddChoice(true);
+        }
+
+        internal void SetTabPlacement(bool bottom)
+        {
+            if (_tabsAtBottom == bottom) return;
+            _tabsAtBottom = bottom;
+            App.SetSetting("TabsAtBottom", bottom ? "1" : "0");
+            ApplyTabPlacement();
         }
 
         /// <summary>
-        /// Buttons that did not fit on the bar. The overflow menu lists these and only these, so
-        /// a button is in exactly one of the two places.
+        /// Puts the strip on its side of the pane and squares the pane's corners there. With the
+        /// tabs on top the table's header loses its top rounding, since the tabs sit on it; with
+        /// them below, the header keeps it and the pane's foot squares instead.
         /// </summary>
-        private readonly List<Button> _overflowedViews = [];
+        private void ApplyTabPlacement()
+        {
+            Grid.SetRow(_viewTabBand, _tabsAtBottom ? 4 : 2);
+            _viewTabBand.VerticalAlignment = _tabsAtBottom ? VerticalAlignment.Top : VerticalAlignment.Bottom;
+            // Darkest against the pane: at the band's foot for a top strip, its head for a bottom one.
+            _viewTabBandShadow.RenderTransform = _tabsAtBottom ? FlipVertical : Transform.Identity;
+            UpdateWorkspaceNavigation();
+        }
 
         /// <summary>
-        /// Which button gives way first as the bar tightens, least wanted at the front. This is
-        /// a judgement about the work, not about the layout, so it is written down rather than
-        /// derived from the order the buttons happen to sit in: Services is the narrowest reading
-        /// of a scan you already have, while Devices is the reason the window is open.
+        /// KillerShell's TabSideCorners (Shell/Tabs.cs): the pane keeps its full radius on the side
+        /// away from the tabs. On the tab side a corner is square where the active tab is the end
+        /// tab, so the pane's edge runs straight up into the tab, and TabRadius anywhere else.
         /// </summary>
-        private static readonly string[] ToolbarDropOrder =
-        [
-            "Str_Services_Title", "Str_View_Topology",
-            "Str_Workspace_Terminal", "Str_View_KeepAlive", "Str_View_Devices"
-        ];
+        private void ApplyPaneCorners()
+        {
+            double r = PaneRadius(), t = Math.Min(TabRadius, r);
+            bool left = _workspaceView == (string)((Border)_viewTabStrip.Children[0]).Tag;
+            bool right = _workspaceView == (string)((Border)_viewTabStrip.Children[^1]).Tag;
+            double l = left ? 0 : t, rt = right ? 0 : t;
+            var corners = _tabsAtBottom ? new CornerRadius(r, r, rt, l) : new CornerRadius(l, rt, r, r);
+            DevicesPane.CornerRadius = corners;
+            DevicesPaneShadow.CornerRadius = corners;
+            // Every view draws its own frame and grain inside the pane from these two keys, so
+            // they are overridden for the pane's subtree and square on the tab side with it.
+            TerminalLayout.Resources["PanelCornerRadius"] = corners;
+            TerminalLayout.Resources["PaneGrainCornerRadius"] = corners;
+            // The strip overlaps the pane's edge by 1px so the active tab's fill covers that line.
+            _viewTabBand.Margin = _tabsAtBottom ? new Thickness(0, -1, 0, 0) : new Thickness(0, 0, 0, -1);
+            ClipWorkspaceSurface();
+        }
 
-        /// <summary>
-        /// Keeps as many view buttons on the bar as the space beside the active view's own
-        /// controls allows, and moves the rest into the overflow menu.
-        /// </summary>
-        /// <remarks>
-        /// The view buttons are what gives way, one at a time in ToolbarDropOrder. The input box
-        /// and its buttons are what the window is FOR in a view, so they keep their measured
-        /// width rather than being squeezed until they wrap. Scan's bar and Keep Alive's are
-        /// different widths, so the budget is measured from whichever is showing.
-        /// </remarks>
-        private const double TargetPreferredWidth = 220;
-        private const double TargetGive = 60;
-        private const double TargetFloor = 40;
+        private double PaneRadius() => TryFindResource("PaneCornerRadiusValue") is double d && d >= 0 ? d : 6.0;
+
+        private void UpdateWorkspaceNavigation()
+        {
+            foreach (var tab in _viewTabs.Values) StyleViewTab(tab);
+            ApplyPaneCorners();
+        }
 
         /// <summary>
         /// The address box of each view bar that has one. Its width is set by the fit, so the
@@ -251,162 +245,154 @@ namespace KillerScan.Shell
         /// width the last fit left it made every squeeze compound on the one before.
         /// </summary>
         private readonly Dictionary<string, FrameworkElement> _viewToolbarTargets = [];
-
-        private bool _toolbarFitQueued;
-
-        /// <summary>
-        /// Runs the fit once the current change has laid out. A language or theme switch changes
-        /// caption widths without resizing the bar, so a fit run inside the switch measured the
-        /// previous language's text and kept that language's decisions.
-        /// </summary>
-        private void QueueToolbarFit()
-        {
-            if (_toolbarFitQueued) return;
-            _toolbarFitQueued = true;
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                _toolbarFitQueued = false;
-                FitToolbarViews();
-            }), System.Windows.Threading.DispatcherPriority.Loaded);
-        }
-
-        private static TextBlock? ViewCaption(Button button) =>
-            button.Content is Panel panel && panel.Children.Count > 1
-                ? panel.Children[^1] as TextBlock : null;
+        private const double TargetPreferredWidth = 220;
+        private const double TargetFloor = 40;
 
         /// <summary>
-        /// KillerPDF's order: views move into the overflow menu first, captions stay on what is
-        /// left, and only when the bar still does not fit do the remaining buttons drop their
-        /// captions to icons. Every pass starts fully expanded, so widening the window or
-        /// switching to a shorter language always brings everything back.
+        /// Gives a view's address box whatever the bar has left, between its floor and its
+        /// preferred width. The view buttons used to share this bar; the tabs took them off it,
+        /// so the box only has the view's own controls to fit beside. The scan bar also fits its
+        /// filter box, so it finishes that itself.
         /// </summary>
         private void FitToolbarViews()
         {
             if (_workspaceToolbar.ActualWidth <= 0) return;
-            var unbounded = new Size(double.PositiveInfinity, double.PositiveInfinity);
-
-            // The overflow button lives in this strip too, so it has to be kept out of the list of
-            // things that can be pushed into the overflow.
-            var buttons = _workspaceNavigation.Children.OfType<Button>()
-                .Where(b => b != _toolbarOverflow).ToList();
-            bool shedCaptions = _toolbarLabelMode is ToolbarLabelMode.Beside or ToolbarLabelMode.Under;
-            foreach (var button in buttons)
-            {
-                button.Visibility = Visibility.Visible;
-                if (shedCaptions && ViewCaption(button) is { } caption) caption.Visibility = Visibility.Visible;
-                button.InvalidateMeasure();
-                button.Measure(unbounded);
-            }
-
-            double reserved = _workspaceNavigation.Margin.Left + _workspaceNavigation.Margin.Right;
             string key = _viewToolbars.ContainsKey(_workspaceView) ? _workspaceView : "scan";
-            _viewToolbarTargets.TryGetValue(key, out var target);
-            double toolbarOthers = 0;
-            if (_viewToolbars.TryGetValue(key, out var toolbar))
-            {
-                toolbar.InvalidateMeasure();
-                toolbar.Measure(unbounded);
-                double measured = toolbar.DesiredSize.Width + toolbar.Margin.Left + toolbar.Margin.Right;
-                if (target != null && !double.IsNaN(target.Width))
-                {
-                    // Everything on the bar except the address box, and the box counted at its
-                    // preferred width less the give it may take before a view goes missing.
-                    toolbarOthers = measured - target.Width;
-                    measured = toolbarOthers + TargetPreferredWidth - TargetGive;
-                }
-                reserved += measured;
-            }
-
-            _toolbarOverflow.Measure(unbounded);
-            double available = _workspaceToolbar.ActualWidth - reserved;
-            double total = buttons.Sum(b => b.DesiredSize.Width);
-
-            _overflowedViews.Clear();
-            _viewButtons.TryGetValue(_workspaceView, out var active);
-            if (total > available)
-            {
-                // The overflow button is about to appear, so it has to come out of the same
-                // budget. Drop buttons from the left until what is left fits beside it.
-                available -= _toolbarOverflow.DesiredSize.Width;
-                var order = buttons
-                    .OrderBy(b => Array.IndexOf(ToolbarDropOrder,
-                        _viewAppearance.TryGetValue(b, out var look) ? look.Key : string.Empty) is var i && i < 0
-                        ? int.MaxValue : i);
-                foreach (var button in order)
-                {
-                    if (total <= available) break;
-                    // The view you are in keeps its place on the bar however tight it gets:
-                    // it is the one carrying the selected state, and hiding it would leave
-                    // nothing on screen saying where you are.
-                    if (button == active) continue;
-                    total -= button.DesiredSize.Width;
-                    button.Visibility = Visibility.Collapsed;
-                    _overflowedViews.Add(button);
-                }
-
-                // Last resort: what is still on the bar drops its captions, the active view last.
-                // The tooltip still names each button.
-                if (shedCaptions && total > available)
-                {
-                    foreach (var button in buttons.Where(b => b.Visibility == Visibility.Visible)
-                        .OrderBy(b => b == active ? 1 : 0))
-                    {
-                        if (total <= available) break;
-                        if (ViewCaption(button) is not { } caption) continue;
-                        double before = button.DesiredSize.Width;
-                        caption.Visibility = Visibility.Collapsed;
-                        button.InvalidateMeasure();
-                        button.Measure(unbounded);
-                        total -= before - button.DesiredSize.Width;
-                    }
-                }
-            }
-
-            _toolbarOverflow.Visibility = _overflowedViews.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-
-            // Give the address box whatever the views left, between its floor and its preferred
-            // width. The scan bar also fits its filter box, so it finishes that itself.
-            if (target != null && key != "scan")
-            {
-                double navigation = _workspaceNavigation.Margin.Left + _workspaceNavigation.Margin.Right + total
-                    + (_toolbarOverflow.Visibility == Visibility.Visible ? _toolbarOverflow.DesiredSize.Width : 0);
-                target.Width = Math.Max(TargetFloor, Math.Min(TargetPreferredWidth,
-                    _workspaceToolbar.ActualWidth - navigation - toolbarOthers));
-            }
+            if (key == "scan" || !_viewToolbarTargets.TryGetValue(key, out var target)
+                || !_viewToolbars.TryGetValue(key, out var toolbar)) return;
+            var unbounded = new Size(double.PositiveInfinity, double.PositiveInfinity);
+            toolbar.InvalidateMeasure();
+            toolbar.Measure(unbounded);
+            double others = toolbar.DesiredSize.Width + toolbar.Margin.Left + toolbar.Margin.Right
+                - (double.IsNaN(target.Width) ? target.DesiredSize.Width : target.Width);
+            target.Width = Math.Max(TargetFloor, Math.Min(TargetPreferredWidth, _workspaceToolbar.ActualWidth - others));
         }
 
-        private void OpenToolbarOverflow()
-            => CreateToolbarOverflowMenu().IsOpen = true;
+        // ── The bottom scroll shadow ─────────────────────────────────────────────────────────
+        // KillerShell's TabScrollShadow (Controls/FilePane.xaml, FilePane.xaml.cs): with the tabs
+        // below, the active tab continues the page, so the shade that says "more below" is ONE
+        // gradient, transparent 28px above the pane's foot and darkest at the active tab's foot,
+        // clipped to the list's foot plus the tab's face. It sits above the band so the tab's
+        // icon and title darken with the rows. The list's own bottom cue steps aside while it
+        // shows, so the two never stack. Hidden at the end of the list and with the tabs on top.
 
-        private ContextMenu CreateToolbarOverflowMenu()
+        private const double ScrollShadowReach = 28;
+        private readonly Border _tabScrollShadow = new()
         {
-            var menu = new ContextMenu { PlacementTarget = _toolbarOverflow,
-                Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom };
-            // Bar order, not the order they were dropped: the menu reads as the rest of the same
-            // toolbar rather than as a list of casualties.
-            foreach (var button in _workspaceNavigation.Children.OfType<Button>().Where(_overflowedViews.Contains))
-            {
-                var item = new MenuItem { IsEnabled = button.IsEnabled, Icon = MenuGlyph.Create(char.ConvertToUtf32(_viewAppearance[button].Glyph, 0)) };
-                item.SetResourceReference(HeaderedItemsControl.HeaderProperty, _viewAppearance[button].Key);
-                item.InputGestureText = _viewAppearance[button].Key switch
-                {
-                    "Str_View_Devices" => "F6 / Ctrl+T",
-                    "Str_Services_Title" => "F7",
-                    "Str_View_Topology" => "F8",
-                    "Str_View_KeepAlive" => "F9",
-                    "Str_Workspace_Terminal" => "F10 / Ctrl+Shift+T",
-                    _ => "Ctrl+E"
-                };
-                item.ToolTip = button.ToolTip;
-                item.Click += (_, _) =>
-                {
-                    button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                    if (button.ContextMenu?.IsOpen == true) button.ContextMenu.PlacementTarget = _toolbarOverflow;
-                };
-                menu.Items.Add(item);
-            }
-            return menu;
+            IsHitTestVisible = false, VerticalAlignment = VerticalAlignment.Top, Visibility = Visibility.Collapsed
+        };
+        private ScrollViewer? _shadowScroller;
+
+        private void BuildTabScrollShadow()
+        {
+            _tabScrollShadow.SetResourceReference(UIElement.OpacityProperty, "EdgeFadeOpacity");
+            Grid.SetRow(_tabScrollShadow, 3);
+            Grid.SetRowSpan(_tabScrollShadow, 2);
+            Panel.SetZIndex(_tabScrollShadow, 30);
+            WorkspaceHost.Children.Add(_tabScrollShadow);
+            WorkspaceHost.LayoutUpdated += (_, _) => UpdateTabScrollShadow();
         }
+
+        /// <summary>The tallest vertical scroller in the active view: the list the shadow belongs to.</summary>
+        private ScrollViewer? ActiveListScroller()
+        {
+            ScrollViewer? best = null;
+            void Walk(DependencyObject node)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(node); i++)
+                {
+                    var child = VisualTreeHelper.GetChild(node, i);
+                    if (child is UIElement { IsVisible: false }) continue;
+                    if (child is ScrollViewer sv && sv.ComputedVerticalScrollBarVisibility == Visibility.Visible
+                        && (best == null || sv.ActualHeight > best.ActualHeight)) best = sv;
+                    Walk(child);
+                }
+            }
+            Walk(TerminalLayout);
+            return best;
+        }
+
+        private void UpdateTabScrollShadow()
+        {
+            var scroller = _tabsAtBottom ? ActiveListScroller() : null;
+            if (!ReferenceEquals(scroller, _shadowScroller))
+            {
+                if (_shadowScroller != null)
+                {
+                    _shadowScroller.ScrollChanged -= ShadowScroller_ScrollChanged;
+                    _shadowScroller.Resources.Remove("ScrollBottomCueBrush");
+                }
+                _shadowScroller = scroller;
+                if (scroller != null) scroller.ScrollChanged += ShadowScroller_ScrollChanged;
+            }
+            _viewTabs.TryGetValue(_workspaceView, out var face);
+            bool on = scroller != null && scroller.VerticalOffset < scroller.ScrollableHeight - 0.5
+                && DevicesPane.ActualHeight > 0 && face != null && face.ActualHeight > 0;
+            if (scroller != null)
+            {
+                bool hidden = scroller.Resources.Contains("ScrollBottomCueBrush");
+                if (on && !hidden) scroller.Resources["ScrollBottomCueBrush"] = Brushes.Transparent;
+                else if (!on && hidden) scroller.Resources.Remove("ScrollBottomCueBrush");
+            }
+            var visibility = on ? Visibility.Visible : Visibility.Collapsed;
+            if (_tabScrollShadow.Visibility != visibility) _tabScrollShadow.Visibility = visibility;
+            foreach (var each in _viewTabs.Values)
+                if (((Grid)each.Child).Children[1] is Border idle && (!on || !ReferenceEquals(each, face))
+                    && idle.Visibility != Visibility.Collapsed) idle.Visibility = Visibility.Collapsed;
+            if (!on) return;
+
+            // Measured from the real positions, relative to the shadow's own grid row.
+            Point origin = new(0, WorkspaceHost.RowDefinitions[0].ActualHeight + WorkspaceHost.RowDefinitions[1].ActualHeight
+                + WorkspaceHost.RowDefinitions[2].ActualHeight);
+            Rect pane = DevicesPane.TransformToAncestor(WorkspaceHost).TransformBounds(new Rect(DevicesPane.RenderSize));
+            Rect tab = face!.TransformToAncestor(WorkspaceHost).TransformBounds(new Rect(face.RenderSize));
+            double top = pane.Bottom - ScrollShadowReach, bottom = Math.Max(pane.Bottom, tab.Bottom);
+
+            // The list's part: an overlay over the pane's foot only.
+            Thickness stroke = DevicesPane.BorderThickness;
+            CornerRadius radius = DevicesPane.CornerRadius;
+            Geometry clip = Controls.PickerBorder.RoundedGeometry(
+                new Rect(pane.X + stroke.Left, 0, Math.Max(0, pane.Width - stroke.Left - stroke.Right), ScrollShadowReach),
+                new Size(0, 0), new Size(0, 0),
+                new Size(Math.Max(0, radius.BottomRight - stroke.Right / 2), radius.BottomRight),
+                new Size(Math.Max(0, radius.BottomLeft - stroke.Left / 2), radius.BottomLeft));
+            clip.Freeze();
+            double span = bottom - top;
+            var margin = new Thickness(0, top - origin.Y, 0, 0);
+            if (_tabScrollShadow.Margin != margin) _tabScrollShadow.Margin = margin;
+            if (_tabScrollShadow.Height != ScrollShadowReach) _tabScrollShadow.Height = ScrollShadowReach;
+            if (_tabScrollShadow.Clip?.Bounds != clip.Bounds) _tabScrollShadow.Clip = clip;
+            // The overlay covers only the first part of the one gradient, so its stops are scaled
+            // to end where the pane does; the tab's layer picks up from there.
+            _tabScrollShadow.Background = ShadowSlice(0, ScrollShadowReach, span);
+
+            // The tab's part: its own layer between the fill and the label, in screen orientation
+            // (it is flipped back like the label), painted with the same gradient in place.
+            if (((Grid)face.Child).Children[1] is Border shade)
+            {
+                shade.Visibility = Visibility.Visible;
+                Rect layer = shade.TransformToAncestor(WorkspaceHost).TransformBounds(new Rect(shade.RenderSize));
+                shade.Background = ShadowSlice(layer.Top - top, layer.Height, span);
+            }
+        }
+
+        /// <summary>
+        /// One slice of the scroll shadow's single gradient (KillerShell's stops: clear, 0x38 at
+        /// half, 0x80 at the foot), for an element whose top sits <paramref name="offset"/> px into
+        /// a gradient <paramref name="span"/> px tall and which is <paramref name="height"/> px tall.
+        /// </summary>
+        private static Brush ShadowSlice(double offset, double height, double span)
+        {
+            var brush = new LinearGradientBrush { MappingMode = BrushMappingMode.Absolute,
+                StartPoint = new Point(0, -offset), EndPoint = new Point(0, span - offset) };
+            brush.GradientStops.Add(new GradientStop(Color.FromArgb(0x00, 0, 0, 0), 0));
+            brush.GradientStops.Add(new GradientStop(Color.FromArgb(0x38, 0, 0, 0), 0.5));
+            brush.GradientStops.Add(new GradientStop(Color.FromArgb(0x80, 0, 0, 0), 1));
+            brush.Freeze();
+            return brush;
+        }
+
+        private void ShadowScroller_ScrollChanged(object sender, ScrollChangedEventArgs e) => UpdateTabScrollShadow();
 
         private void NewTerminalView()
         {
