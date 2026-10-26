@@ -54,9 +54,11 @@ namespace KillerScan.Services
                     + "if($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Thumbprint -ne " + Data(thumb)
                     + "){throw 'The installed uninstall helper does not match its trusted publisher.'};\n";
             }
-            if (!silent)
-                script += "$confirm=[Diagnostics.Process]::Start($image,'/confirm-uninstall');if($null -eq $confirm){throw 'The uninstall confirmation did not start.'};"
-                    + "$confirm.WaitForExit();$answer=$confirm.ExitCode;$confirm.Dispose();if($answer -ne 0){exit $answer};\n";
+            // A machine uninstall asks in the unelevated wrapper below, before the UAC prompt.
+            const string confirmation = "$confirm=[Diagnostics.Process]::Start($image,'/confirm-uninstall');if($null -eq $confirm){throw 'The uninstall confirmation did not start.'};"
+                + "$confirm.WaitForExit();$answer=$confirm.ExitCode;$confirm.Dispose();if($answer -ne 0){exit $answer};";
+            if (!silent && !machine)
+                script += confirmation + "\n";
             script += "$stage=[IO.Path]::Combine($root,'.uninstall-'+[Guid]::NewGuid().ToString('N'));"
                 + "[IO.Directory]::CreateDirectory($stage)|Out-Null;$helper=[IO.Path]::Combine($stage,'KillerScan.exe');\n"
                 + "$input=[IO.File]::Open($image,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::Read);"
@@ -83,7 +85,11 @@ namespace KillerScan.Services
             if (machine)
             {
                 // The elevated command is immutable process data. It never reads code from TEMP.
-                string elevation = "$ErrorActionPreference='Stop';try{$s=New-Object Diagnostics.ProcessStartInfo;"
+                // Confirmation runs here, unelevated, so cancelling never spends a UAC prompt and the
+                // dialog never runs as administrator.
+                string elevation = "$ErrorActionPreference='Stop';try{"
+                    + (silent ? "" : "$image=[IO.Path]::Combine(" + Data(InstallDirectory(machine)) + ",'KillerScan.exe');" + confirmation)
+                    + "$s=New-Object Diagnostics.ProcessStartInfo;"
                     + "$s.FileName=" + Data(powershell) + ";$s.Arguments='" + inner + "';"
                     + "$s.UseShellExecute=$true;$s.Verb='runas';$s.WindowStyle=[Diagnostics.ProcessWindowStyle]::Hidden;"
                     + "$p=[Diagnostics.Process]::Start($s);if($null -eq $p){exit 1};$p.WaitForExit();$code=$p.ExitCode;$p.Dispose();exit $code"

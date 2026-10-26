@@ -22,8 +22,17 @@ internal static class UninstallCommandTests
                 {
                     var nested = Regex.Match(script, @"-EncodedCommand ([A-Za-z0-9+/=]+)");
                     if (!nested.Success) throw new InvalidOperationException("The elevation wrapper lost its immutable child command.");
-                    Parse(Decode("-EncodedCommand " + nested.Groups[1].Value));
+                    string elevated = Decode("-EncodedCommand " + nested.Groups[1].Value);
+                    Parse(elevated);
+                    // Ask before UAC, not after: cancelling must not cost an elevation, and the
+                    // confirmation window must not run as administrator.
+                    int confirm = script.IndexOf("/confirm-uninstall", StringComparison.Ordinal);
+                    if (elevated.Contains("/confirm-uninstall")
+                        || (silent ? confirm >= 0 : confirm < 0 || confirm > script.IndexOf("runas", StringComparison.Ordinal)))
+                        throw new InvalidOperationException("A machine uninstall confirms in the unelevated wrapper before elevating, and never when silent.");
                 }
+                else if (silent == script.Contains("/confirm-uninstall"))
+                    throw new InvalidOperationException("A per-user uninstall confirms exactly when it is not silent.");
             }
         Console.WriteLine("PASS Windows PowerShell parses all user/machine, silent/interactive completion commands.");
 
