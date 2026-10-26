@@ -76,9 +76,7 @@
 
     <SolidColorBrush x:Key="SurfaceBrush" Color="#3f4947" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
-    <!-- KillerScan exception (family/theme-contract.json): its darker ScanContentPaneBrush needs
-         the other panes one tier lighter than the family's #232a2b. -->
-    <SolidColorBrush x:Key="PaneBrush" Color="#343b3d" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <SolidColorBrush x:Key="PaneBrush" Color="#232a2b" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
     <SolidColorBrush x:Key="TableHeaderBrush" Color="#4b5652" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 

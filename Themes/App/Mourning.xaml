@@ -1,4 +1,4 @@
-<!-- KillerScans own theme values: keys only KillerScans views use. ThemeManager.AppTokens
+<!-- KillerScan's own theme values: keys only KillerScan's views use. ThemeManager.AppTokens
      (Services/AppTheme.cs) merges the Mourning values over the family palette. -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
