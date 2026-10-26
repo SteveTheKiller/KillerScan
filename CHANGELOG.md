@@ -55,6 +55,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Starting or finishing a scan while a Location import is still running no longer loses changes to the Locations list, and can no longer crash the app.
 - When another window or another copy of KillerScan deletes the Location a tab is in, the tab turns into a Temporary scan and says why. It keeps its results, which you can still save to a Location. Before, renames, approvals and finished scans kept writing into a hidden copy of the deleted Location that no list showed.
 - When a saved names, types, logins or scans file can't be read, the "Could not save changes" prompt now names that file. KillerScan still won't overwrite it, so you can repair, restore or remove it yourself.
+- Resizing the window or sliding the sidebar with a large topology diagram open no longer stutters. The diagram is redrawn a few times during the resize instead of on every frame.
 - An upgrade installed while KillerScan was running (winget, Chocolatey or an RMM tool) no longer leaves a full-size `.bak` copy of the old exe behind for good. The next install, update or uninstall removes it.
 - Uninstalling an all-users copy from Settings asks whether you're sure before the administrator prompt, not after it, and the question no longer runs as administrator.
 - When an all-users update can't be installed, KillerScan opens again on the version you had instead of staying closed with nothing said.

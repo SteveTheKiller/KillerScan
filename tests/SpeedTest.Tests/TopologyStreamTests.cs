@@ -37,6 +37,20 @@ internal static class TopologyStreamTests
         Require(trickle >= 1 && trickle <= 8, "40 devices over 0.8 s rebuild the diagram at most 8 times, not " + trickle + ".");
         Require(canvas.Children.OfType<Border>().Count() >= 540, "The final refresh shows the last device too.");
 
+        // A drag-resize or the sidebar slide delivers dozens of size changes a second.
+        var resized = typeof(ScanWorkspace).GetMethod("TopologyPane_SizeChanged",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+        Pump(TimeSpan.FromMilliseconds(400));
+        before = workspace.TopologyRefreshes;
+        for (int i = 0; i < 30; i++)
+        {
+            resized.Invoke(workspace, new object?[] { workspace, null });
+            Pump(TimeSpan.FromMilliseconds(16));
+        }
+        Pump(TimeSpan.FromMilliseconds(800));
+        int resizes = workspace.TopologyRefreshes - before;
+        Require(resizes >= 1 && resizes <= 4, "30 size changes over half a second rebuild the diagram 1 to 4 times, not " + resizes + ".");
+
         workspace.SetView("devices");
         before = workspace.TopologyRefreshes;
         workspace.Session.Devices.Add(new NetworkDevice { IpAddress = "10.0.3.200" });

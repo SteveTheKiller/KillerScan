@@ -102,9 +102,12 @@ namespace KillerScan.Controls
             UpdateTopologySettingsUi();
         }
 
+        // A drag-resize or the sidebar slide fires this per frame. The rebuild goes through the
+        // same coalescing timer as streamed results, so it runs at most once per interval and
+        // always once more after the last change.
         private void TopologyPane_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (_showTopology) RefreshTopology();
+            if (_showTopology) ScheduleViewRefresh();
         }
 
         /// <summary>How many times the diagram has been rebuilt, for the streaming budget check.</summary>
