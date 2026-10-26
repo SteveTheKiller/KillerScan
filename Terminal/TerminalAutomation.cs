@@ -48,21 +48,33 @@ namespace KillerScan.Terminal
             if (!_automationTimer.IsEnabled) _automationTimer.Start();
         }
 
+        // Text offset where each row starts, plus the total at the end, for one buffer version.
+        // Rebuilt at most once per change: a screen reader asks for offsets on every 200 ms tick
+        // and on every query, and a long scrollback made each of those a full rebuild.
+        private int[] _rowStarts = Array.Empty<int>();
+        private int _rowStartsVersion = -1;
+
+        private int[] RowStarts()
+        {
+            if (_rowStartsVersion == _buf.Version && _rowStarts.Length == _buf.TotalLines + 1) return _rowStarts;
+            var starts = new int[_buf.TotalLines + 1];
+            for (int r = 0; r < _buf.TotalLines; r++) starts[r + 1] = starts[r] + RowTextLength(_buf.LineAt(r)) + Environment.NewLine.Length;
+            _rowStarts = starts;
+            _rowStartsVersion = _buf.Version;
+            return starts;
+        }
+
+        private static int RowTextLength(Cell[] cells) => string.Concat(cells.Select(c => c.Text)).TrimEnd().Length;
+
         internal int TextOffset(int row, int col)
         {
-            int offset = 0;
-            for (int r = 0; r <= row && r < _buf.TotalLines; r++)
-            {
-                var cells = _buf.LineAt(r);
-                string text = string.Concat(cells.Select(c => c.Text)).TrimEnd();
-                if (r == row)
-                {
-                    string prefix = string.Concat(cells.Take(Math.Max(0, col)).Select(c => c.Text));
-                    return offset + Math.Min(prefix.Length, text.Length);
-                }
-                offset += text.Length + Environment.NewLine.Length;
-            }
-            return offset;
+            var starts = RowStarts();
+            if (row >= _buf.TotalLines) return starts[_buf.TotalLines];
+            if (row < 0) return 0;
+            var cells = _buf.LineAt(row);
+            int prefix = 0;
+            for (int c = 0; c < Math.Min(Math.Max(0, col), cells.Length); c++) prefix += cells[c].Text.Length;
+            return starts[row] + Math.Min(prefix, starts[row + 1] - starts[row] - Environment.NewLine.Length);
         }
 
         internal (int Start, int End) AutomationSelection
@@ -82,24 +94,23 @@ namespace KillerScan.Terminal
         internal (int Row, int Col) CellFromOffset(int offset)
         {
             offset = Math.Max(0, offset);
-            for (int r = 0; r < _buf.TotalLines; r++)
+            if (_buf.TotalLines == 0) return (-1, 0);
+            var starts = RowStarts();
+            // The last row whose start is at or before the offset; the final row takes any overflow.
+            int r = Array.BinarySearch(starts, 0, _buf.TotalLines, offset);
+            if (r < 0) r = ~r - 1;
+            while (r + 1 < _buf.TotalLines && starts[r + 1] == offset) r++;
+            r = Math.Max(0, Math.Min(r, _buf.TotalLines - 1));
+            offset -= starts[r];
+            var cells = _buf.LineAt(r);
+            int used = 0;
+            for (int c = 0; c < cells.Length; c++)
             {
-                var cells = _buf.LineAt(r);
-                int length = string.Concat(cells.Select(c => c.Text)).TrimEnd().Length + Environment.NewLine.Length;
-                if (offset < length || r == _buf.TotalLines - 1)
-                {
-                    int used = 0;
-                    for (int c = 0; c < cells.Length; c++)
-                    {
-                        if (cells[c].Ch < 0) continue;
-                        if (used >= offset) return (r, c);
-                        used += cells[c].Text.Length;
-                    }
-                    return (r, cells.Length);
-                }
-                offset -= length;
+                if (cells[c].Ch < 0) continue;
+                if (used >= offset) return (r, c);
+                used += cells[c].Text.Length;
             }
-            return (_buf.TotalLines - 1, 0);
+            return (r, cells.Length);
         }
 
         internal void AutomationSelect(int start, int end)

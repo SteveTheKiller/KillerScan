@@ -41,6 +41,33 @@ internal static class TerminalAccessibilityTests
                 Require(copy.GetText(-1) == "transcrip", "Endpoint movement updates only the requested endpoint.");
                 Require(provider.DocumentRange.GetText(5) == "known", "Bounded text reads honor their maximum length.");
                 Require(provider.GetVisibleRanges().Length == 1, "Viewport exposes a text range.");
+                using (var offsets = new TerminalControl())
+                {
+                    offsets.ShowScript("alpha  \r\n\r\n中beta\r\n   \r\nlast line");
+                    var buffer = offsets.Buffer;
+                    int Reference(int row, int col)
+                    {
+                        int total = 0;
+                        for (int r = 0; r <= row && r < buffer.TotalLines; r++)
+                        {
+                            var cells = buffer.LineAt(r);
+                            string line = string.Concat(System.Linq.Enumerable.Select(cells, c => c.Text)).TrimEnd();
+                            if (r == row)
+                                return total + Math.Min(string.Concat(System.Linq.Enumerable.Select(System.Linq.Enumerable.Take(cells, Math.Max(0, col)), c => c.Text)).Length, line.Length);
+                            total += line.Length + Environment.NewLine.Length;
+                        }
+                        return total;
+                    }
+                    for (int row = -1; row <= buffer.TotalLines; row++)
+                        for (int col = 0; col <= buffer.Cols + 1; col++)
+                            Require(offsets.TextOffset(row, col) == Reference(row, col), "Cached text offsets match the full rebuild at " + row + "," + col);
+                    int end = offsets.TextOffset(buffer.TotalLines, 0);
+                    for (int at = 0; at <= end; at++)
+                    {
+                        var cell = offsets.CellFromOffset(at);
+                        Require(offsets.TextOffset(cell.Row, cell.Col) <= at, "An offset maps to a cell at or before it: " + at);
+                    }
+                }
                 terminal.ShowScript("\r\n\u4e2d e\u0301 \U0001f469\u200d\U0001f4bb");
                 Require(terminal.GetText().Contains("\u4e2d e\u0301 \U0001f469\u200d\U0001f4bb"), "Transcript preserves complete Unicode clusters without continuation spaces.");
                 provider.DocumentRange.FindText("\u4e2d e\u0301 \U0001f469\u200d\U0001f4bb", false, false)!.Select();
