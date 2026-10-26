@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KillerScan.Engine.Tests", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KillerScan.Engine.Example", "samples\KillerScan.Engine.Example\KillerScan.Engine.Example.csproj", "{A3E59B17-6C2D-4F80-B7E4-15D9F0C83E33}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpeedTest.Tests", "tests\SpeedTest.Tests\SpeedTest.Tests.csproj", "{4F4FA6F2-3059-4A30-8C6B-0A03C632D263}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{A3E59B17-6C2D-4F80-B7E4-15D9F0C83E33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3E59B17-6C2D-4F80-B7E4-15D9F0C83E33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3E59B17-6C2D-4F80-B7E4-15D9F0C83E33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F4FA6F2-3059-4A30-8C6B-0A03C632D263}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F4FA6F2-3059-4A30-8C6B-0A03C632D263}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F4FA6F2-3059-4A30-8C6B-0A03C632D263}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F4FA6F2-3059-4A30-8C6B-0A03C632D263}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
