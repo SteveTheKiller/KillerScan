@@ -17,6 +17,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Per-user and portable updates no longer run their helper from a script in the temp folder.
 - Installation cleanup preserves unrelated files and folders; registered silent uninstall waits for owned removal and reports failures.
 - Elevated updates use the signed installed helper and verify the release identity, digest and publisher in protected staging.
+- Per-user and portable updates now require the same publisher signature, product and newer version as all-users updates, instead of only a matching checksum. An all-users update checks the download before copying it into the installation folder, removes a staged copy that fails verification, and accepts the download only from an ordinary file on a local drive.
 - Preference and history saves preserve existing files on failure, keep unsaved edits for retry, and report when changes could not be saved.
 - Concurrent app instances preserve saved scans and retention changes instead of overwriting newer history.
 - File dialogs stay responsive on slow or crowded folders, cancel stale loads and identify incomplete listings.

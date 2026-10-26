@@ -99,6 +99,10 @@ namespace KillerScan.Services
             var path = Path.Combine(Path.GetTempPath(),
                                     $"{AppInfo.DisplayName}_update_{Guid.NewGuid():N}.exe");
             File.WriteAllBytes(path, exeBytes);
+            // The checksum file comes from the same release as the exe, so it only proves the
+            // download arrived intact. The signature, product and version prove where it came from.
+            try { ReleaseIdentity.Verify(path, tag, requireInstalledSignature: false); }
+            catch { DiscardDownload(path); throw; }
             UpdateImagePublication.RememberVerified(path, actual);
             return path;
         }

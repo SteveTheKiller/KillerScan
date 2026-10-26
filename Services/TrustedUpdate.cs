@@ -64,7 +64,7 @@ namespace KillerScan.Services
                 using var creator = WindowsIdentity.GetCurrent();
                 ValidateMachineOwner(directory, creator.Owner
                     ?? throw new SecurityException("The machine staging creator owner is unavailable."));
-                string download = Path.GetFullPath(Encoding.Unicode.GetString(Convert.FromBase64String(args[1])));
+                string download = ReleaseIdentity.RequireLocalFile(Encoding.Unicode.GetString(Convert.FromBase64String(args[1])));
                 string expected = args[2], version = NormalizeVersion(args[3]);
                 UpdateImagePublication.RememberVerified(download, expected);
                 if (!Guid.TryParseExact(args[6], "N", out _)) throw new SecurityException("The update staging identity is invalid.");
@@ -80,26 +80,7 @@ namespace KillerScan.Services
                 if (!Hex(hash.ComputeHash(source)).Equals(expected, StringComparison.OrdinalIgnoreCase))
                     throw new SecurityException("The update changed after download verification.");
                 string staged = Path.Combine(directory, ".update-" + args[6] + ".exe");
-                if (File.Exists(staged) || Directory.Exists(staged)) throw new IOException("The update staging path is already occupied.");
-                ExecutableDeployment.Install(download, staged);
-                using (var protectedCopy = new FileStream(staged, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    if (!Hex(hash.ComputeHash(protectedCopy)).Equals(expected, StringComparison.OrdinalIgnoreCase))
-                        throw new SecurityException("The protected update staging failed SHA-256 verification.");
-                    // Release identity belongs to the protected bytes that will be published,
-                    // rather than another reopening of the caller-controlled source pathname.
-                    var installedSigner = CodeSignature.GetSignerInfo();
-                    var incomingSigner = CodeSignature.GetSignerInfo(staged);
-                    if (!installedSigner.valid || !incomingSigner.valid
-                        || !string.Equals(installedSigner.thumb, incomingSigner.thumb, StringComparison.OrdinalIgnoreCase))
-                        throw new SecurityException("The update must have a valid signature from the installed publisher certificate.");
-                    var incoming = AssemblyName.GetAssemblyName(staged);
-                    var installed = Assembly.GetExecutingAssembly().GetName();
-                    if (incoming.Name != "KillerScan" || incoming.Version == null
-                        || NormalizeVersion(incoming.Version.ToString()) != version
-                        || Version.Parse(version) <= Version.Parse(NormalizeVersion(installed.Version!.ToString())))
-                        throw new SecurityException("The update's product or release version does not match a newer KillerScan release.");
-                }
+                Stage(download, staged, expected, image => ReleaseIdentity.Verify(image, version, requireInstalledSignature: true));
                 string originalHash;
                 using (var original = new FileStream(target, FileMode.Open, FileAccess.Read, FileShare.Read))
                     originalHash = Hex(hash.ComputeHash(original));
@@ -113,6 +94,30 @@ namespace KillerScan.Services
             {
                 Console.Error.WriteLine(error.Message);
                 return KillerFamily.Deployment.InstallerExitCodes.FromException(error);
+            }
+        }
+
+        /// <summary>Copies a hash-verified download into protected staging. The caller holds the
+        /// download open without delete sharing, so its path cannot be swapped: release identity is
+        /// checked there before anything reaches the installation folder, and again on the staged
+        /// bytes that will be published. A staged copy that fails either check is deleted.</summary>
+        internal static void Stage(string download, string staged, string expected, Action<string> verifyIdentity)
+        {
+            verifyIdentity(download);
+            if (File.Exists(staged) || Directory.Exists(staged)) throw new IOException("The update staging path is already occupied.");
+            try
+            {
+                ExecutableDeployment.Install(download, staged);
+                using (var protectedCopy = new FileStream(staged, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var hash = SHA256.Create())
+                    if (!Hex(hash.ComputeHash(protectedCopy)).Equals(expected, StringComparison.OrdinalIgnoreCase))
+                        throw new SecurityException("The protected update staging failed SHA-256 verification.");
+                verifyIdentity(staged);
+            }
+            catch
+            {
+                try { File.Delete(staged); } catch { /* The failure below is what the caller reports. */ }
+                throw;
             }
         }
 
@@ -144,11 +149,7 @@ namespace KillerScan.Services
             + ")}catch [ArgumentException]{};if($null -ne $p -and $p.StartTime.ToUniversalTime().Ticks -eq "
             + ticks.ToString(CultureInfo.InvariantCulture) + " -and -not $p.WaitForExit(60000)){exit 1618};";
 
-        private static string NormalizeVersion(string? text)
-        {
-            if (!Version.TryParse(text, out var version) || version.Build < 0) throw new SecurityException("The release version is invalid.");
-            return version.ToString(3);
-        }
+        private static string NormalizeVersion(string? text) => ReleaseIdentity.NormalizeVersion(text);
         private static string Data(string text) => "[Text.Encoding]::Unicode.GetString([Convert]::FromBase64String('"
             + Convert.ToBase64String(Encoding.Unicode.GetBytes(text)) + "'))";
         private static string Hex(byte[] bytes) => BitConverter.ToString(bytes).Replace("-", "");

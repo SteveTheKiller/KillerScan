@@ -34,6 +34,7 @@ internal static class Program
                 InstallationCleanupTests.Run();
                 UpdateHandoffTests.Run();
                 UpdateHelperLaunchTests.Run();
+                ReleaseIdentityTests.Run();
                 return 0;
             }
             if (args.SequenceEqual(new[] { "--loopback-headers" })) { await LoopbackHeaders(); return 0; }
@@ -117,6 +118,8 @@ internal static class Program
                 { InstallationCleanupTests.Run(); return Task.CompletedTask; });
                 await Run("Elevated update handoff rejects untrusted targets before launch", () =>
                 { UpdateHandoffTests.Run(); return Task.CompletedTask; });
+                await Run("Updates need the installed publisher and a newer release, and refused staging is removed", () =>
+                { ReleaseIdentityTests.Run(); return Task.CompletedTask; });
                 await Run("HTML report logo returns after a theme without one", ReportLogoTests.Run);
                 await Run("Outline button hover text stays readable in every accent", OutlineHoverThemeTests.RunIsolated);
                 await Run("Radio and checkbox indicators sit on the middle of their labels", RadioCenterUiTests.RunIsolated);
