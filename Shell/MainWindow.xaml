@@ -156,7 +156,7 @@
         </Border>
 
         <!-- The workspace host and theme-aware icon rail share the content area. -->
-        <Grid x:Name="ScaleHost" Grid.Row="1" Grid.RowSpan="2">
+        <kl:UnclippedGrid x:Name="ScaleHost" Grid.Row="1" Grid.RowSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>   <!-- 0: scan toolbar -->
                 <RowDefinition Height="*"/>      <!-- 1: devices pane -->
@@ -634,7 +634,7 @@
         <!-- Named so the shadow can be switched off. Windows 98 had no drop shadows anywhere, and
              PaneShadow is a StaticResource effect that a palette cannot reach - so Theme.cs nulls
              the Effect on 98SE and restores it otherwise. Same approach KillerShell takes. -->
-        <Grid x:Name="WorkspaceHost" Grid.Row="1" Grid.Column="1"
+        <kl:UnclippedGrid x:Name="WorkspaceHost" Grid.Row="1" Grid.Column="1"
               Margin="{DynamicResource DevicesPaneMargin}" Panel.ZIndex="10">
         <Border x:Name="DevicesPaneShadow" Grid.Row="1" IsHitTestVisible="False"
                 Background="{DynamicResource ScanContentPaneBrush}"
@@ -666,9 +666,9 @@
                 Margin="{DynamicResource PaneBevelInnerMargin}"
                 BorderBrush="{DynamicResource PaneBevelLight2Brush}"
                 BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
-        </Grid>
+        </kl:UnclippedGrid>
 
-        </Grid>
+        </kl:UnclippedGrid>
         <!-- end ScaleHost -->
 
         <!-- Status Bar -->
