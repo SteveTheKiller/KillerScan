@@ -81,6 +81,18 @@ internal static class VendorDatabaseTests
         Require(device.SshBanner == "SSH-2.0-x\u001b]0;title\u0007", "Short device text keeps its original characters.");
         Require(device.HttpServer.Length == 1023 && !char.IsHighSurrogate(device.HttpServer[device.HttpServer.Length - 1]), "A cap never splits a surrogate pair.");
         Console.WriteLine("PASS: device-sent text is length-bounded without rewriting what the device said.");
+
+        // Only the block sizes the lookup understands (24, 28 and 36 bits) become keys. A /25 must not
+        // turn into a /24 key that overwrites the real MA-L owner, and a /2 must not write an empty key.
+        var (count, parsed) = VendorDbUpdater.ParseManuf(
+            "00:00:0C\tCisco\tCisco Systems\n" +
+            "00:50:C2:00:00:00/28\tIeee\tIEEE Registration\n" +
+            "70:B3:D5:00:00:00/36\tSmall\tSmall Block\n" +
+            "00:00:0C:80:00:00/25\tSquat\tSquatter\n" +
+            "00:00:00:00:00:00/2\tEmpty\tEmpty Key\n");
+        Require(count == 3 && parsed.ToString() == "00000C\tCisco Systems\n0050C20\tIEEE Registration\n70B3D5000\tSmall Block\n",
+            "manuf masks other than 24, 28 and 36 are skipped: " + count + " " + parsed.ToString().Replace("\n", " | "));
+        Console.WriteLine("PASS: manuf blocks outside 24, 28 and 36 bits are skipped instead of truncated.");
         return Task.CompletedTask;
     }
 

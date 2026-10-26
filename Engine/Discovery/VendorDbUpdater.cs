@@ -178,7 +178,7 @@ namespace KillerScan.Engine
         }
 
         // Wireshark manuf: "<prefix[/mask]>\t<short>\t<long>"  (/28 = MA-M, /36 = MA-S, none = MA-L).
-        private static (int, StringBuilder) ParseManuf(string content)
+        internal static (int, StringBuilder) ParseManuf(string content)
         {
             var sb = new StringBuilder(); int n = 0;
             foreach (var raw in content.Split('\n'))
@@ -196,10 +196,12 @@ namespace KillerScan.Engine
                 int slash = prefix.IndexOf('/');
                 if (slash >= 0)
                 {
-                    int.TryParse(prefix[(slash + 1)..], out bits);
+                    if (!int.TryParse(prefix[(slash + 1)..], out bits)) continue;
                     prefix = prefix[..slash];
                 }
-                if (bits <= 0) bits = 24;
+                // The lookup keys MA-L, MA-M and MA-S blocks only; any other mask would be truncated
+                // into a shorter key that overwrites the real owner of the wider block.
+                if (bits != 24 && bits != 28 && bits != 36) continue;
                 int nib = bits / 4;
                 var hex = new string([.. prefix.Where(Uri.IsHexDigit)]).ToUpperInvariant();
                 if (hex.Length < nib) continue;

@@ -36,6 +36,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - HTTP fingerprints connect to the device directly, so a system or PAC proxy can no longer answer and have its page reported as the device.
 - NetBIOS names are accepted only from validated replies sent by the queried host.
 - Bonjour (mDNS) names and services land only on the device they describe. Another device's question no longer names the device that asked, a relayed answer from a mesh router or Bonjour gateway goes to the device it names instead of the router, and a scan bound to one adapter ignores answers from other networks.
+- A vendor database update skips manufacturer blocks of unusual sizes instead of filing them under a wider block, so they no longer replace the real owner of that wider block.
 - The PowerShell `scan` and `probe` commands return device objects instead of nothing, and failures, timeouts and usage errors throw with the app's message and exit code. Arguments such as a folder path ending in a backslash reach the app intact.
 - The engine's scan APIs refuse malformed or oversized targets and a port concurrency below 1 before any network or DNS cache work, instead of reporting an empty scan or waiting forever.
 - Saving an export over an existing file keeps the old file intact if the save fails partway. This covers CSV, HTML, SVG, PNG and JPEG exports, history CSV, Keep Alive and terminal saves, and command-line `/export`.
