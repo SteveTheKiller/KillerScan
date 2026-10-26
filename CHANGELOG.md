@@ -70,6 +70,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Balanced the Technical page columns by moving the glossary to the left.
 
 ### Added
+- Speed test, Saved scans and History can be dragged into any order on the rail, and the order is kept. Theme, language and shortcuts stay at the bottom edge, as in the other Killer apps.
 - Scan settings beside Scan selects discovery and fingerprint checks, saves them with profiles, and applies them to normal and deep scans. (#6) (Thanks @MrCodeLabs)
 - Added Slovenian across the app, installation prompts, website and help. (#5) (Thanks @MrCodeLabs)
 - Scan settings can let deep scans fingerprint unknown open ports. It is off by default, so unknown ports get a connection check only.

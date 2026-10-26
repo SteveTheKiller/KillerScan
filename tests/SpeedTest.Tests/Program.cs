@@ -100,6 +100,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--outline-hover-ui" })) { await OutlineHoverThemeTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--radio-center-ui" })) { await RadioCenterUiTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--shrink-to-fit" })) { await ShrinkToFitTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--rail-order" })) { await RailOrderTests.Run(); return 0; }
             Require(args.All(value => value == "--worker" || value == "--internet" || value == "--speed-loopback"),
                 "Usage: SpeedTest.Tests.exe [--speed-loopback] [--worker] [--internet]");
             if (!args.Contains("--speed-loopback"))
@@ -120,6 +121,7 @@ internal static class Program
                 await Run("Outline button hover text stays readable in every accent", OutlineHoverThemeTests.RunIsolated);
                 await Run("Radio and checkbox indicators sit on the middle of their labels", RadioCenterUiTests.RunIsolated);
                 await Run("Sidebar text shrinks a little before it is trimmed", ShrinkToFitTests.Run);
+                await Run("Theme, language and shortcuts hold the rail edge; other rail buttons keep a saved order", RailOrderTests.Run);
                 await Run("Metric units, median, jitter and unavailable values", Metrics);
                 await Run("Scan terminal progress stays on one line and results fit narrow widths", ScanPresentation);
                 await Run("Terminal history survives resizing, clears and shell replacement", TerminalHistory);
