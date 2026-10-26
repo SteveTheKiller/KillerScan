@@ -46,6 +46,10 @@ namespace KillerScan.Services
             using var helper = platform.Start(start) ?? throw new IOException("The trusted update helper did not start.");
             helper.WaitForExit();
             if (helper.ExitCode != 0) throw new Win32Exception(helper.ExitCode);
+            // The verified copy now sits in protected staging, and its own report lives beside it, so
+            // the download and the report written above are no longer anyone's recovery path.
+            UpdateService.DiscardDownload(download);
+            UpdateService.DiscardDownload(download + ".recovery.txt");
         }
 
         internal static int Apply(string[] args)

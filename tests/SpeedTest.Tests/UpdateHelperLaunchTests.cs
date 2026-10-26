@@ -31,6 +31,26 @@ internal static class UpdateHelperLaunchTests
             Require(swapped.Exit != 0 && swapped.Target.SequenceEqual(Original) && !swapped.Relaunched && swapped.ReportShown,
                 "A download replaced after verification is refused and its recovery report is shown: " + swapped);
             Console.WriteLine("PASS the unelevated update helper publishes only the verified image and refuses a swapped download.");
+
+            // The elevated helper has no window to report in, so a refused update reopens the
+            // installed copy instead of leaving KillerScan closed with nothing said.
+            var refused = Case(root, "elevated-swapped", standIn.Concat(new byte[] { 0 }).ToArray(), standIn, elevated: true);
+            Require(refused.Exit != 0 && refused.Target.SequenceEqual(Original) && refused.Relaunched && !refused.ReportShown,
+                "A refused elevated publication relaunches the installed copy: " + refused);
+            Console.WriteLine("PASS a failed elevated publication reopens the installed KillerScan.");
+
+            // Downloads from earlier attempts are swept; recent ones and other files are not.
+            string temp = Path.Combine(root, "temp");
+            Directory.CreateDirectory(temp);
+            string old = Path.Combine(temp, "KillerScan_update_" + Guid.NewGuid().ToString("N") + ".exe");
+            string recent = Path.Combine(temp, "KillerScan_update_" + Guid.NewGuid().ToString("N") + ".exe");
+            string other = Path.Combine(temp, "KillerScan_update_notes.exe");
+            foreach (string file in new[] { old, old + ".recovery.txt", recent, other }) File.WriteAllBytes(file, Original);
+            foreach (string file in new[] { old, old + ".recovery.txt", other }) File.SetLastWriteTimeUtc(file, DateTime.UtcNow.AddHours(-2));
+            UpdateService.SweepStaleDownloads(temp, DateTime.UtcNow);
+            Require(!File.Exists(old) && !File.Exists(old + ".recovery.txt") && File.Exists(recent) && File.Exists(other),
+                "Only update downloads and reports older than an hour are swept.");
+            Console.WriteLine("PASS stale update downloads and their reports are swept.");
         }
         finally
         {
@@ -96,7 +116,7 @@ internal static class UpdateHelperLaunchTests
         public override string ToString() => "exit " + Exit + ", relaunched " + Relaunched + ", report shown " + ReportShown;
     }
 
-    private static Outcome Case(string root, string name, byte[] download, byte[] verified)
+    private static Outcome Case(string root, string name, byte[] download, byte[] verified, bool elevated = false)
     {
         string folder = Path.Combine(root, name);
         Directory.CreateDirectory(folder);
@@ -109,8 +129,9 @@ internal static class UpdateHelperLaunchTests
         string shown = Path.Combine(folder, "report-shown.txt");
         string overrides = "$ops.Relaunch = { param($plan) [IO.File]::WriteAllText('" + relaunched + "', 'yes') }\n" +
             "$ops.ShowReport = { param($path) [IO.File]::WriteAllText('" + shown + "', $path) }";
-        string script = UpdateImagePublication.Script(path, target, false, "https://example.invalid/releases", "KillerScan",
-            showReport: true, overrides: overrides);
+        // The elevated publication never opens a report window; TrustedUpdate builds it without one.
+        string script = UpdateImagePublication.Script(path, target, elevated, "https://example.invalid/releases", "KillerScan",
+            showReport: !elevated, overrides: overrides);
         using var process = Process.Start(UpdateService.HelperStart(script)) ?? throw new IOException("The update helper did not start.");
         if (!process.WaitForExit(60000)) { process.Kill(); throw new TimeoutException("The update helper did not finish."); }
         return new Outcome { Exit = process.ExitCode, Target = File.ReadAllBytes(target), Relaunched = File.Exists(relaunched),

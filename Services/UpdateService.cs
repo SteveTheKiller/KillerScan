@@ -96,6 +96,7 @@ namespace KillerScan.Services
             if (!actual.Equals(expected, StringComparison.OrdinalIgnoreCase))
                 throw new Exception("checksum mismatch");
 
+            SweepStaleDownloads(Path.GetTempPath(), DateTime.UtcNow);
             var path = Path.Combine(Path.GetTempPath(),
                                     $"{AppInfo.DisplayName}_update_{Guid.NewGuid():N}.exe");
             File.WriteAllBytes(path, exeBytes);
@@ -182,6 +183,30 @@ namespace KillerScan.Services
             }
             catch { }
             return "";
+        }
+
+        /// <summary>Deletes update downloads and recovery reports from earlier attempts that were
+        /// refused, declined or interrupted. Only names this app writes are touched, and only after an
+        /// hour, so a download another window is installing right now is left alone.</summary>
+        internal static void SweepStaleDownloads(string directory, DateTime utcNow)
+        {
+            string prefix = AppInfo.DisplayName + "_update_";
+            string[] files;
+            try { files = Directory.GetFiles(directory, prefix + "*.exe*"); }
+            catch { return; }
+            foreach (string file in files)
+            {
+                string name = Path.GetFileName(file);
+                string rest = name.Substring(prefix.Length);
+                if (!rest.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) && !rest.EndsWith(".exe.recovery.txt", StringComparison.OrdinalIgnoreCase))
+                    continue;
+                if (rest.Length < 32 || !Guid.TryParseExact(rest.Substring(0, 32), "N", out _) || rest[32] != '.') continue;
+                try
+                {
+                    if (utcNow - File.GetLastWriteTimeUtc(file) > TimeSpan.FromHours(1)) File.Delete(file);
+                }
+                catch { /* In use or protected: a later sweep gets it. */ }
+            }
         }
 
         /// <summary>Deletes a downloaded update that will not be installed.</summary>
