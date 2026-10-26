@@ -126,13 +126,11 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - A name containing a device keyword, such as "synology" or "pihole", is now heavy evidence rather than the final word, so clearer protocol answers can outvote it. A UniFi or UBNT name now shows Switch/AP instead of the generic Network type.
 - Trusted devices are now called approved devices, and approving is always a choice you make.
 - Command-line scans without `/location` no longer apply saved device names or types, and save nothing.
-- Updated the app and engine JSON dependency to 10.0.13.
+- Updated the app and engine JSON dependency to 10.0.14.
 - Updated and pinned the build/release actions to current compatible stable versions.
 - Clarified sent-byte upload throughput and its acknowledgment requirement in the app, engine and website documentation.
 - Hovered menu and list items show their text in the theme accent, lightened or darkened only as far as needed to stay readable on the hover fill.
-
-### Changed
-
+- The deployment guide explains that automatic updates and the registered uninstall do not work where Windows PowerShell runs in Constrained Language Mode, and how to update and remove KillerScan there.
 - Wordmarks and headings are raised with a subtle bevel in their own color instead of a dark outline; wordmarks keep their drop shadow. The Dark theme's red accent is the brand red again instead of a pink tint.
 - Theme menu hover rows reach the right edge with the same inset as the left.
 

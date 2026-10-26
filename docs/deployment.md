@@ -29,9 +29,21 @@ The interactive registered command keeps the uninstall confirmation. The legacy 
 
 Automatic elevated updates run only through the protected all-users installation. The installed helper validates its directory ownership, parent process identity, retained SHA-256, product name, requested newer assembly version and signing certificate. It copies the download into protected staging and verifies those protected bytes before publication. The publication command contains immutable code and waits for the exact parent/helper instances to exit.
 
-The incoming release must validate with the same signing certificate as the installed app. Certificate rotation, an unsigned installation, an untrusted installation directory or a portable copy requiring elevation uses the manual download path instead. A canceled or rejected handoff preserves the downloaded file.
+The incoming release must validate with the same signing certificate as the installed app. Certificate rotation, an unsigned installation, an untrusted installation directory or a portable copy in a folder its user cannot write uses the manual download path instead. A per-user or portable copy that is running as administrator but can write its own folder updates through the per-user helper, not the protected one. A canceled or rejected handoff preserves the downloaded file until a later update sweeps downloads more than an hour old.
 
-The original download has a recovery report naming the protected staging and report locations. Publication failures retain complete recovery files and the manual release URL. A completed handoff means the publication helper started; actual publication can still fail afterward, so retain its report when investigating an update.
+Until the handoff completes, the original download has a recovery report naming the protected staging and report locations. Once the protected helper has staged its verified copy, the download and that report are deleted. A completed handoff means the publication helper started; actual publication can still fail afterward. In that case the helper reopens the installed copy through Explorer, so it runs without elevation, and keeps its report beside the staged file in the installation folder. Retain that report when investigating an update.
+
+## Constrained Language Mode
+
+Every helper that completes an update or an uninstall is a Windows PowerShell command: the per-user update swap, the protected update publication, the registered UninstallString and QuietUninstallString, and the Chocolatey uninstall script that calls them. These commands create .NET objects such as streams, mutexes, registry keys and processes. Where AppLocker or Windows Defender Application Control enforces script rules, or `__PSLockdownPolicy` is set, Windows PowerShell runs in Constrained Language Mode and refuses those objects. On such a machine, automatic updates fail with a PowerShell error, and the registered uninstall fails from Settings, from Chocolatey and from deployment tools.
+
+A publisher rule for the KillerScan signing certificate does not help, because these commands are encoded command lines, not signed script files. This limitation stays until completion moves into the signed executable. Installing with `KillerScan.exe /silent` does not use these helpers. To update on such a machine, run the new release's `KillerScan.exe /silent` as administrator. To remove an all-users installation by hand:
+
+1. Close KillerScan for every signed-in user.
+2. Delete `%ProgramFiles%\KillerScan`.
+3. Delete the registry keys `HKLM\Software\KillerScan` and `HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall\KillerScan`.
+4. Delete the `KillerScan` folder from the all-users Start menu, `%ProgramData%\Microsoft\Windows\Start Menu\Programs`.
+5. Remove `%ProgramFiles%\KillerScan` from the system `Path` if it is listed there.
 
 ## Validation boundary
 
