@@ -52,6 +52,36 @@ internal static class SafeProbeTests
         finally { NetworkPlatform.Current = platform; }
         Console.WriteLine("PASS: deep fingerprinting skips raw services and keeps unknown ports connect-only by default.");
         await ProxyIgnored();
+        await RacesObserved();
+    }
+
+    // A connect or read that loses its timeout race still faults later; nothing may leave that
+    // fault for the finalizer to report as an unobserved task exception.
+    private static async Task RacesObserved()
+    {
+        int unobserved = 0;
+        EventHandler<UnobservedTaskExceptionEventArgs> count = (_, e) => { Interlocked.Increment(ref unobserved); e.SetObserved(); };
+        // Faults left over from earlier checks are not this check's to count.
+        GC.Collect(); GC.WaitForPendingFinalizers();
+        TaskScheduler.UnobservedTaskException += count;
+        var platform = NetworkPlatform.Current;
+        try
+        {
+            NetworkPlatform.Current = new QuietPlatform();
+            var scanner = new NetworkScanner(new IsolatedDiscovery());
+            var options = new ScanOptions { ReverseDns = false, Icmp = false, Snmp = false, Netbios = false };
+            await scanner.DeepProbeHostAsync("127.0.0.1", CancellationToken.None, options);
+            // Refused loopback connects on Windows finish about two seconds after the race ends.
+            await Task.Delay(3000);
+            for (int i = 0; i < 3; i++) { GC.Collect(); GC.WaitForPendingFinalizers(); }
+        }
+        finally
+        {
+            NetworkPlatform.Current = platform;
+            TaskScheduler.UnobservedTaskException -= count;
+        }
+        Require(unobserved == 0, unobserved + " probe task fault(s) were never observed.");
+        Console.WriteLine("PASS: probe timeout races observe the tasks they abandon.");
     }
 
     // A system proxy must never answer for the device: fingerprinting talks to the target directly.

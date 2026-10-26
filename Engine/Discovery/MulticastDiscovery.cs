@@ -65,7 +65,7 @@ namespace KillerScan.Engine
                 }
 
                 var deadline = DateTime.UtcNow.AddMilliseconds(listenMs);
-                var recv = udp.ReceiveAsync();
+                var recv = udp.ReceiveAsync().ObserveFault();
                 while (DateTime.UtcNow < deadline && !ct.IsCancellationRequested)
                 {
                     if (await Task.WhenAny(recv, Task.Delay(300)) != recv) continue;
@@ -74,7 +74,7 @@ namespace KillerScan.Engine
                     // The socket listens on every adapter; a bound scan keeps only its own network's replies.
                     if (ScanSource.Current is not { } bound || bound.Contains(r.RemoteEndPoint.Address))
                         try { ParseResponse(r.Buffer, r.RemoteEndPoint.Address.ToString(), map); } catch { }
-                    recv = udp.ReceiveAsync();
+                    recv = udp.ReceiveAsync().ObserveFault();
                 }
             }
             catch { }
@@ -99,13 +99,13 @@ namespace KillerScan.Engine
                 try { await udp.SendAsync(msearch, msearch.Length, dest); } catch { }
 
                 var deadline = DateTime.UtcNow.AddMilliseconds(listenMs);
-                var recv = udp.ReceiveAsync();
+                var recv = udp.ReceiveAsync().ObserveFault();
                 while (DateTime.UtcNow < deadline && !ct.IsCancellationRequested)
                 {
                     if (await Task.WhenAny(recv, Task.Delay(300)) != recv) continue;
                     UdpReceiveResult r;
                     try { r = recv.Result; } catch { break; }
-                    recv = udp.ReceiveAsync();
+                    recv = udp.ReceiveAsync().ObserveFault();
                     string ip = r.RemoteEndPoint.Address.ToString();
                     if (map.ContainsKey(ip)) continue;
                     string text = Encoding.ASCII.GetString(r.Buffer);

@@ -106,7 +106,7 @@ namespace KillerScan.Engine
             if (winner != task)
             {
                 // DNS cannot be canceled on net48. Observe a late fault without holding up the UI.
-                _ = task.ContinueWith(t => { _ = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);
+                _ = task.ObserveFault();
                 token.ThrowIfCancellationRequested();
                 throw new TimeoutException();
             }

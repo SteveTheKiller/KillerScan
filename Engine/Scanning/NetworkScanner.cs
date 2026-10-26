@@ -473,7 +473,7 @@ namespace KillerScan.Engine
 
             if (await Task.WhenAny(task, Task.Delay(Timeout.Infinite, token)) != task)
             {
-                _ = task.ContinueWith(t => { _ = t.Exception; }, TaskContinuationOptions.OnlyOnFaulted);
+                _ = task.ObserveFault();
                 token.ThrowIfCancellationRequested();
             }
 
@@ -519,7 +519,7 @@ namespace KillerScan.Engine
                 try
                 {
                     using var client = ScanSource.Tcp();
-                    var connectTask = client.ConnectAsync(addr, port);
+                    var connectTask = client.ConnectAsync(addr, port).ObserveFault();
                     if (await Task.WhenAny(connectTask, Task.Delay(200, token)) == connectTask
                         && client.Connected)
                     {
@@ -696,7 +696,7 @@ namespace KillerScan.Engine
             try
             {
                 using var client = ScanSource.Tcp();
-                var connect = client.ConnectAsync(addr, port);
+                var connect = client.ConnectAsync(addr, port).ObserveFault();
                 if (await Task.WhenAny(connect, Task.Delay(timeoutMs)) == connect && client.Connected)
                     return true;
             }
@@ -1417,13 +1417,13 @@ namespace KillerScan.Engine
             try
             {
                 using var tcp = ScanSource.Tcp();
-                var connect = tcp.ConnectAsync(addr, 22);
+                var connect = tcp.ConnectAsync(addr, 22).ObserveFault();
                 if (await Task.WhenAny(connect, Task.Delay(1000)) != connect || !tcp.Connected)
                     return;
                 using var stream = tcp.GetStream();
                 stream.ReadTimeout = 1500;
                 var buf = new byte[256];
-                var readTask = stream.ReadAsync(buf, 0, buf.Length);
+                var readTask = stream.ReadAsync(buf, 0, buf.Length).ObserveFault();
                 if (await Task.WhenAny(readTask, Task.Delay(1500)) != readTask) return;
                 int n = readTask.Result;
                 if (n <= 0) return;
@@ -1466,13 +1466,13 @@ namespace KillerScan.Engine
                 {
                     using var tcp = ScanSource.Tcp();
                     using var cancellation = ct.Register(() => tcp.Dispose());
-                    var connect = tcp.ConnectAsync(addr, port);
+                    var connect = tcp.ConnectAsync(addr, port).ObserveFault();
                     if (await AwaitWithCancellation(Task.WhenAny(connect, Task.Delay(1500, ct)), ct) != connect)
                         continue;
                     await connect;
                     ct.ThrowIfCancellationRequested();
                     using var ssl = new SslStream(tcp.GetStream(), false, (_, _, _, _) => true);
-                    var auth = ssl.AuthenticateAsClientAsync(addr.ToString(), null, SslProtocols.None, false);
+                    var auth = ssl.AuthenticateAsClientAsync(addr.ToString(), null, SslProtocols.None, false).ObserveFault();
                     if (await AwaitWithCancellation(Task.WhenAny(auth, Task.Delay(1500, ct)), ct) != auth) continue;
                     await auth;
                     ct.ThrowIfCancellationRequested();
@@ -1523,7 +1523,7 @@ namespace KillerScan.Engine
                 udp.Connect(addr, port);
                 await udp.SendAsync(query, query.Length);
 
-                var recvTask = udp.ReceiveAsync();
+                var recvTask = udp.ReceiveAsync().ObserveFault();
                 if (await Task.WhenAny(recvTask, Task.Delay(800)) != recvTask) return;
                 if (NetbiosResponse.TryDecode(recvTask.Result.Buffer, transactionId, out var name))
                     device.NetbiosName = name;
@@ -1566,7 +1566,7 @@ namespace KillerScan.Engine
                 udp.Connect(addr, 161);
                 await udp.SendAsync(query, query.Length);
 
-                var recvTask = udp.ReceiveAsync();
+                var recvTask = udp.ReceiveAsync().ObserveFault();
                 if (await Task.WhenAny(recvTask, Task.Delay(1000)) != recvTask) return;
                 var resp = recvTask.Result.Buffer;
                 if (SnmpResponse.TryDecode(resp, requestId, out var description)) device.SnmpDescr = description;
@@ -1587,7 +1587,7 @@ namespace KillerScan.Engine
                 try
                 {
                     using var client = ScanSource.Tcp();
-                    var connect = client.ConnectAsync(addr, port);
+                    var connect = client.ConnectAsync(addr, port).ObserveFault();
                     if (await Task.WhenAny(connect, Task.Delay(300)) == connect && client.Connected)
                         return true;
                 }
