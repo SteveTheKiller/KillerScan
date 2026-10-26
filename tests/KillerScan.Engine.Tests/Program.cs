@@ -31,6 +31,7 @@ internal static class Program
             await Run("The address ceiling counts unique addresses and keeps first-seen order", TargetCeiling);
             await Run("CIDR expansion excludes the network and broadcast addresses", Subnet);
             await Run("ARP output parsing keeps IPv4 device entries with full MAC addresses", ArpParsing);
+            await Run("Local network detection skips an adapter without a mask and uses the next one", LocalNetworkPick);
             await Run("Classifier honors manual types, the gateway, DNS and hostname rules", Classifier);
             await Run("Recognition grades a labeled corpus and records its evidence", RecognitionTests.Run);
             await Run("Access records what each endpoint answered", AccessTests.Run);
@@ -148,6 +149,26 @@ internal static class Program
         Require(!cache.ContainsKey("224.0.0.251") && !cache.ContainsKey("239.255.255.250"), "Multicast rows are not devices");
         Require(cache.TryGetValue("192.168.1.40", out mac) && mac == "00:11:32:AA:BB:CC", "A static entry for a real device is kept");
         Require(!cache.ContainsKey("224.0.0.22"), "Short MAC rows are rejected");
+        return Task.CompletedTask;
+    }
+
+    private static Task LocalNetworkPick()
+    {
+        var maskless = new LocalNetwork.Candidate
+        {
+            Type = System.Net.NetworkInformation.NetworkInterfaceType.Ethernet,
+            Address = System.Net.IPAddress.Parse("172.20.0.5"), Mask = null, Gateway = "172.20.0.1"
+        };
+        var wifi = new LocalNetwork.Candidate
+        {
+            Type = System.Net.NetworkInformation.NetworkInterfaceType.Wireless80211,
+            Address = System.Net.IPAddress.Parse("192.168.1.20"), Mask = System.Net.IPAddress.Parse("255.255.255.0"),
+            Gateway = "192.168.1.1", Dns = "192.168.1.1", Description = "Test Wi-Fi"
+        };
+        var net = LocalNetwork.Pick(new[] { maskless, wifi });
+        Require(net != null && net.Subnet == "192.168.1.0/24" && net.Gateway == "192.168.1.1" && net.InterfaceLabel == "Wi-Fi",
+            "A maskless adapter must not hide the next good one: " + (net?.Subnet ?? "null"));
+        Require(LocalNetwork.Pick(new[] { maskless }) == null, "Only a maskless adapter means no local network");
         return Task.CompletedTask;
     }
 
