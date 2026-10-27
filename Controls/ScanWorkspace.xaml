@@ -126,7 +126,7 @@
      the label in the wordmark's Lacquer, like KillerNotes' + New. -->
 <Button x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}" Style="{StaticResource PrimaryButton}" Click="ScanBtn_Click"
         FontFamily="{DynamicResource WordmarkAccentFont}" FontSize="19" FontWeight="Normal"
-        Height="28" MinWidth="92" Padding="16,0" Margin="0,0,8,0" VerticalContentAlignment="Center">
+        Height="26" Padding="10,0" Margin="0,0,8,0" VerticalContentAlignment="Center">
 <Button.ContentTemplate>
     <DataTemplate>
         <TextBlock Text="{Binding}"><TextBlock.RenderTransform><TranslateTransform Y="-1"/></TextBlock.RenderTransform></TextBlock>

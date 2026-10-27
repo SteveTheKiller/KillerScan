@@ -340,7 +340,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Button x:Name="NewLocationButton" Style="{StaticResource OutlineButton}" Click="NewLocation_Click"
+                        <Button x:Name="NewLocationButton" Style="{StaticResource SurfaceButton}" Click="NewLocation_Click"
                                 Content="{DynamicResource Str_Loc_NewShort}" HorizontalAlignment="Left"
                                 Height="26" FontSize="12" Padding="10,0" VerticalContentAlignment="Center">
                             <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Loc_NewTitle}"/><Run Text=" (Ctrl+Alt+S)"/></TextBlock></Button.ToolTip>
