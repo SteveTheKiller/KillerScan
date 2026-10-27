@@ -535,13 +535,13 @@
                                                 </Style>
                                             </TextBlock.Style>
                                         </TextBlock>
-                                        <TextBox Text="{Binding EditText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource DarkTextBox}"
+                                        <TextBox Text="{Binding EditText, UpdateSourceTrigger=PropertyChanged}"
                                                  Width="120" FontFamily="{DynamicResource MonoFont}" FontSize="12" Padding="2,0"
                                                  SelectionBrush="{DynamicResource PrimaryBrush}"
                                                  IsVisibleChanged="ScanEditor_IsVisibleChanged" PreviewKeyDown="ScanEditor_KeyDown"
                                                  LostKeyboardFocus="ScanEditor_LostFocus">
                                             <TextBox.Style>
-                                                <Style TargetType="TextBox">
+                                                <Style TargetType="TextBox" BasedOn="{StaticResource DarkTextBox}">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding IsEditing}" Value="True">
