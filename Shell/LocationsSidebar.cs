@@ -137,14 +137,40 @@ namespace KillerScan.Shell
             RefreshLocationsList();
         }
 
+        /// <summary>Renames in place: the label turns into a text box (ScanEditor_* below).</summary>
         private void RenameSavedScan(ScanNode scan)
         {
+            scan.EditText = scan.HasNickname ? scan.Profile.Name : string.Empty;
+            scan.IsEditing = true;
+        }
+
+        private void ScanEditor_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is TextBox box && box.IsVisible)
+                Dispatcher.BeginInvoke(new Action(() => { box.Focus(); box.SelectAll(); }), System.Windows.Threading.DispatcherPriority.Input);
+        }
+
+        private void ScanEditor_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((sender as FrameworkElement)?.DataContext is not ScanNode scan) return;
+            if (e.Key == Key.Enter) { CommitScanName(scan); e.Handled = true; }
+            else if (e.Key == Key.Escape) { scan.IsEditing = false; e.Handled = true; LocationsList.Focus(); }
+        }
+
+        private void ScanEditor_LostFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if ((sender as FrameworkElement)?.DataContext is ScanNode { IsEditing: true } scan) CommitScanName(scan);
+        }
+
+        /// <summary>A blank name goes back to the subnet, which is what an un-nicknamed scan shows.</summary>
+        private void CommitScanName(ScanNode scan)
+        {
+            scan.IsEditing = false;
+            string name = scan.EditText.Trim();
+            if (name.Length == 0) name = scan.Profile.Target;
+            if (name == scan.Profile.Name) return;
             var store = LocationService.Get(scan.Location.Info).SavedScans;
-            var dialog = new InputDialog(Loc("Str_History_Rename").TrimEnd('.'), scan.Profile.Target, Loc("Str_Rename_Label"),
-                scan.Profile.Name, Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
-            dialog.ShowDialog();
-            if (!dialog.Confirmed || dialog.Value.Length == 0 || dialog.Value == scan.Profile.Name) return;
-            bool saved = store.SaveEdited(dialog.Value, scan.Profile.Target, scan.Profile.Options, scan.Profile.Adapter ?? string.Empty)
+            bool saved = store.SaveEdited(name, scan.Profile.Target, scan.Profile.Options, scan.Profile.Adapter ?? string.Empty)
                 && store.Delete(scan.Profile);
             PersistenceFeedback.Check(saved, store.Retry, () => store.SaveError);
             RefreshLocationsList();
@@ -307,14 +333,32 @@ namespace KillerScan.Shell
 
     /// <summary>A scan under its Location in the Locations tree.</summary>
     /// <summary>A saved scan under its Location: a named target with its settings.</summary>
+    /// <summary>A saved scan under its Location: a named target with its settings.</summary>
     internal sealed class ScanNode(MainWindow owner) : System.ComponentModel.INotifyPropertyChanged
     {
-        private bool _isSelected;
+        private bool _isSelected, _isEditing;
+        private string _editText = string.Empty;
         public ScanProfile Profile { get; init; } = new();
         public LocationRow Location { get; init; } = null!;
-        /// <summary>The tree's one line: the saved scan's name, its target when it has none.</summary>
-        public string Label => Profile.Name.Trim().Length > 0 ? Profile.Name.Trim() : Profile.Target;
+
+        /// <summary>A name other than the subnet itself (a blank save stores the subnet as the name).</summary>
+        public bool HasNickname => Profile.Name.Trim().Length > 0
+            && !string.Equals(Profile.Name.Trim(), Profile.Target.Trim(), StringComparison.OrdinalIgnoreCase);
+        /// <summary>The nickname, or the subnet when there is none.</summary>
+        public string Label => HasNickname ? Profile.Name.Trim() : Profile.Target;
         public string Tip => Profile.Target;
+
+        public bool IsEditing
+        {
+            get => _isEditing;
+            set { if (_isEditing == value) return; _isEditing = value; PropertyChanged?.Invoke(this, new(nameof(IsEditing))); }
+        }
+
+        public string EditText
+        {
+            get => _editText;
+            set { _editText = value ?? string.Empty; PropertyChanged?.Invoke(this, new(nameof(EditText))); }
+        }
 
         public bool IsSelected
         {

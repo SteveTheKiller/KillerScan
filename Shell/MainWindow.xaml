@@ -516,14 +516,56 @@
                                         </MenuItem>
                                     </ContextMenu>
                                 </StackPanel.ContextMenu>
-                                <!-- One line like the Location rows: a scan glyph and its label, the name or,
-                                     for an unnamed run, its date. Target and date are the tooltip. -->
+                                <!-- A saved scan: its nickname, with the subnet under it in small muted type;
+                                     an un-nicknamed scan is just its subnet, on one line. F2 or Rename edits
+                                     the name in place (Shell/LocationsSidebar.cs). -->
                                 <StackPanel Orientation="Horizontal" ToolTip="{Binding Tip}">
                                     <a11y:Glyph Text="&#xE81C;" FontFamily="Segoe MDL2 Assets" FontSize="13"
                                                 VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                    <TextBlock Text="{Binding Label}" VerticalAlignment="Center"
-                                               FontFamily="{DynamicResource MonoFont}" FontSize="12"
-                                               TextTrimming="CharacterEllipsis"/>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Label}" FontFamily="{DynamicResource MonoFont}" FontSize="12"
+                                                   TextTrimming="CharacterEllipsis">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBox Text="{Binding EditText, UpdateSourceTrigger=PropertyChanged}" MinWidth="110"
+                                                 FontFamily="{DynamicResource MonoFont}" FontSize="12" Padding="2,0"
+                                                 Background="{DynamicResource TextFieldBrush}" Foreground="{DynamicResource TextBrush}"
+                                                 CaretBrush="{DynamicResource PrimaryBrush}" BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1"
+                                                 IsVisibleChanged="ScanEditor_IsVisibleChanged" PreviewKeyDown="ScanEditor_KeyDown"
+                                                 LostKeyboardFocus="ScanEditor_LostFocus">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+                                        <TextBlock Text="{Binding Profile.Target}" FontSize="10" Opacity="0.7"
+                                                   TextTrimming="CharacterEllipsis">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding HasNickname}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
                                 </StackPanel>
                             </StackPanel>
                         </DataTemplate>
