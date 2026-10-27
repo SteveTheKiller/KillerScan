@@ -50,7 +50,7 @@ namespace KillerScan.Services
             Application.Current.TryFindResource(key) as string ?? key;
 
         // ---- Translator test mode (KillerPDF #211) ----
-        // --lang-file <path> loads an external translation XAML into the override slot, winning
+        // --lang-file <path> reads an external translation file into the override slot, winning
         // over the saved locale, and re-applies it on every save of the file, so a translator can
         // check string length and context in the live app before the file is built in. Keys the
         // file leaves out fall back to the en-US base like any partial locale.
@@ -170,8 +170,8 @@ namespace KillerScan.Services
 
         /// <summary>The .NET culture for a locale. Resource dictionaries translate the fixed
         /// interface strings; the culture supplies the generated ones (dates, month and day names,
-        /// number formats). Keeping the two in step is why choosing English on a Polish Windows no
-        /// longer leaves Polish dates in an English UI (Killendar).</summary>
+        /// number formats). Applied only when <see cref="KeepRegionFormats"/> is false; by default
+        /// dates and numbers follow the Windows region instead.</summary>
         internal static CultureInfo CultureFor(Locale locale) => new(locale switch
         {
             Locale.Bn   => "bn-BD",
@@ -199,9 +199,10 @@ namespace KillerScan.Services
         // ---- Internal ----
 
         /// <summary>Leave the thread cultures alone, so dates and numbers keep the Windows region
-        /// format whatever the interface language. Off by default, where the cultures follow the
-        /// chosen language. Set it before <see cref="Initialize"/>.</summary>
-        internal static bool KeepRegionFormats { get; set; }
+        /// format whatever the interface language. On by default for every app (Steve,
+        /// 2026-10-27); set it to false before <see cref="Initialize"/> to make the cultures follow
+        /// the chosen language instead.</summary>
+        internal static bool KeepRegionFormats { get; set; } = true;
 
         private static void ApplyInternal(Locale locale)
         {
@@ -284,8 +285,16 @@ namespace KillerScan.Services
         {
             try
             {
+                var merged = Application.Current.Resources.MergedDictionaries;
+                int baseIndex = StringsBaseIndex(merged);
+                if (merged.Count <= baseIndex) return false;
+                // Parsed as data, never as XAML: XamlReader would instantiate whatever the file
+                // names. Only keys the English base already has are accepted (TranslationFileReader).
+                var known = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
+                foreach (object key in merged[baseIndex].Keys) if (key is string name) known.Add(name);
                 using var fs = new FileStream(ExternalFile!, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                if (System.Windows.Markup.XamlReader.Load(fs) is not ResourceDictionary rd) return false;
+                var rd = new ResourceDictionary();
+                foreach (var entry in TranslationFileReader.Read(fs, known)) rd[entry.Key] = entry.Value;
                 SetOverride(rd);
                 _externalLoadedOnce = true;
                 return true;
