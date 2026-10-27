@@ -202,13 +202,14 @@ namespace KillerScan.Shell
             LocationsList.DragOver += (_, e) =>
             {
                 e.Effects = e.Data.GetData(typeof(ScanNode)) is ScanNode scan && TargetRow(e) is { } row
-                    && row.Info.Id != scan.Location.Info.Id ? DragDropEffects.Move : DragDropEffects.None;
+                    && row.Info.Id != scan.Location.Info.Id && !LocationService.IsImportedScans(row.Info)
+                    ? DragDropEffects.Move : DragDropEffects.None;
                 e.Handled = true;
             };
             LocationsList.Drop += (_, e) =>
             {
                 if (e.Data.GetData(typeof(ScanNode)) is ScanNode scan && TargetRow(e) is { } row
-                    && row.Info.Id != scan.Location.Info.Id)
+                    && row.Info.Id != scan.Location.Info.Id && !LocationService.IsImportedScans(row.Info))
                     MoveSavedScan(scan, row);
                 e.Handled = true;
             };
@@ -239,6 +240,7 @@ namespace KillerScan.Shell
             if (!PersistenceFeedback.Check(saved, to.Retry, () => to.SaveError)) return;
             PersistenceFeedback.Check(from.Delete(scan.Profile), from.Retry, () => from.SaveError);
             _expandedLocations.Add(row.Info.Id);
+            RetireHoldingLocation();
             RefreshLocationsList();
         }
 
@@ -249,10 +251,23 @@ namespace KillerScan.Shell
                 if (item.Template.FindName(part, item) is UIElement line) line.Visibility = Visibility.Collapsed;
         }
 
+        /// <summary>Once the migrated "Saved scans" Location is empty it goes; a tab in it moves to
+        /// Unassigned first, so nothing is left pointing at a deleted Location.</summary>
+        private void RetireHoldingLocation()
+        {
+            if (_scanWorkspace is { InImportedScans: true } inside
+                && LocationService.Items.FirstOrDefault(LocationService.IsImportedScans) is { } held
+                && LocationService.Get(held).SavedScans.Items.Count == 0
+                && LocationService.Find(LocationCatalog.UnassignedId) is { } unassigned)
+                inside.SetLocation(LocationService.Get(unassigned));
+            LocationService.RetireImportedScansIfEmpty();
+        }
+
         private void DeleteSavedScan(ScanNode scan)
         {
             var store = LocationService.Get(scan.Location.Info).SavedScans;
             PersistenceFeedback.Check(store.Delete(scan.Profile), store.Retry, () => store.SaveError);
+            RetireHoldingLocation();
             RefreshLocationsList();
         }
 
@@ -276,7 +291,7 @@ namespace KillerScan.Shell
         private void SaveToLocation_Click(object sender, RoutedEventArgs e)
         {
             if (_scanWorkspace is not { } scan || sender is not Button button) return;
-            if (!scan.IsUnsaved)
+            if (!scan.IsUnsaved && !scan.InImportedScans)
             {
                 // Already in a Location: save the target and settings as one of its networks.
                 var name = new InputDialog(Loc("Str_Loc_SaveScan"), scan.Targets.Trim(), Loc("Str_Rename_Label"),
@@ -286,7 +301,8 @@ namespace KillerScan.Shell
                 return;
             }
             var menu = new ContextMenu { PlacementTarget = button, Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom };
-            foreach (var info in LocationService.Items.Where(item => item.Id != LocationCatalog.UnassignedId)
+            foreach (var info in LocationService.Items.Where(item => item.Id != LocationCatalog.UnassignedId
+                             && !LocationService.IsImportedScans(item))
                          .OrderBy(item => item.Name, StringComparer.CurrentCultureIgnoreCase))
             {
                 var captured = info;
@@ -298,7 +314,10 @@ namespace KillerScan.Shell
                         string.Empty, Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
                     dialog.ShowDialog();
                     if (!dialog.Confirmed) return;
-                    if (scan.SaveResultsTo(LocationService.Get(captured), dialog.Value)) RefreshLocationsList();
+                    bool saved = scan.InImportedScans
+                        ? scan.SaveScanInto(LocationService.Get(captured), dialog.Value)
+                        : scan.SaveResultsTo(LocationService.Get(captured), dialog.Value);
+                    if (saved) RefreshLocationsList();
                 };
                 menu.Items.Add(item);
             }

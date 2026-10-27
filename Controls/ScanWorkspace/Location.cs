@@ -643,9 +643,17 @@ namespace KillerScan.Controls
         /// </summary>
         internal bool SaveCurrentScan(string? name) => SaveScanTo(_location, name);
 
+        /// <summary>Saves the scan bar's scan into another Location (from the holding Location).</summary>
+        internal bool SaveScanInto(LocationData location, string? name) => SaveScanTo(location, name);
+
+        /// <summary>True while the tab is in the migrated "Saved scans" holding Location.</summary>
+        internal bool InImportedScans => _location.Info is { } info && LocationService.IsImportedScans(info);
+
         private bool SaveScanTo(LocationData location, string? name)
         {
             if (_disposed || location.IsTemporary) return false;
+            // The migrated holding Location only empties out; nothing new goes in.
+            if (location.Info is { } held && LocationService.IsImportedScans(held)) return false;
             if (IsScanning) { StatusText.Text = Loc("Str_Loc_Busy"); return false; }
             string target = Targets.Trim();
             if (target.Length == 0) { FocusTargets(); return false; }
@@ -704,7 +712,9 @@ namespace KillerScan.Controls
         /// <summary>New Location, then the unsaved scan on screen saved into it (Save's menu).</summary>
         internal void CreateLocationAndSave()
         {
-            if (CreateLocation(switchTo: false) is { } created) SaveResultsTo(LocationService.Get(created));
+            if (CreateLocation(switchTo: false) is not { } created) return;
+            if (InImportedScans) SaveScanInto(LocationService.Get(created), null);
+            else SaveResultsTo(LocationService.Get(created));
         }
 
         private void CreateLocation() => CreateLocation(switchTo: true);

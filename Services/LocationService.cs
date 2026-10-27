@@ -77,6 +77,20 @@ namespace KillerScan.Services
         /// <summary>The Location the old scan profiles were migrated into.</summary>
         internal static bool IsImportedScans(LocationInfo info) => App.GetSetting(ImportedScansSetting) == info.Id;
 
+        /// <summary>
+        /// Deletes the migrated "Saved scans" Location once its last saved scan has been moved out
+        /// or deleted: it is a holding pen, not a place. Through the normal delete, so its folder
+        /// is kept in the Locations "deleted" folder.
+        /// </summary>
+        internal static bool RetireImportedScansIfEmpty()
+        {
+            if (!Editable || Items.FirstOrDefault(IsImportedScans) is not { } held) return false;
+            if (Get(held).SavedScans.Items.Count > 0) return false;
+            if (!Delete(held, out _)) return false;
+            App.SetSetting(ImportedScansSetting, string.Empty);
+            return true;
+        }
+
         private static void MigrateSavedScans()
         {
             if (!Editable) return;
