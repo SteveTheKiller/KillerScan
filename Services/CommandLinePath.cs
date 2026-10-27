@@ -57,6 +57,14 @@ namespace KillerScan.Services
                 || ex is IOException || ex is InvalidOperationException) { }
         }
 
+        /// <summary>Unregister that lets a failure through, for an uninstall that must not leave
+        /// a stale PATH entry behind silently.</summary>
+        internal static void UnregisterRequired(string installDirectory, bool machine)
+        {
+            using (RegistryKey key = OpenEnvironment(machine))
+                if (RemoveFrom(key, installDirectory)) BroadcastEnvironmentChange();
+        }
+
         private static RegistryKey OpenEnvironment(bool machine) => machine
             ? Registry.LocalMachine.OpenSubKey(MachineEnvironmentKey, writable: true)
                 ?? throw new InvalidOperationException("The machine environment is unavailable.")
