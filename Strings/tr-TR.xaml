@@ -430,6 +430,8 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">At</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Lokasyonlar ayarlanamadı, bu nedenle KillerScan mevcut cihazlarınızı, kayıtlı taramalarınızı ve geçmişinizi eskisi gibi kullanıyor.&#10;&#10;{0}&#10;&#10;Hiçbir şey değiştirilmedi veya kaldırılmadı. KillerScan bir sonraki açılışta yeniden deneyecek.</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notlar (Ctrl+Enter kaydeder)</sys:String>
+    <sys:String x:Key="Str_Loc_RouterLabel">Yönlendirici (ağ geçidi MAC):</sys:String>
+    <sys:String x:Key="Str_Loc_RouterNone">Henüz yok. Buraya bir tarama kaydetmek yönlendiricisini hatırlar.</sys:String>
     <sys:String x:Key="Str_Loc_Export">Lokasyonu dışa aktar...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Bu Lokasyonun adını, notlarını, kayıtlı taramalarını, cihaz adlarını, onaylarını, bilinen cihazlarını, cihaz türlerini ve geçmişini başka bir bilgisayarda içe aktarabileceğiniz tek bir dosyaya kaydeder.</sys:String>
     <sys:String x:Key="Str_Loc_ExportButton">Dışa aktar</sys:String>

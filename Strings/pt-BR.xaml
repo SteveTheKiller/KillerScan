@@ -472,6 +472,8 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Descartar</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Não foi possível configurar os Locais, então o KillerScan está usando seus dispositivos, verificações salvas e histórico existentes como antes.&#10;&#10;{0}&#10;&#10;Nada foi alterado ou removido. O KillerScan tentará novamente na próxima vez que for iniciado.</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notas (Ctrl+Enter salva)</sys:String>
+    <sys:String x:Key="Str_Loc_RouterLabel">Roteador (MAC do gateway):</sys:String>
+    <sys:String x:Key="Str_Loc_RouterNone">Nenhum ainda. Salvar uma varredura aqui memoriza o roteador.</sys:String>
     <sys:String x:Key="Str_Loc_Export">Exportar Local...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Salva o nome, as notas, as verificações salvas, os nomes de dispositivos, as aprovações, os dispositivos conhecidos, os tipos de dispositivo e o histórico deste Local em um único arquivo que você pode importar em outro PC.</sys:String>
     <sys:String x:Key="Str_Loc_ExportButton">Exportar</sys:String>

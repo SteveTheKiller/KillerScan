@@ -430,6 +430,8 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Descartar</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">No se pudieron configurar las Ubicaciones, así que KillerScan usa sus dispositivos, escaneos guardados e historial existentes como antes.&#10;&#10;{0}&#10;&#10;No se cambió ni se eliminó nada. KillerScan lo intentará de nuevo la próxima vez que se inicie.</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notas (Ctrl+Enter guarda)</sys:String>
+    <sys:String x:Key="Str_Loc_RouterLabel">Router (MAC de la puerta de enlace):</sys:String>
+    <sys:String x:Key="Str_Loc_RouterNone">Todavía ninguno. Guardar aquí un escaneo recuerda su router.</sys:String>
     <sys:String x:Key="Str_Loc_Export">Exportar Ubicación...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Guarda el nombre, las notas, los escaneos guardados, los nombres de dispositivos, las aprobaciones, los dispositivos conocidos, los tipos de dispositivo y el historial de esta Ubicación en un archivo que puede importar en otro PC.</sys:String>
     <sys:String x:Key="Str_Loc_ExportButton">Exportar</sys:String>

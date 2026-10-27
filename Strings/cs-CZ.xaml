@@ -428,6 +428,8 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Zahodit</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Lokality se nepodařilo nastavit, proto KillerScan používá vaše stávající zařízení, uložené skeny a historii jako dosud.&#10;&#10;{0}&#10;&#10;Nic nebylo změněno ani odstraněno. KillerScan to zkusí znovu při příštím spuštění.</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Poznámky (Ctrl+Enter uloží)</sys:String>
+    <sys:String x:Key="Str_Loc_RouterLabel">Router (MAC brány):</sys:String>
+    <sys:String x:Key="Str_Loc_RouterNone">Zatím žádný. Uložení skenu sem si zapamatuje jeho router.</sys:String>
     <sys:String x:Key="Str_Loc_Export">Exportovat Lokalitu...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Uloží název, poznámky, uložené skeny, názvy zařízení, schválení, známá zařízení, typy zařízení a historii této Lokality do jednoho souboru, který můžete importovat na jiném PC.</sys:String>
     <sys:String x:Key="Str_Loc_ExportButton">Exportovat</sys:String>

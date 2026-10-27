@@ -446,6 +446,8 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Elvetés</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">A Helyszíneket nem sikerült beállítani, ezért a KillerScan a korábbiakhoz hasonlóan a meglévő eszközeit, mentett vizsgálatait és előzményeit használja.&#10;&#10;{0}&#10;&#10;Semmi sem módosult, és semmi sem lett eltávolítva. A KillerScan a következő indításkor újra megpróbálja.</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Jegyzetek (Ctrl+Enter: mentés)</sys:String>
+    <sys:String x:Key="Str_Loc_RouterLabel">Router (átjáró MAC):</sys:String>
+    <sys:String x:Key="Str_Loc_RouterNone">Még nincs. Ha ide mentesz egy vizsgálatot, megjegyzi a routerét.</sys:String>
     <sys:String x:Key="Str_Loc_Export">Helyszín exportálása...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Egyetlen fájlba menti ennek a Helyszínnek a nevét, jegyzeteit, mentett vizsgálatait, eszközneveit, jóváhagyásait, ismert eszközeit, eszköztípusait és előzményeit, amelyet egy másik PC-n importálhat.</sys:String>
     <sys:String x:Key="Str_Loc_ExportButton">Exportálás</sys:String>

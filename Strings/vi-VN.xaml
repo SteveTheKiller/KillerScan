@@ -410,6 +410,8 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Bỏ</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Không thể thiết lập địa điểm, nên KillerScan vẫn dùng thiết bị, các lần quét đã lưu và lịch sử hiện có như trước.&#10;&#10;{0}&#10;&#10;Không có gì bị thay đổi hay xóa. KillerScan sẽ thử lại vào lần khởi động tới.</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Ghi chú (Ctrl+Enter để lưu)</sys:String>
+    <sys:String x:Key="Str_Loc_RouterLabel">Bộ định tuyến (MAC cổng):</sys:String>
+    <sys:String x:Key="Str_Loc_RouterNone">Chưa có. Lưu một lần quét ở đây sẽ ghi nhớ bộ định tuyến của nó.</sys:String>
     <sys:String x:Key="Str_Loc_Export">Xuất địa điểm...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Lưu tên, ghi chú, các lần quét đã lưu, tên thiết bị, phê duyệt, thiết bị đã biết, loại thiết bị và lịch sử của địa điểm này vào một tệp mà bạn có thể nhập trên PC khác.</sys:String>
     <sys:String x:Key="Str_Loc_ExportButton">Xuất</sys:String>

@@ -99,6 +99,14 @@ namespace KillerScan.Controls
         }
 
         /// <summary>A taller box that keeps line breaks, for free text such as Location notes.</summary>
+        /// <summary>Shows a read-only labelled line under the fields.</summary>
+        public void UseInfo(string label, string text)
+        {
+            InfoLabel.Text = label;
+            InfoText.Text = text;
+            InfoLabel.Visibility = InfoText.Visibility = Visibility.Visible;
+        }
+
         /// <summary>The notes box's text, when <see cref="UseNotes"/> showed it.</summary>
         public string Notes => NotesBox.Text;
 

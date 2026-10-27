@@ -415,6 +415,8 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Odrzuć</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Nie udało się skonfigurować Lokalizacji, więc KillerScan używa dotychczasowych urządzeń, zapisanych skanów i historii tak jak wcześniej.&#10;&#10;{0}&#10;&#10;Niczego nie zmieniono ani nie usunięto. KillerScan spróbuje ponownie przy następnym uruchomieniu.</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notatki (Ctrl+Enter zapisuje)</sys:String>
+    <sys:String x:Key="Str_Loc_RouterLabel">Router (MAC bramy):</sys:String>
+    <sys:String x:Key="Str_Loc_RouterNone">Jeszcze brak. Zapisanie tu skanu zapamięta jego router.</sys:String>
     <sys:String x:Key="Str_Loc_Export">Eksportuj Lokalizację...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Zapisuje nazwę tej Lokalizacji, notatki, zapisane skany, nazwy urządzeń, zatwierdzenia, znane urządzenia, typy urządzeń i historię w jednym pliku, który możesz zaimportować na innym komputerze.</sys:String>
     <sys:String x:Key="Str_Loc_ExportButton">Eksportuj</sys:String>

@@ -125,6 +125,11 @@
                              FontFamily="{DynamicResource UiFont}" FontSize="13" Padding="6,3"
                              AcceptsReturn="True" TextWrapping="Wrap" MinHeight="72" MaxHeight="220"
                              VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top"/>
+                    <!-- Optional read-only line: Edit Location's router, the gateway MAC it is recognized by. -->
+                    <TextBlock x:Name="InfoLabel" Visibility="Collapsed" Foreground="{DynamicResource MutedTextBrush}"
+                               FontFamily="{DynamicResource UiFont}" FontSize="11" Margin="0,10,0,2"/>
+                    <TextBlock x:Name="InfoText" Visibility="Collapsed" Foreground="{DynamicResource TextBrush}"
+                               FontFamily="{DynamicResource MonoFont}" FontSize="12" TextWrapping="Wrap"/>
                 </StackPanel>
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="16,2,16,14">

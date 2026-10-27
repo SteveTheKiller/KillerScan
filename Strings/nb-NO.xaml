@@ -472,6 +472,8 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Forkast</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Lokasjoner kunne ikke settes opp, så KillerScan bruker eksisterende enheter, lagrede skanninger og skanneloggen som før.&#10;&#10;{0}&#10;&#10;Ingenting ble endret eller fjernet. KillerScan prøver igjen neste gang programmet starter.</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notater (Ctrl+Enter lagrer)</sys:String>
+    <sys:String x:Key="Str_Loc_RouterLabel">Ruter (gateway-MAC):</sys:String>
+    <sys:String x:Key="Str_Loc_RouterNone">Ingen ennå. Når du lagrer en skanning her, huskes ruteren.</sys:String>
     <sys:String x:Key="Str_Loc_Export">Eksporter Lokasjon...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Lagrer navnet, notatene, lagrede skanninger, enhetsnavn, godkjenninger, kjente enheter, enhetstyper og skanneloggen for denne Lokasjonen i én fil du kan importere på en annen PC.</sys:String>
     <sys:String x:Key="Str_Loc_ExportButton">Eksporter</sys:String>

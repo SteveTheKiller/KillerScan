@@ -721,6 +721,9 @@ namespace KillerScan.Controls
                 Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
             dialog.UseIcons(LocationIcons.All, stored.Icon);
             dialog.UseNotes(Loc("Str_Loc_NotesLabel"), stored.Notes);
+            // The router this Location is recognized by, so it is plain what the match is.
+            dialog.UseInfo(Loc("Str_Loc_RouterLabel"), stored.GatewayMacs.Count > 0
+                ? string.Join(Environment.NewLine, stored.GatewayMacs) : Loc("Str_Loc_RouterNone"));
             dialog.ShowDialog();
             if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return;
             string name = dialog.Value.Trim();

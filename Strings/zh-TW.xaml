@@ -430,6 +430,8 @@
     <sys:String x:Key="Str_Loc_DiscardConfirm">捨棄</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">無法設定站點，因此 KillerScan 會照常使用您現有的裝置、已儲存的掃描與歷史記錄。&#10;&#10;{0}&#10;&#10;未變更或移除任何內容。KillerScan 會在下次啟動時重試。</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">備註（Ctrl+Enter 儲存）</sys:String>
+    <sys:String x:Key="Str_Loc_RouterLabel">路由器（閘道 MAC）：</sys:String>
+    <sys:String x:Key="Str_Loc_RouterNone">尚無。在此儲存掃描後會記住其路由器。</sys:String>
     <sys:String x:Key="Str_Loc_Export">匯出站點...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">將此站點的名稱、備註、已儲存的掃描、裝置名稱、核准記錄、已知裝置、裝置類型與歷史記錄儲存到單一檔案，可在另一台 PC 上匯入。</sys:String>
     <sys:String x:Key="Str_Loc_ExportButton">匯出</sys:String>

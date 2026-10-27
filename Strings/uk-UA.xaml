@@ -472,6 +472,8 @@
     <sys:String x:Key="Str_Loc_DiscardConfirm">Відкинути</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Не вдалося налаштувати локації, тому KillerScan використовує ваші наявні пристрої, збережені сканування та історію, як і раніше.&#10;&#10;{0}&#10;&#10;Нічого не змінено й не видалено. KillerScan спробує знову під час наступного запуску.</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Нотатки (Ctrl+Enter зберігає)</sys:String>
+    <sys:String x:Key="Str_Loc_RouterLabel">Маршрутизатор (MAC шлюзу):</sys:String>
+    <sys:String x:Key="Str_Loc_RouterNone">Поки немає. Збереження сканування тут запам’ятає його маршрутизатор.</sys:String>
     <sys:String x:Key="Str_Loc_Export">Експортувати локацію...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Зберігає назву, нотатки, збережені сканування, імена пристроїв, схвалення, відомі пристрої, типи пристроїв та історію цієї локації в один файл, який можна імпортувати на іншому ПК.</sys:String>
     <sys:String x:Key="Str_Loc_ExportButton">Експорт</sys:String>

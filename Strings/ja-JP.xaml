@@ -441,6 +441,8 @@
     <sys:String x:Key="Str_Loc_DiscardConfirm">破棄</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">ロケーションを設定できなかったため、KillerScan は既存のデバイス、保存済みスキャン、履歴をこれまでどおり使用しています。&#10;&#10;{0}&#10;&#10;変更や削除は行われていません。KillerScan は次回の起動時に再試行します。</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">メモ (Ctrl+Enter で保存)</sys:String>
+    <sys:String x:Key="Str_Loc_RouterLabel">ルーター (ゲートウェイ MAC):</sys:String>
+    <sys:String x:Key="Str_Loc_RouterNone">まだありません。ここにスキャンを保存すると、そのルーターが記憶されます。</sys:String>
     <sys:String x:Key="Str_Loc_Export">ロケーションをエクスポート...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">このロケーションの名前、メモ、保存済みスキャン、デバイス名、承認、既知のデバイス、デバイスの種類、履歴を、別の PC でインポートできる 1 つのファイルに保存します。</sys:String>
     <sys:String x:Key="Str_Loc_ExportButton">エクスポート</sys:String>

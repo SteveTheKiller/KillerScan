@@ -430,6 +430,8 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Abandonner</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Les Sites n’ont pas pu être configurés, KillerScan utilise donc vos appareils, analyses enregistrées et historique existants comme avant.&#10;&#10;{0}&#10;&#10;Rien n’a été modifié ni supprimé. KillerScan réessaiera au prochain démarrage.</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notes (Ctrl+Enter pour enregistrer)</sys:String>
+    <sys:String x:Key="Str_Loc_RouterLabel">Routeur (MAC de la passerelle) :</sys:String>
+    <sys:String x:Key="Str_Loc_RouterNone">Aucun pour l’instant. Enregistrer une analyse ici mémorise son routeur.</sys:String>
     <sys:String x:Key="Str_Loc_Export">Exporter le Site...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Enregistre le nom, les notes, les analyses enregistrées, les noms d’appareils, les approbations, les appareils connus, les types d’appareils et l’historique de ce Site dans un fichier que vous pouvez importer sur un autre PC.</sys:String>
     <sys:String x:Key="Str_Loc_ExportButton">Exporter</sys:String>
