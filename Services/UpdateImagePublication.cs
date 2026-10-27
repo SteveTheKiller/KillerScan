@@ -58,7 +58,7 @@ namespace KillerScan.Services
             script.AppendLine(Operations);
             if (overrides is not null) script.AppendLine(overrides);
             // The elevated helper must not open a window as administrator, so instead of showing the
-            // report it reopens whatever copy is installed. The user is not left with KillerScan
+            // report it reopens whatever copy is installed. The user is not left with the app
             // closed and the old version silently still in place.
             script.AppendLine("if (Invoke-UpdateImagePublication $plan $ops) { exit 0 } else { if ($plan.ShowReport) { try { & $ops.ShowReport $plan.Report } catch { } }; "
                 + "if ($plan.Elevated) { try { & $ops.Relaunch $plan } catch { } }; exit 1 }");

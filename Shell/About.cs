@@ -10,13 +10,15 @@ using KillerScan.Services;
 namespace KillerScan.Shell
 {
     /// <summary>
-    /// The About overlay's window half: the dim backdrop, the fade, the click handling, and the
-    /// IAboutHost implementation that maps the controller's values onto the named XAML elements.
-    /// Everything the card SAYS is decided in Features/About/AboutController.cs.
+    /// The About overlay's window half: the fade, the click handling, and the IAboutHost
+    /// implementation that maps the controller's values onto the named XAML elements.
+    /// Everything the card SAYS is decided in Features/About/AboutController.cs. Rows only this
+    /// app's card has (Start with Windows, Close to tray, KillerScan's vendor database) are mapped
+    /// in the app's own Shell/About.Extras.cs.
     /// </summary>
     public partial class MainWindow : IAboutHost
     {
-        private readonly AboutController _about = null!;
+        private AboutController _about = null!;
 
         private void ShowAboutOverlay() => _about.Show();
 
@@ -29,8 +31,6 @@ namespace KillerScan.Shell
         string IAboutHost.Thumbprint  { set => AboutThumbprintBlock.Text = value; }
         string IAboutHost.Sha256      { set => AboutSha256Block.Text = value; }
         string IAboutHost.UpdateText  { set => AboutUpdateText.Text = value; }
-        string IAboutHost.DbInfo      { set => AboutDbBlock.Text = value; }
-        string IAboutHost.DbStatus    { set => AboutDbStatus.Text = value; }
 
         bool IAboutHost.AliasVisible
         {
@@ -42,17 +42,23 @@ namespace KillerScan.Shell
             set => AboutUpdateButton.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        bool IAboutHost.UpdateEnabled   { set => AboutUpdateButton.IsEnabled = value; }
-        bool IAboutHost.DbUpdateEnabled { set => AboutDbUpdateLink.IsEnabled = value; }
+        bool IAboutHost.UpdateEnabled { set => AboutUpdateButton.IsEnabled = value; }
+
         bool IAboutHost.StartupUpdateCheck { set => AboutStartupUpdateCheck.IsChecked = value; }
 
         void IAboutHost.ShowCard() => FadeOverlayIn(AboutOverlay);
 
-        // ---- Overlay fade (shared with the shortcuts overlay, Shortcuts.cs) ----
+        // ---- Overlay fade (shared with the shortcuts overlay, ShortcutsOverlay.cs) ----
+
+        /// <summary>App hook: an overlay is about to show (KillerScan dims the frame behind it).</summary>
+        partial void OnOverlayShowing(UIElement overlay);
+
+        /// <summary>App hook: an overlay finished hiding.</summary>
+        partial void OnOverlayHidden(UIElement overlay);
 
         private void FadeOverlayIn(UIElement o)
         {
-            FrameDimmer.Visibility = Visibility.Visible;
+            OnOverlayShowing(o);
             o.Visibility = Visibility.Visible;
             Anim.FadeIn(o);
         }
@@ -66,9 +72,7 @@ namespace KillerScan.Shell
             a.Completed += (_, _) =>
             {
                 o.Visibility = Visibility.Collapsed;
-                if (ShortcutsOverlay.Visibility != Visibility.Visible &&
-                    AboutOverlay.Visibility != Visibility.Visible)
-                    FrameDimmer.Visibility = Visibility.Collapsed;
+                OnOverlayHidden(o);
             };
             o.BeginAnimation(UIElement.OpacityProperty, a);
         }
@@ -82,12 +86,19 @@ namespace KillerScan.Shell
 
         private void AboutVersion_Click(object sender, MouseButtonEventArgs e) => _about.OpenReleaseNotes();
 
+        /// <summary>The footer version opens the About card, as in every app. One overlay at a
+        /// time, so the F1 overlay steps aside first.</summary>
+        private void VersionLabel_Click(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            if (ShortcutsOverlay.Visibility == Visibility.Visible) ShortcutsOverlay.Visibility = Visibility.Collapsed;
+            ShowAboutOverlay();
+        }
+
         private void AboutUpdateButton_Click(object sender, RoutedEventArgs e) => _about.Update();
 
         private void AboutStartupUpdateCheck_Click(object sender, RoutedEventArgs e)
             => _about.SetStartupCheck(AboutStartupUpdateCheck.IsChecked == true);
-
-        private void AboutDbUpdate_Click(object sender, RoutedEventArgs e) => _about.UpdateVendorDb();
 
         private void AboutLink_Navigate(object sender, RequestNavigateEventArgs e)
         {

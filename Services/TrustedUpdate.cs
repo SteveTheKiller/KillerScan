@@ -19,7 +19,7 @@ namespace KillerScan.Services
         {
             string current = Process.GetCurrentProcess().MainModule!.FileName;
             string directory = UninstallCompletion.InstallDirectory(machine: true);
-            string target = Path.Combine(directory, "KillerScan.exe");
+            string target = Path.Combine(directory, AppInfo.ExeName);
             if (!string.Equals(current, target, StringComparison.OrdinalIgnoreCase))
                 throw new SecurityException("Automatic elevated updates require the protected machine installation. Download retained at: "
                     + download + ". Manual download: " + UpdateService.ReleasesUrl);
@@ -59,11 +59,11 @@ namespace KillerScan.Services
                 if (args.Length != 7 || !KillerFamily.Deployment.InstallerExitCodes.IsElevated())
                     throw new SecurityException("The machine update operation requires a complete elevated request.");
                 string directory = UninstallCompletion.InstallDirectory(machine: true);
-                string target = Path.Combine(directory, "KillerScan.exe");
+                string target = Path.Combine(directory, AppInfo.ExeName);
                 using var self = Process.GetCurrentProcess();
                 if (!string.Equals(self.MainModule!.FileName, target, StringComparison.OrdinalIgnoreCase))
                     throw new SecurityException("The update helper is not the protected installed application.");
-                using var lease = KillerFamily.Deployment.InstallerExitCodes.Acquire("KillerScan");
+                using var lease = KillerFamily.Deployment.InstallerExitCodes.Acquire(AppInfo.DisplayName);
                 using var pinned = InstallationFiles.PinDirectory(directory);
                 using var creator = WindowsIdentity.GetCurrent();
                 ValidateMachineOwner(directory, creator.Owner
@@ -129,11 +129,11 @@ namespace KillerScan.Services
             int parentId, long parentTicks, int helperId, long helperTicks)
         {
             string publication = UpdateImagePublication.Script(staged, target, true, UpdateService.ReleasesUrl,
-                "KillerScan", version, "HKLM");
+                AppInfo.DisplayName, version, "HKLM");
             string report = staged + ".recovery.txt";
             string body = "$ErrorActionPreference='Stop';$lease=$null;$owned=$false;try{"
                 + Wait(parentId, parentTicks) + Wait(helperId, helperTicks)
-                + "$lease=New-Object Threading.Mutex($false,'Global\\KillerTools-Install-KillerScan');"
+                + "$lease=New-Object Threading.Mutex($false,'Global\\KillerTools-Install-" + AppInfo.DisplayName + "');"
                 + "try{$owned=$lease.WaitOne(0)}catch [Threading.AbandonedMutexException]{$owned=$true};if(-not $owned){exit 1618};"
                 + "$original=[IO.File]::OpenRead(" + Data(target) + ");$hash=[Security.Cryptography.SHA256]::Create();"
                 + "try{if([BitConverter]::ToString($hash.ComputeHash($original)).Replace('-','') -ne " + Data(originalHash)

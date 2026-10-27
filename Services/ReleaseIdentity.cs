@@ -6,14 +6,14 @@ using System.Security;
 namespace KillerScan.Services
 {
     /// <summary>
-    /// Decides whether an update image is a newer KillerScan release from the same publisher as the
+    /// Decides whether an update image is a newer release of this app from the same publisher as the
     /// running copy. Both update paths call it: the per-user swap on the downloaded file and the
     /// elevated helper on the held-open download and again on the protected staged copy.
     /// </summary>
     internal static class ReleaseIdentity
     {
         /// <summary>Throws <see cref="SecurityException"/> unless <paramref name="exe"/> is a validly
-        /// signed KillerScan <paramref name="version"/> that is newer than the running copy and, when
+        /// signed <paramref name="version"/> that is newer than the running copy and, when
         /// the running copy is signed, signed by the same certificate. An unsigned running copy is a
         /// local build that cannot vouch for a publisher, so it accepts any validly signed release;
         /// <paramref name="requireInstalledSignature"/> removes that allowance for the elevated path.</summary>
@@ -24,7 +24,7 @@ namespace KillerScan.Services
             AssemblyName name;
             try { name = AssemblyName.GetAssemblyName(exe); }
             catch (Exception error) when (error is BadImageFormatException or FileLoadException)
-            { throw new SecurityException("The update is not a KillerScan executable.", error); }
+            { throw new SecurityException("The update is not a " + AppInfo.DisplayName + " executable.", error); }
             Verify(name, version, Assembly.GetExecutingAssembly().GetName().Version!,
                 (installed.valid, installed.thumb), (incoming.valid, incoming.thumb), requireInstalledSignature);
         }
@@ -41,10 +41,10 @@ namespace KillerScan.Services
                 && !string.Equals(installedSigner.thumb, incomingSigner.thumb, StringComparison.OrdinalIgnoreCase))
                 throw new SecurityException("The update must have a valid signature from the installed publisher certificate.");
             string requested = NormalizeVersion(version);
-            if (incoming.Name != "KillerScan" || incoming.Version == null
+            if (incoming.Name != AppInfo.DisplayName || incoming.Version == null
                 || NormalizeVersion(incoming.Version.ToString()) != requested
                 || Version.Parse(requested) <= Version.Parse(NormalizeVersion(installed.ToString())))
-                throw new SecurityException("The update's product or release version does not match a newer KillerScan release.");
+                throw new SecurityException("The update's product or release version does not match a newer " + AppInfo.DisplayName + " release.");
         }
 
         internal static string NormalizeVersion(string? text)

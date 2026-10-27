@@ -7,11 +7,29 @@ namespace KillerScan.Features.About
 {
     /// <summary>
     /// The About card's content: version and release date, the code-signing publisher and
-    /// thumbprint, the running exe's SHA-256, the bundled vendor database's size and origin, and a
-    /// quiet update check with optional one-click self-update.
+    /// thumbprint, the running exe's SHA-256, and a quiet update check with optional one-click
+    /// self-update.
+    ///
+    /// One controller serves every app. Rows only some cards have arrive as capability interfaces
+    /// on the host (IAboutStartup, IAboutTray, in IAboutHost.cs), and anything a single app adds
+    /// lives in that app's own AboutController.Extras.cs, which implements the partial hooks below.
+    /// A hook nobody implements compiles away.
     /// </summary>
-    internal sealed class AboutController
+    internal sealed partial class AboutController
     {
+        /// <summary>App hook: fill the app's own rows; runs as the card is filled, before it shows.</summary>
+        partial void OnShow();
+
+        /// <summary>App hook: adjust the signature the card shows (KillerScan's --demo preview).</summary>
+        partial void AdjustSignature(ref bool valid, ref string subject, ref string thumbprint);
+
+        /// <summary>App hook: replace a raw placeholder value ("(none)", "(unavailable)") with
+        /// localized text.</summary>
+        partial void ShownValue(ref string value);
+
+        /// <summary>App hook: skip the startup update prompt (KillerScan skips it under --demo).</summary>
+        partial void SkipStartupCheck(ref bool skip);
+
         private readonly IAboutHost _host;
 
         /// <summary>Tag of the newer release found by the check, null when there is nothing to
@@ -26,21 +44,43 @@ namespace KillerScan.Features.About
 
         internal AboutController(IAboutHost host) => _host = host;
 
-        internal static bool StartupCheckEnabled => App.GetSetting(StartupCheckSetting) != "0";
+        internal static bool StartupCheckEnabled => ThemeManager.GetSetting(StartupCheckSetting) != "0";
 
         /// <summary>Saves the startup check choice from either the About checkbox or the prompt.</summary>
         internal void SetStartupCheck(bool enabled)
         {
-            App.SetSetting(StartupCheckSetting, enabled ? "1" : "0");
+            ThemeManager.SetSetting(StartupCheckSetting, enabled ? "1" : "0");
             _host.StartupUpdateCheck = enabled;
         }
 
+        /// <summary>Adds or removes the app's Run value from the About checkbox, then shows what the
+        /// registry actually holds, so a refused write unchecks the box again.</summary>
+        internal void SetStartWithWindows(bool enabled)
+        {
+            KillerFamily.Deployment.StartupRegistration.Set(AppInfo.DisplayName, enabled);
+            if (_host is IAboutStartup startup)
+                startup.StartWithWindows = KillerFamily.Deployment.StartupRegistration.IsEnabled(AppInfo.DisplayName);
+        }
+
+        /// <summary>Whether closing the main window hides it to the notification area. Read by
+        /// CloseToTray each time the window closes, so the checkbox takes effect at once.</summary>
+        internal static bool CloseToTrayEnabled => ThemeManager.GetSetting(KillerFamily.Shell.CloseToTray.SettingName) == "1";
+
+        /// <summary>Saves the Close to system tray choice from the About checkbox.</summary>
+        internal void SetCloseToTray(bool enabled)
+        {
+            ThemeManager.SetSetting(KillerFamily.Shell.CloseToTray.SettingName, enabled ? "1" : "0");
+            if (_host is IAboutTray tray) tray.CloseToTray = enabled;
+        }
+
         /// <summary>Once per run, after the main window is showing: when a newer release exists, offers
-        /// it with an "Always check on startup" box so the check can be turned off right there. The
-        /// About card's checkbox turns it back on. Skipped under --demo so captures stay clean.</summary>
+        /// it in the same dialog as the About card's update, with an "Always check on startup" box so the
+        /// check can be turned off right there. The About card's checkbox turns it back on.</summary>
         internal async void CheckOnStartup()
         {
-            if (_startupCheckStarted || DemoData.Enabled || !StartupCheckEnabled) return;
+            bool skip = false;
+            SkipStartupCheck(ref skip);
+            if (_startupCheckStarted || skip || !StartupCheckEnabled) return;
             _startupCheckStarted = true;
             var tag = await UpdateService.CheckAsync(AppInfo.AssemblyVersion);
             if (tag is null || _updating) return;
@@ -69,15 +109,7 @@ namespace KillerScan.Features.About
             _host.ReleaseDate = AppInfo.ReleaseDate;
 
             var (sigValid, subject, thumb) = CodeSignature.GetSignerInfo();
-            // --demo previews the signed card using the real cert values, so a capture from a local
-            // (unsigned) build matches a release. The sigValid override is what lets the alias gate
-            // below pass naturally rather than being special-cased twice.
-            if (DemoData.Enabled)
-            {
-                sigValid = true;
-                subject  = AppInfo.DemoSubject;
-                thumb    = AppInfo.DemoThumbprint;
-            }
+            AdjustSignature(ref sigValid, ref subject, ref thumb);
             _host.Publisher = sigValid ? subject : _host.Loc("Str_About_Unsigned");
 
             // Shown only when the exe is signed by the expected publisher AND the signature actually
@@ -88,15 +120,18 @@ namespace KillerScan.Features.About
             // Only the quoted alias goes here; the prefix and the surrounding hyperlink live in the
             // XAML. 0x201C / 0x201D are the curly quotes, built from codepoints so this line adds no
             // non-ASCII bytes to the source.
-            _host.Alias         = (char)0x201C + AppInfo.AkaName + (char)0x201D;
-            _host.AliasVisible  = signedByPublisher;
-            _host.Thumbprint    = thumb == "(none)" ? _host.Loc("Str_Diag_Unavailable") : thumb;
-            _host.Sha256        = _host.Loc("Str_About_Computing");
+            _host.Alias        = (char)0x201C + AppInfo.AkaName + (char)0x201D;
+            _host.AliasVisible = signedByPublisher;
+            string shownThumb  = thumb;
+            ShownValue(ref shownThumb);
+            _host.Thumbprint   = shownThumb;
+            _host.Sha256       = _host.Loc("Str_About_Computing");
             _host.UpdateVisible = false;
             _host.StartupUpdateCheck = StartupCheckEnabled;
-
-            RefreshDbInfo();
-            _host.DbStatus = _host.Loc("Str_About_DbHint");
+            if (_host is IAboutStartup startup)
+                startup.StartWithWindows = KillerFamily.Deployment.StartupRegistration.IsEnabled(AppInfo.DisplayName);
+            if (_host is IAboutTray tray) tray.CloseToTray = CloseToTrayEnabled;
+            OnShow();
 
             _host.ShowCard();
 
@@ -104,8 +139,12 @@ namespace KillerScan.Features.About
             Task.Run(() =>
             {
                 var hash = CodeSignature.ExeSha256();
-                _host.Window.Dispatcher.BeginInvoke((Action)(() => _host.Sha256 =
-                    hash == "(unavailable)" ? _host.Loc("Str_Diag_Unavailable") : hash));
+                _host.Window.Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    string shown = hash;
+                    ShownValue(ref shown);
+                    _host.Sha256 = shown;
+                }));
             });
 
             CheckForUpdate();
@@ -113,60 +152,6 @@ namespace KillerScan.Features.About
 
         /// <summary>Opens the release page for the running version.</summary>
         internal void OpenReleaseNotes() => WebLink.Open(UpdateService.ReleaseUrl(AppInfo.Version));
-
-        // ---- Vendor database ----
-
-        /// <summary>Current vendor-database size and where it came from (bundled, or the date of the
-        /// last refresh).</summary>
-        private void RefreshDbInfo()
-        {
-            var entries = string.Format(_host.Loc("Str_About_DbEntries"), OuiLookup.Count.ToString("N0"));
-            var origin  = OuiLookup.LastRefreshed.HasValue
-                ? string.Format(_host.Loc("Str_About_DbRefreshed"),
-                                OuiLookup.LastRefreshed.Value.ToString("yyyy-MM-dd"))
-                : _host.Loc("Str_About_DbBundled");
-            _host.DbInfo = $"{entries} · {origin}";
-        }
-
-        /// <summary>Downloads a fresh OUI list and reloads it in place. Never shrinks the list; all
-        /// status is reported inline under the link.</summary>
-        internal async void UpdateVendorDb()
-        {
-            _host.DbUpdateEnabled = false;
-            _host.DbStatus = _host.Loc("Str_Db_Checking");
-            // The updater reports progress and its outcome as RESOURCE KEYS plus arguments, not as
-            // finished English. It lives in Services/ with no access to the resource dictionary,
-            // and the alternative - handing it a localizer - would have made a background service
-            // depend on the UI (VendorDbUpdater).
-            var progress = new Progress<VendorDbUpdater.Status>(s => _host.DbStatus = Format(s));
-            try
-            {
-                var (_, _, status) = await VendorDbUpdater.UpdateAsync(progress);
-                _host.DbStatus = Format(status);
-            }
-            catch (Exception ex)
-            {
-                _host.DbStatus = string.Format(_host.Loc("Str_Db_Failed"), ex.Message);
-            }
-            RefreshDbInfo();
-            _host.DbUpdateEnabled = true;
-        }
-
-        /// <summary>Turns one of the updater's key-plus-arguments reports into a sentence in the
-        /// current language. Counts are formatted here rather than by the service, so they pick up
-        /// the culture's own thousands separator.</summary>
-        private string Format(VendorDbUpdater.Status s)
-        {
-            // Detail carries an exception's own text, which is not ours to translate - it goes in
-            // as {0} verbatim. Otherwise the arguments are counts, formatted N0 so they pick up the
-            // culture's thousands separator rather than always reading like English.
-            if (s.Detail is string d) return string.Format(_host.Loc(s.Key), d);
-            var args = new object[s.Args.Length];
-            for (int i = 0; i < s.Args.Length; i++) args[i] = s.Args[i].ToString("N0");
-            return string.Format(_host.Loc(s.Key), args);
-        }
-
-        // ---- Self-update ----
 
         /// <summary>Shows the update button if a newer release exists. Silent when offline.</summary>
         private async void CheckForUpdate()
@@ -200,7 +185,7 @@ namespace KillerScan.Features.About
         private async Task InstallAsync(string tag)
         {
             if (_updating) return;
-            _updating           = true;
+            _updating = true;
             _host.UpdateEnabled = false;
             _host.UpdateText    = _host.Loc("Str_About_Downloading");
 
@@ -211,8 +196,6 @@ namespace KillerScan.Features.About
             }
             catch
             {
-                // Offline, timed out, or verification failed: restore the button and open the
-                // releases page so the user can update by hand.
                 _updating           = false;
                 _host.UpdateEnabled = true;
                 _host.UpdateText    = string.Format(_host.Loc("Str_About_UpdateAvailable"), tag);
@@ -229,6 +212,7 @@ namespace KillerScan.Features.About
             }
             catch
             {
+                // A failed helper launch retains the verified download for recovery.
                 _updating           = false;
                 _host.UpdateEnabled = true;
                 _host.UpdateText    = string.Format(_host.Loc("Str_About_UpdateAvailable"), tag);

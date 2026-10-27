@@ -37,13 +37,21 @@ namespace KillerScan.Features.About
         /// <summary>The "Check for updates on startup" checkbox, first of the card's checkboxes.</summary>
         bool StartupUpdateCheck { set; }
 
-        /// <summary>Vendor-database size and origin, and the line under the refresh link that
-        /// reports what a refresh did. The link goes insensitive while one is running.</summary>
-        string DbInfo { set; }
-        string DbStatus { set; }
-        bool DbUpdateEnabled { set; }
-
         /// <summary>Fades the About card in.</summary>
         void ShowCard();
+    }
+
+    /// <summary>A card with the "Start with Windows" checkbox, under the update checkbox. Off until
+    /// the user turns it on.</summary>
+    internal interface IAboutStartup
+    {
+        bool StartWithWindows { set; }
+    }
+
+    /// <summary>A card with the "Close to system tray" checkbox, under Start with Windows. Off until
+    /// the user turns it on (KillerShot, a tray app, defaults to on).</summary>
+    internal interface IAboutTray
+    {
+        bool CloseToTray { set; }
     }
 }

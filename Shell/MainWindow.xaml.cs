@@ -135,12 +135,6 @@ namespace KillerScan.Shell
             }
         }
 
-        // Footer version number -> About overlay (About.cs).
-        private void VersionLabel_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            ShowAboutOverlay();
-        }
-
         // ============================================================
         // Window placement persistence ("WindowPlacement" = left,top,w,h,max).
         // A maximized (or minimized) close saves RestoreBounds, so the

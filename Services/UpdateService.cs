@@ -222,7 +222,7 @@ namespace KillerScan.Services
         {
             try
             {
-                var probe = Path.Combine(dir, $".ks_write_{Guid.NewGuid():N}.tmp");
+                var probe = Path.Combine(dir, $".upd_write_{Guid.NewGuid():N}.tmp");
                 using (new FileStream(probe, FileMode.CreateNew, FileAccess.Write, FileShare.None,
                                       1, FileOptions.DeleteOnClose)) { }
                 return true;

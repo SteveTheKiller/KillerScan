@@ -130,7 +130,7 @@
                     <!-- The active view's own bar (address box, Scan, settings) rides in the title bar
                          after the wordmark, so the content pane starts right under it
                          (Shell/Workspace.cs). It took the place of the "Network Scanner" subtitle. -->
-                    <Border x:Name="TitleToolbarHost" VerticalAlignment="Center" Margin="16,0,0,0"
+                    <Border x:Name="TitleToolbarHost" VerticalAlignment="Center" Margin="{DynamicResource ScanTitleToolbarMargin}"
                             WindowChrome.IsHitTestVisibleInChrome="True"/>
                 </StackPanel>
 
