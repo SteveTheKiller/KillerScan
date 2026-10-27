@@ -389,6 +389,14 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Loc_New">Nowa Lokalizacja...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Nowa Lokalizacja</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Nowa</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">Pinezka</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">Dom</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">Biuro</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">Sklep</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">Szkoła</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">Serwerownia</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">Chmura</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">Punkt Wi-Fi</sys:String>
     <sys:String x:Key="Str_Loc_Rename">Zmień nazwę Lokalizacji...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Zarządzaj Lokalizacjami...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Lokalizacje</sys:String>

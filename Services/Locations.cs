@@ -13,6 +13,9 @@ namespace KillerScan.Services
         public string Customer { get; set; } = string.Empty;
         public string Notes { get; set; } = string.Empty;
 
+        /// <summary>The Location's icon, a key from <see cref="LocationIcons"/>; empty is the pin.</summary>
+        public string Icon { get; set; } = string.Empty;
+
         /// <summary>The targets, settings and adapter of the last scan run here, restored when it is picked.</summary>
         public string LastTargets { get; set; } = string.Empty;
         public ScanOptions? LastOptions { get; set; }
@@ -268,6 +271,8 @@ namespace KillerScan.Services
         public bool Rename(string id, string name) => Update(id, item => item.Name = name.Trim());
         public bool SetCustomer(string id, string customer) => Update(id, item => item.Customer = customer.Trim());
         public bool SetNotes(string id, string notes) => Update(id, item => item.Notes = notes);
+
+        public bool SetIcon(string id, string icon) => Update(id, item => item.Icon = icon);
         public bool AddGatewayMac(string id, string mac)
         {
             string normalized = LocationInfo.NormalizeMac(mac);

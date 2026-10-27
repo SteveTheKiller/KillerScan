@@ -379,6 +379,14 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Loc_New">Nova Lokacija...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Nova Lokacija</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Novo</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">Žebljiček</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">Dom</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">Pisarna</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">Trgovina</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">Šola</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">Strežniška soba</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">Oblak</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">Točka Wi-Fi</sys:String>
     <sys:String x:Key="Str_Loc_Rename">Preimenuj Lokacijo...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Upravljaj Lokacije...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Lokacije</sys:String>

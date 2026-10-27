@@ -190,6 +190,8 @@ namespace KillerScan.Shell
         public LocationInfo Info { get; init; } = new();
         public string Name { get; init; } = string.Empty;
         public string Detail { get; init; } = string.Empty;
+        /// <summary>The Location's icon glyph; the pin when it has none.</summary>
+        public string Glyph => LocationIcons.Glyph(Info.Icon);
         public List<ScanNode> Children { get; } = [];
 
         public bool IsSelected

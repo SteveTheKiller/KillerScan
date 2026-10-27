@@ -404,6 +404,14 @@
     <sys:String x:Key="Str_Loc_New">新建站点...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">新建站点</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ 新建</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">图钉</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">家</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">办公室</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">商店</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">学校</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">机房</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">云</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">Wi-Fi 热点</sys:String>
     <sys:String x:Key="Str_Loc_Rename">重命名站点...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">管理站点...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">站点</sys:String>

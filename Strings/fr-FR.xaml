@@ -404,6 +404,14 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Loc_New">Nouveau Site...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Nouveau Site</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Nouvelle</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">Épingle</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">Maison</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">Bureau</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">Boutique</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">École</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">Salle serveurs</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">Cloud</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">Point Wi-Fi</sys:String>
     <sys:String x:Key="Str_Loc_Rename">Renommer le Site...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Gérer les Sites...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Sites</sys:String>

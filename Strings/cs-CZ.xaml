@@ -402,6 +402,14 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Loc_New">Nová Lokalita...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Nová Lokalita</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Nová</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">Špendlík</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">Domov</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">Kancelář</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">Obchod</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">Škola</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">Serverovna</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">Cloud</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">Místo s Wi-Fi</sys:String>
     <sys:String x:Key="Str_Loc_Rename">Přejmenovat Lokalitu...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Spravovat Lokality...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Lokality</sys:String>

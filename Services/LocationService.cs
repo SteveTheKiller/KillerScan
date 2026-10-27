@@ -161,6 +161,7 @@ namespace KillerScan.Services
 
         public static bool Rename(LocationInfo info, string name) => Notify(_catalog != null && _fallback == null && _catalog.Rename(info.Id, name));
         public static bool SetNotes(LocationInfo info, string notes) => Notify(_catalog != null && _fallback == null && _catalog.SetNotes(info.Id, notes));
+        public static bool SetIcon(LocationInfo info, string icon) => Notify(_catalog != null && _fallback == null && _catalog.SetIcon(info.Id, icon));
 
         /// <summary>Whether Locations can be created, renamed, exported and imported right now.</summary>
         public static bool Editable => Loaded && !DemoData.Enabled && _catalog != null && _fallback == null && _catalog.LoadError == null;

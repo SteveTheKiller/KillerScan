@@ -446,6 +446,14 @@
     <sys:String x:Key="Str_Loc_New">Жаңа Локация...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Жаңа Локация</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Жаңа</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">Түйреуіш</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">Үй</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">Кеңсе</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">Дүкен</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">Мектеп</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">Сервер бөлмесі</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">Бұлт</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">Wi-Fi нүктесі</sys:String>
     <sys:String x:Key="Str_Loc_Rename">Локация атын өзгерту...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Локацияларды басқару...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Локациялар</sys:String>

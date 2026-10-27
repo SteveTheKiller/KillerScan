@@ -117,7 +117,7 @@
         Click="LocationButton_Click" ContextMenuOpening="LocationButton_ContextMenuOpening"
         FontSize="12" Padding="8,3" Margin="0,2,6,2">
     <StackPanel Orientation="Horizontal">
-        <a11y:Glyph Text="&#xE707;" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="0,0,5,0" VerticalAlignment="Center"/>
+        <a11y:Glyph x:Name="LocationGlyph" Text="&#xE707;" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="0,0,5,0" VerticalAlignment="Center"/>
         <TextBlock x:Name="LocationLabel" MaxWidth="140" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
     </StackPanel>
 </Button>

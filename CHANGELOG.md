@@ -112,6 +112,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Balanced the Technical page columns by moving the glossary to the left.
 
 ### Added
+- Locations can carry an icon (Home, Office, Shop, School, Server room, Cloud, Wi-Fi spot or the pin), picked from a button beside the name in New and Rename Location, and shown in the Locations tree and on the Location button.
 - Save to puts the unsaved scan on screen into an existing Location, with an optional name.
 - Scans in history can be named (right-click Rename scan, or F2); an unnamed scan shows its target.
 - Delete a scan from Scan history with right-click Delete or the Delete key.

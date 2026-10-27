@@ -420,6 +420,14 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Loc_New">Nuova Sede...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Nuova Sede</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Nuova</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">Puntina</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">Casa</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">Ufficio</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">Negozio</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">Scuola</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">Sala server</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">Cloud</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">Punto Wi-Fi</sys:String>
     <sys:String x:Key="Str_Loc_Rename">Rinomina Sede...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Gestisci Sedi...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Sedi</sys:String>

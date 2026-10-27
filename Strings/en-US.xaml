@@ -446,6 +446,14 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Loc_New">New Location...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">New Location</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ New</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">Pin</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">Home</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">Office</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">Shop</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">School</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">Server room</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">Cloud</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">Wi-Fi spot</sys:String>
     <sys:String x:Key="Str_Loc_Rename">Rename Location...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Manage Locations...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Locations</sys:String>

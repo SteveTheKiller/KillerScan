@@ -500,19 +500,25 @@
                                         </MenuItem>
                                     </ContextMenu>
                                 </StackPanel.ContextMenu>
-                                <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="SemiBold"
-                                           TextTrimming="CharacterEllipsis" controls:ShrinkToFit.MinScale="0.85">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
-                                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
+                                <!-- The Location's icon (LocationIcons) leads its name, in the name's colour. -->
+                                <StackPanel Orientation="Horizontal">
+                                    <a11y:Glyph Text="{Binding Glyph}" FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                                VerticalAlignment="Center" Margin="0,0,6,0"
+                                                Foreground="{Binding Foreground, ElementName=LocationName}"/>
+                                    <TextBlock x:Name="LocationName" Text="{Binding Name}" FontSize="13" FontWeight="SemiBold"
+                                               TextTrimming="CharacterEllipsis" controls:ShrinkToFit.MinScale="0.85">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
                                 <TextBlock Text="{Binding Detail}" FontSize="11"
                                            TextTrimming="CharacterEllipsis" controls:ShrinkToFit.MinScale="0.85">
                                     <TextBlock.Style>

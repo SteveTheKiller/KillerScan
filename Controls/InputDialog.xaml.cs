@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Input;
 
@@ -21,6 +22,50 @@ namespace KillerScan.Controls
         /// <param name="initial">Pre-filled value, selected so typing replaces it.</param>
         /// <param name="confirmText">Confirm button caption.</param>
         /// <param name="cancelText">Cancel button caption.</param>
+        private (string Key, string Glyph, string NameKey)[] _icons = [];
+
+        /// <summary>The icon picked, when <see cref="UseIcons"/> showed the icon button.</summary>
+        public string SelectedIcon { get; private set; } = string.Empty;
+
+        /// <summary>Shows the icon button after the field, starting on <paramref name="selected"/>.</summary>
+        public void UseIcons((string Key, string Glyph, string NameKey)[] icons, string selected)
+        {
+            _icons = icons;
+            IconButton.Visibility = Visibility.Visible;
+            SetIcon(Array.Exists(icons, icon => icon.Key == selected) ? selected : icons[0].Key);
+        }
+
+        private void SetIcon(string key)
+        {
+            SelectedIcon = key;
+            var icon = Array.Find(_icons, item => item.Key == key);
+            IconButton.Content = icon.Glyph;
+            string name = TryFindResource(icon.NameKey) as string ?? key;
+            IconButton.ToolTip = name;
+            System.Windows.Automation.AutomationProperties.SetName(IconButton, name);
+        }
+
+        private void IconButton_Click(object sender, RoutedEventArgs e)
+        {
+            var menu = new System.Windows.Controls.ContextMenu
+            {
+                PlacementTarget = IconButton, Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom
+            };
+            foreach (var icon in _icons)
+            {
+                var captured = icon.Key;
+                var item = new System.Windows.Controls.MenuItem
+                {
+                    IsCheckable = true, IsChecked = icon.Key == SelectedIcon,
+                    Icon = MenuGlyph.Create(char.ConvertToUtf32(icon.Glyph, 0))
+                };
+                item.SetResourceReference(System.Windows.Controls.HeaderedItemsControl.HeaderProperty, icon.NameKey);
+                item.Click += (_, _) => SetIcon(captured);
+                menu.Items.Add(item);
+            }
+            menu.IsOpen = true;
+        }
+
         public InputDialog(string heading, string detail, string fieldLabel,
                            string initial, string confirmText, string cancelText)
         {

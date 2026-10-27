@@ -415,6 +415,14 @@
     <sys:String x:Key="Str_Loc_New">新しいロケーション...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">新しいロケーション</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ 新規</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">ピン</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">自宅</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">オフィス</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">店舗</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">学校</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">サーバー室</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">クラウド</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">Wi-Fi スポット</sys:String>
     <sys:String x:Key="Str_Loc_Rename">ロケーション名を変更...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">ロケーションを管理...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">ロケーション</sys:String>

@@ -34,7 +34,7 @@ namespace KillerScan.Services
             var file = new TransferFile
             {
                 Format = Format, Version = Version,
-                Name = info.Name, Customer = info.Customer, Notes = info.Notes, Files = files
+                Name = info.Name, Customer = info.Customer, Notes = info.Notes, Icon = info.Icon, Files = files
             };
             return Encoding.UTF8.GetBytes(JsonSerializer.Serialize(file, new JsonSerializerOptions { WriteIndented = true }));
         }
@@ -87,6 +87,7 @@ namespace KillerScan.Services
                     error = catalog.SaveError ?? catalog.LoadError ?? "The Location could not be added.";
                     return false;
                 }
+                if (LocationIcons.IsKnown(file.Icon)) catalog.SetIcon(created.Id, file.Icon!);
                 try { MoveDirectory(staging, catalog.DirectoryFor(created)); }
                 catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
                 {
@@ -120,6 +121,7 @@ namespace KillerScan.Services
             public string? Name { get; set; }
             public string? Customer { get; set; }
             public string? Notes { get; set; }
+            public string? Icon { get; set; }
             public Dictionary<string, JsonElement>? Files { get; set; }
         }
     }

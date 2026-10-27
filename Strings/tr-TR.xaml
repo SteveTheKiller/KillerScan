@@ -404,6 +404,14 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Loc_New">Yeni Lokasyon...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Yeni Lokasyon</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Yeni</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">Raptiye</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">Ev</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">Ofis</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">Mağaza</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">Okul</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">Sunucu odası</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">Bulut</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">Wi-Fi noktası</sys:String>
     <sys:String x:Key="Str_Loc_Rename">Lokasyonu yeniden adlandır...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Lokasyonları yönet...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Lokasyonlar</sys:String>

@@ -405,6 +405,14 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Loc_New">Neuer Standort...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Neuer Standort</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Neu</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">Pin</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">Zuhause</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">Büro</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">Geschäft</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">Schule</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">Serverraum</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">Cloud</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">WLAN-Ort</sys:String>
     <sys:String x:Key="Str_Loc_Rename">Standort umbenennen...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Standorte verwalten...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Standorte</sys:String>

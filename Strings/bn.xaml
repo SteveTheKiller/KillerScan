@@ -404,6 +404,14 @@
     <sys:String x:Key="Str_Loc_New">নতুন লোকেশন...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">নতুন লোকেশন</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ নতুন</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">পিন</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">বাড়ি</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">অফিস</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">দোকান</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">স্কুল</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">সার্ভার রুম</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">ক্লাউড</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">ওয়াই-ফাই স্থান</sys:String>
     <sys:String x:Key="Str_Loc_Rename">লোকেশনের নাম পরিবর্তন করুন...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">লোকেশন পরিচালনা করুন...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">লোকেশন</sys:String>

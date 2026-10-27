@@ -96,13 +96,24 @@
                                FontSize="12" LineHeight="18" TextWrapping="Wrap" Margin="0,0,0,10"/>
                     <TextBlock x:Name="FieldLabel" Foreground="{DynamicResource MutedTextBrush}"
                                FontFamily="{DynamicResource UiFont}" FontSize="11" Margin="0,0,0,4"/>
-                    <TextBox x:Name="ValueBox"
-                             Background="{DynamicResource TextFieldBrush}"
-                             Foreground="{DynamicResource TextBrush}"
-                             CaretBrush="{DynamicResource PrimaryBrush}"
-                             BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1"
-                             FontFamily="{DynamicResource MonoFont}" FontSize="12.5"
-                             Padding="6,5" KeyDown="ValueBox_KeyDown"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="ValueBox"
+                                 Background="{DynamicResource TextFieldBrush}"
+                                 Foreground="{DynamicResource TextBrush}"
+                                 CaretBrush="{DynamicResource PrimaryBrush}"
+                                 BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1"
+                                 FontFamily="{DynamicResource MonoFont}" FontSize="12.5"
+                                 Padding="6,5" KeyDown="ValueBox_KeyDown"/>
+                        <!-- Optional icon choice right after the field (a Location's icon): the
+                             button shows the current icon and opens a flyout of the choices. -->
+                        <Button x:Name="IconButton" Grid.Column="1" Visibility="Collapsed" Margin="8,0,0,0"
+                                Style="{StaticResource SurfaceButton}" FontFamily="Segoe MDL2 Assets" FontSize="15"
+                                Width="36" Padding="0" Click="IconButton_Click"/>
+                    </Grid>
                 </StackPanel>
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="24,0,24,18">

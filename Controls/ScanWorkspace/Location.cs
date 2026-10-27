@@ -201,6 +201,8 @@ namespace KillerScan.Controls
         {
             if (LocationLabel == null) return;
             LocationLabel.Text = LocationName;
+            // The Location's own icon (LocationIcons); the pin when it has none.
+            LocationGlyph.Text = LocationIcons.Glyph(_location.Info is { } shown ? LocationService.Find(shown.Id)?.Icon ?? shown.Icon : null);
             System.Windows.Automation.AutomationProperties.SetName(LocationButton,
                 Loc("Str_Loc_Title") + ": " + LocationName);
             // The notes are a glance away on the button, so the gateway or the person to call
@@ -689,9 +691,16 @@ namespace KillerScan.Controls
         private void CreateLocation()
         {
             // No subtitle: the current Location is not what a new one is named after.
-            if (AskName("Str_Loc_NewTitle", string.Empty, string.Empty) is not { } name) return;
-            if (LocationService.Create(name, out var created) && created != null)
+            var dialog = new InputDialog(Loc("Str_Loc_NewTitle"), string.Empty, Loc("Str_Rename_Label"), string.Empty,
+                Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
+            dialog.UseIcons(LocationIcons.All, LocationIcons.Default);
+            dialog.ShowDialog();
+            if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return;
+            if (LocationService.Create(dialog.Value.Trim(), out var created) && created != null)
+            {
+                LocationService.SetIcon(created, dialog.SelectedIcon);
                 SetLocation(LocationService.Get(created));
+            }
             else
                 PersistenceFeedback.Check(false, () => false, () => LocationService.SaveError ?? LocationService.LoadError);
         }
@@ -701,10 +710,17 @@ namespace KillerScan.Controls
         /// <summary>Renames any Location, from this menu or the Locations sidebar. The ID and data stay put.</summary>
         internal void RenameLocation(LocationInfo info)
         {
-            string current = LocationService.Find(info.Id)?.Name ?? info.Name;
-            if (AskName("Str_Loc_Rename", current, current) is not { } name) return;
+            var stored = LocationService.Find(info.Id) ?? info;
+            string current = stored.Name;
+            var dialog = new InputDialog(Loc("Str_Loc_Rename"), current, Loc("Str_Rename_Label"), current,
+                Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
+            dialog.UseIcons(LocationIcons.All, stored.Icon);
+            dialog.ShowDialog();
+            if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return;
+            string name = dialog.Value.Trim();
             if (!LocationService.Rename(info, name))
                 PersistenceFeedback.Check(false, () => LocationService.Rename(info, name), () => LocationService.SaveError);
+            if (dialog.SelectedIcon != stored.Icon) LocationService.SetIcon(info, dialog.SelectedIcon);
             UpdateLocationLabel();
             LocationChanged?.Invoke(this, EventArgs.Empty);
         }

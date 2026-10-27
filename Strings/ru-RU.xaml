@@ -430,6 +430,14 @@
     <sys:String x:Key="Str_Loc_New">Новый Объект...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Новый Объект</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Новая</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">Булавка</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">Дом</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">Офис</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">Магазин</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">Школа</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">Серверная</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">Облако</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">Точка Wi-Fi</sys:String>
     <sys:String x:Key="Str_Loc_Rename">Переименовать Объект...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Управление Объектами...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Объекты</sys:String>

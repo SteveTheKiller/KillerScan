@@ -446,6 +446,14 @@
     <sys:String x:Key="Str_Loc_New">Нова локація...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Нова локація</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Нова</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">Шпилька</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">Дім</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">Офіс</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">Магазин</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">Школа</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">Серверна</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">Хмара</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">Точка Wi-Fi</sys:String>
     <sys:String x:Key="Str_Loc_Rename">Перейменувати локацію...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Керування локаціями...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Локації</sys:String>

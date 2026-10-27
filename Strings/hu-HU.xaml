@@ -420,6 +420,14 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Loc_New">Új Helyszín...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Új Helyszín</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Új</sys:String>
+    <sys:String x:Key="Str_LocIcon_Pin">Gombostű</sys:String>
+    <sys:String x:Key="Str_LocIcon_Home">Otthon</sys:String>
+    <sys:String x:Key="Str_LocIcon_Office">Iroda</sys:String>
+    <sys:String x:Key="Str_LocIcon_Shop">Üzlet</sys:String>
+    <sys:String x:Key="Str_LocIcon_School">Iskola</sys:String>
+    <sys:String x:Key="Str_LocIcon_Server">Szerverterem</sys:String>
+    <sys:String x:Key="Str_LocIcon_Cloud">Felhő</sys:String>
+    <sys:String x:Key="Str_LocIcon_Wifi">Wi-Fi pont</sys:String>
     <sys:String x:Key="Str_Loc_Rename">Helyszín átnevezése...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Helyszínek kezelése...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Helyszínek</sys:String>
