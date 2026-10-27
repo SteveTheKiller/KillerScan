@@ -150,6 +150,71 @@ namespace KillerScan.Shell
             RefreshLocationsList();
         }
 
+        // ---- Dragging a saved scan to another Location ----
+        private ScanNode? _dragScan;
+        private Point _dragStart;
+
+        private void InitLocationsDrag()
+        {
+            LocationsList.AllowDrop = true;
+            LocationsList.PreviewMouseLeftButtonDown += (_, e) =>
+            {
+                _dragScan = NodeUnder(e.OriginalSource as DependencyObject) as ScanNode;
+                _dragStart = e.GetPosition(LocationsList);
+            };
+            LocationsList.PreviewMouseMove += (_, e) =>
+            {
+                if (_dragScan == null || e.LeftButton != MouseButtonState.Pressed) return;
+                var now = e.GetPosition(LocationsList);
+                if (Math.Abs(now.X - _dragStart.X) < SystemParameters.MinimumHorizontalDragDistance
+                    && Math.Abs(now.Y - _dragStart.Y) < SystemParameters.MinimumVerticalDragDistance) return;
+                var scan = _dragScan;
+                _dragScan = null;
+                DragDrop.DoDragDrop(LocationsList, new DataObject(typeof(ScanNode), scan), DragDropEffects.Move);
+            };
+            LocationsList.DragOver += (_, e) =>
+            {
+                e.Effects = e.Data.GetData(typeof(ScanNode)) is ScanNode scan && TargetRow(e) is { } row
+                    && row.Info.Id != scan.Location.Info.Id ? DragDropEffects.Move : DragDropEffects.None;
+                e.Handled = true;
+            };
+            LocationsList.Drop += (_, e) =>
+            {
+                if (e.Data.GetData(typeof(ScanNode)) is ScanNode scan && TargetRow(e) is { } row
+                    && row.Info.Id != scan.Location.Info.Id)
+                    MoveSavedScan(scan, row);
+                e.Handled = true;
+            };
+        }
+
+        private static object? NodeUnder(DependencyObject? source)
+        {
+            for (var node = source; node != null; node = System.Windows.Media.VisualTreeHelper.GetParent(node))
+                if (node is TreeViewItem item) return item.DataContext;
+            return null;
+        }
+
+        /// <summary>The Location a drop lands in: the row itself, or the Location of a scan dropped on.</summary>
+        private LocationRow? TargetRow(DragEventArgs e) => NodeUnder(e.OriginalSource as DependencyObject) switch
+        {
+            LocationRow row => row,
+            ScanNode node => node.Location,
+            _ => null
+        };
+
+        /// <summary>Moves a saved scan into another Location: saved there first, then removed here,
+        /// so a failed save loses nothing.</summary>
+        private void MoveSavedScan(ScanNode scan, LocationRow row)
+        {
+            var from = LocationService.Get(scan.Location.Info).SavedScans;
+            var to = LocationService.Get(row.Info).SavedScans;
+            bool saved = to.SaveEdited(scan.Profile.Name, scan.Profile.Target, scan.Profile.Options, scan.Profile.Adapter ?? string.Empty);
+            if (!PersistenceFeedback.Check(saved, to.Retry, () => to.SaveError)) return;
+            PersistenceFeedback.Check(from.Delete(scan.Profile), from.Retry, () => from.SaveError);
+            _expandedLocations.Add(row.Info.Id);
+            RefreshLocationsList();
+        }
+
         private void DeleteSavedScan(ScanNode scan)
         {
             var store = LocationService.Get(scan.Location.Info).SavedScans;
