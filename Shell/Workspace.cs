@@ -453,6 +453,7 @@ namespace KillerScan.Shell
         {
             _workspaceToolbar.LayoutTransform = new ScaleTransform(scale, scale);
             _workspaceSummary.LayoutTransform = new ScaleTransform(scale, scale);
+            _viewTabBand.LayoutTransform = new ScaleTransform(scale, scale);
             foreach (var content in _workspaceBody.Children.OfType<FrameworkElement>())
                 if (content is ScanWorkspace scan) scan.ApplyScale(scale);
                 else if (content is NetworkToolsWindow tools) tools.ApplyScale(scale);

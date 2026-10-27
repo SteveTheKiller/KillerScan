@@ -30,8 +30,12 @@ namespace KillerScan.Controls
     /// WIRING (at startup, and again when the sidebar moves to another edge):
     ///     FlyoutPlacement.UsePane(ContentPane, side);           // or UsePane(pane, root, side)
     /// then, each time a flyout opens:
-    ///     FlyoutPlacement.Attach(themeMenu, themeButton);
+    ///     FlyoutPlacement.Attach(historyMenu, historyButton);   // rises with its button
+    ///     FlyoutPlacement.Attach(themeMenu, null);              // large menus: always the corner
     ///     themeMenu.IsOpen = true;
+    ///
+    /// The big menus (theme, language) always open in the corner whatever button opens them:
+    /// raised to a button they would cover the pane they are meant to sit beside.
     ///
     /// The flyout's card carries a transparent margin for its drop shadow (FlyoutCard, or the
     /// ContextMenu template's MenuRoot); that halo is read from the card itself and taken off, so
@@ -62,7 +66,7 @@ namespace KillerScan.Controls
         private static FrameworkElement? Root =>
             _root ?? (_pane == null ? null : Window.GetWindow(_pane)?.Content as FrameworkElement) ?? _pane;
 
-        internal static void Attach(Popup popup, UIElement anchor)
+        internal static void Attach(Popup popup, UIElement? anchor)
         {
             popup.PlacementTarget = Root;
             popup.Placement = PlacementMode.Custom;
@@ -71,7 +75,7 @@ namespace KillerScan.Controls
             popup.CustomPopupPlacementCallback = (popupSize, _, _) => Place(popup, popupSize, halo, anchor);
         }
 
-        internal static void Attach(ContextMenu menu, UIElement anchor)
+        internal static void Attach(ContextMenu menu, UIElement? anchor)
         {
             menu.PlacementTarget = Root;
             menu.Placement = PlacementMode.Custom;
