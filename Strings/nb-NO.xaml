@@ -446,6 +446,7 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Loc_New">Ny Lokasjon...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Ny Lokasjon</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Ny</sys:String>
+    <sys:String x:Key="Str_Loc_ImportedScans">Lagrede skanninger</sys:String>
     <sys:String x:Key="Str_Loc_SaveScan">Lagre skanning</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">Nål</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">Hjem</sys:String>

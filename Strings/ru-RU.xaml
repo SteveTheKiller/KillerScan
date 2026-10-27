@@ -430,6 +430,7 @@
     <sys:String x:Key="Str_Loc_New">Новый Объект...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Новый Объект</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Новая</sys:String>
+    <sys:String x:Key="Str_Loc_ImportedScans">Сохранённые сканирования</sys:String>
     <sys:String x:Key="Str_Loc_SaveScan">Сохранить сканирование</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">Булавка</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">Дом</sys:String>

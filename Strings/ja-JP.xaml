@@ -415,6 +415,7 @@
     <sys:String x:Key="Str_Loc_New">新しいロケーション...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">新しいロケーション</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ 新規</sys:String>
+    <sys:String x:Key="Str_Loc_ImportedScans">保存済みスキャン</sys:String>
     <sys:String x:Key="Str_Loc_SaveScan">スキャンを保存</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">ピン</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">自宅</sys:String>

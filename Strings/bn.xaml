@@ -404,6 +404,7 @@
     <sys:String x:Key="Str_Loc_New">নতুন লোকেশন...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">নতুন লোকেশন</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ নতুন</sys:String>
+    <sys:String x:Key="Str_Loc_ImportedScans">সংরক্ষিত স্ক্যান</sys:String>
     <sys:String x:Key="Str_Loc_SaveScan">স্ক্যান সংরক্ষণ</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">পিন</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">বাড়ি</sys:String>

@@ -65,35 +65,29 @@ namespace KillerScan.Services
         }
 
         /// <summary>
-        /// The old app-wide saved scans lived in Unassigned and were really places, so a window
-        /// running "Home" still said Unassigned (Steve, 2026-10-26). Each of them becomes a
-        /// Location of its own carrying its target, settings and adapter, and is
-        /// removed only once that Location exists. A name already taken by a Location keeps that
-        /// Location and fills in its target if it had none. Runs on every load; with nothing
-        /// left to move it does nothing.
+        /// Scan profiles from before Locations: the app-wide profiles.json, which the catalog's own
+        /// first-run migration moves into Unassigned. A profile is a saved scan (a target and its
+        /// settings), so each one becomes a saved scan, keeping its name, inside one Location named
+        /// "Saved scans" (localized), from where the user drags each to its real Location. It is
+        /// removed from Unassigned only once it is saved there; with none left this does nothing,
+        /// and no empty Location is made.
         /// </summary>
         private static void MigrateSavedScans()
         {
             if (!Editable) return;
-            // Only Unassigned's: those were the old app-wide saved scans. A real Location's saved
-            // scans are its own named networks and stay where they are.
-            foreach (var owner in Items.Where(item => item.Id == LocationCatalog.UnassignedId).ToList())
+            if (Items.FirstOrDefault(item => item.Id == LocationCatalog.UnassignedId) is not { } unassigned) return;
+            var source = Get(unassigned).SavedScans;
+            var old = source.Items.Where(scan => scan.Target.Trim().Length > 0).ToList();
+            if (old.Count == 0) return;
+            string name = System.Windows.Application.Current?.TryFindResource("Str_Loc_ImportedScans") as string ?? "Saved scans";
+            var home = Items.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.CurrentCultureIgnoreCase));
+            if (home == null && (!Create(name, out home) || home == null)) return;
+            var target = Get(home).SavedScans;
+            foreach (var scan in old)
             {
-                var data = Get(owner);
-                foreach (var scan in data.SavedScans.Items.ToList())
-                {
-                    if (scan.Name.Trim().Length == 0) continue;
-                    var existing = Items.FirstOrDefault(item =>
-                        string.Equals(item.Name, scan.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
-                    if (existing == null)
-                    {
-                        if (!Create(scan.Name.Trim(), out existing) || existing == null) continue;
-                        SetLastUsed(existing, scan.Target, scan.Options, scan.Adapter ?? string.Empty);
-                    }
-                    else if (existing.LastTargets.Trim().Length == 0)
-                        SetLastUsed(existing, scan.Target, scan.Options, scan.Adapter ?? string.Empty);
-                    data.SavedScans.Delete(scan);
-                }
+                string label = scan.Name.Trim().Length > 0 ? scan.Name.Trim() : scan.Target.Trim();
+                if (target.SaveEdited(label, scan.Target.Trim(), scan.Options ?? new ScanOptions(), scan.Adapter ?? string.Empty))
+                    source.Delete(scan);
             }
         }
 

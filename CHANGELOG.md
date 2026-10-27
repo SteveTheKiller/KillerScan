@@ -144,6 +144,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - About groups settings in two columns and can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts.
 
 ### Changed
+- Scan profiles from earlier versions become saved scans, each keeping its name, target and settings, inside one Location named Saved scans; drag each into its own Location.
 - Scan is the app's largest button: the filled accent button with its label in the wordmark's lettering.
 - Edit Location replaces Rename and Location notes: name, icon and notes in one dialog, which New Location shares. The dialogs are tighter and their text larger.
 - Each Location can keep several saved scans, each a target with its settings, labeled by its subnet or a nickname. They are listed under the Location in the tree and load into the scan bar with a click. Every run stays in Scan history.

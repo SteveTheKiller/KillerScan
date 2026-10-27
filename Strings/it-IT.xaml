@@ -420,6 +420,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Loc_New">Nuova Sede...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Nuova Sede</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Nuova</sys:String>
+    <sys:String x:Key="Str_Loc_ImportedScans">Scansioni salvate</sys:String>
     <sys:String x:Key="Str_Loc_SaveScan">Salva scansione</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">Puntina</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">Casa</sys:String>
