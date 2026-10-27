@@ -454,7 +454,7 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_LocIcon_Server">Sala de servidores</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">Nuvem</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">Ponto Wi-Fi</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">Renomear Local...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">Editar Local...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Gerenciar Locais...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Locais</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (atual)</sys:String>
@@ -470,7 +470,6 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Estes resultados de “Verificação temporária” não são salvos em nenhum lugar. Trocar de Local os apaga. Para mantê-los, escolha “Salvar resultados no Local”.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Descartar</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Não foi possível configurar os Locais, então o KillerScan está usando seus dispositivos, verificações salvas e histórico existentes como antes.&#10;&#10;{0}&#10;&#10;Nada foi alterado ou removido. O KillerScan tentará novamente na próxima vez que for iniciado.</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">Notas do Local...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notas (Ctrl+Enter salva)</sys:String>
     <sys:String x:Key="Str_Loc_Export">Exportar Local...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Salva o nome, as notas, as verificações salvas, os nomes de dispositivos, as aprovações, os dispositivos conhecidos, os tipos de dispositivo e o histórico deste Local em um único arquivo que você pode importar em outro PC.</sys:String>

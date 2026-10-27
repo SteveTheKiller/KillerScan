@@ -14,6 +14,10 @@ namespace KillerScan.Services
         /// Location keep several networks apart in its history.</summary>
         public string Name { get; set; } = string.Empty;
 
+        /// <summary>True once the user deliberately saved this run (Save to, or Save scan in a
+        /// Location). Every run is in history; only saved ones are listed under their Location.</summary>
+        public bool Saved { get; set; }
+
         /// <summary>What the history list shows: the name, or the target when there is none.</summary>
         [System.Text.Json.Serialization.JsonIgnore]
         public string DisplayName => Name.Trim().Length > 0 ? Name.Trim() : Target;
@@ -155,10 +159,10 @@ namespace KillerScan.Services
         internal HistoryRetention Retention => MemoryOnly ? _demoRetention : _archive.Policy;
 
         /// <summary>Names one run (empty clears it); the history sidebar's Rename scan.</summary>
-        internal bool Rename(ScanHistoryEntry entry, string name)
+        internal bool Rename(ScanHistoryEntry entry, string name, bool? saved = null)
         {
-            if (MemoryOnly) { entry.Name = name; return true; }
-            bool renamed = _archive.Rename(entry, name);
+            if (MemoryOnly) { entry.Name = name; if (saved is bool s) entry.Saved = s; return true; }
+            bool renamed = _archive.Rename(entry, name, saved);
             _entries = _archive.Entries;
             return renamed;
         }

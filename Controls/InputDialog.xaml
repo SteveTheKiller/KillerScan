@@ -89,7 +89,7 @@
                     </Grid>
                 </Border>
 
-                <StackPanel Grid.Row="1" Margin="24,16,24,12">
+                <StackPanel Grid.Row="1" Margin="16,10,16,10">
                     <TextBlock x:Name="HeadingText" Foreground="{DynamicResource TextBrush}" FontSize="13"
                                TextWrapping="Wrap" Margin="0,0,0,10"/>
                     <TextBlock x:Name="DetailText" Foreground="{DynamicResource MutedTextBrush}"
@@ -106,17 +106,28 @@
                                  Foreground="{DynamicResource TextBrush}"
                                  CaretBrush="{DynamicResource PrimaryBrush}"
                                  BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1"
-                                 FontFamily="{DynamicResource MonoFont}" FontSize="12.5"
-                                 Padding="6,5" KeyDown="ValueBox_KeyDown"/>
+                                 FontFamily="{DynamicResource UiFont}" FontSize="13"
+                                 Padding="6,3" KeyDown="ValueBox_KeyDown"/>
                         <!-- Optional icon choice right after the field (a Location's icon): the
                              button shows the current icon and opens a flyout of the choices. -->
                         <Button x:Name="IconButton" Grid.Column="1" Visibility="Collapsed" Margin="8,0,0,0"
                                 Style="{StaticResource SurfaceButton}" FontFamily="Segoe MDL2 Assets" FontSize="15"
                                 Width="36" Padding="0" Click="IconButton_Click"/>
                     </Grid>
+                    <!-- Optional second field: a Location's notes, in New and Edit Location. -->
+                    <TextBlock x:Name="NotesLabel" Visibility="Collapsed" Foreground="{DynamicResource MutedTextBrush}"
+                               FontFamily="{DynamicResource UiFont}" FontSize="11" Margin="0,10,0,4"/>
+                    <TextBox x:Name="NotesBox" Visibility="Collapsed"
+                             Background="{DynamicResource TextFieldBrush}"
+                             Foreground="{DynamicResource TextBrush}"
+                             CaretBrush="{DynamicResource PrimaryBrush}"
+                             BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1"
+                             FontFamily="{DynamicResource UiFont}" FontSize="13" Padding="6,3"
+                             AcceptsReturn="True" TextWrapping="Wrap" MinHeight="72" MaxHeight="220"
+                             VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top"/>
                 </StackPanel>
 
-                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="24,0,24,18">
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="16,2,16,14">
                     <Button x:Name="CancelButton" Content="{DynamicResource Str_Btn_Cancel}" Click="Cancel_Click"
                             Style="{StaticResource SurfaceButton}" MinWidth="86" Margin="0,0,8,0"/>
                     <Button x:Name="OkButton" Content="OK" Click="OK_Click"

@@ -438,7 +438,7 @@
     <sys:String x:Key="Str_LocIcon_Server">Серверная</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">Облако</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">Точка Wi-Fi</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">Переименовать Объект...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">Изменить Объект...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Управление Объектами...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Объекты</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (текущий)</sys:String>
@@ -454,7 +454,6 @@
     <sys:String x:Key="Str_Loc_DiscardTemporary">Результаты режима «Временное сканирование» нигде не сохраняются. При смене Объекта они будут удалены. Чтобы оставить их, выберите вместо этого «Сохранить результаты в Объект».</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Сбросить</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Не удалось настроить Объекты, поэтому KillerScan, как и раньше, использует ваши существующие устройства, сохранённые сканирования и историю.&#10;&#10;{0}&#10;&#10;Ничего не изменено и не удалено. KillerScan попробует снова при следующем запуске.</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">Заметки об Объекте...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Заметки (Ctrl+Enter сохраняет)</sys:String>
     <sys:String x:Key="Str_Loc_Export">Экспорт Объекта...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Сохраняет название этого Объекта, заметки, сохранённые сканирования, имена устройств, одобрения, известные устройства, типы устройств и историю в один файл, который можно импортировать на другом компьютере.</sys:String>

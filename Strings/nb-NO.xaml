@@ -454,7 +454,7 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_LocIcon_Server">Serverrom</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">Sky</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">Wi-Fi-sted</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">Gi Lokasjonen nytt navn...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">Rediger Lokasjonen...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Administrer Lokasjoner...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Lokasjoner</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (gjeldende)</sys:String>
@@ -470,7 +470,6 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Disse resultatene fra «Midlertidig skanning» er ikke lagret noe sted. Å bytte Lokasjon fjerner dem. For å beholde dem, velg «Lagre resultater i Lokasjonen» i stedet.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Forkast</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Lokasjoner kunne ikke settes opp, så KillerScan bruker eksisterende enheter, lagrede skanninger og skanneloggen som før.&#10;&#10;{0}&#10;&#10;Ingenting ble endret eller fjernet. KillerScan prøver igjen neste gang programmet starter.</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">Lokasjonsnotater...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notater (Ctrl+Enter lagrer)</sys:String>
     <sys:String x:Key="Str_Loc_Export">Eksporter Lokasjon...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Lagrer navnet, notatene, lagrede skanninger, enhetsnavn, godkjenninger, kjente enheter, enhetstyper og skanneloggen for denne Lokasjonen i én fil du kan importere på en annen PC.</sys:String>

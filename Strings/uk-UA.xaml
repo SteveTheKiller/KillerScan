@@ -454,7 +454,7 @@
     <sys:String x:Key="Str_LocIcon_Server">Серверна</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">Хмара</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">Точка Wi-Fi</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">Перейменувати локацію...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">Редагувати локацію...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Керування локаціями...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Локації</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (поточна)</sys:String>
@@ -470,7 +470,6 @@
     <sys:String x:Key="Str_Loc_DiscardTemporary">Результати режиму «Тимчасове сканування» ніде не зберігаються. Зміна локації очистить їх. Щоб зберегти їх, виберіть натомість «Зберегти результати в локацію».</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Відкинути</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Не вдалося налаштувати локації, тому KillerScan використовує ваші наявні пристрої, збережені сканування та історію, як і раніше.&#10;&#10;{0}&#10;&#10;Нічого не змінено й не видалено. KillerScan спробує знову під час наступного запуску.</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">Нотатки локації...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Нотатки (Ctrl+Enter зберігає)</sys:String>
     <sys:String x:Key="Str_Loc_Export">Експортувати локацію...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Зберігає назву, нотатки, збережені сканування, імена пристроїв, схвалення, відомі пристрої, типи пристроїв та історію цієї локації в один файл, який можна імпортувати на іншому ПК.</sys:String>

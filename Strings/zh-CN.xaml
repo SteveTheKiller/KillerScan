@@ -412,7 +412,7 @@
     <sys:String x:Key="Str_LocIcon_Server">机房</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">云</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">Wi-Fi 热点</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">重命名站点...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">编辑站点...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">管理站点...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">站点</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0}（当前）</sys:String>
@@ -428,7 +428,6 @@
     <sys:String x:Key="Str_Loc_DiscardTemporary">此“临时扫描”的结果未保存在任何位置。切换站点会清除这些结果。如需保留，请改为选择“将结果保存到站点”。</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">放弃</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">无法设置站点，因此 KillerScan 将照常使用现有的设备、已保存的扫描和历史记录。&#10;&#10;{0}&#10;&#10;未更改或删除任何内容。KillerScan 将在下次启动时重试。</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">站点备注...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">备注（Ctrl+Enter 保存）</sys:String>
     <sys:String x:Key="Str_Loc_Export">导出站点...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">将此站点的名称、备注、已保存的扫描、设备名称、批准记录、已知设备、设备类型和历史记录保存到一个文件中，可在另一台 PC 上导入。</sys:String>

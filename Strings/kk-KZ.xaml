@@ -454,7 +454,7 @@
     <sys:String x:Key="Str_LocIcon_Server">Сервер бөлмесі</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">Бұлт</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">Wi-Fi нүктесі</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">Локация атын өзгерту...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">Локацияны өңдеу...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Локацияларды басқару...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Локациялар</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (ағымдағы)</sys:String>
@@ -470,7 +470,6 @@
     <sys:String x:Key="Str_Loc_DiscardTemporary">Бұл «Уақытша сканерлеу» нәтижелері ешқайда сақталмаған. Локацияны ауыстырсаңыз, олар өшіріледі. Оларды сақтап қалу үшін оның орнына «Нәтижелерді Локацияға сақтау» тармағын таңдаңыз.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Жою</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Локацияларды орнату мүмкін болмады, сондықтан KillerScan бұрынғыдай бар құрылғыларыңызды, сақталған сканерлеулерді және тарихты пайдаланады.&#10;&#10;{0}&#10;&#10;Ештеңе өзгертілген немесе жойылған жоқ. KillerScan келесі іске қосылғанда қайта әрекет етеді.</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">Локация жазбалары...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Жазбалар (Ctrl+Enter сақтайды)</sys:String>
     <sys:String x:Key="Str_Loc_Export">Локацияны экспорттау...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Осы Локацияның атауын, жазбаларын, сақталған сканерлеулерін, құрылғы атауларын, мақұлдауларын, белгілі құрылғыларын, құрылғы түрлерін және тарихын басқа PC-де импорттауға болатын бір файлға сақтайды.</sys:String>

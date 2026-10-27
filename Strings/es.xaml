@@ -412,7 +412,7 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_LocIcon_Server">Sala de servidores</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">Nube</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">Punto Wi-Fi</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">Cambiar nombre de la Ubicación...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">Editar la Ubicación...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Administrar Ubicaciones...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Ubicaciones</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (actual)</sys:String>
@@ -428,7 +428,6 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Estos resultados de «Escaneo temporal» no se guardan en ningún sitio. Cambiar de Ubicación los borra. Para conservarlos, elija «Guardar resultados en la Ubicación».</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Descartar</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">No se pudieron configurar las Ubicaciones, así que KillerScan usa sus dispositivos, escaneos guardados e historial existentes como antes.&#10;&#10;{0}&#10;&#10;No se cambió ni se eliminó nada. KillerScan lo intentará de nuevo la próxima vez que se inicie.</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">Notas de la Ubicación...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notas (Ctrl+Enter guarda)</sys:String>
     <sys:String x:Key="Str_Loc_Export">Exportar Ubicación...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Guarda el nombre, las notas, los escaneos guardados, los nombres de dispositivos, las aprobaciones, los dispositivos conocidos, los tipos de dispositivo y el historial de esta Ubicación en un archivo que puede importar en otro PC.</sys:String>

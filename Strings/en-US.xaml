@@ -454,7 +454,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_LocIcon_Server">Server room</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">Cloud</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">Wi-Fi spot</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">Rename Location...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">Edit Location...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Manage Locations...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Locations</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (current)</sys:String>
@@ -470,7 +470,6 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">These Temporary scan results are not saved anywhere. Changing Location clears them. To keep them, choose Save results to Location instead.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Discard</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Locations could not be set up, so KillerScan is using your existing devices, saved scans and history as before.&#10;&#10;{0}&#10;&#10;Nothing was changed or removed. KillerScan will try again the next time it starts.</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">Location notes...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notes (Ctrl+Enter saves)</sys:String>
     <sys:String x:Key="Str_Loc_Export">Export Location...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Saves this Location's name, notes, saved scans, device names, approvals, known devices, device types and history to one file you can import on another PC.</sys:String>

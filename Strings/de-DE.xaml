@@ -413,7 +413,7 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_LocIcon_Server">Serverraum</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">Cloud</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">WLAN-Ort</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">Standort umbenennen...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">Standort bearbeiten...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Standorte verwalten...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Standorte</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (aktuell)</sys:String>
@@ -429,7 +429,6 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Diese Ergebnisse aus „Temporärer Scan“ werden nirgends gespeichert. Ein Wechsel des Standorts löscht sie. Um sie zu behalten, wählen Sie stattdessen „Ergebnisse im Standort speichern“.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Verwerfen</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Standorte konnten nicht eingerichtet werden, daher verwendet KillerScan Ihre vorhandenen Geräte, gespeicherten Scans und den Verlauf wie bisher.&#10;&#10;{0}&#10;&#10;Es wurde nichts geändert oder entfernt. KillerScan versucht es beim nächsten Start erneut.</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">Standortnotizen...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notizen (Strg+Eingabe speichert)</sys:String>
     <sys:String x:Key="Str_Loc_Export">Standort exportieren...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Speichert Namen, Notizen, gespeicherte Scans, Gerätenamen, Freigaben, bekannte Geräte, Gerätetypen und Verlauf dieses Standorts in einer Datei, die Sie auf einem anderen PC importieren können.</sys:String>

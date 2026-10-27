@@ -287,8 +287,7 @@ namespace KillerScan.Controls
                 // Icons and shortcuts like every other family menu; only the actions that have a
                 // shortcut show one (Shell/Shortcuts.cs).
                 menu.Items.Add(MenuText("Str_Loc_New", CreateLocation, !IsScanning, 0xE710, "Ctrl+Alt+S"));
-                menu.Items.Add(MenuText("Str_Loc_Rename", RenameLocation, own, 0xE8AC));
-                menu.Items.Add(MenuText("Str_Loc_Notes", EditNotes, own, 0xE70B));
+                menu.Items.Add(MenuText("Str_Loc_Edit", RenameLocation, own, 0xE70F, "F2"));
                 menu.Items.Add(new Separator());
                 menu.Items.Add(MenuText("Str_Loc_Export", ExportLocation, own, 0xEDE1));
                 menu.Items.Add(MenuText("Str_Loc_Import", ImportLocation, !IsScanning, 0xE8B5));
@@ -422,23 +421,6 @@ namespace KillerScan.Controls
         {
             if (_suggestedGateway.Length > 0) DismissedGateways.Add(_suggestedGateway);
             LocationSuggestion.Visibility = Visibility.Collapsed;
-        }
-
-        private void EditNotes() { if (_location.Info is { } info) EditNotes(info); }
-
-        internal void EditNotes(LocationInfo info)
-        {
-            var latest = LocationService.Find(info.Id) ?? info;
-            string current = latest.Notes;
-            var dialog = new InputDialog(Loc("Str_Loc_Notes"), latest.Name, Loc("Str_Loc_NotesLabel"), current,
-                Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
-            dialog.UseMultipleLines();
-            dialog.ShowDialog();
-            if (!dialog.Confirmed) return;
-            if (!LocationService.SetNotes(info, dialog.Value ?? string.Empty))
-                PersistenceFeedback.Check(false, () => LocationService.SetNotes(info, dialog.Value ?? string.Empty), () => LocationService.SaveError);
-            UpdateLocationLabel();
-            LocationChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void ExportLocation() { if (_location.Info is { } info) ExportLocation(info); }
@@ -646,6 +628,22 @@ namespace KillerScan.Controls
         /// typed while it was temporary. Nothing is approved and the baseline is not touched,
         /// then the tab moves to that Location.
         /// </summary>
+        /// <summary>
+        /// Saves the latest run in this Location's own history, with an optional name. The
+        /// deliberate save when the scan is already in a Location (Save to covers an unsaved one).
+        /// </summary>
+        internal bool SaveCurrentScan(string? name)
+        {
+            if (_disposed || IsScanning || IsUnsaved) return false;
+            var store = _location.History;
+            var latest = store.Entries.OrderByDescending(entry => entry.ScannedAt).FirstOrDefault();
+            if (latest == null) return false;
+            bool saved = store.Rename(latest, string.IsNullOrWhiteSpace(name) ? latest.Name : name!.Trim(), saved: true);
+            PersistenceFeedback.Check(saved, store.Retry, () => store.SaveError);
+            HistoryRecorded?.Invoke(this, EventArgs.Empty);
+            return saved;
+        }
+
         /// <summary>True while the scan on screen is unsaved: Unassigned (or a Temporary scan).</summary>
         internal bool IsUnsaved => _location.IsTemporary
             || (_location.Info is { } info ? info.Id == LocationCatalog.UnassignedId : _location.IsShared);
@@ -664,6 +662,7 @@ namespace KillerScan.Controls
                 : source.History.Entries.OrderByDescending(entry => entry.ScannedAt).Take(1).ToList();
             // The name, if one was given, labels the run being saved (one run from Unassigned).
             if (!string.IsNullOrWhiteSpace(name) && runs.Count == 1) runs[0].Name = name!.Trim();
+            foreach (var run in runs) run.Saved = true;
             foreach (var entry in runs)
             {
                 bool adopted = target.History.Adopt(entry);
@@ -694,11 +693,13 @@ namespace KillerScan.Controls
             var dialog = new InputDialog(Loc("Str_Loc_NewTitle"), string.Empty, Loc("Str_Rename_Label"), string.Empty,
                 Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
             dialog.UseIcons(LocationIcons.All, LocationIcons.Default);
+            dialog.UseNotes(Loc("Str_Loc_NotesLabel"), string.Empty);
             dialog.ShowDialog();
             if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return;
             if (LocationService.Create(dialog.Value.Trim(), out var created) && created != null)
             {
                 LocationService.SetIcon(created, dialog.SelectedIcon);
+                if (dialog.Notes.Trim().Length > 0) LocationService.SetNotes(created, dialog.Notes);
                 SetLocation(LocationService.Get(created));
             }
             else
@@ -712,15 +713,19 @@ namespace KillerScan.Controls
         {
             var stored = LocationService.Find(info.Id) ?? info;
             string current = stored.Name;
-            var dialog = new InputDialog(Loc("Str_Loc_Rename"), current, Loc("Str_Rename_Label"), current,
+            // Edit Location: name, icon and notes in one dialog (Rename and Location notes were two).
+            var dialog = new InputDialog(Loc("Str_Loc_Edit").TrimEnd('.'), string.Empty, Loc("Str_Rename_Label"), current,
                 Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
             dialog.UseIcons(LocationIcons.All, stored.Icon);
+            dialog.UseNotes(Loc("Str_Loc_NotesLabel"), stored.Notes);
             dialog.ShowDialog();
             if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return;
             string name = dialog.Value.Trim();
             if (!LocationService.Rename(info, name))
                 PersistenceFeedback.Check(false, () => LocationService.Rename(info, name), () => LocationService.SaveError);
             if (dialog.SelectedIcon != stored.Icon) LocationService.SetIcon(info, dialog.SelectedIcon);
+            if (dialog.Notes != stored.Notes && !LocationService.SetNotes(info, dialog.Notes))
+                PersistenceFeedback.Check(false, () => LocationService.SetNotes(info, dialog.Notes), () => LocationService.SaveError);
             UpdateLocationLabel();
             LocationChanged?.Invoke(this, EventArgs.Empty);
         }

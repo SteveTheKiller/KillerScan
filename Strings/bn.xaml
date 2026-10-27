@@ -412,7 +412,7 @@
     <sys:String x:Key="Str_LocIcon_Server">সার্ভার রুম</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">ক্লাউড</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">ওয়াই-ফাই স্থান</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">লোকেশনের নাম পরিবর্তন করুন...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">লোকেশন সম্পাদনা করুন...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">লোকেশন পরিচালনা করুন...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">লোকেশন</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (বর্তমান)</sys:String>
@@ -428,7 +428,6 @@
     <sys:String x:Key="Str_Loc_DiscardTemporary">এই “অস্থায়ী স্ক্যান” থেকে পাওয়া ফলাফল কোথাও সংরক্ষিত নেই। লোকেশন পরিবর্তন করলে সেগুলো মুছে যাবে। রেখে দিতে চাইলে এর বদলে “ফলাফল লোকেশনে সংরক্ষণ করুন” বেছে নিন।</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">ফেলে দিন</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">লোকেশন সেট আপ করা যায়নি, তাই KillerScan আগের মতোই আপনার বিদ্যমান ডিভাইস, সংরক্ষিত স্ক্যান ও ইতিহাস ব্যবহার করছে।&#10;&#10;{0}&#10;&#10;কিছুই পরিবর্তন বা সরানো হয়নি। পরের বার চালু হলে KillerScan আবার চেষ্টা করবে।</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">লোকেশনের নোট...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">নোট (Ctrl+Enter চাপলে সংরক্ষণ হয়)</sys:String>
     <sys:String x:Key="Str_Loc_Export">লোকেশন এক্সপোর্ট করুন...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">এই লোকেশনের নাম, নোট, সংরক্ষিত স্ক্যান, ডিভাইসের নাম, অনুমোদন, পরিচিত ডিভাইস, ডিভাইসের ধরন ও ইতিহাস একটি ফাইলে সংরক্ষণ করে, যা আপনি অন্য PC-তে ইমপোর্ট করতে পারবেন।</sys:String>

@@ -27,8 +27,9 @@ namespace KillerScan.Shell
 
         private void RefreshLocationsList()
         {
-            SaveToLocationButton.IsEnabled = _scanWorkspace is { IsUnsaved: true, IsScanning: false }
-                && LocationService.Items.Any(item => item.Id != LocationCatalog.UnassignedId);
+            // Save works from an unsaved scan (Save to a Location) and inside a Location (save its run).
+            SaveToLocationButton.IsEnabled = _scanWorkspace is { IsScanning: false } scanning
+                && (!scanning.IsUnsaved || LocationService.Items.Any(item => item.Id != LocationCatalog.UnassignedId));
             string? current = ShellLocation.Info?.Id;
             string? selectedLocation = (_selectedLocationNode as LocationRow)?.Info.Id;
             var selectedScan = (_selectedLocationNode as ScanNode)?.Entry;
@@ -47,9 +48,10 @@ namespace KillerScan.Shell
                     Detail = item.Customer.Length > 0 ? item.Customer
                         : item.Notes.Split('\n').Select(line => line.Trim()).FirstOrDefault(line => line.Length > 0) ?? string.Empty,
                 };
-                // Its scans, newest first, under it.
+                // Its deliberately saved scans, newest first, under it. Every run is in Scan
+                // history; this tree is for the ones the user chose to keep.
                 var store = LocationService.Get(item).History;
-                foreach (var entry in store.Entries.OrderByDescending(entry => entry.ScannedAt))
+                foreach (var entry in store.Entries.Where(entry => entry.Saved).OrderByDescending(entry => entry.ScannedAt))
                 {
                     entry.Owner = store;
                     var node = new ScanNode(this) { Entry = entry, Location = row };
@@ -151,7 +153,6 @@ namespace KillerScan.Shell
 
         private void LocationOpen_Click(object sender, RoutedEventArgs e) { if (LocationFor(sender) is { } row) OpenLocation(row); }
         private void LocationRename_Click(object sender, RoutedEventArgs e) { if (LocationFor(sender) is { } row) _scanWorkspace?.RenameLocation(row.Info); }
-        private void LocationNotes_Click(object sender, RoutedEventArgs e) { if (LocationFor(sender) is { } row) _scanWorkspace?.EditNotes(row.Info); }
         private void LocationExport_Click(object sender, RoutedEventArgs e) { if (LocationFor(sender) is { } row) _scanWorkspace?.ExportLocation(row.Info); }
         private void LocationDelete_Click(object sender, RoutedEventArgs e) { if (LocationFor(sender) is { } row) _scanWorkspace?.DeleteLocation(row.Info); }
         private void NewLocation_Click(object sender, RoutedEventArgs e) => _scanWorkspace?.NewLocation();
@@ -161,6 +162,15 @@ namespace KillerScan.Shell
         private void SaveToLocation_Click(object sender, RoutedEventArgs e)
         {
             if (_scanWorkspace is not { } scan || sender is not Button button) return;
+            if (!scan.IsUnsaved)
+            {
+                // Already in a Location: save its current run there, optionally named.
+                var name = new InputDialog(Loc("Str_History_Rename").TrimEnd('.'), string.Empty, Loc("Str_Rename_Label"),
+                    string.Empty, Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
+                name.ShowDialog();
+                if (name.Confirmed && scan.SaveCurrentScan(name.Value)) RefreshLocationsList();
+                return;
+            }
             var menu = new ContextMenu { PlacementTarget = button, Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom };
             foreach (var info in LocationService.Items.Where(item => item.Id != LocationCatalog.UnassignedId)
                          .OrderBy(item => item.Name, StringComparer.CurrentCultureIgnoreCase))

@@ -122,7 +122,16 @@
     </StackPanel>
 </Button>
 <TextBox x:Name="SubnetInput" AutomationProperties.Name="{DynamicResource Str_Lbl_Subnet}" Style="{StaticResource DarkTextBox}" Padding="5,3,9,3" FontSize="12" Width="220" MaxWidth="220" VerticalAlignment="Center" Margin="0,2,8,2"/>
-<Button x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}" Style="{StaticResource OutlineButton}" Click="ScanBtn_Click" FontSize="12" Padding="10,3" Margin="0,2,6,2">
+<!-- The app's main action, so its largest button: the family's filled accent PrimaryButton with
+     the label in the wordmark's Lacquer, like KillerNotes' + New. -->
+<Button x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}" Style="{StaticResource PrimaryButton}" Click="ScanBtn_Click"
+        FontFamily="{DynamicResource WordmarkAccentFont}" FontSize="19" FontWeight="Normal"
+        Height="28" MinWidth="92" Padding="16,0" Margin="0,0,8,0" VerticalContentAlignment="Center">
+<Button.ContentTemplate>
+    <DataTemplate>
+        <TextBlock Text="{Binding}"><TextBlock.RenderTransform><TranslateTransform Y="-1"/></TextBlock.RenderTransform></TextBlock>
+    </DataTemplate>
+</Button.ContentTemplate>
 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Btn_Scan}"/><Run Text=" (F5)"/></TextBlock></Button.ToolTip>
 </Button>
 <Button x:Name="ScanOptionsButton" AutomationProperties.Name="{DynamicResource Str_Options_Title}"

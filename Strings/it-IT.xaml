@@ -428,7 +428,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_LocIcon_Server">Sala server</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">Cloud</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">Punto Wi-Fi</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">Rinomina Sede...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">Modifica Sede...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Gestisci Sedi...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Sedi</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (corrente)</sys:String>
@@ -444,7 +444,6 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">I risultati di questa «Scansione temporanea» non vengono salvati da nessuna parte. Cambiare Sede li cancella. Per conservarli, scegli invece «Salva i risultati nella Sede».</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Scarta</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Non è stato possibile configurare le Sedi, quindi KillerScan usa come prima i dispositivi, le scansioni salvate e la cronologia esistenti.&#10;&#10;{0}&#10;&#10;Nulla è stato modificato o rimosso. KillerScan riproverà al prossimo avvio.</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">Note della Sede...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Note (Ctrl+Enter per salvare)</sys:String>
     <sys:String x:Key="Str_Loc_Export">Esporta Sede...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Salva in un unico file, importabile su un altro PC, nome, note, scansioni salvate, nomi dei dispositivi, approvazioni, dispositivi noti, tipi di dispositivo e cronologia di questa Sede.</sys:String>

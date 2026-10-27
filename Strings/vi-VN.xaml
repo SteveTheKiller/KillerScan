@@ -392,7 +392,7 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_LocIcon_Server">Phòng máy chủ</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">Đám mây</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">Điểm Wi-Fi</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">Đổi tên địa điểm...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">Chỉnh sửa địa điểm...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Quản lý địa điểm...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Địa điểm</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (hiện tại)</sys:String>
@@ -408,7 +408,6 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Kết quả của “Lần quét tạm thời” này không được lưu ở đâu cả. Đổi địa điểm sẽ xóa chúng. Để giữ lại, hãy chọn “Lưu kết quả vào địa điểm”.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Bỏ</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Không thể thiết lập địa điểm, nên KillerScan vẫn dùng thiết bị, các lần quét đã lưu và lịch sử hiện có như trước.&#10;&#10;{0}&#10;&#10;Không có gì bị thay đổi hay xóa. KillerScan sẽ thử lại vào lần khởi động tới.</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">Ghi chú địa điểm...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Ghi chú (Ctrl+Enter để lưu)</sys:String>
     <sys:String x:Key="Str_Loc_Export">Xuất địa điểm...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Lưu tên, ghi chú, các lần quét đã lưu, tên thiết bị, phê duyệt, thiết bị đã biết, loại thiết bị và lịch sử của địa điểm này vào một tệp mà bạn có thể nhập trên PC khác.</sys:String>

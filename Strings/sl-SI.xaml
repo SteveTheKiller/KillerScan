@@ -387,7 +387,7 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_LocIcon_Server">Strežniška soba</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">Oblak</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">Točka Wi-Fi</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">Preimenuj Lokacijo...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">Uredi Lokacijo...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Upravljaj Lokacije...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Lokacije</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (trenutna)</sys:String>
@@ -403,7 +403,6 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Rezultati načina »Začasni pregled« niso nikjer shranjeni. Menjava Lokacije jih izbriše. Če jih želiš obdržati, raje izberi »Shrani rezultate v Lokacijo«.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Zavrzi</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Lokacij ni bilo mogoče nastaviti, zato KillerScan uporablja tvoje obstoječe naprave, shranjene preglede in zgodovino kot doslej.&#10;&#10;{0}&#10;&#10;Nič ni bilo spremenjeno ali odstranjeno. KillerScan bo poskusil znova ob naslednjem zagonu.</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">Opombe Lokacije...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Opombe (Ctrl+Enter shrani)</sys:String>
     <sys:String x:Key="Str_Loc_Export">Izvozi Lokacijo...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Shrani ime te Lokacije, opombe, shranjene preglede, imena naprav, odobritve, znane naprave, vrste naprav in zgodovino v eno datoteko, ki jo lahko uvoziš na drugem računalniku.</sys:String>

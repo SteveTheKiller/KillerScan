@@ -410,7 +410,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_LocIcon_Server">Serverovna</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">Cloud</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">Místo s Wi-Fi</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">Přejmenovat Lokalitu...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">Upravit Lokalitu...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Spravovat Lokality...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Lokality</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (aktuální)</sys:String>
@@ -426,7 +426,6 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Výsledky z režimu „Dočasný sken“ nejsou nikde uloženy. Změnou Lokality se vymažou. Chcete-li je zachovat, zvolte místo toho „Uložit výsledky do Lokality“.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Zahodit</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Lokality se nepodařilo nastavit, proto KillerScan používá vaše stávající zařízení, uložené skeny a historii jako dosud.&#10;&#10;{0}&#10;&#10;Nic nebylo změněno ani odstraněno. KillerScan to zkusí znovu při příštím spuštění.</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">Poznámky k Lokalitě...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Poznámky (Ctrl+Enter uloží)</sys:String>
     <sys:String x:Key="Str_Loc_Export">Exportovat Lokalitu...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Uloží název, poznámky, uložené skeny, názvy zařízení, schválení, známá zařízení, typy zařízení a historii této Lokality do jednoho souboru, který můžete importovat na jiném PC.</sys:String>

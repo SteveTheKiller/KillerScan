@@ -483,11 +483,8 @@
                                         <MenuItem Header="{DynamicResource Str_Loc_Open}" InputGestureText="Enter" Click="LocationOpen_Click">
                                             <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE707;"/></MenuItem.Icon>
                                         </MenuItem>
-                                        <MenuItem Header="{DynamicResource Str_Loc_Rename}" InputGestureText="F2" Click="LocationRename_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8AC;"/></MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Header="{DynamicResource Str_Loc_Notes}" Click="LocationNotes_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE70B;"/></MenuItem.Icon>
+                                        <MenuItem Header="{DynamicResource Str_Loc_Edit}" InputGestureText="F2" Click="LocationRename_Click">
+                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE70F;"/></MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem Header="{DynamicResource Str_Loc_Export}" Click="LocationExport_Click">
                                             <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE896;"/></MenuItem.Icon>

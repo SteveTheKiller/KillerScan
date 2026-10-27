@@ -412,7 +412,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_LocIcon_Server">Sunucu odası</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">Bulut</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">Wi-Fi noktası</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">Lokasyonu yeniden adlandır...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">Lokasyonu düzenle...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Lokasyonları yönet...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Lokasyonlar</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (geçerli)</sys:String>
@@ -428,7 +428,6 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Bu “Geçici tarama” sonuçları hiçbir yere kaydedilmez. Lokasyonu değiştirmek bunları temizler. Saklamak için bunun yerine “Sonuçları Lokasyona kaydet” seçeneğini kullanın.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">At</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Lokasyonlar ayarlanamadı, bu nedenle KillerScan mevcut cihazlarınızı, kayıtlı taramalarınızı ve geçmişinizi eskisi gibi kullanıyor.&#10;&#10;{0}&#10;&#10;Hiçbir şey değiştirilmedi veya kaldırılmadı. KillerScan bir sonraki açılışta yeniden deneyecek.</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">Lokasyon notları...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notlar (Ctrl+Enter kaydeder)</sys:String>
     <sys:String x:Key="Str_Loc_Export">Lokasyonu dışa aktar...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Bu Lokasyonun adını, notlarını, kayıtlı taramalarını, cihaz adlarını, onaylarını, bilinen cihazlarını, cihaz türlerini ve geçmişini başka bir bilgisayarda içe aktarabileceğiniz tek bir dosyaya kaydeder.</sys:String>

@@ -226,8 +226,10 @@ namespace KillerScan.Shell
             // they are overridden for the pane's subtree and square on the tab side with it.
             TerminalLayout.Resources["PanelCornerRadius"] = corners;
             TerminalLayout.Resources["PaneGrainCornerRadius"] = corners;
-            // The strip overlaps the pane's edge by 1px so the active tab's fill covers that line.
-            _viewTabBand.Margin = _tabsAtBottom ? new Thickness(0, -1, 0, 0) : new Thickness(0, 0, 0, -1);
+            // The strip overlaps the pane's edge so the active tab's fill covers that line.
+            // 2px, not 1: the strip scales with the app size, and at a fractional size a 1px overlap
+            // lands between device pixels and the pane edge shows through under the active tab.
+            _viewTabBand.Margin = _tabsAtBottom ? new Thickness(0, -2, 0, 0) : new Thickness(0, 0, 0, -2);
             ClipWorkspaceSurface();
         }
 

@@ -142,6 +142,9 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - About groups settings in two columns and can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts.
 
 ### Changed
+- Scan is the app's largest button: the filled accent button with its label in the wordmark's lettering.
+- Edit Location replaces Rename and Location notes: name, icon and notes in one dialog, which New Location shares. The dialogs are tighter and their text larger.
+- The Locations tree lists only scans you saved (Save to, or Save inside a Location); every run stays in Scan history.
 - The Locations sidebar is a tree in the family folder-tree style: each Location expands to its scans, newest first; click a scan to open it in Scan history, right-click to rename or delete it.
 - The file picker uses the family's own buttons, fields and menus instead of a private copy of them, so it matches the rest of the app.
 - The five views are permanent tabs below the table, or above it from the tab menu (Alt+Shift+Up and Alt+Shift+Down).

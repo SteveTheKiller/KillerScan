@@ -412,7 +412,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_LocIcon_Server">Salle serveurs</sys:String>
     <sys:String x:Key="Str_LocIcon_Cloud">Cloud</sys:String>
     <sys:String x:Key="Str_LocIcon_Wifi">Point Wi-Fi</sys:String>
-    <sys:String x:Key="Str_Loc_Rename">Renommer le Site...</sys:String>
+    <sys:String x:Key="Str_Loc_Edit">Modifier le Site...</sys:String>
     <sys:String x:Key="Str_Loc_Manage">Gérer les Sites...</sys:String>
     <sys:String x:Key="Str_Loc_ManageTitle">Sites</sys:String>
     <sys:String x:Key="Str_Loc_Current">{0} (actuel)</sys:String>
@@ -428,7 +428,6 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Les résultats de cette « Analyse temporaire » ne sont enregistrés nulle part. Changer de Site les efface. Pour les conserver, choisissez plutôt « Enregistrer les résultats dans le Site ».</sys:String>
     <sys:String x:Key="Str_Loc_DiscardConfirm">Abandonner</sys:String>
     <sys:String x:Key="Str_Loc_LoadFailed">Les Sites n’ont pas pu être configurés, KillerScan utilise donc vos appareils, analyses enregistrées et historique existants comme avant.&#10;&#10;{0}&#10;&#10;Rien n’a été modifié ni supprimé. KillerScan réessaiera au prochain démarrage.</sys:String>
-    <sys:String x:Key="Str_Loc_Notes">Notes du Site...</sys:String>
     <sys:String x:Key="Str_Loc_NotesLabel">Notes (Ctrl+Enter pour enregistrer)</sys:String>
     <sys:String x:Key="Str_Loc_Export">Exporter le Site...</sys:String>
     <sys:String x:Key="Str_Loc_ExportDetail">Enregistre le nom, les notes, les analyses enregistrées, les noms d’appareils, les approbations, les appareils connus, les types d’appareils et l’historique de ce Site dans un fichier que vous pouvez importer sur un autre PC.</sys:String>

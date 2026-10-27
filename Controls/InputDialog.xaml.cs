@@ -99,6 +99,24 @@ namespace KillerScan.Controls
         }
 
         /// <summary>A taller box that keeps line breaks, for free text such as Location notes.</summary>
+        /// <summary>The notes box's text, when <see cref="UseNotes"/> showed it.</summary>
+        public string Notes => NotesBox.Text;
+
+        /// <summary>Shows the notes box under the field. Enter in it is a new line; Ctrl+Enter saves.</summary>
+        public void UseNotes(string label, string notes)
+        {
+            NotesLabel.Text = label;
+            NotesLabel.Visibility = Visibility.Visible;
+            NotesBox.Text = notes ?? string.Empty;
+            NotesBox.Visibility = Visibility.Visible;
+            NotesBox.PreviewKeyDown += (_, e) =>
+            {
+                if (e.Key != Key.Enter || Keyboard.Modifiers != ModifierKeys.Control) return;
+                OK_Click(this, new RoutedEventArgs());
+                e.Handled = true;
+            };
+        }
+
         internal void UseMultipleLines()
         {
             ValueBox.AcceptsReturn = true;
