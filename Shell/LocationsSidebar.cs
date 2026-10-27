@@ -223,6 +223,9 @@ namespace KillerScan.Shell
         public LocationRow Location { get; init; } = null!;
         public string Title => Entry.DisplayName;
         public string When => Entry.ScannedAt.ToString("g", System.Globalization.CultureInfo.CurrentCulture);
+        /// <summary>The tree's one line: the scan's name, or its date when it has none.</summary>
+        public string Label => Entry.Name.Trim().Length > 0 ? Entry.Name.Trim() : When;
+        public string Tip => Entry.Target + Environment.NewLine + When;
 
         public bool IsSelected
         {

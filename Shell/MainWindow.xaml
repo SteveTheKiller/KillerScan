@@ -465,13 +465,11 @@
                             <Setter Property="AutomationProperties.Name" Value="{Binding}"/>
                             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
                             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-                            <Setter Property="Padding" Value="2,2"/>
                             <Setter Property="ItemContainerStyle">
                                 <Setter.Value>
                                     <Style TargetType="TreeViewItem" BasedOn="{StaticResource FolderTreeItem}">
                                         <Setter Property="AutomationProperties.Name" Value="{Binding}"/>
                                         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-                                        <Setter Property="Padding" Value="2,1"/>
                                     </Style>
                                 </Setter.Value>
                             </Setter>
@@ -500,42 +498,16 @@
                                         </MenuItem>
                                     </ContextMenu>
                                 </StackPanel.ContextMenu>
-                                <!-- The Location's icon (LocationIcons) leads its name, in the name's colour. -->
-                                <StackPanel Orientation="Horizontal">
-                                    <a11y:Glyph Text="{Binding Glyph}" FontFamily="Segoe MDL2 Assets" FontSize="13"
-                                                VerticalAlignment="Center" Margin="0,0,6,0"
-                                                Foreground="{Binding Foreground, ElementName=LocationName}"/>
-                                    <TextBlock x:Name="LocationName" Text="{Binding Name}" FontSize="13" FontWeight="SemiBold"
-                                               TextTrimming="CharacterEllipsis" controls:ShrinkToFit.MinScale="0.85">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
-                                                        <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
+                                <!-- KillerShell's folder-tree row: one line, icon then the name in the tree's
+                                     mono type. No local Foreground, so FolderTreeItem's selected trigger can
+                                     recolour it on every theme. The detail line is the tooltip. -->
+                                <StackPanel Orientation="Horizontal" ToolTip="{Binding Detail}">
+                                    <a11y:Glyph Text="{Binding Glyph}" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                                                VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center"
+                                               FontFamily="{DynamicResource MonoFont}" FontSize="12"
+                                               TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>
-                                <TextBlock Text="{Binding Detail}" FontSize="11"
-                                           TextTrimming="CharacterEllipsis" controls:ShrinkToFit.MinScale="0.85">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Detail}" Value="">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
-                                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
-                                                    <Setter Property="Opacity" Value="0.78"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
                             </StackPanel>
                         </HierarchicalDataTemplate>
                         <!-- A scan: its name (or target) in the tree's mono type, the date under it. -->
@@ -555,21 +527,15 @@
                                         </MenuItem>
                                     </ContextMenu>
                                 </StackPanel.ContextMenu>
-                                <TextBlock Text="{Binding Title}" FontFamily="{DynamicResource MonoFont}" FontSize="11"
-                                           TextTrimming="CharacterEllipsis" controls:ShrinkToFit.MinScale="0.85" ToolTip="{Binding Entry.Target}"/>
-                                <TextBlock Text="{Binding When}" FontSize="10" TextTrimming="CharacterEllipsis">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
-                                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
-                                                    <Setter Property="Opacity" Value="0.78"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
+                                <!-- One line like the Location rows: a scan glyph and its label, the name or,
+                                     for an unnamed run, its date. Target and date are the tooltip. -->
+                                <StackPanel Orientation="Horizontal" ToolTip="{Binding Tip}">
+                                    <a11y:Glyph Text="&#xE81C;" FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                                VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                    <TextBlock Text="{Binding Label}" VerticalAlignment="Center"
+                                               FontFamily="{DynamicResource MonoFont}" FontSize="12"
+                                               TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
                             </StackPanel>
                         </DataTemplate>
                     </TreeView.Resources>
