@@ -61,19 +61,26 @@ internal static class UninstallCommandTests
 
     internal static void Parse(string script)
     {
-        // Parse the actual command without executing any installation or registry operation.
-        string check = "$text=[Text.Encoding]::Unicode.GetString([Convert]::FromBase64String('"
-            + Convert.ToBase64String(Encoding.Unicode.GetBytes(script))
-            + "'));$tokens=$null;$errors=$null;[Management.Automation.Language.Parser]::ParseInput($text,[ref]$tokens,[ref]$errors)|Out-Null;"
-            + "if($errors.Count -ne 0){$errors|ForEach-Object{[Console]::Error.WriteLine($_.Message)};exit 1};exit 0";
-        var start = new ProcessStartInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
-            @"WindowsPowerShell\v1.0\powershell.exe"), ImmutablePowerShell.Arguments(check))
-        { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
-        using var child = Process.Start(start) ?? throw new IOException("The Windows PowerShell parser did not start.");
-        var output = child.StandardOutput.ReadToEndAsync();
-        var error = child.StandardError.ReadToEndAsync();
-        if (!child.WaitForExit(15000)) { child.Kill(); throw new TimeoutException("The PowerShell parser did not finish."); }
-        if (child.ExitCode != 0) throw new InvalidOperationException("Completion command parse failed: " + error.GetAwaiter().GetResult());
-        output.GetAwaiter().GetResult();
+        // Parse the actual command without executing any installation or registry operation. The
+        // script goes through a file: wrapping an already encoded helper in a second command line
+        // would hit the Windows command limit long before the real helper does.
+        string file = Path.Combine(Path.GetTempPath(), "KillerScan-parse-" + Guid.NewGuid().ToString("N") + ".txt");
+        File.WriteAllText(file, script, new UTF8Encoding(false));
+        try
+        {
+            string check = "$text=[IO.File]::ReadAllText('" + file.Replace("'", "''")
+                + "',[Text.Encoding]::UTF8);$tokens=$null;$errors=$null;[Management.Automation.Language.Parser]::ParseInput($text,[ref]$tokens,[ref]$errors)|Out-Null;"
+                + "if($errors.Count -ne 0){$errors|ForEach-Object{[Console]::Error.WriteLine($_.Message)};exit 1};exit 0";
+            var start = new ProcessStartInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
+                @"WindowsPowerShell\v1.0\powershell.exe"), ImmutablePowerShell.Arguments(check))
+            { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true };
+            using var child = Process.Start(start) ?? throw new IOException("The Windows PowerShell parser did not start.");
+            var output = child.StandardOutput.ReadToEndAsync();
+            var error = child.StandardError.ReadToEndAsync();
+            if (!child.WaitForExit(15000)) { child.Kill(); throw new TimeoutException("The PowerShell parser did not finish."); }
+            if (child.ExitCode != 0) throw new InvalidOperationException("Completion command parse failed: " + error.GetAwaiter().GetResult());
+            output.GetAwaiter().GetResult();
+        }
+        finally { File.Delete(file); }
     }
 }
