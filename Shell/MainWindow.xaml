@@ -449,15 +449,36 @@
 
 
                 <!-- Third section: every Location, opened from Manage Locations on the Location button. -->
-                <ListBox x:Name="LocationsList" Grid.Row="1" AutomationProperties.Name="{DynamicResource Str_Loc_ManageTitle}" Background="Transparent" BorderThickness="0"
-                         Margin="14,0,5,0" HorizontalContentAlignment="Stretch" Visibility="Collapsed"
-                         PreviewMouseRightButtonDown="LocationList_RightClick"
-                         PreviewMouseLeftButtonUp="LocationList_Activate"
-                         PreviewKeyDown="LocationList_KeyDown"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         ItemContainerStyle="{Binding ItemContainerStyle, ElementName=HistoryList}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
+                <!-- Locations as a tree in KillerShell's folder-tree style (FolderTreeView /
+                     FolderTreeItem, the chevron TreeExpander): each Location, and under it its
+                     scans, newest first, named or showing their target. A click on a Location
+                     switches to it; a click on a scan opens it in Scan history (LocationsSidebar.cs). -->
+                <TreeView x:Name="LocationsList" Grid.Row="1" Style="{StaticResource FolderTreeView}"
+                          AutomationProperties.Name="{DynamicResource Str_Loc_ManageTitle}"
+                          Margin="10,0,5,0" Visibility="Collapsed"
+                          PreviewMouseRightButtonDown="LocationList_RightClick"
+                          PreviewMouseLeftButtonUp="LocationList_Activate"
+                          PreviewKeyDown="LocationList_KeyDown"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="TreeViewItem" BasedOn="{StaticResource FolderTreeItem}">
+                            <Setter Property="AutomationProperties.Name" Value="{Binding}"/>
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                            <Setter Property="Padding" Value="2,2"/>
+                            <Setter Property="ItemContainerStyle">
+                                <Setter.Value>
+                                    <Style TargetType="TreeViewItem" BasedOn="{StaticResource FolderTreeItem}">
+                                        <Setter Property="AutomationProperties.Name" Value="{Binding}"/>
+                                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                                        <Setter Property="Padding" Value="2,1"/>
+                                    </Style>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type local:LocationRow}" ItemsSource="{Binding Children}">
                             <StackPanel>
                                 <StackPanel.ContextMenu>
                                     <ContextMenu>
@@ -485,7 +506,7 @@
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
                                                     <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -501,7 +522,41 @@
                                                 <DataTrigger Binding="{Binding Detail}" Value="">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
+                                                    <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                                    <Setter Property="Opacity" Value="0.78"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        <!-- A scan: its name (or target) in the tree's mono type, the date under it. -->
+                        <DataTemplate DataType="{x:Type local:ScanNode}">
+                            <StackPanel>
+                                <StackPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="{DynamicResource Str_Loc_Open}" InputGestureText="Enter" Click="ScanOpen_Click">
+                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE81C;"/></MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="{DynamicResource Str_History_Rename}" InputGestureText="F2" Click="ScanRename_Click">
+                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8AC;"/></MenuItem.Icon>
+                                        </MenuItem>
+                                        <Separator/>
+                                        <MenuItem Header="{DynamicResource Str_Loc_DeleteButton}" InputGestureText="Delete" Click="ScanDelete_Click">
+                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE74D;"/></MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </StackPanel.ContextMenu>
+                                <TextBlock Text="{Binding Title}" FontFamily="{DynamicResource MonoFont}" FontSize="11"
+                                           TextTrimming="CharacterEllipsis" controls:ShrinkToFit.MinScale="0.85" ToolTip="{Binding Entry.Target}"/>
+                                <TextBlock Text="{Binding When}" FontSize="10" TextTrimming="CharacterEllipsis">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
                                                     <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
                                                     <Setter Property="Opacity" Value="0.78"/>
                                                 </DataTrigger>
@@ -511,8 +566,8 @@
                                 </TextBlock>
                             </StackPanel>
                         </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                    </TreeView.Resources>
+                </TreeView>
 
             </Grid>
         </Grid>

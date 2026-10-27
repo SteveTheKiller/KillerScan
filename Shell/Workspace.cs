@@ -200,6 +200,7 @@ namespace KillerScan.Shell
                 _scanWorkspace.HistoryRecorded += (_, _) =>
                 {
                     if (!_sidebarCollapsed) RefreshHistoryList();
+                    if (!_sidebarCollapsed && _sidebarSection == "locations") RefreshLocationsList();
                     // A re-rolled demo network invalidates whatever Keep Alive was watching, so it
                     // follows the new addresses rather than sitting on a network that is gone.
                     if (DemoData.Enabled) _watchWorkspace?.RestartWith(DemoWatchTargets());

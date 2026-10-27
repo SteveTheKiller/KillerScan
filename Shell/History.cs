@@ -135,7 +135,11 @@ namespace KillerScan.Shell
         // goes back to showing the target.
         private void RenameSelectedHistoryEntry()
         {
-            if (HistoryList.SelectedItem is not ScanHistoryEntry entry) return;
+            if (HistoryList.SelectedItem is ScanHistoryEntry entry) RenameHistoryEntry(entry);
+        }
+
+        private void RenameHistoryEntry(ScanHistoryEntry entry)
+        {
             var dialog = new InputDialog(Loc("Str_History_Rename").TrimEnd('.'), entry.Target, Loc("Str_Rename_Label"), entry.Name,
                 Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
             dialog.ShowDialog();
@@ -143,14 +147,20 @@ namespace KillerScan.Shell
             var store = entry.Owner ?? ShellLocation.History;
             PersistenceFeedback.Check(store.Rename(entry, (dialog.Value ?? string.Empty).Trim()), store.Retry, () => store.SaveError);
             RefreshHistoryList();
+            RefreshLocationsList();
         }
 
         private void DeleteSelectedHistoryEntry()
         {
-            if (HistoryList.SelectedItem is not ScanHistoryEntry entry) return;
+            if (HistoryList.SelectedItem is ScanHistoryEntry entry) DeleteHistoryEntry(entry);
+        }
+
+        private void DeleteHistoryEntry(ScanHistoryEntry entry)
+        {
             var store = entry.Owner ?? ShellLocation.History;
             PersistenceFeedback.Check(store.Remove(entry), store.Retry, () => store.SaveError);
             RefreshHistoryList();
+            RefreshLocationsList();
         }
 
         private List<ScanHistoryEntry> HistoryEntries()

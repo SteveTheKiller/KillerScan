@@ -6,8 +6,8 @@ using System.Windows.Controls;
 using KillerScan.Services;
 using KillerScan.Shell;
 
-// Manage Locations shows every Location in the sidebar, marks the current one, and opens one
-// with a click or Enter. Runs inside the history suite's host, which points Locations at a
+// Manage Locations shows every Location as a tree node in the sidebar, marks the current one,
+// and opens one with a click or Enter. Runs inside the history suite's host, which points Locations at a
 // scratch folder before the window loads them.
 internal static class LocationsSidebarTests
 {
@@ -28,7 +28,7 @@ internal static class LocationsSidebarTests
         var workspace = (KillerScan.Controls.ScanWorkspace)typeof(MainWindow).GetField("_scanWorkspace", Instance)!.GetValue(window)!;
         workspace.OpenLocation(acme!);
         Call(window, "ShowLocationsSection");
-        var list = (ListBox)window.FindName("LocationsList");
+        var list = (TreeView)window.FindName("LocationsList");
         var heading = (TextBlock)window.FindName("SidebarHeading");
         Require(list.Visibility == Visibility.Visible && heading.Text == (string)Application.Current.FindResource("Str_Loc_ManageTitle"),
             "Manage Locations shows the Locations section under its own heading.");
@@ -41,7 +41,10 @@ internal static class LocationsSidebarTests
             "Every Location is listed and the current one is marked.");
         Require(Detail(rows[1]) == "Gateway 10.9.0.1", "A Location without a customer shows the first line of its notes.");
 
-        list.SelectedItem = rows[1];
+        Require(rows.All(row => row.GetType().GetProperty("Children")!.GetValue(row) is System.Collections.ICollection { Count: 0 }),
+            "Each Location is a tree node whose children are its scans (none yet in the scratch catalog).");
+        // A TreeView's selection is the node's: select the Branch office node, then press Enter.
+        rows[1].GetType().GetProperty("IsSelected")!.SetValue(rows[1], true);
         list.RaiseEvent(new System.Windows.Input.KeyEventArgs(System.Windows.Input.Keyboard.PrimaryDevice,
             PresentationSource.FromVisual(list) ?? new System.Windows.Interop.HwndSource(new System.Windows.Interop.HwndSourceParameters()), 0,
             System.Windows.Input.Key.Enter) { RoutedEvent = UIElement.PreviewKeyDownEvent });

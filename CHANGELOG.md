@@ -141,6 +141,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - About groups settings in two columns and can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts.
 
 ### Changed
+- The Locations sidebar is a tree in the family folder-tree style: each Location expands to its scans, newest first; click a scan to open it in Scan history, right-click to rename or delete it.
 - The file picker uses the family's own buttons, fields and menus instead of a private copy of them, so it matches the rest of the app.
 - The five views are permanent tabs below the table, or above it from the tab menu (Alt+Shift+Up and Alt+Shift+Down).
 - The scan bar moved into the title bar, the filter sits beside the window buttons, and topology settings moved into the topology pane.
