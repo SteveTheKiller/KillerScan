@@ -53,7 +53,7 @@ namespace KillerScan.Controls
         public ConfirmDialog(string heading, string detail, string confirmText, string? cancelText = null,
                              string? check1Label = null, bool check1Initial = false,
                              string? check2Label = null, bool check2Initial = false,
-                             bool installer = false, bool notice = false)
+                             bool installer = false, bool notice = false, string? check2Note = null)
             : this()
         {
             if (installer)
@@ -84,6 +84,12 @@ namespace KillerScan.Controls
                 Check2.IsChecked = check2Initial;
                 Check2.Visibility = Visibility.Visible;
             }
+            // A note under the second box says what ticking it does, so it shows before the tick.
+            if (!string.IsNullOrEmpty(check2Note))
+            {
+                Check2Note.Text = check2Note;
+                Check2Note.Visibility = Visibility.Visible;
+            }
         }
 
         /// <summary>A one-button notice, OK only.</summary>
@@ -97,7 +103,8 @@ namespace KillerScan.Controls
 
         /// <summary>Pre-ticked and locked, with an explanatory note underneath. Used when the
         /// choice is already made for the user, for example an app already installed machine-wide,
-        /// where unticking the all-users box would leave two copies behind.</summary>
+        /// where unticking the all-users box would leave two copies behind. The note replaces
+        /// any check2Note.</summary>
         public void LockCheck2(string? note = null)
         {
             Check2.IsChecked = true;

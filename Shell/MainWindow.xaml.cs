@@ -118,7 +118,7 @@ namespace KillerScan.Shell
             var dlg = new ConfirmDialog(Loc("Str_Install_HeadUser"),
                 Loc("Str_Install_BulletShortcut") + "\n" + Loc("Str_Install_BulletArp"),
                 Loc("Str_Btn_Install"), Loc("Str_Btn_Cancel"),
-                check2Label: Loc("Str_Install_AllUsers")) { Owner = this };
+                check2Label: Loc("Str_Install_AllUsers"), check2Note: Loc("Str_Install_AllUsersNote")) { Owner = this };
             // Already installed machine-wide (by an admin, winget, choco or an RMM)? Then the only
             // sane move is to update that copy in place, so the all-users box is ticked and locked.
             if (App.MachineInstallExists())
