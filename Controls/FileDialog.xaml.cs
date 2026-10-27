@@ -191,6 +191,8 @@ namespace KillerScan.Controls
             {
                 _fadingOut = true;
                 e.Cancel = true;
+                // Stop folder listing now, not after the fade, so a slow listing cannot land on a closing dialog.
+                CloseDirectoryListing();
                 Anim.FadeOut(RootFade, () =>
                 {
                     if (_pendingResult.HasValue) DialogResult = _pendingResult;   // this closes it

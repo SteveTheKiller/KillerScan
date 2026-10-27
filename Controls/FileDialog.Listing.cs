@@ -77,6 +77,7 @@ namespace KillerScan.Controls
 
         private void CloseDirectoryListing()
         {
+            if (_listingClosed) return;
             _listingClosed = true;
             _listingWork.Dispose();
             _listingRows?.Cancel();
