@@ -50,6 +50,18 @@ namespace KillerScan.Features.About
         /// through the app's own path; otherwise Application.Current.Shutdown() runs.</summary>
         partial void ShutdownForUpdate(ref bool handled);
 
+        /// <summary>App hook: runs immediately before the verified update is handed off (the swap
+        /// helper or installer starts), after ConfirmUpdateShutdown agreed. Set proceed false to cancel
+        /// without starting anything; the download is discarded and the update button comes back
+        /// (KillerPDF records its open documents here and refuses a session it cannot reopen).</summary>
+        partial void BeforeUpdateHandoff(ref bool proceed);
+
+        /// <summary>App hook: the handoff BeforeUpdateHandoff prepared has ended. Started is true once
+        /// the helper or installer is running and the app is about to close (KillerPDF commits the
+        /// documents to reopen); false when it did not start, so the app stays open and undoes what it
+        /// prepared.</summary>
+        partial void AfterUpdateHandoff(bool started);
+
         private readonly IAboutHost _host;
 
         /// <summary>Tag of the newer release found by the check, null when there is nothing to
@@ -228,10 +240,15 @@ namespace KillerScan.Features.About
                 return;
             }
 
-            bool held = false, proceed = true;
+            bool held = false, proceed = true, handoff = true;
             HoldUpdate(ref held);
             if (!held) ConfirmUpdateShutdown(ref proceed);
-            if (held || !proceed)
+            if (!held && proceed)
+            {
+                BeforeUpdateHandoff(ref handoff);
+                if (!handoff) UpdateShutdownCanceled();
+            }
+            if (held || !proceed || !handoff)
             {
                 UpdateService.DiscardDownload(newExe);
                 _updating           = false;
@@ -244,7 +261,9 @@ namespace KillerScan.Features.About
             {
                 // Declining UAC throws, so the shutdown only happens once the helper is actually
                 // running - otherwise the app would close without updating.
-                UpdateService.StartSwap(newExe, tag!.TrimStart('v', 'V'));
+                try { UpdateService.StartSwap(newExe, tag!.TrimStart('v', 'V')); }
+                catch { AfterUpdateHandoff(false); throw; }
+                AfterUpdateHandoff(true);
                 bool handled = false;
                 ShutdownForUpdate(ref handled);
                 if (!handled) System.Windows.Application.Current.Shutdown();

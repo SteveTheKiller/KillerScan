@@ -37,6 +37,12 @@ namespace KillerScan.Services
             internal bool Machine { get; set; }
             /// <summary>This copy cannot update itself (a development build, say); the download step fails.</summary>
             internal bool Unsupported { get; set; }
+            /// <summary>Opt-in for the installer mode: start the verified installer itself, through
+            /// "runas" when it needs elevation, so the UAC prompt names the signed publisher, instead
+            /// of the PowerShell staging helper. Its hash and publisher signature are checked again
+            /// under a handle that keeps the file from changing until it has started. The installer
+            /// closes this process itself (KillerPDF).</summary>
+            internal bool DirectInstaller { get; set; }
 
             internal bool IsPackage => InstallerArguments is not null || Replace is not null;
         }
@@ -178,7 +184,10 @@ namespace KillerScan.Services
             if (target.Unsupported) throw new InvalidOperationException("This copy is neither installed nor portable.");
             if (target.IsPackage)
             {
-                StartPackage(newExe, curExe, self, target, platform);
+                if (target.InstallerArguments is not null && target.DirectInstaller)
+                    StartInstaller(newExe, newVersion, curExe, target, platform);
+                else
+                    StartPackage(newExe, curExe, self, target, platform);
                 return;
             }
             string hive = RegistryHiveFor(curExe);
@@ -231,6 +240,32 @@ namespace KillerScan.Services
             if (elevate) start.Verb = "runas";
             if (platform.Start(start) is null)
                 throw new IOException("The update helper did not start. Download retained at: " + download);
+        }
+
+        /// <summary>The direct installer mode: the verified installer starts with its arguments, elevated
+        /// through "runas" on the signed file when the target is a machine install or a folder this process
+        /// cannot write. The download is held open against writes and deletion while its hash, product
+        /// version and publisher signature are checked again, and until the installer has started.</summary>
+        private static void StartInstaller(string download, string? version, string curExe, UpdateTarget target, Platform platform)
+        {
+            if (string.IsNullOrEmpty(version)) throw new InvalidOperationException("The installer needs the offered release version.");
+            string path = ReleaseIdentity.RequireLocalFile(download);
+            bool elevate = target.Machine || !platform.CanWrite(Path.GetDirectoryName(target.Replace ?? curExe)!);
+            using var held = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            string actual;
+            using (var sha = SHA256.Create())
+                actual = BitConverter.ToString(sha.ComputeHash(held)).Replace("-", "");
+            if (!actual.Equals(UpdateImagePublication.VerifiedHash(path), StringComparison.OrdinalIgnoreCase))
+                throw new System.Security.SecurityException("The update installer changed after it was verified.");
+            ReleaseIdentity.VerifyPackage(path, version!);
+            var start = new ProcessStartInfo(path, target.InstallerArguments!)
+            {
+                UseShellExecute = true,
+                WorkingDirectory = Path.GetTempPath()
+            };
+            if (elevate) start.Verb = "runas";
+            if (platform.Start(start) is null)
+                throw new IOException("The update installer did not start. Download retained at: " + download);
         }
 
         /// <summary>Waits for the launcher <paramref name="processId"/> to exit, for at most five minutes. The launcher
