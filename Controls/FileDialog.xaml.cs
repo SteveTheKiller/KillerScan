@@ -29,8 +29,7 @@ namespace KillerScan.Controls
     ///     var dlg = new FileDialog(FileDialogMode.Save) { Title = ..., Filter = ..., FileName = ... };
     ///     if (dlg.ShowDialog(owner) == true) Use(dlg.FileName);
     ///
-    /// Multiselect is deliberately NOT implemented yet - nothing in the app needs it, and
-    /// a half-working Multiselect is worse than an absent one. Add it when something wants it.
+    /// Multiselect matches Explorer's Ctrl and Shift selection behavior in Open mode.
     /// </summary>
     public partial class FileDialog : Window
     {
@@ -76,6 +75,9 @@ namespace KillerScan.Controls
         /// <summary>Show a live preview pane for image-selection workflows. The pane is opt-in so
         /// ordinary Open and Save dialogs keep their compact layout.</summary>
         public bool ShowImagePreview { get; set; }
+
+        /// <summary>The kit's older name for <see cref="ShowImagePreview"/>, kept for its callers.</summary>
+        public bool ShowPreview { get => ShowImagePreview; set => ShowImagePreview = value; }
 
         /// <summary>Every path chosen. Always populated on success, so a caller can read this
         /// whether or not it asked for Multiselect - single selection yields one entry, matching
@@ -167,8 +169,7 @@ namespace KillerScan.Controls
             _mode = mode;
             InitializeComponent();
             Closed += (_, _) => CloseDirectoryListing();
-            TitleIcon.Source = BitmapDecoder.Create(new Uri("pack://application:,,,/KillerScan;component/Resources/ks-icon.ico"),
-                BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames[0];
+            if (!DialogChrome.SetTitleIcon(TitleIcon)) TitleIcon.Visibility = Visibility.Collapsed;
             Loaded += (_, _) => Anim.FadeIn(RootFade);
 
             // Size and placement remembered separately from the folder picker: this dialog is a
@@ -176,17 +177,17 @@ namespace KillerScan.Controls
             try
             {
                 var ci = System.Globalization.CultureInfo.InvariantCulture;
-                if (double.TryParse(App.GetSetting("FileDlgW"),
+                if (double.TryParse(Services.ThemeManager.GetSetting("FileDlgW"),
                         System.Globalization.NumberStyles.Float, ci, out double w) &&
-                    double.TryParse(App.GetSetting("FileDlgH"),
+                    double.TryParse(Services.ThemeManager.GetSetting("FileDlgH"),
                         System.Globalization.NumberStyles.Float, ci, out double h))
                 {
                     Width  = Math.Max(MinWidth,  Math.Min(w, SystemParameters.WorkArea.Width));
                     Height = Math.Max(MinHeight, Math.Min(h, SystemParameters.WorkArea.Height));
                 }
-                if (double.TryParse(App.GetSetting("FileDlgX"),
+                if (double.TryParse(Services.ThemeManager.GetSetting("FileDlgX"),
                         System.Globalization.NumberStyles.Float, ci, out double x) &&
-                    double.TryParse(App.GetSetting("FileDlgY"),
+                    double.TryParse(Services.ThemeManager.GetSetting("FileDlgY"),
                         System.Globalization.NumberStyles.Float, ci, out double y))
                 {
                     var wa = SystemParameters.WorkArea;
@@ -198,19 +199,19 @@ namespace KillerScan.Controls
                         Top  = y;
                     }
                 }
-                if (double.TryParse(App.GetSetting(PlacesHKey),
+                if (double.TryParse(Services.ThemeManager.GetSetting(PlacesHKey),
                         System.Globalization.NumberStyles.Float, ci, out double ph) && ph >= 56)
                     PlacesRow.Height = new GridLength(Math.Min(ph, 600));
             }
             catch { /* registry unavailable - defaults are fine */ }
 
-            _showHidden = App.GetSetting(ShowHiddenKey) == "1";
+            _showHidden = Services.ThemeManager.GetSetting(ShowHiddenKey) == "1";
             FolderNode.ShowHidden = _showHidden;
             ApplyShowHiddenButton();
-            if (int.TryParse(App.GetSetting(SortKeyKey), out int savedSortKey)
+            if (int.TryParse(Services.ThemeManager.GetSetting(SortKeyKey), out int savedSortKey)
                 && savedSortKey is >= 0 and <= 2)
                 _sortKey = savedSortKey;
-            _sortAsc = App.GetSetting(SortAscKey) is not string savedSortAsc
+            _sortAsc = Services.ThemeManager.GetSetting(SortAscKey) is not string savedSortAsc
                 || savedSortAsc != "0";
 
             Closing += (_, _) =>
@@ -218,11 +219,11 @@ namespace KillerScan.Controls
                 try
                 {
                     var ci = System.Globalization.CultureInfo.InvariantCulture;
-                    App.SetSetting("FileDlgW", ActualWidth.ToString(ci));
-                    App.SetSetting("FileDlgH", ActualHeight.ToString(ci));
-                    App.SetSetting("FileDlgX", Left.ToString(ci));
-                    App.SetSetting("FileDlgY", Top.ToString(ci));
-                    App.SetSetting(PlacesHKey, PlacesRow.ActualHeight.ToString(ci));
+                    Services.ThemeManager.SetSetting("FileDlgW", ActualWidth.ToString(ci));
+                    Services.ThemeManager.SetSetting("FileDlgH", ActualHeight.ToString(ci));
+                    Services.ThemeManager.SetSetting("FileDlgX", Left.ToString(ci));
+                    Services.ThemeManager.SetSetting("FileDlgY", Top.ToString(ci));
+                    Services.ThemeManager.SetSetting(PlacesHKey, PlacesRow.ActualHeight.ToString(ci));
                 }
                 catch { /* not worth failing the close */ }
             };
@@ -278,7 +279,7 @@ namespace KillerScan.Controls
             }
             if (string.IsNullOrWhiteSpace(startDir) || !Directory.Exists(startDir))
             {
-                string? remembered = App.GetSetting(LastDirKey);
+                string? remembered = Services.ThemeManager.GetSetting(LastDirKey);
                 startDir = !string.IsNullOrWhiteSpace(remembered) && Directory.Exists(remembered)
                     ? remembered!
                     : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -488,7 +489,7 @@ namespace KillerScan.Controls
         /// </summary>
         private static List<string> PinnedPaths()
         {
-            string? saved = App.GetSetting(PinnedKey);
+            string? saved = Services.ThemeManager.GetSetting(PinnedKey);
             if (saved != null)
                 return [.. saved.Split('|').Where(s => s.Length > 0)];
 
@@ -532,7 +533,7 @@ namespace KillerScan.Controls
             if (list.Any(p => p.TrimEnd('\\').Equals(path.TrimEnd('\\'), StringComparison.OrdinalIgnoreCase)))
                 return;
             list.Add(path);
-            App.SetSetting(PinnedKey, string.Join("|", list));
+            Services.ThemeManager.SetSetting(PinnedKey, string.Join("|", list));
             BuildPlaces();
             SyncPlacesSelection();
         }
@@ -552,7 +553,7 @@ namespace KillerScan.Controls
             var list = PinnedPaths()
                 .Where(p => !p.TrimEnd('\\').Equals(pl.Path.TrimEnd('\\'), StringComparison.OrdinalIgnoreCase))
                 .ToList();
-            App.SetSetting(PinnedKey, string.Join("|", list));
+            Services.ThemeManager.SetSetting(PinnedKey, string.Join("|", list));
             BuildPlaces();
             SyncPlacesSelection();
         }
@@ -866,7 +867,7 @@ namespace KillerScan.Controls
         // ── Recent locations ─────────────────────────────────────────────────────
 
         private static List<string> LoadRecents()
-            => [.. (App.GetSetting(RecentsKey) ?? "")
+            => [.. (Services.ThemeManager.GetSetting(RecentsKey) ?? "")
                .Split('|').Where(s => s.Length > 0)];
 
         private static void RecordRecent(string dir)
@@ -875,7 +876,7 @@ namespace KillerScan.Controls
             list.RemoveAll(p => p.TrimEnd('\\').Equals(dir.TrimEnd('\\'), StringComparison.OrdinalIgnoreCase));
             list.Insert(0, dir);
             if (list.Count > RecentsMax) list.RemoveRange(RecentsMax, list.Count - RecentsMax);
-            App.SetSetting(RecentsKey, string.Join("|", list));
+            Services.ThemeManager.SetSetting(RecentsKey, string.Join("|", list));
         }
 
         private void RecentsBtn_Click(object sender, RoutedEventArgs e)
@@ -905,7 +906,7 @@ namespace KillerScan.Controls
         private void ShowHidden_Click(object sender, RoutedEventArgs e)
         {
             _showHidden = !_showHidden;
-            App.SetSetting(ShowHiddenKey, _showHidden ? "1" : "0");
+            Services.ThemeManager.SetSetting(ShowHiddenKey, _showHidden ? "1" : "0");
             FolderNode.ShowHidden = _showHidden;
             ApplyShowHiddenButton();
 
@@ -1163,8 +1164,8 @@ namespace KillerScan.Controls
         {
             if (_sortKey == key) _sortAsc = !_sortAsc;
             else { _sortKey = key; _sortAsc = key == 0; }
-            App.SetSetting(SortKeyKey, _sortKey.ToString());
-            App.SetSetting(SortAscKey, _sortAsc ? "1" : "0");
+            Services.ThemeManager.SetSetting(SortKeyKey, _sortKey.ToString());
+            Services.ThemeManager.SetSetting(SortAscKey, _sortAsc ? "1" : "0");
             ApplySort();
         }
 
@@ -1300,7 +1301,7 @@ namespace KillerScan.Controls
         private void RememberAcceptedDirectory()
         {
             if (_currentDir.Length > 0 && Directory.Exists(_currentDir))
-                App.SetSetting(LastDirKey, _currentDir);
+                Services.ThemeManager.SetSetting(LastDirKey, _currentDir);
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e) => Close();

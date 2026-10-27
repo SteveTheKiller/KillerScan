@@ -21,6 +21,10 @@ namespace KillerScan.Services
             ThemeManager.SetDefaults(Theme.Black, dark: Accent.Orange, light: Accent.Orange, black: Accent.Orange, se98: Accent.Blue);
             ThemeManager.AppTokens = AppTokens;
             ThemeManager.AppDerivedTokens = AppDerivedTokens;
+            // Dialog captions (Controls/DialogChrome.cs): the file picker's title icon comes from here.
+            Controls.DialogChrome.AppName = "KillerScan";
+            Controls.DialogChrome.WordmarkSplit = 6;
+            Controls.DialogChrome.IconUri = new Uri("pack://application:,,,/KillerScan;component/Resources/ks-icon.ico");
         }
 
         private static string FileName(Theme theme) => theme == Theme.SE98 ? "98SE" : theme.ToString();
@@ -64,18 +68,6 @@ namespace KillerScan.Services
             ThemeManager.SetIfAbsent(d, "WatchUpBrush", Frozen(ansi[2]));
             ThemeManager.SetIfAbsent(d, "WatchDownBrush", Frozen(ansi[1]));
             ThemeManager.SetIfAbsent(d, "WatchIdleBrush", Frozen(ansi[8]));
-
-            // The picker's buttons (Controls/PickerStyles.xaml) name their bevel thickness separately
-            // from the family bevel, and carry the same value.
-            ThemeManager.Mirror(d, "ButtonBevelLightThickness", "BevelLightThickness");
-            ThemeManager.Mirror(d, "ButtonBevelDarkThickness", "BevelDarkThickness");
-
-            // KillerScan's dialog close button and caption buttons.
-            bool flat = d.Contains("UseDialogCaption") && d["UseDialogCaption"] is bool f && f;
-            ThemeManager.SetIfAbsent(d, "DialogCloseWidth", flat ? d["CaptionButtonWidth"] : 28.0);
-            ThemeManager.SetIfAbsent(d, "DialogCloseHeight", flat ? d["CaptionButtonHeight"] : 26.0);
-            ThemeManager.SetIfAbsent(d, "DialogCaptionButtonsMargin", new Thickness(0, 0,
-                d["CaptionButtonsMargin"] is Thickness caption ? caption.Right : 0, 0));
         }
 
         private static void Merge(ResourceDictionary d, string path, bool overwrite)

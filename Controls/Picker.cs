@@ -15,7 +15,7 @@ namespace KillerScan.Controls
 
         /// <summary>Real shell icon, resolved by PATH - a drive shows its true icon (USB,
         /// network, optical) and a special folder its own. Cached in ShellIcons.</summary>
-        public System.Windows.Media.ImageSource? Icon => ShellIcons.Place(Path);
+        public System.Windows.Media.ImageSource? Icon => Services.ShellIcons.Place(Path);
     }
 
     // One row in the folder pane: a subfolder or a (dimmed, non-pickable) file.
@@ -37,11 +37,12 @@ namespace KillerScan.Controls
         /// <summary>Shell icon, 16px, for the list and details rows. Cached by extension, so
         /// binding it per row is cheap.</summary>
         public System.Windows.Media.ImageSource? Icon
-            => ShellIcons.Small(FullPath, IsFolder);
+            => Services.ShellIcons.Small(FullPath, IsFolder);
 
-        /// <summary>Shell icon, 32px, for the icon grid.</summary>
+        /// <summary>Shell icon, 32px, for the icon grid - or a real thumbnail when the file is an
+        /// image, so a folder of pictures does not read as a grid of identical type icons.</summary>
         public System.Windows.Media.ImageSource? IconLarge
-            => ShellIcons.Large(FullPath, IsFolder);
+            => Services.ShellIcons.Thumbnail(FullPath, 32) ?? Services.ShellIcons.Large(FullPath, IsFolder);
 
         public string SizeLabel     => IsFolder ? string.Empty : FormatSize(SizeBytes);
         public string ModifiedLabel => Modified == DateTime.MinValue ? string.Empty : Modified.ToString("yyyy-MM-dd HH:mm");

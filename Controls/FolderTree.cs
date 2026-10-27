@@ -14,7 +14,7 @@ using System.Windows.Media;
 namespace KillerScan.Controls
 {
     // ═══════════════════════════════════════════════════════════
-    //  FOLDER TREE  -  the file dialog's left pane, below places
+    //  FOLDER TREE  -  the file dialog's left pane, above places
     // ═══════════════════════════════════════════════════════════
     // Ported from KillerShell's FolderTree.cs (the family reference), minus what a modal file
     // dialog does not need: no demo mode, no expansion persistence (the dialog reveals the
@@ -41,7 +41,7 @@ namespace KillerScan.Controls
         // their label is "Local Disk (C:)" rather than a bare folder name.
         public bool IsDrive { get; }
 
-        public ObservableCollection<FolderNode> Children { get; } = [];
+        public ObservableCollection<FolderNode> Children { get; } = new();
 
         public FolderNode(string path, string name, bool mayHaveChildren)
         {
@@ -79,7 +79,7 @@ namespace KillerScan.Controls
         // A drive's REAL icon (USB, network, optical) via the real-path query; plain folders get
         // the shared generic folder icon so the tree never touches the disk per row.
         public ImageSource? Icon
-            => IsDrive ? ShellIcons.Place(Path) : ShellIcons.Small(Path, true);
+            => IsDrive ? Services.ShellIcons.Place(Path) : Services.ShellIcons.Small(Path, true);
 
         private bool _isExpanded;
         public bool IsExpanded
@@ -164,7 +164,7 @@ namespace KillerScan.Controls
                     {
                         var a = d.Attributes;
                         if ((a & FileAttributes.Hidden) != 0 || (a & FileAttributes.System) != 0) continue;
-                        if (d.Name.StartsWith(".")) continue;
+                        if (d.Name.StartsWith(".", StringComparison.Ordinal)) continue;
                     }
 
                     list.Add(new FolderNode(d.FullName, d.Name, mayHaveChildren: true));

@@ -1,0 +1,184 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+
+namespace KillerScan.Services
+{
+    /// <summary>
+    /// Shell icons for the file dialog, via SHGetFileInfo - a glyph font cannot distinguish a .pdf
+    /// from a .zip, and these are the icons already familiar from Explorer.
+    ///
+    /// SHGFI_USEFILEATTRIBUTES is the important flag: it resolves the icon from the NAME and a
+    /// synthetic attribute set, so nothing is read off disk and a path on a sleeping network share
+    /// cannot stall the list. The trade-off is that per-file icons (an .exe's own icon, a .lnk's
+    /// target, a custom folder icon) come back generic - correct for a file list, and worth it to
+    /// keep scrolling responsive.
+    ///
+    /// Icons are cached by extension, so ten thousand .txt rows share one HICON conversion. Every
+    /// HICON is destroyed after conversion: they are a limited USER handle and leaking them
+    /// eventually takes the whole desktop down, not just this app.
+    /// </summary>
+    internal static class ShellIcons
+    {
+        private const uint SHGFI_ICON              = 0x000000100;
+        private const uint SHGFI_SMALLICON         = 0x000000001;
+        private const uint SHGFI_LARGEICON         = 0x000000000;
+        private const uint SHGFI_USEFILEATTRIBUTES = 0x000000010;
+
+        private const uint FILE_ATTRIBUTE_NORMAL    = 0x00000080;
+        private const uint FILE_ATTRIBUTE_DIRECTORY = 0x00000010;
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        private struct SHFILEINFO
+        {
+            public IntPtr hIcon;
+            public int    iIcon;
+            public uint   dwAttributes;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string szDisplayName;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]  public string szTypeName;
+        }
+
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+        private static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes,
+                                                   ref SHFILEINFO psfi, uint cbFileInfo, uint uFlags);
+
+        [DllImport("user32.dll")]
+        private static extern bool DestroyIcon(IntPtr hIcon);
+
+        // key: extension (lowercase) or the two folder sentinels, per size
+        private static readonly Dictionary<string, ImageSource?> _small = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, ImageSource?> _large = new(StringComparer.OrdinalIgnoreCase);
+
+        private const string FolderKey = " dir";
+
+        /// <summary>16px icon for a list row. Null if the shell has nothing (caller falls back).</summary>
+        internal static ImageSource? Small(string path, bool isFolder) => Get(path, isFolder, true);
+
+        /// <summary>32px icon for the icon grid.</summary>
+        internal static ImageSource? Large(string path, bool isFolder) => Get(path, isFolder, false);
+
+        private static readonly Dictionary<string, ImageSource?> _thumbs = new(StringComparer.OrdinalIgnoreCase);
+
+        private static readonly HashSet<string> ThumbExts = new(StringComparer.OrdinalIgnoreCase)
+        { ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp", ".tif", ".tiff", ".ico" };
+
+        /// <summary>True when the file is a raster image we can render a real thumbnail for.</summary>
+        internal static bool CanThumbnail(string path) =>
+            !string.IsNullOrEmpty(path) && ThumbExts.Contains(Path.GetExtension(path));
+
+        /// <summary>
+        /// A real thumbnail of an image file, or null when it is not an image / cannot be decoded.
+        /// Picking an image from a list of generic type icons is guesswork, which is what this
+        /// removes.
+        ///
+        /// DecodePixelWidth is what makes it affordable: WPF decodes at the requested size instead
+        /// of loading a 40-megapixel photo into memory to draw it 32px wide. OnLoad caching closes
+        /// the file handle immediately - without it the picker keeps every previewed file locked,
+        /// and the user cannot rename or delete what they just looked at. Frozen and cached by
+        /// path so scrolling a folder decodes each file once.
+        /// </summary>
+        internal static ImageSource? Thumbnail(string path, int px)
+        {
+            string key = path + "|" + px;
+            if (_thumbs.TryGetValue(key, out var hit)) return hit;
+
+            ImageSource? img = null;
+            try
+            {
+                if (CanThumbnail(path) && File.Exists(path))
+                {
+                    var bmp = new BitmapImage();
+                    bmp.BeginInit();
+                    bmp.UriSource = new Uri(path);
+                    bmp.DecodePixelWidth = px;
+                    bmp.CacheOption = BitmapCacheOption.OnLoad;
+                    bmp.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+                    bmp.EndInit();
+                    bmp.Freeze();
+                    img = bmp;
+                }
+            }
+            catch { img = null; }   // unreadable, corrupt, or not really an image - fall back to the type icon
+            _thumbs[key] = img;
+            return img;
+        }
+
+        // key: full path - the places rail is a dozen entries, so per-path caching is cheap
+        private static readonly Dictionary<string, ImageSource?> _places = new(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// 16px icon for a REAL path - the places rail. Deliberately NOT SHGFI_USEFILEATTRIBUTES:
+        /// the rail wants a drive's true icon (USB, network, optical) and a special folder's own,
+        /// which only a real-path query returns. That touches the disk, so it stays off the
+        /// per-row paths above and is cached by path.
+        /// </summary>
+        internal static ImageSource? Place(string path)
+        {
+            if (_places.TryGetValue(path, out var hit)) return hit;
+
+            ImageSource? img = null;
+            var info = new SHFILEINFO();
+            IntPtr res = SHGetFileInfo(path, 0, ref info, (uint)Marshal.SizeOf(info),
+                                       SHGFI_ICON | SHGFI_SMALLICON);
+            if (res != IntPtr.Zero && info.hIcon != IntPtr.Zero)
+            {
+                try
+                {
+                    img = Imaging.CreateBitmapSourceFromHIcon(
+                        info.hIcon, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    img.Freeze();
+                }
+                catch { img = null; }
+                finally { DestroyIcon(info.hIcon); }
+            }
+
+            _places[path] = img;
+            return img;
+        }
+
+        private static ImageSource? Get(string path, bool isFolder, bool small)
+        {
+            string key = isFolder ? FolderKey : ExtOf(path);
+            var cache = small ? _small : _large;
+            if (cache.TryGetValue(key, out var hit)) return hit;
+
+            var img = Load(isFolder ? "dir" : "x" + key, isFolder, small);
+            if (img != null) img.Freeze();          // shared across threads and rows
+            cache[key] = img;
+            return img;
+        }
+
+        /// <summary>
+        /// Extension including the dot, lowercased. Extensionless files all share one key - the
+        /// shell gives them the same generic icon anyway.
+        /// </summary>
+        private static string ExtOf(string path)
+        {
+            var ext = Path.GetExtension(path);
+            return string.IsNullOrEmpty(ext) ? " noext" : ext.ToLowerInvariant();
+        }
+
+        private static BitmapSource? Load(string fakeName, bool isFolder, bool small)
+        {
+            var info = new SHFILEINFO();
+            uint flags = SHGFI_ICON | SHGFI_USEFILEATTRIBUTES | (small ? SHGFI_SMALLICON : SHGFI_LARGEICON);
+            uint attrs = isFolder ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL;
+
+            IntPtr res = SHGetFileInfo(fakeName, attrs, ref info, (uint)Marshal.SizeOf(info), flags);
+            if (res == IntPtr.Zero || info.hIcon == IntPtr.Zero) return null;
+
+            try
+            {
+                return Imaging.CreateBitmapSourceFromHIcon(
+                    info.hIcon, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            }
+            catch { return null; }
+            finally { DestroyIcon(info.hIcon); }
+        }
+    }
+}

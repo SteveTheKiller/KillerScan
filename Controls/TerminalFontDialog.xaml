@@ -11,13 +11,6 @@
         ResizeMode="NoResize"
         Background="Transparent"
         ShowInTaskbar="False">
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="PickerStyles.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
 
     <kui:PickerBorder x:Name="RootBorder" Opacity="0"
             Background="{StaticResource BackgroundBrush}"

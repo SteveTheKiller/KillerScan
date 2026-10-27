@@ -20,13 +20,43 @@
         SnapsToDevicePixels="True"
         WindowStartupLocation="CenterOwner">
 
-    <!-- The picker's styles are merged HERE, not into App.xaml. LocaleManager owns application
-         merged-dictionary slot [2] - it assigns the locale override there and, for English,
-         REMOVES it - so anything parked at [2] is deleted at startup. That is what "Cannot find
-         resource named 'DarkTextBox'" was. These styles are the picker's own, so scoping them to
-         the picker removes the index coupling entirely rather than competing for a slot. -->
+    <!-- Every picker style lives in the family Controls.xaml. Only the recent-locations arrow,
+         which no other control uses, is kept here. -->
     <Window.Resources>
-        <ResourceDictionary Source="pack://application:,,,/Controls/PickerStyles.xaml"/>
+        <Style x:Key="PickerComboArrowBtn" TargetType="Button">
+            <Setter Property="Width" Value="{DynamicResource ComboButtonSize}"/>
+            <Setter Property="Height" Value="{DynamicResource ComboButtonHeight}"/>
+            <Setter Property="FontFamily" Value="{DynamicResource ComboChevFont}"/>
+            <Setter Property="FontSize" Value="8"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border x:Name="face" Background="{DynamicResource ComboButtonBrush}"/>
+                            <Border x:Name="bevelLight" IsHitTestVisible="False"
+                                    BorderBrush="{DynamicResource BevelLightBrush}"
+                                    BorderThickness="{DynamicResource BevelLightThickness}"/>
+                            <Border x:Name="bevelDark" IsHitTestVisible="False"
+                                    BorderBrush="{DynamicResource BevelDarkBrush}"
+                                    BorderThickness="{DynamicResource BevelDarkThickness}"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="face" Property="Background" Value="{DynamicResource ComboButtonHoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bevelLight" Property="BorderBrush" Value="{DynamicResource BevelDarkBrush}"/>
+                                <Setter TargetName="bevelDark" Property="BorderBrush" Value="{DynamicResource BevelLightBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <!-- NO shell:WindowChrome. On an AllowsTransparency window it fills its own non-client area,
@@ -200,8 +230,7 @@
                             </StackPanel>
                         </Button.ToolTip>
                         <Button.ContextMenu>
-                            <ContextMenu x:Name="SortMenu" Style="{StaticResource PickerContextMenu}"
-                                         ItemContainerStyle="{StaticResource PickerMenuItem}">
+                            <ContextMenu x:Name="SortMenu">
                                 <MenuItem x:Name="SortNameItem" Header="{DynamicResource Str_Col_Name}"
                                           IsCheckable="True" Click="SortName_Click">
                                     <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8CB;"/></MenuItem.Icon>

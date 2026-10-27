@@ -938,6 +938,14 @@ namespace KillerScan.Services
             // binding them; 98SE states its own and is the only theme that changes.
             SetIfAbsent("TitleBarPadding", new Thickness(14, 0, 14, 0));
             // The main window logo (icon + wordmark) sits 5px off the top-left corner, as in KillerPDF.
+            // The file picker's caption close (Controls/FileDialog.xaml): the caption button's size on a
+            // theme that draws a dialog caption, a compact 28x26 everywhere else, flush with the
+            // caption buttons' right inset.
+            bool pickerCaption = combined.Contains("UseDialogCaption") && combined["UseDialogCaption"] is bool fp && fp;
+            SetIfAbsent("DialogCloseWidth", pickerCaption ? combined["CaptionButtonWidth"] : 28.0);
+            SetIfAbsent("DialogCloseHeight", pickerCaption ? combined["CaptionButtonHeight"] : 26.0);
+            SetIfAbsent("DialogCaptionButtonsMargin", new Thickness(0, 0,
+                combined["CaptionButtonsMargin"] is Thickness pickerButtons ? pickerButtons.Right : 0, 0));
             SetIfAbsent("TitleLogoMargin", combined.Contains("UseDialogCaption") && combined["UseDialogCaption"] is bool fc && fc
                 ? combined["TitleBarPadding"] : new Thickness(4, 3, 0, 0));
             // The UI face for everything that is not the app (mono) slot; a flat theme keeps its caption font.

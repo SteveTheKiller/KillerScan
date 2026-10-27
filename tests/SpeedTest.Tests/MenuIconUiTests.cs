@@ -46,9 +46,7 @@ internal static partial class HistoryUiTests
         menus.Add("Services", ((DataGrid)scan.FindName("ServicesGrid")).ContextMenu);
         menus.Add("Export", ((Button)scan.FindName("ExportButton")).ContextMenu);
 
-        // Load the actual Sort menu with its picker template without navigating user directories.
-        app.Resources.MergedDictionaries.Add((ResourceDictionary)Application.LoadComponent(
-            new Uri("/KillerScan;component/Controls/PickerStyles.xaml", UriKind.Relative)));
+        // Load the actual Sort menu without navigating user directories; its styles are the family Controls.xaml.
         var xml = new XmlDocument(); xml.Load(Path.Combine(source, "Controls", "FileDialog.xaml"));
         var ns = new XmlNamespaceManager(xml.NameTable);
         ns.AddNamespace("p", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
