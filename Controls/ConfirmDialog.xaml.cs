@@ -71,6 +71,8 @@ namespace KillerScan.Controls
             // null keeps the translated Cancel; an empty string hides it, the same as notice.
             if (cancelText != null) CancelButton.Content = cancelText;
             if (cancelText == string.Empty) CancelButton.Visibility = Visibility.Collapsed;
+            // With no Cancel on screen, Esc answers the one button that is.
+            if (CancelButton.Visibility != Visibility.Visible) OkButton.IsCancel = true;
 
             if (!string.IsNullOrEmpty(check1Label))
             {
@@ -137,6 +139,7 @@ namespace KillerScan.Controls
         /// <summary>Enter and Esc both answer Cancel, for a prompt whose OK replaces something.</summary>
         public void DefaultToCancel()
         {
+            OkButton.IsDefault = false;
             CancelButton.IsDefault = true;
             CancelButton.IsCancel = true;
             Loaded += (_, _) => CancelButton.Focus();

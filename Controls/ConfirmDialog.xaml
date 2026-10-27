@@ -146,7 +146,7 @@
                      Left for the pass that unifies the dialog layouts. -->
                 <StackPanel x:Name="ButtonRow" Grid.Row="2" Orientation="Horizontal"
                             HorizontalAlignment="Right" Margin="24,0,24,20">
-                    <Button x:Name="CancelButton" Content="{DynamicResource Str_Btn_Cancel}" Click="Cancel_Click"
+                    <Button x:Name="CancelButton" Content="{DynamicResource Str_Btn_Cancel}" Click="Cancel_Click" IsCancel="True"
                             Style="{StaticResource SurfaceButton}"
                             Height="28" MinWidth="80" Padding="12,2" Margin="0,0,8,0"/>
                     <!-- OutlineButton, not PrimaryButton. A solid accent block sits in this card
@@ -154,7 +154,7 @@
                          a translucent white tint over the accent, which on half the palettes is
                          no visible feedback at all. Hollow with an accent fill on hover is the
                          family's other confirm treatment and it reads as a button. -->
-                    <Button x:Name="OkButton" Click="OK_Click"
+                    <Button x:Name="OkButton" Click="OK_Click" IsDefault="True"
                             Style="{StaticResource OutlineButton}"
                             Height="28" MinWidth="80" Padding="12,2"/>
                 </StackPanel>
