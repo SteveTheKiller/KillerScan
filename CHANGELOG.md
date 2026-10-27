@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
 ### Fixed
+- A Location only recognizes a network you saved a scan into, so the switch suggestion no longer names a Location that merely had a scan run in it. A Location is recognized by its router's hardware address, never by a common subnet.
 - On Cyanotic, Greed and Blood, selected rows and buttons use the theme's cream with dark text, and an unapproved device stays visible on a selected row.
 - New Location, rename and notes prompts show the app icon, and New Location no longer shows the current Location as if it were the name.
 - Dialogs have their padding back, and their title bars, icons and buttons match the rest of the family.

@@ -50,7 +50,7 @@ namespace KillerScan.Services
                 System.Threading.Thread.Sleep(150);
                 _catalog.Load(unassignedName);
             }
-            if (_catalog.LoadError == null) { MigrateSavedScans(); return; }
+            if (_catalog.LoadError == null) { MigrateSavedScans(); ForgetLearnedGateways(); return; }
             if (_catalog.Published)
             {
                 // After migration the app-wide files are a stale backup, so writing there would
@@ -95,6 +95,19 @@ namespace KillerScan.Services
                     data.SavedScans.Delete(scan);
                 }
             }
+        }
+
+        /// <summary>
+        /// Once: clears every gateway Locations learned from runs that merely finished there. From
+        /// 2026-10-26 a Location learns a gateway only from a saved scan, so the old ones (Home
+        /// "knowing" a router nobody saved there) were never the user's choice.
+        /// </summary>
+        private static void ForgetLearnedGateways()
+        {
+            if (!Editable || App.GetSetting("GatewaysFromSavesOnly") == "1") return;
+            foreach (var item in Items.Where(item => item.GatewayMacs.Count > 0).ToList())
+                _catalog!.ClearGatewayMacs(item.Id);
+            App.SetSetting("GatewaysFromSavesOnly", "1");
         }
 
         /// <summary>The data for a Location, shared by every tab that has it open.</summary>

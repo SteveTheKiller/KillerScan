@@ -343,7 +343,7 @@
         <Button x:Name="LocationSuggestionDismiss" DockPanel.Dock="Right" Content="{DynamicResource Str_Loc_Dismiss}"
                 Style="{StaticResource OutlineButton}" FontSize="12" Padding="10,3" Margin="6,0,0,0" Click="LocationSuggestionDismiss_Click" KeyboardNavigation.TabIndex="1"/>
         <Button x:Name="LocationSuggestionSwitch" DockPanel.Dock="Right" Content="{DynamicResource Str_Loc_Switch}"
-                Style="{StaticResource OutlineButton}" FontSize="12" Padding="10,3" Click="LocationSuggestionSwitch_Click" KeyboardNavigation.TabIndex="0"/>
+                Style="{StaticResource OutlineButton}" FontSize="12" Padding="10,3" Margin="16,0,0,0" Click="LocationSuggestionSwitch_Click" KeyboardNavigation.TabIndex="0"/>
         <a11y:Glyph DockPanel.Dock="Left" Text="&#xE707;" FontFamily="Segoe MDL2 Assets" FontSize="13" Margin="0,0,8,0"
                     Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
         <TextBlock x:Name="LocationSuggestionText" Foreground="{DynamicResource TextBrush}" FontSize="12" AutomationProperties.LiveSetting="Polite"

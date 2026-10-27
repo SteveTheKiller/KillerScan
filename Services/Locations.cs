@@ -273,6 +273,8 @@ namespace KillerScan.Services
         public bool SetNotes(string id, string notes) => Update(id, item => item.Notes = notes);
 
         public bool SetIcon(string id, string icon) => Update(id, item => item.Icon = icon);
+        public bool ClearGatewayMacs(string id) => Update(id, item => item.GatewayMacs.Clear());
+
         public bool AddGatewayMac(string id, string mac)
         {
             string normalized = LocationInfo.NormalizeMac(mac);

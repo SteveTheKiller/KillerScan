@@ -361,9 +361,9 @@ namespace KillerScan.Controls
 
         /// <summary>
         /// A window still on Unassigned, with nothing on screen, takes the one Location that
-        /// recognizes this network: by the gateway's MAC first, and when no Location has recorded
-        /// that yet, by the local subnet matching a Location's last scanned target. Two or more
-        /// matches still go to the banner, and a Location the user picked is never overridden.
+        /// recognizes this network by its gateway's MAC, which a Location records only when a scan
+        /// is saved into it. Two or more matches still go to the banner, and a Location the user
+        /// picked is never overridden.
         /// </summary>
         private bool TryAssignRecognizedLocation(string gatewayMac, string subnet)
         {
@@ -372,11 +372,9 @@ namespace KillerScan.Controls
             bool unassigned = _location.Info == null ? _location.IsShared : _location.Info.Id == LocationCatalog.UnassignedId;
             if (!unassigned || IsScanning) return false;
             var places = LocationService.Items.Where(item => item.Id != LocationCatalog.UnassignedId).ToList();
+            // By the gateway's MAC only, which is that one router's. A subnet is not: nearly
+            // every home network is 192.168.1.0/24.
             var matches = LocationCatalog.Matching(places, gatewayMac);
-            if (matches.Count == 0 && subnet.Length > 0)
-                matches = places
-                    .Where(item => string.Equals(item.LastTargets.Trim(), subnet, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
             return matches.Count == 1 && SetLocation(LocationService.Get(matches[0]));
         }
 
@@ -643,6 +641,7 @@ namespace KillerScan.Controls
             string label = string.IsNullOrWhiteSpace(name) ? target : name!.Trim();
             var store = location.SavedScans;
             bool saved = store.SaveEdited(label, target, _active.Options, _adapterChoice);
+            if (saved) RecordGateway(location);   // this Location now knows this network
             PersistenceFeedback.Check(saved, store.Retry, () => store.SaveError);
             LocationChanged?.Invoke(this, EventArgs.Empty);
             return saved;
