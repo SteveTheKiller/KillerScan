@@ -27,9 +27,8 @@ namespace KillerScan.Shell
 
         private void RefreshLocationsList()
         {
-            // Save works from an unsaved scan (Save to a Location) and inside a Location.
-            SaveToLocationButton.IsEnabled = _scanWorkspace is { IsScanning: false } scanning
-                && (!scanning.IsUnsaved || LocationService.Items.Any(item => item.Id != LocationCatalog.UnassignedId));
+            // Save is always clickable; the click decides (a running scan, or nothing to save to, just
+            // returns). Gating it here left it grey for good when the list refreshed mid-scan.
             string? current = ShellLocation.Info?.Id;
             string? selectedLocation = (_selectedLocationNode as LocationRow)?.Info.Id;
             var selectedScan = (_selectedLocationNode as ScanNode)?.Profile;
@@ -243,6 +242,13 @@ namespace KillerScan.Shell
             RefreshLocationsList();
         }
 
+        private void LocationRoot_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is not TreeViewItem item || item.Template == null) return;
+            foreach (string part in new[] { "VerLineTop", "VerLineBottom", "HorLine" })
+                if (item.Template.FindName(part, item) is UIElement line) line.Visibility = Visibility.Collapsed;
+        }
+
         private void DeleteSavedScan(ScanNode scan)
         {
             var store = LocationService.Get(scan.Location.Info).SavedScans;
@@ -296,7 +302,12 @@ namespace KillerScan.Shell
                 };
                 menu.Items.Add(item);
             }
-            if (menu.Items.Count == 0) return;
+            // Always a way to save: into a brand new Location.
+            if (menu.Items.Count > 0) menu.Items.Add(new Separator());
+            var create = new MenuItem { Icon = MenuGlyph.Create(0xE710) };
+            create.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Loc_New");
+            create.Click += (_, _) => { scan.CreateLocationAndSave(); RefreshLocationsList(); };
+            menu.Items.Add(create);
             menu.IsOpen = true;
         }
     }

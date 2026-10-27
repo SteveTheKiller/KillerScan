@@ -454,6 +454,9 @@
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <TreeView.ItemContainerStyle>
                         <Style TargetType="TreeViewItem" BasedOn="{StaticResource FolderTreeItem}">
+                            <!-- Locations are the roots: no connector in front of them, only the
+                                 lines running down to their scans (LocationRoot_Loaded). -->
+                            <EventSetter Event="Loaded" Handler="LocationRoot_Loaded"/>
                             <Setter Property="AutomationProperties.Name" Value="{Binding}"/>
                             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
                             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>

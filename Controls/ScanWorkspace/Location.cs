@@ -643,9 +643,10 @@ namespace KillerScan.Controls
 
         private bool SaveScanTo(LocationData location, string? name)
         {
-            if (_disposed || IsScanning || location.IsTemporary) return false;
+            if (_disposed || location.IsTemporary) return false;
+            if (IsScanning) { StatusText.Text = Loc("Str_Loc_Busy"); return false; }
             string target = Targets.Trim();
-            if (target.Length == 0) return false;
+            if (target.Length == 0) { FocusTargets(); return false; }
             string label = string.IsNullOrWhiteSpace(name) ? target : name!.Trim();
             var store = location.SavedScans;
             bool saved = store.SaveEdited(label, target, _active.Options, _adapterChoice);
@@ -698,7 +699,17 @@ namespace KillerScan.Controls
             return dialog.Confirmed && !string.IsNullOrWhiteSpace(dialog.Value) ? dialog.Value.Trim() : null;
         }
 
-        private void CreateLocation()
+        /// <summary>New Location, then the unsaved scan on screen saved into it (Save's menu).</summary>
+        internal void CreateLocationAndSave()
+        {
+            if (CreateLocation(switchTo: false) is { } created) SaveResultsTo(LocationService.Get(created));
+        }
+
+        private void CreateLocation() => CreateLocation(switchTo: true);
+
+        /// <summary>Asks for a new Location's name, icon and notes and creates it; returns it.
+        /// switchTo moves the tab there (clearing the table), which Save's own path must not do.</summary>
+        private LocationInfo? CreateLocation(bool switchTo)
         {
             // No subtitle: the current Location is not what a new one is named after.
             var dialog = new InputDialog(Loc("Str_Loc_NewTitle"), string.Empty, Loc("Str_Rename_Label"), string.Empty,
@@ -706,15 +717,16 @@ namespace KillerScan.Controls
             dialog.UseIcons(LocationIcons.All, LocationIcons.Default);
             dialog.UseNotes(Loc("Str_Loc_NotesLabel"), string.Empty);
             dialog.ShowDialog();
-            if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return;
+            if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return null;
             if (LocationService.Create(dialog.Value.Trim(), out var created) && created != null)
             {
                 LocationService.SetIcon(created, dialog.SelectedIcon);
                 if (dialog.Notes.Trim().Length > 0) LocationService.SetNotes(created, dialog.Notes);
-                SetLocation(LocationService.Get(created));
+                if (switchTo) SetLocation(LocationService.Get(created));
+                return created;
             }
-            else
-                PersistenceFeedback.Check(false, () => false, () => LocationService.SaveError ?? LocationService.LoadError);
+            PersistenceFeedback.Check(false, () => false, () => LocationService.SaveError ?? LocationService.LoadError);
+            return null;
         }
 
         private void RenameLocation() { if (_location.Info is { } info) RenameLocation(info); }

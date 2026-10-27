@@ -136,13 +136,13 @@
 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Btn_Scan}"/><Run Text=" (F5)"/></TextBlock></Button.ToolTip>
 </Button>
 <Button x:Name="ScanOptionsButton" AutomationProperties.Name="{DynamicResource Str_Options_Title}"
-        ToolTip="{DynamicResource Str_Options_Title}" Style="{StaticResource OutlineButton}"
+        ToolTip="{DynamicResource Str_Options_Title}" Style="{StaticResource BareButton}"
         FontSize="12" Padding="8,3" Margin="0,2,6,2">
     <StackPanel Orientation="Horizontal">
         <a11y:Glyph Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="12" VerticalAlignment="Center"/>
     </StackPanel>
 </Button>
-<Button x:Name="DeepScanAllButton" Content="{DynamicResource Str_Btn_DeepScanAll}" Style="{StaticResource OutlineButton}" Click="DeepScanAll_Click" Visibility="Collapsed" FontSize="12" Padding="8,3" Margin="0,2,10,2"/>
+<Button x:Name="DeepScanAllButton" Content="{DynamicResource Str_Btn_DeepScanAll}" Style="{StaticResource BareButton}" Click="DeepScanAll_Click" Visibility="Collapsed" FontSize="12" Padding="8,3" Margin="0,2,10,2"/>
 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,8,2">
 <TextBlock Text="{DynamicResource Str_Lbl_Local}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,0,5,0"/>
 <TextBlock x:Name="LocalIpLabel" Foreground="{DynamicResource TextBrush}" FontFamily="Consolas" FontSize="11"/>
@@ -165,7 +165,7 @@
 <TextBlock x:Name="FooterNetLabel" Visibility="Collapsed"/>
 <TextBlock x:Name="FooterNetAdapter" Visibility="Collapsed"/>
 <TextBlock x:Name="FooterNetSpeed" Visibility="Collapsed"/>
-<Button x:Name="FilterToggleButton" Style="{StaticResource OutlineButton}" FontFamily="Segoe MDL2 Assets" Content="&#xE71C;" Width="26" Height="26" Padding="0" Margin="0,2,6,2" Click="FilterToggle_Click">
+<Button x:Name="FilterToggleButton" Style="{StaticResource BareButton}" FontFamily="Segoe MDL2 Assets" Content="&#xE71C;" Width="26" Height="26" Padding="0" Margin="0,2,6,2" Click="FilterToggle_Click">
 <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_FilterPlaceholder}"/><Run Text=" (Ctrl+Shift+F)"/></TextBlock></Button.ToolTip>
 </Button>
                     <Border x:Name="FilterBox" Margin="0,2,6,2" Width="150" MaxWidth="150" Visibility="Collapsed" Height="26" VerticalAlignment="Center" HorizontalAlignment="Stretch"
@@ -784,7 +784,7 @@
                     </ScrollViewer>
                     <!-- The topology's own settings, in the pane's bottom-right corner rather than in
                          the title bar beside Scan settings, where two gears read as one. -->
-                    <Button x:Name="TopologyOrderButton" Visibility="Collapsed" Style="{StaticResource OutlineButton}"
+                    <Button x:Name="TopologyOrderButton" Visibility="Collapsed" Style="{StaticResource BareButton}"
                             FontFamily="Segoe MDL2 Assets" Content="&#xE713;" Width="26" Height="26" Padding="0"
                             Margin="0,0,10,10" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                             Panel.ZIndex="5" Click="TopologyOrderButton_Click">
