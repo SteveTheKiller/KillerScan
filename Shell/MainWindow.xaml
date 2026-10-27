@@ -332,26 +332,18 @@
                                    Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource HeadingFont}"
                                    FontSize="20" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </DockPanel>
-                    <!-- The Locations section's actions, KillerNotes' sidebar bar: a wide accent
-                         "+ New" in the wordmark's Lacquer, then small square buttons. -->
+                    <!-- The Locations section's actions: a standard "+ New" button, then small
+                         square buttons. Scan is the app's one big accent button. -->
                     <Grid x:Name="LocationsFooter" Margin="14,0,5,6" Visibility="Collapsed">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Button x:Name="NewLocationButton" Style="{StaticResource PrimaryButton}" Click="NewLocation_Click"
+                        <Button x:Name="NewLocationButton" Style="{StaticResource OutlineButton}" Click="NewLocation_Click"
                                 Content="{DynamicResource Str_Loc_NewShort}" HorizontalAlignment="Left"
-                                Height="26" MinWidth="34" Padding="12,0" FontFamily="{DynamicResource WordmarkAccentFont}" FontSize="17" FontWeight="Normal"
-                                HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                                Height="26" FontSize="12" Padding="10,0" VerticalContentAlignment="Center">
                             <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Loc_NewTitle}"/><Run Text=" (Ctrl+Alt+S)"/></TextBlock></Button.ToolTip>
-                            <Button.ContentTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}">
-                                        <TextBlock.RenderTransform><TranslateTransform Y="-2"/></TextBlock.RenderTransform>
-                                    </TextBlock>
-                                </DataTemplate>
-                            </Button.ContentTemplate>
                         </Button>
                         <Button Grid.Column="1" Style="{StaticResource SurfaceButton}" FontFamily="Segoe MDL2 Assets" FontSize="13"
                                 Content="&#xE8B5;" Width="34" Height="26" Padding="0" Margin="6,0,0,0" Click="ImportLocation_Click"
