@@ -577,7 +577,7 @@ internal static class Program
                     "About update button is the family outline button");
                 var confirmXml = new XmlDocument();
                 confirmXml.Load(Path.Combine(directory.FullName, "Controls", "ConfirmDialog.xaml"));
-                Require(confirmXml.OuterXml.Contains("Background=\"{DynamicResource InputDialogTitleBrush}\"") &&
+                Require(confirmXml.OuterXml.Contains("Background=\"{DynamicResource DialogTitleBarBrush}\"") &&
                     confirmXml.OuterXml.Contains("Style=\"{StaticResource OverlayCloseButton}\"") &&
                     confirmXml.OuterXml.Contains("BorderThickness=\"{DynamicResource FrameOuterLightThickness}\""),
                     "98SE confirmation dialogs use the themed caption, close control, and bevel");

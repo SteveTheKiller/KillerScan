@@ -115,7 +115,17 @@ namespace KillerScan.Shell
         // Portable-mode install button
         private void Install_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new ConfirmDialog { Owner = this };
+            var dlg = new ConfirmDialog(Loc("Str_Install_HeadUser"),
+                Loc("Str_Install_BulletShortcut") + "\n" + Loc("Str_Install_BulletArp"),
+                Loc("Str_Btn_Install"), Loc("Str_Btn_Cancel"),
+                check2Label: Loc("Str_Install_AllUsers")) { Owner = this };
+            // Already installed machine-wide (by an admin, winget, choco or an RMM)? Then the only
+            // sane move is to update that copy in place, so the all-users box is ticked and locked.
+            if (App.MachineInstallExists())
+                dlg.LockCheck2(Loc("Str_Install_AlreadyAllUsers"));
+            dlg.Check2.Checked += (_, _) => dlg.HeadingText.Text = Loc("Str_Install_HeadAll");
+            dlg.Check2.Unchecked += (_, _) => dlg.HeadingText.Text = Loc("Str_Install_HeadUser");
+            if (dlg.Check2Checked) dlg.HeadingText.Text = Loc("Str_Install_HeadAll");
             dlg.ShowDialog();
             if (!dlg.Confirmed) return;
 
@@ -123,7 +133,7 @@ namespace KillerScan.Shell
             // once the install actually happened, otherwise the app keeps running as portable.
             try
             {
-                if (!App.InstallAndRelaunch(wantDesktop: true, allUsers: dlg.AllUsers))
+                if (!App.InstallAndRelaunch(wantDesktop: true, allUsers: dlg.Check2Checked))
                 {
                     StatusText.Text = Loc("Str_St_InstallCanceled");
                     return;
