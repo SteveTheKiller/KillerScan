@@ -10,7 +10,7 @@ namespace KillerScan.Services
         {
             using (InstallationFiles.PinDirectory(directory))
             {
-                string image = Path.Combine(directory, "KillerScan.exe");
+                string image = Path.Combine(directory, AppInfo.ExeName);
                 string retired = image + ".uninstall-" + Guid.NewGuid().ToString("N");
                 bool moved = false, metadataStarted = false;
                 try

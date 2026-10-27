@@ -8,7 +8,7 @@ using Microsoft.Win32;
 namespace KillerScan.Services
 {
     /// <summary>
-    /// Puts an installed copy on PATH so a new terminal can run "killerscan" from any folder. The
+    /// Puts an installed copy on PATH so a new terminal can run the app by name from any folder. The
     /// install folder is added to the current user's PATH, or to the machine PATH for an
     /// all-users install, and the same folder is taken out again on uninstall. Portable copies
     /// register nothing.

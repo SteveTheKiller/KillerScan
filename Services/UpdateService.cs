@@ -30,7 +30,9 @@ namespace KillerScan.Services
 
         private static HttpClient NewClient(int timeoutSeconds)
         {
+#if NETFRAMEWORK
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+#endif
             var http = new HttpClient { Timeout = TimeSpan.FromSeconds(timeoutSeconds) };
             http.DefaultRequestHeaders.UserAgent.ParseAdd($"{AppInfo.DisplayName}-UpdateCheck");
             return http;

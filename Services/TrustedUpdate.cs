@@ -161,13 +161,13 @@ namespace KillerScan.Services
         private static string Hex(byte[] bytes) => BitConverter.ToString(bytes).Replace("-", "");
 
         internal static void ValidateMachineOwner(string directory, SecurityIdentifier? stagingOwner = null)
-            => ValidateMachineOwner(Directory.GetAccessControl(directory), stagingOwner);
+            => ValidateMachineOwner(new DirectoryInfo(directory).GetAccessControl(), stagingOwner);
 
         // Pre-UAC validation defers creator proof; the elevated staging caller supplies its token owner.
         internal static void ValidateMachineOwner(DirectorySecurity security, SecurityIdentifier? stagingOwner = null)
         {
             var trusted = new[] { "S-1-5-18", "S-1-5-32-544", "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464" };
-            if (!trusted.Contains(security.GetOwner(typeof(SecurityIdentifier)).Value))
+            if (security.GetOwner(typeof(SecurityIdentifier)) is not { } owner || !trusted.Contains(owner.Value))
                 throw new SecurityException("The machine installation has an untrusted owner.");
             if (stagingOwner != null && !trusted.Contains(stagingOwner.Value))
                 throw new SecurityException("The machine staging creator has an untrusted owner.");
