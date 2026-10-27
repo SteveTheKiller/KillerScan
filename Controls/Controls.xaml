@@ -1007,8 +1007,11 @@
                                 <!-- IsSharedSizeScope so every MenuItem's Header/Gesture columns in THIS
                                      popup align as real columns (see the MenuItem template's SharedSizeGroup
                                      names) instead of each row sizing its shortcut text independently. -->
-                                <StackPanel IsItemsHost="True" Margin="{TemplateBinding Padding}" KeyboardNavigation.DirectionalNavigation="Cycle"
-                                            Grid.IsSharedSizeScope="True"/>
+                                <!-- A menu taller than the screen scrolls instead of cutting off its last items (KillerShot menu-overflow). -->
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" CanContentScroll="False">
+                                    <StackPanel IsItemsHost="True" Margin="{TemplateBinding Padding}" KeyboardNavigation.DirectionalNavigation="Cycle"
+                                                Grid.IsSharedSizeScope="True"/>
+                                </ScrollViewer>
                                 <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}"
                                         CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}"/>
                             </Grid>
@@ -1125,7 +1128,9 @@
                                         <Grid>
                                             <!-- Own scope, so a submenu's columns align among its own
                                                  siblings rather than the unrelated parent popup's rows. -->
-                                            <ItemsPresenter Margin="4" Grid.IsSharedSizeScope="True"/>
+                                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" CanContentScroll="False">
+                                                <ItemsPresenter Margin="4" Grid.IsSharedSizeScope="True"/>
+                                            </ScrollViewer>
                                             <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}"
                                                     CornerRadius="{DynamicResource FlyoutCornerRadius}" Background="{DynamicResource GrainTileBrush}"/>
                                         </Grid>
