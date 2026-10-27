@@ -15,15 +15,21 @@ namespace KillerScan.Services
 {
     internal static class TrustedUpdate
     {
+        internal const string HelperArgument = "/apply-verified-update";
+
+        /// <summary>The protected machine installation folder, the only one the elevated helper updates.</summary>
+        internal static string MachineDirectory =>
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), AppInfo.DisplayName);
+
         internal static void Start(string download, string? version, UpdateService.Platform platform)
         {
             string current = Process.GetCurrentProcess().MainModule!.FileName;
-            string directory = UninstallCompletion.InstallDirectory(machine: true);
+            string directory = MachineDirectory;
             string target = Path.Combine(directory, AppInfo.ExeName);
             if (!string.Equals(current, target, StringComparison.OrdinalIgnoreCase))
                 throw new SecurityException("Automatic elevated updates require the protected machine installation. Download retained at: "
                     + download + ". Manual download: " + UpdateService.ReleasesUrl);
-            using var pinned = InstallationFiles.PinDirectory(directory);
+            using var pinned = InstallationFiles.PinDirectory(directory, mustExist: true);
             ValidateMachineOwner(directory);
             if (!CodeSignature.GetSignerInfo().valid) throw new SecurityException("The installed update helper has no valid signature.");
             string hash = UpdateImagePublication.VerifiedHash(download);
@@ -37,7 +43,7 @@ namespace KillerScan.Services
             using var owner = Process.GetCurrentProcess();
             // Keep the installed helper immutable across the UAC handoff.
             using var image = new FileStream(current, FileMode.Open, FileAccess.Read, FileShare.Read);
-            var start = new ProcessStartInfo(current, "/apply-verified-update "
+            var start = new ProcessStartInfo(current, HelperArgument + " "
                 + Convert.ToBase64String(Encoding.Unicode.GetBytes(Path.GetFullPath(download))) + " " + hash + " " + requested
                 + " " + owner.Id.ToString(CultureInfo.InvariantCulture)
                 + " " + owner.StartTime.ToUniversalTime().Ticks.ToString(CultureInfo.InvariantCulture) + " " + identity)
@@ -56,21 +62,25 @@ namespace KillerScan.Services
         {
             try
             {
-                if (args.Length != 7 || !KillerFamily.Deployment.InstallerExitCodes.IsElevated())
+                ValidateRequest(args);
+                if (!KillerFamily.Deployment.InstallerExitCodes.IsElevated())
                     throw new SecurityException("The machine update operation requires a complete elevated request.");
-                string directory = UninstallCompletion.InstallDirectory(machine: true);
+                string directory = MachineDirectory;
                 string target = Path.Combine(directory, AppInfo.ExeName);
                 using var self = Process.GetCurrentProcess();
                 if (!string.Equals(self.MainModule!.FileName, target, StringComparison.OrdinalIgnoreCase))
                     throw new SecurityException("The update helper is not the protected installed application.");
                 using var lease = KillerFamily.Deployment.InstallerExitCodes.Acquire(AppInfo.DisplayName);
-                using var pinned = InstallationFiles.PinDirectory(directory);
+                using var pinned = InstallationFiles.PinDirectory(directory, mustExist: true);
                 using var creator = WindowsIdentity.GetCurrent();
                 ValidateMachineOwner(directory, creator.Owner
                     ?? throw new SecurityException("The machine staging creator owner is unavailable."));
                 string download = ReleaseIdentity.RequireLocalFile(Encoding.Unicode.GetString(Convert.FromBase64String(args[1])));
                 string expected = args[2], version = NormalizeVersion(args[3]);
-                UpdateImagePublication.RememberVerified(download, expected);
+                // The staged image must carry the installed publisher's certificate (ReleaseIdentity
+                // below), so the publication helper holds the published image to that thumbprint.
+                string signer = CodeSignature.GetSignerInfo().thumb;
+                UpdateImagePublication.RememberVerified(download, expected, signer);
                 if (!Guid.TryParseExact(args[6], "N", out _)) throw new SecurityException("The update staging identity is invalid.");
                 int parentId = int.Parse(args[4], CultureInfo.InvariantCulture);
                 long parentTicks = long.Parse(args[5], CultureInfo.InvariantCulture);
@@ -78,7 +88,7 @@ namespace KillerScan.Services
                 if (parent.StartTime.ToUniversalTime().Ticks != parentTicks
                     || !string.Equals(parent.MainModule?.FileName, target, StringComparison.OrdinalIgnoreCase))
                     throw new SecurityException("The update owner does not match the installed application.");
-                using var sourcePath = InstallationFiles.PinDirectory(Path.GetDirectoryName(download)!);
+                using var sourcePath = InstallationFiles.PinDirectory(Path.GetDirectoryName(download)!, mustExist: true);
                 using var source = new FileStream(download, FileMode.Open, FileAccess.Read, FileShare.Read);
                 using var hash = SHA256.Create();
                 if (!Hex(hash.ComputeHash(source)).Equals(expected, StringComparison.OrdinalIgnoreCase))
@@ -88,7 +98,7 @@ namespace KillerScan.Services
                 string originalHash;
                 using (var original = new FileStream(target, FileMode.Open, FileAccess.Read, FileShare.Read))
                     originalHash = Hex(hash.ComputeHash(original));
-                UpdateImagePublication.RememberVerified(staged, expected);
+                UpdateImagePublication.RememberVerified(staged, expected, signer);
                 var start = Publication(staged, target, version, originalHash,
                     parentId, parentTicks, self.Id, self.StartTime.ToUniversalTime().Ticks);
                 using var child = Process.Start(start) ?? throw new IOException("The immutable publication helper did not start.");
@@ -154,6 +164,28 @@ namespace KillerScan.Services
             "$p=$null;try{$p=[Diagnostics.Process]::GetProcessById(" + id.ToString(CultureInfo.InvariantCulture)
             + ")}catch [ArgumentException]{};if($null -ne $p -and $p.StartTime.ToUniversalTime().Ticks -eq "
             + ticks.ToString(CultureInfo.InvariantCulture) + " -and -not $p.WaitForExit(60000)){exit 1618};";
+
+        /// <summary>Refuses an elevated request unless every argument has exactly the shape
+        /// <see cref="Start"/> writes: the helper verb, an absolute download path, a 64-digit hex
+        /// hash, a release version, a positive owner id and start time, and a staging identity
+        /// (Killendar's and KillerNotes' request check).</summary>
+        internal static void ValidateRequest(string[] args)
+        {
+            if (args.Length != 7 || args[0] != HelperArgument
+                || args[2].Length != 64 || args[2].Any(c => !Uri.IsHexDigit(c))
+                || !int.TryParse(args[4], NumberStyles.None, CultureInfo.InvariantCulture, out int id) || id <= 0
+                || !long.TryParse(args[5], NumberStyles.None, CultureInfo.InvariantCulture, out long ticks)
+                || ticks <= 0 || ticks > DateTime.MaxValue.Ticks
+                || !Guid.TryParseExact(args[6], "N", out _))
+                throw new SecurityException("The update request is invalid.");
+            string download;
+            try { download = Encoding.Unicode.GetString(Convert.FromBase64String(args[1])); }
+            catch (FormatException error) { throw new SecurityException("The update request is invalid.", error); }
+            if (download.Length == 0 || !Path.IsPathRooted(download))
+                throw new SecurityException("The update download path must be absolute.");
+            _ = Path.GetFullPath(download);
+            _ = NormalizeVersion(args[3]);
+        }
 
         private static string NormalizeVersion(string? text) => ReleaseIdentity.NormalizeVersion(text);
         private static string Data(string text) => "[Text.Encoding]::Unicode.GetString([Convert]::FromBase64String('"

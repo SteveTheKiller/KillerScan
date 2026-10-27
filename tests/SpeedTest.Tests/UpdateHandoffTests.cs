@@ -11,7 +11,8 @@ internal static class UpdateHandoffTests
         Directory.CreateDirectory(root);
         string payload = Path.Combine(root, "verified.exe");
         File.WriteAllText(payload, "abc");
-        UpdateImagePublication.RememberVerified(payload, "BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD");
+        UpdateImagePublication.RememberVerified(payload, "BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD",
+            new string('0', 40));
         string? ownedBatch = null;
         bool mutableElevatedCode = false;
         Exception? rejection = null;

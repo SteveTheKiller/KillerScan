@@ -56,8 +56,10 @@ namespace KillerScan.Services
             using (PinDirectory(Path.GetDirectoryName(full)!)) File.Delete(full);
         }
 
-        /// <summary>Keep every existing directory ancestor immovable during owned-file cleanup.</summary>
-        internal static IDisposable PinDirectory(string directory)
+        /// <summary>Keep every existing directory ancestor immovable during owned-file cleanup. With
+        /// <paramref name="mustExist"/>, a missing ancestor fails instead of being skipped, as the
+        /// update paths require (Killendar's UpdatePathSafety).</summary>
+        internal static IDisposable PinDirectory(string directory, bool mustExist = false)
         {
             var lease = new DirectoryLease();
             try
@@ -74,7 +76,8 @@ namespace KillerScan.Services
                     {
                         int code = Marshal.GetLastWin32Error();
                         handle.Dispose();
-                        if (code == 2 || code == 3) continue;
+                        if ((code == 2 || code == 3) && !mustExist) continue;
+                        if (code == 2 || code == 3) throw new DirectoryNotFoundException(item);
                         throw new Win32Exception(code);
                     }
                     lease.Handles.Add(handle);

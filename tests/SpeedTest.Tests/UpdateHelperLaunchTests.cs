@@ -14,6 +14,8 @@ using KillerScan.Services;
 internal static class UpdateHelperLaunchTests
 {
     private static readonly byte[] Original = Encoding.UTF8.GetBytes("original inert application image");
+    // cmd.exe carries no embedded signature, so the publisher check is replaced and checked on its own.
+    private static readonly string Signer = new string('A', 40);
 
     internal static void Run()
     {
@@ -67,7 +69,7 @@ internal static class UpdateHelperLaunchTests
         }
         string download = Path.Combine(root, "launch.exe");
         File.WriteAllBytes(download, standIn);
-        UpdateImagePublication.RememberVerified(download, Hash(standIn));
+        UpdateImagePublication.RememberVerified(download, Hash(standIn), Signer);
         ProcessStartInfo? captured = null;
         try
         {
@@ -124,11 +126,12 @@ internal static class UpdateHelperLaunchTests
         string path = Path.Combine(folder, "download.exe");
         File.WriteAllBytes(target, Original);
         File.WriteAllBytes(path, download);
-        UpdateImagePublication.RememberVerified(path, Hash(verified));
+        UpdateImagePublication.RememberVerified(path, Hash(verified), Signer);
         string relaunched = Path.Combine(folder, "relaunched.txt");
         string shown = Path.Combine(folder, "report-shown.txt");
         string overrides = "$ops.Relaunch = { param($plan) [IO.File]::WriteAllText('" + relaunched + "', 'yes') }\n" +
-            "$ops.ShowReport = { param($path) [IO.File]::WriteAllText('" + shown + "', $path) }";
+            "$ops.ShowReport = { param($path) [IO.File]::WriteAllText('" + shown + "', $path) }\n" +
+            "$ops.Publisher = { param($path, $plan) $plan.Thumb -eq '" + Signer + "' }";
         // The elevated publication never opens a report window; TrustedUpdate builds it without one.
         string script = UpdateImagePublication.Script(path, target, elevated, "https://example.invalid/releases", "KillerScan",
             showReport: !elevated, overrides: overrides);

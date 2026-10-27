@@ -46,7 +46,24 @@ namespace KillerScan.Shell
 
         bool IAboutHost.StartupUpdateCheck { set => AboutStartupUpdateCheck.IsChecked = value; }
 
-        void IAboutHost.ShowCard() => FadeOverlayIn(AboutOverlay);
+        void IAboutHost.ShowCard()
+        {
+            bool handled = false;
+            ShowingCard(ref handled);
+            if (!handled) FadeOverlayIn(AboutOverlay);
+        }
+
+        /// <summary>App hook: show the card yourself and set <paramref name="handled"/> (KillerNotes
+        /// opens a keyboard focus scope around the fade and focuses the card after it).</summary>
+        partial void ShowingCard(ref bool handled);
+
+        /// <summary>App hook: hide an overlay yourself and set <paramref name="handled"/> (KillerNotes
+        /// hands its keyboard-managed overlays to their own close path).</summary>
+        partial void OverlayFadingOut(UIElement overlay, ref bool handled);
+
+        /// <summary>App hook: close the shortcuts overlay before the footer version opens About, and
+        /// set <paramref name="handled"/>; otherwise the kit collapses ShortcutsOverlay.</summary>
+        partial void CloseShortcutsForAbout(ref bool handled);
 
         // ---- Overlay fade (shared with the shortcuts overlay, ShortcutsOverlay.cs) ----
 
@@ -65,6 +82,9 @@ namespace KillerScan.Shell
 
         private void FadeOverlayOut(UIElement o)
         {
+            bool handled = false;
+            OverlayFadingOut(o, ref handled);
+            if (handled) return;
             var a = new DoubleAnimation(o.Opacity, 0, new Duration(TimeSpan.FromMilliseconds(Anim.FadeMs)))
             {
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
@@ -91,7 +111,9 @@ namespace KillerScan.Shell
         private void VersionLabel_Click(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            if (ShortcutsOverlay.Visibility == Visibility.Visible) ShortcutsOverlay.Visibility = Visibility.Collapsed;
+            bool handled = false;
+            CloseShortcutsForAbout(ref handled);
+            if (!handled && ShortcutsOverlay.Visibility == Visibility.Visible) ShortcutsOverlay.Visibility = Visibility.Collapsed;
             ShowAboutOverlay();
         }
 

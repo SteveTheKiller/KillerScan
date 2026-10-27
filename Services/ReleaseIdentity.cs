@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Security;
@@ -17,7 +18,9 @@ namespace KillerScan.Services
         /// the running copy is signed, signed by the same certificate. An unsigned running copy is a
         /// local build that cannot vouch for a publisher, so it accepts any validly signed release;
         /// <paramref name="requireInstalledSignature"/> removes that allowance for the elevated path.</summary>
-        internal static void Verify(string exe, string version, bool requireInstalledSignature)
+        /// <returns>The thumbprint of the certificate that signed <paramref name="exe"/>, which the
+        /// publication helper holds the published image to.</returns>
+        internal static string Verify(string exe, string version, bool requireInstalledSignature)
         {
             var installed = CodeSignature.GetSignerInfo();
             var incoming = CodeSignature.GetSignerInfo(exe);
@@ -27,6 +30,38 @@ namespace KillerScan.Services
             { throw new SecurityException("The update is not a " + AppInfo.DisplayName + " executable.", error); }
             Verify(name, version, Assembly.GetExecutingAssembly().GetName().Version!,
                 (installed.valid, installed.thumb), (incoming.valid, incoming.thumb), requireInstalledSignature);
+            // The certificate subject must also name the publisher (KillerBench's package check).
+            if (incoming.subject.IndexOf(AppInfo.SignerName, StringComparison.OrdinalIgnoreCase) < 0)
+                throw new SecurityException("The update is not signed by the publisher.");
+            // KillerShell's same-publisher rule: a signed copy only takes a replacement from the same
+            // publisher, and a copy whose own signature is present but fails is refused outright
+            // instead of being treated as an unsigned local build.
+            string current;
+            using (var self = Process.GetCurrentProcess()) current = self.MainModule?.FileName ?? string.Empty;
+            if (!CodeSignature.MayReplace(current, exe))
+                throw new SecurityException("The update is not signed by the publisher of the installed copy.");
+            return incoming.thumb;
+        }
+
+        /// <summary>Throws unless <paramref name="package"/> (an installer or launcher, not this
+        /// app's assembly) has a valid signature whose subject names the publisher, from the same
+        /// certificate as the running copy when that copy is signed, under the same-publisher rule.</summary>
+        /// <returns>The thumbprint of the certificate that signed it.</returns>
+        internal static string VerifyPackage(string package)
+        {
+            var installed = CodeSignature.GetSignerInfo();
+            var incoming = CodeSignature.GetSignerInfo(package);
+            if (!incoming.valid)
+                throw new SecurityException("The update has no valid Authenticode signature.");
+            if (installed.valid && !string.Equals(installed.thumb, incoming.thumb, StringComparison.OrdinalIgnoreCase))
+                throw new SecurityException("The update must have a valid signature from the installed publisher certificate.");
+            if (incoming.subject.IndexOf(AppInfo.SignerName, StringComparison.OrdinalIgnoreCase) < 0)
+                throw new SecurityException("The update is not signed by the publisher.");
+            string current;
+            using (var self = Process.GetCurrentProcess()) current = self.MainModule?.FileName ?? string.Empty;
+            if (!CodeSignature.MayReplace(current, package))
+                throw new SecurityException("The update is not signed by the publisher of the installed copy.");
+            return incoming.thumb;
         }
 
         internal static void Verify(AssemblyName incoming, string version, Version installed,

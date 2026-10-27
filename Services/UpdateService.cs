@@ -18,8 +18,39 @@ namespace KillerScan.Services
     /// <see cref="CheckAsync"/> finds a newer tag, <see cref="DownloadAsync"/> fetches and verifies
     /// the exe, <see cref="StartSwap"/> launches the helper that replaces it.
     /// </summary>
-    internal static class UpdateService
+    internal static partial class UpdateService
     {
+        /// <summary>How this copy updates. The default swaps this exe for the released one. An app
+        /// that installs through its own installer, or runs behind a portable launcher, describes
+        /// that in <see cref="ChooseUpdateTarget"/> (KillerBench's installer and launcher modes).</summary>
+        internal sealed class UpdateTarget
+        {
+            /// <summary>Release asset to download and verify.</summary>
+            internal string Asset { get; set; } = AppInfo.ExeName;
+            /// <summary>An exe other than this one to swap, such as a portable launcher.</summary>
+            internal string? Replace { get; set; }
+            /// <summary>Another process (the launcher) the helper waits for before it swaps.</summary>
+            internal int WaitForProcess { get; set; }
+            /// <summary>When set, the verified installer is run with these arguments instead of a swap.</summary>
+            internal string? InstallerArguments { get; set; }
+            /// <summary>The installer targets a machine-wide installation, so its helper runs elevated.</summary>
+            internal bool Machine { get; set; }
+            /// <summary>This copy cannot update itself (a development build, say); the download step fails.</summary>
+            internal bool Unsupported { get; set; }
+
+            internal bool IsPackage => InstallerArguments is not null || Replace is not null;
+        }
+
+        /// <summary>App hook: describe how this copy updates. Left alone, it swaps this exe.</summary>
+        static partial void ChooseUpdateTarget(UpdateTarget target);
+
+        internal static UpdateTarget Target()
+        {
+            var target = new UpdateTarget();
+            ChooseUpdateTarget(target);
+            return target;
+        }
+
         /// <summary>Latest release page, used as the fallback whenever an automatic step fails.</summary>
         internal static string ReleasesUrl =>
             $"https://github.com/{AppInfo.GitHubRepo}/releases/latest";
@@ -51,9 +82,11 @@ namespace KillerScan.Services
                     $"https://api.github.com/repos/{AppInfo.GitHubRepo}/releases/latest")
                     .ConfigureAwait(false);
 
-                var m = Regex.Match(json, "\"tag_name\"\\s*:\\s*\"([^\"]+)\"");
+                // Only a published, stable vX.Y.Z release is offered (KillerBench's release check).
+                if (Regex.IsMatch(json, "\"(draft|prerelease)\"\\s*:\\s*true")) return null;
+                var m = Regex.Match(json, "\"tag_name\"\\s*:\\s*\"(v?[0-9]+\\.[0-9]+\\.[0-9]+)\"");
                 if (!m.Success) return null;
-                if (!Version.TryParse(m.Groups[1].Value.TrimStart('v', 'V').Trim(), out var latest))
+                if (!Version.TryParse(m.Groups[1].Value.TrimStart('v'), out var latest))
                     return null;
 
                 var cur = new Version(current.Major, current.Minor, current.Build < 0 ? 0 : current.Build);
@@ -69,9 +102,11 @@ namespace KillerScan.Services
         /// that cannot be verified must not be installed.</summary>
         internal static async Task<string> DownloadAsync(string tag)
         {
+            var target = Target();
+            if (target.Unsupported) throw new InvalidOperationException("This copy is neither installed nor portable.");
             using var http = NewClient(90);
 
-            var exeUrl = $"https://github.com/{AppInfo.GitHubRepo}/releases/download/{tag}/{AppInfo.ExeName}";
+            var exeUrl = $"https://github.com/{AppInfo.GitHubRepo}/releases/download/{tag}/{target.Asset}";
             // The checksums come from the release asset next to the exe, not from the repo at the
             // tag. Both files are uploaded to the release together, so the hash cannot drift from
             // the exe the way a committed file does when the tag and commit order get muddled.
@@ -83,10 +118,11 @@ namespace KillerScan.Services
             string? expected = null;
             foreach (var line in sumsTxt.Replace("\r", "").Split('\n'))
             {
-                if (line.TrimStart().StartsWith(AppInfo.ExeName, StringComparison.OrdinalIgnoreCase))
+                // Exactly "<asset> <hash>" for exactly this asset name (KillerBench's checksum rule).
+                var parts = line.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length == 2 && string.Equals(parts[0], target.Asset, StringComparison.OrdinalIgnoreCase))
                 {
-                    var parts = line.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length >= 2) expected = parts[^1];
+                    expected = parts[1];
                     break;
                 }
             }
@@ -104,9 +140,16 @@ namespace KillerScan.Services
             File.WriteAllBytes(path, exeBytes);
             // The checksum file comes from the same release as the exe, so it only proves the
             // download arrived intact. The signature, product and version prove where it came from.
-            try { ReleaseIdentity.Verify(path, tag, requireInstalledSignature: false); }
+            string signer;
+            try
+            {
+                // An installer or launcher package is not this app's assembly, so it is held to the
+                // publisher's signature alone; the app's own exe also has to be a newer release of it.
+                signer = target.IsPackage ? ReleaseIdentity.VerifyPackage(path)
+                    : ReleaseIdentity.Verify(path, tag, requireInstalledSignature: false);
+            }
             catch { DiscardDownload(path); throw; }
-            UpdateImagePublication.RememberVerified(path, actual);
+            UpdateImagePublication.RememberVerified(path, actual, signer);
             return path;
         }
 
@@ -131,6 +174,13 @@ namespace KillerScan.Services
             platform ??= new Platform();
             using var self = Process.GetCurrentProcess();
             var curExe = self.MainModule!.FileName;
+            var target = Target();
+            if (target.Unsupported) throw new InvalidOperationException("This copy is neither installed nor portable.");
+            if (target.IsPackage)
+            {
+                StartPackage(newExe, curExe, self, target, platform);
+                return;
+            }
             string hive = RegistryHiveFor(curExe);
 
             // The machine install always goes through the trusted helper, elevated or not. A per-user
@@ -152,6 +202,36 @@ namespace KillerScan.Services
             var psi = HelperStart(script);
             if (platform.Start(psi) is null)
                 throw new IOException("The update helper did not start. Download retained at: " + newExe);
+        }
+
+        /// <summary>The installer and launcher modes. The helper waits for this process (and the
+        /// launcher), then either runs the verified installer from a staging folder it holds open or
+        /// swaps the launcher. A machine install or a protected launcher folder runs the helper
+        /// elevated, with its whole script in the consented command line.</summary>
+        private static void StartPackage(string download, string curExe, Process self, UpdateTarget target, Platform platform)
+        {
+            string replaced = target.Replace ?? curExe;
+            bool elevate = target.Machine || !platform.CanWrite(Path.GetDirectoryName(replaced)!);
+            string script = "$ErrorActionPreference = 'Stop'\n"
+                + TrustedUpdate.Wait(self.Id, self.StartTime.ToUniversalTime().Ticks) + "\n";
+            if (target.WaitForProcess > 0)
+                script += "while (Get-Process -Id " + target.WaitForProcess.ToString(CultureInfo.InvariantCulture)
+                    + " -ErrorAction SilentlyContinue) { Start-Sleep -Milliseconds 500 }\n";
+            if (target.InstallerArguments is null)
+                script += UpdateImagePublication.Script(download, replaced, elevate, ReleasesUrl, AppInfo.DisplayName,
+                    showReport: !elevate);
+            else
+            {
+                // An elevated helper stages under Program Files, where only administrators can write.
+                string stageRoot = elevate
+                    ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), AppInfo.DisplayName + " Update")
+                    : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppInfo.DisplayName, "UpdateStage");
+                script += UpdateImagePublication.Installer(download, target.InstallerArguments, elevate, replaced, stageRoot, ReleasesUrl);
+            }
+            var start = HelperStart(script);
+            if (elevate) start.Verb = "runas";
+            if (platform.Start(start) is null)
+                throw new IOException("The update helper did not start. Download retained at: " + download);
         }
 
         /// <summary>Starts Windows PowerShell directly with the whole unelevated helper in its command line.</summary>
