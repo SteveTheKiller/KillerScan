@@ -180,7 +180,7 @@ namespace KillerScan.Shell
             if (!scan.IsUnsaved)
             {
                 // Already in a Location: save the target and settings as one of its networks.
-                var name = new InputDialog(Loc("Str_History_Rename").TrimEnd('.'), scan.Targets.Trim(), Loc("Str_Rename_Label"),
+                var name = new InputDialog(Loc("Str_Loc_SaveScan"), scan.Targets.Trim(), Loc("Str_Rename_Label"),
                     string.Empty, Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
                 name.ShowDialog();
                 if (name.Confirmed && scan.SaveCurrentScan(name.Value)) RefreshLocationsList();
@@ -195,7 +195,7 @@ namespace KillerScan.Shell
                 item.Click += (_, _) =>
                 {
                     // Optional name for the run; blank keeps the target as its label.
-                    var dialog = new InputDialog(Loc("Str_History_Rename").TrimEnd('.'), captured.ToString(), Loc("Str_Rename_Label"),
+                    var dialog = new InputDialog(Loc("Str_Loc_SaveScan"), captured.ToString(), Loc("Str_Rename_Label"),
                         string.Empty, Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
                     dialog.ShowDialog();
                     if (!dialog.Confirmed) return;

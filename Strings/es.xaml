@@ -404,6 +404,7 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Loc_New">Nueva Ubicación...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Nueva Ubicación</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Nueva</sys:String>
+    <sys:String x:Key="Str_Loc_SaveScan">Guardar escaneo</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">Chincheta</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">Casa</sys:String>
     <sys:String x:Key="Str_LocIcon_Office">Oficina</sys:String>

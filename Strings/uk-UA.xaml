@@ -446,6 +446,7 @@
     <sys:String x:Key="Str_Loc_New">Нова локація...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Нова локація</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Нова</sys:String>
+    <sys:String x:Key="Str_Loc_SaveScan">Зберегти сканування</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">Шпилька</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">Дім</sys:String>
     <sys:String x:Key="Str_LocIcon_Office">Офіс</sys:String>

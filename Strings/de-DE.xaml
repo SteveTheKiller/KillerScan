@@ -405,6 +405,7 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Loc_New">Neuer Standort...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Neuer Standort</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Neu</sys:String>
+    <sys:String x:Key="Str_Loc_SaveScan">Scan speichern</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">Pin</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">Zuhause</sys:String>
     <sys:String x:Key="Str_LocIcon_Office">Büro</sys:String>

@@ -404,6 +404,7 @@
     <sys:String x:Key="Str_Loc_New">新增站點...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">新增站點</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ 新增</sys:String>
+    <sys:String x:Key="Str_Loc_SaveScan">儲存掃描</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">圖釘</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">家</sys:String>
     <sys:String x:Key="Str_LocIcon_Office">辦公室</sys:String>

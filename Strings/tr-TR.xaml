@@ -404,6 +404,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Loc_New">Yeni Lokasyon...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Yeni Lokasyon</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Yeni</sys:String>
+    <sys:String x:Key="Str_Loc_SaveScan">Taramayı kaydet</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">Raptiye</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">Ev</sys:String>
     <sys:String x:Key="Str_LocIcon_Office">Ofis</sys:String>

@@ -402,6 +402,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Loc_New">Nová Lokalita...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Nová Lokalita</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Nová</sys:String>
+    <sys:String x:Key="Str_Loc_SaveScan">Uložit sken</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">Špendlík</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">Domov</sys:String>
     <sys:String x:Key="Str_LocIcon_Office">Kancelář</sys:String>

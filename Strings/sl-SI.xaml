@@ -379,6 +379,7 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Loc_New">Nova Lokacija...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Nova Lokacija</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Novo</sys:String>
+    <sys:String x:Key="Str_Loc_SaveScan">Shrani pregled</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">Žebljiček</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">Dom</sys:String>
     <sys:String x:Key="Str_LocIcon_Office">Pisarna</sys:String>

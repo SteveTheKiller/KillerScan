@@ -446,6 +446,7 @@
     <sys:String x:Key="Str_Loc_New">Жаңа Локация...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Жаңа Локация</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Жаңа</sys:String>
+    <sys:String x:Key="Str_Loc_SaveScan">Сканерлеуді сақтау</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">Түйреуіш</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">Үй</sys:String>
     <sys:String x:Key="Str_LocIcon_Office">Кеңсе</sys:String>

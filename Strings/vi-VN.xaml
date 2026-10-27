@@ -384,6 +384,7 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Loc_New">Địa điểm mới...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Địa điểm mới</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Mới</sys:String>
+    <sys:String x:Key="Str_Loc_SaveScan">Lưu lần quét</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">Ghim</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">Nhà</sys:String>
     <sys:String x:Key="Str_LocIcon_Office">Văn phòng</sys:String>

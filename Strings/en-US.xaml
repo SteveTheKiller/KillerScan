@@ -446,6 +446,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Loc_New">New Location...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">New Location</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ New</sys:String>
+    <sys:String x:Key="Str_Loc_SaveScan">Save scan</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">Pin</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">Home</sys:String>
     <sys:String x:Key="Str_LocIcon_Office">Office</sys:String>

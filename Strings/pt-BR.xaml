@@ -446,6 +446,7 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Loc_New">Novo Local...</sys:String>
     <sys:String x:Key="Str_Loc_NewTitle">Novo Local</sys:String>
     <sys:String x:Key="Str_Loc_NewShort">+ Nova</sys:String>
+    <sys:String x:Key="Str_Loc_SaveScan">Salvar varredura</sys:String>
     <sys:String x:Key="Str_LocIcon_Pin">Alfinete</sys:String>
     <sys:String x:Key="Str_LocIcon_Home">Casa</sys:String>
     <sys:String x:Key="Str_LocIcon_Office">Escritório</sys:String>
