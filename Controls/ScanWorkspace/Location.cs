@@ -329,6 +329,8 @@ namespace KillerScan.Controls
         private void RecordGateway(LocationData location)
         {
             if (location.Info is not { } info || location.IsShared) return;
+            // The migrated "Saved scans" holding Location mixes every old site, so it never claims one.
+            if (LocationService.IsImportedScans(info)) return;
             string gateway = LocalNetwork.Detect()?.Gateway ?? string.Empty;
             if (gateway.Length == 0) return;
             // From the results when the gateway is in them, otherwise from the neighbour cache Windows

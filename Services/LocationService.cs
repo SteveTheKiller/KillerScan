@@ -72,6 +72,11 @@ namespace KillerScan.Services
         /// removed from Unassigned only once it is saved there; with none left this does nothing,
         /// and no empty Location is made.
         /// </summary>
+        private const string ImportedScansSetting = "ImportedScansLocation";
+
+        /// <summary>The Location the old scan profiles were migrated into.</summary>
+        internal static bool IsImportedScans(LocationInfo info) => App.GetSetting(ImportedScansSetting) == info.Id;
+
         private static void MigrateSavedScans()
         {
             if (!Editable) return;
@@ -82,6 +87,9 @@ namespace KillerScan.Services
             string name = System.Windows.Application.Current?.TryFindResource("Str_Loc_ImportedScans") as string ?? "Saved scans";
             var home = Items.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.CurrentCultureIgnoreCase));
             if (home == null && (!Create(name, out home) || home == null)) return;
+            // Remembered by id (a rename keeps it): this holding Location never learns a router,
+            // since it mixes every old site (IsImportedScans).
+            App.SetSetting(ImportedScansSetting, home.Id);
             var target = Get(home).SavedScans;
             foreach (var scan in old)
             {
