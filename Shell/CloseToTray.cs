@@ -120,25 +120,34 @@ namespace KillerFamily.Shell
             int size = GetSystemMetrics(49);   // SM_CXSMICON
             // The SDK embeds ApplicationIcon as icon group 32512.
             _icon = LoadImage(GetModuleHandle(null), new IntPtr(32512), 1, size, size, 0);
-            window.Closed += (_, _) =>
-            {
-                Dispose();
-                // The close Exit started went through: quit the app, any other windows included.
-                if (_exitRequested) Application.Current?.Shutdown();
-            };
+            window.Closed += WindowClosed;
             // The user's next click or key after Exit ends the exit. A prompt the user turned down
             // leaves the window open, and the next close hides to the tray again. A close that is
             // still running (a fade's second pass) arrives without input and still closes.
-            window.PreviewMouseDown += (_, _) => _exitRequested = false;
-            window.PreviewKeyDown += (_, _) => _exitRequested = false;
-            Application.Current.SessionEnding += (_, e) =>
-            {
-                if (e.Cancel) return;
-                if (_canExit != null && !_canExit()) { e.Cancel = true; return; }
-                _exiting = true;
-            };
-            Application.Current.Exit += (_, _) => Dispose();
+            window.PreviewMouseDown += EndExitRequest;
+            window.PreviewKeyDown += EndExitRequest;
+            Application.Current.SessionEnding += SessionEnding;
+            Application.Current.Exit += ApplicationExit;
         }
+
+        private void WindowClosed(object? sender, EventArgs e)
+        {
+            bool quit = _exitRequested;
+            Dispose();
+            // The close Exit started went through: quit the app, any other windows included.
+            if (quit) Application.Current?.Shutdown();
+        }
+
+        private void EndExitRequest(object sender, RoutedEventArgs e) => _exitRequested = false;
+
+        private void SessionEnding(object sender, SessionEndingCancelEventArgs e)
+        {
+            if (e.Cancel) return;
+            if (_canExit != null && !_canExit()) { e.Cancel = true; return; }
+            _exiting = true;
+        }
+
+        private void ApplicationExit(object sender, ExitEventArgs e) => Dispose();
 
         /// <summary>Quits the app from the icon or the app menu without hiding to the tray. The
         /// window comes back and closes the normal way, so its quit and save prompts run and can
@@ -155,6 +164,7 @@ namespace KillerFamily.Shell
         /// <summary>Brings the window back from the tray, the taskbar or behind other windows.</summary>
         internal void ShowWindow()
         {
+            if (_disposed) return;
             if (!_window.IsVisible) _window.Show();
             if (_window.WindowState == WindowState.Minimized) _window.WindowState = WindowState.Normal;
             _window.Activate();
@@ -175,13 +185,16 @@ namespace KillerFamily.Shell
 
         /// <summary>Call first in the main window's OnClosing override. With the option on, cancels
         /// the close, hides the window, shows the icon and returns true, and the override returns
-        /// at once. Returns false for a real close: the option off, Exit, or the app shutting down.</summary>
+        /// at once. Returns false for a real close: the option off, Exit, or the app shutting down.
+        /// If the icon cannot be added the close is still canceled but the window stays in view,
+        /// so the app is never left running with no window and no icon.</summary>
         internal bool HideInstead(CancelEventArgs e)
         {
             if (_exiting || _exitRequested || _disposed || e.Cancel || AppShuttingDown() || !_isEnabled()) return false;
             e.Cancel = true;
-            _window.Hide();
             ShowIcon();
+            if (_iconShown) _window.Hide();
+            else ShowWindow();
             return true;
         }
 
@@ -231,6 +244,8 @@ namespace KillerFamily.Shell
             {
                 _iconShown = false;   // Explorer restarted and dropped the icon
                 ShowIcon();
+                // The icon could not come back: bring the window back so the app is reachable.
+                if (!_iconShown && !_window.IsVisible) ShowWindow();
             }
             return IntPtr.Zero;
         }
@@ -278,6 +293,14 @@ namespace KillerFamily.Shell
             if (_icon != IntPtr.Zero) DestroyIcon(_icon);
             _source.RemoveHook(WndProc);
             _source.Dispose();
+            _window.Closed -= WindowClosed;
+            _window.PreviewMouseDown -= EndExitRequest;
+            _window.PreviewKeyDown -= EndExitRequest;
+            if (Application.Current is { } app)
+            {
+                app.SessionEnding -= SessionEnding;
+                app.Exit -= ApplicationExit;
+            }
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
