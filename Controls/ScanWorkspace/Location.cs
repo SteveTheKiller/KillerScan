@@ -131,11 +131,16 @@ namespace KillerScan.Controls
         /// lists it. The results stay on screen, so they can still be saved to a Location.
         /// Returns true when the tab moved.
         /// </summary>
+        /// <summary>Where a window goes when its Location is deleted: Unassigned, the normal
+        /// unsaved state. Temporary is only the fallback when Locations cannot be read at all.</summary>
+        private static LocationData UnsavedLocation() =>
+            LocationService.Find(LocationCatalog.UnassignedId) is { } unassigned ? LocationService.Get(unassigned) : LocationData.Temporary();
+
         internal bool LeaveDeletedLocation()
         {
             // Only a Location from this process's catalog can be judged against that catalog on disk.
             if (_disposed || !_inCatalog || _location.Info is not { } info || LocationService.StillExists(info.Id)) return false;
-            EnterLocation(LocationData.Temporary());
+            EnterLocation(UnsavedLocation());
             LocationService.Forget(info.Id);
             StatusText.Text = string.Format(Loc("Str_Loc_DeletedElsewhere"), info.Name);
             return true;
@@ -326,8 +331,11 @@ namespace KillerScan.Controls
             if (location.Info is not { } info || location.IsShared) return;
             string gateway = LocalNetwork.Detect()?.Gateway ?? string.Empty;
             if (gateway.Length == 0) return;
-            var device = _active.Devices.FirstOrDefault(item => item.IpAddress == gateway && item.MacAddress.Length > 0);
-            if (device != null) LocationService.AddGatewayMac(info, device.MacAddress);
+            // From the results when the gateway is in them, otherwise from the neighbour cache Windows
+            // already has (no traffic), so saving with an empty table still records the router.
+            string mac = _active.Devices.FirstOrDefault(item => item.IpAddress == gateway && item.MacAddress.Length > 0)?.MacAddress
+                ?? (NetworkPlatform.Current.ReadNeighborCache().TryGetValue(gateway, out var cached) ? cached : string.Empty);
+            if (mac.Length > 0) LocationService.AddGatewayMac(info, mac);
         }
 
         private int _suggestionCheck;
@@ -474,7 +482,7 @@ namespace KillerScan.Controls
                 PersistenceFeedback.Check(false, () => false, () => LocationService.SaveError ?? LocationService.LoadError);
                 return;
             }
-            if (here) SetLocation(LocationData.Temporary());
+            if (here) SetLocation(UnsavedLocation());
             else LocationChanged?.Invoke(this, EventArgs.Empty);
         }
 

@@ -126,8 +126,10 @@ namespace KillerScan.Controls
         private void NoteKnownDevices(LocationData location)
         {
             if (location.IsTemporary || _active.Devices.Count == 0) return;
-            // The gateway is not recorded here: a Location learns a network only when a scan is
-            // saved into it (SaveScanTo), never because a run happened to finish there.
+            // A Location learns a network only from what was saved into it: a run that finishes on
+            // one of its saved scans' targets records the router; any other run does not.
+            if (location.SavedScans.Items.Any(saved => string.Equals(saved.Target.Trim(), _active.SubnetText.Trim(), StringComparison.OrdinalIgnoreCase)))
+                RecordGateway(location);
             var devices = location.Devices;
             var seen = devices.Observe(_active.Devices.ToList());
             PersistenceFeedback.Check(seen.Saved, devices.Retry, () => devices.SaveError);

@@ -113,7 +113,8 @@
 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
 <Grid x:Name="ScanToolbar">
 <StackPanel Orientation="Horizontal" Margin="0,2">
-<Button x:Name="LocationButton" ToolTip="{DynamicResource Str_Loc_Title}" Style="{StaticResource OutlineButton}"
+<!-- Not shown: Locations live in the sidebar only (Steve, 2026-10-26). Kept for the code that reads it. -->
+<Button x:Name="LocationButton" Visibility="Collapsed" ToolTip="{DynamicResource Str_Loc_Title}" Style="{StaticResource OutlineButton}"
         Click="LocationButton_Click" ContextMenuOpening="LocationButton_ContextMenuOpening"
         FontSize="12" Padding="8,3" Margin="0,2,6,2">
     <StackPanel Orientation="Horizontal">
