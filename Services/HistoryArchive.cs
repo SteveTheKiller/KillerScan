@@ -141,6 +141,29 @@ namespace KillerScan.Services
             }
         }
 
+        /// <summary>Names one run, matched the same way <see cref="Remove"/> matches.</summary>
+        internal bool Rename(ScanHistoryEntry entry, string name)
+        {
+            try
+            {
+                return Locked(() =>
+                {
+                    ReadCurrent(); EnsureReadable();
+                    var match = Entries.FirstOrDefault(item => item.ScannedAt == entry.ScannedAt && item.Target == entry.Target);
+                    if (match == null) return false;
+                    match.Name = name;
+                    Persist(Entries, Policy);
+                    SaveError = null;
+                    return true;
+                });
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                SaveError = ex.Message;
+                return false;
+            }
+        }
+
         internal bool Append(ScanHistoryEntry entry, DateTimeOffset now)
         {
             _pending.Add(entry);

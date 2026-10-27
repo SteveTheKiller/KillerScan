@@ -644,14 +644,32 @@ namespace KillerScan.Controls
         /// typed while it was temporary. Nothing is approved and the baseline is not touched,
         /// then the tab moves to that Location.
         /// </summary>
-        internal bool SaveResultsTo(LocationData target)
+        /// <summary>True while the scan on screen is unsaved: Unassigned (or a Temporary scan).</summary>
+        internal bool IsUnsaved => _location.IsTemporary
+            || (_location.Info is { } info ? info.Id == LocationCatalog.UnassignedId : _location.IsShared);
+
+        /// <summary>
+        /// Saves the unsaved scan on screen into an existing Location: its run moves into that
+        /// Location's history (and out of Unassigned's), with the device names given to it. A
+        /// Temporary scan hands over everything it has, as before.
+        /// </summary>
+        internal bool SaveResultsTo(LocationData target, string? name = null)
         {
-            if (_disposed || IsScanning || !_location.IsTemporary || target.IsTemporary || ReferenceEquals(target, _location)) return false;
+            if (_disposed || IsScanning || !IsUnsaved || target.IsTemporary || ReferenceEquals(target, _location)) return false;
             var source = _location;
             bool saved = true;
-            foreach (var entry in source.History.Entries) saved &= target.History.Adopt(entry);
+            var runs = source.IsTemporary ? source.History.Entries.ToList()
+                : source.History.Entries.OrderByDescending(entry => entry.ScannedAt).Take(1).ToList();
+            // The name, if one was given, labels the run being saved (one run from Unassigned).
+            if (!string.IsNullOrWhiteSpace(name) && runs.Count == 1) runs[0].Name = name!.Trim();
+            foreach (var entry in runs)
+            {
+                bool adopted = target.History.Adopt(entry);
+                saved &= adopted;
+                if (adopted && !source.IsTemporary) source.History.Remove(entry);
+            }
             foreach (var device in _active.Devices)
-                if (source.Devices.GetName(device) is { } name) saved &= target.Devices.SetName(device, name);
+                if (source.Devices.GetName(device) is { } deviceName) saved &= target.Devices.SetName(device, deviceName);
             PersistenceFeedback.Check(saved, () => target.History.Retry() && target.Devices.Retry(),
                 () => target.History.SaveError ?? target.Devices.SaveError);
             // The results now belong to the target, so they stay on screen there.

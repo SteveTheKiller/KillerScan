@@ -609,6 +609,7 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_History_SaveFailed">Az előzmények beállításait nem sikerült menteni: {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">Vizsgálatok összehasonlítása: {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">Vizsgálatok törlése</sys:String>
+    <sys:String x:Key="Str_History_Rename">Vizsgálat átnevezése...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Görgetés felfelé</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Görgetés lefelé</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Görgetés balra</sys:String>

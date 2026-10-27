@@ -594,6 +594,7 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_History_SaveFailed">Verlaufseinstellungen konnten nicht gespeichert werden: {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">Scanvergleich: {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">Scans löschen</sys:String>
+    <sys:String x:Key="Str_History_Rename">Scan umbenennen...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Nach oben scrollen</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Nach unten scrollen</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Nach links scrollen</sys:String>

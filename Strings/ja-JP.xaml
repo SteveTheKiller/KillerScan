@@ -604,6 +604,7 @@
     <sys:String x:Key="Str_History_SaveFailed">履歴設定を保存できませんでした: {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">スキャン比較: {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">スキャンを削除</sys:String>
+    <sys:String x:Key="Str_History_Rename">スキャン名を変更...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">上へスクロール</sys:String>
     <sys:String x:Key="Str_Scroll_Down">下へスクロール</sys:String>
     <sys:String x:Key="Str_Scroll_Left">左へスクロール</sys:String>

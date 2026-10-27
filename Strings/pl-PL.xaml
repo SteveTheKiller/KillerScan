@@ -578,6 +578,7 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_History_SaveFailed">Nie można zapisać ustawień historii: {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">Porównanie skanów: {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">Usuń skany</sys:String>
+    <sys:String x:Key="Str_History_Rename">Zmień nazwę skanu...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Przewiń w górę</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Przewiń w dół</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Przewiń w lewo</sys:String>

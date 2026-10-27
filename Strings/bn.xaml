@@ -593,6 +593,7 @@
     <sys:String x:Key="Str_History_SaveFailed">ইতিহাসের সেটিংস সংরক্ষণ করা যায়নি: {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">স্ক্যানের তুলনা: {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">স্ক্যান মুছুন</sys:String>
+    <sys:String x:Key="Str_History_Rename">স্ক্যানের নাম পরিবর্তন...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">উপরে স্ক্রল করুন</sys:String>
     <sys:String x:Key="Str_Scroll_Down">নিচে স্ক্রল করুন</sys:String>
     <sys:String x:Key="Str_Scroll_Left">বাঁয়ে স্ক্রল করুন</sys:String>

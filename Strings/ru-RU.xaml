@@ -619,6 +619,7 @@
     <sys:String x:Key="Str_History_SaveFailed">Не удалось сохранить настройки истории: {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">Сравнение сканирований: {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">Удалить сканирования</sys:String>
+    <sys:String x:Key="Str_History_Rename">Переименовать сканирование...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Прокрутить вверх</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Прокрутить вниз</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Прокрутить влево</sys:String>

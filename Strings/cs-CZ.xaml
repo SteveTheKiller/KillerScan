@@ -591,6 +591,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_History_SaveFailed">Nastavení historie nelze uložit: {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">Porovnání skenů: {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">Odstranit skeny</sys:String>
+    <sys:String x:Key="Str_History_Rename">Přejmenovat sken...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Posunout nahoru</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Posunout dolů</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Posunout doleva</sys:String>

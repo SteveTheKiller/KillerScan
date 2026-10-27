@@ -338,6 +338,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Button x:Name="NewLocationButton" Style="{StaticResource PrimaryButton}" Click="NewLocation_Click"
                                 Content="{DynamicResource Str_Loc_NewShort}" HorizontalAlignment="Left"
@@ -355,6 +356,9 @@
                         <Button Grid.Column="1" Style="{StaticResource SurfaceButton}" FontFamily="Segoe MDL2 Assets" FontSize="13"
                                 Content="&#xE8B5;" Width="34" Height="26" Padding="0" Margin="6,0,0,0" Click="ImportLocation_Click"
                                 ToolTip="{DynamicResource Str_Loc_Import}"/>
+                        <Button x:Name="SaveToLocationButton" Grid.Column="2" Style="{StaticResource SurfaceButton}" FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                Content="&#xE74E;" Width="34" Height="26" Padding="0" Margin="6,0,0,0" Click="SaveToLocation_Click"
+                                ToolTip="{DynamicResource Str_Loc_SaveResults}"/>
                     </Grid>
                 </StackPanel>
                 <ListBox x:Name="HistoryList" Grid.Row="1" AutomationProperties.Name="{DynamicResource Str_History_Title}" Background="Transparent" BorderThickness="0"
@@ -406,7 +410,7 @@
                                         </Style>
                                     </TextBlock.Style>
                                 </TextBlock>
-                                <TextBlock Text="{Binding Target}" FontSize="11"
+                                <TextBlock Text="{Binding DisplayName}" FontSize="11"
                                            TextTrimming="CharacterEllipsis" controls:ShrinkToFit.MinScale="0.85">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">

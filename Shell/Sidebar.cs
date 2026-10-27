@@ -32,7 +32,7 @@ namespace KillerScan.Shell
         private const double RailW = 24;
         private const double PanelMinLogical = 140;
         private const double SidebarMinPx = 170;
-        private const double SidebarDefaultPx = 210;
+        private const double SidebarDefaultPx = 176;
         private const double SidebarMaxPx = 480;
 
         // The default fits the widest date at full size. A width the user drags to is kept as is:

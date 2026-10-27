@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using KillerScan.Controls;
 using KillerScan.Services;
 
 namespace KillerScan.Shell
@@ -31,6 +32,8 @@ namespace KillerScan.Shell
 
         private void RefreshLocationsList()
         {
+            SaveToLocationButton.IsEnabled = _scanWorkspace is { IsUnsaved: true, IsScanning: false }
+                && LocationService.Items.Any(item => item.Id != LocationCatalog.UnassignedId);
             string? current = ShellLocation.Info?.Id;
             var rows = LocationService.Items
                 .Where(item => item.Id != LocationCatalog.UnassignedId)   // not a place (Location.cs)
@@ -87,5 +90,30 @@ namespace KillerScan.Shell
         private void LocationDelete_Click(object sender, RoutedEventArgs e) { if (LocationFor(sender) is { } row) _scanWorkspace?.DeleteLocation(row.Info); }
         private void NewLocation_Click(object sender, RoutedEventArgs e) => _scanWorkspace?.NewLocation();
         private void ImportLocation_Click(object sender, RoutedEventArgs e) => _scanWorkspace?.ImportLocationFromSidebar();
+
+        // Save to: the unsaved scan on screen goes into a Location picked from a short menu.
+        private void SaveToLocation_Click(object sender, RoutedEventArgs e)
+        {
+            if (_scanWorkspace is not { } scan || sender is not Button button) return;
+            var menu = new ContextMenu { PlacementTarget = button, Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom };
+            foreach (var info in LocationService.Items.Where(item => item.Id != LocationCatalog.UnassignedId)
+                         .OrderBy(item => item.Name, StringComparer.CurrentCultureIgnoreCase))
+            {
+                var captured = info;
+                var item = new MenuItem { Header = info.ToString() };
+                item.Click += (_, _) =>
+                {
+                    // Optional name for the run; blank keeps the target as its label.
+                    var dialog = new InputDialog(Loc("Str_History_Rename").TrimEnd('.'), captured.ToString(), Loc("Str_Rename_Label"),
+                        string.Empty, Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
+                    dialog.ShowDialog();
+                    if (!dialog.Confirmed) return;
+                    if (scan.SaveResultsTo(LocationService.Get(captured), dialog.Value)) RefreshLocationsList();
+                };
+                menu.Items.Add(item);
+            }
+            if (menu.Items.Count == 0) return;
+            menu.IsOpen = true;
+        }
     }
 }

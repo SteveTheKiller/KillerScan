@@ -593,6 +593,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_History_SaveFailed">Geçmiş ayarları kaydedilemedi: {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">Tarama karşılaştırması: {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">Taramaları sil</sys:String>
+    <sys:String x:Key="Str_History_Rename">Taramayı yeniden adlandır...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Yukarı kaydır</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Aşağı kaydır</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Sola kaydır</sys:String>

@@ -111,7 +111,10 @@ namespace KillerScan.Shell
             var delete = new MenuItem { InputGestureText = "Delete", Icon = MenuGlyph.Create(0xE74D) };
             delete.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Loc_DeleteButton");
             delete.Click += (_, _) => DeleteSelectedHistoryEntry();
-            HistoryList.ContextMenu = new ContextMenu { Items = { delete } };
+            var rename = new MenuItem { InputGestureText = "F2", Icon = MenuGlyph.Create(0xE8AC) };
+            rename.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_History_Rename");
+            rename.Click += (_, _) => RenameSelectedHistoryEntry();
+            HistoryList.ContextMenu = new ContextMenu { Items = { rename, delete } };
             HistoryList.PreviewMouseRightButtonDown += (_, e) =>
             {
                 if (ItemsControl.ContainerFromElement(HistoryList, e.OriginalSource as DependencyObject) is ListBoxItem row)
@@ -120,10 +123,26 @@ namespace KillerScan.Shell
             HistoryList.ContextMenuOpening += (_, e) => { if (HistoryList.SelectedItem is not ScanHistoryEntry) e.Handled = true; };
             HistoryList.PreviewKeyDown += (_, e) =>
             {
-                if (e.Key != System.Windows.Input.Key.Delete || System.Windows.Input.Keyboard.Modifiers != System.Windows.Input.ModifierKeys.None) return;
-                DeleteSelectedHistoryEntry();
+                if (System.Windows.Input.Keyboard.Modifiers != System.Windows.Input.ModifierKeys.None) return;
+                if (e.Key == System.Windows.Input.Key.Delete) DeleteSelectedHistoryEntry();
+                else if (e.Key == System.Windows.Input.Key.F2) RenameSelectedHistoryEntry();
+                else return;
                 e.Handled = true;
             };
+        }
+
+        // A scan is named so one Location can keep several networks apart; an empty name
+        // goes back to showing the target.
+        private void RenameSelectedHistoryEntry()
+        {
+            if (HistoryList.SelectedItem is not ScanHistoryEntry entry) return;
+            var dialog = new InputDialog(Loc("Str_History_Rename").TrimEnd('.'), entry.Target, Loc("Str_Rename_Label"), entry.Name,
+                Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
+            dialog.ShowDialog();
+            if (!dialog.Confirmed) return;
+            var store = entry.Owner ?? ShellLocation.History;
+            PersistenceFeedback.Check(store.Rename(entry, (dialog.Value ?? string.Empty).Trim()), store.Retry, () => store.SaveError);
+            RefreshHistoryList();
         }
 
         private void DeleteSelectedHistoryEntry()

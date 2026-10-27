@@ -574,6 +574,7 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_History_SaveFailed">Không thể lưu cài đặt lịch sử: {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">So sánh lần quét: {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">Xóa lần quét</sys:String>
+    <sys:String x:Key="Str_History_Rename">Đổi tên lần quét...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Cuộn lên</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Cuộn xuống</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Cuộn sang trái</sys:String>

@@ -635,6 +635,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_History_SaveFailed">Could not save history settings: {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">Scan comparison: {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">Delete scans</sys:String>
+    <sys:String x:Key="Str_History_Rename">Rename scan...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Scroll up</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Scroll down</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Scroll left</sys:String>

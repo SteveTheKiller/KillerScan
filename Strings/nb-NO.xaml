@@ -635,6 +635,7 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_History_SaveFailed">Kunne ikke lagre historikkinnstillingene: {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">Skannesammenligning: {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">Slett skanninger</sys:String>
+    <sys:String x:Key="Str_History_Rename">Gi skanningen nytt navn...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Rull opp</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Rull ned</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Rull til venstre</sys:String>

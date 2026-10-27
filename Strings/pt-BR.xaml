@@ -635,6 +635,7 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_History_SaveFailed">Não foi possível salvar as configurações do histórico: {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">Comparação de varreduras: {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">Excluir varreduras</sys:String>
+    <sys:String x:Key="Str_History_Rename">Renomear varredura...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Rolar para cima</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Rolar para baixo</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Rolar para a esquerda</sys:String>

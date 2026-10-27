@@ -593,6 +593,7 @@
     <sys:String x:Key="Str_History_SaveFailed">無法儲存歷史設定：{0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">掃描比較：{0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">刪除掃描</sys:String>
+    <sys:String x:Key="Str_History_Rename">重新命名掃描...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">向上捲動</sys:String>
     <sys:String x:Key="Str_Scroll_Down">向下捲動</sys:String>
     <sys:String x:Key="Str_Scroll_Left">向左捲動</sys:String>

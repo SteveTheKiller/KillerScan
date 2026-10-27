@@ -609,6 +609,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_History_SaveFailed">Impossibile salvare le impostazioni della cronologia: {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">Confronto scansioni: {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">Elimina scansioni</sys:String>
+    <sys:String x:Key="Str_History_Rename">Rinomina scansione...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Scorri verso l'alto</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Scorri verso il basso</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Scorri a sinistra</sys:String>

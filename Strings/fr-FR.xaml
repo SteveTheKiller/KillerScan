@@ -593,6 +593,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_History_SaveFailed">Impossible d'enregistrer les paramètres de l'historique : {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">Comparaison des scans : {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">Supprimer les scans</sys:String>
+    <sys:String x:Key="Str_History_Rename">Renommer l'analyse...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Défiler vers le haut</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Défiler vers le bas</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Défiler vers la gauche</sys:String>

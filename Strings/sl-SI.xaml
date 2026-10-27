@@ -568,6 +568,7 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_History_SaveFailed">Nastavitev zgodovine ni bilo mogoče shraniti: {0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">Primerjava pregledov: {0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">Izbriši preglede</sys:String>
+    <sys:String x:Key="Str_History_Rename">Preimenuj pregled...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Pomakni navzgor</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Pomakni navzdol</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Pomakni levo</sys:String>

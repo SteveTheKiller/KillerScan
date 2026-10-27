@@ -9,6 +9,14 @@ namespace KillerScan.Services
     {
         public DateTimeOffset ScannedAt { get; set; }
         public string Target { get; set; } = string.Empty;
+
+        /// <summary>A name the user gave this run ("LAN", "Guest Wi-Fi"), or empty. Lets one
+        /// Location keep several networks apart in its history.</summary>
+        public string Name { get; set; } = string.Empty;
+
+        /// <summary>What the history list shows: the name, or the target when there is none.</summary>
+        [System.Text.Json.Serialization.JsonIgnore]
+        public string DisplayName => Name.Trim().Length > 0 ? Name.Trim() : Target;
         public List<HistoricalDevice> Devices { get; set; } = [];
         public ScanCompletion Completion { get; set; }
 
@@ -145,6 +153,15 @@ namespace KillerScan.Services
         }
 
         internal HistoryRetention Retention => MemoryOnly ? _demoRetention : _archive.Policy;
+
+        /// <summary>Names one run (empty clears it); the history sidebar's Rename scan.</summary>
+        internal bool Rename(ScanHistoryEntry entry, string name)
+        {
+            if (MemoryOnly) { entry.Name = name; return true; }
+            bool renamed = _archive.Rename(entry, name);
+            _entries = _archive.Entries;
+            return renamed;
+        }
 
         /// <summary>Deletes one run from this history (the history sidebar's right-click Delete).</summary>
         internal bool Remove(ScanHistoryEntry entry)

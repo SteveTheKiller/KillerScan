@@ -593,6 +593,7 @@
     <sys:String x:Key="Str_History_SaveFailed">无法保存历史设置：{0}</sys:String>
     <sys:String x:Key="Str_History_ComparisonIdentity">扫描比较：{0} / {1}</sys:String>
     <sys:String x:Key="Str_History_Delete">删除扫描</sys:String>
+    <sys:String x:Key="Str_History_Rename">重命名扫描...</sys:String>
     <sys:String x:Key="Str_Scroll_Up">向上滚动</sys:String>
     <sys:String x:Key="Str_Scroll_Down">向下滚动</sys:String>
     <sys:String x:Key="Str_Scroll_Left">向左滚动</sys:String>
