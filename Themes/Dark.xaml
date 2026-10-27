@@ -20,7 +20,7 @@
     <!-- Near-black, matching the Black family. This is the text ON a filled accent button, and
          Dark's accents are mid-tone rather than deep: white measures 2.38 to 3.94 across the six
          (blue, teal, orange and purple all under 3), near-black measures 5.32 to 8.83. -->
-    <SolidColorBrush x:Key="OnPrimaryBrush" Color="#0a0a0a" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <SolidColorBrush x:Key="OnPrimaryBrush" Color="#1c1c1c" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="OutlineBtnBrush" Color="#22bb56" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="InputHoverBrush" Color="#707070" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="TextFooter"          Color="#858585" po:Freeze="True"/>

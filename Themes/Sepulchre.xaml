@@ -69,7 +69,7 @@
 
     <SolidColorBrush x:Key="HeaderLineBrush" Color="#292d2f" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
-<SolidColorBrush x:Key="OnPrimaryBrush" Color="#1e2424" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+<SolidColorBrush x:Key="OnPrimaryBrush" Color="#242729" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
     <SolidColorBrush x:Key="OutlineBtnBrush" Color="#8ccac8" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
