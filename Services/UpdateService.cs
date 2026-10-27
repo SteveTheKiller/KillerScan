@@ -121,17 +121,7 @@ namespace KillerScan.Services
             var exeBytes = await http.GetByteArrayAsync(exeUrl).ConfigureAwait(false);
             var sumsTxt  = await http.GetStringAsync(sumsUrl).ConfigureAwait(false);
 
-            string? expected = null;
-            foreach (var line in sumsTxt.Replace("\r", "").Split('\n'))
-            {
-                // Exactly "<asset> <hash>" for exactly this asset name (KillerBench's checksum rule).
-                var parts = line.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length == 2 && string.Equals(parts[0], target.Asset, StringComparison.OrdinalIgnoreCase))
-                {
-                    expected = parts[1];
-                    break;
-                }
-            }
+            string? expected = ChecksumFor(sumsTxt, target.Asset);
             if (string.IsNullOrEmpty(expected)) throw new Exception("checksum entry not found");
 
             string actual;
@@ -157,6 +147,20 @@ namespace KillerScan.Services
             catch { DiscardDownload(path); throw; }
             UpdateImagePublication.RememberVerified(path, actual, signer);
             return path;
+        }
+
+        /// <summary>The hash SHA256SUMS.txt publishes for <paramref name="asset"/>: the first line that is
+        /// exactly "&lt;asset&gt; &lt;hash&gt;" for exactly this asset name (KillerBench's checksum rule), so
+        /// "KillerApp.exe" never takes the line of "KillerApp-Portable.exe". Null when there is none.</summary>
+        internal static string? ChecksumFor(string sums, string asset)
+        {
+            foreach (var line in sums.Replace("\r", "").Split('\n'))
+            {
+                var parts = line.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length == 2 && string.Equals(parts[0], asset, StringComparison.OrdinalIgnoreCase))
+                    return parts[1];
+            }
+            return null;
         }
 
         /// <summary>Starts a helper that waits for this process to exit, swaps
