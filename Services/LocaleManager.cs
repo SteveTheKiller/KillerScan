@@ -85,11 +85,17 @@ namespace KillerScan.Services
 
         /// <summary>
         /// The saved "Locale" setting, including names an app stored before the enum was unified:
-        /// KillerScan saved Japanese as "Ja" where the family name is "JaJP".
+        /// KillerScan saved Japanese as "Ja" where the family name is "JaJP", and Killendar,
+        /// KillerShell and KillerShot saved Czech and Italian as "Cs" and "It".
         /// </summary>
         private static Locale? ParseSaved(string? saved)
         {
-            if (saved == "Ja") return Locale.JaJP;
+            switch (saved)
+            {
+                case "Ja": return Locale.JaJP;
+                case "Cs": return Locale.CsCZ;
+                case "It": return Locale.ItIT;
+            }
             return Enum.TryParse<Locale>(saved, out var locale) && Enum.IsDefined(typeof(Locale), locale) ? locale : null;
         }
 
@@ -192,13 +198,21 @@ namespace KillerScan.Services
 
         // ---- Internal ----
 
+        /// <summary>Leave the thread cultures alone, so dates and numbers keep the Windows region
+        /// format whatever the interface language. Off by default, where the cultures follow the
+        /// chosen language. Set it before <see cref="Initialize"/>.</summary>
+        internal static bool KeepRegionFormats { get; set; }
+
         private static void ApplyInternal(Locale locale)
         {
-            var culture = CultureFor(locale);
-            CultureInfo.CurrentCulture = culture;
-            CultureInfo.CurrentUICulture = culture;
-            CultureInfo.DefaultThreadCurrentCulture = culture;
-            CultureInfo.DefaultThreadCurrentUICulture = culture;
+            if (!KeepRegionFormats)
+            {
+                var culture = CultureFor(locale);
+                CultureInfo.CurrentCulture = culture;
+                CultureInfo.CurrentUICulture = culture;
+                CultureInfo.DefaultThreadCurrentCulture = culture;
+                CultureInfo.DefaultThreadCurrentUICulture = culture;
+            }
 
             var merged = Application.Current.Resources.MergedDictionaries;
             LanguageTag = "en-US";

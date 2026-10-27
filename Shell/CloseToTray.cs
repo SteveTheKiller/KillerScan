@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -34,6 +35,12 @@ using System.Windows.Interop;
 //      on the main window, which also works while it is hidden in the tray.
 //   5. Exit everywhere else (the app menu, an update, an uninstall) goes through
 //      CloseToTray.Exit or Application.Shutdown, which never hides to the tray.
+//   6. Optional Attach arguments; apps that pass none behave exactly as before:
+//      canExit   asked before a tray Exit and when Windows ends the session; false keeps the app
+//                running (and cancels the session end), for unsaved work the user declined to lose.
+//      items     the app's own rows in the icon's menu, above Open.
+//      keepIcon  an app option that keeps the icon while the window is open too. Call
+//                RefreshIcon after that option changes and once after attaching.
 // ============================================================
 namespace KillerFamily.Shell
 {
@@ -41,6 +48,10 @@ namespace KillerFamily.Shell
     {
         /// <summary>The app setting that turns the option on, "1" or "0".</summary>
         internal const string SettingName = "CloseToTray";
+
+        /// <summary>An app's own row in the icon's menu, above Open. Header is asked each time the
+        /// menu opens, so a language switch shows at once.</summary>
+        internal sealed record TrayItem(Func<string> Header, Action Run);
 
         private const int WM_APP = 0x8000;
         private const int CallbackMessage = WM_APP + 0x51;
@@ -76,11 +87,20 @@ namespace KillerFamily.Shell
         /// <summary>Prepares the icon for <paramref name="window"/>, whose OnClosing override calls
         /// HideInstead. <paramref name="isEnabled"/> is asked on every close; <paramref name="loc"/>
         /// looks up Str_Tray_Open and Str_Tray_Exit.</summary>
-        internal static CloseToTray Attach(Window window, string appName, Func<string, string> loc, Func<bool> isEnabled)
-            => new(window, appName, loc, isEnabled);
+        internal static CloseToTray Attach(Window window, string appName, Func<string, string> loc, Func<bool> isEnabled,
+            Func<bool>? canExit = null, IReadOnlyList<TrayItem>? items = null, Func<bool>? keepIcon = null)
+            => new(window, appName, loc, isEnabled, canExit, items, keepIcon);
 
-        private CloseToTray(Window window, string appName, Func<string, string> loc, Func<bool> isEnabled)
+        private readonly Func<bool>? _canExit;
+        private readonly IReadOnlyList<TrayItem> _items;
+        private readonly Func<bool>? _keepIcon;
+
+        private CloseToTray(Window window, string appName, Func<string, string> loc, Func<bool> isEnabled,
+            Func<bool>? canExit, IReadOnlyList<TrayItem>? items, Func<bool>? keepIcon)
         {
+            _canExit = canExit;
+            _items = items ?? [];
+            _keepIcon = keepIcon;
             _window = window;
             _appName = appName;
             _loc = loc;
@@ -94,13 +114,19 @@ namespace KillerFamily.Shell
             // The SDK embeds ApplicationIcon as icon group 32512.
             _icon = LoadImage(GetModuleHandle(null), new IntPtr(32512), 1, size, size, 0);
             window.Closed += (_, _) => Dispose();
-            Application.Current.SessionEnding += (_, _) => _exiting = true;
+            Application.Current.SessionEnding += (_, e) =>
+            {
+                if (e.Cancel) return;
+                if (_canExit != null && !_canExit()) { e.Cancel = true; return; }
+                _exiting = true;
+            };
             Application.Current.Exit += (_, _) => Dispose();
         }
 
         /// <summary>Quits the app from anywhere without hiding to the tray.</summary>
         internal void Exit()
         {
+            if (_canExit != null && !_canExit()) return;
             _exiting = true;
             HideIcon();
             Application.Current.Shutdown();
@@ -114,7 +140,17 @@ namespace KillerFamily.Shell
             _window.Activate();
             _window.Topmost = true;
             _window.Topmost = false;
-            HideIcon();
+            if (_keepIcon == null) HideIcon();
+            else RefreshIcon();
+        }
+
+        /// <summary>Shows the icon while the app keeps it (keepIcon) or the window is in the tray,
+        /// and hides it otherwise. Safe to call at any time.</summary>
+        internal void RefreshIcon()
+        {
+            if (_disposed || _exiting) return;
+            if (_keepIcon?.Invoke() == true || !_window.IsVisible) ShowIcon();
+            else HideIcon();
         }
 
         /// <summary>Call first in the main window's OnClosing override. With the option on, cancels
@@ -145,7 +181,7 @@ namespace KillerFamily.Shell
         }
 
         /// <summary>True while the window is hidden and its tray icon is showing.</summary>
-        internal bool InTray => _iconShown;
+        internal bool InTray => _iconShown && !_window.IsVisible;
 
         private void ShowIcon()
         {
@@ -182,6 +218,13 @@ namespace KillerFamily.Shell
         private void ShowMenu()
         {
             var menu = new ContextMenu { Placement = PlacementMode.MousePoint };
+            foreach (var item in _items)
+            {
+                var row = new MenuItem { Header = item.Header() };
+                row.Click += (_, _) => item.Run();
+                menu.Items.Add(row);
+            }
+            if (_items.Count > 0) menu.Items.Add(new Separator());
             var open = new MenuItem { Header = string.Format(_loc("Str_Tray_Open"), _appName), FontWeight = FontWeights.SemiBold };
             open.Click += (_, _) => ShowWindow();
             var exit = new MenuItem { Header = _loc("Str_Tray_Exit") };

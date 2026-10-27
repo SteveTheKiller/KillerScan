@@ -398,6 +398,7 @@ Your settings will not be removed.</sys:String>
 
     <sys:String x:Key="Str_Btn_Open">Open</sys:String>
     <sys:String x:Key="Str_Btn_Save">Save</sys:String>
+    <sys:String x:Key="Str_Btn_Select">Select</sys:String>
     <sys:String x:Key="Str_Col_Modified">modified</sys:String>
     <sys:String x:Key="Str_Col_Name">name</sys:String>
     <sys:String x:Key="Str_Col_DeviceName">Name</sys:String>

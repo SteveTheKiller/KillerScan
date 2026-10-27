@@ -63,18 +63,78 @@ namespace KillerScan.Services
 
         internal static (bool valid, string subject, string thumb) GetSignerInfo(string exePath)
         {
+            var (valid, subject, thumb, _) = Inspect(exePath);
+            return (valid, subject, thumb);
+        }
+
+        /// <summary>
+        /// Whether <paramref name="candidate"/> may replace the signed exe at
+        /// <paramref name="current"/>. A copy with a valid signature only accepts a replacement
+        /// whose signature also validates and names the same publisher: the certificate subject,
+        /// which stays the same across certificate renewals. An unsigned copy (a local or
+        /// development build) has no publisher to hold a replacement to, and accepts it as before.
+        /// </summary>
+        internal static bool MayReplace(string current, string candidate)
+        {
+            try
+            {
+                // Keep the current bytes stable while distinguishing an unsigned local image
+                // from a signed image whose verification failed or could not be completed.
+                using var currentImage = new FileStream(current, FileMode.Open, FileAccess.Read, FileShare.Read);
+                var (currentValid, _, _, currentPublisher) = Inspect(current);
+                if (!currentValid)
+                    return currentPublisher.Length == 0 && IsUnsignedImage(currentImage);
+                var (candidateValid, _, _, candidatePublisher) = Inspect(candidate);
+                return candidateValid && currentPublisher.Length > 0
+                    && string.Equals(currentPublisher, candidatePublisher, StringComparison.Ordinal);
+            }
+            catch { return false; }
+        }
+
+        private static bool IsUnsignedImage(FileStream image)
+        {
+            // A missing certificate is conclusive only for a readable PE with an empty
+            // certificate directory. A malformed or unreadable signature must fail closed.
+            using var reader = new BinaryReader(image, System.Text.Encoding.UTF8, leaveOpen: true);
+            if (image.Length < 64 || reader.ReadUInt16() != 0x5a4d) return false;
+            image.Position = 0x3c;
+            uint pe = reader.ReadUInt32();
+            if (pe < 64 || (long)pe + 24 > image.Length) return false;
+            image.Position = pe;
+            if (reader.ReadUInt32() != 0x00004550) return false;
+            image.Position = pe + 20;
+            ushort optionalSize = reader.ReadUInt16();
+            long optional = (long)pe + 24;
+            if (optional + optionalSize > image.Length) return false;
+            image.Position = optional;
+            ushort magic = reader.ReadUInt16();
+            int directories = magic == 0x10b ? 96 : magic == 0x20b ? 112 : 0;
+            if (directories == 0 || optionalSize < directories + 40) return false;
+            image.Position = optional + directories - 4;
+            if (reader.ReadUInt32() < 5) return false;
+            image.Position = optional + directories + 32;
+            return reader.ReadUInt32() == 0 && reader.ReadUInt32() == 0;
+        }
+
+        private static (bool valid, string subject, string thumb, string publisher) Inspect(string exePath)
+        {
             var subject = "(not signed)";
             var thumb   = "(none)";
+            string publisher;
 
             try
             {
-                if (exePath.Length == 0) return (false, "(unavailable)", "(none)");
-                using var cert = new X509Certificate2(X509Certificate.CreateFromSignedFile(exePath));
+                if (exePath.Length == 0) return (false, "(unavailable)", "(none)", string.Empty);
+#pragma warning disable SYSLIB0057 // Authenticode signer extraction has no X509CertificateLoader equivalent.
+                using var sourceCertificate = X509Certificate.CreateFromSignedFile(exePath);
+                using var cert = new X509Certificate2(sourceCertificate);
+#pragma warning restore SYSLIB0057
                 var subj = cert.GetNameInfo(X509NameType.SimpleName, false);
-                subject = string.IsNullOrEmpty(subj) ? cert.Subject : subj;
-                thumb   = string.IsNullOrEmpty(cert.Thumbprint) ? "(none)" : cert.Thumbprint;
+                subject   = string.IsNullOrEmpty(subj) ? cert.Subject : subj;
+                thumb     = string.IsNullOrEmpty(cert.Thumbprint) ? "(none)" : cert.Thumbprint;
+                publisher = cert.Subject ?? string.Empty;
             }
-            catch { return (false, "(not signed)", "(none)"); }
+            catch { return (false, "(not signed)", "(none)", string.Empty); }
 
             var pathPtr     = Marshal.StringToHGlobalUni(exePath);
             var fileInfoPtr = Marshal.AllocHGlobal(Marshal.SizeOf<WINTRUST_FILE_INFO>());
@@ -97,9 +157,9 @@ namespace KillerScan.Services
                 }, dataPtr, false);
 
                 var actionId = WTD_VERIFY_GENERIC;
-                return (WinVerifyTrust(IntPtr.Zero, ref actionId, dataPtr) == 0, subject, thumb);
+                return (WinVerifyTrust(IntPtr.Zero, ref actionId, dataPtr) == 0, subject, thumb, publisher);
             }
-            catch { return (false, subject, thumb); }
+            catch { return (false, subject, thumb, publisher); }
             finally
             {
                 Marshal.FreeHGlobal(dataPtr);

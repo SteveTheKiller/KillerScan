@@ -549,7 +549,7 @@
 
             <!-- File name + filter. Labels are DimTextBrush on the dark card: 3.15:1, the tier
                  these brushes are calibrated for. -->
-            <Grid Grid.Row="4" Margin="16,12,16,0">
+            <Grid x:Name="FileFields" Grid.Row="4" Margin="16,12,16,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>

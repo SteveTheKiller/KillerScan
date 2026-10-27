@@ -2,6 +2,9 @@ Killer Sans is a Modified Version of Play (https://github.com/google/fonts/tree/
 It was renamed because Play is a Reserved Font Name. Changes: hinting removed and the em
 enlarged so the capitals render at 0.49 em.
 
+Killer Sans UI is a second Modified Version of Play under this license, with the same changes
+and the outlines scaled so the capitals render at 0.66 em for interface text.
+
 Copyright (c) 2011, Jonas Hecksher, Playtypes, e-types AS (lasse@e-types.com), with Reserved Font Name 'Play', 'Playtype', 'Playtype Sans'.
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.

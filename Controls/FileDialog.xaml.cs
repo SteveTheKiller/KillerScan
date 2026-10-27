@@ -14,8 +14,10 @@ using KillerScan.Services;
 
 namespace KillerScan.Controls
 {
-    /// <summary>Open or Save. Picked at construction; changes the accept button and the rules.</summary>
-    public enum FileDialogMode { Open, Save }
+    /// <summary>Open, Save or Folder. Picked at construction; changes the accept button and the
+    /// rules. Folder hides the name and type fields, labels the button Select, and returns a
+    /// folder as FileName.</summary>
+    public enum FileDialogMode { Open, Save, Folder }
 
     /// <summary>
     /// Themed stand-in for Microsoft.Win32.OpenFileDialog / SaveFileDialog. Same chrome, places
@@ -71,6 +73,16 @@ namespace KillerScan.Controls
         /// a drag over the list). Ignored in Save mode, where "several names" is meaningless.
         /// Set it BEFORE ShowDialog - the list's selection mode is applied there.</summary>
         public bool Multiselect { get; set; }
+
+        /// <summary>Folder mode only: list folders alone instead of folders and the files that
+        /// pass the filter. Off by default.</summary>
+        public bool HideFilesInFolderMode { get; set; }
+
+        /// <summary>Folder mode only: Explorer-style picking. A highlighted subfolder is the answer
+        /// (otherwise the folder being shown), Enter anywhere accepts, and the chosen folder is
+        /// remembered as the next starting point. Off by default: the folder being shown is the
+        /// answer and nothing is remembered.</summary>
+        public bool AcceptHighlightedFolder { get; set; }
 
         /// <summary>Show a live preview pane for image-selection workflows. The pane is opt-in so
         /// ordinary Open and Save dialogs keep their compact layout.</summary>
@@ -246,7 +258,17 @@ namespace KillerScan.Controls
         {
             if (owner != null && owner.IsVisible) Owner = owner;
 
-            AcceptButton.Content = Loc(_mode == FileDialogMode.Save ? "Str_Btn_Save" : "Str_Btn_Open");
+            AcceptButton.Content = Loc(_mode switch
+            {
+                FileDialogMode.Save   => "Str_Btn_Save",
+                FileDialogMode.Folder => "Str_Btn_Select",
+                _                     => "Str_Btn_Open",
+            });
+            if (_mode == FileDialogMode.Folder)
+            {
+                FileFields.Visibility = Visibility.Collapsed;
+                AcceptButton.IsDefault = AcceptHighlightedFolder;
+            }
             ConfigureImagePreview();
             // Extended, not Multiple: Extended is the Explorer behavior (plain click replaces the
             // selection, Ctrl adds, Shift ranges). Multiple toggles on every click, which feels
@@ -290,8 +312,9 @@ namespace KillerScan.Controls
             FileNameBox.Text = seedName;
 
             // Save: preselect the stem so typing replaces the name but keeps the extension
-            // visible. Open: caret at the end.
-            FileNameBox.Focus();
+            // visible. Open: caret at the end. Folder: there is no name box, so the button.
+            if (_mode == FileDialogMode.Folder) AcceptButton.Focus();
+            else FileNameBox.Focus();
             if (_mode == FileDialogMode.Save && seedName.Length > 0)
             {
                 int dot = seedName.LastIndexOf('.');
@@ -390,6 +413,7 @@ namespace KillerScan.Controls
         private bool PassesFilter(PickerEntry en)
         {
             if (en.IsFolder) return true;
+            if (_mode == FileDialogMode.Folder && HideFilesInFolderMode) return false;
             int i = FilterCombo.SelectedIndex;
             if (i < 0 || i >= _filterPatterns.Count) return true;
             var pats = _filterPatterns[i];
@@ -818,7 +842,7 @@ namespace KillerScan.Controls
         /// own expander is left exactly as the user had it (KillerShell's rule - forcing it
         /// collapsed the branch under the cursor and the whole tree jumped).
         /// </summary>
-        private async Task RevealInTree(string folder)
+        private async Task RevealInTree(string folder, long version)
         {
             if (string.IsNullOrEmpty(folder)) return;
 
@@ -836,6 +860,7 @@ namespace KillerScan.Controls
             if (segments.Count > 0)
             {
                 await current.LoadChildrenAsync();
+                if (version != _navigationVersion) return;   // a newer folder is being shown
                 current.IsExpanded = true;
             }
 
@@ -849,6 +874,7 @@ namespace KillerScan.Controls
                 if (i == segments.Count - 1) break;
 
                 await current.LoadChildrenAsync();   // needed to match the NEXT segment
+                if (version != _navigationVersion) return;
                 current.IsExpanded = true;
             }
 
@@ -1214,6 +1240,18 @@ namespace KillerScan.Controls
         private void Accept()
         {
             if (IsDirectoryListingBusy || !IsDirectoryListingAvailable) return;
+            if (_mode == FileDialogMode.Folder)
+            {
+                string folder = AcceptHighlightedFolder && FileList.SelectedItem is PickerEntry { IsFolder: true } selected
+                    ? selected.FullPath : _currentDir;
+                if (!Directory.Exists(folder)) return;
+                FileName  = folder;
+                FileNames = [folder];
+                if (AcceptHighlightedFolder) RememberAcceptedDirectory();
+                _pendingResult = true;   // applied after the fade - see OnClosing
+                Close();
+                return;
+            }
             // Multiselect: several files highlighted wins outright. The name box shows a quoted
             // list in that state and is not worth re-parsing - the selection IS the answer. A
             // single highlighted file falls through to the normal path so every rule below

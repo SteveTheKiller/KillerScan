@@ -27,11 +27,32 @@ namespace KillerScan.Shell
     public partial class MainWindow
     {
         private double _appScale = 1.0;
-        private const double AppScaleMin = 0.7, AppScaleMax = 2.5, AppScaleStep = 0.02;
+        private double AppScaleMin = 0.7, AppScaleMax = 2.5, AppScaleStep = 0.02;
+        private bool _appScaleSmoothText = true, _appScaleConfigured, _appScaleUnroundedLayout;
+
+        /// <summary>Optional app hook: keep an app's own range, step, or ClearType text under scale.</summary>
+        partial void ConfigureAppScale(ref double min, ref double max, ref double step, ref bool smoothText);
+
+        /// <summary>Optional app hook: show the size readout somewhere other than StatusText.</summary>
+        partial void ShowAppScaleReadout(double scale, ref bool handled);
+
+        /// <summary>Optional app hook: set unroundedLayout true to turn layout rounding off on
+        /// ScaleHost at fractional sizes (it comes back on at 100%). Rounded edges under a
+        /// fractional scale can leave a one-pixel stripe between panes (KillerNotes at 108%).</summary>
+        partial void ConfigureAppScaleLayout(ref bool unroundedLayout);
+
+        private void EnsureAppScaleConfigured()
+        {
+            if (_appScaleConfigured) return;
+            _appScaleConfigured = true;
+            ConfigureAppScale(ref AppScaleMin, ref AppScaleMax, ref AppScaleStep, ref _appScaleSmoothText);
+            ConfigureAppScaleLayout(ref _appScaleUnroundedLayout);
+        }
 
         /// <summary>Call from the constructor after InitializeComponent to restore the saved size.</summary>
         private void InitAppScale()
         {
+            EnsureAppScaleConfigured();
             if (double.TryParse(Services.ThemeManager.GetSetting("AppScale"), NumberStyles.Float,
                                 CultureInfo.InvariantCulture, out double saved))
                 ApplyAppScale(saved);
@@ -40,6 +61,7 @@ namespace KillerScan.Shell
         // One small step per wheel notch: fine-grained, no big jumps.
         private void LogoBar_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            EnsureAppScaleConfigured();
             ApplyAppScale(_appScale + (e.Delta > 0 ? AppScaleStep : -AppScaleStep), persist: true);
             e.Handled = true;
         }
@@ -67,19 +89,16 @@ namespace KillerScan.Shell
 
         internal void ApplyAppScale(double scale, bool persist = false)
         {
+            EnsureAppScaleConfigured();
             scale = Math.Round(Math.Max(AppScaleMin, Math.Min(AppScaleMax, scale)), 3);
             _appScale = scale;
-            // An app whose scaled content is not one element (KillerScan's scan bar rides in the
-            // title bar) implements ApplyAppScaleTo and sets handled; everyone else scales ScaleHost.
-            bool handled = false;
-            ApplyAppScaleTo(scale, ref handled);
-            if (!handled) ScaleHost.LayoutTransform = scale == 1.0 ? Transform.Identity : new ScaleTransform(scale, scale);
 
             // The window runs Display + ClearType, which pixel-snaps glyphs for maximum crispness at
             // 1:1. Under a fractional scale those snapped stems land on partial device pixels and
             // the text goes soft. Ideal + Grayscale positions glyphs at sub-pixel precision and
             // stays smooth at any size; at exactly 1.0 the window's own crisp setting comes back.
-            if (scale == 1.0)
+            // An app that keeps ClearType under scale opts out through ConfigureAppScale.
+            if (scale == 1.0 || !_appScaleSmoothText)
             {
                 ScaleHost.ClearValue(TextOptions.TextFormattingModeProperty);
                 ScaleHost.ClearValue(TextOptions.TextRenderingModeProperty);
@@ -89,6 +108,19 @@ namespace KillerScan.Shell
                 TextOptions.SetTextFormattingMode(ScaleHost, TextFormattingMode.Ideal);
                 TextOptions.SetTextRenderingMode(ScaleHost, TextRenderingMode.Grayscale);
             }
+
+            if (_appScaleUnroundedLayout)
+            {
+                if (scale == 1.0) ScaleHost.ClearValue(UseLayoutRoundingProperty);
+                else ScaleHost.UseLayoutRounding = false;
+            }
+
+            // The app hook runs last, so whatever it sets wins over the kit defaults above. An app
+            // whose scaled content is not one element (KillerScan's scan bar rides in the title bar)
+            // implements ApplyAppScaleTo and sets handled; everyone else scales ScaleHost.
+            bool handled = false;
+            ApplyAppScaleTo(scale, ref handled);
+            if (!handled) ScaleHost.LayoutTransform = scale == 1.0 ? Transform.Identity : new ScaleTransform(scale, scale);
 
             if (persist)
             {
@@ -109,6 +141,10 @@ namespace KillerScan.Shell
 
         private void ShowScaleReadout(double scale)
         {
+            bool handled = false;
+            ShowAppScaleReadout(scale, ref handled);
+            if (handled) return;
+
             if (_appScaleHide is null)
             {
                 _appScaleHide = new DispatcherTimer(DispatcherPriority.Normal) { Interval = TimeSpan.FromSeconds(5) };

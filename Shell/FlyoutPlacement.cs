@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -40,6 +41,18 @@ namespace KillerScan.Controls
     /// The flyout's card carries a transparent margin for its drop shadow (FlyoutCard, or the
     /// ContextMenu template's MenuRoot); that halo is read from the card itself and taken off, so
     /// the VISIBLE card sits the eight pixels in. Do not add an inset of your own.
+    ///
+    /// UsePane without a side keeps the side (and root) already set, so a picker that re-points
+    /// the pane on every open does not move a right-docked rail's menus back to the left.
+    ///
+    /// Fixed placements for menus that are not rail flyouts, measured against the pane itself:
+    ///     AttachTopLeft(popup)                  the pane's top-left corner
+    ///     AttachTopRight(menu)                  8px in from the pane's top-right (title bar menus)
+    ///     AttachBelowRight(menu, button)        under a toolbar button, right edges aligned
+    ///     AttachBesideButton(menu, button)      in from the rail, centered on its button
+    ///     AttachInsidePane(menu or popup, button, alignRight)
+    ///                                           8px inside the pane's top corner, for a flyout
+    ///                                           anchored to a button inside the pane
     /// </summary>
     internal static class FlyoutPlacement
     {
@@ -50,17 +63,24 @@ namespace KillerScan.Controls
         private static FrameworkElement? _root;
         private static SidebarSide _side;
 
-        /// <summary>The content pane. Set once at startup; every flyout positions against it.</summary>
-        internal static void UsePane(FrameworkElement pane, SidebarSide side = SidebarSide.Left)
-            => UsePane(pane, null, side);
+        /// <summary>The content pane. Set once at startup; every flyout positions against it.
+        /// Without a side the current side is kept (Left until one is given), and the root set
+        /// earlier is kept while the pane is the same.</summary>
+        internal static void UsePane(FrameworkElement pane, SidebarSide? side = null)
+        {
+            if (!ReferenceEquals(pane, _pane)) _root = null;
+            _pane = pane;
+            if (side is { } s) _side = s;
+        }
 
         /// <summary>The content pane and the unscaled element placement is measured in (the
-        /// window's root grid). Without a root, the window's content is used.</summary>
-        internal static void UsePane(FrameworkElement pane, FrameworkElement? root, SidebarSide side = SidebarSide.Left)
+        /// window's root grid). Without a root, the window's content is used. Without a side the
+        /// current side is kept.</summary>
+        internal static void UsePane(FrameworkElement pane, FrameworkElement? root, SidebarSide? side = null)
         {
             _pane = pane;
             _root = root;
-            _side = side;
+            if (side is { } s) _side = s;
         }
 
         private static FrameworkElement? Root =>
@@ -132,5 +152,125 @@ namespace KillerScan.Controls
                 y = topLeft.Y - halo.Top * fy;
             return [new CustomPopupPlacement(new Point(x, y), PopupPrimaryAxis.None)];
         }
+
+        // The FlyoutCard halo for the fixed placements below, which measure against the pane.
+        private static Thickness FlyoutCardHalo() => new Border
+        {
+            Style = Application.Current?.TryFindResource("FlyoutCard") as Style
+        }.Margin;
+
+        /// <summary>The pane's top-left corner, with no inset (Killendar's export scope popup).</summary>
+        internal static void AttachTopLeft(Popup popup)
+        {
+            popup.PlacementTarget = _pane;
+            popup.Placement = PlacementMode.Custom;
+            popup.CustomPopupPlacementCallback =
+                (_, _, _) => [new CustomPopupPlacement(new Point(0, 0), PopupPrimaryAxis.None)];
+        }
+
+        /// <summary>The title bar's menus (a lock button) open in the pane's top-right corner, 8px
+        /// in from the top and the right: the mirror of the rail flyouts' bottom corner.</summary>
+        internal static void AttachTopRight(ContextMenu menu)
+        {
+            menu.PlacementTarget = _pane;
+            menu.Placement = PlacementMode.Custom;
+            menu.HorizontalOffset = 0;
+            menu.VerticalOffset = 0;
+            menu.CustomPopupPlacementCallback = (popupSize, targetSize, _) =>
+            {
+                var halo = FlyoutCardHalo();
+                return [new CustomPopupPlacement(new Point(
+                    targetSize.Width - popupSize.Width + halo.Right - Inset,
+                    Inset - halo.Top), PopupPrimaryAxis.None)];
+            };
+        }
+
+        /// <summary>A toolbar dropdown: under its button, the visible card's right edge on the
+        /// button's right edge, 4px below it.</summary>
+        internal static void AttachBelowRight(ContextMenu menu, FrameworkElement button)
+        {
+            menu.PlacementTarget = button;
+            menu.Placement = PlacementMode.Custom;
+            menu.HorizontalOffset = 0;
+            menu.VerticalOffset = 0;
+            menu.CustomPopupPlacementCallback = (popupSize, targetSize, _) =>
+            {
+                var halo = FlyoutCardHalo();
+                double x = targetSize.Width - popupSize.Width + halo.Right;
+                double y = targetSize.Height - halo.Top + 4;
+                return [new CustomPopupPlacement(new Point(x, y), PopupPrimaryAxis.None)];
+            };
+        }
+
+        /// <summary>In from the rail like the corner menus, but centered on its button vertically
+        /// and kept inside the pane (KillerNotes' dictation menu).</summary>
+        internal static void AttachBesideButton(ContextMenu menu, FrameworkElement button)
+        {
+            var pane = _pane;
+            if (pane is null) { Attach(menu, button); return; }
+            menu.PlacementTarget = pane;
+            menu.Placement = PlacementMode.Custom;
+            menu.HorizontalOffset = 0;
+            menu.VerticalOffset = 0;
+            menu.CustomPopupPlacementCallback = (popupSize, targetSize, _) =>
+            {
+                var halo = FlyoutCardHalo();
+                double x = _side == SidebarSide.Right
+                    ? targetSize.Width - popupSize.Width + halo.Right - Inset
+                    : Inset - halo.Left;
+                // Popup target sizes include the app's layout scale. TranslatePoint returns
+                // pane-local coordinates, so its height is converted to the callback's units.
+                double scaleY = pane.ActualHeight > 0 ? targetSize.Height / pane.ActualHeight : 1;
+                double center = button.TranslatePoint(new Point(0, button.ActualHeight / 2), pane).Y * scaleY;
+                double visibleHeight = popupSize.Height - halo.Top - halo.Bottom;
+                double y = center - visibleHeight / 2 - halo.Top;
+                double top = Inset - halo.Top;
+                double bottom = targetSize.Height - popupSize.Height + halo.Bottom - Inset;
+                return [new CustomPopupPlacement(new Point(x, Math.Max(top, Math.Min(bottom, y))), PopupPrimaryAxis.None)];
+            };
+        }
+
+        /// <summary>A flyout anchored to a button inside the pane: the visible card 8px inside the
+        /// pane's top-left corner, or its top-right with <paramref name="alignRight"/>.</summary>
+        internal static void AttachInsidePane(ContextMenu menu, UIElement button, bool alignRight = false)
+        {
+            menu.PlacementTarget = button;
+            menu.Placement = PlacementMode.Custom;
+            menu.HorizontalOffset = menu.VerticalOffset = 0;
+            menu.CustomPopupPlacementCallback = PanePlacement(button, alignRight,
+                () => menu.Template?.FindName("MenuRoot", menu) as FrameworkElement);
+        }
+
+        /// <inheritdoc cref="AttachInsidePane(ContextMenu, UIElement, bool)"/>
+        internal static void AttachInsidePane(Popup popup, UIElement button, bool alignRight = false)
+        {
+            popup.PlacementTarget = button;
+            popup.Placement = PlacementMode.Custom;
+            popup.HorizontalOffset = popup.VerticalOffset = 0;
+            popup.CustomPopupPlacementCallback = PanePlacement(button, alignRight,
+                () => popup.Child as FrameworkElement);
+        }
+
+        private static CustomPopupPlacementCallback PanePlacement(UIElement button, bool alignRight, Func<FrameworkElement?> card)
+            => (popupSize, targetSize, offset) =>
+            {
+                if (_pane == null || button is not FrameworkElement element)
+                    return [new CustomPopupPlacement(new Point(0, targetSize.Height + 8), PopupPrimaryAxis.None)];
+                FrameworkElement? face = card();
+                Vector faceOffset = new();
+                double faceWidth = popupSize.Width;
+                if (face != null && PresentationSource.FromVisual(face) is { RootVisual: Visual root, CompositionTarget: { } target })
+                {
+                    var transform = face.TransformToAncestor(root);
+                    Point left = target.TransformToDevice.Transform(transform.Transform(new Point()));
+                    Point right = target.TransformToDevice.Transform(transform.Transform(new Point(face.ActualWidth, 0)));
+                    faceOffset = (Vector)left;
+                    faceWidth = right.X - left.X;
+                }
+                Point desired = _pane.PointToScreen(new Point(alignRight ? _pane.ActualWidth - Inset : Inset, Inset));
+                Vector position = desired - element.PointToScreen(new Point()) - faceOffset;
+                if (alignRight) position.X -= faceWidth;
+                return [new CustomPopupPlacement((Point)position, PopupPrimaryAxis.None)];
+            };
     }
 }

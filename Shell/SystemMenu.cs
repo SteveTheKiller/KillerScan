@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Interop;
 using KillerFamily.Accessibility;
 
@@ -41,6 +42,14 @@ using KillerFamily.Accessibility;
 // Chrome.cs was replaced with this file on 2026-10-23, when Close gained Windows' Alt+F4 hint and
 // the default item its bold. Ported into
 // the kit 2026-07-30 because three of five apps were still showing the stock white menu.
+//
+// ---- App hooks (optional partial methods; leave them out to keep the kit menu) -----------
+//   CustomizeSystemMenuItem(item, icon, command, danger): runs once per item after the kit
+//      builds it. An app that styles menu icons through its own MenuIcon style clears the
+//      icon's local font, size and alignment and sets that style here, and may clear the item's
+//      Padding to use its implicit MenuItem padding.
+//   UseSystemMenuAccessKeys(ref use): set true to show and handle Windows' access letters
+//      (R, M, S, N, X and C, with Close labeled "Alt+F4 / C") while the menu is open.
 // ============================================================
 namespace KillerScan.Shell
 {
@@ -66,7 +75,7 @@ namespace KillerScan.Shell
         private bool TryHandleSystemMenu(int msg, IntPtr wParam, IntPtr lParam)
         {
             // Right-click on the caption.
-            if (msg == WM_NCRBUTTONUP && wParam.ToInt32() == HTCAPTION)
+            if (msg == WM_NCRBUTTONUP && wParam.ToInt64() == HTCAPTION)
             {
                 ShowSystemMenu(ScreenPointFromLParam(lParam));
                 return true;
@@ -86,7 +95,7 @@ namespace KillerScan.Shell
         /// <summary>lParam of a non-client mouse message packs screen coords as two shorts.</summary>
         private static Point ScreenPointFromLParam(IntPtr lParam)
         {
-            int v = lParam.ToInt32();
+            int v = unchecked((int)lParam.ToInt64());   // ToInt32 throws on a 64-bit value
             return new Point((short)(v & 0xFFFF), (short)((v >> 16) & 0xFFFF));
         }
 
@@ -127,17 +136,36 @@ namespace KillerScan.Shell
             else
             {
                 // Keyboard route: hang it under the top-left of the window, like Windows does.
-                _sysMenu.HorizontalOffset = Left + 8;
-                _sysMenu.VerticalOffset = Top + 36;
+                // While maximized Left/Top keep the RESTORE position, which put the menu where the
+                // restored window would sit, possibly on another monitor, so the real screen
+                // position is used there. A normal window keeps Left/Top, the same point.
+                if (maximized)
+                {
+                    Point corner = PointToScreen(new Point(8, 36));
+                    if (PresentationSource.FromVisual(this)?.CompositionTarget is { } target)
+                        corner = target.TransformFromDevice.Transform(corner);
+                    _sysMenu.HorizontalOffset = corner.X;
+                    _sysMenu.VerticalOffset = corner.Y;
+                }
+                else
+                {
+                    _sysMenu.HorizontalOffset = Left + 8;
+                    _sysMenu.VerticalOffset = Top + 36;
+                }
             }
 
             _sysMenu.IsOpen = true;
             Controls.Anim.FadeIn(_sysMenu);
         }
 
+        partial void CustomizeSystemMenuItem(MenuItem item, Glyph icon, int command, bool danger);
+        partial void UseSystemMenuAccessKeys(ref bool use);
+
         private ContextMenu BuildSystemMenu()
         {
             var menu = new ContextMenu();
+            bool accessKeys = false;
+            UseSystemMenuAccessKeys(ref accessKeys);
 
             // Every codepoint below was verified present in segmdl2.ttf by RENDERING it, not
             // trusted from documentation - this repo has shipped a missing-glyph box before.
@@ -164,6 +192,25 @@ namespace KillerScan.Shell
                                          danger ? "DangerRed" : "MutedTextBrush");
                 mi.Icon = ico;
 
+                if (accessKeys)
+                {
+                    string letter = cmd switch
+                    {
+                        SC_RESTORE => "R", SC_MOVE => "M", SC_SIZE => "S",
+                        SC_MINIMIZE => "N", SC_MAXIMIZE => "X", _ => "C",
+                    };
+                    if (cmd == SC_CLOSE) mi.InputGestureText = "Alt+F4 / C";
+                    else if (gesture.Length == 0) mi.InputGestureText = letter;
+                    menu.KeyDown += (_, e) =>
+                    {
+                        if (Keyboard.Modifiers != ModifierKeys.None || e.Key.ToString() != letter || !mi.IsEnabled) return;
+                        menu.IsOpen = false;
+                        SendSysCommand(cmd);
+                        e.Handled = true;
+                    };
+                }
+
+                CustomizeSystemMenuItem(mi, ico, cmd, danger);
                 mi.Click += (_, _) => SendSysCommand(cmd);
                 menu.Items.Add(mi);
                 return mi;

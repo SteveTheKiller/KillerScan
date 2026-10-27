@@ -30,6 +30,26 @@ namespace KillerScan.Features.About
         /// <summary>App hook: skip the startup update prompt (KillerScan skips it under --demo).</summary>
         partial void SkipStartupCheck(ref bool skip);
 
+        /// <summary>App hook: hold the update back, checked before the download starts and again
+        /// once it is verified (KillerBench holds it while a repair is running). A held download
+        /// is discarded and the update button comes back.</summary>
+        partial void HoldUpdate(ref bool hold);
+
+        /// <summary>App hook: the last word before the swap helper starts and the app closes,
+        /// after the download, since documents can change while it runs (KillerShell's unsaved
+        /// documents check, KillerNotes saving the open note). Set proceed false to cancel; the
+        /// download is discarded and the update button comes back.</summary>
+        partial void ConfirmUpdateShutdown(ref bool proceed);
+
+        /// <summary>App hook: the helper did not start after ConfirmUpdateShutdown agreed (UAC
+        /// declined), so the app stays open; undo whatever the confirmation set up (KillerShell's
+        /// CancelShutdown).</summary>
+        partial void UpdateShutdownCanceled();
+
+        /// <summary>App hook: close the app once the helper is running. Set handled to shut down
+        /// through the app's own path; otherwise Application.Current.Shutdown() runs.</summary>
+        partial void ShutdownForUpdate(ref bool handled);
+
         private readonly IAboutHost _host;
 
         /// <summary>Tag of the newer release found by the check, null when there is nothing to
@@ -39,7 +59,9 @@ namespace KillerScan.Features.About
         /// <summary>Setting that turns the startup check off. Anything but "0" leaves it on.</summary>
         internal const string StartupCheckSetting = "CheckForUpdatesOnStartup";
 
-        private bool _startupCheckStarted;
+        // Static: once per process, so an app with several windows (each with its own About
+        // controller) prompts once.
+        private static bool _startupCheckStarted;
         private bool _updating;
 
         internal AboutController(IAboutHost host) => _host = host;
@@ -185,6 +207,9 @@ namespace KillerScan.Features.About
         private async Task InstallAsync(string tag)
         {
             if (_updating) return;
+            bool hold = false;
+            HoldUpdate(ref hold);
+            if (hold) return;
             _updating = true;
             _host.UpdateEnabled = false;
             _host.UpdateText    = _host.Loc("Str_About_Downloading");
@@ -203,15 +228,30 @@ namespace KillerScan.Features.About
                 return;
             }
 
+            bool held = false, proceed = true;
+            HoldUpdate(ref held);
+            if (!held) ConfirmUpdateShutdown(ref proceed);
+            if (held || !proceed)
+            {
+                UpdateService.DiscardDownload(newExe);
+                _updating           = false;
+                _host.UpdateEnabled = true;
+                _host.UpdateText    = string.Format(_host.Loc("Str_About_UpdateAvailable"), tag);
+                return;
+            }
+
             try
             {
                 // Declining UAC throws, so the shutdown only happens once the helper is actually
                 // running - otherwise the app would close without updating.
                 UpdateService.StartSwap(newExe, tag!.TrimStart('v', 'V'));
-                System.Windows.Application.Current.Shutdown();
+                bool handled = false;
+                ShutdownForUpdate(ref handled);
+                if (!handled) System.Windows.Application.Current.Shutdown();
             }
             catch
             {
+                UpdateShutdownCanceled();
                 // A failed helper launch retains the verified download for recovery.
                 _updating           = false;
                 _host.UpdateEnabled = true;

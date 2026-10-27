@@ -203,7 +203,10 @@ namespace KillerScan.Controls
         /// PreviewMouseLeftButtonDown, NOT Click: the caption band under this handles ButtonDown to
         /// drag the window, DragMove() runs a modal loop, and the matching ButtonUp - and therefore
         /// Click - never arrives, which is how a close X ends up doing nothing. Tunnelling gets it
-        /// first, and marking it handled stops a drag starting on a click aimed at the X.
+        /// first, and marking it handled stops a drag starting on a click aimed at the X. Click is
+        /// still wired as the keyboard and automation path (Space or Enter on the focused X, UI
+        /// Automation Invoke); the handled pointer press never raises it, so a mouse click closes
+        /// once.
         /// </summary>
         public static FrameworkElement CloseGlyph(string tooltip, Action onClose)
         {
@@ -221,6 +224,7 @@ namespace KillerScan.Controls
             glyph.SetResourceReference(FrameworkElement.WidthProperty, "AboutCloseWidth");
             glyph.SetResourceReference(FrameworkElement.HeightProperty, "AboutCloseHeight");
             glyph.PreviewMouseLeftButtonDown += (_, e) => { e.Handled = true; onClose(); };
+            glyph.Click += (_, _) => onClose();
             return glyph;
         }
     }

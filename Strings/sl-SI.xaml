@@ -331,6 +331,7 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Dev_Unknown">Neznano</sys:String>
     <sys:String x:Key="Str_Btn_Open">Odpri</sys:String>
     <sys:String x:Key="Str_Btn_Save">Shrani</sys:String>
+    <sys:String x:Key="Str_Btn_Select">Izberi</sys:String>
     <sys:String x:Key="Str_Col_Modified">spremenjeno</sys:String>
     <sys:String x:Key="Str_Col_Name">ime</sys:String>
     <sys:String x:Key="Str_Col_DeviceName">Ime</sys:String>
