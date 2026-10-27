@@ -29,6 +29,7 @@
     <kl:TooltipTextConverter x:Key="TooltipTextConverter"/>
     <Style TargetType="ToolTip">
         <Setter Property="kl:TooltipTextConverter.WrapContent" Value="True"/>
+        <Setter Property="kl:CursorTooltipPlacement.Enabled" Value="True"/>
         <Setter Property="Background" Value="{DynamicResource MenuBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource MenuBorderBrush}"/>

@@ -145,7 +145,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Each device type now explains itself. Hover over the type for its confidence (Low, Medium, High or Set manually) and its strongest evidence, or right-click and choose Why This Type? (Ctrl+I) for every signal, its source, close alternatives and any conflict. Opening it sends nothing to the device. A manual type keeps the automatic result alongside, HTML reports show the same summary on hover, and CLI JSON and the PowerShell module carry the full evidence.
 - Device CSV exports add Confidence and Evidence columns after the existing six.
 - Right-click a device and choose Access to see every way into it: each web port and what it answered (a status, a login request or a sign-in page), the SSH banner, and every other open port. Clicking an entry opens it in the browser, SSH or Remote Desktop on that port, and Copy Address copies any of them. Nothing is claimed beyond what was seen, no credentials are ever sent, and opening the menu sends nothing. Deep scans now check every web port so each has its own evidence. CSV adds an Access column, HTML reports list the endpoints when hovering a device's ports, and CLI JSON and the PowerShell module carry the full list.
-- About groups settings in two columns and can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts.
+- About groups settings in two columns and can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts. Hover tooltips clear large pointers while preserving custom placement.
 
 ### Changed
 - Confirmation prompts, including the install prompt, use the family dialog frame shared with KillerShell, and dragging a pinned place in the file dialog shows the plain arrow.
