@@ -10,7 +10,7 @@
         xmlns:theme="clr-namespace:KillerFamily.Theming"
         xmlns:kui="clr-namespace:KillerScan.Controls"
         Title="KillerScan"
-        Width="420" SizeToContent="Height"
+        Width="300" SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
         WindowStyle="None"
         AllowsTransparency="True"

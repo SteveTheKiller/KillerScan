@@ -105,6 +105,7 @@ namespace KillerScan.Controls
         /// <summary>Shows the notes box under the field. Enter in it is a new line; Ctrl+Enter saves.</summary>
         public void UseNotes(string label, string notes)
         {
+            Width = 380;   // room for notes; a lone name field stays at 300
             NotesLabel.Text = label;
             NotesLabel.Visibility = Visibility.Visible;
             NotesBox.Text = notes ?? string.Empty;
