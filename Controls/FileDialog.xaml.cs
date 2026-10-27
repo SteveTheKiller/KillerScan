@@ -52,6 +52,11 @@ namespace KillerScan.Controls
         public string DefaultExt { get; set; } = "";
 
         public bool AddExtension { get; set; } = true;
+
+        /// <summary>Keeps the seeded name fixed while the user picks only the folder: the name box
+        /// is read only, picking a file does not replace it, and a type switch leaves it alone.
+        /// Off by default.</summary>
+        public bool IsFileNameReadOnly { get; set; }
         /// <summary>
         /// Append the active filter's extension even when the typed name contains another dot.
         /// Use this for format-locked exports such as flattened PDF output.
@@ -337,6 +342,7 @@ namespace KillerScan.Controls
             _built = true;
             NavigateTo(startDir);
             FileNameBox.Text = seedName;
+            FileNameBox.IsReadOnly = IsFileNameReadOnly;
 
             // Save: preselect the stem so typing replaces the name but keeps the extension
             // visible. Open: caret at the end. Folder: there is no name box, so the button.
@@ -397,7 +403,7 @@ namespace KillerScan.Controls
             // Save mode follows the Win32 dialogs: switching the type swaps the typed name's
             // extension - but only when the current one belongs to another entry of THIS filter.
             // An extension the user typed by hand is theirs and is left alone.
-            if (_mode == FileDialogMode.Save)
+            if (_mode == FileDialogMode.Save && !IsFileNameReadOnly)
             {
                 string? newExt = ActiveFilterExt();
                 string  name   = FileNameBox.Text?.Trim() ?? "";
@@ -985,7 +991,7 @@ namespace KillerScan.Controls
                 // Selecting a FILE fills the name box - that is the value being chosen. Selecting
                 // a folder does not: it is a navigation target, and overwriting the typed name
                 // with a folder name would lose what the user was in the middle of typing.
-                if (!en.IsFolder) FileNameBox.Text = en.Name;
+                if (!en.IsFolder && !IsFileNameReadOnly) FileNameBox.Text = en.Name;
                 SelName.Text = en.Name;
                 SelMeta.Text = en.IsFolder ? en.ModifiedLabel : $"{en.SizeLabel}  |  {en.ModifiedLabel}";
                 UpdateImagePreview(en);

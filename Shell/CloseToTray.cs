@@ -33,11 +33,15 @@ using System.Windows.Interop;
 //      icon's menu uses Str_Tray_Open ("Open {0}", the app name) and Str_Tray_Exit.
 //   4. A second launch that asks the running copy to come forward calls CloseToTray.ShowWindow
 //      on the main window, which also works while it is hidden in the tray.
-//   5. Exit everywhere else (the app menu, an update, an uninstall) goes through
-//      CloseToTray.Exit or Application.Shutdown, which never hides to the tray.
+//   5. The icon's Exit, and Exit from the app menu, go through CloseToTray.Exit: it brings the
+//      window back and closes it the normal way, so the window's own quit and save prompts run
+//      and can cancel. A confirmed close then shuts the app down. An update or an uninstall
+//      calls Application.Shutdown, which never hides to the tray.
 //   6. Optional Attach arguments; apps that pass none behave exactly as before:
 //      canExit   asked before a tray Exit and when Windows ends the session; false keeps the app
 //                running (and cancels the session end), for unsaved work the user declined to lose.
+//      notifyIcon a test seam standing in for Shell_NotifyIcon (NIM_ADD, NIM_DELETE), so tests
+//                run without a real notification area icon.
 //      items     the app's own rows in the icon's menu, above Open.
 //      keepIcon  an app option that keeps the icon while the window is open too. Call
 //                RefreshIcon after that option changes and once after attaching.
@@ -67,7 +71,7 @@ namespace KillerFamily.Shell
         private readonly HwndSource _source;
         private readonly uint _taskbarCreated;
         private readonly IntPtr _icon;
-        private bool _iconShown, _exiting, _disposed;
+        private bool _iconShown, _exiting, _exitRequested, _disposed;
 
         // WPF's own shutdown flag. Application.Shutdown closes every window through OnClosing
         // and ignores a cancel, so without it a hide would skip the app's save and then close
@@ -88,17 +92,20 @@ namespace KillerFamily.Shell
         /// HideInstead. <paramref name="isEnabled"/> is asked on every close; <paramref name="loc"/>
         /// looks up Str_Tray_Open and Str_Tray_Exit.</summary>
         internal static CloseToTray Attach(Window window, string appName, Func<string, string> loc, Func<bool> isEnabled,
-            Func<bool>? canExit = null, IReadOnlyList<TrayItem>? items = null, Func<bool>? keepIcon = null)
-            => new(window, appName, loc, isEnabled, canExit, items, keepIcon);
+            Func<bool>? canExit = null, IReadOnlyList<TrayItem>? items = null, Func<bool>? keepIcon = null,
+            Func<uint, bool>? notifyIcon = null)
+            => new(window, appName, loc, isEnabled, canExit, items, keepIcon, notifyIcon);
 
         private readonly Func<bool>? _canExit;
         private readonly IReadOnlyList<TrayItem> _items;
         private readonly Func<bool>? _keepIcon;
+        private readonly Func<uint, bool>? _notifyIcon;
 
         private CloseToTray(Window window, string appName, Func<string, string> loc, Func<bool> isEnabled,
-            Func<bool>? canExit, IReadOnlyList<TrayItem>? items, Func<bool>? keepIcon)
+            Func<bool>? canExit, IReadOnlyList<TrayItem>? items, Func<bool>? keepIcon, Func<uint, bool>? notifyIcon)
         {
             _canExit = canExit;
+            _notifyIcon = notifyIcon;
             _items = items ?? [];
             _keepIcon = keepIcon;
             _window = window;
@@ -113,7 +120,17 @@ namespace KillerFamily.Shell
             int size = GetSystemMetrics(49);   // SM_CXSMICON
             // The SDK embeds ApplicationIcon as icon group 32512.
             _icon = LoadImage(GetModuleHandle(null), new IntPtr(32512), 1, size, size, 0);
-            window.Closed += (_, _) => Dispose();
+            window.Closed += (_, _) =>
+            {
+                Dispose();
+                // The close Exit started went through: quit the app, any other windows included.
+                if (_exitRequested) Application.Current?.Shutdown();
+            };
+            // The user's next click or key after Exit ends the exit. A prompt the user turned down
+            // leaves the window open, and the next close hides to the tray again. A close that is
+            // still running (a fade's second pass) arrives without input and still closes.
+            window.PreviewMouseDown += (_, _) => _exitRequested = false;
+            window.PreviewKeyDown += (_, _) => _exitRequested = false;
             Application.Current.SessionEnding += (_, e) =>
             {
                 if (e.Cancel) return;
@@ -123,13 +140,16 @@ namespace KillerFamily.Shell
             Application.Current.Exit += (_, _) => Dispose();
         }
 
-        /// <summary>Quits the app from anywhere without hiding to the tray.</summary>
+        /// <summary>Quits the app from the icon or the app menu without hiding to the tray. The
+        /// window comes back and closes the normal way, so its quit and save prompts run and can
+        /// cancel; a confirmed close shuts the app down.</summary>
         internal void Exit()
         {
+            if (_disposed || _exiting || _exitRequested) return;
             if (_canExit != null && !_canExit()) return;
-            _exiting = true;
-            HideIcon();
-            Application.Current.Shutdown();
+            ShowWindow();
+            _exitRequested = true;
+            _window.Close();
         }
 
         /// <summary>Brings the window back from the tray, the taskbar or behind other windows.</summary>
@@ -158,7 +178,7 @@ namespace KillerFamily.Shell
         /// at once. Returns false for a real close: the option off, Exit, or the app shutting down.</summary>
         internal bool HideInstead(CancelEventArgs e)
         {
-            if (_exiting || _disposed || e.Cancel || AppShuttingDown() || !_isEnabled()) return false;
+            if (_exiting || _exitRequested || _disposed || e.Cancel || AppShuttingDown() || !_isEnabled()) return false;
             e.Cancel = true;
             _window.Hide();
             ShowIcon();
@@ -187,14 +207,14 @@ namespace KillerFamily.Shell
         {
             if (_iconShown) return;
             var d = Data(NIF_MESSAGE | NIF_ICON | NIF_TIP);
-            _iconShown = Shell_NotifyIcon(NIM_ADD, ref d);
+            _iconShown = _notifyIcon?.Invoke(NIM_ADD) ?? Shell_NotifyIcon(NIM_ADD, ref d);
         }
 
         private void HideIcon()
         {
             if (!_iconShown) return;
             var d = Data(0);
-            Shell_NotifyIcon(NIM_DELETE, ref d);
+            _ = _notifyIcon?.Invoke(NIM_DELETE) ?? Shell_NotifyIcon(NIM_DELETE, ref d);
             _iconShown = false;
         }
 

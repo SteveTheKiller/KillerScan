@@ -74,11 +74,6 @@ namespace KillerFamily.Accessibility
             }));
         }
 
-        /// <summary>Also map MenuHoverTextBrush to the window text color in high contrast. Off by
-        /// default, which leaves menu hover text on the theme's value; an app that wants the mapped
-        /// hover text sets this once at startup.</summary>
-        internal static bool MapMenuHoverText { get; set; }
-
         private static void Refresh()
         {
             if (Application.Current == null) return;
@@ -118,7 +113,7 @@ namespace KillerFamily.Accessibility
                 "OverlayWindowBrush", "MenuBackgroundBrush", "BgFlyout", "SidebarPaneBrush", "FileDialogPaneBrush",
                 "ComboFieldBrush", "ComboFieldHoverBrush", "ComboPopupBrush", "ComboButtonBrush",
                 "ComboButtonHoverBrush", "DropdownArrowBrush", "DialogTitleBarBrush", "RowAltBrush",
-                "RowHoverBrush", "MenuHoverBrush", "SurfaceHoverBrush", "OutlinePressedBrush");
+                "RowHoverBrush", "SurfaceHoverBrush", "OutlinePressedBrush");
             Brushes(windowBrush, "AboutPanelBrush", "EditorPaneBrush", "InputFieldBrush", "KeyCapBrush",
                 "CalendarEvenColumnBrush", "CalendarOddColumnBrush", "CalendarEvenHeaderBrush", "CalendarOddHeaderBrush",
                 "CalendarOutsideMonthBrush", "CalendarWeekendBrush", "CalendarWeekendHeaderBrush", "CalendarDayHoverBrush",
@@ -130,7 +125,6 @@ namespace KillerFamily.Accessibility
                 "ComparisonBarBrush", "ComparisonBarHoverBrush", "AnnotationBarBrush", "KeyboardKeyBrush", "TabActiveBrush",
                 "BgCanvas", "BgRecentPanel", "BgDragHandle",
                 "FooterZoomSurfaceBrush", "FooterZoomClosedBrush", "SortButtonBrush", "MonitorCellBrush", "MonitorHoverBrush");
-            if (MapMenuHoverText) Brushes(windowTextBrush, "MenuHoverTextBrush");
             Brushes(windowTextBrush, "TextBrush", "MutedTextBrush", "DimTextBrush", "ChromeTextBrush",
                 "MenuTextBrush", "TextFooter", "FilenameBrush", "CaptionTextBrush", "DialogCaptionTextBrush",
                 "OverlayCloseBrush", "CaptionGlyphBrush", "ComboTextBrush", "OutlineRestBrush", "OutlineBtnBrush", "RadioAccent",
@@ -146,14 +140,15 @@ namespace KillerFamily.Accessibility
                 "ConsoleBorderBrush", "ReportMetricBrush", "TreeLineBrush", "TopologyNodeTextBrush", "TopologyNodeBorderBrush",
                 "TopologyNodeHoverTextBrush", "TerminalForegroundBrush", "MonitorTextBrush", "MonitorMutedBrush",
                 "ComparisonBarForegroundBrush", "AnnotationBarBorderBrush", "WindowFrameBrush", "FooterAccentBrush", "DropBorder");
+            // Menu hover is a selection, so it takes the Highlight pair the way Windows' own menus do.
             Brushes(highlightBrush, "PrimaryBrush", "PrimaryHoverBrush", "PrimaryPressedBrush",
                 "PrimaryFillBaseBrush", "PrimaryFillBrush", "SelectionBg", "RowSelectedBrush", "SelectionAccent",
                 "OutlineHoverBrush", "OutlineHoverFillBrush", "CaptionHoverBrush", "CaptionCloseHoverBrush",
-                "CalendarViewSelectedBrush");
+                "CalendarViewSelectedBrush", "MenuHoverBrush");
             Brushes(highlightBrush, "DatabaseSelectionBrush", "TextSelectionBrush", "TabActiveRingBrush",
                 "CheckBoxCheckedBackgroundBrush", "CheckBoxCheckedBrush", "FocusedPaneBrush", "SettingsOpenRowBg");
             Brushes(highlightTextBrush, "OnPrimaryBrush", "SelectionFg", "OutlineHoverTextBrush",
-                "ComboHighlightTextBrush", "CaptionHoverTextBrush", "CaptionCloseHoverTextBrush");
+                "ComboHighlightTextBrush", "CaptionHoverTextBrush", "CaptionCloseHoverTextBrush", "MenuHoverTextBrush");
             Brushes(highlightTextBrush, "CaptionCloseHoverFgBrush", "AboutCloseHoverFg", "CaptionPressedTextBrush",
                 "DatabaseSelectionTextBrush", "TextSelectionTextBrush", "GridSelectedTextBrush", "CheckMarkBrush",
                 "CheckBoxCheckBrush", "OnOutlineBtnBrush");
