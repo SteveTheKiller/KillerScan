@@ -98,11 +98,18 @@
                             BorderBrush="{DynamicResource ButtonEdgeBrush}" BorderThickness="0">
                         <Grid>
                             <Border x:Name="tint" CornerRadius="{DynamicResource ControlCornerRadius}" Background="Transparent"/>
-                            <!-- The resting accent label may use the family stroke; hover removes
-                                 it below so a brightened button never grows fuzzy text. -->
+                            <!-- The family stroke sits on a copy UNDER the label. An effect on the label
+                                 itself rasterizes it, which blurs it at rest and snaps it back to
+                                 hinted text on hover. With no stroke (98SE) the copy hides behind
+                                 the label. Ideal grayscale text keeps a large display font smooth, with no
+                                 ClearType fringes on the accent when hover drops the stroke. -->
+                            <ContentPresenter x:Name="stroke" Margin="{TemplateBinding Padding}" IsHitTestVisible="False"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Grayscale"
+                                              Effect="{DynamicResource TextStroke}"/>
                             <ContentPresenter x:Name="label" Margin="{TemplateBinding Padding}"
                                               HorizontalAlignment="Center" VerticalAlignment="Center"
-                                              Effect="{DynamicResource TextStroke}"/>
+                                              TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Grayscale"/>
                         </Grid>
                     </Border>
                     <!-- Raised bevel. Nothing on any theme but 98SE, where a default button is a
@@ -119,13 +126,13 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="tint" Property="Background" Value="#2EFFFFFF"/>
-                            <Setter TargetName="label" Property="Effect" Value="{x:Null}"/>
+                            <Setter TargetName="stroke" Property="Visibility" Value="Collapsed"/>
                             <Setter TargetName="liftRest" Property="Visibility" Value="Collapsed"/>
                             <Setter TargetName="liftHover" Property="Visibility" Value="Visible"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="tint" Property="Background" Value="#38000000"/>
-                            <Setter TargetName="label" Property="Effect" Value="{x:Null}"/>
+                            <Setter TargetName="stroke" Property="Visibility" Value="Collapsed"/>
                             <Setter TargetName="liftRest" Property="Visibility" Value="Collapsed"/>
                             <Setter TargetName="liftHover" Property="Visibility" Value="Collapsed"/>
                         </Trigger>
