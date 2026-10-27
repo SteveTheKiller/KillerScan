@@ -706,10 +706,11 @@ namespace KillerScan.Services
             // accent text, filling with the accent on hover under the AA-derived label color.
             // 98SE turns it into a real raised gray button - a #c0c0c0 face at rest, lighter on
             // hover, darker when pressed, black text throughout and NO accent anywhere.
-            // Rest is bare, as KillerPDF's buttons always were: no fill and no edge, just the
-            // accent text. Hover and press fill with the accent.
+            // The accent outline at rest is the family's confirm button (dialogs). Title-bar and
+            // toolbar buttons that should be bare until hover use BareButton (Controls.xaml).
             SetIfAbsent("OutlineFaceBrush", Transparent);          // rest FILL
-            SetIfAbsent("OutlineRestBrush", Transparent);          // rest EDGE
+            Mirror("OutlineRestBrush", "OutlineBtnBrush");         // rest EDGE
+            SetIfAbsent("OutlineLiftRestVisibility", Visibility.Visible);   // resting shadow
             Mirror("OutlineTextBrush", "OutlineBtnBrush");         // rest TEXT
             Mirror("OutlineHoverBrush", "OutlineBtnBrush");        // hover FILL
             // OutlineHoverTextBrush is set AFTER the accent overlay, next to OnOutlineBtnBrush -

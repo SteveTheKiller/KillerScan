@@ -162,7 +162,7 @@
                         <!-- Raised: a soft shadow on item-free SIBLINGS under the face (an effect on the face
                              itself would rasterize the caption and lose ClearType). Hover lifts the button
                              higher, press sets it down. BarShadowOpacity is 0 on 98SE, which stays flat. -->
-                        <Border x:Name="liftRest" IsHitTestVisible="False" Visibility="Collapsed" CornerRadius="{DynamicResource ControlCornerRadius}"
+                        <Border x:Name="liftRest" IsHitTestVisible="False" Visibility="{DynamicResource OutlineLiftRestVisibility}" CornerRadius="{DynamicResource ControlCornerRadius}"
                                 Background="Transparent" BorderBrush="Black" BorderThickness="1" Opacity="{DynamicResource BarShadowOpacity}">
                             <Border.Effect><DropShadowEffect Color="Black" Direction="270" ShadowDepth="1.5" BlurRadius="5" RenderingBias="Quality"/></Border.Effect>
                         </Border>
@@ -220,6 +220,17 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- Bare until hover: a title-bar or toolbar button with no face, edge or resting shadow,
+         filling with the accent on hover and press like OutlineButton. Its own resources hide the
+         rest state, so the template is OutlineButton's. Dialog confirm buttons stay OutlineButton. -->
+    <Style x:Key="BareButton" TargetType="Button" BasedOn="{StaticResource OutlineButton}">
+        <Style.Resources>
+            <SolidColorBrush x:Key="OutlineRestBrush" Color="Transparent"/>
+            <Visibility x:Key="OutlineLiftRestVisibility">Collapsed</Visibility>
+        </Style.Resources>
+        <Setter Property="BorderBrush" Value="Transparent"/>
     </Style>
 
     <!-- Surface Button (secondary): fill one tier lighter than what it sits on, a dim border, and a
