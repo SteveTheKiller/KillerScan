@@ -111,6 +111,8 @@ namespace KillerScan.Shell
         private void LocationList_KeyDown(object sender, KeyEventArgs e)
         {
             if (Keyboard.Modifiers != ModifierKeys.None) return;
+            // Typing in an inline rename box: Enter, Esc, Delete and F2 belong to the box.
+            if (e.OriginalSource is TextBox) return;
             var node = _selectedLocationNode ?? LocationsList.SelectedItem;
             if (node is LocationRow row)
             {
