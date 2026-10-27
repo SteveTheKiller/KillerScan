@@ -692,28 +692,21 @@ internal static partial class HistoryUiTests
         Call(window, "HistorySettingsMenu_Opening", icon, null);
         Require(ReferenceEquals(menu.PlacementTarget, icon) && menu.CustomPopupPlacementCallback != null && menu.HorizontalOffset == 0 && menu.VerticalOffset == 0,
             "Mouse and native keyboard menu opening use the history button anchor, never the pointer.");
-        // Every rail flyout opens beside the button that opened it, never at a fixed point.
+        // Rail flyouts are placed by the kit's FlyoutPlacement: against the window's unscaled root
+        // (so app size cannot shift them), beside the rail, at their button's height but never
+        // below the pane's corner.
+        var root = (FrameworkElement)window.FindName("RootGrid");
         var themeButton = (Button)window.FindName("ThemeButton");
         Call(window, "ThemeButton_Click", themeButton, new RoutedEventArgs());
         var themeMenu = (ContextMenu)typeof(MainWindow).GetField("_themeContextMenu", Instance)!.GetValue(window)!;
-        Require(ReferenceEquals(themeMenu.PlacementTarget, themeButton), "The theme flyout is anchored to the theme button.");
+        Require(ReferenceEquals(themeMenu.PlacementTarget, root) && themeMenu.Placement == System.Windows.Controls.Primitives.PlacementMode.Custom
+            && themeMenu.CustomPopupPlacementCallback != null, "The theme flyout uses the family placement against the unscaled root.");
         themeMenu.IsOpen = false;
         var langButton = (Button)window.FindName("LangButton");
         Call(window, "LangButton_Click", langButton, new RoutedEventArgs());
-        Require(ReferenceEquals(langButton.ContextMenu.PlacementTarget, langButton), "The language flyout is anchored to the language button.");
+        Require(ReferenceEquals(langButton.ContextMenu.PlacementTarget, root) && langButton.ContextMenu.CustomPopupPlacementCallback != null,
+            "The language flyout uses the family placement against the unscaled root.");
         langButton.ContextMenu.IsOpen = false;
-        var placement = typeof(MainWindow).Assembly.GetType("KillerScan.Shell.FlyoutPlacement", true)!.GetMethod("PlaceBesideButton", Static)!;
-        foreach (double dpi in new[] { 1.0, 1.5, 2.0 })
-        foreach (double zoom in new[] { 1.0, 1.5, 2.5 })
-        {
-            double scale = dpi * zoom;
-            var candidates = (System.Windows.Controls.Primitives.CustomPopupPlacement[])placement.Invoke(null,
-                new object[] { new Size(320 * scale, 80 * scale), new Size(24 * scale, 24 * scale), new Thickness(22, 18, 22, 26), scale, scale, dpi })!;
-            Require(candidates.Length == 2 && candidates.All(candidate => Math.Abs(candidate.Point.X + 22 * scale - 24 * scale - 8 * dpi) < 0.01),
-                "Visible menu card stays eight logical pixels right of the rail button at DPI=" + dpi + " zoom=" + zoom);
-            Require(Math.Abs(candidates[0].Point.Y + 18 * scale) < 0.01 && Math.Abs(candidates[1].Point.Y + 80 * scale - 26 * scale - 24 * scale) < 0.01,
-                "Top and bottom candidates let WPF fit screen edges without covering the rail.");
-        }
         Require(menu.Items.OfType<MenuItem>().Count() == 2 &&
             menu.Items.OfType<MenuItem>().Last() is { IsCheckable: true } all && Equals(all.Header, app.FindResource("Str_History_AllLocations")),
             "The history icon also offers the all-Locations switch.");

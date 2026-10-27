@@ -441,6 +441,14 @@ namespace KillerScan.Shell
                 if (content != _terminalControl) (content as IDisposable)?.Dispose();
         }
 
+        // AppScale.cs hook: the scan bar rides in the title bar, so the workspace parts scale
+        // one by one instead of through ScaleHost.
+        partial void ApplyAppScaleTo(double scale, ref bool handled)
+        {
+            ApplyWorkspaceScale(scale);
+            handled = true;
+        }
+
         private void ApplyWorkspaceScale(double scale)
         {
             _workspaceToolbar.LayoutTransform = new ScaleTransform(scale, scale);
