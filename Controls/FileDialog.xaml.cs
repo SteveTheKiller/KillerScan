@@ -105,6 +105,31 @@ namespace KillerScan.Controls
 
         private readonly List<PickerEntry> _raw = [];
         private string _currentDir = string.Empty;
+
+        /// <summary>A typed name or path, resolved against the folder shown. "C:shot.png" and
+        /// "\shot.png" are rooted but not fully qualified; they must not fall back on the
+        /// process's current directory.</summary>
+        private string ResolveTyped(string typed)
+        {
+            // Written by hand: .NET Framework apps share this file and lack the two-argument GetFullPath.
+            if (typed.Length == 0 || _currentDir.Length == 0) return typed;
+            if (typed.StartsWith(@"\\") || typed.StartsWith("//")) return typed;
+            string combined;
+            if (typed.Length >= 2 && char.IsLetter(typed[0]) && typed[1] == ':')
+            {
+                if (typed.Length >= 3 && (typed[2] == '\\' || typed[2] == '/')) return typed;
+                // "C:shot.png": the shown folder when it is on that drive, otherwise that drive's root.
+                bool sameDrive = _currentDir.Length >= 2 && _currentDir[1] == ':'
+                    && char.ToUpperInvariant(_currentDir[0]) == char.ToUpperInvariant(typed[0]);
+                combined = Path.Combine(sameDrive ? _currentDir : typed.Substring(0, 2) + @"\", typed.Substring(2));
+            }
+            else if (typed[0] == '\\' || typed[0] == '/')
+                combined = Path.Combine(Path.GetPathRoot(_currentDir) ?? _currentDir, typed.TrimStart('\\', '/'));
+            else combined = Path.Combine(_currentDir, typed);
+            try { return Path.GetFullPath(combined); }
+            catch (Exception error) when (error is ArgumentException or NotSupportedException or PathTooLongException)
+            { return combined; }
+        }
         private bool _navigating;
         private bool _built;                 // suppresses filter events during construction
         private int  _viewMode;              // 0 list, 1 icons, 2 details
@@ -1055,7 +1080,7 @@ namespace KillerScan.Controls
             // Win32 dialogs, and is how people paste a path in.
             if (typed.Length > 0)
             {
-                var asDir = Path.IsPathRooted(typed) ? typed : Path.Combine(_currentDir, typed);
+                var asDir = ResolveTyped(typed);
                 if (Directory.Exists(asDir)) { NavigateTo(asDir); FileNameBox.Clear(); return; }
             }
 
@@ -1297,7 +1322,7 @@ namespace KillerScan.Controls
                 else { FileNameBox.Focus(); return; }
             }
 
-            var full = Path.IsPathRooted(typed) ? typed : Path.Combine(_currentDir, typed);
+            var full = ResolveTyped(typed);
 
             if (_mode == FileDialogMode.Save)
             {
