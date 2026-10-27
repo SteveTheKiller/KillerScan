@@ -50,6 +50,12 @@ using KillerFamily.Accessibility;
 //      Padding to use its implicit MenuItem padding.
 //   UseSystemMenuAccessKeys(ref use): set true to show and handle Windows' access letters
 //      (R, M, S, N, X and C, with Close labeled "Alt+F4 / C") while the menu is open.
+//   CustomizeSystemMenu(menu): runs once on the new menu before any item is added, for an app
+//      that builds its code-made menus with its own style or text options.
+//   AddSystemMenuItems(menu): runs once after the separator above Close, for the app's own
+//      rows; an app that adds any ends them with its own Separator.
+//   SystemMenuOpening(): runs each time the menu opens, before the kit enables its items, so
+//      the app's own rows can show their current state.
 // ============================================================
 namespace KillerScan.Shell
 {
@@ -102,6 +108,7 @@ namespace KillerScan.Shell
         private void ShowSystemMenu(Point? screenPoint)
         {
             _sysMenu ??= BuildSystemMenu();
+            SystemMenuOpening();
 
             bool maximized = WindowState == WindowState.Maximized;
             // Windows grays out what does not apply: you cannot Restore a normal window, cannot
@@ -160,10 +167,14 @@ namespace KillerScan.Shell
 
         partial void CustomizeSystemMenuItem(MenuItem item, Glyph icon, int command, bool danger);
         partial void UseSystemMenuAccessKeys(ref bool use);
+        partial void CustomizeSystemMenu(ContextMenu menu);
+        partial void AddSystemMenuItems(ContextMenu menu);
+        partial void SystemMenuOpening();
 
         private ContextMenu BuildSystemMenu()
         {
             var menu = new ContextMenu();
+            CustomizeSystemMenu(menu);
             bool accessKeys = false;
             UseSystemMenuAccessKeys(ref accessKeys);
 
@@ -222,6 +233,7 @@ namespace KillerScan.Shell
             Add("Str_Sys_Minimize", "Minimize", SC_MINIMIZE, 0xE921);
             Add("Str_Sys_Maximize", "Maximize", SC_MAXIMIZE, 0xE922);
             menu.Items.Add(new Separator());
+            AddSystemMenuItems(menu);
             Add("Str_Sys_Close",    "Close",    SC_CLOSE,    0xE8BB, gesture: "Alt+F4", danger: true);
             return menu;
         }
