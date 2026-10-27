@@ -806,7 +806,8 @@ html[data-yellow-outline] .tb-more-menu > a { text-shadow: none !important; }
    Grain switch in the theme flyout (Alt+Shift+G) sets data-grain="off" to flatten every surface. */
 :root { --grain-img:url('grain-a17.png'); }
 html[data-theme="light"] { --grain-img:url('grain-a28.png'); }
-html[data-theme="hc"] { --grain-img:url('grain-a17-highlights.png'); }
+/* Black: the apps' highlights-only grain at their 0.18 layer opacity (GrainTexture.cs, seed 1337). */
+html[data-theme="hc"] { --grain-img:url('grain-a13-highlights.png'); }
 html[data-grain="off"] { --grain-img:none; }
 .tgrp-sep { flex-basis: 100%; height: 1px; margin: 2px 0; background: linear-gradient(90deg, transparent, var(--border), transparent); }
 .tgrp-grain { flex-basis: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 7px; font-family: var(--kt-font-ui); font-size: 14px; color: var(--text); cursor: pointer; user-select: none; }
