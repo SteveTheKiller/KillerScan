@@ -638,8 +638,16 @@
                                         </Grid.ColumnDefinitions>
                                         <Ellipse Width="4" Height="4" HorizontalAlignment="Left" VerticalAlignment="Center"
                                                    Margin="0,0,6,0"
-                                                   Fill="{Binding Converter={StaticResource TrustMark}}"
-                                                   ToolTip="{DynamicResource Str_TT_TrustMark}"/>
+                                                   ToolTip="{DynamicResource Str_TT_TrustMark}">
+                                            <!-- The row's selection rides along so an unapproved device can switch
+                                                 to a stronger orange on a cream selected row (TrustMarkConverter). -->
+                                            <Ellipse.Fill>
+                                                <MultiBinding Converter="{StaticResource TrustMark}">
+                                                    <Binding/>
+                                                    <Binding Path="IsSelected" RelativeSource="{RelativeSource AncestorType=DataGridRow}"/>
+                                                </MultiBinding>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
                                         <TextBlock Grid.Column="1" Text="{Binding IpAddress}" VerticalAlignment="Center"/>
                                     </Grid>
                                 </DataTemplate>

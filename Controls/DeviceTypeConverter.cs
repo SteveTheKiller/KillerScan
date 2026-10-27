@@ -93,10 +93,13 @@ namespace KillerScan.Controls
     /// toggling approval does exactly that. Each scan tab supplies <see cref="State"/> for its
     /// own Location; without one, the app-wide trusted list decides between green and amber.
     /// </summary>
-    public sealed class TrustMarkConverter : IValueConverter
+    public sealed class TrustMarkConverter : IValueConverter, IMultiValueConverter
     {
         private static readonly Brush Trusted = Frozen("#3FA95F");
         private static readonly Brush Unknown = Frozen("#E0A317");
+        // On a selected row the amber can vanish: the RGB themes select in a cream almost its
+        // own colour. A stronger orange keeps an unapproved device visible there.
+        private static readonly Brush UnknownSelected = Frozen("#E8590C");
 
         internal Func<NetworkDevice, TrustMark>? State { get; set; }
 
@@ -121,5 +124,16 @@ namespace KillerScan.Controls
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => Binding.DoNothing;
+
+        /// <summary>The device and whether its row is selected.</summary>
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var brush = Convert(values.Length > 0 ? values[0] : null!, targetType, parameter, culture);
+            bool selected = values.Length > 1 && values[1] is true;
+            return selected && ReferenceEquals(brush, Unknown) ? UnknownSelected : brush;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+            => throw new NotSupportedException();
     }
 }

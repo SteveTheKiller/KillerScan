@@ -336,12 +336,12 @@
                          "+ New" in the wordmark's Lacquer, then small square buttons. -->
                     <Grid x:Name="LocationsFooter" Margin="14,0,5,6" Visibility="Collapsed">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Button x:Name="NewLocationButton" Style="{StaticResource PrimaryButton}" Click="NewLocation_Click"
-                                Content="{DynamicResource Str_Loc_NewShort}" HorizontalAlignment="Stretch"
-                                Height="30" MinWidth="34" Padding="6,1" FontFamily="{DynamicResource WordmarkAccentFont}" FontSize="22" FontWeight="Normal"
+                                Content="{DynamicResource Str_Loc_NewShort}" HorizontalAlignment="Left"
+                                Height="26" MinWidth="34" Padding="12,0" FontFamily="{DynamicResource WordmarkAccentFont}" FontSize="17" FontWeight="Normal"
                                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
                             <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Loc_NewTitle}"/><Run Text=" (Ctrl+Alt+S)"/></TextBlock></Button.ToolTip>
                             <Button.ContentTemplate>
@@ -353,7 +353,7 @@
                             </Button.ContentTemplate>
                         </Button>
                         <Button Grid.Column="1" Style="{StaticResource SurfaceButton}" FontFamily="Segoe MDL2 Assets" FontSize="13"
-                                Content="&#xE8B5;" Width="40" Height="30" Padding="0" Margin="8,0,0,0" Click="ImportLocation_Click"
+                                Content="&#xE8B5;" Width="34" Height="26" Padding="0" Margin="6,0,0,0" Click="ImportLocation_Click"
                                 ToolTip="{DynamicResource Str_Loc_Import}"/>
                     </Grid>
                 </StackPanel>

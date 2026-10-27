@@ -25,6 +25,7 @@ namespace KillerScan.Controls
                            string initial, string confirmText, string cancelText)
         {
             InitializeComponent();
+            if (!DialogChrome.SetTitleIcon(TitleIcon)) TitleIcon.Visibility = Visibility.Collapsed;
 
             HeadingText.Text = heading;
             DetailText.Text = detail;

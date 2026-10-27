@@ -9,6 +9,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
 ### Fixed
+- On Cyanotic, Greed and Blood, selected rows and buttons use the theme's cream with dark text, and an unapproved device stays visible on a selected row.
+- New Location, rename and notes prompts show the app icon, and New Location no longer shows the current Location as if it were the name.
 - Dialogs have their padding back, and their title bars, icons and buttons match the rest of the family.
 - A window on a network a Location knows now opens in that Location, matched by gateway or by subnet.
 - A speed test blocked by a Cloudflare security challenge now says so, and a rejected upload reply shows its status, content type and the start of its body instead of only "invalid response" (#4).

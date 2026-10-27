@@ -670,7 +670,8 @@ namespace KillerScan.Controls
 
         private void CreateLocation()
         {
-            if (AskName("Str_Loc_NewTitle", string.Empty) is not { } name) return;
+            // No subtitle: the current Location is not what a new one is named after.
+            if (AskName("Str_Loc_NewTitle", string.Empty, string.Empty) is not { } name) return;
             if (LocationService.Create(name, out var created) && created != null)
                 SetLocation(LocationService.Get(created));
             else

@@ -36,9 +36,9 @@
 
     <SolidColorBrush x:Key="RowAltBrush" Color="#18FFFFFF" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="RowHoverBrush" Color="#54201f" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
-    <SolidColorBrush x:Key="RowSelectedBrush"    Color="#44f8c99e" po:Freeze="True"/>
-    <LinearGradientBrush x:Key="SelectionBg" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#60F8C99E" Offset="0"/><GradientStop Color="#30F8C99E" Offset="1"/></LinearGradientBrush>
-    <SolidColorBrush x:Key="SelectionFg" Color="#ffffff" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <LinearGradientBrush x:Key="RowSelectedBrush" StartPoint="0,0" EndPoint="0,1" po:Freeze="True"><GradientStop Color="#FFF8C99E" Offset="0"/><GradientStop Color="#FFD0A884" Offset="1"/></LinearGradientBrush>
+    <LinearGradientBrush x:Key="SelectionBg" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#FFF8C99E" Offset="0"/><GradientStop Color="#FFD0A884" Offset="1"/></LinearGradientBrush>
+    <SolidColorBrush x:Key="SelectionFg" Color="#2c1012" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
     <SolidColorBrush x:Key="InputBorderBrush" Color="#633030" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#160607" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
@@ -95,7 +95,7 @@
 
     <SolidColorBrush x:Key="AppBorderBrush" Color="#401d1d" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
-    <SolidColorBrush x:Key="GridSelectedTextBrush" Color="#fffde8" po:Freeze="True"/>
+    <SolidColorBrush x:Key="GridSelectedTextBrush" Color="#2c1012" po:Freeze="True"/>
     <SolidColorBrush x:Key="AccentLogo"     Color="#f8c99e" po:Freeze="True"/>
     <SolidColorBrush x:Key="TabActiveRingBrush"     Color="#f8c99e" po:Freeze="True"/>
     <SolidColorBrush x:Key="RadioAccent"    Color="#f8c99e" po:Freeze="True"/>
