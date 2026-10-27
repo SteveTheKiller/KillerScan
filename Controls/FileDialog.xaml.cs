@@ -1239,7 +1239,23 @@ namespace KillerScan.Controls
         /// </summary>
         private void Accept()
         {
-            if (IsDirectoryListingBusy || !IsDirectoryListingAvailable) return;
+            // Accept stays off while a listing loads or an accept is already running, so a double
+            // press or an Enter during the overwrite prompt cannot run it twice.
+            if (IsDirectoryListingBusy || !IsDirectoryListingAvailable || _accepting) return;
+            _accepting = true;
+            AcceptButton.IsEnabled = false;
+            try { AcceptCore(); }
+            finally
+            {
+                _accepting = false;
+                if (_pendingResult != true) AcceptButton.IsEnabled = IsDirectoryListingAvailable && !IsDirectoryListingBusy;
+            }
+        }
+
+        private bool _accepting;
+
+        private void AcceptCore()
+        {
             if (_mode == FileDialogMode.Folder)
             {
                 string folder = AcceptHighlightedFolder && FileList.SelectedItem is PickerEntry { IsFolder: true } selected

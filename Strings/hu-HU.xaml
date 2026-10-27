@@ -385,6 +385,7 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Ez a mappa nem létezik.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Lecseréli a következőt: {0}?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Csere</sys:String>
+    <sys:String x:Key="Str_Btn_Select">Kiválasztás</sys:String>
     <sys:String x:Key="Str_Dlg_Preview">Előnézet</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Rögzítés helyekre</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Távolítsa el a helyekről</sys:String>

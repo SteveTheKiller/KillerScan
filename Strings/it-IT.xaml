@@ -385,6 +385,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Quella cartella non esiste.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Sostituire {0}?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Sostituisci</sys:String>
+    <sys:String x:Key="Str_Btn_Select">Seleziona</sys:String>
     <sys:String x:Key="Str_Dlg_Preview">Anteprima</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Aggiungi ai percorsi</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Rimuovi dai percorsi</sys:String>

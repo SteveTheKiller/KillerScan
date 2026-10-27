@@ -349,6 +349,7 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Thư mục đó không tồn tại.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Thay thế {0}?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Thay thế</sys:String>
+    <sys:String x:Key="Str_Btn_Select">Chọn</sys:String>
     <sys:String x:Key="Str_Dlg_Preview">Xem trước</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Ghim vào vị trí</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Xóa khỏi vị trí</sys:String>

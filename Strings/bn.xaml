@@ -369,6 +369,7 @@
     <sys:String x:Key="Str_Dlg_NoSuchFolder">ওই ফোল্ডারটি নেই।</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">{0} প্রতিস্থাপন করবেন?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">পরিবর্তন</sys:String>
+    <sys:String x:Key="Str_Btn_Select">নির্বাচন করুন</sys:String>
     <sys:String x:Key="Str_Dlg_Preview">পূর্বরূপ</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">স্থানে পিন করুন</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">স্থান থেকে সরান</sys:String>

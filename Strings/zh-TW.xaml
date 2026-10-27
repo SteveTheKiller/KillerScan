@@ -369,6 +369,7 @@
     <sys:String x:Key="Str_Dlg_NoSuchFolder">該資料夾不存在。</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">要取代 {0} 嗎?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">取代</sys:String>
+    <sys:String x:Key="Str_Btn_Select">選擇</sys:String>
     <sys:String x:Key="Str_Dlg_Preview">預覽</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">釘選到位置</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">從位置移除</sys:String>

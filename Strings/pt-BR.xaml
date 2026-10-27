@@ -411,6 +411,7 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Essa pasta não existe.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Substituir {0}?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Substituir</sys:String>
+    <sys:String x:Key="Str_Btn_Select">Selecionar</sys:String>
     <sys:String x:Key="Str_Dlg_Preview">Visualização</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Fixar em locais</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Remover dos locais</sys:String>

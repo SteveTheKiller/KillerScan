@@ -369,6 +369,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Ce dossier n'existe pas.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Remplacer {0} ?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Remplacer</sys:String>
+    <sys:String x:Key="Str_Btn_Select">Sélectionner</sys:String>
     <sys:String x:Key="Str_Dlg_Preview">Aperçu</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Épingler aux emplacements</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Retirer des emplacements</sys:String>

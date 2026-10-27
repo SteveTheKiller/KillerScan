@@ -369,6 +369,7 @@
     <sys:String x:Key="Str_Dlg_NoSuchFolder">该文件夹不存在。</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">替换 {0}?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">替换</sys:String>
+    <sys:String x:Key="Str_Btn_Select">选择</sys:String>
     <sys:String x:Key="Str_Dlg_Preview">预览</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">固定到位置</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">从位置中移除</sys:String>

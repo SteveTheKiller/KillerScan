@@ -367,6 +367,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Tato složka neexistuje.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Nahradit {0}?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Nahradit</sys:String>
+    <sys:String x:Key="Str_Btn_Select">Vybrat</sys:String>
     <sys:String x:Key="Str_Dlg_Preview">Náhled</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Připnout k místům</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Odebrat z míst</sys:String>

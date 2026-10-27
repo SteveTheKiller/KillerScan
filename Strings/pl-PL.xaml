@@ -354,6 +354,7 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Ten folder nie istnieje.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Zastąpić {0}?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Zamień</sys:String>
+    <sys:String x:Key="Str_Btn_Select">Wybierz</sys:String>
     <sys:String x:Key="Str_Dlg_Preview">Podgląd</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Przypnij do miejsc</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Usuń z miejsc</sys:String>

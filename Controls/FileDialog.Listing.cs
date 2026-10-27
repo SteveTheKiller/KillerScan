@@ -44,6 +44,9 @@ namespace KillerScan.Controls
                 {
                     IsDirectoryListingBusy = false;
                     SelMeta.Text = Loc("Str_Dlg_NoSuchFolder");
+                    // A bad typed path goes back to the last folder that listed. _currentDir only
+                    // changes after a listing succeeds, so it is always that folder.
+                    if (_currentDir.Length > 0 && !string.Equals(_currentDir, directory, StringComparison.OrdinalIgnoreCase)) NavigateTo(_currentDir);
                     return;
                 }
                 IsDirectoryListingComplete = result.Complete && result.Entries.Count <= PickerDirectoryListing.MaximumEntries;
@@ -58,7 +61,7 @@ namespace KillerScan.Controls
                 token.ThrowIfCancellationRequested();
                 IsDirectoryListingBusy = false;
                 IsDirectoryListingAvailable = true;
-                AcceptButton.IsEnabled = true;
+                AcceptButton.IsEnabled = !_accepting;
                 UpButton.IsEnabled = System.IO.Directory.GetParent(directory) != null;
                 UpdateInfoSummary();
                 MutateListingRows(SyncPlacesSelection);

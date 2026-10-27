@@ -380,6 +380,7 @@
     <sys:String x:Key="Str_Dlg_NoSuchFolder">そのフォルダーは存在しません。</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">{0} を置き換えますか?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">置き換え</sys:String>
+    <sys:String x:Key="Str_Btn_Select">選択</sys:String>
     <sys:String x:Key="Str_Dlg_Preview">プレビュー</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">場所にピン留め</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">場所から削除</sys:String>

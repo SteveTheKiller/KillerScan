@@ -112,6 +112,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Film grain has crisper specks and fades midtones across app themes without dimming bright highlights.
 - The website's film grain is lighter, matching KillerTools, and the theme menu can turn it off (Alt+Shift+G). The top bar no longer leaves extra space above the page on narrower windows, and the release details box lifts with an accent border on hover.
 - Balanced the Technical page columns by moving the glossary to the left.
+- The file picker's Accept button can no longer fire twice: it stays off while a folder is loading or an accept is already running. A mistyped folder path now returns to the last folder that worked instead of leaving an empty list.
 
 ### Added
 - Drag a saved scan onto another Location in the Locations tree to move it there.

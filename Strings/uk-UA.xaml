@@ -411,6 +411,7 @@
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Такої папки не існує.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Замінити {0}?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Замінити</sys:String>
+    <sys:String x:Key="Str_Btn_Select">Вибрати</sys:String>
     <sys:String x:Key="Str_Dlg_Preview">Попередній перегляд</sys:String>
     <sys:String x:Key="Str_Menu_PinPlace">Закріпити в місцях</sys:String>
     <sys:String x:Key="Str_Menu_UnpinPlace">Прибрати з місць</sys:String>
