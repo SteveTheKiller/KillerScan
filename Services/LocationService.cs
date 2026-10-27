@@ -65,10 +65,9 @@ namespace KillerScan.Services
         }
 
         /// <summary>
-        /// Saved scans and Locations were two names for one idea: a named place with its target
-        /// and settings. A saved scan's name never reached the Location button, so a window
-        /// running "Home" still said Unassigned (Steve, 2026-10-26). Every saved scan, in any
-        /// Location, now becomes a Location of its own carrying its target, settings and adapter, and is
+        /// The old app-wide saved scans lived in Unassigned and were really places, so a window
+        /// running "Home" still said Unassigned (Steve, 2026-10-26). Each of them becomes a
+        /// Location of its own carrying its target, settings and adapter, and is
         /// removed only once that Location exists. A name already taken by a Location keeps that
         /// Location and fills in its target if it had none. Runs on every load; with nothing
         /// left to move it does nothing.
@@ -76,7 +75,9 @@ namespace KillerScan.Services
         private static void MigrateSavedScans()
         {
             if (!Editable) return;
-            foreach (var owner in Items.ToList())
+            // Only Unassigned's: those were the old app-wide saved scans. A real Location's saved
+            // scans are its own named networks and stay where they are.
+            foreach (var owner in Items.Where(item => item.Id == LocationCatalog.UnassignedId).ToList())
             {
                 var data = Get(owner);
                 foreach (var scan in data.SavedScans.Items.ToList())

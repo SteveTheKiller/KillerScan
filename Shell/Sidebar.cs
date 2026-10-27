@@ -92,7 +92,9 @@ namespace KillerScan.Shell
 
         private void InitSidebar()
         {
-            _sidebarCollapsed = App.GetSetting("HistorySidebarOpen") != "1";
+            // Always starts closed; a rail button opens it. Restoring the last open state brought
+            // History back on every launch whatever was open before (Steve, 2026-10-26).
+            _sidebarCollapsed = true;
             if (double.TryParse(App.GetSetting("HistorySidebarWidth"), NumberStyles.Float,
                     CultureInfo.InvariantCulture, out double width))
             {

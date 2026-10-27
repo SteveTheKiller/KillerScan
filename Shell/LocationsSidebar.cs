@@ -27,12 +27,12 @@ namespace KillerScan.Shell
 
         private void RefreshLocationsList()
         {
-            // Save works from an unsaved scan (Save to a Location) and inside a Location (save its run).
+            // Save works from an unsaved scan (Save to a Location) and inside a Location.
             SaveToLocationButton.IsEnabled = _scanWorkspace is { IsScanning: false } scanning
                 && (!scanning.IsUnsaved || LocationService.Items.Any(item => item.Id != LocationCatalog.UnassignedId));
             string? current = ShellLocation.Info?.Id;
             string? selectedLocation = (_selectedLocationNode as LocationRow)?.Info.Id;
-            var selectedScan = (_selectedLocationNode as ScanNode)?.Entry;
+            var selectedScan = (_selectedLocationNode as ScanNode)?.Profile;
             _selectedLocationNode = null;
             var rows = new List<LocationRow>();
             foreach (var item in LocationService.Items
@@ -48,14 +48,14 @@ namespace KillerScan.Shell
                     Detail = item.Customer.Length > 0 ? item.Customer
                         : item.Notes.Split('\n').Select(line => line.Trim()).FirstOrDefault(line => line.Length > 0) ?? string.Empty,
                 };
-                // Its deliberately saved scans, newest first, under it. Every run is in Scan
-                // history; this tree is for the ones the user chose to keep.
-                var store = LocationService.Get(item).History;
-                foreach (var entry in store.Entries.Where(entry => entry.Saved).OrderByDescending(entry => entry.ScannedAt))
+                // Its saved scans: the named networks this Location keeps, each a target and its
+                // settings (LAN, Guest Wi-Fi, Cameras). Results are never listed here; every run
+                // is in Scan history.
+                var store = LocationService.Get(item).SavedScans;
+                foreach (var profile in store.Items.OrderBy(profile => profile.Name, StringComparer.CurrentCultureIgnoreCase))
                 {
-                    entry.Owner = store;
-                    var node = new ScanNode(this) { Entry = entry, Location = row };
-                    if (selectedScan != null && entry.ScannedAt == selectedScan.ScannedAt && entry.Target == selectedScan.Target)
+                    var node = new ScanNode(this) { Profile = profile, Location = row };
+                    if (selectedScan != null && string.Equals(profile.Name, selectedScan.Name, StringComparison.OrdinalIgnoreCase))
                         node.IsSelected = true;
                     row.Children.Add(node);
                 }
@@ -121,30 +121,45 @@ namespace KillerScan.Shell
             else if (node is ScanNode scan)
             {
                 if (e.Key == Key.Enter) { OpenScan(scan); e.Handled = true; }
-                else if (e.Key == Key.F2) { RenameHistoryEntry(scan.Entry); e.Handled = true; }
-                else if (e.Key == Key.Delete) { DeleteHistoryEntry(scan.Entry); e.Handled = true; }
+                else if (e.Key == Key.F2) { RenameSavedScan(scan); e.Handled = true; }
+                else if (e.Key == Key.Delete) { DeleteSavedScan(scan); e.Handled = true; }
             }
         }
 
-        /// <summary>Opens a scan from the tree: into its Location if it is another one, then in
-        /// Scan history, selected there.</summary>
+        /// <summary>Opens a saved scan from the tree: into its Location if it is another one,
+        /// then its target, settings and adapter go into the scan bar, ready to scan.</summary>
         private void OpenScan(ScanNode scan)
         {
             if (ShellLocation.Info?.Id != scan.Location.Info.Id && !NewScan().OpenLocation(scan.Location.Info)) return;
-            RefreshHistoryList();
-            var match = HistoryList.Items.OfType<ScanHistoryEntry>()
-                .FirstOrDefault(entry => entry.ScannedAt == scan.Entry.ScannedAt && entry.Target == scan.Entry.Target);
-            if (match == null) return;
-            _syncingHistory = true;
-            try { HistoryList.SelectedItem = match; }
-            finally { _syncingHistory = false; }
-            ShowHistoryEntry();
+            if (_scanWorkspace is not { } workspace) return;
+            workspace.LoadProfile(scan.Profile);
+            workspace.AdapterChoice = scan.Profile.Adapter ?? string.Empty;
+            RefreshLocationsList();
+        }
+
+        private void RenameSavedScan(ScanNode scan)
+        {
+            var store = LocationService.Get(scan.Location.Info).SavedScans;
+            var dialog = new InputDialog(Loc("Str_History_Rename").TrimEnd('.'), scan.Profile.Target, Loc("Str_Rename_Label"),
+                scan.Profile.Name, Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
+            dialog.ShowDialog();
+            if (!dialog.Confirmed || dialog.Value.Length == 0 || dialog.Value == scan.Profile.Name) return;
+            bool saved = store.SaveEdited(dialog.Value, scan.Profile.Target, scan.Profile.Options, scan.Profile.Adapter ?? string.Empty)
+                && store.Delete(scan.Profile);
+            PersistenceFeedback.Check(saved, store.Retry, () => store.SaveError);
+            RefreshLocationsList();
+        }
+
+        private void DeleteSavedScan(ScanNode scan)
+        {
+            var store = LocationService.Get(scan.Location.Info).SavedScans;
+            PersistenceFeedback.Check(store.Delete(scan.Profile), store.Retry, () => store.SaveError);
             RefreshLocationsList();
         }
 
         private void ScanOpen_Click(object sender, RoutedEventArgs e) { if (ScanFor(sender) is { } scan) OpenScan(scan); }
-        private void ScanRename_Click(object sender, RoutedEventArgs e) { if (ScanFor(sender) is { } scan) RenameHistoryEntry(scan.Entry); }
-        private void ScanDelete_Click(object sender, RoutedEventArgs e) { if (ScanFor(sender) is { } scan) DeleteHistoryEntry(scan.Entry); }
+        private void ScanRename_Click(object sender, RoutedEventArgs e) { if (ScanFor(sender) is { } scan) RenameSavedScan(scan); }
+        private void ScanDelete_Click(object sender, RoutedEventArgs e) { if (ScanFor(sender) is { } scan) DeleteSavedScan(scan); }
 
         private void OpenLocation(LocationRow row)
         {
@@ -164,8 +179,8 @@ namespace KillerScan.Shell
             if (_scanWorkspace is not { } scan || sender is not Button button) return;
             if (!scan.IsUnsaved)
             {
-                // Already in a Location: save its current run there, optionally named.
-                var name = new InputDialog(Loc("Str_History_Rename").TrimEnd('.'), string.Empty, Loc("Str_Rename_Label"),
+                // Already in a Location: save the target and settings as one of its networks.
+                var name = new InputDialog(Loc("Str_History_Rename").TrimEnd('.'), scan.Targets.Trim(), Loc("Str_Rename_Label"),
                     string.Empty, Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
                 name.ShowDialog();
                 if (name.Confirmed && scan.SaveCurrentScan(name.Value)) RefreshLocationsList();
@@ -226,16 +241,15 @@ namespace KillerScan.Shell
     }
 
     /// <summary>A scan under its Location in the Locations tree.</summary>
+    /// <summary>A saved scan under its Location: a named target with its settings.</summary>
     internal sealed class ScanNode(MainWindow owner) : System.ComponentModel.INotifyPropertyChanged
     {
         private bool _isSelected;
-        public ScanHistoryEntry Entry { get; init; } = new();
+        public ScanProfile Profile { get; init; } = new();
         public LocationRow Location { get; init; } = null!;
-        public string Title => Entry.DisplayName;
-        public string When => Entry.ScannedAt.ToString("g", System.Globalization.CultureInfo.CurrentCulture);
-        /// <summary>The tree's one line: the scan's name, or its date when it has none.</summary>
-        public string Label => Entry.Name.Trim().Length > 0 ? Entry.Name.Trim() : When;
-        public string Tip => Entry.Target + Environment.NewLine + When;
+        /// <summary>The tree's one line: the saved scan's name, its target when it has none.</summary>
+        public string Label => Profile.Name.Trim().Length > 0 ? Profile.Name.Trim() : Profile.Target;
+        public string Tip => Profile.Target;
 
         public bool IsSelected
         {
@@ -244,6 +258,6 @@ namespace KillerScan.Shell
         }
 
         public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
-        public override string ToString() => Title + ", " + When;
+        public override string ToString() => Label + ", " + Profile.Target;
     }
 }

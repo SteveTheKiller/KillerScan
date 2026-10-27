@@ -142,7 +142,7 @@ namespace KillerScan.Services
         }
 
         /// <summary>Names one run, matched the same way <see cref="Remove"/> matches.</summary>
-        internal bool Rename(ScanHistoryEntry entry, string name, bool? saved = null)
+        internal bool Rename(ScanHistoryEntry entry, string name)
         {
             try
             {
@@ -152,7 +152,6 @@ namespace KillerScan.Services
                     var match = Entries.FirstOrDefault(item => item.ScannedAt == entry.ScannedAt && item.Target == entry.Target);
                     if (match == null) return false;
                     match.Name = name;
-                    if (saved is bool keep) match.Saved = keep;
                     Persist(Entries, Policy);
                     SaveError = null;
                     return true;

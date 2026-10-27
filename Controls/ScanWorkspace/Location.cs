@@ -629,18 +629,22 @@ namespace KillerScan.Controls
         /// then the tab moves to that Location.
         /// </summary>
         /// <summary>
-        /// Saves the latest run in this Location's own history, with an optional name. The
-        /// deliberate save when the scan is already in a Location (Save to covers an unsaved one).
+        /// Saves the scan bar's target, settings and adapter as one of this Location's networks,
+        /// under a name (the target when none is given). What is saved is the place to scan,
+        /// never a result: every run is already in Scan history.
         /// </summary>
-        internal bool SaveCurrentScan(string? name)
+        internal bool SaveCurrentScan(string? name) => SaveScanTo(_location, name);
+
+        private bool SaveScanTo(LocationData location, string? name)
         {
-            if (_disposed || IsScanning || IsUnsaved) return false;
-            var store = _location.History;
-            var latest = store.Entries.OrderByDescending(entry => entry.ScannedAt).FirstOrDefault();
-            if (latest == null) return false;
-            bool saved = store.Rename(latest, string.IsNullOrWhiteSpace(name) ? latest.Name : name!.Trim(), saved: true);
+            if (_disposed || IsScanning || location.IsTemporary) return false;
+            string target = Targets.Trim();
+            if (target.Length == 0) return false;
+            string label = string.IsNullOrWhiteSpace(name) ? target : name!.Trim();
+            var store = location.SavedScans;
+            bool saved = store.SaveEdited(label, target, _active.Options, _adapterChoice);
             PersistenceFeedback.Check(saved, store.Retry, () => store.SaveError);
-            HistoryRecorded?.Invoke(this, EventArgs.Empty);
+            LocationChanged?.Invoke(this, EventArgs.Empty);
             return saved;
         }
 
@@ -661,8 +665,8 @@ namespace KillerScan.Controls
             var runs = source.IsTemporary ? source.History.Entries.ToList()
                 : source.History.Entries.OrderByDescending(entry => entry.ScannedAt).Take(1).ToList();
             // The name, if one was given, labels the run being saved (one run from Unassigned).
-            if (!string.IsNullOrWhiteSpace(name) && runs.Count == 1) runs[0].Name = name!.Trim();
-            foreach (var run in runs) run.Saved = true;
+            // The scan itself (target and settings) is saved as one of the target's networks.
+            SaveScanTo(target, name);
             foreach (var entry in runs)
             {
                 bool adopted = target.History.Adopt(entry);
