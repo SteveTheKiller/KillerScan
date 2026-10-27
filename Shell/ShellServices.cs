@@ -14,6 +14,16 @@ namespace KillerScan.Shell
 
         string IShellServices.Loc(string key) => Services.LocaleManager.Loc(key);
 
-        void IShellServices.SetStatus(string text) => StatusText.Text = text;
+        void IShellServices.SetStatus(string text)
+        {
+            bool handled = false;
+            SetStatusText(text, ref handled);
+            if (!handled) StatusText.Text = text;
+        }
+
+        /// <summary>App hook: show a feature's status line the app's own way (a held message that
+        /// routine updates must not replace, a crash-report breadcrumb). Set
+        /// <paramref name="handled"/> to skip the kit's plain StatusText write.</summary>
+        partial void SetStatusText(string text, ref bool handled);
     }
 }
