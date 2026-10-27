@@ -47,12 +47,13 @@ namespace KillerScan.Services
                 + "if([IO.Directory]::Exists($item) -and ([IO.File]::GetAttributes($item) -band [IO.FileAttributes]::ReparsePoint)){throw 'Uninstall cannot traverse a linked installation path.'}};\n";
             if (machine)
             {
-                string thumb = CodeSignature.GetSignerInfo().thumb;
+                // The registered command outlives updates, so it holds the image to the publisher
+                // name, not a thumbprint that a renewed certificate would change.
                 script += "$acl=[IO.Directory]::GetAccessControl($root);$creator=[Security.Principal.WindowsIdentity]::GetCurrent();"
                     + "try{$creatorOwner=$creator.Owner.Value}finally{$creator.Dispose()};" + MachineDirectoryPolicy
                     + "$signature=Get-AuthenticodeSignature -LiteralPath $image;"
-                    + "if($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Thumbprint -ne " + Data(thumb)
-                    + "){throw 'The installed uninstall helper does not match its trusted publisher.'};\n";
+                    + "if($signature.Status -ne 'Valid' -or $signature.SignerCertificate.GetNameInfo([Security.Cryptography.X509Certificates.X509NameType]::SimpleName,$false) -notlike ('*'+"
+                    + Data(AppInfo.SignerName) + "+'*')){throw 'The installed uninstall helper does not match its trusted publisher.'};\n";
             }
             // A machine uninstall asks in the unelevated wrapper below, before the UAC prompt.
             const string confirmation = "$confirm=[Diagnostics.Process]::Start($image,'/confirm-uninstall');if($null -eq $confirm){throw 'The uninstall confirmation did not start.'};"

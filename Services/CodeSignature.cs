@@ -70,8 +70,10 @@ namespace KillerScan.Services
         /// <summary>
         /// Whether <paramref name="candidate"/> may replace the signed exe at
         /// <paramref name="current"/>. A copy with a valid signature only accepts a replacement
-        /// whose signature also validates and names the same publisher: the certificate subject,
-        /// which stays the same across certificate renewals. An unsigned copy (a local or
+        /// whose signature also validates and names the same publisher (<see cref="SamePublisher"/>).
+        /// Publisher identity is the certificate subject's common name, never the thumbprint: a renewed
+        /// certificate has a new thumbprint, and can carry new address fields, for the same publisher.
+        /// A copy whose own signature is present but fails accepts nothing. An unsigned copy (a local or
         /// development build) has no publisher to hold a replacement to, and accepts it as before.
         /// </summary>
         internal static bool MayReplace(string current, string candidate)
@@ -81,14 +83,24 @@ namespace KillerScan.Services
                 // Keep the current bytes stable while distinguishing an unsigned local image
                 // from a signed image whose verification failed or could not be completed.
                 using var currentImage = new FileStream(current, FileMode.Open, FileAccess.Read, FileShare.Read);
-                var (currentValid, _, _, currentPublisher) = Inspect(current);
+                var (currentValid, currentSubject, _, currentPublisher) = Inspect(current);
                 if (!currentValid)
                     return currentPublisher.Length == 0 && IsUnsignedImage(currentImage);
-                var (candidateValid, _, _, candidatePublisher) = Inspect(candidate);
-                return candidateValid && currentPublisher.Length > 0
-                    && string.Equals(currentPublisher, candidatePublisher, StringComparison.Ordinal);
+                var (candidateValid, candidateSubject, _, _) = Inspect(candidate);
+                return candidateValid && SamePublisher(currentSubject, candidateSubject);
             }
             catch { return false; }
+        }
+
+        /// <summary>True when two certificate subjects, as simple names (the common name), name the same
+        /// publisher. Case-insensitive; an empty or placeholder subject never matches. Thumbprints play
+        /// no part, so a renewed certificate of the same publisher matches.</summary>
+        internal static bool SamePublisher(string? current, string? candidate)
+        {
+            current = current?.Trim(); candidate = candidate?.Trim();
+            return !string.IsNullOrEmpty(current) && !string.IsNullOrEmpty(candidate)
+                && current != "(not signed)" && current != "(unavailable)"
+                && string.Equals(current, candidate, StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool IsUnsignedImage(FileStream image)

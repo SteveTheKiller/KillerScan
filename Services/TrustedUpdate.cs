@@ -77,10 +77,10 @@ namespace KillerScan.Services
                     ?? throw new SecurityException("The machine staging creator owner is unavailable."));
                 string download = ReleaseIdentity.RequireLocalFile(Encoding.Unicode.GetString(Convert.FromBase64String(args[1])));
                 string expected = args[2], version = NormalizeVersion(args[3]);
-                // The staged image must carry the installed publisher's certificate (ReleaseIdentity
-                // below), so the publication helper holds the published image to that thumbprint.
-                string signer = CodeSignature.GetSignerInfo().thumb;
-                UpdateImagePublication.RememberVerified(download, expected, signer);
+                // The publication helper pins the published image to the thumbprint of the file just
+                // verified (ReleaseIdentity in Stage below), never the installed copy's own, so a
+                // release signed with the publisher's renewed certificate still publishes.
+                string signer = string.Empty;
                 if (!Guid.TryParseExact(args[6], "N", out _)) throw new SecurityException("The update staging identity is invalid.");
                 int parentId = int.Parse(args[4], CultureInfo.InvariantCulture);
                 long parentTicks = long.Parse(args[5], CultureInfo.InvariantCulture);
@@ -94,7 +94,14 @@ namespace KillerScan.Services
                 if (!Hex(hash.ComputeHash(source)).Equals(expected, StringComparison.OrdinalIgnoreCase))
                     throw new SecurityException("The update changed after download verification.");
                 string staged = Path.Combine(directory, ".update-" + args[6] + ".exe");
-                Stage(download, staged, expected, image => ReleaseIdentity.Verify(image, version, requireInstalledSignature: true));
+                Stage(download, staged, expected, image =>
+                {
+                    string thumb = ReleaseIdentity.Verify(image, version, requireInstalledSignature: true);
+                    if (signer.Length != 0 && !string.Equals(signer, thumb, StringComparison.OrdinalIgnoreCase))
+                        throw new SecurityException("The staged update is not the verified download.");
+                    signer = thumb;
+                    if (image == download) UpdateImagePublication.RememberVerified(download, expected, signer);
+                });
                 string originalHash;
                 using (var original = new FileStream(target, FileMode.Open, FileAccess.Read, FileShare.Read))
                     originalHash = Hex(hash.ComputeHash(original));

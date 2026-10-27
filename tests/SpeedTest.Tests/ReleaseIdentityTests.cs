@@ -9,7 +9,7 @@ using KillerScan.Services;
 /// staging cleanup, and the local-file gate on the elevated helper's download argument.</summary>
 internal static class ReleaseIdentityTests
 {
-    private const string Publisher = "AB12";
+    private const string Publisher = "Open Source Developer Stephen Riley";
 
     internal static void Run()
     {
@@ -34,18 +34,21 @@ internal static class ReleaseIdentityTests
             throw new InvalidOperationException("Accepted " + what + ".");
         }
 
-        Accept("a newer release from the installed publisher", Image("KillerScan", "1.9.1.0"), "v1.9.1", (true, Publisher), (true, "ab12"));
+        Accept("a newer release from the installed publisher", Image("KillerScan", "1.9.1.0"), "v1.9.1", (true, Publisher), (true, Publisher));
+        Accept("a release signed by the publisher's renewed certificate", Image("KillerScan", "1.9.1.0"), "v1.9.1", (true, Publisher), (true, Publisher.ToUpperInvariant()));
         Accept("a signed release on an unsigned local build", Image("KillerScan", "1.9.1.0"), "1.9.1", (false, "(none)"), (true, Publisher));
         Refuse("an unsigned download", Image("KillerScan", "1.9.1.0"), "v1.9.1", (true, Publisher), (false, "(none)"));
         Refuse("an unsigned download on an unsigned build", Image("KillerScan", "1.9.1.0"), "v1.9.1", (false, "(none)"), (false, "(none)"));
-        Refuse("another publisher's signature", Image("KillerScan", "1.9.1.0"), "v1.9.1", (true, Publisher), (true, "CD34"));
+        Refuse("another publisher's signature", Image("KillerScan", "1.9.1.0"), "v1.9.1", (true, Publisher), (true, "Open Source Developer Someone Else"));
+        Refuse("a subject that only contains the publisher name", Image("KillerScan", "1.9.1.0"), "v1.9.1", (true, Publisher), (true, "Stephen Riley Imitations Ltd"));
+        Refuse("an invalid signature from the publisher", Image("KillerScan", "1.9.1.0"), "v1.9.1", (true, Publisher), (false, Publisher));
         Refuse("another product", Image("KillerNotes", "1.9.1.0"), "v1.9.1", (true, Publisher), (true, Publisher));
         Refuse("the running version", Image("KillerScan", "1.9.0.0"), "v1.9.0", (true, Publisher), (true, Publisher));
         Refuse("an older signed release", Image("KillerScan", "1.8.3.0"), "v1.8.3", (true, Publisher), (true, Publisher));
         Refuse("an image whose version differs from its tag", Image("KillerScan", "1.9.2.0"), "v1.9.1", (true, Publisher), (true, Publisher));
         Refuse("a malformed tag", Image("KillerScan", "1.9.1.0"), "latest", (true, Publisher), (true, Publisher));
         Refuse("an unsigned elevated helper", Image("KillerScan", "1.9.1.0"), "1.9.1", (false, "(none)"), (true, Publisher), strict: true);
-        Console.WriteLine("PASS update identity requires the installed publisher, the product and a newer matching version.");
+        Console.WriteLine("PASS update identity requires the installed publisher (any of its certificates), the product and a newer matching version.");
 
         // Without a seam for a real signature, an ordinary build of this runner is the unsigned image.
         string unsigned = Assembly.GetExecutingAssembly().Location;
