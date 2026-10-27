@@ -45,10 +45,14 @@ namespace KillerScan.Services
 
         /// <summary>Throws unless <paramref name="package"/> (an installer or launcher, not this
         /// app's assembly) has a valid signature whose subject names the publisher, from the same
-        /// certificate as the running copy when that copy is signed, under the same-publisher rule.</summary>
+        /// certificate as the running copy when that copy is signed, under the same-publisher rule,
+        /// and whose file version is the offered <paramref name="version"/>, newer than the running copy.</summary>
         /// <returns>The thumbprint of the certificate that signed it.</returns>
-        internal static string VerifyPackage(string package)
+        internal static string VerifyPackage(string package, string version)
         {
+            var file = FileVersionInfo.GetVersionInfo(package);
+            VerifyPackageVersion(new Version(file.FileMajorPart, file.FileMinorPart, file.FileBuildPart, file.FilePrivatePart),
+                version, Assembly.GetExecutingAssembly().GetName().Version!);
             var installed = CodeSignature.GetSignerInfo();
             var incoming = CodeSignature.GetSignerInfo(package);
             if (!incoming.valid)
@@ -62,6 +66,16 @@ namespace KillerScan.Services
             if (!CodeSignature.MayReplace(current, package))
                 throw new SecurityException("The update is not signed by the publisher of the installed copy.");
             return incoming.thumb;
+        }
+
+        /// <summary>Throws unless the package's file version equals the offered <paramref name="version"/>
+        /// and that version is newer than <paramref name="installed"/>, by the same rule Verify applies to the app's own exe.</summary>
+        internal static void VerifyPackageVersion(Version package, string version, Version installed)
+        {
+            string requested = NormalizeVersion(version);
+            if (NormalizeVersion(package.ToString()) != requested
+                || Version.Parse(requested) <= Version.Parse(NormalizeVersion(installed.ToString())))
+                throw new SecurityException("The update package's version does not match a newer " + AppInfo.DisplayName + " release.");
         }
 
         internal static void Verify(AssemblyName incoming, string version, Version installed,

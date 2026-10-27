@@ -270,6 +270,7 @@ function Invoke-UpdateInstaller {
     param($plan, $ops)
     $stage = $null
     $hold = $null
+    $installed = $false
     try {
         $source = & $ops.OpenImage $plan.Download
         try {
@@ -287,6 +288,7 @@ function Invoke-UpdateInstaller {
         if (-not (& $ops.Publisher $staged $plan)) { throw 'The staged installer is not signed by the publisher.' }
         $code = & $ops.Run $staged $plan.Arguments
         if ($code -ne 0) { throw ('The installer exited with code ' + $code + '.') }
+        $installed = $true
     }
     catch {
         $message = 'Update installation failed: ' + $_.Exception.Message + [Environment]::NewLine + 'Download: ' + $plan.Download +
@@ -298,7 +300,8 @@ function Invoke-UpdateInstaller {
     finally {
         if ($null -ne $hold) { $hold.Dispose() }
         if ($null -ne $stage) { try { [IO.Directory]::Delete($stage, $true) } catch { } }
-        try { [IO.File]::Delete($plan.Download) } catch { }
+        # A failed install keeps the download its report names for recovery.
+        if ($installed) { try { [IO.File]::Delete($plan.Download) } catch { } }
     }
     try { & $ops.Relaunch $plan } catch { }
     return $true

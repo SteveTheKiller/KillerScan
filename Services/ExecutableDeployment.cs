@@ -57,7 +57,8 @@ namespace KillerScan.Services
         /// Deletes the backups earlier publications left beside <paramref name="destination"/>. Replacing
         /// a running exe renames the mapped image to its backup, which cannot be deleted until that
         /// process exits, so it is cleared by the next publication or uninstall instead. Only regular
-        /// files named exactly "&lt;destination&gt;.&lt;32 hex&gt;.bak" are touched, and one still in use stays.
+        /// files named exactly "&lt;destination&gt;.&lt;32 hex&gt;.bak" are touched, and one still in use, or one a failed
+        /// publication kept for recovery (marked by a ".keep" file beside it), stays.
         /// </summary>
         internal static void RemoveRetiredBackups(string destination) => RemoveRetiredBackups(destination, new FileOperations());
 
@@ -80,6 +81,8 @@ namespace KillerScan.Services
                 try
                 {
                     if ((File.GetAttributes(path) & (FileAttributes.ReparsePoint | FileAttributes.Directory)) != 0) continue;
+                    // A failed publication told the user to keep this backup for recovery.
+                    if (File.Exists(path + KeepMarker)) continue;
                 }
                 catch { continue; }
                 TryDelete(path, files);
@@ -136,8 +139,14 @@ namespace KillerScan.Services
             }
         }
 
+        private const string KeepMarker = ".keep";
+
+        /// <summary>Marks the backup as a recovery file before naming it, so a later publication leaves it alone.</summary>
         private static IOException RecoveryError(string staged, string backup, Exception error)
-            => new IOException("The executable could not be published. Recovery files were kept. Staged: " + staged + ". Backup: " + backup, error);
+        {
+            if (File.Exists(backup)) { try { File.WriteAllText(backup + KeepMarker, string.Empty); } catch { } }
+            return new IOException("The executable could not be published. Recovery files were kept. Staged: " + staged + ". Backup: " + backup, error);
+        }
 
         private static void TryDelete(string path, FileOperations files)
         {

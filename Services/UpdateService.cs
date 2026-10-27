@@ -145,7 +145,7 @@ namespace KillerScan.Services
             {
                 // An installer or launcher package is not this app's assembly, so it is held to the
                 // publisher's signature alone; the app's own exe also has to be a newer release of it.
-                signer = target.IsPackage ? ReleaseIdentity.VerifyPackage(path)
+                signer = target.IsPackage ? ReleaseIdentity.VerifyPackage(path, tag)
                     : ReleaseIdentity.Verify(path, tag, requireInstalledSignature: false);
             }
             catch { DiscardDownload(path); throw; }
@@ -215,8 +215,7 @@ namespace KillerScan.Services
             string script = "$ErrorActionPreference = 'Stop'\n"
                 + TrustedUpdate.Wait(self.Id, self.StartTime.ToUniversalTime().Ticks) + "\n";
             if (target.WaitForProcess > 0)
-                script += "while (Get-Process -Id " + target.WaitForProcess.ToString(CultureInfo.InvariantCulture)
-                    + " -ErrorAction SilentlyContinue) { Start-Sleep -Milliseconds 500 }\n";
+                script += LauncherWait(target.WaitForProcess);
             if (target.InstallerArguments is null)
                 script += UpdateImagePublication.Script(download, replaced, elevate, ReleasesUrl, AppInfo.DisplayName,
                     showReport: !elevate);
@@ -233,6 +232,14 @@ namespace KillerScan.Services
             if (platform.Start(start) is null)
                 throw new IOException("The update helper did not start. Download retained at: " + download);
         }
+
+        /// <summary>Waits for the launcher <paramref name="processId"/> to exit, for at most five minutes. The launcher
+        /// exposes only its process ID, so the deadline keeps a reused or hung ID from holding the helper forever;
+        /// past it, the publication goes ahead and reports its own failure if the launcher is still locked.</summary>
+        internal static string LauncherWait(int processId)
+            => "$deadline = [DateTime]::UtcNow.AddMinutes(5)\n"
+                + "while ((Get-Process -Id " + processId.ToString(CultureInfo.InvariantCulture)
+                + " -ErrorAction SilentlyContinue) -and [DateTime]::UtcNow -lt $deadline) { Start-Sleep -Milliseconds 500 }\n";
 
         /// <summary>Starts Windows PowerShell directly with the whole unelevated helper in its command line.</summary>
         internal static ProcessStartInfo HelperStart(string script)
