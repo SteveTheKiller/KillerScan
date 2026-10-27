@@ -379,6 +379,7 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Minden fájl</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Fájlnév:</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">Fájl típusa:</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">Helyek</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">Itt semmi sem egyezik az aktuális fájltípussal.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Nincs elérhető előnézet</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Ez a fájl nem létezik.</sys:String>

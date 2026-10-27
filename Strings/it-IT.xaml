@@ -379,6 +379,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Tutti i file</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Nome file:</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">Tipo di file:</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">Posizioni</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">Niente qui corrisponde al tipo di file corrente.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Nessuna anteprima disponibile</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Quel file non esiste.</sys:String>

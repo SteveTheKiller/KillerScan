@@ -405,6 +405,7 @@
     <sys:String x:Key="Str_Dlg_AllFiles">Барлық файлдар</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Файл атауы:</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">Файл түрі:</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">Орындар</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">Мұнда ағымдағы файл түріне сәйкес ештеңе жоқ.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Алдын ала қарау қолжетімсіз</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Мұндай файл жоқ.</sys:String>

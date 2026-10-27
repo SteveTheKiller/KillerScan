@@ -389,6 +389,7 @@
     <sys:String x:Key="Str_Dlg_AllFiles">Все файлы</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Имя файла:</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">Тип файла:</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">Места</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">Здесь нет ничего, что подходит под текущий тип файла.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Предпросмотр недоступен</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Такого файла не существует.</sys:String>

@@ -363,6 +363,7 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Todos los archivos</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Nombre de archivo:</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">Tipo de archivo:</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">Lugares</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">Aquí no hay nada que coincida con el tipo de archivo actual.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Vista previa no disponible</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Ese archivo no existe.</sys:String>

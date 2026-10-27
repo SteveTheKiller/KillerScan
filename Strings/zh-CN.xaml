@@ -363,6 +363,7 @@
     <sys:String x:Key="Str_Dlg_AllFiles">所有文件</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">文件名:</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">文件类型:</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">位置</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">此处没有符合当前文件类型的内容。</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">无预览</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">该文件不存在。</sys:String>

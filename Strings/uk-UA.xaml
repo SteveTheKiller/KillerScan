@@ -405,6 +405,7 @@
     <sys:String x:Key="Str_Dlg_AllFiles">Усі файли</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Ім'я файлу:</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">Тип файлу:</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">Місця</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">Тут немає файлів поточного типу.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Попередній перегляд недоступний</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Такого файлу не існує.</sys:String>

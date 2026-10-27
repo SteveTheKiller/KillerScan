@@ -361,6 +361,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Všechny soubory</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Název souboru:</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">Typ souboru:</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">Místa</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">Zde nic neodpovídá aktuálnímu typu souboru.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Náhled není k dispozici</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Tento soubor neexistuje.</sys:String>

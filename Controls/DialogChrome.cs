@@ -58,8 +58,8 @@ namespace KillerScan.Controls
         private static object? Res(string key) => Application.Current?.TryFindResource(key);
 
         /// <summary>
-        /// The caption content: either the Punktype and Lacquer wordmark or, on a theme that declares
-        /// UseDialogCaption, an icon and a plain bold title in the chrome font.
+        /// The caption content: the Punktype and Lacquer wordmark, and an icon with a plain bold
+        /// title in the chrome font for a theme that declares UseDialogCaption.
         ///
         /// ChromeTextBrush and not TextBrush for the neutral half: a caption band is a dark
         /// gradient on several themes, and TextBrush is the color calibrated for the CONTENT
@@ -67,76 +67,63 @@ namespace KillerScan.Controls
         /// </summary>
         public static UIElement Wordmark(string subtitle)
         {
-            // ONE of the two is built, chosen by the theme. This deliberately does NOT build both
-            // and bind Visibility: a dialog is short-lived and rebuilt on open, where the main
-            // window persists across a live theme switch and does need the bound pair.
-            if (Res("UseDialogCaption") != null)
-            {
-                // Icon + bold title, from the SAME keys the main window's caption uses, so the two
-                // cannot disagree: TitleIconSize, TitleIconMargin, ChromeFontFamily, ChromeTextBrush.
-                var row = new StackPanel
-                {
-                    Orientation = Orientation.Horizontal,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                };
-
-                if (IconUri != null)
-                {
-                    var icon = new AppIcon
-                    {
-                        VerticalAlignment = VerticalAlignment.Center,
-                    };
-                    icon.SetResourceReference(FrameworkElement.WidthProperty, "TitleIconSize");
-                    icon.SetResourceReference(FrameworkElement.HeightProperty, "TitleIconSize");
-                    icon.SetResourceReference(FrameworkElement.MarginProperty, "TitleIconMargin");
-                    SetTitleIcon(icon);
-                    row.Children.Add(icon);
-                }
-
-                var plain = new TextBlock
-                {
-                    Text = subtitle.Length > 0 ? AppName + " - " + subtitle : AppName,
-                    FontSize = 11,
-                    FontWeight = FontWeights.Bold,   // match the main window's plain title exactly
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-                plain.SetResourceReference(TextBlock.FontFamilyProperty, "ChromeFontFamily");
-                plain.SetResourceReference(TextBlock.ForegroundProperty, "ChromeTextBrush");
-                row.Children.Add(plain);
-                return row;
-            }
-
-            var wf = Res("WordmarkFont") as FontFamily;
+            // BOTH captions are ALWAYS built, and the theme's PlainTitleVisibility and
+            // WordmarkVisibility keys (the pair the main title bar binds) pick one. A dialog left
+            // open through a live theme switch must not keep the logotype painted over a Win98
+            // caption, or the plain title over a wordmark theme.
             var host = new Grid { HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Center };
 
+            // Icon + bold title, from the SAME keys the main window's caption uses, so the two
+            // cannot disagree: TitleIconSize, TitleIconMargin, ChromeFontFamily, ChromeTextBrush.
+            var flatRow = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Left,
+            };
+            flatRow.SetResourceReference(UIElement.VisibilityProperty, "PlainTitleVisibility");
+            if (TitleIcon() is AppIcon flatIcon) flatRow.Children.Add(flatIcon);
+            var plain = new TextBlock
+            {
+                Text = subtitle.Length > 0 ? AppName + " - " + subtitle : AppName,
+                FontSize = 11,
+                FontWeight = FontWeights.Bold,   // match the main window's plain title exactly
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            plain.SetResourceReference(TextBlock.FontFamilyProperty, "ChromeFontFamily");
+            plain.SetResourceReference(TextBlock.ForegroundProperty, "ChromeTextBrush");
+            flatRow.Children.Add(plain);
+            host.Children.Add(flatRow);
+
             // The app icon leads the wordmark, as it does in the main window's title bar.
+            var wf = Res("WordmarkFont") as FontFamily;
             var markRow = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
             };
-            if (IconUri != null)
+            markRow.SetResourceReference(UIElement.VisibilityProperty, "WordmarkVisibility");
+            if (TitleIcon() is AppIcon markIcon) markRow.Children.Add(markIcon);
+
+            // Main title bar geometry: the negative margins keep Lacquer's deep descent out of
+            // the layout so the caption band never clips the drips, and the 5px lift matches the
+            // main window's wordmark.
+            var mark = new Grid
             {
-                var markIcon = new AppIcon
-                {
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-                markIcon.SetResourceReference(FrameworkElement.WidthProperty, "TitleIconSize");
-                markIcon.SetResourceReference(FrameworkElement.HeightProperty, "TitleIconSize");
-                markIcon.SetResourceReference(FrameworkElement.MarginProperty, "TitleIconMargin");
-                SetTitleIcon(markIcon);
-                markRow.Children.Add(markIcon);
-            }
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, -18, 0, -22),
+                RenderTransform = new TranslateTransform(0, -5),
+            };
 
             // Shadow copy first, offset a pixel and blurred, so the mark lifts off the band.
             var shadowInk = new SolidColorBrush(Color.FromArgb(0xD8, 0, 0, 0));
             var shadow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(1, 2, 0, 0) };
-            if (Res("WordmarkShadowOpacity") is double sop) shadow.Opacity = sop;
+            shadow.SetResourceReference(UIElement.OpacityProperty, "WordmarkShadowOpacity");
             shadow.Effect = new BlurEffect { Radius = 3 };
             shadow.Children.Add(Text(wf, subtitle, "", "", "", shadowInk));
-            host.Children.Add(shadow);
+            mark.Children.Add(shadow);
             // Light/Yellow: the accent half is yellow on a light band, so it gets the same dark
             // halo the main window's wordmark has. WordmarkAccentShadowOpacity is 0 everywhere else.
             var accentShadow = Text(wf, subtitle, "", "", "", Brushes.Transparent);
@@ -145,16 +132,32 @@ namespace KillerScan.Controls
             accentShadow.IsHitTestVisible = false;
             accentShadow.Effect = new BlurEffect { Radius = 3 };
             accentShadow.SetResourceReference(UIElement.OpacityProperty, "WordmarkAccentShadowOpacity");
-            host.Children.Add(accentShadow);
+            mark.Children.Add(accentShadow);
 
             // The subtitle takes ChromeTextBrush too, NOT MutedTextBrush. Muted is a color mixed
             // against the CONTENT surface; on a theme that paints a real caption band it lands
             // dark-on-dark and the subtitle disappears while the app name beside it stays perfectly
             // readable. Chrome text is the band's own color by definition. The subtitle still reads
             // as secondary because it is lighter weight and a size down.
-            host.Children.Add(Text(wf, subtitle, "ChromeTextBrush", "AccentLogo", "ChromeTextBrush"));
-            markRow.Children.Add(host);
-            return markRow;
+            mark.Children.Add(Text(wf, subtitle, "ChromeTextBrush", "AccentLogo", "ChromeTextBrush"));
+            markRow.Children.Add(mark);
+            host.Children.Add(markRow);
+            return host;
+        }
+
+        /// <summary>The app icon at the main title bar's size and spacing, or null without an IconUri.</summary>
+        private static AppIcon? TitleIcon()
+        {
+            if (IconUri == null) return null;
+            var icon = new AppIcon
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            icon.SetResourceReference(FrameworkElement.WidthProperty, "TitleIconSize");
+            icon.SetResourceReference(FrameworkElement.HeightProperty, "TitleIconSize");
+            icon.SetResourceReference(FrameworkElement.MarginProperty, "TitleIconMargin");
+            SetTitleIcon(icon);
+            return icon;
         }
 
         private static TextBlock Text(FontFamily? wf, string subtitle,

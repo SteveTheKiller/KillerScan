@@ -363,6 +363,7 @@
     <sys:String x:Key="Str_Dlg_AllFiles">সব ফাইল</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">ফাইলের নাম:</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">ফাইলের ধরন:</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">স্থান</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">বর্তমান ফাইলের ধরনের সঙ্গে এখানে কিছুই মেলে না।</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">কোনো প্রিভিউ নেই</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">ওই ফাইলটি নেই।</sys:String>

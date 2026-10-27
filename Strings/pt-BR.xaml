@@ -405,6 +405,7 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Todos os arquivos</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Nome do arquivo:</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">Tipo de arquivo:</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">Locais</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">Nada aqui corresponde ao tipo de arquivo atual.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Nenhuma visualização disponível</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Esse arquivo não existe.</sys:String>

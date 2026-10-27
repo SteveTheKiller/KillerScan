@@ -363,6 +363,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Tous les fichiers</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Nom du fichier :</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">Type de fichier :</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">Emplacements</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">Rien ici ne correspond au type de fichier actuel.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Aucun aperçu disponible</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Ce fichier n'existe pas.</sys:String>

@@ -348,6 +348,7 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Wszystkie pliki</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Nazwa pliku:</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">Typ pliku:</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">Miejsca</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">Nic tutaj nie pasuje do bieżącego typu pliku.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Podgląd niedostępny</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Ten plik nie istnieje.</sys:String>

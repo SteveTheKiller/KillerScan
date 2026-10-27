@@ -363,6 +363,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Tüm dosyalar</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Dosya adı:</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">Dosya türü:</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">Konumlar</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">Burada geçerli dosya türüyle eşleşen bir şey yok.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Önizleme yok</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Bu dosya mevcut değil.</sys:String>

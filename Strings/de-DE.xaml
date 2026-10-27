@@ -364,6 +364,7 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Alle Dateien</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Dateiname:</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">Dateityp:</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">Orte</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">Hier passt nichts zum aktuellen Dateityp.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Keine Vorschau verfügbar</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Diese Datei existiert nicht.</sys:String>

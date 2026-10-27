@@ -343,6 +343,7 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Dlg_AllFiles">Tất cả tệp</sys:String>
     <sys:String x:Key="Str_Dlg_FileName">Tên tệp:</sys:String>
     <sys:String x:Key="Str_Dlg_FileType">Loại tệp:</sys:String>
+    <sys:String x:Key="Str_Dlg_Places">Vị trí</sys:String>
     <sys:String x:Key="Str_Dlg_NoMatchingFiles">Không có tệp nào khớp với loại tệp hiện tại.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Không có bản xem trước</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Tệp đó không tồn tại.</sys:String>
