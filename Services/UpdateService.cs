@@ -87,19 +87,25 @@ namespace KillerScan.Services
                 var json = await http.GetStringAsync(
                     $"https://api.github.com/repos/{AppInfo.GitHubRepo}/releases/latest")
                     .ConfigureAwait(false);
-
-                // Only a published, stable vX.Y.Z release is offered (KillerBench's release check).
-                if (Regex.IsMatch(json, "\"(draft|prerelease)\"\\s*:\\s*true")) return null;
-                var m = Regex.Match(json, "\"tag_name\"\\s*:\\s*\"(v?[0-9]+\\.[0-9]+\\.[0-9]+)\"");
-                if (!m.Success) return null;
-                if (!Version.TryParse(m.Groups[1].Value.TrimStart('v'), out var latest))
-                    return null;
-
-                var cur = new Version(current.Major, current.Minor, current.Build < 0 ? 0 : current.Build);
-                var lat = new Version(latest.Major, latest.Minor, latest.Build < 0 ? 0 : latest.Build);
-                return lat > cur ? $"v{lat.ToString(3)}" : null;
+                return NewerReleaseTag(json, current);
             }
             catch { return null; }
+        }
+
+        /// <summary>The release in GitHub's latest-release <paramref name="json"/>, as "v1.2.3",
+        /// when it is a published, stable vX.Y.Z release newer than <paramref name="current"/>
+        /// (KillerBench's release check). Null for anything else.</summary>
+        internal static string? NewerReleaseTag(string json, Version current)
+        {
+            if (Regex.IsMatch(json, "\"(draft|prerelease)\"\\s*:\\s*true")) return null;
+            var m = Regex.Match(json, "\"tag_name\"\\s*:\\s*\"(v?[0-9]+\\.[0-9]+\\.[0-9]+)\"");
+            if (!m.Success) return null;
+            if (!Version.TryParse(m.Groups[1].Value.TrimStart('v'), out var latest))
+                return null;
+
+            var cur = new Version(current.Major, current.Minor, current.Build < 0 ? 0 : current.Build);
+            var lat = new Version(latest.Major, latest.Minor, latest.Build < 0 ? 0 : latest.Build);
+            return lat > cur ? $"v{lat.ToString(3)}" : null;
         }
 
         /// <summary>Downloads the released exe for <paramref name="tag"/>, checks it against the

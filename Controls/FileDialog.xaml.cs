@@ -1363,6 +1363,8 @@ namespace KillerScan.Controls
                         "",
                         Loc("Str_Btn_Replace"),
                         Loc("Str_Btn_Cancel")) { Owner = this };
+                    // Enter keeps the existing file, as Windows' own replace prompt does.
+                    confirm.DefaultToCancel();
                     confirm.ShowDialog();
                     if (!confirm.Confirmed) { FileNameBox.Focus(); return; }
                 }

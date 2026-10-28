@@ -35,8 +35,10 @@ using System.Windows.Interop;
 //      on the main window, which also works while it is hidden in the tray.
 //   5. The icon's Exit, and Exit from the app menu, go through CloseToTray.Exit: it brings the
 //      window back and closes it the normal way, so the window's own quit and save prompts run
-//      and can cancel. A confirmed close then shuts the app down. An update or an uninstall
-//      calls Application.Shutdown, which never hides to the tray.
+//      and can cancel. A confirmed close then closes the app's other main windows the same way,
+//      one at a time, and shuts the app down after the last; a Cancel on any of them keeps that
+//      window and the app open. An update or an uninstall calls Application.Shutdown, which
+//      never hides to the tray.
 //   6. Optional Attach arguments; apps that pass none behave exactly as before:
 //      canExit   asked before a tray Exit and when Windows ends the session; false keeps the app
 //                running (and cancels the session end), for unsaved work the user declined to lose.
@@ -72,6 +74,9 @@ namespace KillerFamily.Shell
         private readonly uint _taskbarCreated;
         private readonly IntPtr _icon;
         private bool _iconShown, _exiting, _exitRequested, _disposed;
+
+        // Every attached main window, so a confirmed Exit can close the others the normal way.
+        private static readonly List<CloseToTray> s_open = [];
 
         // WPF's own shutdown flag. Application.Shutdown closes every window through OnClosing
         // and ignores a cancel, so without it a hide would skip the app's save and then close
@@ -128,14 +133,26 @@ namespace KillerFamily.Shell
             window.PreviewKeyDown += EndExitRequest;
             Application.Current.SessionEnding += SessionEnding;
             Application.Current.Exit += ApplicationExit;
+            s_open.Add(this);
         }
 
         private void WindowClosed(object? sender, EventArgs e)
         {
             bool quit = _exitRequested;
             Dispose();
-            // The close Exit started went through: quit the app, any other windows included.
-            if (quit) Application.Current?.Shutdown();
+            if (!quit) return;
+            // The close Exit started went through. Close the next main window the normal way, so
+            // its own save prompt runs and Cancel keeps it (and the app) open; Application.Shutdown
+            // would ignore that Cancel. When the last one has closed, the app shuts down.
+            if (s_open.Count > 0) s_open[0].CloseForExit();
+            else Application.Current?.Shutdown();
+        }
+
+        private void CloseForExit()
+        {
+            ShowWindow();
+            _exitRequested = true;
+            _window.Close();
         }
 
         private void EndExitRequest(object sender, RoutedEventArgs e) => _exitRequested = false;
@@ -145,6 +162,10 @@ namespace KillerFamily.Shell
             if (e.Cancel) return;
             if (_canExit != null && !_canExit()) { e.Cancel = true; return; }
             _exiting = true;
+            // Later SessionEnding work (an app's own unsaved-changes check) can still cancel the
+            // session end. Windows then carries on, so the tray must too: once the request is over
+            // and the app is not shutting down, Exit, the icon and hiding work again.
+            Application.Current?.Dispatcher.InvokeAsync(() => { if (!_disposed && !AppShuttingDown()) _exiting = false; });
         }
 
         private void ApplicationExit(object sender, ExitEventArgs e) => Dispose();
@@ -156,9 +177,7 @@ namespace KillerFamily.Shell
         {
             if (_disposed || _exiting || _exitRequested) return;
             if (_canExit != null && !_canExit()) return;
-            ShowWindow();
-            _exitRequested = true;
-            _window.Close();
+            CloseForExit();
         }
 
         /// <summary>Brings the window back from the tray, the taskbar or behind other windows.</summary>
@@ -289,6 +308,7 @@ namespace KillerFamily.Shell
         {
             if (_disposed) return;
             _disposed = true;
+            s_open.Remove(this);
             HideIcon();
             if (_icon != IntPtr.Zero) DestroyIcon(_icon);
             _source.RemoveHook(WndProc);

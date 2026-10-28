@@ -185,14 +185,16 @@ namespace KillerScan.Services
             // member, so it is mapped by hand before TryParse gets a look at it.
             string? saved = GetSetting(ThemeKey);
             _current = saved == "98SE" ? Theme.SE98
-                     : Enum.TryParse<Theme>(saved, out var t) ? t
+                     : Enum.TryParse<Theme>(saved, out var t) && Enum.IsDefined(typeof(Theme), t) ? t
                      : (Elevated ? Theme.Blood : _current);
 
-            _darkAccent  = Enum.TryParse<Accent>(GetSetting("DarkAccent"),  out var da) ? da : _darkAccent;
-            _lightAccent = Enum.TryParse<Accent>(GetSetting("LightAccent"), out var la) ? la : _lightAccent;
-            _blackAccent = Enum.TryParse<Accent>(GetSetting("BlackAccent"), out var ba) ? ba : _blackAccent;
+            // TryParse also accepts any number ("99"), which names no theme file; IsDefined keeps
+            // a damaged setting from failing startup.
+            _darkAccent  = Enum.TryParse<Accent>(GetSetting("DarkAccent"),  out var da) && Enum.IsDefined(typeof(Accent), da) ? da : _darkAccent;
+            _lightAccent = Enum.TryParse<Accent>(GetSetting("LightAccent"), out var la) && Enum.IsDefined(typeof(Accent), la) ? la : _lightAccent;
+            _blackAccent = Enum.TryParse<Accent>(GetSetting("BlackAccent"), out var ba) && Enum.IsDefined(typeof(Accent), ba) ? ba : _blackAccent;
             // SE98Accent is the spelling some apps once wrote.
-            _se98Accent  = Enum.TryParse<Accent>(GetSetting("98SEAccent") ?? GetSetting("SE98Accent"), out var wa) ? wa : _se98Accent;
+            _se98Accent  = Enum.TryParse<Accent>(GetSetting("98SEAccent") ?? GetSetting("SE98Accent"), out var wa) && Enum.IsDefined(typeof(Accent), wa) ? wa : _se98Accent;
             LoadDict(_current);
         }
 
