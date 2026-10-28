@@ -120,16 +120,28 @@ jobs:
               Add-Result 'Chocolatey' $fallback[0] $fallback[1]
           }
 
+          # A throttled or failing GitHub (429, 5xx, no response) says nothing about the package, so it
+          # reports Unchecked instead of falling through to Missing. A merged PR counts as published,
+          # because raw.githubusercontent.com can lag behind the merge.
           $wingetUrl = "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/$env:WINGET_MANIFEST_ROOT/$version/$env:WINGET_ID.yaml"
-          if ((Get-HttpStatus $wingetUrl) -eq 200) {
+          $wingetStatus = Get-HttpStatus $wingetUrl
+          if ($wingetStatus -eq 200) {
               Add-Result 'WinGet' 'Published' "$env:WINGET_ID $version"
           } else {
-              $search = gh search prs "New version: $env:WINGET_ID version $version" --repo microsoft/winget-pkgs --state open --limit 1 --json url
-              $pulls = @($search | ConvertFrom-Json)
-              if ($pulls.Count -and $age.TotalDays -ge 7) {
-                  Add-Result 'WinGet' 'Missing' ($pulls[0].url + ' is still open after seven days')
-              } elseif ($pulls.Count) {
-                  Add-Result 'WinGet' 'Pending' $pulls[0].url
+              $title = "New version: $env:WINGET_ID version $version"
+              $search = gh pr list --repo microsoft/winget-pkgs --state all --search "`"$title`" in:title" --limit 10 --json url,state,title
+              $searchFailed = $LASTEXITCODE -ne 0
+              $pulls = @(if (-not $searchFailed) { $search | ConvertFrom-Json | Where-Object { $_.title -eq $title } })
+              $merged = @($pulls | Where-Object state -eq 'MERGED')
+              $open = @($pulls | Where-Object state -eq 'OPEN')
+              if ($merged.Count) {
+                  Add-Result 'WinGet' 'Published' "$($merged[0].url) is merged"
+              } elseif ($open.Count -and $age.TotalDays -ge 7) {
+                  Add-Result 'WinGet' 'Missing' ($open[0].url + ' is still open after seven days')
+              } elseif ($open.Count) {
+                  Add-Result 'WinGet' 'Pending' $open[0].url
+              } elseif ($searchFailed -or $wingetStatus -eq 0 -or $wingetStatus -eq 429 -or $wingetStatus -ge 500) {
+                  Add-Result 'WinGet' 'Unchecked' "GitHub returned $wingetStatus, so the next run checks again"
               } else {
                   $fallback = Get-PublishFallback 'WinGet Release' $age
                   Add-Result 'WinGet' $fallback[0] $fallback[1]
