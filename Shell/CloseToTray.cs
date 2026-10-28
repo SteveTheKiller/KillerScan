@@ -271,7 +271,8 @@ namespace KillerFamily.Shell
 
         private void ShowMenu()
         {
-            var menu = new ContextMenu { Placement = PlacementMode.MousePoint };
+            var menu = new ContextMenu();
+            AnchorToPointer(menu);
             foreach (var item in _items)
             {
                 var row = new MenuItem { Header = item.Header() };
@@ -290,6 +291,53 @@ namespace KillerFamily.Shell
             SetForegroundWindow(_source.Handle);
             menu.IsOpen = true;
         }
+
+        /// <summary>
+        /// The icon's menu opens the way Windows' own tray menus do: the card's bottom-left corner at
+        /// the pointer, rising out of the notification area; to the pointer's left near the right
+        /// edge of the screen, and downward under a taskbar at the top.
+        ///
+        /// MousePoint placement did not do this. It drops a menu below the pointer when it fits and
+        /// flips it above when it does not, and the ContextMenu style's shadow-halo offsets are only
+        /// right for the downward case, so a short menu covered the icons while a taller one floated
+        /// about 40px above them: one placement, different in every app (Steve, 2026-10-27).
+        ///
+        /// With no PlacementTarget, a Custom placement is measured from the screen's top-left, in
+        /// device pixels, so the candidates are the pointer itself less the card's halo.
+        /// </summary>
+        internal static void AnchorToPointer(ContextMenu menu)
+        {
+            if (!GetCursorPos(out POINT cursor)) { menu.Placement = PlacementMode.MousePoint; return; }
+            menu.Placement = PlacementMode.Custom;
+            menu.HorizontalOffset = menu.VerticalOffset = 0;
+            menu.CustomPopupPlacementCallback = (popupSize, _, _) =>
+            {
+                double scale = PresentationSource.FromVisual(menu)?.CompositionTarget?.TransformToDevice.M11 ?? 1;
+                Thickness halo = menu.Template?.FindName("MenuRoot", menu) is FrameworkElement root ? root.Margin : new Thickness(22, 18, 22, 26);
+                return Candidates(new Point(cursor.X, cursor.Y), popupSize, halo, scale);
+            };
+        }
+
+        /// <summary>Where the menu may go, best first, in device pixels: its visible card two pixels
+        /// from the pointer, above right, above left, below right, below left.</summary>
+        internal static CustomPopupPlacement[] Candidates(Point pointer, Size popupSize, Thickness halo, double scale)
+        {
+            const double gap = 2;
+            double rightX = pointer.X - (halo.Left - gap) * scale, leftX = pointer.X - popupSize.Width + (halo.Right - gap) * scale;
+            double upY = pointer.Y - popupSize.Height + (halo.Bottom - gap) * scale, downY = pointer.Y - (halo.Top - gap) * scale;
+            return
+            [
+                new CustomPopupPlacement(new Point(rightX, upY), PopupPrimaryAxis.None),
+                new CustomPopupPlacement(new Point(leftX, upY), PopupPrimaryAxis.None),
+                new CustomPopupPlacement(new Point(rightX, downY), PopupPrimaryAxis.None),
+                new CustomPopupPlacement(new Point(leftX, downY), PopupPrimaryAxis.None),
+            ];
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT { public int X, Y; }
+
+        [DllImport("user32.dll")] private static extern bool GetCursorPos(out POINT point);
 
         private NOTIFYICONDATA Data(uint flags) => new()
         {
