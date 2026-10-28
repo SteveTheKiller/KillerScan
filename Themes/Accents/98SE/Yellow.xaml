@@ -5,6 +5,7 @@
   <SolidColorBrush x:Key="TextSelectionBrush" Color="#FFD94D"/>
   <SolidColorBrush x:Key="SelectionFg" Color="#24231C"/>
   <SolidColorBrush x:Key="ChromeTextBrush" Color="#24231C"/>
+  <SolidColorBrush x:Key="FilenameBrush" Color="#24231C"/>
   <SolidColorBrush x:Key="TextSelectionTextBrush" Color="#24231C"/>
   <SolidColorBrush x:Key="MenuHoverBrush" Color="#FFD94D"/>
   <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#24231C"/>
