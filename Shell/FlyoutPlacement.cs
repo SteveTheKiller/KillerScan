@@ -59,8 +59,19 @@ namespace KillerScan.Controls
         private const double Inset = 8;
         private static readonly Thickness DefaultCardHalo = new(22, 18, 22, 26);
 
-        private static FrameworkElement? _pane;
-        private static FrameworkElement? _root;
+        // Held weakly: every window points these at itself, and a strong static reference kept the
+        // last window that did so alive after it closed (KillerPDF's window collection check).
+        private static WeakReference<FrameworkElement>? _paneRef, _rootRef;
+        private static FrameworkElement? _pane
+        {
+            get => _paneRef != null && _paneRef.TryGetTarget(out var pane) ? pane : null;
+            set => _paneRef = value == null ? null : new WeakReference<FrameworkElement>(value);
+        }
+        private static FrameworkElement? _root
+        {
+            get => _rootRef != null && _rootRef.TryGetTarget(out var root) ? root : null;
+            set => _rootRef = value == null ? null : new WeakReference<FrameworkElement>(value);
+        }
         private static SidebarSide _side;
 
         /// <summary>The content pane. Set once at startup; every flyout positions against it.

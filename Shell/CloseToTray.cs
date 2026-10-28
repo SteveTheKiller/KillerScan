@@ -65,6 +65,7 @@ namespace KillerFamily.Shell
         private const uint NIF_MESSAGE = 1, NIF_ICON = 2, NIF_TIP = 4, NIF_INFO = 0x10;
         private const uint NIIF_INFO = 1, NIIF_NOSOUND = 0x10;
         private const int WM_LBUTTONUP = 0x0202, WM_RBUTTONUP = 0x0205, WM_CONTEXTMENU = 0x007B, NIN_SELECT = 0x0400, NIN_KEYSELECT = 0x0401, NIN_BALLOONUSERCLICK = 0x0405;
+        private const int WM_ENDSESSION = 0x0016;
 
         private readonly Window _window;
         private readonly string _appName;
@@ -266,6 +267,10 @@ namespace KillerFamily.Shell
                 // The icon could not come back: bring the window back so the app is reachable.
                 if (!_iconShown && !_window.IsVisible) ShowWindow();
             }
+            // WM_ENDSESSION with wParam FALSE: the session end was canceled (by this app's own check
+            // or another one), so the tray works again at once. The queued reset in SessionEnding
+            // covers a cancel that arrives without this message.
+            else if (msg == WM_ENDSESSION && wParam == IntPtr.Zero && !_disposed) _exiting = false;
             return IntPtr.Zero;
         }
 
