@@ -217,13 +217,9 @@ namespace KillerScan.Controls
                 : Loc("Str_Loc_Title") + ": " + LocationName + "\n\n" + notes;
         }
 
-        // Locations live in the sidebar (Shell/LocationsSidebar.cs): a click opens it. The quick
-        // dropdown stays on right-click for switching without leaving the table.
-        private void LocationButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!LocationButton.IsEnabled) return;
-            ManageLocationsRequested?.Invoke(this, EventArgs.Empty);
-        }
+        // The picker: a click (or a right-click) opens the dropdown. The sidebar's Locations list
+        // is for managing them, through Manage Locations at the foot of the dropdown.
+        private void LocationButton_Click(object sender, RoutedEventArgs e) => OpenLocationMenu();
 
         private void OpenLocationMenu()
         {
@@ -270,6 +266,38 @@ namespace KillerScan.Controls
                 menu.Items.Add(item);
             }
 
+            // This Location's saved scans, under the Locations: a click loads one into the scan
+            // bar, ready to scan. A nicknamed scan shows its target on the right.
+            var scans = SavedScansHere();
+            if (scans.Count > 0)
+            {
+                menu.Items.Add(new Separator());
+                foreach (var profile in scans)
+                {
+                    var captured = profile;
+                    var item = new DetailMenuItem
+                    {
+                        Header = ScanLabel(profile),
+                        InputGestureText = HasNickname(profile) ? profile.Target : string.Empty,
+                        Icon = MenuGlyph.Create(0xE81C),
+                        IsEnabled = !IsScanning,
+                    };
+                    item.Click += (_, _) => LoadSavedScan(captured);
+                    menu.Items.Add(item);
+                }
+            }
+
+            if (!DemoMode && LocationService.Editable)
+            {
+                menu.Items.Add(new Separator());
+                menu.Items.Add(BuildSaveScanItem());
+                if (scans.Count > 0 && !_location.IsShared)
+                {
+                    menu.Items.Add(ScanSubmenu("Str_History_Rename", 0xE8AC, scans, RenameSavedScan));
+                    menu.Items.Add(ScanSubmenu("Str_Loc_DeleteScan", 0xE74D, scans, DeleteSavedScan));
+                }
+            }
+
             if (_location.IsTemporary && _location.History.Entries.Count > 0 && LocationService.Items.Count > 0 && !DemoMode)
             {
                 menu.Items.Add(new Separator());
@@ -300,6 +328,126 @@ namespace KillerScan.Controls
             }
             return menu;
         }
+
+        private List<ScanProfile> SavedScansHere() => _location.IsTemporary ? []
+            : _location.SavedScans.Items.OrderBy(ScanLabel, StringComparer.CurrentCultureIgnoreCase).ToList();
+
+        /// <summary>A name other than the target itself (a blank save stores the target as the name).</summary>
+        private static bool HasNickname(ScanProfile profile) => profile.Name.Trim().Length > 0
+            && !string.Equals(profile.Name.Trim(), profile.Target.Trim(), StringComparison.OrdinalIgnoreCase);
+
+        private static string ScanLabel(ScanProfile profile) => HasNickname(profile) ? profile.Name.Trim() : profile.Target;
+
+        /// <summary>Puts a saved scan's target, settings and adapter into the scan bar. Scanning is
+        /// a separate press, so loading and running stay distinct.</summary>
+        internal void LoadSavedScan(ScanProfile profile)
+        {
+            if (IsScanning) return;
+            LoadProfile(profile);
+            AdapterChoice = profile.Adapter ?? string.Empty;
+            _loadedScan = profile;
+        }
+
+        // The saved scan last loaded from the picker, so saving it out of the migrated holding
+        // Location moves it rather than copying it.
+        private ScanProfile? _loadedScan;
+
+        private void MoveOutOfHolding(LocationInfo target, string? name)
+        {
+            if (!SaveScanInto(LocationService.Get(target), name)) return;
+            if (_loadedScan is { } moved && _location.SavedScans.Items.Contains(moved)
+                && string.Equals(moved.Target.Trim(), Targets.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                _loadedScan = null;
+                DeleteSavedScan(moved);
+            }
+        }
+
+        private MenuItem ScanSubmenu(string key, int glyph, List<ScanProfile> scans, Action<ScanProfile> act)
+        {
+            var parent = new MenuItem { Icon = MenuGlyph.Create(glyph), IsEnabled = !IsScanning };
+            parent.SetResourceReference(HeaderedItemsControl.HeaderProperty, key);
+            foreach (var profile in scans)
+            {
+                var captured = profile;
+                var item = new MenuItem { Header = ScanLabel(profile) };
+                item.Click += (_, _) => act(captured);
+                parent.Items.Add(item);
+            }
+            return parent;
+        }
+
+        /// <summary>
+        /// Save scan: inside a Location it asks for an optional name and saves the scan bar there.
+        /// On an unsaved scan it opens a list of Locations (and New Location) to save into, which
+        /// also moves the unsaved results there.
+        /// </summary>
+        private MenuItem BuildSaveScanItem()
+        {
+            var save = new MenuItem { Icon = MenuGlyph.Create(0xE74E), IsEnabled = !IsScanning };
+            save.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Loc_SaveScan");
+            if (!IsUnsaved && !InImportedScans)
+            {
+                save.Click += (_, _) =>
+                {
+                    var dialog = new InputDialog(Loc("Str_Loc_SaveScan"), Targets.Trim(), Loc("Str_Rename_Label"),
+                        string.Empty, Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
+                    dialog.ShowDialog();
+                    if (dialog.Confirmed) SaveCurrentScan(dialog.Value);
+                };
+                return save;
+            }
+            foreach (var info in LocationService.Items.Where(item => item.Id != LocationCatalog.UnassignedId
+                             && !LocationService.IsImportedScans(item))
+                         .OrderBy(item => item.Name, StringComparer.CurrentCultureIgnoreCase))
+            {
+                var captured = info;
+                var item = new MenuItem { Header = info.ToString() };
+                item.Click += (_, _) =>
+                {
+                    // Optional name; blank keeps the target as its label.
+                    var dialog = new InputDialog(Loc("Str_Loc_SaveScan"), captured.ToString(), Loc("Str_Rename_Label"),
+                        string.Empty, Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
+                    dialog.ShowDialog();
+                    if (!dialog.Confirmed) return;
+                    if (InImportedScans) MoveOutOfHolding(captured, dialog.Value);
+                    else SaveResultsTo(LocationService.Get(captured), dialog.Value);
+                };
+                save.Items.Add(item);
+            }
+            if (save.Items.Count > 0) save.Items.Add(new Separator());
+            save.Items.Add(MenuText("Str_Loc_New", CreateLocationAndSave, true, 0xE710));
+            return save;
+        }
+
+        /// <summary>Renames a saved scan of this Location. A blank name goes back to the target,
+        /// which is what an un-nicknamed scan shows.</summary>
+        private void RenameSavedScan(ScanProfile profile)
+        {
+            var dialog = new InputDialog(Loc("Str_History_Rename"), profile.Target, Loc("Str_Rename_Label"),
+                HasNickname(profile) ? profile.Name : string.Empty, Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
+            dialog.ShowDialog();
+            if (!dialog.Confirmed) return;
+            string name = dialog.Value.Trim();
+            if (name.Length == 0) name = profile.Target;
+            if (name == profile.Name) return;
+            var store = _location.SavedScans;
+            bool saved = store.SaveEdited(name, profile.Target, profile.Options, profile.Adapter ?? string.Empty)
+                && store.Delete(profile);
+            PersistenceFeedback.Check(saved, store.Retry, () => store.SaveError);
+            LocationChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void DeleteSavedScan(ScanProfile profile)
+        {
+            var store = _location.SavedScans;
+            PersistenceFeedback.Check(store.Delete(profile), store.Retry, () => store.SaveError);
+            if (InImportedScans) SavedScansEmptied?.Invoke(this, EventArgs.Empty);
+            LocationChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>The migrated holding Location lost a scan; the shell retires it once empty.</summary>
+        public event EventHandler? SavedScansEmptied;
 
         // ── Suggesting a Location ──────────────────────────────────────────────────────────
         // A completed scan records the gateway's MAC in its Location. When the machine is on a

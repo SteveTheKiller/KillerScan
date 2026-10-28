@@ -193,6 +193,7 @@ namespace KillerScan.Shell
                     UpdateWorkspaceStatus();
                 };
                 _scanWorkspace.ManageLocationsRequested += (_, _) => ShowLocationsSection();
+                _scanWorkspace.SavedScansEmptied += (_, _) => RetireHoldingLocation();
                 // Everything bound with DynamicResource follows a language change on its own. The
                 // status line and the device count do not: they are composed in code and stored,
                 // so they are re-stated here from the state the workspace is in.

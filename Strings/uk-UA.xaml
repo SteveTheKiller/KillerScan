@@ -467,6 +467,7 @@
     <sys:String x:Key="Str_Loc_DeleteTitle">Видалити локацію</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Видалити {0}? Її збережені сканування, імена пристроїв, схвалення та історія зникнуть із KillerScan. Файли зберігаються в папці локацій «deleted», тож їх можна відновити.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Видалити</sys:String>
+    <sys:String x:Key="Str_Loc_DeleteScan">Видалити сканування</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Зупиніть сканування, перш ніж змінювати локацію.</sys:String>
     <sys:String x:Key="Str_Loc_DeletedElsewhere">Локацію «{0}» видалено в іншому вікні. Ці результати тепер належать до режиму «Тимчасове сканування». Щоб зберегти їх, виберіть «Зберегти результати в локацію».</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Цей файл локації більший за {0} MB, а це більше, ніж імпортує KillerScan.</sys:String>

@@ -467,6 +467,7 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteTitle">Excluir Local</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Excluir {0}? As verificações salvas, os nomes de dispositivos, as aprovações e o histórico dele saem do KillerScan. Os arquivos ficam guardados na pasta "deleted" dos Locais, então podem ser recuperados.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Excluir</sys:String>
+    <sys:String x:Key="Str_Loc_DeleteScan">Excluir varredura</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Pare a verificação antes de trocar de Local.</sys:String>
     <sys:String x:Key="Str_Loc_DeletedElsewhere">O Local {0} foi excluído em outra janela. Estes resultados agora são uma “Verificação temporária”. Para mantê-los, escolha “Salvar resultados no Local”.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Este arquivo de Local tem mais de {0} MB, mais do que o KillerScan importa.</sys:String>

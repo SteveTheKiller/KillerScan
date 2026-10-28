@@ -27,7 +27,6 @@ namespace KillerScan.Shell
             new KillerFamily.Accessibility.OverlayFocus(this).Track(ShortcutsOverlay, AboutOverlay);
             InitRailOrder();
             InitHistoryDelete();
-            InitLocationsDrag();
             var titleFrames = System.Windows.Media.Imaging.BitmapDecoder.Create(
                 new System.Uri("pack://application:,,,/Resources/ks-icon.ico"),
                 System.Windows.Media.Imaging.BitmapCreateOptions.None,

@@ -132,7 +132,8 @@ Where 1.9.0 differs from the plan above:
 - **History.** "Show all Locations" is on the History button's right-click menu.
 - **Temporary results.** "Save results to Location" moves a Temporary scan's history entries and typed names into a Location without approving anything or touching its baseline.
 
-- **Manage Locations.** Opens a Locations section in the sidebar, with no rail button of its own so the rail order is unchanged. Each row switches (click or Enter), renames (F2), edits notes, exports or deletes (Delete). The old Profiles section is titled Saved scans and lists the current Location's saved scans.
+- **Location picker.** The Location button sits at the start of the scan bar. A click opens a dropdown with every Location (the current one checked), then the current Location's saved scans, then Save scan, Rename scan and Delete scan, then New, Edit, Export, Import and Manage Locations. Clicking a saved scan loads its target, settings and adapter without scanning. Loading a scan from the migrated Saved scans Location and saving it into another Location moves it there.
+- **Manage Locations.** Opens a Locations section in the sidebar, with no rail button of its own so the rail order is unchanged. It is one flat list of Locations, with a check on the current one and no saved scans under them. A click selects, a double-click or Enter switches, F2 edits and Delete deletes; the right-click menu does the same plus Export. The footer has New and Import; saving a scan is in the picker.
 - **Deleting a Location.** Asks first, removes it from the list, and moves its folder to `locations\.deleted\<id>-<time>` so it can be recovered by hand. A workspace in that Location becomes a Temporary scan. Nothing ever empties the deleted folder.
 
 Still open:

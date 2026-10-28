@@ -423,6 +423,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteTitle">Odstranit Lokalitu</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Odstranit {0}? Její uložené skeny, názvy zařízení, schválení a historie budou z KillerScan odebrány. Soubory zůstanou ve složce "deleted" Lokalit, takže je lze obnovit.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Odstranit</sys:String>
+    <sys:String x:Key="Str_Loc_DeleteScan">Odstranit sken</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Před změnou Lokality zastavte skenování.</sys:String>
     <sys:String x:Key="Str_Loc_DeletedElsewhere">Lokalita {0} byla smazána v jiném okně. Tyto výsledky jsou nyní v režimu „Dočasný sken“. Chcete-li je zachovat, zvolte „Uložit výsledky do Lokality“.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Tento soubor Lokality je větší než {0} MB, což je víc, než KillerScan importuje.</sys:String>

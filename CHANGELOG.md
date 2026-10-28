@@ -118,8 +118,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - The file picker's recent locations and places lists are named for screen readers.
 
 ### Added
-- Drag a saved scan onto another Location in the Locations tree to move it there.
-- Locations can carry an icon (Home, Office, Shop, School, Server room, Cloud, Wi-Fi spot or the pin), picked from a button beside the name in New and Rename Location, and shown in the Locations tree and on the Location button.
+- Locations can carry an icon (Home, Office, Shop, School, Server room, Cloud, Wi-Fi spot or the pin), picked from a button beside the name in New and Rename Location, and shown in the Locations list and on the Location button.
 - Save to puts the unsaved scan on screen into an existing Location, with an optional name.
 - Scans in history can be named (right-click Rename scan, or F2); an unnamed scan shows its target.
 - Delete a scan from Scan history with right-click Delete or the Delete key.
@@ -131,13 +130,13 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - The PowerShell `scan` command takes `-Demo` for fabricated screenshot data.
 - Locations keep each customer site's saved scans, device names, approvals, type overrides, SSH usernames and history separate. Pick one from the Location button beside the target box, or run a Temporary scan that saves nothing. Changing Location clears the results on screen, so a rename or approval never lands in the wrong site, and leaving unsaved Temporary results asks first. On first start, everything you already had moves into a Location named Unassigned, and the original files are left in place.
 - The first scan in a Location sets a baseline of Known devices without approving any. Later scans flag devices that are new since that baseline, and the device mark shows approved, new and known.
-- Saved scans belong to a Location and can be saved in place or under a new name. Picking a Location restores its last targets and settings without scanning.
+- Saved scans belong to a Location and are listed in the Location button's dropdown under the Locations. Clicking one loads its target, settings and adapter into the scan bar without scanning. Save scan, Rename scan and Delete scan are in the same dropdown. Picking a Location restores its last targets and settings without scanning.
 - Each Location has notes for the gateway, VLANs, quirks or who to call, shown in the Location button's tooltip.
 - Export Location saves a Location to one `.ksloc` file to import on another PC. Remembered SSH usernames are left out unless you tick the box, and passwords are never stored. Import always adds a new Location and never runs or scans anything. It reads the file in the background and refuses files over 256 MB.
 - When the network's gateway has been seen in a Location, a banner offers to switch to it. It never switches by itself, offers nothing when more than one Location matches beyond listing them, and Dismiss hides it until KillerScan restarts. It reads the gateway from Windows' own ARP cache, so checking sends nothing, and screen readers announce it.
 - Scan settings has a Network adapter choice. Picking an adapter sends every probe from it, so Ethernet, Wi-Fi and VPN adapters on the same PC no longer mix results. A bound scan reaches the adapter's own network and anything Windows already routes through it, such as hosts behind a VPN adapter; a target Windows would send out another adapter is refused with a message naming both. Saved scans keep their adapter, and if it is not connected KillerScan asks before using the adapter Windows chooses. A bound scan finds hosts only in its own adapter's ARP table. Each run records the adapter it used, and HTML reports show the Location and adapter.
 - Save results to Location moves a Temporary scan's history and any names you typed into a Location, without approving anything.
-- Manage Locations on the Location button opens a sidebar list of every Location, with the current one marked. Each can be switched to, renamed, given notes, exported or deleted. Deleting moves the Location's files aside to a deleted folder rather than erasing them. The Profiles section is now called Saved scans.
+- Manage Locations on the Location button opens a sidebar list of every Location, with a check on the current one. A click selects a Location, and a double-click or Enter switches to it. Each can be renamed, given notes, exported or deleted from its right-click menu. Deleting moves the Location's files aside to a deleted folder rather than erasing them. The Profiles section is now called Saved scans.
 - History lists the current Location's scans. Right-click the History button and choose Show all Locations to list every Location's scans, each labeled with its Location.
 - `/scan` and `/probe` take `/location <name or ID>`, and the PowerShell `scan` and `probe` commands take `-Location`. An unknown or shared name is a usage error. The terminal's Scan button scans in the current Location.
 - `/scan` and `/probe` take `/skip <checks>`, and the PowerShell `scan` and `probe` commands take `-Skip`, to turn off the same checks Scan settings offers. The terminal's Scan button uses the current Scan settings.
@@ -150,7 +149,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 
 ### Changed
 - Confirmation prompts, including the install prompt, use the family dialog frame shared with KillerShell, and dragging a pinned place in the file dialog shows the plain arrow.
-- Scan profiles from earlier versions become saved scans, each keeping its name, target and settings, inside one Location named Saved scans; drag each into its own Location. Nothing new can be saved into Saved scans, and it removes itself once it is empty.
+- Scan profiles from earlier versions become saved scans, each keeping its name, target and settings, inside one Location named Saved scans. Load one and use Save scan to put it into its own Location. Nothing new can be saved into Saved scans, and it removes itself once it is empty.
 - Scan is the app's largest button: the filled accent button with its label in the wordmark's lettering.
 - Edit Location replaces Rename and Location notes: name, icon and notes in one dialog, which New Location shares. The dialogs are tighter and their text larger.
 - Each Location can keep several saved scans, each a target with its settings, labeled by its subnet or a nickname. They are listed under the Location in the tree and load into the scan bar with a click. Every run stays in Scan history.

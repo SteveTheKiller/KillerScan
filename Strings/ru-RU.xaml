@@ -451,6 +451,7 @@
     <sys:String x:Key="Str_Loc_DeleteTitle">Удалить Объект</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Удалить {0}? Его сохранённые сканирования, имена устройств, одобрения и история будут убраны из KillerScan. Файлы сохранятся в папке Объектов "deleted", поэтому их можно восстановить.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Удалить</sys:String>
+    <sys:String x:Key="Str_Loc_DeleteScan">Удалить сканирование</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Остановите сканирование, прежде чем менять Объект.</sys:String>
     <sys:String x:Key="Str_Loc_DeletedElsewhere">Объект «{0}» удалён в другом окне. Эти результаты теперь относятся к режиму «Временное сканирование». Чтобы оставить их, выберите «Сохранить результаты в Объект».</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Этот файл Объекта больше {0} MB, а это больше, чем импортирует KillerScan.</sys:String>

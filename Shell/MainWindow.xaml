@@ -332,11 +332,10 @@
                                    Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource HeadingFont}"
                                    FontSize="20" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </DockPanel>
-                    <!-- The Locations section's actions: a standard "+ New" button, then small
-                         square buttons. Scan is the app's one big accent button. -->
+                    <!-- The Locations section's actions: a standard "+ New" button, then Import.
+                         Saving a scan is in the Location picker. -->
                     <Grid x:Name="LocationsFooter" Margin="14,0,5,6" Visibility="Collapsed">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
@@ -348,9 +347,6 @@
                         <Button Grid.Column="1" Style="{StaticResource SurfaceButton}" FontFamily="Segoe MDL2 Assets" FontSize="13"
                                 Content="&#xE8B5;" Width="34" Height="26" Padding="0" Margin="6,0,0,0" Click="ImportLocation_Click"
                                 ToolTip="{DynamicResource Str_Loc_Import}"/>
-                        <Button x:Name="SaveToLocationButton" Grid.Column="2" Style="{StaticResource SurfaceButton}" FontFamily="Segoe MDL2 Assets" FontSize="13"
-                                Content="&#xE74E;" Width="34" Height="26" Padding="0" Margin="6,0,0,0" Click="SaveToLocation_Click"
-                                ToolTip="{DynamicResource Str_Loc_SaveScan}"/>
                     </Grid>
                 </StackPanel>
                 <ListBox x:Name="HistoryList" Grid.Row="1" AutomationProperties.Name="{DynamicResource Str_History_Title}" Background="Transparent" BorderThickness="0"
@@ -440,40 +436,45 @@
                 </ListBox>
 
 
-                <!-- Third section: every Location, opened from Manage Locations on the Location button. -->
-                <!-- Locations as a tree in KillerShell's folder-tree style (FolderTreeView /
-                     FolderTreeItem, the chevron TreeExpander): each Location, and under it its
-                     scans, newest first, named or showing their target. A click on a Location
-                     switches to it; a click on a scan opens it in Scan history (LocationsSidebar.cs). -->
-                <TreeView x:Name="LocationsList" Grid.Row="1" Style="{StaticResource FolderTreeView}"
-                          AutomationProperties.Name="{DynamicResource Str_Loc_ManageTitle}"
-                          Margin="10,0,5,0" Visibility="Collapsed"
-                          PreviewMouseRightButtonDown="LocationList_RightClick"
-                          PreviewMouseLeftButtonUp="LocationList_Activate"
-                          PreviewKeyDown="LocationList_KeyDown"
-                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                    <TreeView.ItemContainerStyle>
-                        <Style TargetType="TreeViewItem" BasedOn="{StaticResource FolderTreeItem}">
-                            <!-- Locations are the roots: no connector in front of them, only the
-                                 lines running down to their scans (LocationRoot_Loaded). -->
-                            <EventSetter Event="Loaded" Handler="LocationRoot_Loaded"/>
+                <!-- Third section: every Location, opened from Manage Locations in the Location
+                     picker. A flat list for managing them: a click selects, a double-click or
+                     Enter switches, and the right-click menu edits, exports or deletes. The
+                     current Location carries a check. Saved scans live in the picker, not here
+                     (LocationsSidebar.cs). -->
+                <ListBox x:Name="LocationsList" Grid.Row="1" AutomationProperties.Name="{DynamicResource Str_Loc_ManageTitle}"
+                         Background="Transparent" BorderThickness="0" Margin="14,0,5,0" Visibility="Collapsed"
+                         HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         MouseDoubleClick="LocationList_DoubleClick" PreviewKeyDown="LocationList_KeyDown">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="9,4"/>
+                            <Setter Property="SnapsToDevicePixels" Value="True"/>
                             <Setter Property="AutomationProperties.Name" Value="{Binding}"/>
-                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
-                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-                            <Setter Property="ItemContainerStyle">
+                            <Setter Property="Template">
                                 <Setter.Value>
-                                    <Style TargetType="TreeViewItem" BasedOn="{StaticResource FolderTreeItem}">
-                                        <Setter Property="AutomationProperties.Name" Value="{Binding}"/>
-                                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-                                    </Style>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="bg" Background="Transparent" Margin="0,0,0,2"
+                                                CornerRadius="{DynamicResource ControlCornerRadius}">
+                                            <ContentPresenter Margin="{TemplateBinding Padding}"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="bg" Property="Background" Value="{DynamicResource SelectionBg}"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
                         </Style>
-                    </TreeView.ItemContainerStyle>
-                    <TreeView.Resources>
-                        <HierarchicalDataTemplate DataType="{x:Type local:LocationRow}" ItemsSource="{Binding Children}">
-                            <StackPanel>
-                                <StackPanel.ContextMenu>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type local:LocationRow}">
+                            <DockPanel ToolTip="{Binding Tip}">
+                                <DockPanel.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="{DynamicResource Str_Loc_Open}" InputGestureText="Enter" Click="LocationOpen_Click">
                                             <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE707;"/></MenuItem.Icon>
@@ -489,90 +490,41 @@
                                             <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE74D;"/></MenuItem.Icon>
                                         </MenuItem>
                                     </ContextMenu>
-                                </StackPanel.ContextMenu>
-                                <!-- KillerShell's folder-tree row: one line, icon then the name in the tree's
-                                     mono type. No local Foreground, so FolderTreeItem's selected trigger can
-                                     recolour it on every theme. The detail line is the tooltip. -->
-                                <StackPanel Orientation="Horizontal" ToolTip="{Binding Detail}">
-                                    <a11y:Glyph Text="{Binding Glyph}" FontFamily="Segoe MDL2 Assets" FontSize="14"
-                                                VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center"
-                                               FontFamily="{DynamicResource MonoFont}" FontSize="12"
-                                               TextTrimming="CharacterEllipsis"/>
+                                </DockPanel.ContextMenu>
+                                <!-- The check marks the Location this scan is in. -->
+                                <a11y:Glyph DockPanel.Dock="Right" Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                            VerticalAlignment="Center" Margin="6,0,0,0">
+                                    <a11y:Glyph.Style>
+                                        <Style TargetType="a11y:Glyph">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </a11y:Glyph.Style>
+                                </a11y:Glyph>
+                                <a11y:Glyph Text="{Binding Glyph}" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                                            VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Name}" FontSize="13" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="{Binding Detail}" FontSize="11" Opacity="0.7" TextTrimming="CharacterEllipsis">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Detail}" Value="">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                 </StackPanel>
-                            </StackPanel>
-                        </HierarchicalDataTemplate>
-                        <!-- A scan: its name (or target) in the tree's mono type, the date under it. -->
-                        <DataTemplate DataType="{x:Type local:ScanNode}">
-                            <StackPanel>
-                                <StackPanel.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="{DynamicResource Str_Loc_Open}" InputGestureText="Enter" Click="ScanOpen_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE81C;"/></MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Header="{DynamicResource Str_History_Rename}" InputGestureText="F2" Click="ScanRename_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8AC;"/></MenuItem.Icon>
-                                        </MenuItem>
-                                        <Separator/>
-                                        <MenuItem Header="{DynamicResource Str_Loc_DeleteButton}" InputGestureText="Delete" Click="ScanDelete_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE74D;"/></MenuItem.Icon>
-                                        </MenuItem>
-                                    </ContextMenu>
-                                </StackPanel.ContextMenu>
-                                <!-- A saved scan: its nickname, with the subnet under it in small muted type;
-                                     an un-nicknamed scan is just its subnet, on one line. F2 or Rename edits
-                                     the name in place (Shell/LocationsSidebar.cs). -->
-                                <StackPanel Orientation="Horizontal" ToolTip="{Binding Tip}">
-                                    <a11y:Glyph Text="&#xE81C;" FontFamily="Segoe MDL2 Assets" FontSize="13"
-                                                VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                    <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding Label}" FontFamily="{DynamicResource MonoFont}" FontSize="12"
-                                                   TextTrimming="CharacterEllipsis">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
-                                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                        <TextBox Text="{Binding EditText, UpdateSourceTrigger=PropertyChanged}"
-                                                 Width="120" FontFamily="{DynamicResource MonoFont}" FontSize="12" Padding="2,0"
-                                                 SelectionBrush="{DynamicResource PrimaryBrush}"
-                                                 IsVisibleChanged="ScanEditor_IsVisibleChanged" PreviewKeyDown="ScanEditor_KeyDown"
-                                                 LostKeyboardFocus="ScanEditor_LostFocus">
-                                            <TextBox.Style>
-                                                <Style TargetType="TextBox" BasedOn="{StaticResource DarkTextBox}">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBox.Style>
-                                        </TextBox>
-                                        <TextBlock Text="{Binding Profile.Target}" FontSize="10" Opacity="0.7"
-                                                   TextTrimming="CharacterEllipsis">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding HasNickname}" Value="True">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </StackPanel>
-                                </StackPanel>
-                            </StackPanel>
+                            </DockPanel>
                         </DataTemplate>
-                    </TreeView.Resources>
-                </TreeView>
+                    </ListBox.ItemTemplate>
+                </ListBox>
 
             </Grid>
         </Grid>
