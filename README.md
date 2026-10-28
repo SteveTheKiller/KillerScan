@@ -2,79 +2,46 @@
   <a href="https://killerscan.net"><img src="docs/wordmark.png" height="180" alt="KillerScan - Free Network Scanner"></a>
 </p>
 
-One-click, fast network scanner built for field techs.
-
-- ARP + ping discovery, port probing
-- Active fingerprinting (HTTP title, SSH banner, TLS cert, NetBIOS, SNMP)
-- mDNS/SSDP service discovery
-- MAC vendor lookup across the full IEEE OUI registries
-- Weighted-score device classifier
-
-Single portable EXE. The only requirement is .NET Framework 4.8, which Windows 10 (version 1903 and later) and Windows 11 already include.
-Free, open-source, GPLv3.
+One-click, fast network scanner built for field techs. Single portable EXE, free and open source under GPLv3.
 
 Part of [killertools.net](https://killertools.net).
 
 ## Features
 
-- **Scan settings**, beside Scan, lets each tab choose its discovery and fingerprint checks. Choices also apply to deep rescans and are saved with profiles. [Probe choices and dependencies](docs/scan-options.md).
-- Permanent Devices, Services, Topology, Keep Alive and Terminal views sit on the right of the toolbar. Each keeps its own state, a right-click menu sets icon size and caption placement, and buttons that do not fit overflow into a menu rather than squeezing the input bar.
-- Embedded terminals run PowerShell, ping, and SSH using the system clients, preferring PowerShell 7 where it is installed. They use KillerShell's font, palette and prompt, and the prompt unpacks to a file you can edit and keeps your version across upgrades. The KillerScripts module travels inside the EXE, so it is there on a machine you cannot install anything on. Closing a terminal ends its process.
-- Keep Alive (F9) watches up to 16 devices at once, each as a status card with a latency sparkline, packet loss, its own checks on banded rows, and its own event log. Right-click a card to copy the address, run diagnostics, reset its counters, or drop it from the run. Checks start for the whole set as soon as a run begins.
-- Topology (F8) infers how the network fits together and draws devices as movable, multi-selectable boxes in four arrangement modes, cycled with Ctrl+G or picked directly with Ctrl+1 through Ctrl+4. Connectors stay attached to boxes you move, and the arranged view exports at full resolution as a picture or as editable SVG.
-- Deep Scan runs a cancellable rescan of all discovered hosts, or the selection with Ctrl+R, probing ports 1-1024 plus the additional service ports to improve hostnames, services and classifications.
-- Scan history (Ctrl+H) compares each scan against the last run of the same target for added, missing and changed devices, or shows the saved run in full, and supports trusted-device baselines with alerts for unknown devices. A marker beside each address says whether the device is trusted. Scan profiles (Ctrl+Shift+P) remember targets you can load or run, optionally following with Deep Scan. Both share a sliding sidebar that opens from the icon rail and resizes by dragging.
-- A service-centric view (F7) organizes results by discovered service, port and device.
-- Manual device names and classifications both persist across restarts and rescans.
-- Self-installer: launch the EXE to install to `%LOCALAPPDATA%\Programs\KillerScan\` with Start Menu and optional desktop shortcut, or tick "Install for all users" to install to Program Files for every account on the PC (the only path that asks for admin), or just run it portable with no install. An installed copy is added to PATH, so a new terminal can run it as `KillerScan` from any directory
-- Scan several networks in one pass: the subnet box takes a comma-separated list of CIDR blocks (`192.168.9.0/24, 192.168.10.0/24`), single hosts (`192.168.1.7`), and ranges written in full (`192.168.1.10-192.168.1.50`) or shorthand (`192.168.1.10-50`); spacing is forgiving and overlapping targets are counted once
-- ARP cache + parallel ping sweep for fast discovery; a second ARP pass after the sweep catches phones and devices that block ICMP
-- TCP port scan across 30+ common service ports, plus active fingerprinting: HTTP title/Server header, SSH banner, TLS cert subject, NetBIOS name (UDP 137), SNMPv1 sysDescr (UDP 161), ICMP TTL
-- mDNS (Bonjour) and SSDP (UPnP) discovery to spot Chromecasts, printers, Sonos, AirPlay, Roku, Plex and Synology devices
-- MAC vendor identification across the full IEEE registries (MA-L, MA-M, MA-S) with longest-prefix matching, brand overrides for "Private" blocks, and a clear label for randomized privacy MACs; the vendor database is refreshable from within the app (About screen)
-- Weighted-score classifier identifies hypervisors, Windows boxes, Linux servers, printers, NAS, network gear, cameras, IoT, mobile, Home Assistant and more; gateway/DNS aware (Router, DNS Server, or Router/DNS - Pi-hole safe)
-- Right-click to copy IP/MAC/hostname, launch RDP/SSH/browser, or override a device type. SSH does not assume your Windows account name: it asks which user to sign in as the first time you reach a device, remembers the answer against that device's MAC, and offers "SSH as..." for connecting as somebody else
-- Export follows the active view: devices as CSV or HTML, the service list as its own CSV in Services, the arranged topology as a transparent PNG, a flattened JPG or an HTML page carrying real SVG, the Keep Alive run as CSV, a page or a picture, and the terminal session as text
-- A native speed test (F4 or the icon rail) runs in the existing themed terminal, with live download, upload, and latency results. If another task is running, KillerScan asks before stopping it. Esc or Ctrl+C cancels, and the normal terminal prompt returns when the test ends. Use the terminal's copy commands to copy the results.
-- Device diagnostics (F3 or the device menu) checks reverse and forward DNS, ICMP replies, the local route, and common or previously discovered TCP ports. Results can be copied for ticket notes. A missing ping reply does not mean the device is offline.
-- Headless command line for scripts, RMM, and KillerMCP: scan networks, probe or diagnose a host, inspect the active network, ping, trace routes, monitor availability, run KillerSpeed, or look up a MAC vendor. Commands support bounded inputs, structured JSON, and distinct exit codes without opening a window.
-- Keyboard shortcuts, on F1, which switches between a grouped shortcut list in two colored columns and a persistent keyboard map that paints each key in its category color: F5 scan/stop, Esc cancel, Ctrl+R deep rescan the selection, Ctrl+F subnet box, Ctrl+A select all, Ctrl+E export, F6 Devices, F7 Services, F8 Topology, F9 Keep Alive, F10 Terminal, F3 diagnostics, F4 speed test, Ctrl+H history, Ctrl+Shift+P profiles, Ctrl+G topology arrangement, F12 About, and device actions (Enter browser, Ctrl+P ping, Ctrl+D RDP, Ctrl+S SSH, Ctrl+C/Ctrl+Shift+C/Ctrl+Alt+C copy IP/MAC/hostname)
-- App-wide size control from 70% to 250%, on Ctrl+Shift+plus/minus/0 or the mouse wheel over the title-bar wordmark; text reflows at the new size and the setting is remembered
-- Thirteen themes, of which Dark, Light, Black and 98SE each take one of eight accent colors for 41 looks in all, including a full Windows 98 treatment; theme, accent, language, and app size are remembered; localized in 20 languages (English, Spanish, Brazilian Portuguese, Traditional and Simplified Chinese, German, French, Turkish, Bengali, Japanese, Czech, Kazakh, Norwegian, Polish, Hungarian, Italian, Russian, Ukrainian, Vietnamese, Slovenian)
+- **Discovery:** ARP cache, a parallel ping sweep and a second ARP pass, plus mDNS and SSDP for Chromecasts, printers, Sonos, AirPlay and NAS boxes. The target box takes several subnets, single hosts and ranges at once.
+- **Fingerprinting:** TCP ports, HTTP title, SSH banner, TLS certificate, NetBIOS, SNMP and TTL feed a weighted-score classifier, with MAC vendors from the full IEEE registries. [Scan settings](docs/scan-options.md) choose which checks run.
+- **Locations:** each customer site keeps its own saved scans, device names, approvals and history, picked from the Location button in the scan bar. [How Locations work](docs/locations.md).
+- **Views:** Devices, Services, Topology, Keep Alive and Terminal, each keeping its own state. Topology exports as PNG, JPG or SVG, and Keep Alive watches up to 16 devices with latency and loss.
+- **Deep Scan** rescans every host or the selection across ports 1-1024 and more.
+- **Scan history** compares each run with the last one and flags new devices against an approved baseline.
+- **Tools:** built-in PowerShell, ping and SSH terminals, device diagnostics, and a native speed test.
+- **Command line** for scripts, RMM and KillerMCP, with JSON output and distinct exit codes.
+- **Looks:** thirteen themes, 20 languages and app-wide sizing from 70% to 250%. Press F1 for every shortcut.
+
+The [help page](https://killerscan.net/help.html) covers every view, tool and shortcut.
 
 ## Screenshots
 
 <table>
 <tr>
-<td width="50%"><img src="scan-landing/screenshots/01.png" alt="KillerScan device list beside the scan history sidebar"><br><sub>A completed scan with IP addresses, hostnames, MAC vendors, device classifications and open ports in one sortable view, beside the scan history.</sub></td>
-<td width="50%"><img src="scan-landing/screenshots/03.png" alt="KillerScan network topology with the scan history sidebar collapsed"><br><sub>Topology draws the same devices as a map you can rearrange and tune, and exports the arranged view as a transparent PNG, a JPG or an HTML page with SVG.</sub></td>
+<td width="50%"><img src="scan-landing/screenshots/01.png" alt="KillerScan device list beside the scan history sidebar"><br><sub>A completed scan with addresses, hostnames, vendors, device types and open ports, beside the scan history.</sub></td>
+<td width="50%"><img src="scan-landing/screenshots/03.png" alt="KillerScan network topology with the scan history sidebar collapsed"><br><sub>Topology draws the same devices as a map you can rearrange and export.</sub></td>
 </tr>
 </table>
 
-## Requirements
+## Install
 
-- Windows 10 or 11 (x64)
-- .NET Framework 4.8, included with Windows 10 version 1903 and later and with Windows 11, so there is normally nothing to install. All other dependencies are bundled inside the EXE.
-- Run as admin for best ARP results on some networks
-
-## Download
-
-- Prebuilt binary: <https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe>
-- Source (GPL3 corresponding source for this release): <https://github.com/SteveTheKiller/KillerScan/releases/download/v1.8.3/KillerScan-1.8.3-src.zip>
-
-WinGet:
+Windows 10 or 11 (x64) with .NET Framework 4.8, which Windows 10 version 1903 and later already include. Run as admin for the best ARP results on some networks.
 
 ```powershell
 winget install killerscan
 ```
 
-Chocolatey:
-
 ```powershell
 choco install killerscan
 ```
 
-For managed removal, exit codes and elevated-update requirements, see [deployment and removal](docs/deployment.md).
+Or download [KillerScan.exe](https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe) and run it. It offers to install for you, for all users, or not at all. The GPL source for this release is [KillerScan-1.8.3-src.zip](https://github.com/SteveTheKiller/KillerScan/releases/download/v1.8.3/KillerScan-1.8.3-src.zip). For managed removal and exit codes, see [deployment](docs/deployment.md).
 
 ## Build from source
 
@@ -84,56 +51,18 @@ cd KillerScan
 dotnet publish -c Release
 ```
 
-Output lands in `bin/Release/net48/publish/`. The publish step produces a single Costura-bundled `KillerScan.exe` plus a versioned `KillerScan-<version>-src.zip` for GPL3 source distribution.
+Needs the .NET 8 SDK or later. Output lands in `bin/Release/net48/publish/`. Speed-test internals and tests are in [docs/speed-test.md](docs/speed-test.md).
 
-Requires the .NET 8 SDK or later to build (even though the output targets .NET Framework 4.8).
+## Privacy
 
-## Privacy and network connections
+KillerScan has no usage analytics and never uploads scan results. Vendor lookup and classification run locally. It connects out only when you scan or diagnose, open About (update check), refresh vendors, run a speed test against `speed.killerscan.net`, or open an HTML report, which fetches its logo. The speed test runs through Cloudflare, which sees your public IP, and sends only generated test data. The website has its own analytics; this statement covers the app. The [technical page](https://killerscan.net/technical.html#speedtest-network) has the details.
 
-KillerScan has no usage analytics or automatic scan-result uploads. Vendor identification and device classification run locally. It does make network connections:
+## More
 
-- Scans and diagnostics contact the selected targets and configured DNS services, which may be outside the LAN.
-- Opening About checks GitHub for updates. An update downloads release files after confirmation. Vendor refresh downloads full lists from Wireshark and GitHub without sending scanned MAC addresses.
-- Starting a speed test connects to `speed.killerscan.net` over HTTPS. Download and upload payloads are generated test data, not files, scan results, device names, or MAC addresses. Downloaded bytes are discarded from memory, never executed. The Worker counts and discards uploads and does not save test results.
-- Cloudflare processes the public IP and ordinary request metadata. The Worker uses that IP for temporary rate limiting. This is not a guarantee of zero provider infrastructure or security logs.
-- Opening a saved HTML report can fetch its logo from `scan.killertools.net`; the image request does not upload its device table. Terminal commands and links you open can contact other services.
-
-The website loads separate analytics from `koya.thekiller.net`; the no-usage-analytics statement above concerns the desktop app. See the [technical explanation](https://killerscan.net/technical.html#speedtest-network) for speed-test traffic, limits, and source links.
-
-## Speed-test development
-
-The default profile compares two, four, and eight concurrent HTTP transfers during nine seconds of warmup per direction, then runs a 15-second test. Upload keeps the connection count that improved measured throughput by at least 5%. Download always measures with all eight connections, because short warmup bursts do not predict sustained throughput. Request sizes adapt to the connection while staying within the deployed server limits. A 3 GiB budget per direction includes warmup and can shorten a very fast test; the terminal reports that limit. Final throughput uses payload bytes transferred during the timed phase. Upload bytes are counted as they are sent, but the test still requires a valid server acknowledgment. Server rate limits stop the test instead of adding retries to the timing window.
-
-The upload count includes payload successfully written to the HTTP transport before cutoff, including requests still in flight. Some of those bytes can remain buffered before the receiver reads them. A valid acknowledgment establishes that the endpoint completed an upload exchange; later sent bytes remain part of the rate even if their request is unacknowledged. Received and acknowledged totals are separate quantities.
-
-Latency is HTTP round-trip time to the selected endpoint, including server processing. Idle latency is the median of five samples after an unmeasured connection warmup. Jitter is the mean absolute difference between consecutive samples. Loaded latency is sampled on a separate connection during each measured phase. These measurements describe that route and server, and do not claim packet loss or universal ISP capacity.
-
-When you start a speed test, the app connects to `https://speed.killerscan.net/`, the dedicated [KillerScan endpoint](server/speedtest/README.md) hosted on Cloudflare Workers. Users do not need an account or server setup. Deployment credentials are kept outside the source and app.
-
-Run the retained tests on Windows with the .NET SDK and Node.js 22 or newer:
-
-```powershell
-dotnet build tests/SpeedTest.Tests/SpeedTest.Tests.csproj -c Release
-./tests/SpeedTest.Tests/bin/Release/net48/SpeedTest.Tests.exe --worker
-node --test server/speedtest/worker.test.mjs
-```
-
-The release script also adds `--internet` to verify the deployed KillerScan service before publishing or signing. That check uses the app's full budget of up to 3 GiB in each direction, including warmup. The normal checks above stay on loopback; passing them alone does not verify the deployed service.
-
-## Translations
-
-UI strings live in `Strings/` (one XAML `ResourceDictionary` per locale). To add or improve a language, see [TRANSLATING.md](TRANSLATING.md). Missing keys fall back to English.
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md).
-
-## How classification works
-
-The classifier accumulates points from every signal (open ports, OUI vendor, hostname keywords, HTTP title, SSH banner, TLS subject, SNMP description, NetBIOS name, TTL, mDNS service types, SSDP SERVER string) and picks the highest-scoring type above a threshold. This replaces brittle first-match port rules and avoids false positives like "my coworker's laptop is a hypervisor because port 2179 is open."
-
-See `Services/NetworkScanner.cs` -> `ClassifyDevice` for the scoring table. For a full technical breakdown of how KillerScan works end to end - the scan pipeline, vendor resolution, and the classifier - see <https://killerscan.net/technical.html>. For how to drive each view, every tool and every shortcut, see <https://killerscan.net/help.html>.
+- [CHANGELOG.md](CHANGELOG.md)
+- [TRANSLATING.md](TRANSLATING.md) for adding or improving a language
+- [How it works](https://killerscan.net/technical.html): the scan pipeline, vendor resolution and the classifier
 
 ## License
 
-GPLv3. See [LICENSE](LICENSE). If you fork, modify, or redistribute KillerScan, your version must also be released under GPLv3 with source available. No exceptions for commercial rebrands.
+GPLv3. See [LICENSE](LICENSE). Forks and redistributions must stay GPLv3 with source available.
