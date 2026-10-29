@@ -442,7 +442,7 @@
                      current Location carries a check. Saved scans live in the picker, not here
                      (LocationsSidebar.cs). -->
                 <ListBox x:Name="LocationsList" Grid.Row="1" AutomationProperties.Name="{DynamicResource Str_Loc_ManageTitle}"
-                         Background="Transparent" BorderThickness="0" Margin="14,0,5,0" Visibility="Collapsed"
+                         Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" Margin="14,0,5,0" Visibility="Collapsed"
                          HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          MouseDoubleClick="LocationList_DoubleClick" PreviewKeyDown="LocationList_KeyDown">
                     <ListBox.ItemContainerStyle>
