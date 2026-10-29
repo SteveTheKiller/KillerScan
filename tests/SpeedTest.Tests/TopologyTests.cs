@@ -207,7 +207,9 @@ internal static class TopologyTests
         var deviceNode = canvas.Children.OfType<Border>().First(n => n.Tag is NetworkDevice);
         var click = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left) { RoutedEvent = UIElement.MouseLeftButtonDownEvent, Source = deviceNode };
         deviceNode.RaiseEvent(click);
-        Require(ReferenceEquals(grid.SelectedItem, deviceNode.Tag) && deviceNode.BorderThickness.Left == 2, "Selection works while zoomed.");
+        // A selected card wears the accent ring (TopologyNode.Selected); the stripe width never changes.
+        Require(ReferenceEquals(grid.SelectedItem, deviceNode.Tag) && deviceNode is KillerScan.Controls.TopologyNode { Selected: true },
+            "Selection works while zoomed.");
         deviceNode.ReleaseMouseCapture();
         var point = deviceNode.TranslatePoint(new Point(deviceNode.Width / 2, deviceNode.Height / 2), root);
         DependencyObject? hit = VisualTreeHelper.HitTest(root, point)?.VisualHit;
@@ -294,7 +296,7 @@ internal static class TopologyTests
         var boxes = canvas.Children.OfType<Border>().Select(Bounds).ToArray();
         foreach (var box in boxes)
             Require(box.Left >= 0 && box.Top >= 0 && box.Right <= canvas.Width + 0.01 && box.Bottom <= canvas.Height + 0.01,
-                "Node stays within the canvas.");
+                "Node stays within the canvas: box " + box + ", canvas " + canvas.Width + "x" + canvas.Height + ".");
         for (int i = 0; i < boxes.Length; i++)
             for (int j = i + 1; j < boxes.Length; j++) Require(!boxes[i].IntersectsWith(boxes[j]), "Automatic nodes do not overlap.");
     }

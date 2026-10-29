@@ -29,10 +29,15 @@ namespace KillerScan.Controls
 
         private double TopologyScale => double.Parse(_topologyOptions["NodeScale"], CultureInfo.InvariantCulture) / 100;
         private double TopologyFontSize => double.Parse(_topologyOptions["FontSize"], CultureInfo.InvariantCulture);
-        private double TopologyNodeWidth => 126 * TopologyScale;
+        private double TopologyNodeWidth => Math.Max(126 * TopologyScale, _topologyCardSize.Width);
         // Just the two lines, the 3px ring and 2px of air: no fixed floor, so a card only grows
         // when the topology font does.
-        private double TopologyNodeHeight => Math.Ceiling(TopologyFontSize * 2.66 + 7);
+        private double TopologyNodeHeight => Math.Max(Math.Ceiling(TopologyFontSize * 2.66 + 7), _topologyCardSize.Height);
+
+        /// <summary>The largest card the last build measured. Cards size to their text, so a long
+        /// name is wider than the default slot; the layout spaces by this so none overlap or leave
+        /// the canvas (RefreshTopology).</summary>
+        private Size _topologyCardSize;
         private bool TopologyHorizontal => _topologyOptions["Orientation"] == "Horizontal";
 
         private void LoadTopologySettings()

@@ -119,7 +119,18 @@ namespace KillerScan.Controls
             TopologyRefreshes++;
             // Rebuilding replaces every node, so a focused node's device gets focus back after.
             bool hadFocus = TopologyCanvas.IsKeyboardFocusWithin;
+            // Lay out with the default slot first. If a card measured larger than its slot, lay
+            // out again with the largest card as the slot, so every row and ring has room for it.
+            _topologyCardSize = default;
             BuildTopology();
+            var cards = TopologyCanvas.Children.OfType<TopologyNode>().ToList();
+            var largest = new Size(cards.Count == 0 ? 0 : cards.Max(card => card.Width),
+                cards.Count == 0 ? 0 : cards.Max(card => card.Height));
+            if (largest.Width > TopologyNodeWidth + 0.5 || largest.Height > TopologyNodeHeight + 0.5)
+            {
+                _topologyCardSize = largest;
+                BuildTopology();
+            }
             RestoreTopologyFocus(hadFocus);
         }
 

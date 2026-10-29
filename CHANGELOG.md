@@ -9,6 +9,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
 ### Fixed
+- Topology cards with long names no longer overlap their neighbors or hang off the edge of the map; every row and ring is spaced for its widest card.
+- The F1 keyboard map shows the arrow keys, so Alt+Shift+Up and Alt+Shift+Down (tabs at the top or bottom) appear on it.
 - The tray icon's menu opens from the pointer upward, out of the notification area, the same way in every Killer app. A short menu no longer covers the tray icons and a taller one no longer floats about 40 pixels above them.
 - Self-update checks the downloaded and staged copies for the publisher's signature inside the helper, keeps every parent folder pinned while it publishes, refuses redirected paths and malformed requests, and offers only stable releases.
 - The close button on dialogs now works from the keyboard and screen readers, the window menu opens at the right spot while the window is maximized, and the file dialog's folder tree no longer jumps back to an older folder after a quick change of folder.

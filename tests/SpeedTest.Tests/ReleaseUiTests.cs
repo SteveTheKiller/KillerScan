@@ -471,7 +471,7 @@ internal static class ReleaseUiTests
                             Require(bounds[i].Left >= 0 && bounds[i].Top >= 0 && bounds[i].Right <= canvas.Width + 0.1 &&
                                 bounds[i].Bottom <= canvas.Height + 0.1, "All topology boxes stay within the canvas.");
                             for (int j = i + 1; j < bounds.Length; j++)
-                                Require(!bounds[i].IntersectsWith(bounds[j]), "Automatic topology boxes do not overlap.");
+                                Require(!bounds[i].IntersectsWith(bounds[j]), "Automatic topology boxes do not overlap: " + pattern + "/" + orientation + "/" + scale + "/" + size + " " + bounds[i] + " and " + bounds[j] + ".");
                         }
                         foreach (var node in canvas.Children.OfType<Border>())
                         {
