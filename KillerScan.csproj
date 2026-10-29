@@ -82,6 +82,7 @@
     <EmbeddedResource Include="Modules\**\*" />
     <EmbeddedResource Include="Terminal\Unicode-LICENSE.txt" />
     <EmbeddedResource Include="Terminal\KillerPrompt.ps1" />
+    <EmbeddedResource Include="Resources\report-logo.svg" LogicalName="KillerScan.ReportLogo.svg" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ks-icon.ico" />

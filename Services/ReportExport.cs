@@ -22,10 +22,21 @@ namespace KillerScan.Services
     /// </summary>
     internal static class ReportExport
     {
-        /// <summary>Where the report loads its wordmark from: the same per-theme and per-accent SVGs
-        /// the website uses. The report still works fully without them (text wordmark fallback), so
-        /// they can fail to load safely.</summary>
-        private const string LogoBase = "https://killerscan.net/brand/killerscan-logo-";
+        /// <summary>The report's logo, carried inside the report so opening one contacts nothing.
+        /// One copy of the website's artwork with its colors as CSS variables (--lg0 to --lg4);
+        /// ReportLogoColors holds each theme and accent's colors. Both come from
+        /// tools\Build-ReportLogo.ps1. Empty if the resource is missing, which leaves the text
+        /// wordmark.</summary>
+        private static readonly Lazy<string> LogoSvg = new(() =>
+        {
+            using var stream = typeof(ReportExport).Assembly.GetManifestResourceStream("KillerScan.ReportLogo.svg");
+            if (stream == null) return string.Empty;
+            using var reader = new System.IO.StreamReader(stream);
+            return reader.ReadToEnd().Trim();
+        });
+
+        private static string LogoTable() => "{" + string.Join(",", ReportLogoColors.Variants.Select(v =>
+            "'" + v.Key + "':[" + string.Join(",", v.Value.Select(c => "'" + c + "'")) + "]")) + "}";
 
         /// <summary>Comma-separated devices, IP-ordered, every field quoted.</summary>
         /// <summary>Resource lookup that survives having no Application - the CLI builds reports
@@ -117,7 +128,7 @@ namespace KillerScan.Services
             sb.AppendLine(".wrap{max-width:1100px;margin:0 auto}");
             sb.AppendLine(".topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:8px}");
             sb.AppendLine(".brand{display:flex;align-items:center;gap:10px;min-height:38px}");
-            sb.AppendLine(".logo{height:36px;display:block}");
+            sb.AppendLine(".logo svg{height:36px;width:auto;display:block}.logo.noshadow .lgshadow{filter:none}.logo.nooutline .lgoutline{display:none}");
             sb.AppendLine(".wordmark{font-family:Consolas,'Courier New',monospace;font-size:27px;font-weight:700;letter-spacing:.5px}");
             sb.AppendLine(".wordmark .k{color:var(--text)}.wordmark .s{color:var(--accent)}");
             sb.AppendLine(".switchers{display:flex;flex-direction:column;gap:6px;align-items:flex-end}");
@@ -145,9 +156,10 @@ namespace KillerScan.Services
             sb.AppendLine("@media(max-width:640px){body{padding:12px}.wordmark{font-size:22px}th,td{padding:8px 10px;font-size:12px}}");
             sb.AppendLine("</style></head><body><div class='wrap'>");
 
-            // Header: logo (if hosted) falls back to a Consolas wordmark - Killer in text color, Scan in accent.
+            // Header: the embedded logo in the theme's colors, or the Consolas wordmark (Killer in text color,
+            // Scan in accent) for a theme without one, such as 98SE.
             sb.AppendLine("<div class='topbar'><div class='brand'>");
-            sb.AppendLine("<img id='logo' class='logo' alt='KillerScan' style='display:none' onload=\"this.style.display='';document.getElementById('wm').style.display='none'\" onerror=\"this.style.display='none';document.getElementById('wm').style.display=''\"/>");
+            sb.AppendLine("<span id='logo' class='logo' style='display:none'>" + LogoSvg.Value + "</span>");
             sb.AppendLine("<span id='wm' class='wordmark'><span class='k'>Killer</span><span class='s'>Scan</span></span>");
             sb.AppendLine("</div><div class='switchers'>");
             sb.AppendLine($"<div class='swrow'><span class='swlabel'>{Esc(L("Str_Rep_Theme", "Theme"))}</span><div class='themesw' id='themesw'></div></div>");
@@ -230,8 +242,9 @@ namespace KillerScan.Services
             ]) + "];");
             sb.AppendLine("var sw=document.getElementById('themesw');");
             sb.AppendLine("var CUSTOM_ACCENT={dark:1,light:1,black:1};");
-            sb.AppendLine($"var LOGO='{LogoBase}',THEMED={{blood:1,greed:1,cyanotic:1,ectoplasm:1,decay:1,malaise:1,sepulchre:1,delirium:1,mourning:1}},ACC_NAMES={{'#DD504B':'red','#E8962C':'orange','#EAD900':'yellow','#1EA54C':'green','#1FB8A8':'teal','#50AEE8':'blue','#B982E3':'purple','#FF52C9':'magenta'}};");
-            sb.AppendLine("function updateLogo(){var t=(document.documentElement.className||'').replace('theme-',''),img=document.getElementById('logo'),wm=document.getElementById('wm'),src=null;if(THEMED[t])src=LOGO+t+'.svg';else if(CUSTOM_ACCENT[t]){var a=null;try{a=localStorage.getItem('ksAccent')}catch(e){}src=LOGO+t+'-'+(ACC_NAMES[String(a||'').toUpperCase()]||'green')+'.svg';}if(!src){img.style.display='none';img.removeAttribute('src');wm.style.display='';return;}if(img.getAttribute('src')!==src)img.src=src;}");
+            sb.AppendLine("var LOGOS=" + (LogoSvg.Value.Length == 0 ? "{}" : LogoTable()) + ";");
+            sb.AppendLine($"var THEMED={{blood:1,greed:1,cyanotic:1,ectoplasm:1,decay:1,malaise:1,sepulchre:1,delirium:1,mourning:1}},ACC_NAMES={{'#DD504B':'red','#E8962C':'orange','#EAD900':'yellow','#1EA54C':'green','#1FB8A8':'teal','#50AEE8':'blue','#B982E3':'purple','#FF52C9':'magenta'}};");
+            sb.AppendLine("function updateLogo(){var t=(document.documentElement.className||'').replace('theme-',''),logo=document.getElementById('logo'),wm=document.getElementById('wm'),key=null;if(THEMED[t])key=t;else if(CUSTOM_ACCENT[t]){var a=null;try{a=localStorage.getItem('ksAccent')}catch(e){}key=t+'-'+(ACC_NAMES[String(a||'').toUpperCase()]||'green');}var c=key&&LOGOS[key];if(!c){logo.style.display='none';wm.style.display='';return;}for(var i=0;i<5;i++)logo.style.setProperty('--lg'+i,c[i]);logo.className='logo'+(c[5]==='1'?'':' noshadow')+(c[4]==='none'?' nooutline':'');logo.style.display='';wm.style.display='none';}");
             sb.AppendLine("function setTheme(t){document.documentElement.className='theme-'+t;try{localStorage.setItem('ksTheme',t)}catch(e){}var k=sw.children;for(var i=0;i<k.length;i++)k[i].className=(k[i].getAttribute('data-t')===t)?'active':'';var ar=document.getElementById('accentrow');ar.style.display=CUSTOM_ACCENT[t]?'flex':'none';if(CUSTOM_ACCENT[t]){var a=null;try{a=localStorage.getItem('ksAccent')}catch(e){}if(a)document.documentElement.style.setProperty('--accent',a);}else document.documentElement.style.removeProperty('--accent');updateLogo();}");
             sb.AppendLine("THEMES.forEach(function(a){var b=document.createElement('button');b.title=a[1];b.setAttribute('data-t',a[0]);b.style.background=a[2];b.onclick=function(){setTheme(a[0])};sw.appendChild(b);});");
             sb.AppendLine("var saved=null;try{saved=localStorage.getItem('ksTheme')}catch(e){}");

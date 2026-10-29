@@ -55,7 +55,7 @@ Needs the .NET 8 SDK or later. Output lands in `bin/Release/net48/publish/`. Spe
 
 ## Privacy
 
-KillerScan has no usage analytics and never uploads scan results. Vendor lookup and classification run locally. It connects out only when you scan or diagnose, open About (update check), refresh vendors, run a speed test against `speed.killerscan.net`, or open an HTML report, which fetches its logo. The speed test runs through Cloudflare, which sees your public IP, and sends only generated test data. The website has its own analytics; this statement covers the app. The [technical page](https://killerscan.net/technical.html#speedtest-network) has the details.
+KillerScan has no usage analytics and never uploads scan results. Vendor lookup and classification run locally. It connects out only when you scan or diagnose, open About (update check), refresh vendors, or run a speed test against `speed.killerscan.net`. HTML reports carry their own logo, so opening one contacts nothing. The speed test runs through Cloudflare, which sees your public IP, and sends only generated test data. The website has its own analytics; this statement covers the app. The [technical page](https://killerscan.net/technical.html#speedtest-network) has the details.
 
 ## More
 

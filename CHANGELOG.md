@@ -148,6 +148,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - About groups settings in two columns and can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts. Hover tooltips clear large pointers while preserving custom placement.
 
 ### Changed
+- HTML reports carry their own logo in every theme and accent, so opening a report no longer contacts killerscan.net.
 - Confirmation prompts, including the install prompt, use the family dialog frame shared with KillerShell, and dragging a pinned place in the file dialog shows the plain arrow.
 - Scan profiles from earlier versions become saved scans, each keeping its name, target and settings, inside one Location named Saved scans. Load one and use Save scan to put it into its own Location. Nothing new can be saved into Saved scans, and it removes itself once it is empty.
 - Scan is the app's largest button: the filled accent button with its label in the wordmark's lettering.
