@@ -87,6 +87,48 @@ namespace KillerScan.Services
                 catch { continue; }
                 TryDelete(path, files);
             }
+            RemovePublicationLeftovers(destination, files);
+        }
+
+        /// <summary>
+        /// The self-update publication names its working files "&lt;exe&gt;.old-", ".new-" and ".restore-"
+        /// plus 32 hex, and the trusted path stages ".update-&lt;32 hex&gt;.exe" with a report beside it.
+        /// A cleanup that failed (the old image still mapped by another session) leaves them, and
+        /// they would keep the folder at uninstall. They go once the installed exe is in place and
+        /// they are over a day old, so a recovery copy from a failed update is never taken while
+        /// it could still matter.
+        /// </summary>
+        private static void RemovePublicationLeftovers(string destination, FileOperations files)
+        {
+            string? directory = Path.GetDirectoryName(destination);
+            if (directory == null || !File.Exists(destination)) return;
+            string exe = Path.GetFileName(destination);
+            string[] all;
+            try { all = Directory.GetFiles(directory); }
+            catch (IOException) { return; }
+            catch (UnauthorizedAccessException) { return; }
+            foreach (string path in all)
+            {
+                string name = Path.GetFileName(path);
+                bool leftover = false;
+                foreach (string marker in new[] { ".old-", ".new-", ".restore-" })
+                    if (name.Length == exe.Length + marker.Length + 32 && name.StartsWith(exe + marker, StringComparison.OrdinalIgnoreCase)
+                        && Guid.TryParseExact(name.Substring(exe.Length + marker.Length), "N", out _))
+                        leftover = true;
+                string staged = name.EndsWith(".recovery.txt", StringComparison.OrdinalIgnoreCase) ? name.Substring(0, name.Length - ".recovery.txt".Length) : name;
+                if (staged.Length == ".update-".Length + 32 + ".exe".Length && staged.StartsWith(".update-", StringComparison.OrdinalIgnoreCase)
+                    && staged.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) && Guid.TryParseExact(staged.Substring(8, 32), "N", out _))
+                    leftover = true;
+                if (!leftover) continue;
+                try
+                {
+                    if ((File.GetAttributes(path) & (FileAttributes.ReparsePoint | FileAttributes.Directory)) != 0) continue;
+                    if (DateTime.UtcNow - File.GetLastWriteTimeUtc(path) < TimeSpan.FromDays(1)) continue;
+                    if (File.Exists(path + KeepMarker)) continue;
+                }
+                catch { continue; }
+                TryDelete(path, files);
+            }
         }
 
         private static void Publish(string staged, string destination, FileOperations files, ref bool retainStaged)

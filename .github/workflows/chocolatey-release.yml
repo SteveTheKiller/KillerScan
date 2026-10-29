@@ -19,8 +19,10 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || !github.event.release.prerelease
     runs-on: windows-latest
     steps:
+      # The released tag's nuspec and install script, also for a manual retry of an older tag.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.event.release.tag_name || github.event.inputs.tag }}
           persist-credentials: false
 
       - name: Build and push Chocolatey package

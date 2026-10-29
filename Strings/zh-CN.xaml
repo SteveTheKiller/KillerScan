@@ -520,6 +520,10 @@
     <sys:String x:Key="Str_Term_SelectAll">全选</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">复制全部</sys:String>
     <sys:String x:Key="Str_Term_Clear">清屏</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">终端中有正在运行的内容。要停止它并改为启动 {0} 吗?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">停止并启动</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">粘贴多行内容?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">此文本有 {0} 行。粘贴到这里后,每一行一送达就会执行。</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">按 Esc 停止</sys:String>
     <sys:String x:Key="Str_Workspace_Split">拆分窗格</sys:String>
     <sys:String x:Key="Str_Workspace_Move">移到另一窗格</sys:String>

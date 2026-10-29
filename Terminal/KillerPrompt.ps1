@@ -159,7 +159,9 @@ function script:KFGit {
     if (-not (script:KFInRepo)) { return $null }
 
     try {
-        $lines = @(git status --porcelain=v1 --branch --untracked-files=normal 2>$null)
+        # A repository only being looked at (an extracted download) must not run its own code: no
+    # fsmonitor hook, no hooks, and no index lock that would make this prompt write to it.
+    $lines = @(git -c core.fsmonitor=false -c core.hooksPath=NUL --no-optional-locks status --porcelain=v1 --branch --untracked-files=normal 2>$null)
     } catch { return $null }
     if (-not $lines -or $lines.Count -eq 0) { return $null }
 

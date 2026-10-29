@@ -77,8 +77,8 @@ namespace KillerScan.Services
                 + "if([IO.File]::Exists($image)){throw 'The installed image remains.'};"
                 + "if([IO.Directory]::Exists($root)){if([IO.Directory]::GetFileSystemEntries($root).Length -eq 0){[IO.Directory]::Delete($root,$false)}"
                 + "else{[Console]::Error.WriteLine('Unrelated contents were preserved in: '+$root)}};exit 0\n"
-                + "}catch{$error=$_.Exception.GetBaseException();[Console]::Error.WriteLine($error.Message);"
-                + "if($error -is [UnauthorizedAccessException]){exit 5};$code=$error.HResult -band 65535;"
+                + "}catch{$failure=$_.Exception.GetBaseException();[Console]::Error.WriteLine($failure.Message);"
+                + "if($failure -is [UnauthorizedAccessException]){exit 5};$code=$failure.HResult -band 65535;"
                 + "if($code -in @(32,33)){exit 1618};exit 1}";
 
             string powershell = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"WindowsPowerShell\v1.0\powershell.exe");

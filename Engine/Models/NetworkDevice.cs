@@ -14,7 +14,11 @@ namespace KillerScan.Engine
 
         public string Hostname { get => _hostname; set => _hostname = DeviceText.Clean(value, DeviceText.NameLength); }
         public string MacAddress { get; set; } = string.Empty;
-        public string Vendor { get; set; } = string.Empty;
+        // Never null, whatever a saved or imported file holds: the classifier and filters read them.
+        private string _vendor = string.Empty;
+        private List<int> _openPorts = [];
+        private List<string> _mdnsServices = [];
+        public string Vendor { get => _vendor; set => _vendor = value ?? string.Empty; }
         public string DeviceType { get; set; } = "Unknown";
 
         /// <summary>
@@ -29,7 +33,7 @@ namespace KillerScan.Engine
 
         /// <summary>Turns a stored device type key into display text. Set once by the host.</summary>
         public static Func<string, string>? DeviceTypeDisplayResolver { get; set; }
-        public List<int> OpenPorts { get; set; } = [];
+        public List<int> OpenPorts { get => _openPorts; set => _openPorts = value ?? []; }
 
         /// <summary>
         /// Why the device got its type, set with <see cref="DeviceType"/> by the scanner.
@@ -52,7 +56,7 @@ namespace KillerScan.Engine
         public string SmbOs { get => _smbOs; set => _smbOs = DeviceText.Clean(value, DeviceText.TextLength); }
         public string SnmpDescr { get => _snmpDescr; set => _snmpDescr = DeviceText.Clean(value, DeviceText.TextLength); }
         public string NetbiosName { get => _netbiosName; set => _netbiosName = DeviceText.Clean(value, DeviceText.NameLength); }
-        public List<string> MdnsServices { get; set; } = [];
+        public List<string> MdnsServices { get => _mdnsServices; set => _mdnsServices = value ?? []; }
         public string SsdpServer { get => _ssdpServer; set => _ssdpServer = DeviceText.Clean(value, DeviceText.TextLength); }
 
         public string OpenPortsDisplay =>

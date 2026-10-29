@@ -520,6 +520,10 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Tümünü seç</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Tümünü kopyala</sys:String>
     <sys:String x:Key="Str_Term_Clear">Temizle</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">Terminalde çalışan bir şey var. Durdurup yerine {0} başlatılsın mı?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Durdur ve başlat</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Birden çok satır yapıştırılsın mı?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">Bu metin {0} satır içeriyor. Buraya yapıştırıldığında her satır gelir gelmez çalışır.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Durdurmak için Esc</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Bölmeleri ayır</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Diğer bölmeye taşı</sys:String>

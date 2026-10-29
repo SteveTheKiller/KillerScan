@@ -691,8 +691,11 @@ namespace KillerScan.Features.Cli
             // honored on stdout as-is (that is the scripting contract), just without colors.
             string body = Render(format, devices, label, theme, noHeader);
             bool showTable = _outAnsi && (format == "table" || formatFromExtension);
+            // On a live console, device-chosen text (a hostname with ESC sequences) must not reach
+            // the terminal as control codes, so an explicit format is shown with them written as
+            // \xNN. Line breaks and tabs stay. Redirected output and exported files are untouched.
             if (!quiet)
-                @out.WriteLine(showTable ? Table(devices, !noHeader, ansi: true) : body);
+                @out.WriteLine(showTable ? Table(devices, !noHeader, ansi: true) : _outAnsi ? ConsoleSafe(body) : body);
             if (exportPath != null)
             {
                 try
@@ -747,6 +750,16 @@ namespace KillerScan.Features.Cli
             };
             if (key is null) { err.WriteLine("Error: /sort must be ip, hostname, mac, vendor, type, or ports."); return null; }
             return descending ? [.. devices.OrderByDescending(key)] : [.. devices.OrderBy(key)];
+        }
+
+        private static string ConsoleSafe(string text)
+        {
+            var result = new StringBuilder(text.Length);
+            foreach (char character in text)
+                if ((character < 0x20 && character is not ('\r' or '\n' or '\t')) || character is >= (char)0x7f and <= (char)0x9f)
+                    result.Append("\\x").Append(((int)character).ToString("X2", System.Globalization.CultureInfo.InvariantCulture));
+                else result.Append(character);
+            return result.ToString();
         }
 
         internal static string Render(string format, List<NetworkDevice> devices, string label,

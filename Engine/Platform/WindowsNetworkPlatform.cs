@@ -156,7 +156,7 @@ namespace KillerScan.Engine
                     // which arp -a always lists but which are never devices.
                     if (IPAddress.TryParse(ip, out _) && mac.Length == 17 && mac.Contains(':')
                         && int.TryParse(mac.Substring(0, 2), System.Globalization.NumberStyles.HexNumber, null, out int first)
-                        && (first & 1) == 0)
+                        && (first & 1) == 0 && mac != "00:00:00:00:00:00")   // an unresolved, "invalid" row
                         cache[ip] = mac;
                 }
             }

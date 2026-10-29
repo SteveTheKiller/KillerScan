@@ -296,11 +296,18 @@ namespace KillerScan.Services
         public bool SetLastUsed(string id, string targets, ScanOptions options, string adapter) =>
             Update(id, item => { item.LastTargets = targets; item.LastOptions = options; item.LastAdapter = adapter; });
 
-        private bool Update(string id, Action<LocationInfo> change) =>
-            LoadError == null && _store.Commit(value =>
+        private bool Update(string id, Action<LocationInfo> change)
+        {
+            // False when the Location is gone from the catalog on disk (another window deleted it),
+            // so a rename or note is never reported as saved when it was not.
+            bool found = false;
+            bool saved = LoadError == null && _store.Commit(value =>
             {
-                if (value.Locations.FirstOrDefault(item => item.Id == id) is { } item) change(item);
+                found = false;
+                if (value.Locations.FirstOrDefault(item => item.Id == id) is { } item) { change(item); found = true; }
             });
+            return saved && found;
+        }
 
         private sealed class CatalogFile
         {

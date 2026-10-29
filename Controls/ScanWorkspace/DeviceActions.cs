@@ -201,7 +201,8 @@ namespace KillerScan.Controls
             dlg.ShowDialog();
             if (!dlg.Confirmed) return;
             PersistenceFeedback.Check(_location.Devices.SetName(d, dlg.Value), _location.Devices.Retry, () => _location.Devices.SaveError);
-            if (!string.IsNullOrWhiteSpace(dlg.Value)) d.Hostname = dlg.Value.Trim();
+            // A blank name clears the custom one, so the row shows the discovered name again.
+            if (string.IsNullOrWhiteSpace(dlg.Value)) DevicePreferenceStore.Restore(d); else DevicePreferenceStore.Rename(d, dlg.Value);
             _filteredView?.Refresh();
             if (_showTopology) RefreshTopology();
         }
@@ -210,7 +211,7 @@ namespace KillerScan.Controls
         {
             var d = GetSelectedDevice(); if (d == null) return;
             PersistenceFeedback.Check(_location.Devices.SetName(d, null), _location.Devices.Retry, () => _location.Devices.SaveError);
-            d.Hostname = string.IsNullOrWhiteSpace(d.NetbiosName) ? string.Empty : d.NetbiosName;
+            DevicePreferenceStore.Restore(d);
             _filteredView?.Refresh();
             if (_showTopology) RefreshTopology();
         }

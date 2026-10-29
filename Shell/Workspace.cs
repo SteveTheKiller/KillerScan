@@ -529,10 +529,22 @@ namespace KillerScan.Shell
             // so it gets the same full path as the external window.
             else if (action.StartsWith("Ssh", StringComparison.Ordinal))
             {
+                if (!ConfirmReplaceTerminal("SSH " + ip)) return;
                 int separator = command.IndexOf(' ');
                 NewTerminal(QuoteArgument(SystemTools.Path(command[..separator])) + command[separator..], "SSH " + ip);
             }
-            else NewTerminal(title: "Ping " + ip, shellCommand: PingCommand(ip));
+            else if (ConfirmReplaceTerminal("Ping " + ip)) NewTerminal(title: "Ping " + ip, shellCommand: PingCommand(ip));
+        }
+
+        /// <summary>A device's Ping or SSH takes over the terminal. A session or command still running
+        /// there (an open SSH login, a ping -t) is ended only after asking, as the speed test does.</summary>
+        private bool ConfirmReplaceTerminal(string what)
+        {
+            if (_terminalControl?.HasRunningCommand != true) return true;
+            var dialog = new Controls.ConfirmDialog(what, string.Format(Loc("Str_Term_ReplaceRunning"), what),
+                Loc("Str_Term_Replace"), Loc("Str_Btn_Cancel")) { Owner = this };
+            dialog.ShowDialog();
+            return dialog.Confirmed;
         }
 
         private void ClipWorkspaceSurface()

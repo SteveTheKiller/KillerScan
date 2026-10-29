@@ -215,12 +215,22 @@ namespace KillerScan.Services
             // The whole helper travels in the process command line, so no file the user account can
             // write is read after it starts. A failed publication opens the recovery report.
             string script = "$ErrorActionPreference = 'Stop'\n"
-                + TrustedUpdate.Wait(self.Id, self.StartTime.ToUniversalTime().Ticks) + "\n"
+                + TrustedUpdate.Wait(self.Id, self.StartTime.ToUniversalTime().Ticks, NotClosed(newExe + ".recovery.txt")) + "\n"
                 + UpdateImagePublication.Script(newExe, curExe, false, ReleasesUrl, AppInfo.DisplayName,
                     newVersion, hive, showReport: true);
             var psi = HelperStart(script);
             if (platform.Start(psi) is null)
                 throw new IOException("The update helper did not start. Download retained at: " + newExe);
+        }
+
+        /// <summary>The per-user helper's timeout when the app has not closed within a minute: the
+        /// reason goes into the recovery report Script already wrote, and the report opens, as a
+        /// failed publication's does, instead of the update silently doing nothing.</summary>
+        private static string NotClosed(string report)
+        {
+            string quoted = "'" + report.Replace("'", "''") + "'";
+            return "try{[IO.File]::AppendAllText(" + quoted + ",[Environment]::NewLine+'KillerTools: the app did not close within a minute, so this update was not applied.');"
+                + "[void][Diagnostics.Process]::Start([IO.Path]::Combine([Environment]::SystemDirectory,'notepad.exe'),'\"'+" + quoted + "+'\"')}catch{};exit 1618";
         }
 
         /// <summary>The installer and launcher modes. The helper waits for this process (and the

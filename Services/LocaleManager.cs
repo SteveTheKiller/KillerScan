@@ -296,8 +296,12 @@ namespace KillerScan.Services
                 var rd = new ResourceDictionary();
                 // An entry of another type than the English one (text where a number belongs, or the
                 // reverse) is left out, so the English value stays and no binding gets the wrong type.
+                // Text whose placeholders do not fit the English format ({2} where English has only
+                // {0} and {1}, or a stray brace) is left out too, so string.Format never throws on it.
                 foreach (var entry in TranslationFileReader.Read(fs, known))
-                    if (merged[baseIndex][entry.Key]?.GetType() == entry.Value.GetType()) rd[entry.Key] = entry.Value;
+                    if (merged[baseIndex][entry.Key] is { } english && english.GetType() == entry.Value.GetType()
+                        && (entry.Value is not string text || FitsFormat((string)english, text)))
+                        rd[entry.Key] = entry.Value;
                 SetOverride(rd);
                 _externalLoadedOnce = true;
                 return true;
@@ -338,6 +342,20 @@ namespace KillerScan.Services
                 if (TryApplyExternal()) ExternalReloaded?.Invoke();
             };
             return t;
+        }
+
+        /// <summary>True when <paramref name="text"/> can stand in for <paramref name="english"/> as a
+        /// format: it only uses the placeholders English fills. Text that English never formats is
+        /// always fine.</summary>
+        private static bool FitsFormat(string english, string text)
+        {
+            var placeholders = System.Text.RegularExpressions.Regex.Matches(english, @"(?<!\{)\{(\d+)");
+            if (placeholders.Count == 0) return true;
+            int count = 0;
+            foreach (System.Text.RegularExpressions.Match m in placeholders)
+                count = Math.Max(count, int.Parse(m.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture) + 1);
+            try { _ = string.Format(System.Globalization.CultureInfo.InvariantCulture, text, new object[count]); return true; }
+            catch (FormatException) { return false; }
         }
     }
 }

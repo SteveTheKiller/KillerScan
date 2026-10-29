@@ -476,17 +476,29 @@ namespace KillerScan.Controls
         private void OnNetworkAddressChanged(object? sender, EventArgs e) =>
             Dispatcher.BeginInvoke(new Action(CheckLocationSuggestion));
 
-        private void RecordGateway(LocationData location)
+        private async void RecordGateway(LocationData location)
         {
             if (location.Info is not { } info || location.IsShared) return;
             // The migrated "Saved scans" holding Location mixes every old site, so it never claims one.
             if (LocationService.IsImportedScans(info)) return;
-            string gateway = LocalNetwork.Detect()?.Gateway ?? string.Empty;
-            if (gateway.Length == 0) return;
-            // From the results when the gateway is in them, otherwise from the neighbour cache Windows
-            // already has (no traffic), so saving with an empty table still records the router.
-            string mac = _active.Devices.FirstOrDefault(item => item.IpAddress == gateway && item.MacAddress.Length > 0)?.MacAddress
-                ?? (NetworkPlatform.Current.ReadNeighborCache().TryGetValue(gateway, out var cached) ? cached : string.Empty);
+            // The results are read here, on the UI thread; adapter detection and the neighbour
+            // cache (an arp.exe run) happen off it, as the suggestion check does.
+            var known = _active.Devices.Where(item => item.MacAddress.Length > 0)
+                .GroupBy(item => item.IpAddress).ToDictionary(group => group.Key, group => group.First().MacAddress);
+            string mac;
+            try
+            {
+                mac = await System.Threading.Tasks.Task.Run(() =>
+                {
+                    string gateway = LocalNetwork.Detect()?.Gateway ?? string.Empty;
+                    if (gateway.Length == 0) return string.Empty;
+                    // From the results when the gateway is in them, otherwise from the neighbour cache
+                    // Windows already has (no traffic), so saving with an empty table still records the router.
+                    return known.TryGetValue(gateway, out var found) ? found
+                        : NetworkPlatform.Current.ReadNeighborCache().TryGetValue(gateway, out var cached) ? cached : string.Empty;
+                });
+            }
+            catch (Exception ex) when (ex is not OutOfMemoryException) { return; }
             if (mac.Length > 0) LocationService.AddGatewayMac(info, mac);
         }
 
@@ -889,7 +901,9 @@ namespace KillerScan.Controls
         internal void CreateLocationAndSave()
         {
             if (CreateLocation(switchTo: false) is not { } created) return;
-            if (InImportedScans) SaveScanInto(LocationService.Get(created), null);
+            // From the migrated holding Location this moves the loaded scan, like the other save
+            // targets, so the holding Location still empties and retires.
+            if (InImportedScans) MoveOutOfHolding(created, null);
             else SaveResultsTo(LocationService.Get(created));
         }
 

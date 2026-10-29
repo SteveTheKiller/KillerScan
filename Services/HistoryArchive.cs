@@ -71,6 +71,10 @@ namespace KillerScan.Services
                 foreach (var entry in Entries)
                 {
                     entry.Target ??= string.Empty;
+                    // An imported .ksloc carries history as written, so every text field is made safe
+                    // here: DisplayName and the reports read them without null checks.
+                    entry.Name ??= string.Empty;
+                    entry.Adapter ??= string.Empty;
                     entry.Devices ??= [];
                     entry.Devices.RemoveAll(device => device == null || string.IsNullOrWhiteSpace(device.Identity));
                     foreach (var device in entry.Devices) device.OpenPorts ??= [];

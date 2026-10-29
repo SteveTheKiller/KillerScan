@@ -51,9 +51,11 @@ namespace KillerScan.Engine
 
             var net = Pick(adapters.Select(Read).Where(c => c != null).Select(c => c!));
             if (net == null) return null;
-            if (net.Gateway.Length > 0) NetworkScanner.GatewayIp = net.Gateway;   // so the classifier flags the router
+            // Always the current network's, empty included, so a router from an earlier network is
+            // never classified onto whatever device now has its address.
+            NetworkScanner.GatewayIp = net.Gateway;   // so the classifier flags the router
             // Distinguishes a real DNS server from a router that just forwards.
-            if (net.Dns.Length > 0) NetworkScanner.DnsIp = net.Dns;
+            NetworkScanner.DnsIp = net.Dns;
             return net;
         }
 

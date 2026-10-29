@@ -351,11 +351,12 @@ $ops.Releases = { param($url)
         // Compiled by Windows PowerShell 5.1, so it stays within C# 5.
         private const string Guard = """
 if (-not ('KillerUpdateGuard' -as [type])) {
-# An elevated helper compiles in a fresh folder only Administrators and SYSTEM can open. Add-Type
+# A helper running as administrator (the trusted machine path, or a per-user copy run as
+# administrator) compiles in a fresh folder only Administrators and SYSTEM can open. Add-Type
 # writes its source and DLL to TMP before loading them, and the inherited TMP is the user's own
 # folder, where any process of that user could swap them in between (2026-10-28 review, DEP-001).
 $killerTemp = $null; $killerSaved = @($env:TMP, $env:TEMP)
-if ($plan.Elevated -and ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     $killerTemp = Join-Path ([Environment]::GetFolderPath('Windows')) ('Temp\KillerTools-' + [Guid]::NewGuid().ToString('N'))
     $acl = New-Object Security.AccessControl.DirectorySecurity
     $acl.SetAccessRuleProtection($true, $false)
@@ -393,7 +394,9 @@ public static class KillerUpdateGuard {
         try {
             while (paths.Count > 0) {
                 string path = paths.Pop();
-                var handle = CreateFile(path, 0x80, 3, IntPtr.Zero, 3, 0x02200000, IntPtr.Zero);
+                // Read access, not attributes only: NTFS keeps share modes only for data access, so an
+                // attributes handle would not stop a rename (as InstallationFiles.PinDirectory does).
+                var handle = CreateFile(path, 0x80000000, 3, IntPtr.Zero, 3, 0x02200000, IntPtr.Zero);
                 if (handle.IsInvalid) { int code = Marshal.GetLastWin32Error(); handle.Dispose(); throw new Win32Exception(code); }
                 lease.Handles.Add(handle);
                 FileInformation info;

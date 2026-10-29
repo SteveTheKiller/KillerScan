@@ -562,6 +562,10 @@
     <sys:String x:Key="Str_Term_SelectAll">Барлығын таңдау</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Барлығын көшіру</sys:String>
     <sys:String x:Key="Str_Term_Clear">Тазарту</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">Терминалда бірдеңе орындалып жатыр. Оны тоқтатып, {0} іске қосу керек пе?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Тоқтатып, бастау</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Бірнеше жолды қою керек пе?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">Бұл мәтінде {0} жол бар. Мұнда қойылса, әр жол келген бойда орындалады.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Тоқтату үшін Esc</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Панельдерді бөлу</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Басқа панельге жылжыту</sys:String>

@@ -38,7 +38,20 @@ namespace KillerScan.Terminal
         private Cell[][]? _altScreen;                       // non-null while the alt buffer is up
         private readonly List<Cell[]> _scrollback = [];
 
-        public int ScrollbackLimit { get; set; } = int.MaxValue;
+        /// <summary>Lines of history kept above the screen. Bounded like Windows Terminal's 9001: a
+        /// ping -t or a chatty session left open for days must not grow without end.</summary>
+        public int ScrollbackLimit { get; set; } = 10000;
+
+        /// <summary>Longest text one cell keeps for a base character and what joins it.</summary>
+        private const int MaxClusterLength = 32;
+
+        // Trims in batches, so a session at the limit is not a full list shift on every line.
+        private void TrimScrollback()
+        {
+            // Written as a difference: ScrollbackLimit + 512 overflows when the limit is int.MaxValue.
+            if (_scrollback.Count - ScrollbackLimit > 512)
+                _scrollback.RemoveRange(0, _scrollback.Count - ScrollbackLimit);
+        }
 
         public int ScrollbackCount => _scrollback.Count;
 
@@ -112,6 +125,7 @@ namespace KillerScan.Terminal
             int last = previous.TotalLines - 1;
             while (last >= 0 && Array.TrueForAll(previous.LineAt(last), cell => cell.Ch == 0 || cell.Ch == ' ')) last--;
             for (int row = 0; row <= last; row++) _scrollback.Add((Cell[])previous.LineAt(row).Clone());
+            TrimScrollback();
             Version++;
         }
 
@@ -120,8 +134,7 @@ namespace KillerScan.Terminal
             int last = Rows - 1;
             while (last >= 0 && Array.TrueForAll(_screen[last], cell => cell.Ch == 0 || cell.Ch == ' ')) last--;
             for (int row = 0; row <= last; row++) _scrollback.Add((Cell[])_screen[row].Clone());
-            if (_scrollback.Count > ScrollbackLimit)
-                _scrollback.RemoveRange(0, _scrollback.Count - ScrollbackLimit);
+            TrimScrollback();
             Version++;
         }
 
@@ -137,7 +150,10 @@ namespace KillerScan.Terminal
             int oldRows = Rows;
             int removed = Math.Max(0, oldRows - rows);
             if (_altScreen == null)
+            {
                 for (int r = 0; r < removed; r++) _scrollback.Add(old[r]);
+                TrimScrollback();
+            }
             _screen = New(cols, rows);
             for (int r = 0; r < Math.Min(oldRows, rows); r++)
             {
@@ -149,10 +165,22 @@ namespace KillerScan.Terminal
 
             if (_altScreen != null)
             {
-                var oldAlt = _altScreen;
+                // The saved main screen (under vim, less or htop) resizes the way the main screen
+                // does: anchored at the bottom, where the latest output and prompt are, with rows
+                // that no longer fit moved into history and wide lines kept whole. Its saved cursor
+                // moves with it.
+                var oldMain = _altScreen;
+                int mainRemoved = Math.Max(0, oldRows - rows);
+                for (int r = 0; r < mainRemoved; r++) _scrollback.Add(oldMain[r]);
+                TrimScrollback();
                 _altScreen = New(cols, rows);
                 for (int r = 0; r < Math.Min(oldRows, rows); r++)
-                    Array.Copy(oldAlt[r], _altScreen[r], Math.Min(Cols, cols));
+                {
+                    var source = oldMain[r + mainRemoved];
+                    _altScreen[r] = NewLine(Math.Max(cols, source.Length));
+                    Array.Copy(source, _altScreen[r], source.Length);
+                }
+                _savedRow = Math.Max(0, _savedRow - mainRemoved);
             }
 
             Cols = cols;
@@ -204,7 +232,10 @@ namespace KillerScan.Terminal
                 bool regional = TerminalWidth.IsRegional(cell.Ch) && TerminalWidth.IsRegional(cp) && cluster.Length == 2;
                 if (extension || join || regional)
                 {
-                    cell.Cluster = cluster + char.ConvertFromUtf32(cp);
+                    // Real clusters (the longest family emoji) stay well under this. A stream of
+                    // combining marks stops growing the cell here instead of costing a longer string
+                    // copy and text layout per mark until the window stalls.
+                    if (cluster.Length < MaxClusterLength) cell.Cluster = cluster + char.ConvertFromUtf32(cp);
                     int width = cell.Width;
                     if ((cp == 0xfe0f && TerminalWidth.IsEmoji(cell.Ch)) || join) width = 2;
                     if (width > cell.Width)
@@ -322,6 +353,9 @@ namespace KillerScan.Terminal
 
         private void ScrollUp(int n)
         {
+            // More than the region's height only adds blank lines; a remote ESC[65535S must not
+            // turn eight bytes into tens of thousands of lines.
+            n = Math.Min(n, _bottom - _top + 1);
             bool wholeScreen = _top == 0 && _bottom == Rows - 1 && _altScreen == null;
             for (int i = 0; i < n; i++)
             {
@@ -329,8 +363,7 @@ namespace KillerScan.Terminal
                 if (wholeScreen)
                 {
                     _scrollback.Add(gone);
-                    if (_scrollback.Count > ScrollbackLimit)
-                        _scrollback.RemoveRange(0, _scrollback.Count - ScrollbackLimit);
+                    TrimScrollback();
                 }
                 for (int r = _top; r < _bottom; r++) _screen[r] = _screen[r + 1];
                 _screen[_bottom] = wholeScreen ? NewLine(Cols) : Blank(gone);
@@ -340,6 +373,7 @@ namespace KillerScan.Terminal
 
         private void ScrollDown(int n)
         {
+            n = Math.Min(n, _bottom - _top + 1);
             for (int i = 0; i < n; i++)
             {
                 var gone = _screen[_bottom];
@@ -474,7 +508,8 @@ namespace KillerScan.Terminal
                         if (col >= 0 && line[col].Ch > 0)
                         {
                             string cluster = line[col].Text;
-                            for (int repeat = 0; repeat < P(0); repeat++)
+                            // At most a screenful: more repeats only overwrite what they just wrote.
+                            for (int repeat = 0, times = Math.Min(P(0), Cols * Rows); repeat < times; repeat++)
                                 for (int index = 0; index < cluster.Length; index++)
                                 {
                                     int scalar = char.ConvertToUtf32(cluster, index);

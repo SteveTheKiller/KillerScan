@@ -125,7 +125,11 @@ namespace KillerScan.Shell
             if (key == Key.S && modifiers == (ModifierKeys.Control | ModifierKeys.Alt)
                 && Keyboard.FocusedElement is not TextBox and not KillerScan.Terminal.TerminalControl)
             { NewLocation_Click(this, new RoutedEventArgs()); e.Handled = true; return; }
-            if (_workspaceView == "history" && _historyWorkspace?.HandleShortcut(
+            // History's keys act on its selected run, but not on a focused button or list row
+            // elsewhere (the rail, the Locations list): Enter there belongs to that control.
+            bool focusOutsideHistory = _historyWorkspace?.IsKeyboardFocusWithin != true
+                && Keyboard.FocusedElement is System.Windows.Controls.Primitives.ButtonBase or ListBoxItem;
+            if (_workspaceView == "history" && !focusOutsideHistory && _historyWorkspace?.HandleShortcut(
                 key, modifiers, Keyboard.FocusedElement is TextBox) == true)
             { e.Handled = true; return; }
             if (_workspaceView == "watch" && _watchWorkspace?.HandleShortcut(key, modifiers) == true)
@@ -133,20 +137,23 @@ namespace KillerScan.Shell
             bool ctrl = modifiers.HasFlag(ModifierKeys.Control);
             bool shift = modifiers.HasFlag(ModifierKeys.Shift);
             bool alt = modifiers.HasFlag(ModifierKeys.Alt);
+            // A shell in the terminal owns its Ctrl chords (Ctrl+E end of line, Ctrl+T transpose);
+            // only Ctrl+Shift+T, which closes that panel, is taken from it.
+            bool inTerminal = Keyboard.FocusedElement is KillerScan.Terminal.TerminalControl;
             if (ctrl && !alt)
             {
-                if (key == Key.T)
+                if (key == Key.T && (shift || !inTerminal))
                 {
                     if (shift) ToggleTerminalPanel(); else NewScan();
                     e.Handled = true; return;
                 }
             }
-            if (ctrl && !shift && !alt && key == Key.E)
+            if (ctrl && !shift && !alt && key == Key.E && !inTerminal)
             {
                 _scanWorkspace?.Export("csv");
                 e.Handled = true; return;
             }
-            if (ctrl && shift && !alt)
+            if (ctrl && shift && !alt && !inTerminal)
             {
                 string? format = key switch
                 {
@@ -162,7 +169,7 @@ namespace KillerScan.Shell
                     e.Handled = true; return;
                 }
             }
-            if (ctrl && alt && !shift && key == Key.H)
+            if (ctrl && alt && !shift && key == Key.H && !inTerminal)
             {
                 _scanWorkspace?.Export("svg");
                 e.Handled = true; return;

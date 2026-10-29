@@ -562,6 +562,10 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Selecionar tudo</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Copiar tudo</sys:String>
     <sys:String x:Key="Str_Term_Clear">Limpar</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">Algo está em execução no terminal. Interromper e iniciar {0}?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Interromper e iniciar</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Colar várias linhas?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">Este texto tem {0} linhas. Colada aqui, cada linha é executada assim que chega.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc para parar</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Dividir painéis</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Mover para o outro painel</sys:String>

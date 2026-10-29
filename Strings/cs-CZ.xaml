@@ -518,6 +518,10 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Vybrat vše</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Kopírovat vše</sys:String>
     <sys:String x:Key="Str_Term_Clear">Vymazat</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">V terminálu něco běží. Zastavit to a spustit {0}?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Zastavit a spustit</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Vložit více řádků?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">Tento text má {0} řádků. Po vložení se každý řádek spustí, jakmile dorazí.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc pro zastavení</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Rozdělit panely</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Přesunout do druhého panelu</sys:String>

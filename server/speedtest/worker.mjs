@@ -24,6 +24,17 @@ function error(status, message, headers) {
   return json({ error: message }, status, headers);
 }
 
+// One IPv6 subscriber holds a whole /64, so the per-client budget is kept per /64: rotating
+// addresses inside it must not buy a fresh budget each time. IPv4 stays per address.
+export function clientKey(ip) {
+  if (!ip.includes(":")) return ip;
+  let [head, tail = ""] = ip.toLowerCase().split("::");
+  const left = head ? head.split(":") : [];
+  const right = tail ? tail.split(":") : [];
+  const groups = ip.includes("::") ? [...left, ...Array(Math.max(0, 8 - left.length - right.length)).fill("0"), ...right] : left;
+  return groups.slice(0, 4).map(group => (group || "0").replace(/^0+(?=.)/, "")).join(":") + "::/64";
+}
+
 async function authorize(request, env, url) {
   if (env.LOCAL_TEST === "1") {
     if (["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)) return null;
@@ -37,7 +48,7 @@ async function authorize(request, env, url) {
     return error(503, "Speed test rate limiting is not configured.");
   }
   try {
-    const result = await client.limit({ key: "client:" + ip });
+    const result = await client.limit({ key: "client:" + clientKey(ip) });
     if (!result || typeof result.success !== "boolean") throw new Error("Invalid counter result");
     if (!result.success) return error(429, "Please wait before testing again.", { "Retry-After": "60" });
     const overall = await service.limit({ key: "speedtest" });

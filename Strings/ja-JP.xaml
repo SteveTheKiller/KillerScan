@@ -531,6 +531,10 @@
     <sys:String x:Key="Str_Term_SelectAll">すべて選択</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">すべてコピー</sys:String>
     <sys:String x:Key="Str_Term_Clear">クリア</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">ターミナルで何かが実行中です。停止して {0} を開始しますか?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">停止して開始</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">複数行を貼り付けますか?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">このテキストは {0} 行あります。ここに貼り付けると、各行は届いた時点で実行されます。</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc で停止</sys:String>
     <sys:String x:Key="Str_Workspace_Split">ペインを分割</sys:String>
     <sys:String x:Key="Str_Workspace_Move">別のペインに移動</sys:String>

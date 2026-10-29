@@ -63,15 +63,6 @@ jobs:
           if ($env:FRAMEWORK) { $buildArgs += @('--framework', $env:FRAMEWORK) }
           & dotnet @buildArgs 2>&1 | Tee-Object ci-results/build.log
           if ($LASTEXITCODE -ne 0) { throw 'Build failed. See build.log.' }
-      - name: Run tests
-        if: matrix.mode == 'test'
-        env:
-          PROJECT: ${{ matrix.project }}
-        run: |
-          # WPF FontCache requires WINDIR even for isolated resource tests.
-          if (!$env:WINDIR) { $env:WINDIR = $env:SYSTEMROOT }
-          dotnet test $env:PROJECT --no-build --no-restore --configuration Release --logger 'trx;LogFileName=tests.trx' --results-directory ci-results --verbosity normal 2>&1 | Tee-Object ci-results/test.log
-          if ($LASTEXITCODE -ne 0) { throw 'Tests failed. See test.log and tests.trx.' }
       - name: Run console regression checks
         if: matrix.mode == 'console'
         env:

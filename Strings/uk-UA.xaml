@@ -562,6 +562,10 @@
     <sys:String x:Key="Str_Term_SelectAll">Виділити все</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Копіювати все</sys:String>
     <sys:String x:Key="Str_Term_Clear">Очистити</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">У терміналі щось виконується. Зупинити це й запустити {0}?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Зупинити й запустити</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Вставити кілька рядків?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">У цьому тексті {0} рядків. Після вставлення сюди кожен рядок виконається одразу, щойно надійде.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc - зупинити</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Розділити панелі</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Перемістити до іншої панелі</sys:String>

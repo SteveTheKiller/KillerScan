@@ -37,6 +37,9 @@ namespace KillerScan.Services
         /// </summary>
         public Observation Observe(IReadOnlyCollection<NetworkDevice> devices)
         {
+            // A file that was briefly locked when the Location opened loaded as empty. It is read
+            // again first, or this run would be taken as a fresh baseline and flag nothing as new.
+            if (!MemoryOnly && _store.Error != null) _store.Load();
             bool baseline = !_data.Baseline;
             var fresh = baseline ? [] : devices.Where(device => !IsKnown(device)).ToList();
             var identities = devices.Select(DeviceIdentity.For).ToArray();
@@ -57,7 +60,25 @@ namespace KillerScan.Services
         {
             if (_data.Names.TryGetValue(DeviceIdentity.For(device), out string? name) &&
                 !string.IsNullOrWhiteSpace(name))
-                device.Hostname = name;
+                Rename(device, name);
+        }
+
+        // The name a scan found (reverse DNS, mDNS, NetBIOS) before a custom name replaced it, so
+        // clearing the custom name brings it back. Held beside the device, never saved with it.
+        private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<NetworkDevice, string> Discovered = new();
+
+        /// <summary>Shows a custom name, remembering the discovered one the first time.</summary>
+        internal static void Rename(NetworkDevice device, string name)
+        {
+            if (!Discovered.TryGetValue(device, out _)) Discovered.Add(device, device.Hostname);
+            device.Hostname = name.Trim();
+        }
+
+        /// <summary>Puts back the name the scan found, or the NetBIOS name when nothing was kept.</summary>
+        internal static void Restore(NetworkDevice device)
+        {
+            if (Discovered.TryGetValue(device, out string? found)) { device.Hostname = found; Discovered.Remove(device); }
+            else device.Hostname = string.IsNullOrWhiteSpace(device.NetbiosName) ? string.Empty : device.NetbiosName;
         }
 
         public string? GetName(NetworkDevice device) =>

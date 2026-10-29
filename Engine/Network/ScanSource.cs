@@ -37,8 +37,14 @@ namespace KillerScan.Engine
             if (Current is not { } binding)
             {
                 using var ping = new Ping();
-                var reply = await ping.SendPingAsync(address, timeoutMs);
-                return (reply.Status == IPStatus.Success, reply.Options?.Ttl ?? 0);
+                // Ping throws for some failures (resources under a wide sweep, no route); that is no
+                // reply, and the caller's TCP liveness check still gets its turn.
+                try
+                {
+                    var reply = await ping.SendPingAsync(address, timeoutMs);
+                    return (reply.Status == IPStatus.Success, reply.Options?.Ttl ?? 0);
+                }
+                catch (PingException) { return (false, 0); }
             }
             return await BoundEchoAsync(binding.LocalAddress, address, timeoutMs);
         }
@@ -134,6 +140,9 @@ namespace KillerScan.Engine
                 Release(freeBuffers: true);
                 done.TrySetResult(result);
             }, null, timeoutMs + 5000, executeOnlyOnce: true);
+            // A reply fast enough to finish before the line above assigned the registration left it
+            // registered; it is released here instead.
+            if (done.Task.IsCompleted) registration.Unregister(null);
             return done.Task;
         }
     }

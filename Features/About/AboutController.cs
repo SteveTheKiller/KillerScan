@@ -259,7 +259,10 @@ namespace KillerScan.Features.About
 
             // Declining UAC throws, so the shutdown only happens once the helper is actually
             // running - otherwise the app would close without updating.
-            try { UpdateService.StartSwap(newExe, tag!.TrimStart('v', 'V')); }
+            // Off the UI thread: the machine path waits while the elevated helper hashes, stages and
+            // verifies the release, which takes seconds.
+            string version = tag!.TrimStart('v', 'V');
+            try { await System.Threading.Tasks.Task.Run(() => UpdateService.StartSwap(newExe, version)); }
             catch
             {
                 AfterUpdateHandoff(false);

@@ -520,6 +520,10 @@
     <sys:String x:Key="Str_Term_SelectAll">সব নির্বাচন</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">সব কপি</sys:String>
     <sys:String x:Key="Str_Term_Clear">পরিষ্কার</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">টার্মিনালে কিছু চলছে। সেটি থামিয়ে {0} শুরু করবেন?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">থামিয়ে শুরু করুন</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">একাধিক লাইন পেস্ট করবেন?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">এই লেখায় {0}টি লাইন আছে। এখানে পেস্ট করলে প্রতিটি লাইন পৌঁছানোর সঙ্গে সঙ্গে চলবে।</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">বন্ধ করতে Esc</sys:String>
     <sys:String x:Key="Str_Workspace_Split">প্যান ভাগ করুন</sys:String>
     <sys:String x:Key="Str_Workspace_Move">অন্য প্যানে সরান</sys:String>

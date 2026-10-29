@@ -278,9 +278,13 @@ namespace KillerScan.Controls
                 card = _cards.FirstOrDefault(c => c.Address == address);
                 if (card == null) return;
             }
+            if (_portsOnly) return;
             Cards.SelectedItem = card;
             Cards.ScrollIntoView(card);
         }
+
+        /// <summary>True while a check asks the shell for a target's ports (RunChecksAsync).</summary>
+        private bool _portsOnly;
 
         private void CardDiagnose_Click(object sender, RoutedEventArgs e)
         {
@@ -314,7 +318,14 @@ namespace KillerScan.Controls
             // Ask the shell for this target's scan record before probing, so the checks cover
             // its discovered ports. Guarded on the cache, so the shell calling back into
             // ShowDetails cannot bounce between the two.
-            if (!_knownPorts.ContainsKey(card.Address)) DiagnoseRequested?.Invoke(card.Address);
+            // Only the ports are wanted back: the shell answers through ShowDetails, which must not
+            // select and scroll to each card a sweep checks, moving the user's own selection.
+            if (!_knownPorts.ContainsKey(card.Address))
+            {
+                _portsOnly = true;
+                try { DiagnoseRequested?.Invoke(card.Address); }
+                finally { _portsOnly = false; }
+            }
             card.Checks.Clear();
             var slots = _checkSlots;
             if (slots != null) await slots.WaitAsync(token);

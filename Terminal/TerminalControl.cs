@@ -585,6 +585,22 @@ namespace KillerScan.Terminal
 
         private static readonly Dictionary<int, GlyphTypeface?> _sysFaceCache = [];
 
+        // Every installed family's regular face, resolved once. Looking a codepoint up is then a map
+        // check per face rather than building a Typeface for every font, inside OnRender, each time
+        // output shows a codepoint not seen before.
+        private static readonly Lazy<List<(string Name, GlyphTypeface Face)>> _systemFaces = new(() =>
+        {
+            var faces = new List<(string, GlyphTypeface)>();
+            foreach (var fam in Fonts.SystemFontFamilies)
+                try
+                {
+                    if (new Typeface(fam, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal).TryGetGlyphTypeface(out var face))
+                        faces.Add((fam.Source ?? string.Empty, face));
+                }
+                catch { /* a face that will not resolve is just not a candidate */ }
+            return faces;
+        });
+
         private static GlyphTypeface? SystemFaceFor(int cp)
         {
             lock (_sysFaceCache)
@@ -596,13 +612,12 @@ namespace KillerScan.Terminal
                 if (cp is >= 0xE000 and <= 0xF8FF)
                 {
 
-                    foreach (var fam in Fonts.SystemFontFamilies)
+                    foreach (var (name, face) in _systemFaces.Value)
                     {
-                        string name = fam.Source ?? string.Empty;
                         if (name.IndexOf("Nerd Font", StringComparison.OrdinalIgnoreCase) < 0
                             && name.IndexOf("NerdFont", StringComparison.OrdinalIgnoreCase) < 0
                             && !name.EndsWith(" NF", StringComparison.OrdinalIgnoreCase)) continue;
-                        if (TryFaceFor(fam, cp, out found)) break;
+                        if (face.CharacterToGlyphMap.ContainsKey(cp)) { found = face; break; }
                     }
                 }
                 else
@@ -612,13 +627,18 @@ namespace KillerScan.Terminal
                         if (TryFaceFor(new FontFamily(name), cp, out found)) break;
 
                     if (found == null)
-                        foreach (var fam in Fonts.SystemFontFamilies)
-                            if (TryFaceFor(fam, cp, out found)) break;
+                        foreach (var (_, face) in _systemFaces.Value)
+                            if (face.CharacterToGlyphMap.ContainsKey(cp)) { found = face; break; }
                 }
             }
             catch { found = null; }
 
-            lock (_sysFaceCache) _sysFaceCache[cp] = found;
+            lock (_sysFaceCache)
+            {
+                // Bounded: output full of distinct rare codepoints must not grow it without end.
+                if (_sysFaceCache.Count >= 8192) _sysFaceCache.Clear();
+                _sysFaceCache[cp] = found;
+            }
             return found;
         }
 
@@ -910,13 +930,28 @@ namespace KillerScan.Terminal
             return null;
         }
 
+        private bool ConfirmMultiLinePaste(string text)
+        {
+            string Loc(string key, string fallback) => TryFindResource(key) as string ?? fallback;
+            int lines = text.Replace("\r\n", "\n").TrimEnd('\n', '\r').Split('\n', '\r').Length;
+            var dialog = new KillerScan.Controls.ConfirmDialog(Loc("Str_Term_PasteTitle", "Paste several lines?"),
+                string.Format(Loc("Str_Term_PasteDetail", "This text has {0} lines. Pasted here, each line runs as soon as it arrives."), Math.Max(2, lines)),
+                Loc("Str_Term_Paste", "Paste"), Loc("Str_Btn_Cancel", "Cancel")) { Owner = Window.GetWindow(this) };
+            dialog.ShowDialog();
+            return dialog.Confirmed;
+        }
+
         private void Paste()
         {
             try
             {
                 if (!Clipboard.ContainsText()) return;
 
-                string framed = TerminalPaste.Frame(Clipboard.GetText(), _buf.BracketedPaste);
+                string text = Clipboard.GetText();
+                // Without bracketed paste every line break is Enter, so several lines would run at
+                // once, unseen. Asked first, as Windows Terminal does.
+                if (!_buf.BracketedPaste && text.IndexOfAny(['\r', '\n']) >= 0 && !ConfirmMultiLinePaste(text)) return;
+                string framed = TerminalPaste.Frame(text, _buf.BracketedPaste);
                 if (framed.Length > 0) Send(framed);
                 _scroll = 0;
             }

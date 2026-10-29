@@ -561,6 +561,10 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Select all</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Copy All</sys:String>
     <sys:String x:Key="Str_Term_Clear">Clear</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">Something is running in the terminal. Stop it and start {0} instead?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Stop and start</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Paste several lines?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">This text has {0} lines. Pasted here, each line runs as soon as it arrives.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc to stop</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Split panes</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Move to other pane</sys:String>

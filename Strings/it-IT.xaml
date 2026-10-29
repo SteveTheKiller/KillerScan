@@ -536,6 +536,10 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Seleziona tutto</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Copia tutto</sys:String>
     <sys:String x:Key="Str_Term_Clear">Pulisci</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">Qualcosa è in esecuzione nel terminale. Interromperlo e avviare {0}?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Interrompi e avvia</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Incollare più righe?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">Questo testo ha {0} righe. Incollata qui, ogni riga viene eseguita appena arriva.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc per fermare</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Dividi riquadri</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Sposta nell'altro riquadro</sys:String>

@@ -505,6 +505,10 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Zaznacz wszystko</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Kopiuj wszystko</sys:String>
     <sys:String x:Key="Str_Term_Clear">Wyczyść</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">W terminalu coś działa. Zatrzymać to i uruchomić {0}?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Zatrzymaj i uruchom</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Wkleić kilka wierszy?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">Ten tekst ma {0} wierszy. Po wklejeniu tutaj każdy wiersz zostanie wykonany od razu.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc aby zatrzymać</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Podziel panele</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Przenieś do drugiego panelu</sys:String>

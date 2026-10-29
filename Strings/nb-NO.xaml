@@ -562,6 +562,10 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Merk alt</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Kopier alt</sys:String>
     <sys:String x:Key="Str_Term_Clear">Tøm</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">Noe kjører i terminalen. Stoppe det og starte {0} i stedet?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Stopp og start</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Lime inn flere linjer?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">Denne teksten har {0} linjer. Limt inn her kjøres hver linje så snart den kommer frem.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc for å stoppe</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Del ruter</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Flytt til det andre panelet</sys:String>

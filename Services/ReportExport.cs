@@ -46,8 +46,21 @@ namespace KillerScan.Services
             System.Windows.Application.Current?.TryFindResource(key) as string ?? fallback;
 
         /// <summary>L, escaped to sit inside a single-quoted JavaScript string literal.</summary>
-        private static string Ljs(string key, string fallback) =>
-            L(key, fallback).Replace("\\", "\\\\").Replace("'", "\\'");
+        private static string Ljs(string key, string fallback)
+        {
+            // A translation can come from a --lang-file, so every character that could end the
+            // string or the script element (quotes, backslash, < > &, line breaks, U+2028/9 and
+            // other controls) is written as a \u escape.
+            string text = L(key, fallback);
+            var sb = new StringBuilder(text.Length);
+            foreach (char c in text)
+            {
+                if (c < 0x20 || c is '\\' or '\'' or '"' or '<' or '>' or '&' or '\u007f' || c == (char)0x2028 || c == (char)0x2029)
+                    sb.Append("\\u").Append(((int)c).ToString("x4", System.Globalization.CultureInfo.InvariantCulture));
+                else sb.Append(c);
+            }
+            return sb.ToString();
+        }
 
         internal static string SpreadsheetSafeValue(string? value)
         {

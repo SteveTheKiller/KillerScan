@@ -73,6 +73,16 @@ namespace KillerScan.Engine
                 clock.Stop();
                 token.ThrowIfCancellationRequested();
 
+                // A router that answers "unreachable" is the end of the path, as tracert treats it:
+                // its hop is shown with its address and the walk stops instead of timing out to the
+                // hop limit.
+                if (reply is { Status: IPStatus.DestinationHostUnreachable or IPStatus.DestinationNetworkUnreachable
+                        or IPStatus.DestinationProtocolUnreachable or IPStatus.DestinationPortUnreachable } unreachable
+                    && unreachable.Address != null && !unreachable.Address.Equals(System.Net.IPAddress.Any))
+                {
+                    report(new Hop(ttl, unreachable.Address, unreachable.RoundtripTime > 0 ? unreachable.RoundtripTime : clock.ElapsedMilliseconds, false));
+                    break;
+                }
                 if (reply == null || (reply.Status != IPStatus.Success && reply.Status != IPStatus.TtlExpired))
                 {
                     report(new Hop(ttl, null, null, false));

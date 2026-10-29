@@ -536,6 +536,10 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Összes kijelölése</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Összes másolása</sys:String>
     <sys:String x:Key="Str_Term_Clear">Törlés</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">Valami fut a terminálban. Leállítja, és elindítja helyette ezt: {0}?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Leállítás és indítás</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Több sort illeszt be?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">Ez a szöveg {0} sorból áll. Ide beillesztve minden sor azonnal lefut, amint megérkezik.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc a leállításhoz</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Panelek felosztása</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Áthelyezés a másik panelre</sys:String>

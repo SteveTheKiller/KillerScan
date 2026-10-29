@@ -151,13 +151,17 @@ namespace KillerScan.Services
             string body = "$ErrorActionPreference='Stop';$lease=$null;$owned=$false;try{"
                 + Wait(parentId, parentTicks, Abandoned) + Wait(helperId, helperTicks, Abandoned)
                 + "$lease=New-Object Threading.Mutex($false,'Global\\KillerTools-Install-" + AppInfo.DisplayName + "');"
-                + "try{$owned=$lease.WaitOne(0)}catch [Threading.AbandonedMutexException]{$owned=$true};if(-not $owned){exit 1618};"
+                + "try{$owned=$lease.WaitOne(0)}catch [Threading.AbandonedMutexException]{$owned=$true};if(-not $owned){throw 'Another KillerTools install or update is running, so this update was not applied.'};"
                 + "$original=[IO.File]::OpenRead(" + Data(target) + ");$hash=[Security.Cryptography.SHA256]::Create();"
                 + "try{if([BitConverter]::ToString($hash.ComputeHash($original)).Replace('-','') -ne " + Data(originalHash)
                 + "){throw 'The installed image changed before update publication.'}}finally{$hash.Dispose();$original.Dispose()};\n"
                 + publication
                 + "\n}catch{$message=$_.Exception.ToString();[Console]::Error.WriteLine($message);try{[IO.File]::AppendAllText("
-                + Data(report) + ",[Environment]::NewLine+$message)}catch{};exit 1}"
+                + Data(report) + ",[Environment]::NewLine+$message)}catch{};"
+                // Nothing was published, so the installed copy is reopened through Explorer (as the
+                // signed-in user, never as administrator): the app is not left closed without a word.
+                + "try{[void][Diagnostics.Process]::Start([IO.Path]::Combine([Environment]::GetFolderPath('Windows'),'explorer.exe'),'\"'+"
+                + Data(target) + "+'\"')}catch{};exit 1}"
                 + "finally{if($null -ne $lease){if($owned){$lease.ReleaseMutex()};$lease.Dispose()}}";
             return new ProcessStartInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
                 @"WindowsPowerShell\v1.0\powershell.exe"), ImmutablePowerShell.Arguments(body))

@@ -12,6 +12,7 @@ internal static class TerminalMemoryTests
     private const ulong MemoryCap = 384UL * 1024 * 1024;
     internal static void Run()
     {
+        BoundedScrollback();
         foreach (string preset in new[] { "20000x80", "50000x80", "25000x160", "control20000x80" })
         {
             IntPtr job = CreateJobObject(IntPtr.Zero, null);
@@ -80,7 +81,8 @@ internal static class TerminalMemoryTests
             case "25000x160": lines = 25000; columns = 160; break;
             default: throw new ArgumentException("Unknown bounded memory preset.");
         }
-        var buffer = new TerminalBuffer(columns, 25);
+        // A capacity workload: the whole transcript is the measurement, so these buffers are unbounded.
+        var buffer = new TerminalBuffer(columns, 25) { ScrollbackLimit = int.MaxValue };
         var parser = new VtParser(buffer);
         var timer = Stopwatch.StartNew();
         for (int row = 0; row < lines; row++)
@@ -125,6 +127,7 @@ internal static class TerminalMemoryTests
     private static void Control()
     {
         var terminal = new TerminalControl();
+        terminal.Buffer.ScrollbackLimit = int.MaxValue;
         try
         {
             var parser = new VtParser(terminal.Buffer);
@@ -151,13 +154,38 @@ internal static class TerminalMemoryTests
 
     private static TerminalControl ReplaceControl(TerminalControl previous)
     {
-        var next = new TerminalControl(); next.Buffer.ImportHistory(previous.Buffer); previous.Dispose(); return next;
+        var next = new TerminalControl(); next.Buffer.ScrollbackLimit = int.MaxValue; next.Buffer.ImportHistory(previous.Buffer); previous.Dispose(); return next;
     }
 
     private static TerminalBuffer Replace(TerminalBuffer previous, int columns)
     {
-        var next = new TerminalBuffer(columns, 25); next.ImportHistory(previous); return next;
+        var next = new TerminalBuffer(columns, 25) { ScrollbackLimit = int.MaxValue }; next.ImportHistory(previous); return next;
     }
+    /// <summary>A session left open (ping -t for days) stops growing at the default limit and keeps
+    /// its newest lines, through scrolling and through a terminal replacement.</summary>
+    private static void BoundedScrollback()
+    {
+        var buffer = new TerminalBuffer(80, 25);
+        var parser = new VtParser(buffer);
+        for (int row = 0; row < 30000; row++)
+        {
+            byte[] bytes = Encoding.ASCII.GetBytes(Row(row, 80) + "\r\n"); parser.Feed(bytes, bytes.Length);
+        }
+        int limit = buffer.ScrollbackLimit;
+        if (limit > 20000 || buffer.TotalLines > limit + 512 + 25)
+            throw new InvalidOperationException("Scrollback grew past its limit: " + buffer.TotalLines + " lines, limit " + limit + ".");
+        int lastRow = buffer.TotalLines - 1;
+        while (lastRow > 0 && buffer.LineAt(lastRow)[0].Ch == 0) lastRow--;
+        var last = buffer.LineAt(lastRow);
+        if (new string(Array.ConvertAll(last, cell => (char)cell.Ch), 0, 8) != "00029999")
+            throw new InvalidOperationException("The newest lines were not the ones kept.");
+        var next = Replace(buffer, 80);
+        next.ScrollbackLimit = limit;
+        var fresh = new TerminalBuffer(80, 25); fresh.ImportHistory(buffer);
+        if (fresh.TotalLines > limit + 512 + 25) throw new InvalidOperationException("A replacement terminal brought back more than the limit.");
+        Console.WriteLine("PASS scrollback stays at its limit (" + limit + " lines) and keeps the newest output.");
+    }
+
     private static string Row(int row, int columns) => row.ToString("D8", CultureInfo.InvariantCulture) + new string('x', columns - 8);
     private static void Verify(TerminalBuffer buffer, int count, int columns)
     {

@@ -546,6 +546,10 @@
     <sys:String x:Key="Str_Term_SelectAll">Выделить все</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Копировать все</sys:String>
     <sys:String x:Key="Str_Term_Clear">Очистить</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">В терминале что-то выполняется. Остановить и запустить {0}?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Остановить и запустить</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Вставить несколько строк?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">В этом тексте {0} строк. После вставки сюда каждая строка выполнится сразу, как только поступит.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc для остановки</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Разделить панели</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Переместить в другую панель</sys:String>

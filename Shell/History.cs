@@ -161,6 +161,9 @@ namespace KillerScan.Shell
             PersistenceFeedback.Check(store.Remove(entry), store.Retry, () => store.SaveError);
             RefreshHistoryList();
             RefreshLocationsList();
+            // The refresh selects another run without raising its change, so the pane is told here;
+            // otherwise it would keep showing (and exporting) the run that was just deleted.
+            ShowHistoryEntry();
         }
 
         private List<ScanHistoryEntry> HistoryEntries()

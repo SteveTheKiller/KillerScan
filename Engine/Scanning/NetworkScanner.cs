@@ -87,7 +87,14 @@ namespace KillerScan.Engine
         /// The adapter this scanner's probes are sent from, or null to let Windows pick the
         /// route. While set, targets outside the adapter's network are refused.
         /// </summary>
-        public ScanBinding? Binding { get; set; }
+        /// <summary>The adapter scans go out of. A different one means a different network, so the
+        /// multicast names and services a scan collected are dropped with the change.</summary>
+        public ScanBinding? Binding
+        {
+            get => _binding;
+            set { if (!Equals(_binding, value)) { _mdns = []; _ssdp = []; } _binding = value; }
+        }
+        private ScanBinding? _binding;
 
         /// <summary>Tests only: the NetBIOS port and the deep sweep's port list.</summary>
         internal static int? UdpPortOverride { get; set; }
@@ -123,7 +130,10 @@ namespace KillerScan.Engine
 
         private void Finish(NetworkDevice device)
         {
-            device.Recognition = AssessDevice(device, ManualTypes ?? ManualTypeLookup);
+            // A scan bound to another adapter is on another network: the default adapter's gateway
+            // is not its router, so no device there is made Router by that address.
+            bool foreign = Binding != null && IPAddress.TryParse(GatewayIp, out var gateway) && !Binding.Contains(gateway);
+            device.Recognition = AssessDevice(device, ManualTypes ?? ManualTypeLookup, foreign ? string.Empty : GatewayIp, foreign ? string.Empty : DnsIp);
             device.DeviceType = device.Recognition.Type;
             (Completed ?? DeviceCompleted)?.Invoke(device);
         }
@@ -300,7 +310,9 @@ namespace KillerScan.Engine
                 foreach (var ip in discoveredHosts.Keys.ToList())
                 {
                     var (hAddr, hMac) = discoveredHosts[ip];
-                    if (!string.IsNullOrEmpty(hMac) && bogusMacs.Contains(hMac))
+                    // The gateway is the one host that really owns that MAC: off-link hosts
+                    // resolve to it, so it keeps its own and the rest lose the borrowed copy.
+                    if (!string.IsNullOrEmpty(hMac) && bogusMacs.Contains(hMac) && ip != GatewayIp)
                         discoveredHosts[ip] = (hAddr, "");
                 }
             }
@@ -364,6 +376,16 @@ namespace KillerScan.Engine
 
                         if (!string.IsNullOrEmpty(entry.Mac))
                             device.Vendor = ResolveVendor(entry.Mac);
+                        // The multicast replies were already collected above, so a quick scan
+                        // uses them too: .local names and service types cost nothing more here.
+                        if (options.Mdns && _mdns.TryGetValue(device.IpAddress, out var quickMd))
+                        {
+                            device.MdnsServices = DeviceText.Services(quickMd.Services);
+                            if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(quickMd.Name))
+                                device.Hostname = quickMd.Name;
+                        }
+                        if (options.Ssdp && _ssdp.TryGetValue(device.IpAddress, out var quickSrv))
+                            device.SsdpServer = quickSrv;
 
                         ct.ThrowIfCancellationRequested();
 
@@ -597,6 +619,9 @@ namespace KillerScan.Engine
                 throw new ArgumentOutOfRangeException(nameof(portConcurrency), portConcurrency, "Port concurrency must be at least 1.");
             if (ip == null || !IPAddress.TryParse(ip, out var addr) || addr.AddressFamily != AddressFamily.InterNetwork)
                 throw new ArgumentException($"\"{ip}\" is not an IPv4 address.", nameof(ip));
+            // IPAddress.TryParse also takes shorthand such as "192.168.1" or a bare number; the record
+            // and every lookup use the address that is actually probed.
+            ip = addr.ToString();
             BeginRun([addr]);
             ct.ThrowIfCancellationRequested();
             if (flushLocalDnsCache && options.ReverseDns) FlushLocalDnsCache();
@@ -828,9 +853,13 @@ namespace KillerScan.Engine
         /// The type, the signals behind it, close alternatives and a confidence grade. Reads only
         /// the fields already on <paramref name="device"/>: it sends nothing and changes nothing.
         /// </summary>
-        public static DeviceRecognition AssessDevice(NetworkDevice device, Func<string, string?>? manualTypes)
+        public static DeviceRecognition AssessDevice(NetworkDevice device, Func<string, string?>? manualTypes) =>
+            AssessDevice(device, manualTypes, GatewayIp, DnsIp);
+
+        /// <summary>As above, with the gateway and DNS server of the network the device was scanned on.</summary>
+        public static DeviceRecognition AssessDevice(NetworkDevice device, Func<string, string?>? manualTypes, string gatewayIp, string dnsIp)
         {
-            var automatic = AssessAutomatic(device);
+            var automatic = AssessAutomatic(device, gatewayIp ?? string.Empty, dnsIp ?? string.Empty);
             var manual = manualTypes?.Invoke(device.MacAddress);
             if (manual != null)
             {
@@ -861,7 +890,7 @@ namespace KillerScan.Engine
 
         private static string PortList(params int[] ports) => string.Join(", ", ports);
 
-        private static DeviceRecognition AssessAutomatic(NetworkDevice device)
+        private static DeviceRecognition AssessAutomatic(NetworkDevice device, string gatewayIp, string dnsIp)
         {
             var ports = device.OpenPorts;
             string host = device.Hostname.ToLowerInvariant();
@@ -885,11 +914,11 @@ namespace KillerScan.Engine
             // 1. The default gateway is the router. Surface that role (plus DNS when it serves it),
             //    ahead of the port heuristics that would otherwise label it just "DNS Server".
             //    Windows' own routing table says so, which is firmer than anything the device reports.
-            if (!string.IsNullOrEmpty(GatewayIp) && device.IpAddress == GatewayIp)
+            if (!string.IsNullOrEmpty(gatewayIp) && device.IpAddress == gatewayIp)
             {
                 // Only "Router/DNS" when the gateway IS the configured DNS server. A router that just
                 // has port 53 open (forwarding) but points DNS at a Pi-hole stays plain "Router".
-                bool isDnsServer = !string.IsNullOrEmpty(DnsIp) && device.IpAddress == DnsIp;
+                bool isDnsServer = !string.IsNullOrEmpty(dnsIp) && device.IpAddress == dnsIp;
                 return Decided(isDnsServer ? "Router/DNS" : "Router", RecognitionConfidence.High,
                     RecognitionSources.Gateway, isDnsServer ? "gateway-dns" : "gateway");
             }
@@ -1239,9 +1268,15 @@ namespace KillerScan.Engine
                         {
                             if (resp.Headers.TryGetValues("Server", out var serverVals))
                                 device.HttpServer = string.Join(", ", serverVals).Trim();
-                            var m = Regex.Match(body, @"<title[^>]*>([^<]+)</title>", RegexOptions.IgnoreCase);
-                            if (m.Success)
-                                device.HttpTitle = WebUtility.HtmlDecode(m.Groups[1].Value).Trim();
+                            // Bounded like HasLoginForm: the body is the device's, up to 256 KB, and a
+                            // run of "<title" with no ">" backtracks for seconds on .NET Framework.
+                            try
+                            {
+                                var m = Regex.Match(body, @"<title[^>]*>([^<]+)</title>", RegexOptions.IgnoreCase, HtmlScanLimit);
+                                if (m.Success)
+                                    device.HttpTitle = WebUtility.HtmlDecode(m.Groups[1].Value).Trim();
+                            }
+                            catch (RegexMatchTimeoutException) { }
                         }
                     }
 
@@ -1427,12 +1462,12 @@ namespace KillerScan.Engine
                 if (await Task.WhenAny(readTask, Task.Delay(1500)) != readTask) return;
                 int n = readTask.Result;
                 if (n <= 0) return;
-                string banner = Encoding.ASCII.GetString(buf, 0, n).Trim();
-                if (banner.StartsWith("SSH-"))
-                {
-                    int nl = banner.IndexOfAny(['\r', '\n']);
-                    device.SshBanner = nl > 0 ? banner[..nl] : banner;
-                }
+                // RFC 4253 4.2 lets a server send other lines before its version line.
+                string? banner = Encoding.ASCII.GetString(buf, 0, n)
+                    .Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
+                    .Select(line => line.Trim())
+                    .FirstOrDefault(line => line.StartsWith("SSH-", StringComparison.Ordinal));
+                if (banner != null) device.SshBanner = banner;
             }
             catch { }
         }

@@ -24,7 +24,12 @@ namespace KillerScan.Services
                     }
                     metadataStarted = true;
                     removeRegistration();
-                    if (moved) File.Delete(retired);
+                    // A mapped image can be renamed but not deleted. Access denied on the renamed copy
+                    // means a copy is still running, most likely in another user's session that could
+                    // not be inspected, so it is reported as busy (retry later, 1618), not as denied.
+                    if (moved)
+                        try { File.Delete(retired); }
+                        catch (UnauthorizedAccessException) { throw new IOException("KillerTools is still running in another session.", unchecked((int)0x80070020)); }
                     if (File.Exists(image) || File.Exists(retired))
                         throw new IOException("Owned installation files remain. Removal was not completed.");
                     // Backups left by an upgrade over a running copy are ours too; a missed one only

@@ -495,6 +495,10 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Izberi vse</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Kopiraj vse</sys:String>
     <sys:String x:Key="Str_Term_Clear">Počisti</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">V terminalu nekaj teče. To ustavim in zaženem {0}?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Ustavi in zaženi</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Prilepim več vrstic?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">To besedilo ima {0} vrstic. Ko ga prilepite sem, se vsaka vrstica izvede takoj, ko prispe.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc za ustavitev</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Razdeli podokna</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Premakni v drugo podokno</sys:String>

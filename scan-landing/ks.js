@@ -110,7 +110,8 @@
   function applyAccent(name) {
     var theme = root.getAttribute('data-theme');
     var fam = famFor(theme);
-    if (!ACCENTS[fam][name]) name = 'green';
+    // Own keys only: 'constructor' or 'toString' from a stored value must not pass as an accent.
+    if (!Object.prototype.hasOwnProperty.call(ACCENTS[fam], name)) name = 'green';
     ['dark', 'light', 'hc'].forEach(function (neutralTheme) {
       var preview = ACCENTS[neutralTheme][name];
       if (preview) document.querySelectorAll('.sw-' + neutralTheme).forEach(function (dot) {

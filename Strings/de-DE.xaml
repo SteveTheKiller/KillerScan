@@ -521,6 +521,10 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Alles auswählen</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Alles kopieren</sys:String>
     <sys:String x:Key="Str_Term_Clear">Leeren</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">Im Terminal läuft etwas. Beenden und stattdessen {0} starten?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Beenden und starten</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Mehrere Zeilen einfügen?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">Dieser Text hat {0} Zeilen. Eingefügt wird jede Zeile ausgeführt, sobald sie ankommt.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc zum Beenden</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Ansicht teilen</sys:String>
     <sys:String x:Key="Str_Workspace_Move">In anderen Bereich verschieben</sys:String>

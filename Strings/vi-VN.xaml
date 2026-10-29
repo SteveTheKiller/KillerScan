@@ -500,6 +500,10 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Chọn tất cả</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Sao chép tất cả</sys:String>
     <sys:String x:Key="Str_Term_Clear">Xóa</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">Đang có lệnh chạy trong terminal. Dừng lệnh đó và bắt đầu {0}?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Dừng và bắt đầu</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Dán nhiều dòng?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">Văn bản này có {0} dòng. Khi dán vào đây, mỗi dòng sẽ chạy ngay khi được gửi tới.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc để dừng</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Chia khung</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Chuyển sang khung khác</sys:String>

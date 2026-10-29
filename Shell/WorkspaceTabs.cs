@@ -97,7 +97,7 @@ namespace KillerScan.Shell
             body.Children.Add(grainLayer);
             body.Children.Add(shadeLayer);
             body.Children.Add(content);
-            var tab = new TabSurfaceBorder
+            var tab = new ViewTab(action, () => _workspaceView == view)
             {
                 Child = body, Padding = new Thickness(14, 6, 16, 6), MinWidth = 0,
                 Cursor = Cursors.Hand, Focusable = true, Tag = view
@@ -314,9 +314,17 @@ namespace KillerScan.Shell
             return best;
         }
 
+        private string? _shadowScrollerView;
+        private (double, double, double, double, double, double, Border?) _shadowShape;
+
         private void UpdateTabScrollShadow()
         {
-            var scroller = _tabsAtBottom ? ActiveListScroller() : null;
+            // LayoutUpdated fires after every layout pass in the window, so the visual tree is walked
+            // for the list's scroller only when the view changed or the one found before left the screen.
+            var scroller = !_tabsAtBottom ? null
+                : _shadowScroller is { IsVisible: true } known && _shadowScrollerView == _workspaceView ? known
+                : ActiveListScroller();
+            _shadowScrollerView = _workspaceView;
             if (!ReferenceEquals(scroller, _shadowScroller))
             {
                 if (_shadowScroller != null)
@@ -341,7 +349,7 @@ namespace KillerScan.Shell
             foreach (var each in _viewTabs.Values)
                 if (((Grid)each.Child).Children[1] is Border idle && (!on || !ReferenceEquals(each, face))
                     && idle.Visibility != Visibility.Collapsed) idle.Visibility = Visibility.Collapsed;
-            if (!on) return;
+            if (!on) { _shadowShape = default; return; }
 
             // Measured from the real positions, relative to the shadow's own grid row.
             Point origin = new(0, WorkspaceHost.RowDefinitions[0].ActualHeight + WorkspaceHost.RowDefinitions[1].ActualHeight
@@ -360,6 +368,10 @@ namespace KillerScan.Shell
                 new Size(Math.Max(0, radius.BottomLeft - stroke.Left / 2), radius.BottomLeft));
             clip.Freeze();
             double span = bottom - top;
+            // Unchanged geometry keeps the brushes it already has instead of building new ones each pass.
+            var shape = (top, span, pane.X, pane.Width, tab.Top, tab.Height, face);
+            if (shape.Equals(_shadowShape)) return;
+            _shadowShape = shape;
             var margin = new Thickness(0, top - origin.Y, 0, 0);
             if (_tabScrollShadow.Margin != margin) _tabScrollShadow.Margin = margin;
             if (_tabScrollShadow.Height != ScrollShadowReach) _tabScrollShadow.Height = ScrollShadowReach;
@@ -405,5 +417,33 @@ namespace KillerScan.Shell
             }
             else NewTerminal();
         }
+    }
+
+    /// <summary>A view tab (Devices, Services, Topology, Keep Alive, Terminal). Its peer gives
+    /// screen readers the tab role, which tab is showing, and a way to switch to it.</summary>
+    internal sealed class ViewTab(Action activate, Func<bool> isActive) : Controls.TabSurfaceBorder
+    {
+        protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new ViewTabPeer(this);
+
+        private sealed class ViewTabPeer(ViewTab tab) : System.Windows.Automation.Peers.FrameworkElementAutomationPeer(tab),
+            System.Windows.Automation.Provider.ISelectionItemProvider
+        {
+            protected override System.Windows.Automation.Peers.AutomationControlType GetAutomationControlTypeCore() =>
+                System.Windows.Automation.Peers.AutomationControlType.TabItem;
+            protected override string GetClassNameCore() => "ViewTab";
+            protected override bool IsKeyboardFocusableCore() => true;
+            protected override string GetNameCore() => System.Windows.Automation.AutomationProperties.GetName(tab);
+            public override object? GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) =>
+                patternInterface == System.Windows.Automation.Peers.PatternInterface.SelectionItem ? this : base.GetPattern(patternInterface);
+
+            public bool IsSelected => tab._isActive();
+            public System.Windows.Automation.Provider.IRawElementProviderSimple? SelectionContainer => null;
+            public void Select() => tab._activate();
+            public void AddToSelection() => tab._activate();
+            public void RemoveFromSelection() { }
+        }
+
+        private readonly Action _activate = activate;
+        private readonly Func<bool> _isActive = isActive;
     }
 }

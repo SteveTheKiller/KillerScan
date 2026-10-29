@@ -520,6 +520,10 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Seleccionar todo</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Copiar todo</sys:String>
     <sys:String x:Key="Str_Term_Clear">Limpiar</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">Hay algo en ejecución en la terminal. ¿Detenerlo e iniciar {0}?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Detener e iniciar</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">¿Pegar varias líneas?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">Este texto tiene {0} líneas. Al pegarlo aquí, cada línea se ejecuta en cuanto llega.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc para detener</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Dividir paneles</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Mover al otro panel</sys:String>

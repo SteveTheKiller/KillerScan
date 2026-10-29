@@ -13,7 +13,13 @@ namespace KillerScan.Services
             byte[] bytes = Encoding.UTF8.GetBytes(script);
             using (var gzip = new GZipStream(buffer, CompressionLevel.Optimal, leaveOpen: true))
                 gzip.Write(bytes, 0, bytes.Length);
-            string bootstrap = "$stream=[IO.MemoryStream]::new([Convert]::FromBase64String('"
+            // First, before any cmdlet can autoload: modules come only from Windows PowerShell's own
+            // folder, which only administrators can write. The inherited PSModulePath starts with the
+            // user's Documents\WindowsPowerShell\Modules, where any program running as the user could
+            // plant a module named like New-Object and have it run inside an elevated helper.
+            // An assignment and a .NET call cannot be shadowed by a module.
+            string bootstrap = "$env:PSModulePath=[IO.Path]::Combine($PSHOME,'Modules');"
+                + "$stream=[IO.MemoryStream]::new([Convert]::FromBase64String('"
                 + Convert.ToBase64String(buffer.ToArray())
                 + "'));$reader=[IO.StreamReader]::new([IO.Compression.GZipStream]::new($stream,[IO.Compression.CompressionMode]::Decompress));"
                 + "try{&([scriptblock]::Create($reader.ReadToEnd()))}finally{$reader.Dispose();$stream.Dispose()}";

@@ -16,7 +16,7 @@ namespace KillerScan.Services
 
         /// <summary>What the history list shows: the name, or the target when there is none.</summary>
         [System.Text.Json.Serialization.JsonIgnore]
-        public string DisplayName => Name.Trim().Length > 0 ? Name.Trim() : Target;
+        public string DisplayName => (Name ?? string.Empty).Trim() is { Length: > 0 } name ? name : Target ?? string.Empty;
         public List<HistoricalDevice> Devices { get; set; } = [];
         public ScanCompletion Completion { get; set; }
 

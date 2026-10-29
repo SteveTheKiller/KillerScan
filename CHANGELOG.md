@@ -9,6 +9,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
 ### Fixed
+- Update and uninstall helpers load PowerShell modules only from Windows' own folder, so a module planted in your Documents cannot run inside them as administrator; a failed uninstall reports the real reason and retries when a copy is still running; a stalled update says so; and the window no longer freezes while an update is handed off.
+- The terminal keeps 10,000 lines of history, so a ping -t or a long SSH session no longer grows memory without end; a flood of combining marks cannot stall it; resizing during vim or less no longer loses the latest output; and pasting several lines asks first when the shell would run them at once.
+- Ping and SSH from a device ask before replacing a command still running in the terminal, and the terminal keeps Ctrl+E, Ctrl+T and the other readline keys instead of the app taking them.
+- In History, Enter on a button or the Locations list works again, deleting a run clears it from the pane, and screen readers now get the view tabs as tabs.
+- A web page title from a device can no longer stall a scan, unresolved ARP entries no longer appear as phantom printers, a router from another network is no longer labelled on the current one, and quick scans use the mDNS and SSDP names they already collected.
+- The prompt's git status runs without the repository's fsmonitor or hooks, so changing into a downloaded repository cannot run its code.
+- Clearing a device's custom name brings back the name the scan found, and a blank rename clears it.
+- The command line escapes control characters in device names when it prints CSV to a live console.
 - An update that cannot finish because KillerScan did not close says so in its recovery report, the Update button stays off once an update has started, and a translation file can no longer give a setting the wrong kind of value.
 - Topology builds once per refresh when card sizes have not changed, and a card resizes with its border when the theme changes.
 - A device can add at most 64 mDNS service names, each bounded in length, however many it announces.

@@ -520,6 +520,10 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Term_SelectAll">Tout sélectionner</sys:String>
     <sys:String x:Key="Str_Term_CopyAll">Tout copier</sys:String>
     <sys:String x:Key="Str_Term_Clear">Effacer</sys:String>
+    <sys:String x:Key="Str_Term_ReplaceRunning">Une commande est en cours dans le terminal. L&apos;arrêter et lancer {0} à la place ?</sys:String>
+    <sys:String x:Key="Str_Term_Replace">Arrêter et lancer</sys:String>
+    <sys:String x:Key="Str_Term_PasteTitle">Coller plusieurs lignes ?</sys:String>
+    <sys:String x:Key="Str_Term_PasteDetail">Ce texte compte {0} lignes. Collée ici, chaque ligne s&apos;exécute dès son arrivée.</sys:String>
     <sys:String x:Key="Str_Workspace_EscStop">Esc pour arrêter</sys:String>
     <sys:String x:Key="Str_Workspace_Split">Diviser les volets</sys:String>
     <sys:String x:Key="Str_Workspace_Move">Déplacer vers l'autre volet</sys:String>
