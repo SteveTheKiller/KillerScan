@@ -20,8 +20,10 @@ internal static class ScanOptionsUiChecks
             "Scan settings immediately follows Scan.");
         Require(!string.IsNullOrWhiteSpace(AutomationProperties.GetName(button!)),
             "Scan settings has an accessible name.");
-        Require(button!.Content is Panel content && content.Children.OfType<TextBlock>().Any(t => t.Text.Length > 1),
-            "Scan settings has a visible text label beside its icon.");
+        // Icon-only since the scan bar moved into the title bar; the name is its tooltip.
+        Require(button!.Content is Panel content && content.Children.OfType<TextBlock>().Any(t => t.Text == "")
+                && button.ToolTip != null,
+            "Scan settings shows its gear icon with a tooltip.");
         button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
         var menu = button.ContextMenu;
         // The offscreen host has no presentation source to raise the popup's opened event.

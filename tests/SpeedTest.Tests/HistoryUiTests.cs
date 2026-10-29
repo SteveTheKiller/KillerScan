@@ -471,9 +471,17 @@ internal static partial class HistoryUiTests
                 Require(ReferenceEquals(heading.Template, headerTemplate) && Equals(heading.Background, headerBackground) &&
                     Equals(heading.Foreground, headerForeground) && heading.Padding == standardHeader.Padding,
                     context + ": actual rendered column headers use the standard Devices style.");
-                Require(frame.CornerRadius == radius && surface.Clip.FillContains(new Point(0, 0)) == clipAtCorner &&
-                    ReferenceEquals(surface, frame.Child) && ReferenceEquals(history.Parent, Field(window, "_workspaceBody")),
-                    context + ": history uses the same rounded table frame and clipping as Devices.");
+                // The tab-side corners follow the active tab (ApplyPaneCorners squares the end tab's
+                // corner), so only the corners away from the tabs must match Devices.
+                var now = frame.CornerRadius;
+                bool sameRadius = (bool)Field(window, "_tabsAtBottom")!
+                        ? now.TopLeft == radius.TopLeft && now.TopRight == radius.TopRight
+                        : now.BottomLeft == radius.BottomLeft && now.BottomRight == radius.BottomRight,
+                    sameClip = surface.Clip.FillContains(new Point(0, 0)) == clipAtCorner,
+                    framed = ReferenceEquals(surface, frame.Child), hosted = ReferenceEquals(history.Parent, Field(window, "_workspaceBody"));
+                Require(sameRadius && sameClip && framed && hosted,
+                    context + ": history uses the same rounded table frame and clipping as Devices (radius " + sameRadius +
+                    ", clip " + sameClip + ", frame child " + framed + ", host " + hosted + ": " + history.Parent?.GetType().Name + ").");
                 Require(supplemental.Visibility == Visibility.Visible && Bounds(summary).Bottom <= Bounds(frame).Top &&
                     Bounds(toggle).Bottom <= Bounds(frame).Top && Bounds(identity).Bottom <= Bounds(summary).Top &&
                     Bounds(summary).Right <= Bounds(toggle).Left && !frame.IsAncestorOf(summary) && !frame.IsAncestorOf(toggle),
@@ -682,7 +690,9 @@ internal static partial class HistoryUiTests
             Require(app.FindResource(key) is string text && text.Length > 0, "Shortcut description resolves: " + key);
         }
         Call(window, "BuildShortcutRows"); Call(window, "BuildKeyboardMap");
-        Require(rows.Length >= 70, "The list and map include the added contextual shortcuts.");
+        // A floor against an accidentally truncated catalog. The Profiles and toolbar-style rows left
+        // with those features on 2026-10-26, so it sits below the count from before then.
+        Require(rows.Length >= 60, "The list and map include the added contextual shortcuts: " + rows.Length + ".");
     }
 
     private static void CheckHistorySettingsMenu(MainWindow window, Application app, string output)
