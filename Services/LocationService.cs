@@ -210,20 +210,30 @@ namespace KillerScan.Services
         /// <summary>Whether Locations can be created, renamed, exported and imported right now.</summary>
         public static bool Editable => Loaded && !DemoData.Enabled && _catalog != null && _fallback == null && _catalog.LoadError == null;
 
+        /// <summary>What <see cref="Export"/> reads, taken on the UI thread so the file work can run
+        /// off it: the catalog entry as it is now and the Location's folder. Null when Locations are
+        /// unavailable.</summary>
+        public static (LocationInfo Info, string Directory)? ExportSource(LocationInfo info) =>
+            Editable ? (Find(info.Id) ?? info, _catalog!.DirectoryFor(info)) : null;
+
         public static byte[]? Export(LocationInfo info, bool includeUsernames) =>
             Editable ? LocationTransfer.Export(Find(info.Id) ?? info, _catalog!.DirectoryFor(info), includeUsernames) : null;
 
-        /// <summary>
-        /// Adds a Location from a .ksloc file. With <paramref name="notify"/> false, as when it
-        /// runs off the UI thread, the caller raises <see cref="Changed"/> afterwards through
-        /// <see cref="NotifyChanged"/>, because its handlers update the window.
-        /// </summary>
-        public static bool Import(byte[] bytes, out LocationInfo? imported, out string? error, bool notify = true)
+        /// <summary>The file half of an import (read, check, stage), safe off the UI thread: it never
+        /// touches the catalog. <see cref="CommitImport"/> finishes it on the UI thread.</summary>
+        public static LocationTransfer.Prepared? PrepareImport(byte[] bytes, out string? error)
+        {
+            if (!Editable) { error = LoadError ?? "Locations are unavailable."; return null; }
+            return LocationTransfer.Prepare(_catalog!, bytes, out error);
+        }
+
+        /// <summary>Adds a prepared import to the catalog. UI thread only, like every catalog change.</summary>
+        public static bool CommitImport(LocationTransfer.Prepared prepared, out LocationInfo? imported, out string? error)
         {
             imported = null;
-            if (!Editable) { error = LoadError ?? "Locations are unavailable."; return false; }
-            bool ok = LocationTransfer.Import(_catalog!, bytes, out imported, out error);
-            if (ok && notify) Changed?.Invoke(null, EventArgs.Empty);
+            if (!Editable) { prepared.Dispose(); error = LoadError ?? "Locations are unavailable."; return false; }
+            bool ok = LocationTransfer.Commit(_catalog!, prepared, out imported, out error);
+            if (ok) Changed?.Invoke(null, EventArgs.Empty);
             return ok;
         }
 

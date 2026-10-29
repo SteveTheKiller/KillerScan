@@ -9,6 +9,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
 ### Fixed
+- Save results to Location from Unassigned moves the run on screen, never another window's newer run, and moves nothing when the table is empty.
+- Exporting and importing a Location keep the window responsive, and an import changes the Location list only on the window's own thread.
 - Results on screen in Unassigned are no longer cleared when the network changes to one a Location recognizes, and a canceled scan in a Location deleted elsewhere leaves it like a finished one.
 - Moving earlier versions' saved scans into Locations never replaces one scan with another of the same name, keeps each scan's Deep Scan choice, and never takes over a Location you happened to name Saved scans.
 - The elevated part of an update compiles its helper code in a folder only administrators can open, so another program running as you cannot slip code into it, and an update that finished is no longer reported as failed when KillerScan cannot be reopened afterward.

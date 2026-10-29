@@ -47,48 +47,99 @@ namespace KillerScan.Services
         internal static bool Import(LocationCatalog catalog, byte[] bytes, out LocationInfo? imported, out string? error)
         {
             imported = null;
+            using var prepared = Prepare(catalog, bytes, out error);
+            return prepared != null && Commit(catalog, prepared, out imported, out error);
+        }
+
+        /// <summary>A checked Location file staged on disk, not yet in the catalog. Disposing it
+        /// removes whatever is still staged.</summary>
+        internal sealed class Prepared : IDisposable
+        {
+            internal string Staging { get; init; } = string.Empty;
+            internal string Name { get; init; } = string.Empty;
+            internal string Customer { get; init; } = string.Empty;
+            internal string Notes { get; init; } = string.Empty;
+            internal string? Icon { get; init; }
+
+            public void Dispose()
+            {
+                if (Directory.Exists(Staging))
+                    try { Directory.Delete(Staging, true); } catch (IOException) { } catch (UnauthorizedAccessException) { }
+            }
+        }
+
+        /// <summary>
+        /// Reads, checks and stages a Location file without touching the catalog, so it can run off
+        /// the UI thread. Null, with <paramref name="error"/>, when the file is refused.
+        /// </summary>
+        internal static Prepared? Prepare(LocationCatalog catalog, byte[] bytes, out string? error)
+        {
             TransferFile? file;
             try { file = JsonSerializer.Deserialize<TransferFile>(bytes); }
             catch (JsonException) { file = null; }
-            if (file == null || file.Format != Format) { error = "This is not a KillerScan Location file."; return false; }
-            if (file.Version > Version) { error = "This Location file is from a newer version of KillerScan."; return false; }
-            if (file.Version != Version || string.IsNullOrWhiteSpace(file.Name)) { error = "This Location file is damaged."; return false; }
+            if (file == null || file.Format != Format) { error = "This is not a KillerScan Location file."; return null; }
+            if (file.Version > Version) { error = "This Location file is from a newer version of KillerScan."; return null; }
+            if (file.Version != Version || string.IsNullOrWhiteSpace(file.Name)) { error = "This Location file is damaged."; return null; }
             var files = file.Files ?? [];
             if (files.Keys.Any(name => !LocationData.StoreFiles.Contains(name, StringComparer.OrdinalIgnoreCase)))
             {
                 error = "This Location file contains something other than Location data.";
-                return false;
+                return null;
             }
             // Every saved file is a JSON object or list. Anything else, such as null, is refused
             // here rather than becoming a Location that cannot be opened.
             if (files.Values.Any(value => value.ValueKind is not (JsonValueKind.Object or JsonValueKind.Array)))
             {
                 error = "This Location file is damaged.";
-                return false;
+                return null;
             }
 
-            string staging = Path.Combine(catalog.LocationsDirectory, ".import-" + Guid.NewGuid().ToString("N"));
+            var prepared = new Prepared
+            {
+                Staging = Path.Combine(catalog.LocationsDirectory, ".import-" + Guid.NewGuid().ToString("N")),
+                Name = file.Name!, Customer = file.Customer ?? string.Empty, Notes = file.Notes ?? string.Empty, Icon = file.Icon
+            };
             try
             {
-                Directory.CreateDirectory(staging);
+                Directory.CreateDirectory(prepared.Staging);
                 foreach (var pair in files)
                 {
                     byte[] content = Encoding.UTF8.GetBytes(pair.Value.GetRawText());
-                    JsonPreferenceFile<object>.Publish(Path.Combine(staging, pair.Key.ToLowerInvariant()), content);
+                    JsonPreferenceFile<object>.Publish(Path.Combine(prepared.Staging, pair.Key.ToLowerInvariant()), content);
                 }
                 // Open the staged copy the way the app will. A file the stores cannot read is
                 // refused before the catalog changes, so no unusable Location is ever listed.
                 string? unreadable;
-                try { unreadable = LocationData.Open(new LocationInfo { Id = "import", Name = file.Name! }, staging).ReadError; }
+                try { unreadable = LocationData.Open(new LocationInfo { Id = "import", Name = prepared.Name }, prepared.Staging).ReadError; }
                 catch (Exception ex) { unreadable = ex.Message; }
-                if (unreadable != null) { error = "This Location file is damaged. " + unreadable; return false; }
-                if (!catalog.Create(file.Name!, file.Customer ?? string.Empty, file.Notes ?? string.Empty, out var created) || created == null)
+                if (unreadable != null) { error = "This Location file is damaged. " + unreadable; prepared.Dispose(); return null; }
+                error = null;
+                return prepared;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                error = ex.Message;
+                prepared.Dispose();
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Adds a prepared Location to the catalog and moves its files into place. Runs on the UI
+        /// thread, which every other reader of the catalog uses.
+        /// </summary>
+        internal static bool Commit(LocationCatalog catalog, Prepared prepared, out LocationInfo? imported, out string? error)
+        {
+            imported = null;
+            try
+            {
+                if (!catalog.Create(prepared.Name, prepared.Customer, prepared.Notes, out var created) || created == null)
                 {
                     error = catalog.SaveError ?? catalog.LoadError ?? "The Location could not be added.";
                     return false;
                 }
-                if (LocationIcons.IsKnown(file.Icon)) catalog.SetIcon(created.Id, file.Icon!);
-                try { MoveDirectory(staging, catalog.DirectoryFor(created)); }
+                if (LocationIcons.IsKnown(prepared.Icon)) catalog.SetIcon(created.Id, prepared.Icon!);
+                try { MoveDirectory(prepared.Staging, catalog.DirectoryFor(created)); }
                 catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
                 {
                     // Its files never arrived, so the entry comes off the list again.
@@ -104,11 +155,7 @@ namespace KillerScan.Services
                 error = ex.Message;
                 return false;
             }
-            finally
-            {
-                if (Directory.Exists(staging))
-                    try { Directory.Delete(staging, true); } catch (IOException) { } catch (UnauthorizedAccessException) { }
-            }
+            finally { prepared.Dispose(); }
         }
 
         /// <summary>Moves the staged folder into place. Tests replace it to make the move fail.</summary>

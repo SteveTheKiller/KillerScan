@@ -586,7 +586,7 @@ namespace KillerScan.Controls
 
         private void ExportLocation() { if (_location.Info is { } info) ExportLocation(info); }
 
-        internal void ExportLocation(LocationInfo info)
+        internal async void ExportLocation(LocationInfo info)
         {
             string locationName = LocationService.Find(info.Id)?.Name ?? info.Name;
             var choice = new ConfirmDialog(Loc("Str_Loc_Export"), Loc("Str_Loc_ExportDetail"), Loc("Str_Loc_ExportButton"),
@@ -604,9 +604,17 @@ namespace KillerScan.Controls
             if (ShowExportDialog(dialog) != true) return;
             try
             {
-                var bytes = LocationService.Export(info, usernames) ?? throw new IOException(LocationService.LoadError ?? "Locations are unavailable.");
-                ExportFile.Write(dialog.FileName, stream => stream.Write(bytes, 0, bytes.Length));
-                StatusText.Text = string.Format(Loc("Str_St_Exported"), System.IO.Path.GetFileName(dialog.FileName));
+                var source = LocationService.ExportSource(info) ?? throw new IOException(LocationService.LoadError ?? "Locations are unavailable.");
+                string path = dialog.FileName;
+                // A Location can hold years of history; reading, serializing and writing it happen
+                // off the UI thread so the window keeps responding, as Import does.
+                await System.Threading.Tasks.Task.Run(() =>
+                {
+                    var bytes = LocationTransfer.Export(source.Info, source.Directory, usernames);
+                    ExportFile.Write(path, stream => stream.Write(bytes, 0, bytes.Length));
+                });
+                if (_disposed) return;
+                StatusText.Text = string.Format(Loc("Str_St_Exported"), System.IO.Path.GetFileName(path));
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Text.Json.JsonException)
             {
@@ -668,22 +676,28 @@ namespace KillerScan.Controls
         internal async System.Threading.Tasks.Task ImportLocationFrom(string path)
         {
             if (_importing) return;
-            LocationInfo? imported;
+            LocationInfo? imported = null;
             string? error;
             _importing = true;
             try
             {
-                // Read, checked and staged off the UI thread, so a large export does not freeze the
-                // window. A file past the cap is refused before it is read into memory at all.
+                // Read, checked and staged off the UI thread, so a large file does not freeze the
+                // window. A file past the cap is refused before it is read into memory at all. Only
+                // the catalog change comes back to the UI thread, where every reader of it runs.
                 long limit = MaxImportBytes;
                 string tooLarge = string.Format(Loc("Str_Loc_ImportTooLarge"), Math.Max(1, limit / (1024 * 1024)));
-                (imported, error) = await System.Threading.Tasks.Task.Run(() =>
+                LocationTransfer.Prepared? prepared;
+                (prepared, error) = await System.Threading.Tasks.Task.Run(() =>
                 {
-                    if (new FileInfo(path).Length > limit) return ((LocationInfo?)null, (string?)tooLarge);
-                    byte[] bytes = File.ReadAllBytes(path);
-                    bool ok = LocationService.Import(bytes, out var added, out string? why, notify: false);
-                    return (ok ? added : null, why);
+                    if (new FileInfo(path).Length > limit) return ((LocationTransfer.Prepared?)null, (string?)tooLarge);
+                    var staged = LocationService.PrepareImport(File.ReadAllBytes(path), out string? why);
+                    return (staged, why);
                 });
+                if (prepared != null)
+                {
+                    if (_disposed) { prepared.Dispose(); return; }
+                    LocationService.CommitImport(prepared, out imported, out error);
+                }
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { imported = null; error = ex.Message; }
             finally { _importing = false; }
@@ -693,7 +707,6 @@ namespace KillerScan.Controls
                 ShowImportError(error ?? string.Empty);
                 return;
             }
-            LocationService.NotifyChanged();
             // The tab may refuse to move (a scan started meanwhile, or unsaved results kept), so
             // the rename below names the imported Location, never whichever one the tab is in.
             SetLocation(LocationService.Get(imported));
@@ -842,8 +855,11 @@ namespace KillerScan.Controls
             if (_disposed || IsScanning || !IsUnsaved || target.IsTemporary || ReferenceEquals(target, _location)) return false;
             var source = _location;
             bool saved = true;
+            // From Unassigned, only the run on screen: Unassigned is shared by every window, so its
+            // newest run may be another window's, and an empty table has no run to move at all.
             var runs = source.IsTemporary ? source.History.Entries.ToList()
-                : source.History.Entries.OrderByDescending(entry => entry.ScannedAt).Take(1).ToList();
+                : _active.Devices.Count == 0 ? []
+                : source.History.Entries.Where(entry => entry.ScannedAt == _active.ScannedAt).Take(1).ToList();
             // The name, if one was given, labels the run being saved (one run from Unassigned).
             // The scan itself (target and settings) is saved as one of the target's networks.
             SaveScanTo(target, name);
