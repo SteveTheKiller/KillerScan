@@ -38,7 +38,7 @@
     <SolidColorBrush x:Key="RowHoverBrush" Color="#0a5478" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <LinearGradientBrush x:Key="RowSelectedBrush" StartPoint="0,0" EndPoint="0,1" po:Freeze="True"><GradientStop Color="#FFE0D49A" Offset="0"/><GradientStop Color="#FFBCB281" Offset="1"/></LinearGradientBrush>
     <LinearGradientBrush x:Key="SelectionBg" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#FFE0D49A" Offset="0"/><GradientStop Color="#FFBCB281" Offset="1"/></LinearGradientBrush>
-    <SolidColorBrush x:Key="SelectionFg" Color="#00263a" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <SolidColorBrush x:Key="SelectionFg" Color="#00263a" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <!-- The RGB themes select in their cream with the theme's dark tone on it (2026-10-26). -->
     <SolidColorBrush x:Key="GridSelectedTextBrush" Color="#00263a" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
