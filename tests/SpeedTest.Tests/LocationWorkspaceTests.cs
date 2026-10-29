@@ -302,10 +302,12 @@ internal static class LocationWorkspaceTests
         try
         {
             NetworkPlatform.Current = platform;
-            var catalog = new LocationCatalog(root);
-            catalog.Load("Unassigned");
-            catalog.Create("Site", out var info);
-            var site = catalog.Open(info!);
+            // Through LocationService, as the app does: the last-used adapter is recorded there,
+            // so a private catalog would never see it.
+            LocationService.Root = root;
+            LocationService.Load("Unassigned");
+            Require(LocationService.Create("Site", out var info), "A Location is created.");
+            var site = LocationService.Get(info!);
             var scanner = new SiteScanner();
             using var workspace = new ScanWorkspace("192.168.1.0/24", false, scanner);
             var ethernet = new ScanBinding("Ethernet", System.Net.IPAddress.Parse("192.168.1.5"), 24);
