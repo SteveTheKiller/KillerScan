@@ -137,7 +137,7 @@
     <SolidColorBrush x:Key="AccentLogo" Color="#ff6f91" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <sys:Double x:Key="WordmarkShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.45</sys:Double>
     <sys:Double x:Key="FlyoutShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.55</sys:Double>
-    <SolidColorBrush x:Key="DialogTitleBarBrush" Color="#FF3B3642" po:Freeze="True"/>
+    <SolidColorBrush x:Key="DialogTitleBarBrush" Color="Transparent" po:Freeze="True"/>
     <SolidColorBrush x:Key="RadioAccent" Color="#FFFFA9BD" po:Freeze="True"/>
     <sys:Double x:Key="TitleWordmarkSize" xmlns:sys="clr-namespace:System;assembly=mscorlib">15</sys:Double>
     <sys:Double x:Key="BarShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.38</sys:Double>

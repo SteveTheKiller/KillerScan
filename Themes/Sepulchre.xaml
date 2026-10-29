@@ -138,7 +138,7 @@
     <sys:Double x:Key="WordmarkShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.45</sys:Double>
     <SolidColorBrush x:Key="AccentLogo" Color="#FF4FAAA8" po:Freeze="True"/>
     <sys:Double x:Key="FlyoutShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.55</sys:Double>
-    <LinearGradientBrush x:Key="DialogTitleBarBrush" StartPoint="0,0.5" EndPoint="1,0.5" MappingMode="RelativeToBoundingBox" SpreadMethod="Pad" ColorInterpolationMode="SRgbLinearInterpolation" po:Freeze="True"><GradientStop Color="#FF25282B" Offset="0"/><GradientStop Color="#FF2C5458" Offset="1"/></LinearGradientBrush>
+    <SolidColorBrush x:Key="DialogTitleBarBrush" Color="Transparent" po:Freeze="True"/>
     <SolidColorBrush x:Key="RadioAccent" Color="#FF8CCAC8" po:Freeze="True"/>
     <sys:Double x:Key="TitleWordmarkSize" xmlns:sys="clr-namespace:System;assembly=mscorlib">15</sys:Double>
     <sys:Double x:Key="BarShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.38</sys:Double>

@@ -144,17 +144,11 @@
             <Border Grid.RowSpan="6" IsHitTestVisible="False"
                     Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 
-            <!-- Title bar. TitleBarBrush, not Transparent: the row already spans the card, so this
-                 gives it a real caption band - a gradient on the themes that define one, and
-                 identical to BackgroundBrush on the themes that do not, which is why the other
-                 palettes look unchanged. -->
+            <!-- Title bar: transparent by default so it shows the card and its grain, one surface
+                 with the body, or the theme's own caption band where one is asked for (98SE). -->
             <Border Grid.Row="0" Height="{DynamicResource DialogTitleBarHeight}"
                     Background="{DynamicResource DialogTitleBarBrush}" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                 <Grid>
-                <!-- The caption band paints OVER the dialog-wide grain (declared before this row),
-                     so it carries its own tile - same as the main window's chrome. -->
-                <Border IsHitTestVisible="False"
-                        Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
                 <Grid Margin="{DynamicResource TitleBarPadding}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <kui:AppIcon x:Name="TitleIcon" Width="{DynamicResource TitleIconSize}" Height="{DynamicResource TitleIconSize}"

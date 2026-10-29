@@ -38,7 +38,7 @@
     <SolidColorBrush x:Key="RowHoverBrush" Color="#00593a" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <LinearGradientBrush x:Key="RowSelectedBrush" StartPoint="0,0" EndPoint="0,1" po:Freeze="True"><GradientStop Color="#FFE0D49A" Offset="0"/><GradientStop Color="#FFBCB281" Offset="1"/></LinearGradientBrush>
     <LinearGradientBrush x:Key="SelectionBg" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#FFE0D49A" Offset="0"/><GradientStop Color="#FFBCB281" Offset="1"/></LinearGradientBrush>
-    <SolidColorBrush x:Key="SelectionFg" Color="#002e1c" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <SolidColorBrush x:Key="SelectionFg" Color="#002e1c" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <!-- The RGB themes select in their cream with the theme's dark tone on it (2026-10-26). -->
     <SolidColorBrush x:Key="GridSelectedTextBrush" Color="#002e1c" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
 
@@ -105,7 +105,7 @@
     <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#FF00593A" po:Freeze="True"/>
     <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#FFFFFFFF" po:Freeze="True"/>
     <sys:Double x:Key="BarShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.38</sys:Double>
-    <SolidColorBrush x:Key="DialogTitleBarBrush" Color="#FF002115" po:Freeze="True"/>
+    <SolidColorBrush x:Key="DialogTitleBarBrush" Color="Transparent" po:Freeze="True"/>
     <SolidColorBrush x:Key="FooterBackgroundBrush" Color="#FF002115" po:Freeze="True"/>
     <sys:Double x:Key="FlyoutShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.55</sys:Double>
     <sys:Double x:Key="WordmarkShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.45</sys:Double>

@@ -104,7 +104,7 @@
     <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#FF54201F" po:Freeze="True"/>
     <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#FFF8C99E" po:Freeze="True"/>
     <sys:Double x:Key="BarShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.38</sys:Double>
-    <SolidColorBrush x:Key="DialogTitleBarBrush" Color="#FF240C0D" po:Freeze="True"/>
+    <SolidColorBrush x:Key="DialogTitleBarBrush" Color="Transparent" po:Freeze="True"/>
     <SolidColorBrush x:Key="FooterBackgroundBrush" Color="#FF240C0D" po:Freeze="True"/>
     <sys:Double x:Key="FlyoutShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.55</sys:Double>
     <sys:Double x:Key="WordmarkShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.45</sys:Double>
