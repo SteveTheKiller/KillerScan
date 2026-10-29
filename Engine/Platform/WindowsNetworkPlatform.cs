@@ -68,7 +68,7 @@ namespace KillerScan.Engine
                 using var proc = Process.Start(ArpStart(arguments));
                 if (proc == null) return new Dictionary<string, string>();
                 // Read asynchronously so the deadline bounds a stalled arp.exe instead of the read.
-                var output = proc.StandardOutput.ReadToEndAsync();
+                var output = proc.StandardOutput.ReadToEndAsync().ObserveFault();
                 if (!proc.WaitForExit(3000))
                 {
                     try { proc.Kill(); } catch { }

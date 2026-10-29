@@ -50,7 +50,7 @@ jobs:
           $listed = [regex]::Match($sums, '(?m)^KillerScan\.exe\s+([0-9A-Fa-f]{64})\s*$').Groups[1].Value
           if ($listed -ne $hash) { throw "KillerScan.exe does not match SHA256SUMS.txt (listed '$listed', downloaded $hash)." }
           $signature = Get-AuthenticodeSignature "$env:RUNNER_TEMP\KillerScan.exe"
-          if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notlike '*CN=Open Source Developer Stephen Riley*') {
+          if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.GetNameInfo([Security.Cryptography.X509Certificates.X509NameType]::SimpleName, $false) -ne 'Open Source Developer Stephen Riley') {
               throw "KillerScan.exe is not validly signed by the release certificate ($($signature.Status), $($signature.SignerCertificate.Subject))."
           }
 

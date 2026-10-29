@@ -119,18 +119,19 @@ namespace KillerScan.Controls
             TopologyRefreshes++;
             // Rebuilding replaces every node, so a focused node's device gets focus back after.
             bool hadFocus = TopologyCanvas.IsKeyboardFocusWithin;
-            // Lay out with the default slot first. If a card measured larger than its slot, lay
-            // out again with the largest card as the slot, so every row and ring has room for it.
-            _topologyCardSize = default;
+            // Lay out with the slot the last build measured. Cards size to their text, so the slot
+            // is the largest device card (never the network card in the middle, whose whole target
+            // text has a place of its own). Only when that changed is the diagram built again, so a
+            // streaming scan with the same names builds once per refresh.
             BuildTopology();
-            // Device cards only: the network card in the middle shows the whole target text, which
-            // can be several ranges long, and has a place of its own rather than a slot.
             var cards = TopologyCanvas.Children.OfType<TopologyNode>().Where(card => card.Tag is NetworkDevice).ToList();
             var largest = new Size(cards.Count == 0 ? 0 : cards.Max(card => card.Width),
                 cards.Count == 0 ? 0 : cards.Max(card => card.Height));
-            if (largest.Width > TopologyNodeWidth + 0.5 || largest.Height > TopologyNodeHeight + 0.5)
+            var slot = largest.Width > DefaultTopologyNodeWidth + 0.5 || largest.Height > DefaultTopologyNodeHeight + 0.5
+                ? largest : default;
+            if (Math.Abs(slot.Width - _topologyCardSize.Width) > 0.5 || Math.Abs(slot.Height - _topologyCardSize.Height) > 0.5)
             {
-                _topologyCardSize = largest;
+                _topologyCardSize = slot;
                 BuildTopology();
             }
             RestoreTopologyFocus(hadFocus);

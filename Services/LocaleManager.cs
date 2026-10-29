@@ -294,7 +294,10 @@ namespace KillerScan.Services
                 foreach (object key in merged[baseIndex].Keys) if (key is string name) known.Add(name);
                 using var fs = new FileStream(ExternalFile!, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 var rd = new ResourceDictionary();
-                foreach (var entry in TranslationFileReader.Read(fs, known)) rd[entry.Key] = entry.Value;
+                // An entry of another type than the English one (text where a number belongs, or the
+                // reverse) is left out, so the English value stays and no binding gets the wrong type.
+                foreach (var entry in TranslationFileReader.Read(fs, known))
+                    if (merged[baseIndex][entry.Key]?.GetType() == entry.Value.GetType()) rd[entry.Key] = entry.Value;
                 SetOverride(rd);
                 _externalLoadedOnce = true;
                 return true;

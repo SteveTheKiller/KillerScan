@@ -149,7 +149,7 @@ namespace KillerScan.Services
                 AppInfo.DisplayName, version, "HKLM");
             string report = staged + ".recovery.txt";
             string body = "$ErrorActionPreference='Stop';$lease=$null;$owned=$false;try{"
-                + Wait(parentId, parentTicks) + Wait(helperId, helperTicks)
+                + Wait(parentId, parentTicks, Abandoned) + Wait(helperId, helperTicks, Abandoned)
                 + "$lease=New-Object Threading.Mutex($false,'Global\\KillerTools-Install-" + AppInfo.DisplayName + "');"
                 + "try{$owned=$lease.WaitOne(0)}catch [Threading.AbandonedMutexException]{$owned=$true};if(-not $owned){exit 1618};"
                 + "$original=[IO.File]::OpenRead(" + Data(target) + ");$hash=[Security.Cryptography.SHA256]::Create();"
@@ -166,11 +166,16 @@ namespace KillerScan.Services
         }
 
         /// <summary>PowerShell that waits up to a minute for one process, identified by id and start
-        /// time so a reused id is never mistaken for it, and exits 1618 if it is still running.</summary>
-        internal static string Wait(int id, long ticks) =>
+        /// time so a reused id is never mistaken for it, and runs <paramref name="onTimeout"/> (by
+        /// default, exit 1618) if it is still running.</summary>
+        internal static string Wait(int id, long ticks, string onTimeout = "exit 1618") =>
             "$p=$null;try{$p=[Diagnostics.Process]::GetProcessById(" + id.ToString(CultureInfo.InvariantCulture)
             + ")}catch [ArgumentException]{};if($null -ne $p -and $p.StartTime.ToUniversalTime().Ticks -eq "
-            + ticks.ToString(CultureInfo.InvariantCulture) + " -and -not $p.WaitForExit(60000)){exit 1618};";
+            + ticks.ToString(CultureInfo.InvariantCulture) + " -and -not $p.WaitForExit(60000)){" + onTimeout + "};";
+
+        /// <summary>The protected publication's timeout: thrown, so its catch writes the reason into
+        /// the recovery report beside the staged copy instead of leaving it with no word of why.</summary>
+        private const string Abandoned = "throw 'The app did not close within a minute, so this update was not applied. The staged copy and this report can be deleted.'";
 
         /// <summary>Refuses an elevated request unless every argument has exactly the shape
         /// <see cref="Start"/> writes: the helper verb, an absolute download path, a 64-digit hex

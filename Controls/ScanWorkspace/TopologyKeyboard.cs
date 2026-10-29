@@ -42,8 +42,23 @@ namespace KillerScan.Controls
 
         internal void RefreshRing()
         {
-            BorderThickness = TryFindResource("TabStripeThickness") is Thickness t ? t : new Thickness(1, 3, 1, 0);
+            var stripe = TryFindResource("TabStripeThickness") is Thickness t ? t : new Thickness(1, 3, 1, 0);
+            bool resized = stripe != BorderThickness && !double.IsNaN(Width);
+            BorderThickness = stripe;
             BorderBrush = Fade(TryFindResource(_selected ? "PrimaryBrush" : RingKey) as Brush);
+            // The card's size is pinned to its text (Topology.cs). A theme with another stripe
+            // width changes that, so it is measured again around the same center, which is where
+            // its links end.
+            if (resized)
+            {
+                double centerX = Canvas.GetLeft(this) + Width / 2, centerY = Canvas.GetTop(this) + Height / 2;
+                Width = Height = double.NaN;
+                Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                Width = Math.Ceiling(DesiredSize.Width);
+                Height = Math.Ceiling(DesiredSize.Height);
+                Canvas.SetLeft(this, centerX - Width / 2);
+                Canvas.SetTop(this, centerY - Height / 2);
+            }
         }
 
         /// <summary>ThemeManager's TabActiveRingFadeBrush recipe applied to any colour.</summary>

@@ -257,25 +257,30 @@ namespace KillerScan.Features.About
                 return;
             }
 
-            try
-            {
-                // Declining UAC throws, so the shutdown only happens once the helper is actually
-                // running - otherwise the app would close without updating.
-                try { UpdateService.StartSwap(newExe, tag!.TrimStart('v', 'V')); }
-                catch { AfterUpdateHandoff(false); throw; }
-                AfterUpdateHandoff(true);
-                bool handled = false;
-                ShutdownForUpdate(ref handled);
-                if (!handled) System.Windows.Application.Current.Shutdown();
-            }
+            // Declining UAC throws, so the shutdown only happens once the helper is actually
+            // running - otherwise the app would close without updating.
+            try { UpdateService.StartSwap(newExe, tag!.TrimStart('v', 'V')); }
             catch
             {
+                AfterUpdateHandoff(false);
                 UpdateShutdownCanceled();
                 // A failed helper launch retains the verified download for recovery.
                 _updating           = false;
                 _host.UpdateEnabled = true;
                 _host.UpdateText    = string.Format(_host.Loc("Str_About_UpdateAvailable"), tag);
+                return;
             }
+            // From here the helper is waiting for this process to exit and will replace its exe,
+            // so a shutdown that fails leaves Update off: offering it again would start a second
+            // update over the first.
+            AfterUpdateHandoff(true);
+            try
+            {
+                bool handled = false;
+                ShutdownForUpdate(ref handled);
+                if (!handled) System.Windows.Application.Current.Shutdown();
+            }
+            catch { /* The helper finishes once the app does close. */ }
         }
     }
 }

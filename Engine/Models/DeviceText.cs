@@ -11,6 +11,21 @@ namespace KillerScan.Engine
     {
         internal const int NameLength = 255;
         internal const int TextLength = 1024;
+        /// <summary>Most mDNS service names one device keeps; a host flooding unique names stops here.</summary>
+        internal const int ServiceCount = 64;
+
+        /// <summary>A device's mDNS service names, each bounded like a name and at most <see cref="ServiceCount"/>.</summary>
+        internal static System.Collections.Generic.List<string> Services(System.Collections.Generic.IEnumerable<string> names)
+        {
+            var list = new System.Collections.Generic.List<string>();
+            foreach (string name in names)
+            {
+                if (list.Count == ServiceCount) break;
+                string clean = Clean(name, NameLength);
+                if (clean.Length > 0 && !list.Contains(clean)) list.Add(clean);
+            }
+            return list;
+        }
 
         internal static string Clean(string? value, int max)
         {

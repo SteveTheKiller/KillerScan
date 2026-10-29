@@ -9,6 +9,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
 ### Fixed
+- An update that cannot finish because KillerScan did not close says so in its recovery report, the Update button stays off once an update has started, and a translation file can no longer give a setting the wrong kind of value.
+- Topology builds once per refresh when card sizes have not changed, and a card resizes with its border when the theme changes.
+- A device can add at most 64 mDNS service names, each bounded in length, however many it announces.
+- A copy of KillerScan saved under another name, such as KillerScan (1).exe, keeps its terminal colors while another copy is open.
 - Save results to Location from Unassigned moves the run on screen, never another window's newer run, and moves nothing when the table is empty.
 - Exporting and importing a Location keep the window responsive, and an import changes the Location list only on the window's own thread.
 - Results on screen in Unassigned are no longer cleared when the network changes to one a Location recognizes, and a canceled scan in a Location deleted elsewhere leaves it like a finished one.

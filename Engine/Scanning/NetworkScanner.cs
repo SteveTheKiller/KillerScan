@@ -544,7 +544,7 @@ namespace KillerScan.Engine
             // Attach network-wide discovery results + name fallback (reverse DNS -> mDNS .local name).
             if (options.Mdns && _mdns.TryGetValue(device.IpAddress, out var md))
             {
-                device.MdnsServices = [.. md.Services];
+                device.MdnsServices = DeviceText.Services(md.Services);
                 if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(md.Name))
                     device.Hostname = md.Name;
             }
@@ -648,7 +648,7 @@ namespace KillerScan.Engine
             // Reuse the last full scan's network-wide multicast results for naming.
             if (options.Mdns && _mdns.TryGetValue(ip, out var md))
             {
-                device.MdnsServices = [.. md.Services];
+                device.MdnsServices = DeviceText.Services(md.Services);
                 if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(md.Name))
                     device.Hostname = md.Name;
             }

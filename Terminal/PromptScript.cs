@@ -176,8 +176,11 @@ namespace KillerScan.Shell
             try
             {
                 using var process = System.Diagnostics.Process.GetProcessById(pid);
-                return string.Equals(process.ProcessName, "KillerScan", StringComparison.OrdinalIgnoreCase)
-                    ? process.StartTime.ToUniversalTime() : null;
+                // By product name, not file name: a second download saved as "KillerScan (1).exe"
+                // is still KillerScan, and its palette is live.
+                bool killerScan = string.Equals(process.ProcessName, "KillerScan", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(process.MainModule?.FileVersionInfo.ProductName, "KillerScan", StringComparison.OrdinalIgnoreCase);
+                return killerScan ? process.StartTime.ToUniversalTime() : null;
             }
             catch (ArgumentException) { return null; }               // not running
             catch (InvalidOperationException) { return null; }       // exited while being read
