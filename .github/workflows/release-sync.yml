@@ -128,10 +128,11 @@ jobs:
           if ($wingetStatus -eq 200) {
               Add-Result 'WinGet' 'Published' "$env:WINGET_ID $version"
           } else {
-              $title = "New version: $env:WINGET_ID version $version"
+              # komac titles a first submission "Add version" and later ones "New version"; both count.
+              $title = "$env:WINGET_ID version $version"
               $search = gh pr list --repo microsoft/winget-pkgs --state all --search "`"$title`" in:title" --limit 10 --json url,state,title
               $searchFailed = $LASTEXITCODE -ne 0
-              $pulls = @(if (-not $searchFailed) { $search | ConvertFrom-Json | Where-Object { $_.title -eq $title } })
+              $pulls = @(if (-not $searchFailed) { $search | ConvertFrom-Json | Where-Object { $_.title -match ('^(New|Add) version: ' + [regex]::Escape($title) + '$') } })
               $merged = @($pulls | Where-Object state -eq 'MERGED')
               $open = @($pulls | Where-Object state -eq 'OPEN')
               if ($merged.Count) {
