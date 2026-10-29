@@ -143,7 +143,6 @@ function Invoke-UpdateImagePublication {
         if ((& $ops.HashStream $image) -ne $plan.Hash) { throw 'The published image failed SHA-256 verification.' }
         if (-not (& $ops.Publisher $plan.Target $plan)) { throw 'The published image is not signed by the publisher.' }
         & $ops.Metadata $plan
-        & $ops.Relaunch $plan
     }
     catch {
         $failure = $_.Exception.ToString()
@@ -169,6 +168,10 @@ function Invoke-UpdateImagePublication {
     foreach ($path in @($plan.Download, $plan.Staged, $plan.Backup, $plan.Restore, $plan.Report)) {
         try { & $ops.Delete $path } catch { }
     }
+    # Reopening comes after the update is complete and cleaned up. It can fail on its own (an
+    # administrator from another account, no desktop), and that must never report a finished
+    # update as failed or leave its backup behind (2026-10-28 review, DEP-002).
+    try { & $ops.Relaunch $plan } catch { }
     return $true
 }
 
@@ -347,6 +350,21 @@ $ops.Releases = { param($url)
         // Compiled by Windows PowerShell 5.1, so it stays within C# 5.
         private const string Guard = """
 if (-not ('KillerUpdateGuard' -as [type])) {
+# An elevated helper compiles in a fresh folder only Administrators and SYSTEM can open. Add-Type
+# writes its source and DLL to TMP before loading them, and the inherited TMP is the user's own
+# folder, where any process of that user could swap them in between (2026-10-28 review, DEP-001).
+$killerTemp = $null; $killerSaved = @($env:TMP, $env:TEMP)
+if ($plan.Elevated -and ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    $killerTemp = Join-Path ([Environment]::GetFolderPath('Windows')) ('Temp\KillerTools-' + [Guid]::NewGuid().ToString('N'))
+    $acl = New-Object Security.AccessControl.DirectorySecurity
+    $acl.SetAccessRuleProtection($true, $false)
+    foreach ($sid in 'S-1-5-32-544', 'S-1-5-18') {
+        $acl.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule((New-Object Security.Principal.SecurityIdentifier $sid), 'FullControl', 'ContainerInherit,ObjectInherit', 'None', 'Allow')))
+    }
+    $null = [IO.Directory]::CreateDirectory($killerTemp, $acl)
+    $env:TMP = $killerTemp; $env:TEMP = $killerTemp
+}
+try {
 Add-Type -TypeDefinition @'
 using System;
 using System.Collections.Generic;
@@ -506,6 +524,10 @@ public static class KillerUpdateGuard {
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)] [DllImport("advapi32.dll", EntryPoint = "CreateProcessWithTokenW", CharSet = CharSet.Unicode, SetLastError = true)] private static extern bool CreateProcessWithToken(IntPtr token, uint flags, string application, StringBuilder command, uint creation, IntPtr environment, string directory, ref StartupInfo startup, out ProcessInfo process);
 }
 '@
+} finally {
+    $env:TMP = $killerSaved[0]; $env:TEMP = $killerSaved[1]
+    if ($null -ne $killerTemp) { Remove-Item -LiteralPath $killerTemp -Recurse -Force -ErrorAction SilentlyContinue }
+}
 }
 """;
     }

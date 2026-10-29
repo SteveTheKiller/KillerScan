@@ -41,6 +41,14 @@ internal static class UpdateHelperLaunchTests
                 "A refused elevated publication relaunches the installed copy: " + refused);
             Console.WriteLine("PASS a failed elevated publication reopens the installed KillerScan.");
 
+            // Reopening can fail on its own (an administrator from another account, no desktop). The
+            // update is finished by then, so it still succeeds and leaves no backup behind.
+            var reopenFails = Case(root, "reopen-fails", standIn, standIn, elevated: true, relaunchFails: true);
+            Require(reopenFails.Exit == 0 && reopenFails.Target.SequenceEqual(standIn) && !reopenFails.DownloadLeft
+                    && !Directory.EnumerateFiles(Path.Combine(root, "reopen-fails"), "*.old*").Any(),
+                "A relaunch failure after a finished publication is not reported as a failed update: " + reopenFails);
+            Console.WriteLine("PASS a relaunch failure leaves a finished update finished.");
+
             // Downloads from earlier attempts are swept; recent ones and other files are not.
             string temp = Path.Combine(root, "temp");
             Directory.CreateDirectory(temp);
@@ -118,7 +126,7 @@ internal static class UpdateHelperLaunchTests
         public override string ToString() => "exit " + Exit + ", relaunched " + Relaunched + ", report shown " + ReportShown;
     }
 
-    private static Outcome Case(string root, string name, byte[] download, byte[] verified, bool elevated = false)
+    private static Outcome Case(string root, string name, byte[] download, byte[] verified, bool elevated = false, bool relaunchFails = false)
     {
         string folder = Path.Combine(root, name);
         Directory.CreateDirectory(folder);
@@ -129,7 +137,8 @@ internal static class UpdateHelperLaunchTests
         UpdateImagePublication.RememberVerified(path, Hash(verified), Signer);
         string relaunched = Path.Combine(folder, "relaunched.txt");
         string shown = Path.Combine(folder, "report-shown.txt");
-        string overrides = "$ops.Relaunch = { param($plan) [IO.File]::WriteAllText('" + relaunched + "', 'yes') }\n" +
+        string overrides = (relaunchFails ? "$ops.Relaunch = { param($plan) throw 'The shell belongs to another account.' }\n"
+                : "$ops.Relaunch = { param($plan) [IO.File]::WriteAllText('" + relaunched + "', 'yes') }\n") +
             "$ops.ShowReport = { param($path) [IO.File]::WriteAllText('" + shown + "', $path) }\n" +
             "$ops.Publisher = { param($path, $plan) $plan.Thumb -eq '" + Signer + "' }";
         // The elevated publication never opens a report window; TrustedUpdate builds it without one.

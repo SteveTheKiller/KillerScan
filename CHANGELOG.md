@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
 ### Fixed
+- The elevated part of an update compiles its helper code in a folder only administrators can open, so another program running as you cannot slip code into it, and an update that finished is no longer reported as failed when KillerScan cannot be reopened afterward.
 - Renaming a saved scan keeps it, keeps its Deep Scan setting, and refuses a name another saved scan already uses instead of replacing that scan.
 - A scan run whose save failed is no longer written to history twice, and deleting it stays deleted. A renamed run keeps its name when it is saved to a Location.
 - SSH in the built-in terminal starts Windows' own ssh.exe by its full path, never a file of that name sitting beside a portable copy.
