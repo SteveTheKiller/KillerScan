@@ -700,7 +700,10 @@ internal static partial class HistoryUiTests
         var icon = (Button)window.FindName("HistoryButton");
         var menu = icon.ContextMenu;
         Call(window, "HistorySettingsMenu_Opening", icon, null);
-        Require(ReferenceEquals(menu.PlacementTarget, icon) && menu.CustomPopupPlacementCallback != null && menu.HorizontalOffset == 0 && menu.VerticalOffset == 0,
+        // FlyoutPlacement.Attach (KillerUI) targets the unscaled root and places the menu from the
+        // button through its callback, so the anchor is the button whatever opened the menu.
+        Require(menu.Placement == System.Windows.Controls.Primitives.PlacementMode.Custom && menu.PlacementTarget != null
+                && menu.CustomPopupPlacementCallback != null && menu.HorizontalOffset == 0 && menu.VerticalOffset == 0,
             "Mouse and native keyboard menu opening use the history button anchor, never the pointer.");
         // Rail flyouts are placed by the kit's FlyoutPlacement: against the window's unscaled root
         // (so app size cannot shift them), beside the rail, at their button's height but never
