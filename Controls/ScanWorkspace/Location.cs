@@ -13,8 +13,6 @@ namespace KillerScan.Controls
         private LocationData _location = LocationData.Shared();
         private readonly TrustMarkConverter _trustMark = new();
 
-        /// <summary>The name of the saved scan last loaded here, which Save updates in place.</summary>
-
         /// <summary>The Location this tab's names, approvals, history and saved scans belong to.</summary>
         internal LocationData Location => _location;
 
@@ -124,18 +122,18 @@ namespace KillerScan.Controls
             StateChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        /// <summary>
-        /// Moves the tab to a Temporary scan when its Location was deleted, by another window or
-        /// another KillerScan, since the tab opened it. Without this, every later rename, approval
-        /// or recorded scan would quietly recreate the deleted Location's folder, where nothing
-        /// lists it. The results stay on screen, so they can still be saved to a Location.
-        /// Returns true when the tab moved.
-        /// </summary>
         /// <summary>Where a window goes when its Location is deleted: Unassigned, the normal
         /// unsaved state. Temporary is only the fallback when Locations cannot be read at all.</summary>
         private static LocationData UnsavedLocation() =>
             LocationService.Find(LocationCatalog.UnassignedId) is { } unassigned ? LocationService.Get(unassigned) : LocationData.Temporary();
 
+        /// <summary>
+        /// Moves the tab to Unassigned when its Location was deleted, by another window or another
+        /// KillerScan, since the tab opened it. Without this, every later rename, approval or
+        /// recorded scan would quietly recreate the deleted Location's folder, where nothing lists
+        /// it. The results stay on screen, so they can still be saved to a Location. Returns true
+        /// when the tab moved.
+        /// </summary>
         internal bool LeaveDeletedLocation()
         {
             // Only a Location from this process's catalog can be judged against that catalog on disk.
@@ -625,7 +623,7 @@ namespace KillerScan.Controls
 
         /// <summary>
         /// Deletes a Location after asking. Its files move to locations\.deleted rather than being
-        /// erased. If this workspace is in it, the workspace becomes a Temporary scan.
+        /// erased. If this workspace is in it, the workspace moves to Unassigned.
         /// </summary>
         internal void DeleteLocation(LocationInfo info)
         {
