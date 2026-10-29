@@ -9,6 +9,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
 ### Fixed
+- Renaming a saved scan keeps it, keeps its Deep Scan setting, and refuses a name another saved scan already uses instead of replacing that scan.
+- A scan run whose save failed is no longer written to history twice, and deleting it stays deleted. A renamed run keeps its name when it is saved to a Location.
+- SSH in the built-in terminal starts Windows' own ssh.exe by its full path, never a file of that name sitting beside a portable copy.
+- An adapter reporting a 0.0.0.0 mask no longer becomes the network to scan; the next adapter is used.
+- The Locations list answers Enter, F2, Delete and the menu key itself instead of passing them to the device table.
 - Topology cards with long names no longer overlap their neighbors or hang off the edge of the map; every row and ring is spaced for its widest card.
 - The F1 keyboard map shows the arrow keys, so Alt+Shift+Up and Alt+Shift+Down (tabs at the top or bottom) appear on it.
 - The tray icon's menu opens from the pointer upward, out of the notification area, the same way in every Killer app. A short menu no longer covers the tray icons and a taller one no longer floats about 40 pixels above them.

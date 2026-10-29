@@ -140,6 +140,10 @@ jobs:
           $installer = Join-Path $dir 'SteveTheKiller.KillerScan.installer.yaml'
           if (-not (Test-Path $installer)) { Write-Error "komac did not write $installer"; exit 1 }
           $text = Get-Content $installer -Raw
+          # komac downloads the installer again on its own; the hash it wrote must be the copy
+          # checked above, or an asset swapped in between would be submitted unchecked.
+          $listedSha = [regex]::Match($text, '(?m)^\s*InstallerSha256:\s*(\S+)').Groups[1].Value
+          if ($listedSha -ne $hash) { Write-Error "komac's installer hash $listedSha is not the verified $hash."; exit 1 }
 
           # KillerScan installs itself machine-wide with /silent and registers its own uninstall
           # entry, so it is submitted as an exe installer. komac copies the

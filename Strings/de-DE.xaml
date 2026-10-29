@@ -427,6 +427,7 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">{0} löschen? Die gespeicherten Scans, Gerätenamen, Freigaben und der Verlauf dieses Standorts werden aus KillerScan entfernt. Die Dateien bleiben im Ordner "deleted" der Standorte erhalten und können wiederhergestellt werden.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Löschen</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Scan löschen</sys:String>
+    <sys:String x:Key="Str_Loc_ScanNameTaken">Ein gespeicherter Scan namens {0} existiert bereits. Wählen Sie einen anderen Namen.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Stoppen Sie den Scan, bevor Sie den Standort wechseln.</sys:String>
     <sys:String x:Key="Str_Loc_DeletedElsewhere">Der Standort {0} wurde in einem anderen Fenster gelöscht. Diese Ergebnisse sind jetzt ein „Temporärer Scan“. Um sie zu behalten, wählen Sie „Ergebnisse im Standort speichern“.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Diese Standortdatei ist größer als {0} MB und damit größer, als KillerScan importiert.</sys:String>

@@ -54,7 +54,7 @@ namespace KillerScan.Shell
             [("Shift", "Shift", 2.3), ("Z", "Z", 1), ("X", "X", 1), ("C", "C", 1), ("V", "V", 1),
              ("B", "B", 1), ("N", "N", 1), ("M", "M", 1), ("Comma", ",", 1), ("Period", ".", 1),
              ("Slash", "/", 1), ("RShift", "Shift", 2.7),
-             ("", "", 1.6), ("Up", "↑", 1)],
+             ("", "", 2.6), ("Up", "↑", 1)],   // over Down: the bottom row is a key longer (Del)
             [("Ctrl", "Ctrl", 1.5), ("Win", "Win", 1.2), ("Alt", "Alt", 1.5), ("Space", "", 6.8),
              ("RAlt", "Alt", 1.5), ("Delete", "Del", 1), ("Menu", "Menu", 1), ("RCtrl", "Ctrl", 1.5),
              ("", "", 0.6), ("Left", "←", 1), ("Down", "↓", 1), ("Right", "→", 1)]
@@ -311,7 +311,7 @@ namespace KillerScan.Shell
         /// this file wires in BuildKeyboardMap.</summary>
         private void KbSyncLayerFromModifiers()
         {
-            if (ShortcutMapHost.Visibility != Visibility.Visible) return;
+            if (!ShortcutMapHost.IsVisible) return;   // stays Visible inside a closed overlay
             var m = Keyboard.Modifiers;
             var layer = m.HasFlag(ModifierKeys.Control) && m.HasFlag(ModifierKeys.Shift) ? KbLayer.CtrlShift
                       : m.HasFlag(ModifierKeys.Control) && m.HasFlag(ModifierKeys.Alt) ? KbLayer.CtrlAlt

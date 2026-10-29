@@ -468,6 +468,7 @@
     <sys:String x:Key="Str_Loc_DeleteDetail">{0} жойылсын ба? Оның сақталған сканерлеулері, құрылғы атаулары, мақұлдаулары және тарихы KillerScan ішінде енді көрсетілмейді. Файлдар Локациялардың "deleted" қалтасында сақталады, сондықтан оларды қалпына келтіруге болады.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Жою</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Сканерлеуді жою</sys:String>
+    <sys:String x:Key="Str_Loc_ScanNameTaken">{0} атты сақталған сканерлеу бар. Басқа атау таңдаңыз.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Локацияны ауыстырмас бұрын сканерлеуді тоқтатыңыз.</sys:String>
     <sys:String x:Key="Str_Loc_DeletedElsewhere">«{0}» Локациясы басқа терезеде жойылды. Бұл нәтижелер енді «Уақытша сканерлеу» режимінде. Оларды сақтап қалу үшін «Нәтижелерді Локацияға сақтау» тармағын таңдаңыз.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Бұл Локация файлы {0} MB-тан үлкен, бұл KillerScan импорттайтын көлемнен асады.</sys:String>

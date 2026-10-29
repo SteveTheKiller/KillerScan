@@ -123,7 +123,9 @@ namespace KillerScan.Controls
             // out again with the largest card as the slot, so every row and ring has room for it.
             _topologyCardSize = default;
             BuildTopology();
-            var cards = TopologyCanvas.Children.OfType<TopologyNode>().ToList();
+            // Device cards only: the network card in the middle shows the whole target text, which
+            // can be several ranges long, and has a place of its own rather than a slot.
+            var cards = TopologyCanvas.Children.OfType<TopologyNode>().Where(card => card.Tag is NetworkDevice).ToList();
             var largest = new Size(cards.Count == 0 ? 0 : cards.Max(card => card.Width),
                 cards.Count == 0 ? 0 : cards.Max(card => card.Height));
             if (largest.Width > TopologyNodeWidth + 0.5 || largest.Height > TopologyNodeHeight + 0.5)

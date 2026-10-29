@@ -89,6 +89,24 @@ namespace KillerScan.Services
                 });
             }, MemoryOnly);
 
+        /// <summary>
+        /// Renames one saved scan in place, keeping everything else it holds (Deep Scan included).
+        /// A name only differing in case is a plain rename. A name another saved scan already uses
+        /// is refused rather than replacing that scan; <paramref name="taken"/> says so.
+        /// </summary>
+        public bool Rename(ScanProfile profile, string name, out bool taken)
+        {
+            bool collision = Items.Any(item => !string.Equals(item.Name, profile.Name, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
+            taken = collision;
+            if (collision) return false;
+            return _store.Change(items =>
+            {
+                var found = items.FirstOrDefault(item => string.Equals(item.Name, profile.Name, StringComparison.OrdinalIgnoreCase));
+                if (found != null) found.Name = name;
+            }, MemoryOnly);
+        }
+
         public bool Delete(ScanProfile profile) => _store.Change(items =>
             items.RemoveAll(item => string.Equals(item.Name, profile.Name, StringComparison.OrdinalIgnoreCase)), MemoryOnly);
 

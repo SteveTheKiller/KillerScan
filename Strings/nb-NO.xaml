@@ -468,6 +468,7 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Slette {0}? De lagrede skanningene, enhetsnavnene, godkjenningene og skanneloggen fjernes fra KillerScan. Filene beholdes i "deleted"-mappen for Lokasjoner, så de kan gjenopprettes.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Slett</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Slett skanning</sys:String>
+    <sys:String x:Key="Str_Loc_ScanNameTaken">En lagret skanning med navnet {0} finnes allerede. Velg et annet navn.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Stopp skanningen før du bytter Lokasjon.</sys:String>
     <sys:String x:Key="Str_Loc_DeletedElsewhere">Lokasjonen {0} ble slettet i et annet vindu. Disse resultatene er nå en «Midlertidig skanning». For å beholde dem, velg «Lagre resultater i Lokasjonen».</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Denne Lokasjonsfilen er større enn {0} MB, som er mer enn KillerScan importerer.</sys:String>

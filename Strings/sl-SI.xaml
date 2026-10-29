@@ -401,6 +401,7 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Izbrišem {0}? KillerScan ne bo več prikazoval njenih shranjenih pregledov, imen naprav, odobritev in zgodovine. Datoteke ostanejo v mapi Lokacij "deleted", zato jih je mogoče obnoviti.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Izbriši</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Izbriši pregled</sys:String>
+    <sys:String x:Key="Str_Loc_ScanNameTaken">Shranjen pregled z imenom {0} že obstaja. Izberite drugo ime.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Pred menjavo Lokacije ustavi pregled.</sys:String>
     <sys:String x:Key="Str_Loc_DeletedElsewhere">Lokacija {0} je bila izbrisana v drugem oknu. Ti rezultati so zdaj v načinu »Začasni pregled«. Če jih želiš obdržati, izberi »Shrani rezultate v Lokacijo«.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Ta datoteka Lokacije je večja od {0} MB, kar je več, kot KillerScan uvozi.</sys:String>

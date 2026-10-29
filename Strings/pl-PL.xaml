@@ -411,6 +411,7 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteDetail">Usunąć {0}? Jej zapisane skany, nazwy urządzeń, zatwierdzenia i historia znikną z KillerScan. Pliki zostaną zachowane w folderze Lokalizacji "deleted", więc można je odzyskać.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">Usuń</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Usuń skan</sys:String>
+    <sys:String x:Key="Str_Loc_ScanNameTaken">Zapisany skan o nazwie {0} już istnieje. Wybierz inną nazwę.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Zatrzymaj skanowanie przed zmianą Lokalizacji.</sys:String>
     <sys:String x:Key="Str_Loc_DeletedElsewhere">Lokalizacja {0} została usunięta w innym oknie. Te wyniki należą teraz do trybu „Skanowanie tymczasowe”. Aby je zachować, wybierz „Zapisz wyniki w Lokalizacji”.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Ten plik Lokalizacji jest większy niż {0} MB, czyli więcej, niż KillerScan importuje.</sys:String>

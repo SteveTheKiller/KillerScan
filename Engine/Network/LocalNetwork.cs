@@ -124,6 +124,8 @@ namespace KillerScan.Engine
                         if ((b & (1 << bit)) != 0) prefix++;
                         else goto done;
                 done:
+                // A 0.0.0.0 mask is no network at all, so the next adapter gets its turn.
+                if (prefix == 0) continue;
 
                 return new LocalNet
                 {

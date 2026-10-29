@@ -239,6 +239,9 @@ namespace KillerScan.Shell
                         ApplyAppScale(1.0, persist: true); e.Handled = true; return;
                 }
             }
+            // The Locations list owns its keys (Enter, F2, Delete, the menu key); the scan tab would
+            // otherwise take F2 and Enter for the selected device first.
+            if (LocationsList.IsKeyboardFocusWithin) { LocationList_KeyDown(LocationsList, e); return; }
             ActiveScan?.HandleKey(e);
         }
 

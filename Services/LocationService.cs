@@ -121,9 +121,11 @@ namespace KillerScan.Services
         private static void ForgetLearnedGateways()
         {
             if (!Editable || App.GetSetting("GatewaysFromSavesOnly") == "1") return;
+            bool cleared = true;
             foreach (var item in Items.Where(item => item.GatewayMacs.Count > 0).ToList())
-                _catalog!.ClearGatewayMacs(item.Id);
-            App.SetSetting("GatewaysFromSavesOnly", "1");
+                cleared &= _catalog!.ClearGatewayMacs(item.Id);
+            // A clear that failed (busy catalog, write error) is tried again on the next start.
+            if (cleared) App.SetSetting("GatewaysFromSavesOnly", "1");
         }
 
         /// <summary>The data for a Location, shared by every tab that has it open.</summary>

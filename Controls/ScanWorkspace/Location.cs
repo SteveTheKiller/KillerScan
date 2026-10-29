@@ -424,6 +424,9 @@ namespace KillerScan.Controls
         /// which is what an un-nicknamed scan shows.</summary>
         private void RenameSavedScan(ScanProfile profile)
         {
+            // The store is taken before the dialog, so the rename lands in the Location the menu
+            // showed even if this tab moves while the dialog is open.
+            var store = _location.SavedScans;
             var dialog = new InputDialog(Loc("Str_History_Rename"), profile.Target, Loc("Str_Rename_Label"),
                 HasNickname(profile) ? profile.Name : string.Empty, Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
             dialog.ShowDialog();
@@ -431,10 +434,11 @@ namespace KillerScan.Controls
             string name = dialog.Value.Trim();
             if (name.Length == 0) name = profile.Target;
             if (name == profile.Name) return;
-            var store = _location.SavedScans;
-            bool saved = store.SaveEdited(name, profile.Target, profile.Options, profile.Adapter ?? string.Empty)
-                && store.Delete(profile);
-            PersistenceFeedback.Check(saved, store.Retry, () => store.SaveError);
+            if (!store.Rename(profile, name, out bool taken))
+            {
+                if (taken) StatusText.Text = string.Format(Loc("Str_Loc_ScanNameTaken"), name);
+                else PersistenceFeedback.Check(false, store.Retry, () => store.SaveError);
+            }
             LocationChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -639,7 +643,14 @@ namespace KillerScan.Controls
         /// <summary>Switches to a Location chosen in the Locations sidebar.</summary>
         internal bool OpenLocation(LocationInfo info) => SetLocation(LocationService.Get(info));
 
-        internal void NewLocation() => CreateLocation();
+        /// <summary>New Location from the sidebar or Ctrl+Alt+S, with the same gates as the menu
+        /// item: not while scanning (it could not be entered), in demo mode or read-only.</summary>
+        internal void NewLocation()
+        {
+            if (IsScanning) { StatusText.Text = Loc("Str_Loc_Busy"); return; }
+            if (DemoMode || !LocationService.Editable) return;
+            CreateLocation();
+        }
 
         /// <summary>The largest .ksloc file Import reads. Tests lower it.</summary>
         internal static long MaxImportBytes { get; set; } = 256L * 1024 * 1024;
@@ -682,11 +693,13 @@ namespace KillerScan.Controls
                 return;
             }
             LocationService.NotifyChanged();
+            // The tab may refuse to move (a scan started meanwhile, or unsaved results kept), so
+            // the rename below names the imported Location, never whichever one the tab is in.
             SetLocation(LocationService.Get(imported));
             StatusText.Text = string.Format(Loc("Str_Loc_Imported"), imported.Name);
             // Same name as an existing Location is allowed, so offer a rename straight away.
             if (LocationService.Items.Count(item => string.Equals(item.Name, imported.Name, StringComparison.CurrentCultureIgnoreCase)) > 1)
-                RenameLocation();
+                RenameLocation(imported);
         }
 
         /// <summary>Shows why an import failed. Tests capture the message without a dialog.</summary>

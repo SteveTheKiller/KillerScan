@@ -426,6 +426,7 @@
     <sys:String x:Key="Str_Loc_DeleteDetail">要删除 {0} 吗？其已保存的扫描、设备名称、批准记录和历史记录将从 KillerScan 中移除。文件会保留在站点的“deleted”文件夹中，因此可以恢复。</sys:String>
     <sys:String x:Key="Str_Loc_DeleteButton">删除</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">删除扫描</sys:String>
+    <sys:String x:Key="Str_Loc_ScanNameTaken">已存在名为 {0} 的已保存扫描。请换一个名称。</sys:String>
     <sys:String x:Key="Str_Loc_Busy">请先停止扫描，再切换站点。</sys:String>
     <sys:String x:Key="Str_Loc_DeletedElsewhere">站点“{0}”已在另一个窗口中删除。这些结果现在属于“临时扫描”。如需保留，请选择“将结果保存到站点”。</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">此站点文件大于 {0} MB，超出了 KillerScan 的导入上限。</sys:String>

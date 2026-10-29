@@ -445,11 +445,31 @@
                          Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" Margin="14,0,5,0" Visibility="Collapsed"
                          HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          MouseDoubleClick="LocationList_DoubleClick" PreviewKeyDown="LocationList_KeyDown">
+                    <ListBox.Resources>
+                        <!-- On the row container, not inside the template, so the Menu key and Shift+F10
+                             open it for the focused row. -->
+                        <ContextMenu x:Key="LocationRowMenu" x:Shared="False">
+                                        <MenuItem Header="{DynamicResource Str_Loc_Open}" InputGestureText="Enter" Click="LocationOpen_Click">
+                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE707;"/></MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="{DynamicResource Str_Loc_Edit}" InputGestureText="F2" Click="LocationRename_Click">
+                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE70F;"/></MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="{DynamicResource Str_Loc_Export}" Click="LocationExport_Click">
+                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE896;"/></MenuItem.Icon>
+                                        </MenuItem>
+                                        <Separator/>
+                                        <MenuItem Header="{DynamicResource Str_Loc_Delete}" InputGestureText="Delete" Click="LocationDelete_Click">
+                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE74D;"/></MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                    </ListBox.Resources>
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="Padding" Value="9,4"/>
                             <Setter Property="SnapsToDevicePixels" Value="True"/>
                             <Setter Property="AutomationProperties.Name" Value="{Binding}"/>
+                            <Setter Property="ContextMenu" Value="{StaticResource LocationRowMenu}"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListBoxItem">
@@ -474,23 +494,6 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type local:LocationRow}">
                             <DockPanel ToolTip="{Binding Tip}">
-                                <DockPanel.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="{DynamicResource Str_Loc_Open}" InputGestureText="Enter" Click="LocationOpen_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE707;"/></MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Header="{DynamicResource Str_Loc_Edit}" InputGestureText="F2" Click="LocationRename_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE70F;"/></MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Header="{DynamicResource Str_Loc_Export}" Click="LocationExport_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE896;"/></MenuItem.Icon>
-                                        </MenuItem>
-                                        <Separator/>
-                                        <MenuItem Header="{DynamicResource Str_Loc_Delete}" InputGestureText="Delete" Click="LocationDelete_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE74D;"/></MenuItem.Icon>
-                                        </MenuItem>
-                                    </ContextMenu>
-                                </DockPanel.ContextMenu>
                                 <!-- The check marks the Location this scan is in. -->
                                 <a11y:Glyph DockPanel.Dock="Right" Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="12"
                                             VerticalAlignment="Center" Margin="6,0,0,0">

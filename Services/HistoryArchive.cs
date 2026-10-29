@@ -130,6 +130,8 @@ namespace KillerScan.Services
                     if (kept.Count == Entries.Count) return false;
                     Persist(kept, Policy);
                     Entries = kept;
+                    // The pending runs are in the file now; keeping them would write them twice.
+                    _pending.Clear();
                     SaveError = null;
                     return true;
                 });
@@ -153,6 +155,7 @@ namespace KillerScan.Services
                     if (match == null) return false;
                     match.Name = name;
                     Persist(Entries, Policy);
+                    _pending.Clear();
                     SaveError = null;
                     return true;
                 });

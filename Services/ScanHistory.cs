@@ -264,7 +264,7 @@ namespace KillerScan.Services
             var copy = new ScanHistoryEntry
             {
                 ScannedAt = entry.ScannedAt, Target = entry.Target, TargetKey = entry.TargetKey, Options = entry.Options,
-                Deep = entry.Deep, Completion = entry.Completion, Adapter = entry.Adapter, Devices = [.. entry.Devices]
+                Deep = entry.Deep, Completion = entry.Completion, Adapter = entry.Adapter, Name = entry.Name, Devices = [.. entry.Devices]
             };
             if (MemoryOnly) { _entries = _demoRetention.Retained(_entries.Concat([copy]), DateTimeOffset.Now); return true; }
             bool saved = _archive.Append(copy, DateTimeOffset.Now);
