@@ -105,6 +105,9 @@ namespace KillerScan.Controls
                 bool deep = completed && _runDeepAfterScan && _active.Devices.Count > 0 && !_disposed;
                 _runDeepAfterScan = false;
                 _scanCompleted = completed;
+                // A Location deleted elsewhere while this scan ran is left now, however it ended;
+                // the completed path above already did, the canceled and failed ones did not.
+                if (!_disposed && !completed) LeaveDeletedLocation();
                 if (!_disposed)
                 {
                     _active.Status = StatusText.Text;

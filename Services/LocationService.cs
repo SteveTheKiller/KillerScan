@@ -99,7 +99,10 @@ namespace KillerScan.Services
             var old = source.Items.Where(scan => scan.Target.Trim().Length > 0).ToList();
             if (old.Count == 0) return;
             string name = System.Windows.Application.Current?.TryFindResource("Str_Loc_ImportedScans") as string ?? "Saved scans";
-            var home = Items.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.CurrentCultureIgnoreCase));
+            // By the id an earlier pass remembered, never by name: a Location the user made and
+            // happened to call "Saved scans" must not become the holding pen.
+            string? heldId = App.GetSetting(ImportedScansSetting);
+            var home = string.IsNullOrEmpty(heldId) ? null : Items.FirstOrDefault(item => item.Id == heldId);
             if (home == null && (!Create(name, out home) || home == null)) return;
             // Remembered by id (a rename keeps it): this holding Location never learns a router,
             // since it mixes every old site (IsImportedScans).
@@ -108,8 +111,17 @@ namespace KillerScan.Services
             foreach (var scan in old)
             {
                 string label = scan.Name.Trim().Length > 0 ? scan.Name.Trim() : scan.Target.Trim();
-                if (target.SaveEdited(label, scan.Target.Trim(), scan.Options ?? new ScanOptions(), scan.Adapter ?? string.Empty))
-                    source.Delete(scan);
+                // Names can meet once trimmed ("Office" and "Office "), and a save over a taken
+                // name would replace that scan, so a later one gets a number instead.
+                string unique = label;
+                for (int n = 2; target.Items.Any(item => string.Equals(item.Name, unique, StringComparison.OrdinalIgnoreCase)); n++)
+                    unique = label + " (" + n.ToString(System.Globalization.CultureInfo.CurrentCulture) + ")";
+                var moved = new ScanProfile
+                {
+                    Name = unique, Target = scan.Target.Trim(), Options = scan.Options ?? new ScanOptions(),
+                    DeepScanAfter = scan.DeepScanAfter, Adapter = scan.Adapter ?? string.Empty
+                };
+                if (target.Save(moved)) source.Delete(scan);
             }
         }
 

@@ -504,20 +504,20 @@ namespace KillerScan.Controls
         {
             if (_disposed || DemoMode || !LocationService.Editable) return;
             int check = ++_suggestionCheck;
-            string mac, subnet;
+            string mac;
             try
             {
-                (mac, subnet) = await System.Threading.Tasks.Task.Run(() =>
+                mac = await System.Threading.Tasks.Task.Run(() =>
                 {
                     var net = LocalNetwork.Detect();
                     string gateway = net?.Gateway ?? string.Empty;
                     string found = gateway.Length > 0 && NetworkPlatform.Current.ReadNeighborCache().TryGetValue(gateway, out var known) ? known : string.Empty;
-                    return (found, net?.Subnet ?? string.Empty);
+                    return found;
                 });
             }
-            catch (Exception ex) when (ex is not OutOfMemoryException) { mac = string.Empty; subnet = string.Empty; }
+            catch (Exception ex) when (ex is not OutOfMemoryException) { mac = string.Empty; }
             if (_disposed || check != _suggestionCheck) return;
-            if (TryAssignRecognizedLocation(mac, subnet)) return;
+            if (TryAssignRecognizedLocation(mac)) return;
             ShowLocationSuggestion(mac);
         }
 
@@ -527,12 +527,13 @@ namespace KillerScan.Controls
         /// is saved into it. Two or more matches still go to the banner, and a Location the user
         /// picked is never overridden.
         /// </summary>
-        private bool TryAssignRecognizedLocation(string gatewayMac, string subnet)
+        private bool TryAssignRecognizedLocation(string gatewayMac)
         {
             // Unassigned is a catalog entry with its own id, not a missing one, so that is the test.
-            // Results on screen do not block it: they are Unassigned's own, kept in its history.
+            // Results on screen block it, as the summary says: a canceled or failed run is in no
+            // history, so switching would clear it without a word.
             bool unassigned = _location.Info == null ? _location.IsShared : _location.Info.Id == LocationCatalog.UnassignedId;
-            if (!unassigned || IsScanning) return false;
+            if (!unassigned || IsScanning || _active.Devices.Count > 0) return false;
             var places = LocationService.Items.Where(item => item.Id != LocationCatalog.UnassignedId).ToList();
             // By the gateway's MAC only, which is that one router's. A subnet is not: nearly
             // every home network is 192.168.1.0/24.
