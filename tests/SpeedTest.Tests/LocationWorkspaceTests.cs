@@ -559,6 +559,37 @@ internal static class LocationWorkspaceTests
         Require(stopped.Completion == ScanCompletion.Canceled && stopped.Devices.Single().IpAddress == "192.168.1.10" && stopped.ComparisonKey == ScanHistoryEntry.KeyFor("192.168.1.10"),
             "Saved results reach the file as a canceled run with their devices.");
 
+        // Nothing needs taking out of Unassigned for a run that was never in it, so a file that
+        // cannot be read there does not stop the save.
+        scanner.StopAfterFinding = true;
+        RunIn(unassigned, () => workspace.Session.Devices.Count == 1);
+        scanner.StopAfterFinding = false;
+        var askedAboutSource = new List<string>();
+        PersistenceFeedback.Answer = message => { askedAboutSource.Add(message); return false; };
+        using (new FileStream(HistoryOf(unassigned), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+            Require(workspace.SaveResultsTo(site) && workspace.Location == site && askedAboutSource.Count == 0, "A blocked Unassigned does not stop a run it never held.");
+        PersistenceFeedback.Answer = null;
+        File.Delete(HistoryOf(unassigned));
+        unassigned.History.Load();
+
+        // Results whose run was deleted can still be saved, but the table cannot say what the run
+        // checked, so they are kept as partial and never become a comparison baseline.
+        int rebuilt = Reread(HistoryOf(site)).Entries.Count;
+        RunIn(unassigned, () => unassigned.History.Entries.Count == 1);
+        Require(unassigned.History.Remove(unassigned.History.Entries.Single()), "The run is deleted from History.");
+        Require(workspace.SaveResultsTo(site) && Reread(HistoryOf(site)).Entries.Count == rebuilt + 1, "The results on screen are saved.");
+        Require(Reread(HistoryOf(site)).Entries.Last().Completion == ScanCompletion.Partial, "A run rebuilt from the table is partial, not complete.");
+
+        // A first Temporary scan that was stopped has no run, and the menu still offers to save it.
+        var stoppedFirst = LocationData.Temporary();
+        scanner.StopAfterFinding = true;
+        RunIn(stoppedFirst, () => workspace.Session.Devices.Count == 1);
+        scanner.StopAfterFinding = false;
+        var locationMenu = (System.Windows.Controls.ContextMenu)typeof(ScanWorkspace)
+            .GetMethod("BuildLocationMenu", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(workspace, null)!;
+        Require(locationMenu.Items.OfType<System.Windows.Controls.MenuItem>().Any(item => Equals(item.Header, Application.Current.FindResource("Str_Loc_SaveResults"))),
+            "Save results to Location is offered for results that are in no run yet.");
+
         // A finished Temporary run and stopped results on screen both move.
         var temporary = LocationData.Temporary();
         RunIn(temporary, () => temporary.History.Entries.Count == 1);

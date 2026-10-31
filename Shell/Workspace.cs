@@ -18,6 +18,7 @@ namespace KillerScan.Shell
         private ScanWorkspace? _scanWorkspace;
         private FrameworkElement? _selectedWorkspace;
         private string _workspaceView = "scan";
+        private string? _announcedStatus;
         private ScanWorkspace? ActiveScan => _selectedWorkspace == _scanWorkspace ? _scanWorkspace : null;
 
         private void InitializeWorkspace()
@@ -370,13 +371,16 @@ namespace KillerScan.Shell
             string status = ActiveScan?.Status ?? (_workspaceView == "watch" ? Loc("Str_View_KeepAlive")
                 : _workspaceView == "history" ? Loc("Str_History_Title")
                 : _workspaceView == "services" ? Loc("Str_Services_Title") : Loc("Str_St_Ready"));
-            bool changed = status != StatusText.Text;
             StatusText.Text = status;
             // The text is a live region, so a screen reader hears where things stand. Not while a
-            // scan runs, when its progress lines would talk over each other.
-            if (changed && ActiveScan?.IsProgressVisible != true)
+            // scan runs, when its progress lines would talk over each other. A run's final status
+            // is written before its bar goes, so this compares with what was last announced.
+            if (ActiveScan?.IsProgressVisible != true && status != _announcedStatus)
+            {
+                _announcedStatus = status;
                 System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(StatusText)?
                     .RaiseAutomationEvent(System.Windows.Automation.Peers.AutomationEvents.LiveRegionChanged);
+            }
             ScanProgress.Value = ActiveScan?.Progress ?? 0;
             ScanProgress.Visibility = ActiveScan?.IsProgressVisible == true ? Visibility.Visible : Visibility.Collapsed;
             if (_workspaceView == "terminal") UpdateTerminalPanelStatus();

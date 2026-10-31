@@ -189,6 +189,27 @@ internal static partial class HistoryUiTests
         Require(!((string)Call(window, "BuildStatusTooltip")!).StartsWith(footer.Text, StringComparison.Ordinal), "A status that fits is not repeated in the tooltip.");
         footer.MaxWidth = shownWidth;
         footer.Text = shownStatus;
+
+        // The final status is written while the progress bar is still up, and is heard when it goes.
+        var scanPane = (FrameworkElement)Field(window, "_scanWorkspace")!;
+        var selectedField = window.GetType().GetField("_selectedWorkspace", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        object? shownPane = selectedField.GetValue(window);
+        selectedField.SetValue(window, scanPane);
+        var bar = (FrameworkElement)Field(scanPane, "ScanProgress")!;
+        var paneStatus = (TextBlock)Field(scanPane, "StatusText")!;
+        var heard = window.GetType().GetField("_announcedStatus", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        var shownBar = bar.Visibility;
+        string shownPaneStatus = paneStatus.Text;
+        bar.Visibility = Visibility.Visible;
+        paneStatus.Text = "Final status of a run";
+        Call(window, "UpdateWorkspaceStatus");
+        Require((string?)heard.GetValue(window) != "Final status of a run" && footer.Text == "Final status of a run", "Nothing is announced while a run shows progress.");
+        bar.Visibility = Visibility.Collapsed;
+        Call(window, "UpdateWorkspaceStatus");
+        Require((string?)heard.GetValue(window) == "Final status of a run", "The status is announced once the progress bar goes.");
+        bar.Visibility = shownBar;
+        paneStatus.Text = shownPaneStatus;
+        selectedField.SetValue(window, shownPane);
         viewField.SetValue(window, shownView);
 
         Require(title.FontSize == sidebarTitle.FontSize && Equals(title.FontFamily, sidebarTitle.FontFamily),

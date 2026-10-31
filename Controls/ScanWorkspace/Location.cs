@@ -304,7 +304,8 @@ namespace KillerScan.Controls
                 }
             }
 
-            if (_location.IsTemporary && _location.History.Entries.Count > 0 && LocationService.Items.Count > 0 && !DemoMode)
+            if (_location.IsTemporary && (_location.History.Entries.Count > 0 || _active.Devices.Count > 0)
+                && LocationService.Items.Count > 0 && !DemoMode)
             {
                 menu.Items.Add(new Separator());
                 var saveTo = new MenuItem { IsEnabled = !IsScanning };
@@ -885,11 +886,15 @@ namespace KillerScan.Controls
             var runs = source.IsTemporary ? source.History.Entries.ToList()
                 : _active.Devices.Count == 0 ? []
                 : source.History.Entries.Where(entry => entry.ScannedAt == _active.ScannedAt).Take(1).ToList();
-            // A stopped scan left results on screen that are in no history, so they go in as the
-            // run they are. Saving again adds no second copy, because the time and target match.
+            var heldHere = runs.ToList();
+            // Results on screen with no run, such as a stopped scan's, go in as a run of their own.
+            // Saving again adds no second copy, because the time and target match. A finished run
+            // that has since been deleted comes back as partial: the table alone cannot say what
+            // it checked, so it must not become a comparison baseline.
             if (_active.Devices.Count > 0 && !runs.Any(run => run.ScannedAt == _active.ScannedAt))
                 runs.Add(HistoryStore.Run(_active.ScannedAt, _active.ScannedSubnet, _active.ScannedTargets, _active.Devices,
-                    _active.Completion, _active.Options, false, _active.Adapter, _active.Network));
+                    _active.Completion == ScanCompletion.Complete ? ScanCompletion.Partial : _active.Completion,
+                    _active.Options, false, _active.Adapter, _active.Network));
             // Unassigned is shared too, so from there only the names of the devices on screen go.
             var names = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             if (source.IsTemporary) foreach (var pair in source.Devices.Names) names[pair.Key] = pair.Value;
@@ -914,7 +919,8 @@ namespace KillerScan.Controls
             saved = saved && (!wantsScan || SaveScanTo(target, name))
                 && PersistenceFeedback.Attempt(() => target.Devices.SetNames(names), () => target.Devices.SaveError)
                 && (!source.IsTemporary || PersistenceFeedback.Attempt(() => target.Overrides.SetAll(source.Overrides.All), () => target.Overrides.SaveError))
-                && (source.IsTemporary || PersistenceFeedback.Attempt(() => runs.All(source.History.Remove), () => source.History.SaveError));
+                && (source.IsTemporary || heldHere.Count == 0
+                    || PersistenceFeedback.Attempt(() => heldHere.All(source.History.Remove), () => source.History.SaveError));
             if (saved)
                 // The results now belong to the target, so they stay on screen there.
                 SetLocation(target, keepResults: true);
