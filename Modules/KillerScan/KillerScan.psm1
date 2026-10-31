@@ -273,4 +273,27 @@ function netinfo {
     }
 }
 
-Export-ModuleMember -Function scan, probe, vendor, netinfo
+<#
+.SYNOPSIS
+    The saved Locations, with the name or ID that -Location takes. Changes nothing.
+.EXAMPLE
+    locations
+.EXAMPLE
+    scan -Location (locations | ? Customer -eq 'Acme').Id
+#>
+function locations {
+    [CmdletBinding()]
+    param()
+
+    foreach ($item in (Invoke-KsJson @('/locations', '/json'))) {
+        [pscustomobject]@{
+            Id          = $item.id
+            Name        = $item.name
+            Customer    = $item.customer
+            LastTargets = $item.lastTargets
+            LastAdapter = $item.lastAdapter
+        }
+    }
+}
+
+Export-ModuleMember -Function scan, probe, vendor, netinfo, locations

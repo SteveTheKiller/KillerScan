@@ -145,9 +145,9 @@ namespace KillerScan.Controls
             PersistenceFeedback.Check(seen.Saved, devices.Retry, () => devices.SaveError);
             _active.NewIdentities = new(seen.NewDevices.Select(DeviceIdentity.For), StringComparer.OrdinalIgnoreCase);
             if (seen.BaselineCreated)
-                StatusText.Text = string.Format(Loc("Str_St_KnownBaseline"), _active.Devices.Count);
+                StatusText.Text = string.Format(Loc(ScanStatusText.Counted("Str_St_KnownBaseline", _active.Devices.Count)), _active.Devices.Count);
             else if (seen.NewDevices.Count > 0)
-                StatusText.Text = string.Format(Loc("Str_St_UnknownDevices"), seen.NewDevices.Count);
+                StatusText.Text = string.Format(Loc(ScanStatusText.Counted("Str_St_UnknownDevices", seen.NewDevices.Count)), seen.NewDevices.Count);
             _filteredView?.Refresh();
         }
 

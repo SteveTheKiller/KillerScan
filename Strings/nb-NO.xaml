@@ -35,6 +35,7 @@
     <sys:String x:Key="Str_Btn_Stop">Stopp</sys:String>
     <sys:String x:Key="Str_Status_Ready">Klar - {0} OUI-produsenter lastet inn</sys:String>
     <sys:String x:Key="Str_Count_Found">{0} enheter funnet</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">{0} enhet funnet</sys:String>
     <sys:String x:Key="Str_Count_Shown">{0} av {1} vist</sys:String>
 
     <!-- Results pane -->
@@ -195,6 +196,7 @@
     <sys:String x:Key="Str_St_Probing">Undersøker {0} aktive verter...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Løser opp {0} verter...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Skanningen er fullført - {0} enheter funnet</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Skanningen er fullført - {0} enhet funnet</sys:String>
     <sys:String x:Key="Str_St_Ready">Klar</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Skanningen ble avbrutt</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Dypskanner {0} ...</sys:String>
@@ -438,10 +440,12 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_TT_TrustMark">Grønn: godkjent. Gul: ny siden grunnlinjen for denne Lokasjonen. Grå: kjent, ikke godkjent.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Klarert grunnlinje opprettet med {0} enheter.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Varsel: {0} ukjente enheter funnet.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Varsel: {0} ukjent enhet funnet.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Nye siden grunnlinjen for denne Lokasjonen:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">og {0} til</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Høyreklikk en enhet for å godkjenne den.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Grunnlinje satt: {0} enheter er nå kjent. Ingen er godkjent ennå.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Grunnlinje satt: {0} enhet er nå kjent. Den er ikke godkjent ennå.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Lokasjon</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Midlertidig skanning</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Ikke tilordnet</sys:String>
@@ -470,7 +474,7 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Slett skanning</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">En lagret skanning med navnet {0} finnes allerede. Velg et annet navn.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Stopp skanningen før du bytter Lokasjon.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">Lokasjonen {0} ble slettet i et annet vindu. Disse resultatene er nå en «Midlertidig skanning». For å beholde dem, velg «Lagre resultater i Lokasjonen».</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">Lokasjonen {0} ble slettet i et annet vindu. For å beholde disse resultatene, velg «Lagre resultater i Lokasjonen».</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Denne Lokasjonsfilen er større enn {0} MB, som er mer enn KillerScan importerer.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Forkaste disse resultatene?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Disse resultatene fra «Midlertidig skanning» er ikke lagret noe sted. Å bytte Lokasjon fjerner dem. For å beholde dem, velg «Lagre resultater i Lokasjonen» i stedet.</sys:String>

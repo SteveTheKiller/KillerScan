@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Controls;
 using KillerScan.Models;
+using KillerScan.Services;
 
 namespace KillerScan.Controls
 {
@@ -58,7 +59,7 @@ namespace KillerScan.Controls
             }
             else
             {
-                tail = string.Format(Loc("Str_Count_Found"), total);
+                tail = string.Format(Loc(ScanStatusText.Counted("Str_Count_Found", total)), total);
             }
             DeviceCount.Text = tail;
         }

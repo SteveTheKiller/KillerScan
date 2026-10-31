@@ -13,7 +13,8 @@
         'scan',
         'probe',
         'vendor',
-        'netinfo'
+        'netinfo',
+        'locations'
     )
     CmdletsToExport   = @()
     VariablesToExport = @()

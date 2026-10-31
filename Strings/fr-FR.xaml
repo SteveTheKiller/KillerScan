@@ -168,6 +168,7 @@
     <sys:String x:Key="Str_Btn_Stop">Arrêter</sys:String>
     <sys:String x:Key="Str_Status_Ready">Prêt - {0} fabricants OUI chargés</sys:String>
     <sys:String x:Key="Str_Count_Found">{0} appareils trouvés</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">{0} appareil trouvé</sys:String>
     <sys:String x:Key="Str_Count_Shown">{0} sur {1} affichés</sys:String>
 
     <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
@@ -176,6 +177,7 @@
     <sys:String x:Key="Str_St_Probing">Sondage de {0} hôtes actifs...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Résolution de {0} hôtes...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Analyse terminée - {0} appareils trouvés</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Analyse terminée - {0} appareil trouvé</sys:String>
     <sys:String x:Key="Str_St_Ready">Prêt</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Analyse annulée</sys:String>
     <sys:String x:Key="Str_St_Exported">Exporté vers {0}</sys:String>
@@ -396,10 +398,12 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_TT_TrustMark">Vert : approuvé. Ambre : nouveau depuis la référence de ce Site. Gris : connu, non approuvé.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Base approuvée créée avec {0} appareils.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alerte : {0} appareils inconnus détectés.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Alerte : {0} appareil inconnu détecté.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Nouveaux depuis la référence de ce Site :</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">et {0} de plus</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Clic droit sur un appareil pour l’approuver.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Référence définie : {0} appareils sont maintenant connus. Aucun n’est encore approuvé.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Référence définie : {0} appareil est maintenant connu. Il n’est pas encore approuvé.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Site</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Analyse temporaire</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Non attribué</sys:String>
@@ -428,7 +432,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Supprimer l'analyse</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">Une analyse enregistrée nommée {0} existe déjà. Choisissez un autre nom.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Arrêtez l’analyse avant de changer de Site.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">Le Site {0} a été supprimé dans une autre fenêtre. Ces résultats sont désormais une « Analyse temporaire ». Pour les conserver, choisissez « Enregistrer les résultats dans le Site ».</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">Le Site {0} a été supprimé dans une autre fenêtre. Pour conserver ces résultats, choisissez « Enregistrer les résultats dans le Site ».</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Ce fichier de Site dépasse {0} MB, soit plus que ce que KillerScan importe.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Abandonner ces résultats ?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Les résultats de cette « Analyse temporaire » ne sont enregistrés nulle part. Changer de Site les efface. Pour les conserver, choisissez plutôt « Enregistrer les résultats dans le Site ».</sys:String>

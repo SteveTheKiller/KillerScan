@@ -23,6 +23,7 @@
     <sys:String x:Key="Str_Btn_Stop">Ustavi</sys:String>
     <sys:String x:Key="Str_Status_Ready">Pripravljeno - naloženi proizvajalci OUI: {0}</sys:String>
     <sys:String x:Key="Str_Count_Found">Najdene naprave: {0}</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">Najdena naprava: {0}</sys:String>
     <sys:String x:Key="Str_Count_Shown">Prikazano: {0} od {1}</sys:String>
     <sys:String x:Key="Str_DiscoveredDevices">Odkrite naprave</sys:String>
     <sys:String x:Key="Str_Topology_Title">Topologija omrežja</sys:String>
@@ -167,6 +168,7 @@
     <sys:String x:Key="Str_St_Probing">Preverjanje odzivnih gostiteljev: {0}...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Prepoznavanje gostiteljev: {0}...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Pregled je končan - najdene naprave: {0}</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Pregled je končan - najdena naprava: {0}</sys:String>
     <sys:String x:Key="Str_St_Ready">Pripravljeno</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Pregled je preklican</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Podroben pregled: {0} ...</sys:String>
@@ -371,10 +373,12 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_TT_TrustMark">Zelena: odobrena. Jantarna: nova glede na osnovni seznam te Lokacije. Siva: znana, ni odobrena.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Ustvarjen je osnovni seznam zaupanja vrednih naprav. Število naprav: {0}.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Opozorilo: število najdenih neznanih naprav: {0}.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Opozorilo: število najdenih neznanih naprav: {0}.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Nove naprave glede na osnovni seznam te Lokacije:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">in še {0}</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Z desnim klikom odobri napravo.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Osnovni seznam je nastavljen. Število znanih naprav: {0}. Nobena še ni odobrena.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Osnovni seznam je nastavljen. Število znanih naprav: {0}. Še ni odobrena.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Lokacija</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Začasni pregled</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Nedodeljeno</sys:String>
@@ -403,7 +407,7 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Izbriši pregled</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">Shranjen pregled z imenom {0} že obstaja. Izberite drugo ime.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Pred menjavo Lokacije ustavi pregled.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">Lokacija {0} je bila izbrisana v drugem oknu. Ti rezultati so zdaj v načinu »Začasni pregled«. Če jih želiš obdržati, izberi »Shrani rezultate v Lokacijo«.</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">Lokacija {0} je bila izbrisana v drugem oknu. Če želiš obdržati te rezultate, izberi »Shrani rezultate v Lokacijo«.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Ta datoteka Lokacije je večja od {0} MB, kar je več, kot KillerScan uvozi.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Želiš zavreči te rezultate?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Rezultati načina »Začasni pregled« niso nikjer shranjeni. Menjava Lokacije jih izbriše. Če jih želiš obdržati, raje izberi »Shrani rezultate v Lokacijo«.</sys:String>

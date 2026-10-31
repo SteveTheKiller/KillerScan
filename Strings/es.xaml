@@ -168,6 +168,7 @@
     <sys:String x:Key="Str_Btn_Stop">Detener</sys:String>
     <sys:String x:Key="Str_Status_Ready">Listo - {0} fabricantes OUI cargados</sys:String>
     <sys:String x:Key="Str_Count_Found">{0} dispositivos encontrados</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">{0} dispositivo encontrado</sys:String>
     <sys:String x:Key="Str_Count_Shown">{0} de {1} mostrados</sys:String>
 
     <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
@@ -176,6 +177,7 @@
     <sys:String x:Key="Str_St_Probing">Sondeando {0} hosts activos...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Resolviendo {0} hosts...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Escaneo completado - {0} dispositivos encontrados</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Escaneo completado - {0} dispositivo encontrado</sys:String>
     <sys:String x:Key="Str_St_Ready">Listo</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Escaneo cancelado</sys:String>
     <sys:String x:Key="Str_St_Exported">Exportado a {0}</sys:String>
@@ -396,10 +398,12 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_TT_TrustMark">Verde: aprobado. Ámbar: nuevo desde la referencia de esta Ubicación. Gris: conocido, no aprobado.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Base de confianza creada con {0} dispositivos.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alerta: se encontraron {0} dispositivos desconocidos.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Alerta: se encontró {0} dispositivo desconocido.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Nuevos desde la referencia de esta Ubicación:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">y {0} más</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Haga clic derecho en un dispositivo para aprobarlo.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Referencia establecida: ahora se conocen {0} dispositivos. Todavía no hay ninguno aprobado.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Referencia establecida: ahora se conoce {0} dispositivo. Todavía no está aprobado.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Ubicación</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Escaneo temporal</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Sin asignar</sys:String>
@@ -428,7 +432,7 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Eliminar escaneo</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">Ya existe un escaneo guardado llamado {0}. Elige otro nombre.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Detenga el escaneo antes de cambiar de Ubicación.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">La Ubicación {0} se eliminó en otra ventana. Estos resultados son ahora un «Escaneo temporal». Para conservarlos, elija «Guardar resultados en la Ubicación».</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">La Ubicación {0} se eliminó en otra ventana. Para conservar estos resultados, elija «Guardar resultados en la Ubicación».</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Este archivo de Ubicación supera los {0} MB, más de lo que KillerScan importa.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">¿Descartar estos resultados?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Estos resultados de «Escaneo temporal» no se guardan en ningún sitio. Cambiar de Ubicación los borra. Para conservarlos, elija «Guardar resultados en la Ubicación».</sys:String>

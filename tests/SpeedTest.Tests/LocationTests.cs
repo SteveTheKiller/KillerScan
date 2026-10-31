@@ -591,8 +591,80 @@ internal static class LocationTests
         Require(later.NewDevices.Single() == fourth, "The next readable scan flags the device the unreadable one could not judge.");
     }
 
+    // /locations lists what is there and changes nothing, even on a profile not yet moved into Locations.
+    private static void Listing(string root)
+    {
+        Directory.CreateDirectory(root);
+        File.WriteAllText(Path.Combine(root, "history.json"), "{\"Entries\":[]}");
+        string Snapshot() => string.Join("|", Directory.GetFileSystemEntries(root, "*", SearchOption.AllDirectories).OrderBy(path => path, StringComparer.Ordinal)
+            .Select(path => path + ":" + (File.Exists(path) ? File.GetLastWriteTimeUtc(path).Ticks + ":" + new FileInfo(path).Length : "folder")));
+        (int Code, string Out, string Err) List(params string[] words)
+        {
+            var output = new StringWriter();
+            var errors = new StringWriter();
+            var options = words.Where(word => word.StartsWith("/", StringComparison.Ordinal)).ToDictionary(word => word, _ => "", StringComparer.OrdinalIgnoreCase);
+            int code = KillerScan.Features.Cli.CliRunner.RunLocations(words.Where(word => !word.StartsWith("/", StringComparison.Ordinal)).ToList(), options, output, errors);
+            return (code, output.ToString().Trim(), errors.ToString().Trim());
+        }
+
+        string previous = LocationService.Root;
+        try
+        {
+            LocationService.Root = root;
+            string untouched = Snapshot();
+            var unmoved = List("/json");
+            Require(unmoved.Code == 0 && unmoved.Out == "[]", "A profile not yet moved into Locations lists none: " + unmoved.Code + " " + unmoved.Out + unmoved.Err);
+            Require(Snapshot() == untouched, "Listing moves nothing into Locations.");
+            Require(List().Out.Contains("No Locations"), "The table says when there are none.");
+
+            var catalog = new LocationCatalog(root);
+            catalog.Load("Unassigned");
+            catalog.Create("Zephyr Clinic", "Zephyr Health", "The alarm code is 4417.", out var zephyr);
+            catalog.Create("Acme \u001b[2JDental", out var acme);
+            catalog.SetLastUsed(zephyr!.Id, "10.1.0.0/24", new KillerScan.Engine.ScanOptions(), "Ethernet 2");
+            string saved = Snapshot();
+
+            var listed = List("/json");
+            Require(listed.Code == 0, "Listing Locations succeeds: " + listed.Err);
+            using (var document = System.Text.Json.JsonDocument.Parse(listed.Out))
+            {
+                var rows = document.RootElement.EnumerateArray().ToList();
+                var unassigned = rows.Single(row => row.GetProperty("id").GetString() == LocationCatalog.UnassignedId);
+                Require(unassigned.GetProperty("name").GetString() == "Unassigned", "The original data is listed as Unassigned.");
+                Require(rows.Count == 3, "Every Location is listed.");
+                var row = rows.Single(item => item.GetProperty("id").GetString() == zephyr.Id);
+                Require(row.GetProperty("name").GetString() == "Zephyr Clinic" && row.GetProperty("customer").GetString() == "Zephyr Health"
+                    && row.GetProperty("lastTargets").GetString() == "10.1.0.0/24" && row.GetProperty("lastAdapter").GetString() == "Ethernet 2",
+                    "A Location lists what a scan needs to use it.");
+                Require(rows.Single(item => item.GetProperty("id").GetString() == acme!.Id).GetProperty("name").GetString() == "Acme \u001b[2JDental",
+                    "JSON keeps a name exactly as it was given.");
+                Require(rows.Select(item => item.GetProperty("name").GetString()).SequenceEqual(rows.Select(item => item.GetProperty("name").GetString()).OrderBy(name => name, StringComparer.OrdinalIgnoreCase)),
+                    "Locations list in name order.");
+            }
+            Require(!listed.Out.Contains("4417") && !listed.Out.Contains("alarm"), "Free-text notes stay out of the list.");
+            Require(!listed.Out.Contains("GatewayMacs"), "The networks a Location has seen stay out of the list.");
+
+            var table = List();
+            Require(table.Code == 0 && table.Out.Contains("Zephyr Clinic") && table.Out.Contains(zephyr.Id), "The table names each Location and its ID.");
+            Require(!table.Out.Contains("\u001b"), "A Location name cannot send terminal control codes.");
+            Require(List("nearby").Code == 2, "Listing takes no targets.");
+            Require(List("/quiet").Code == 2, "Listing takes only /json.");
+            Require(Snapshot() == saved, "Listing changes nothing on disk.");
+
+            string path = Path.Combine(root, "locations.json");
+            byte[] good = File.ReadAllBytes(path);
+            File.WriteAllText(path, "not json");
+            var unreadable = List("/json");
+            Require(unreadable.Code == 1 && unreadable.Err.Contains("Locations are unavailable"), "An unreadable catalog is a failure, not an empty list.");
+            Require(File.ReadAllText(path) == "not json", "An unreadable catalog is left as it was.");
+            File.WriteAllBytes(path, good);
+        }
+        finally { LocationService.Root = previous; }
+    }
+
     private static void CommandLine(string root)
     {
+        Listing(Path.Combine(root, "listing"));
         var catalog = new LocationCatalog(root);
         catalog.Load("Unassigned");
         catalog.Create("Acme Dental", out var acme);
@@ -615,10 +687,36 @@ internal static class LocationTests
         Require(data.History.Entries.Count == 1 && data.Devices.HasBaseline && !devices.Any(data.Devices.IsTrusted),
             "A command-line scan records history and the baseline, and approves nothing.");
         Require(err.ToString().Contains("Str_St_KnownBaseline|2"), "The in-app terminal is told the baseline was set.");
+
+        // One device reads as one device, in the terminal, the command line and the status bar.
+        var single = new[] { Device("10.2.0.1", "00:00:00:00:02:01") };
+        catalog.Create("Keyed", out var keyedSite);
+        var one = new StringWriter();
+        KillerScan.Features.Cli.CliRunner.RecordToLocation(catalog.Open(keyedSite!), "10.2.0.1", "10.2.0.1", single, quick: false, one, quiet: false, keyed: true);
+        Require(one.ToString().Contains("Str_St_KnownBaselineOne|1"), "The in-app terminal gets the singular baseline text: " + one);
+        catalog.Create("Plain", out var plainSite);
+        var plain = catalog.Open(plainSite!);
+        one = new StringWriter();
+        KillerScan.Features.Cli.CliRunner.RecordToLocation(plain, "10.2.0.1", "10.2.0.1", single, quick: false, one, quiet: false, keyed: false);
+        Require(one.ToString().Contains("Baseline set: 1 device is now known. It is not approved yet."), "The command line says one device: " + one);
+        one = new StringWriter();
+        KillerScan.Features.Cli.CliRunner.RecordToLocation(plain, "10.2.0.0/30", "10.2.0.0/30", [single[0], Device("10.2.0.2", "00:00:00:00:02:02")], quick: false, one, quiet: false, keyed: false);
+        Require(one.ToString().Contains("Alert: 1 device is new since the baseline."), "The command line says one new device: " + one);
+        Require(ScanStatusText.Counted("Str_Count_Found", 1) == "Str_Count_FoundOne" && ScanStatusText.Counted("Str_Count_Found", 0) == "Str_Count_Found"
+            && ScanStatusText.Counted("Str_Count_Found", 2) == "Str_Count_Found", "Only a count of exactly one takes the singular string.");
+        Require(ScanStatusText.Protocol(new ScanStatus(ScanStage.Complete, 1)) == "Str_St_ScanCompleteOne|1"
+            && ScanStatusText.Protocol(new ScanStatus(ScanStage.Complete, 3)) == "Str_St_ScanComplete|3", "A finished scan of one device uses the singular status.");
+        foreach (string file in Directory.GetFiles(Path.Combine(TestRepository.Find().FullName, "Strings"), "*.xaml"))
+        {
+            string text = File.ReadAllText(file);
+            foreach (string key in new[] { "Str_Count_FoundOne", "Str_St_ScanCompleteOne", "Str_St_KnownBaselineOne", "Str_St_UnknownDevicesOne" })
+                Require(text.Contains("x:Key=\"" + key + "\">") && text.Substring(text.IndexOf("x:Key=\"" + key + "\">", StringComparison.Ordinal)).Split('\n')[0].Contains("{0}"),
+                    Path.GetFileName(file) + " has " + key + " with its count.");
+        }
         err = new StringWriter();
         KillerScan.Features.Cli.CliRunner.RecordToLocation(data, "10.1.0.0/24", "10.1.0.0/24",
             [.. devices, Device("10.1.0.3", "00:00:00:00:01:03")], quick: false, err, quiet: false, keyed: false);
-        Require(err.ToString().Contains("1 devices are new"), "A later command-line scan reports devices new since the baseline.");
+        Require(err.ToString().Contains("1 device is new"), "A later command-line scan reports devices new since the baseline.");
         Require(data.History.Entries.Last().TargetKey == "10.1.0.0/24", "Command-line history keeps the full targets.");
 
         Require(KillerScan.Features.Cli.CliRunner.ParseSkip(null, out var none, out _) && none.DisabledFeatures.Length == 0,

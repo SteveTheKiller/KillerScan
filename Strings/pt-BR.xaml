@@ -35,6 +35,7 @@
     <sys:String x:Key="Str_Btn_Stop">Parar</sys:String>
     <sys:String x:Key="Str_Status_Ready">Pronto - {0} fabricantes OUI carregados</sys:String>
     <sys:String x:Key="Str_Count_Found">{0} dispositivos encontrados</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">{0} dispositivo encontrado</sys:String>
     <sys:String x:Key="Str_Count_Shown">{0} de {1} exibidos</sys:String>
 
     <!-- Results pane -->
@@ -195,6 +196,7 @@
     <sys:String x:Key="Str_St_Probing">Sondando {0} hosts ativos...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Resolvendo {0} hosts...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Verificação concluída - {0} dispositivos encontrados</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Verificação concluída - {0} dispositivo encontrado</sys:String>
     <sys:String x:Key="Str_St_Ready">Pronto</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Verificação cancelada</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Verificação profunda de {0} ...</sys:String>
@@ -438,10 +440,12 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_TT_TrustMark">Verde: aprovado. Âmbar: novo desde a linha de base deste Local. Cinza: conhecido, não aprovado.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Linha de base confiável criada com {0} dispositivos.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alerta: {0} dispositivos desconhecidos encontrados.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Alerta: {0} dispositivo desconhecido encontrado.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Novos desde a linha de base deste Local:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">e mais {0}</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Clique com o botão direito em um dispositivo para aprová-lo.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Linha de base definida: {0} dispositivos agora são conhecidos. Nenhum foi aprovado ainda.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Linha de base definida: {0} dispositivo agora é conhecido. Ele ainda não foi aprovado.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Local</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Verificação temporária</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Não atribuído</sys:String>
@@ -470,7 +474,7 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Excluir varredura</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">Já existe uma varredura salva com o nome {0}. Escolha outro nome.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Pare a verificação antes de trocar de Local.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">O Local {0} foi excluído em outra janela. Estes resultados agora são uma “Verificação temporária”. Para mantê-los, escolha “Salvar resultados no Local”.</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">O Local {0} foi excluído em outra janela. Para manter estes resultados, escolha “Salvar resultados no Local”.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Este arquivo de Local tem mais de {0} MB, mais do que o KillerScan importa.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Descartar estes resultados?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Estes resultados de “Verificação temporária” não são salvos em nenhum lugar. Trocar de Local os apaga. Para mantê-los, escolha “Salvar resultados no Local”.</sys:String>

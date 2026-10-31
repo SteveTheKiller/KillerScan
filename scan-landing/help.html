@@ -244,13 +244,14 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <p data-i18n="tk_term_menu_p2">Clear removes the screen and scrollback without sending input to the program. Ctrl+C copies selected text; with no selection, it reaches the running program. Ctrl+V pastes. Most other keys go to the program while the terminal has focus.</p>
 </div></div></div>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_cmd_title">Commands in the terminal</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
-<p data-i18n="tk_cmd_intro">The terminal carries a small KillerScan module of its own, unpacked from inside the exe like the rest. It gives you four short commands, and the point of them is not that they are shorter than the command line: they hand back <b>objects</b> rather than text.</p>
+<p data-i18n="tk_cmd_intro">The terminal carries a small KillerScan module of its own, unpacked from inside the exe like the rest. It gives you five short commands, and the point of them is not that they are shorter than the command line: they hand back <b>objects</b> rather than text.</p>
 <p data-i18n="tk_cmd_intro_p2">A scan you run this way can be filtered, sorted, counted and piped like anything else in PowerShell, without a single line of parsing.</p>
 <table class="spec-table"><tr><th data-i18n="tk_cmd_col_cmd">Command</th><th data-i18n="tk_cmd_col_what">What it gives you</th></tr>
 <tr><td><code>scan</code></td><td data-i18n="tk_cmd_scan">One object per device, with <code>Ip</code>, <code>Hostname</code>, <code>Mac</code>, <code>Vendor</code>, <code>Type</code> and <code>Ports</code>, plus the fingerprint fields behind them. Takes targets in the same forms the subnet box does, and scans the active network when you give it none. <code>-Quick</code> for discovery only, <code>-Timeout</code> in seconds.</td></tr>
 <tr><td><code>probe</code></td><td data-i18n="tk_cmd_probe">The same object for one host, examined in depth.</td></tr>
 <tr><td><code>vendor</code></td><td data-i18n="tk_cmd_vendor">The maker of a MAC address, read offline from the database inside the app. Accepts addresses from the pipeline, and gives back nothing at all rather than the word "Unknown" when there is no match.</td></tr>
 <tr><td><code>netinfo</code></td><td data-i18n="tk_cmd_netinfo">The active network as an object: <code>Interface</code>, <code>Address</code>, <code>Subnet</code>, <code>Gateway</code> and <code>Dns</code>. A field Windows could not report is empty rather than a dash.</td></tr>
+<tr><td><code>locations</code></td><td data-i18n="tk_cmd_locations">The saved Locations as objects, with the <code>Id</code> and <code>Name</code> that <code>-Location</code> takes, plus <code>Customer</code>, <code>LastTargets</code> and <code>LastAdapter</code>. It changes nothing.</td></tr>
 </table>
 <div class="cli-demo" aria-label="KillerScan terminal command examples"><span class="prompt">&gt;</span> scan <span class="arg">| ? Type -eq 'Printer' | ft Ip, Hostname, Vendor</span>
 <span class="prompt">&gt;</span> scan <span class="arg">192.168.50.0/24 -Quick | measure</span>
@@ -329,6 +330,7 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <tr><td><code>killerscan /scan &lt;targets&gt;</code></td><td data-i18n="tk_cli_targets">Scan one or more explicit IPv4 targets.</td></tr>
 <tr><td><code>killerscan /probe &lt;IPv4&gt;</code></td><td data-i18n="tk_cli_probe">Deep-probe one host, scanning ports 1-1024 plus KillerScan's extended service list and collecting every available fingerprint.</td></tr>
 <tr><td><code>killerscan /network</code></td><td data-i18n="tk_cli_network">Print the detected interface, local address, subnet, gateway and DNS server without scanning.</td></tr>
+<tr><td><code>killerscan /locations</code></td><td data-i18n="tk_cli_locations">List the saved Locations with their IDs, customers, and last targets and adapters. Add <code>/json</code> for data. It changes nothing.</td></tr>
 <tr><td><code>killerscan /vendor &lt;MAC&gt;</code></td><td data-i18n="tk_cli_vendorcmd">Resolve a MAC address against the embedded offline IEEE OUI database.</td></tr>
 <tr><td><code>killerscan /ping &lt;target&gt;</code></td><td data-i18n="tk_cli_pingcmd">Measure latency and packet loss with 1 to 20 ICMP checks.</td></tr>
 <tr><td><code>killerscan /trace &lt;target&gt;</code></td><td data-i18n="tk_cli_tracecmd">Trace up to 64 hops to an IPv4 address or hostname.</td></tr>

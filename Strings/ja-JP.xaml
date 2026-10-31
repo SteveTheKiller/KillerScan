@@ -34,6 +34,7 @@
     <sys:String x:Key="Str_Btn_Stop">停止</sys:String>
     <sys:String x:Key="Str_Status_Ready">準備完了 - {0} 件の OUI ベンダーを読み込み済み</sys:String>
     <sys:String x:Key="Str_Count_Found">{0} 台のデバイスを検出</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">{0} 台のデバイスを検出</sys:String>
     <sys:String x:Key="Str_Count_Shown">{1} 台中 {0} 台を表示</sys:String>
 
     <!-- Results pane -->
@@ -187,6 +188,7 @@
     <sys:String x:Key="Str_St_Probing">{0} 台のアクティブなホストを調査中...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">{0} 台のホストを解決中...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">スキャン完了 - {0} 台のデバイスを検出</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">スキャン完了 - {0} 台のデバイスを検出</sys:String>
     <sys:String x:Key="Str_St_Ready">準備完了</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">スキャンをキャンセルしました</sys:String>
     <sys:String x:Key="Str_St_Exported">{0} にエクスポートしました</sys:String>
@@ -407,10 +409,12 @@
     <sys:String x:Key="Str_TT_TrustMark">緑: 承認済み。琥珀色: このロケーションの基準以降に新しく検出。灰色: 既知、未承認。</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">{0} 台のデバイスで信頼済み基準を作成しました。</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">警告: 不明なデバイスが {0} 台見つかりました。</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">警告: 不明なデバイスが {0} 台見つかりました。</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">このロケーションの基準以降に新しく検出:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">ほか {0} 台</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">デバイスを右クリックすると承認できます。</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">基準を設定しました: {0} 台のデバイスが既知になりました。まだ承認済みのデバイスはありません。</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">基準を設定しました: {0} 台のデバイスが既知になりました。まだ承認済みのデバイスはありません。</sys:String>
     <sys:String x:Key="Str_Loc_Title">ロケーション</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">一時スキャン</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">未割り当て</sys:String>
@@ -439,7 +443,7 @@
     <sys:String x:Key="Str_Loc_DeleteScan">スキャンを削除</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">{0} という名前の保存済みスキャンは既にあります。別の名前を選んでください。</sys:String>
     <sys:String x:Key="Str_Loc_Busy">ロケーションを変更する前にスキャンを停止してください。</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">ロケーション「{0}」は別のウィンドウで削除されました。この結果は「一時スキャン」になりました。残す場合は「結果をロケーションに保存」を選択してください。</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">ロケーション「{0}」は別のウィンドウで削除されました。この結果を残す場合は「結果をロケーションに保存」を選択してください。</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">このロケーションファイルは {0} MB を超えており、KillerScan がインポートできるサイズを上回っています。</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">この結果を破棄しますか？</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">この「一時スキャン」の結果はどこにも保存されていません。ロケーションを変更すると消去されます。残す場合は、代わりに「結果をロケーションに保存」を選択してください。</sys:String>

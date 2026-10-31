@@ -168,6 +168,7 @@
     <sys:String x:Key="Str_Btn_Stop">Stopp</sys:String>
     <sys:String x:Key="Str_Status_Ready">Bereit - {0} OUI-Hersteller geladen</sys:String>
     <sys:String x:Key="Str_Count_Found">{0} Geräte gefunden</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">{0} Gerät gefunden</sys:String>
     <sys:String x:Key="Str_Count_Shown">{0} von {1} angezeigt</sys:String>
 
     <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
@@ -176,6 +177,7 @@
     <sys:String x:Key="Str_St_Probing">Prüfe {0} aktive Hosts...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Löse {0} Hosts auf...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Scan abgeschlossen - {0} Geräte gefunden</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Scan abgeschlossen - {0} Gerät gefunden</sys:String>
     <sys:String x:Key="Str_St_Ready">Bereit</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Scan abgebrochen</sys:String>
     <sys:String x:Key="Str_St_Exported">Exportiert nach {0}</sys:String>
@@ -397,10 +399,12 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_TT_TrustMark">Grün: freigegeben. Bernstein: neu seit der Basis dieses Standorts. Grau: bekannt, nicht freigegeben.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Vertrauensbasis mit {0} Geräten erstellt.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Warnung: {0} unbekannte Geräte gefunden.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Warnung: {0} unbekanntes Gerät gefunden.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Neu seit der Basis dieses Standorts:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">und {0} weitere</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Rechtsklick auf ein Gerät, um es freizugeben.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Basis festgelegt: {0} Geräte sind jetzt bekannt. Noch keines ist freigegeben.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Basis festgelegt: {0} Gerät ist jetzt bekannt. Es ist noch nicht freigegeben.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Standort</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Temporärer Scan</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Nicht zugeordnet</sys:String>
@@ -429,7 +433,7 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Scan löschen</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">Ein gespeicherter Scan namens {0} existiert bereits. Wählen Sie einen anderen Namen.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Stoppen Sie den Scan, bevor Sie den Standort wechseln.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">Der Standort {0} wurde in einem anderen Fenster gelöscht. Diese Ergebnisse sind jetzt ein „Temporärer Scan“. Um sie zu behalten, wählen Sie „Ergebnisse im Standort speichern“.</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">Der Standort {0} wurde in einem anderen Fenster gelöscht. Um diese Ergebnisse zu behalten, wählen Sie „Ergebnisse im Standort speichern“.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Diese Standortdatei ist größer als {0} MB und damit größer, als KillerScan importiert.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Diese Ergebnisse verwerfen?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Diese Ergebnisse aus „Temporärer Scan“ werden nirgends gespeichert. Ein Wechsel des Standorts löscht sie. Um sie zu behalten, wählen Sie stattdessen „Ergebnisse im Standort speichern“.</sys:String>

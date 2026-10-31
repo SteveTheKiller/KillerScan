@@ -236,13 +236,15 @@ namespace KillerScan.Features.Cli
                 err.WriteLine(PaintErr("Warning: known devices could not be saved - " + Flatten(location.Devices.SaveError), AnsiBad));
             if (keyed)
             {
-                if (seen.BaselineCreated) err.WriteLine("Str_St_KnownBaseline|" + devices.Count);
-                else if (seen.NewDevices.Count > 0) err.WriteLine("Str_St_UnknownDevices|" + seen.NewDevices.Count);
+                if (seen.BaselineCreated) err.WriteLine(ScanStatusText.Counted("Str_St_KnownBaseline", devices.Count) + "|" + devices.Count);
+                else if (seen.NewDevices.Count > 0) err.WriteLine(ScanStatusText.Counted("Str_St_UnknownDevices", seen.NewDevices.Count) + "|" + seen.NewDevices.Count);
             }
             else if (!quiet)
             {
-                if (seen.BaselineCreated) err.WriteLine($"Baseline set: {devices.Count} devices are now known. None are approved yet.");
-                else if (seen.NewDevices.Count > 0) err.WriteLine($"Alert: {seen.NewDevices.Count} devices are new since the baseline.");
+                if (seen.BaselineCreated) err.WriteLine(devices.Count == 1 ? "Baseline set: 1 device is now known. It is not approved yet."
+                    : $"Baseline set: {devices.Count} devices are now known. None are approved yet.");
+                else if (seen.NewDevices.Count > 0) err.WriteLine(seen.NewDevices.Count == 1 ? "Alert: 1 device is new since the baseline."
+                    : $"Alert: {seen.NewDevices.Count} devices are new since the baseline.");
             }
         }
 
@@ -266,10 +268,11 @@ namespace KillerScan.Features.Cli
             exitCode = 0;
             if (args is null || args.Length == 0) return false;
             args = KillerFamily.CommandLine.CommandLineEntry.GetArguments(args,
-                ["scan", "probe", "network", "vendor", "ping", "trace", "diagnose", "watch", "speedtest", "version"], "--") ?? args;
+                ["scan", "probe", "network", "locations", "vendor", "ping", "trace", "diagnose", "watch", "speedtest", "version"], "--") ?? args;
             string? command = args.FirstOrDefault(a => IsHelp(a) || IsVersion(a) ||
                 Eq(a, "/scan") || Eq(a, "--scan") || Eq(a, "/probe") || Eq(a, "--probe") ||
-                Eq(a, "/network") || Eq(a, "--network") || Eq(a, "/vendor") || Eq(a, "--vendor") ||
+                Eq(a, "/network") || Eq(a, "--network") || Eq(a, "/locations") || Eq(a, "--locations") ||
+                Eq(a, "/vendor") || Eq(a, "--vendor") ||
                 Eq(a, "/ping") || Eq(a, "--ping") || Eq(a, "/trace") || Eq(a, "--trace") ||
                 Eq(a, "/diagnose") || Eq(a, "--diagnose") || Eq(a, "/watch") || Eq(a, "--watch") ||
                 Eq(a, "/speedtest") || Eq(a, "--speedtest"));
@@ -295,6 +298,8 @@ namespace KillerScan.Features.Cli
                 if (parseError != null) { err.WriteLine(PaintErr("Error: " + parseError, AnsiBad)); exitCode = 2; }
                 else if (Eq(command, "/network") || Eq(command, "--network"))
                     exitCode = RunNetwork(positionals, options, @out, err);
+                else if (Eq(command, "/locations") || Eq(command, "--locations"))
+                    exitCode = RunLocations(positionals, options, @out, err);
                 else if (Eq(command, "/vendor") || Eq(command, "--vendor"))
                     exitCode = RunVendor(positionals, options, @out, err);
                 else if (Eq(command, "/ping") || Eq(command, "--ping"))
@@ -326,6 +331,36 @@ namespace KillerScan.Features.Cli
             @out.WriteLine("SUBNET     " + net.Subnet);
             @out.WriteLine("GATEWAY    " + (net.Gateway.Length == 0 ? "-" : net.Gateway));
             @out.WriteLine("DNS        " + (net.Dns.Length == 0 ? "-" : net.Dns));
+            return 0;
+        }
+
+        /// <summary>
+        /// Lists the saved Locations so a script or agent can find the name or ID /location takes.
+        /// Notes are left out: they are free text, and nothing here needs them.
+        /// </summary>
+        internal static int RunLocations(List<string> positionals, Dictionary<string, string> options,
+                                         TextWriter @out, TextWriter err)
+        {
+            if (positionals.Count > 0 || !Only(options, "/json", "--json"))
+                return Usage(err, "/locations takes no targets and accepts /json.");
+            var found = LocationCatalog.ReadExisting(LocationService.Root, out string? error);
+            if (error != null) return Usage(err, "Locations are unavailable - " + Flatten(error), 1);
+            var items = found.OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase).ToList();
+            if (Has(options, "/json", "--json"))
+            {
+                @out.WriteLine(JsonSerializer.Serialize(items.Select(item => new
+                {
+                    id = item.Id, name = item.Name, customer = item.Customer,
+                    lastTargets = item.LastTargets, lastAdapter = item.LastAdapter
+                })));
+                return 0;
+            }
+            if (items.Count == 0) { @out.WriteLine("No Locations yet."); return 0; }
+            string Row(string name, string id, string customer, string targets) =>
+                name.PadRight(items.Max(item => TerminalText.Escape(item.Name).Length) + 2) + id.PadRight(34) + customer.PadRight(items.Max(item => TerminalText.Escape(item.Customer).Length) + 2) + targets;
+            @out.WriteLine(Row("NAME", "ID", "CUSTOMER", "LAST TARGETS").TrimEnd());
+            foreach (var item in items)
+                @out.WriteLine(Row(TerminalText.Escape(item.Name), item.Id, TerminalText.Escape(item.Customer), TerminalText.Escape(item.LastTargets)).TrimEnd());
             return 0;
         }
 
@@ -862,6 +897,7 @@ namespace KillerScan.Features.Cli
             "  killerscan uiscan [targets]      open the interface and begin scanning",
             "  killerscan probe <IPv4>          deep-probe one host, including ports 1-1024",
             "  killerscan network               show the detected interface, subnet, gateway, and DNS",
+            "  killerscan locations             list saved Locations and their IDs; changes nothing",
             "  killerscan vendor <MAC>          look up a MAC address in the offline OUI database",
             "  killerscan ping <target>         send a bounded set of ICMP checks",
             "  killerscan trace <target>        trace the network path to an IPv4 target",

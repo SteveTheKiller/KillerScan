@@ -168,6 +168,7 @@
     <sys:String x:Key="Str_Btn_Stop">Durdur</sys:String>
     <sys:String x:Key="Str_Status_Ready">Hazır - {0} OUI üreticisi yüklendi</sys:String>
     <sys:String x:Key="Str_Count_Found">{0} cihaz bulundu</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">{0} cihaz bulundu</sys:String>
     <sys:String x:Key="Str_Count_Shown">{1} cihazdan {0} tanesi gösteriliyor</sys:String>
 
     <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
@@ -176,6 +177,7 @@
     <sys:String x:Key="Str_St_Probing">{0} etkin ana bilgisayar yoklanıyor...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">{0} ana bilgisayar çözümleniyor...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Tarama tamamlandı - {0} cihaz bulundu</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Tarama tamamlandı - {0} cihaz bulundu</sys:String>
     <sys:String x:Key="Str_St_Ready">Hazır</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Tarama iptal edildi</sys:String>
     <sys:String x:Key="Str_St_Exported">{0} konumuna aktarıldı</sys:String>
@@ -396,10 +398,12 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_TT_TrustMark">Yeşil: onaylı. Kehribar: bu Lokasyonun temelinden sonra yeni. Gri: bilinen, onaylı değil.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">{0} cihazla güvenilir temel oluşturuldu.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Uyarı: {0} bilinmeyen cihaz bulundu.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Uyarı: {0} bilinmeyen cihaz bulundu.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Bu Lokasyonun temelinden sonra yeni olanlar:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">ve {0} tane daha</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Bir cihazı onaylamak için sağ tıklayın.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Temel belirlendi: {0} cihaz artık biliniyor. Henüz hiçbiri onaylı değil.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Temel belirlendi: {0} cihaz artık biliniyor. Henüz onaylı değil.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Lokasyon</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Geçici tarama</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Atanmamış</sys:String>
@@ -428,7 +432,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Taramayı sil</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">{0} adlı kayıtlı bir tarama zaten var. Başka bir ad seçin.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Lokasyonu değiştirmeden önce taramayı durdurun.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">{0} Lokasyonu başka bir pencerede silindi. Bu sonuçlar artık bir “Geçici tarama”. Saklamak için “Sonuçları Lokasyona kaydet” seçeneğini kullanın.</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">{0} Lokasyonu başka bir pencerede silindi. Bu sonuçları saklamak için “Sonuçları Lokasyona kaydet” seçeneğini kullanın.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Bu Lokasyon dosyası {0} MB'tan büyük; bu, KillerScan'in içe aktardığından fazla.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Bu sonuçlar atılsın mı?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Bu “Geçici tarama” sonuçları hiçbir yere kaydedilmez. Lokasyonu değiştirmek bunları temizler. Saklamak için bunun yerine “Sonuçları Lokasyona kaydet” seçeneğini kullanın.</sys:String>

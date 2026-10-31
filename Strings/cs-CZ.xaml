@@ -28,6 +28,7 @@
     <sys:String x:Key="Str_Btn_Stop">Zastavit</sys:String>
     <sys:String x:Key="Str_Status_Ready">Připraveno - načteno {0} výrobců OUI</sys:String>
     <sys:String x:Key="Str_Count_Found">Nalezeno {0} zařízení</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">Nalezeno {0} zařízení</sys:String>
     <sys:String x:Key="Str_Count_Shown">Zobrazeno {0} z {1}</sys:String>
 
     <sys:String x:Key="Str_DiscoveredDevices">Nalezená zařízení</sys:String>
@@ -178,6 +179,7 @@
     <sys:String x:Key="Str_St_Probing">Sondování {0} dostupných hostitelů...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Překlad {0} hostitelů...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Skenování dokončeno - nalezeno {0} zařízení</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Skenování dokončeno - nalezeno {0} zařízení</sys:String>
     <sys:String x:Key="Str_St_Ready">Připraveno</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Skenování zrušeno</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Hloubkové skenování {0} ...</sys:String>
@@ -394,10 +396,12 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_TT_TrustMark">Zelená: schválené. Jantarová: nové od základu této Lokality. Šedá: známé, neschválené.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Důvěryhodný základ vytvořen s {0} zařízeními.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Upozornění: nalezeno {0} neznámých zařízení.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Upozornění: nalezeno {0} neznámé zařízení.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Nová od základu této Lokality:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">a dalších {0}</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Klepnutím pravým tlačítkem na zařízení jej schválíte.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Základ nastaven, počet známých zařízení: {0}. Zatím žádné není schválené.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Základ nastaven, počet známých zařízení: {0}. Zatím není schválené.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Lokalita</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Dočasný sken</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Nepřiřazeno</sys:String>
@@ -426,7 +430,7 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Odstranit sken</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">Uložený sken s názvem {0} už existuje. Zvolte jiný název.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Před změnou Lokality zastavte skenování.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">Lokalita {0} byla smazána v jiném okně. Tyto výsledky jsou nyní v režimu „Dočasný sken“. Chcete-li je zachovat, zvolte „Uložit výsledky do Lokality“.</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">Lokalita {0} byla smazána v jiném okně. Chcete-li tyto výsledky zachovat, zvolte „Uložit výsledky do Lokality“.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Tento soubor Lokality je větší než {0} MB, což je víc, než KillerScan importuje.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Zahodit tyto výsledky?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Výsledky z režimu „Dočasný sken“ nejsou nikde uloženy. Změnou Lokality se vymažou. Chcete-li je zachovat, zvolte místo toho „Uložit výsledky do Lokality“.</sys:String>

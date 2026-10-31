@@ -168,6 +168,7 @@
     <sys:String x:Key="Str_Btn_Stop">停止</sys:String>
     <sys:String x:Key="Str_Status_Ready">就绪 - 已加载 {0} 个 OUI 厂商</sys:String>
     <sys:String x:Key="Str_Count_Found">找到 {0} 个设备</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">找到 {0} 个设备</sys:String>
     <sys:String x:Key="Str_Count_Shown">显示 {1} 个中的 {0} 个</sys:String>
 
     <!-- Status bar messages (composed in code - {0}/{1} are filled in by the app) -->
@@ -176,6 +177,7 @@
     <sys:String x:Key="Str_St_Probing">正在探测 {0} 个在线主机...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">正在解析 {0} 个主机...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">扫描完成 - 找到 {0} 台设备</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">扫描完成 - 找到 {0} 台设备</sys:String>
     <sys:String x:Key="Str_St_Ready">就绪</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">扫描已取消</sys:String>
     <sys:String x:Key="Str_St_Exported">已导出到 {0}</sys:String>
@@ -396,10 +398,12 @@
     <sys:String x:Key="Str_TT_TrustMark">绿色：已批准。琥珀色：此站点基线之后新出现。灰色：已知，未批准。</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">已使用 {0} 台设备创建可信基线。</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">警报: 发现 {0} 台未知设备。</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">警报: 发现 {0} 台未知设备。</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">此站点基线之后新出现的设备:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">另有 {0} 台</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">右键单击设备即可批准。</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">已设置基线：{0} 台设备现为已知设备。尚未批准任何设备。</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">已设置基线：{0} 台设备现为已知设备。尚未批准任何设备。</sys:String>
     <sys:String x:Key="Str_Loc_Title">站点</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">临时扫描</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">未分配</sys:String>
@@ -428,7 +432,7 @@
     <sys:String x:Key="Str_Loc_DeleteScan">删除扫描</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">已存在名为 {0} 的已保存扫描。请换一个名称。</sys:String>
     <sys:String x:Key="Str_Loc_Busy">请先停止扫描，再切换站点。</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">站点“{0}”已在另一个窗口中删除。这些结果现在属于“临时扫描”。如需保留，请选择“将结果保存到站点”。</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">站点“{0}”已在另一个窗口中删除。如需保留这些结果，请选择“将结果保存到站点”。</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">此站点文件大于 {0} MB，超出了 KillerScan 的导入上限。</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">放弃这些结果？</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">此“临时扫描”的结果未保存在任何位置。切换站点会清除这些结果。如需保留，请改为选择“将结果保存到站点”。</sys:String>

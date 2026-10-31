@@ -40,7 +40,7 @@ namespace KillerScan.Controls
             if (IsScanning) return;
 
             string status = _scanCompleted
-                ? string.Format(Loc("Str_St_ScanComplete"), _active.Devices.Count)
+                ? string.Format(Loc(ScanStatusText.Counted("Str_St_ScanComplete", _active.Devices.Count)), _active.Devices.Count)
                 : Loc("Str_St_Ready");
             _active.Status = status;
             StatusText.Text = status;

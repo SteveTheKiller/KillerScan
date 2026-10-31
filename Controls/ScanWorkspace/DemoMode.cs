@@ -52,7 +52,7 @@ namespace KillerScan.Controls
             _active.NewIdentities = new(_active.Devices.Except(known).Select(DeviceIdentity.For), StringComparer.OrdinalIgnoreCase);
 
             _scanCompleted = true;
-            var done = string.Format(Loc("Str_St_ScanComplete"), _active.Devices.Count);
+            var done = string.Format(Loc(ScanStatusText.Counted("Str_St_ScanComplete", _active.Devices.Count)), _active.Devices.Count);
             _active.Status = done;
             StatusText.Text = done;
             UpdateExportButtonAvailability();

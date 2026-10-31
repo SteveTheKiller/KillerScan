@@ -35,6 +35,7 @@
     <sys:String x:Key="Str_Btn_Stop">Stop</sys:String>
     <sys:String x:Key="Str_Status_Ready">Ready - {0} OUI vendors loaded</sys:String>
     <sys:String x:Key="Str_Count_Found">{0} devices found</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">{0} device found</sys:String>
     <sys:String x:Key="Str_Count_Shown">{0} of {1} shown</sys:String>
 
     <!-- Results pane -->
@@ -195,6 +196,7 @@
     <sys:String x:Key="Str_St_Probing">Probing {0} alive hosts...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Resolving {0} hosts...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Scan complete - {0} devices found</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Scan complete - {0} device found</sys:String>
     <sys:String x:Key="Str_St_Ready">Ready</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Scan canceled</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Deep scanning {0} ...</sys:String>
@@ -438,7 +440,9 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_TT_TrustMark">Green: approved. Amber: new since this Location's baseline. Gray: known, not approved.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Trusted baseline created with {0} devices.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Baseline set: {0} devices are now known. None are approved yet.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Baseline set: {0} device is now known. It is not approved yet.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alert: {0} unknown devices found.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Alert: {0} unknown device found.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">New since this Location's baseline:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">and {0} more</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Right-click a device to approve it.</sys:String>
@@ -470,7 +474,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Delete scan</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">A saved scan named {0} already exists. Choose another name.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Stop the scan before changing Location.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">{0} was deleted in another window. These results are now a Temporary scan. To keep them, choose Save results to Location.</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">{0} was deleted in another window. To keep these results, choose Save results to Location.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">This Location file is larger than {0} MB, which is more than KillerScan imports.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Discard these results?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">These Temporary scan results are not saved anywhere. Changing Location clears them. To keep them, choose Save results to Location instead.</sys:String>

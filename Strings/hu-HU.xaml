@@ -35,6 +35,7 @@
     <sys:String x:Key="Str_Btn_Stop">Leállítás</sys:String>
     <sys:String x:Key="Str_Status_Ready">Kész - {0} OUI-gyártó betöltve</sys:String>
     <sys:String x:Key="Str_Count_Found">{0} eszköz található</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">{0} eszköz található</sys:String>
     <sys:String x:Key="Str_Count_Shown">{0}/{1} látható</sys:String>
 
     <!-- Results pane -->
@@ -195,6 +196,7 @@
     <sys:String x:Key="Str_St_Probing">{0} élő gazdagép vizsgálata...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">{0} gazdagép feloldása...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">A vizsgálat befejeződött - {0} eszköz található</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">A vizsgálat befejeződött - {0} eszköz található</sys:String>
     <sys:String x:Key="Str_St_Ready">Kész</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Szkennelés megszakítva</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Mély vizsgálat {0}...</sys:String>
@@ -412,10 +414,12 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_TT_TrustMark">Zöld: jóváhagyott. Borostyán: új ennek a Helyszínnek az alapállapotához képest. Szürke: ismert, nem jóváhagyott.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Megbízható alap létrehozva {0} eszközzel.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Riasztás: {0} ismeretlen eszköz található.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Riasztás: {0} ismeretlen eszköz található.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Új ennek a Helyszínnek az alapállapotához képest:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">és további {0}</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Kattintson jobb gombbal egy eszközre a jóváhagyásához.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Alapállapot rögzítve: {0} eszköz mostantól ismert. Még egyik sincs jóváhagyva.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Alapállapot rögzítve: {0} eszköz mostantól ismert. Még nincs jóváhagyva.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Helyszín</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Ideiglenes vizsgálat</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Nincs hozzárendelve</sys:String>
@@ -444,7 +448,7 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Vizsgálat törlése</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">Már létezik {0} nevű mentett vizsgálat. Válasszon másik nevet.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Állítsa le a vizsgálatot a Helyszín váltása előtt.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">A(z) {0} Helyszínt egy másik ablakban törölték. Ezek az eredmények mostantól egy „Ideiglenes vizsgálat” részei. Megtartásukhoz válassza az „Eredmények mentése a Helyszínre” lehetőséget.</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">A(z) {0} Helyszínt egy másik ablakban törölték. Az eredmények megtartásához válassza az „Eredmények mentése a Helyszínre” lehetőséget.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Ez a Helyszín fájl nagyobb, mint {0} MB, ami több, mint amennyit a KillerScan importál.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Elveti ezeket az eredményeket?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Az „Ideiglenes vizsgálat” eredményei sehol sincsenek elmentve. A Helyszín váltása törli őket. Megtartásukhoz válassza helyette az „Eredmények mentése a Helyszínre” lehetőséget.</sys:String>

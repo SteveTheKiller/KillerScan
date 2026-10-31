@@ -22,6 +22,7 @@
     <sys:String x:Key="Str_Btn_Stop">Zatrzymaj</sys:String>
     <sys:String x:Key="Str_Status_Ready">Gotowe - załadowano {0} dostawców OUI</sys:String>
     <sys:String x:Key="Str_Count_Found">Znaleziono urządzeń: {0}</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">Znaleziono urządzeń: {0}</sys:String>
     <sys:String x:Key="Str_Count_Shown">Wyświetlono {0} z {1}</sys:String>
     <sys:String x:Key="Str_DiscoveredDevices">Wykryte urządzenia</sys:String>
     <sys:String x:Key="Str_Topology_Title">Topologia sieci</sys:String>
@@ -151,6 +152,7 @@
     <sys:String x:Key="Str_St_Probing">Sprawdzanie {0} aktywnych hostów...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Rozpoznawanie {0} hostów...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Skanowanie zakończone - znaleziono urządzeń: {0}</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Skanowanie zakończone - znaleziono urządzeń: {0}</sys:String>
     <sys:String x:Key="Str_St_Ready">Gotowe</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Skanowanie anulowane</sys:String>
     <sys:String x:Key="Str_St_Exported">Wyeksportowano do {0}</sys:String>
@@ -381,10 +383,12 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_TT_TrustMark">Zielony: zatwierdzone. Bursztynowy: nowe od czasu bazy tej Lokalizacji. Szary: znane, niezatwierdzone.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Utworzono zaufaną bazę z {0} urządzeniami.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Alert: znaleziono {0} nieznanych urządzeń.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Alert: znaleziono {0} nieznane urządzenie.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Nowe od czasu bazy tej Lokalizacji:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">i {0} więcej</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Kliknij urządzenie prawym przyciskiem, aby je zatwierdzić.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Ustawiono bazę. Znane urządzenia: {0}. Żadne nie jest jeszcze zatwierdzone.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Ustawiono bazę. Znane urządzenie: {0}. Nie jest jeszcze zatwierdzone.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Lokalizacja</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Skanowanie tymczasowe</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Nieprzypisane</sys:String>
@@ -413,7 +417,7 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Usuń skan</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">Zapisany skan o nazwie {0} już istnieje. Wybierz inną nazwę.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Zatrzymaj skanowanie przed zmianą Lokalizacji.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">Lokalizacja {0} została usunięta w innym oknie. Te wyniki należą teraz do trybu „Skanowanie tymczasowe”. Aby je zachować, wybierz „Zapisz wyniki w Lokalizacji”.</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">Lokalizacja {0} została usunięta w innym oknie. Aby zachować te wyniki, wybierz „Zapisz wyniki w Lokalizacji”.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Ten plik Lokalizacji jest większy niż {0} MB, czyli więcej, niż KillerScan importuje.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Odrzucić te wyniki?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Wyniki z trybu „Skanowanie tymczasowe” nie są nigdzie zapisane. Zmiana Lokalizacji je usunie. Aby je zachować, wybierz zamiast tego „Zapisz wyniki w Lokalizacji”.</sys:String>

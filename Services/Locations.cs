@@ -228,6 +228,27 @@ namespace KillerScan.Services
         /// <summary>True once migration has published the catalog, even if it cannot be read now.</summary>
         internal bool Published => File.Exists(_path);
 
+        /// <summary>
+        /// The Locations on disk, read without changing anything. <see cref="Load"/> moves the
+        /// original data into Locations on a first run, so a listing cannot go through it; with
+        /// no catalog yet there is simply nothing to list.
+        /// </summary>
+        internal static IReadOnlyList<LocationInfo> ReadExisting(string root, out string? error)
+        {
+            var catalog = new LocationCatalog(root);
+            error = null;
+            if (!catalog.Published) return [];
+            // Another window replacing the catalog can make one read fail; a moment later it reads.
+            for (int attempt = 0; ; attempt++)
+            {
+                catalog._store.Load();
+                error = catalog._store.Error;
+                if (error == null || attempt == 2) break;
+                System.Threading.Thread.Sleep(150);
+            }
+            return error == null ? catalog._store.Value.Locations : [];
+        }
+
         internal string LocationsDirectory => Path.Combine(_root, "locations");
         internal string DirectoryFor(LocationInfo info) => Path.Combine(LocationsDirectory, info.Id);
 

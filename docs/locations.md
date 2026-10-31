@@ -104,6 +104,7 @@ The five current stores are global: `profiles.json`, `history.json`, `devices.js
 - A missing preferred adapter asks before using the normal route, and exports record the adapter actually used.
 - Temporary scans read no annotations and save no history until assigned.
 - `/scan /location <name>` records into that Location; an unknown or ambiguous name exits 2 without scanning, through both the CLI and the PowerShell module.
+- `/locations` lists each Location's name and ID, customer, and last targets and adapter, and `/json` and the PowerShell `locations` command return them as data. It reads the catalog and changes nothing, so a first run's migration still waits for the app. Notes stay out of it.
 
 ## Further decisions
 

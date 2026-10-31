@@ -73,6 +73,17 @@ try {
     $env:KS_EXE = New-FakeExe 'unknown-vendor' 'Unknown' '' 3
     Require ($null -eq (vendor 00:11:22:33:44:55)) 'Exit 3 from vendor is the unknown-vendor answer.'
 
+    $env:KS_EXE = New-FakeExe 'listed' '[{"id":"a1","name":"Acme Dental","customer":"Acme","lastTargets":"10.1.0.0/24","lastAdapter":""}]' '' 0
+    $sites = @(locations)
+    Require ($sites.Count -eq 1 -and $sites[0].Id -eq 'a1' -and $sites[0].Name -eq 'Acme Dental' -and $sites[0].LastTargets -eq '10.1.0.0/24') 'locations returns each Location as an object.'
+    $env:KS_EXE = New-FakeExe 'unlisted' '[]' '' 0
+    Require (@(locations).Count -eq 0) 'No Locations is an empty result, not an error.'
+    $env:KS_EXE = New-FakeExe 'unreadable' '' 'Error: Locations are unavailable' 1
+    $unavailable = Get-Failure { locations }
+    Require ($null -ne $unavailable -and $unavailable.Exception.Data['ExitCode'] -eq 1) 'An unreadable catalog is an error, not an empty list.'
+    $env:KS_EXE = $realExe
+    Require ($null -eq (Get-Failure { locations })) 'The real app lists Locations.'
+
     $located = Join-Path $work 'located.cmd'
     Set-Content -LiteralPath $located -Encoding Ascii -Value @(
         '@echo off',

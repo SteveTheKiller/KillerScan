@@ -35,6 +35,7 @@
     <sys:String x:Key="Str_Btn_Stop">Зупинити</sys:String>
     <sys:String x:Key="Str_Status_Ready">Готово - завантажено виробників OUI: {0}</sys:String>
     <sys:String x:Key="Str_Count_Found">Знайдено пристроїв: {0}</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">Знайдено пристроїв: {0}</sys:String>
     <sys:String x:Key="Str_Count_Shown">Показано {0} із {1}</sys:String>
 
     <!-- Results pane -->
@@ -195,6 +196,7 @@
     <sys:String x:Key="Str_St_Probing">Перевірка активних хостів: {0}...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Визначення імен хостів: {0}...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Сканування завершено - знайдено пристроїв: {0}</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Сканування завершено - знайдено пристроїв: {0}</sys:String>
     <sys:String x:Key="Str_St_Ready">Готово</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Сканування скасовано</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Глибоке сканування {0}...</sys:String>
@@ -438,10 +440,12 @@
     <sys:String x:Key="Str_TT_TrustMark">Зелений: схвалений. Бурштиновий: новий відносно базового набору цієї локації. Сірий: відомий, не схвалений.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Створено довірену основу з пристроїв: {0}.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Увага: знайдено невідомих пристроїв: {0}.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Увага: знайдено невідомих пристроїв: {0}.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Нові відносно базового набору цієї локації:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">і ще {0}</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Клацніть пристрій правою кнопкою, щоб схвалити його.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Базовий набір створено: відомих пристроїв тепер {0}. Жоден ще не схвалений.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Базовий набір створено: відомих пристроїв тепер {0}. Пристрій ще не схвалений.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Локація</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Тимчасове сканування</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Не призначено</sys:String>
@@ -470,7 +474,7 @@
     <sys:String x:Key="Str_Loc_DeleteScan">Видалити сканування</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">Збережене сканування з назвою {0} вже існує. Виберіть іншу назву.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Зупиніть сканування, перш ніж змінювати локацію.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">Локацію «{0}» видалено в іншому вікні. Ці результати тепер належать до режиму «Тимчасове сканування». Щоб зберегти їх, виберіть «Зберегти результати в локацію».</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">Локацію «{0}» видалено в іншому вікні. Щоб зберегти ці результати, виберіть «Зберегти результати в локацію».</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Цей файл локації більший за {0} MB, а це більше, ніж імпортує KillerScan.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Відкинути ці результати?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Результати режиму «Тимчасове сканування» ніде не зберігаються. Зміна локації очистить їх. Щоб зберегти їх, виберіть натомість «Зберегти результати в локацію».</sys:String>

@@ -35,6 +35,7 @@
     <sys:String x:Key="Str_Btn_Stop">Стоп</sys:String>
     <sys:String x:Key="Str_Status_Ready">Готово - загружено производителей OUI: {0}</sys:String>
     <sys:String x:Key="Str_Count_Found">Найдено устройств: {0}</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">Найдено устройств: {0}</sys:String>
     <sys:String x:Key="Str_Count_Shown">Показано {0} из {1}</sys:String>
 
     <!-- Results pane -->
@@ -195,6 +196,7 @@
     <sys:String x:Key="Str_St_Probing">Проверка {0} активных хостов...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Определение имен {0} хостов...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Сканирование завершено - найдено устройств: {0}</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Сканирование завершено - найдено устройств: {0}</sys:String>
     <sys:String x:Key="Str_St_Ready">Готово</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Сканирование отменено</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Глубокое сканирование {0} ...</sys:String>
@@ -422,10 +424,12 @@
     <sys:String x:Key="Str_TT_TrustMark">Зелёный: одобрено. Янтарный: новое с момента создания базы этого Объекта. Серый: известно, не одобрено.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Доверенная база создана с {0} устройствами.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Внимание: обнаружено {0} неизвестных устройств.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Внимание: обнаружено {0} неизвестное устройство.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Новые с момента создания базы этого Объекта:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">и ещё {0}</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Щёлкните устройство правой кнопкой, чтобы одобрить его.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">База задана. Известных устройств: {0}. Пока ни одно не одобрено.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">База задана. Известных устройств: {0}. Пока оно не одобрено.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Объект</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Временное сканирование</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Не назначено</sys:String>
@@ -454,7 +458,7 @@
     <sys:String x:Key="Str_Loc_DeleteScan">Удалить сканирование</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">Сохранённое сканирование с именем {0} уже существует. Выберите другое имя.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Остановите сканирование, прежде чем менять Объект.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">Объект «{0}» удалён в другом окне. Эти результаты теперь относятся к режиму «Временное сканирование». Чтобы оставить их, выберите «Сохранить результаты в Объект».</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">Объект «{0}» удалён в другом окне. Чтобы оставить эти результаты, выберите «Сохранить результаты в Объект».</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Этот файл Объекта больше {0} MB, а это больше, чем импортирует KillerScan.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Сбросить эти результаты?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Результаты режима «Временное сканирование» нигде не сохраняются. При смене Объекта они будут удалены. Чтобы оставить их, выберите вместо этого «Сохранить результаты в Объект».</sys:String>

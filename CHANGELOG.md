@@ -10,6 +10,8 @@ Locations keep each customer site separate, scan settings choose which checks ru
 
 ### Fixed
 - An all-users update reopens KillerScan for the signed-in user at normal rights, whether it finishes or stops early. Windows was refusing that relaunch, so the app stayed closed. Files left behind by earlier failed updates are cleared when the next update is staged.
+- A scan that finds one device says "1 device", in the footer, the status bar, the terminal and the command line.
+- When another window deletes a Location, the tab's message no longer calls the results a Temporary scan, which was not always true.
 - Save results to Location moves a scan only once all of it is on disk in the destination. A run the destination's history limit would delete, or a Location deleted in another window, is refused with the reason, a stopped scan's results are saved as a canceled run and can be saved from the menu, a Temporary scan's names and device types all go with it, a save that fails leaves the results and the tab where they were, and saving again finishes the move without doubling anything.
 - Retry after a failed rename or delete in History repeats that change, a failed one no longer empties the list, and two KillerScans open on the same Location each alert on devices the other never saw.
 - A Location appears in the list only once its imported files are in place, even if KillerScan is killed mid-import. Deleting a Location finishes or changes nothing, so a locked file or a blocked recovery folder can no longer crash it or leave files no list points to. Imported history with empty fields can no longer crash History's copy menu.
@@ -174,6 +176,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Manage Locations on the Location button opens a sidebar list of every Location, with a check on the current one. A click selects a Location, and a double-click or Enter switches to it. Each can be renamed, given notes, exported or deleted from its right-click menu. Deleting moves the Location's files aside to a deleted folder rather than erasing them. The Profiles section is now called Saved scans.
 - History lists the current Location's scans. Right-click the History button and choose Show all Locations to list every Location's scans, each labeled with its Location.
 - `/scan` and `/probe` take `/location <name or ID>`, and the PowerShell `scan` and `probe` commands take `-Location`. An unknown or shared name is a usage error. The terminal's Scan button scans in the current Location.
+- `killerscan locations` lists the saved Locations with their IDs, customers, and last targets and adapters, as a table or with `/json`, and changes nothing. The PowerShell `locations` command returns them as objects.
 - `/scan` and `/probe` take `/skip <checks>`, and the PowerShell `scan` and `probe` commands take `-Skip`, to turn off the same checks Scan settings offers. The terminal's Scan button uses the current Scan settings.
 - `/scan` and `/probe` take `/adapter <name or address>`, and the PowerShell commands take `-Adapter`, to send every probe from one adapter. An unknown adapter, or a target that is neither on its network nor routed through it, is a usage error, and the terminal's Scan button uses the adapter chosen in Scan settings.
 

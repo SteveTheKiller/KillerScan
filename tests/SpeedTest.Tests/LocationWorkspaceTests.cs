@@ -57,7 +57,7 @@ internal static class LocationWorkspaceTests
             Require(workspace.Session.Devices.Single().Hostname == "Front desk", "Site A's saved name is applied to its scan.");
             Require(a.History.Entries.Count == 1 && a.Devices.HasBaseline && !a.Devices.IsTrusted(device),
                 "The first scan in Site A records history and a baseline, and approves nothing.");
-            Require(workspace.Status == string.Format((string)Application.Current.FindResource("Str_St_KnownBaseline"), 1),
+            Require(workspace.Status == string.Format((string)Application.Current.FindResource("Str_St_KnownBaselineOne"), 1),
                 "The status says the baseline was set.");
 
             Require(workspace.SetLocation(b), "The tab moves to Site B.");

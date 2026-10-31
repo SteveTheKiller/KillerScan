@@ -35,6 +35,7 @@
     <sys:String x:Key="Str_Btn_Stop">Тоқтату</sys:String>
     <sys:String x:Key="Str_Status_Ready">Дайын - {0} OUI өндірушісі жүктелді</sys:String>
     <sys:String x:Key="Str_Count_Found">{0} құрылғы табылды</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">{0} құрылғы табылды</sys:String>
     <sys:String x:Key="Str_Count_Shown">{1} ішінен {0} көрсетілді</sys:String>
 
     <!-- Results pane -->
@@ -195,6 +196,7 @@
     <sys:String x:Key="Str_St_Probing">{0} белсенді хост тексерілуде...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">{0} хост анықталуда...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Сканерлеу аяқталды - {0} құрылғы табылды</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Сканерлеу аяқталды - {0} құрылғы табылды</sys:String>
     <sys:String x:Key="Str_St_Ready">Дайын</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Сканерлеу болдырылмады</sys:String>
     <sys:String x:Key="Str_St_Rescanning">{0} терең сканерленуде...</sys:String>
@@ -438,10 +440,12 @@
     <sys:String x:Key="Str_TT_TrustMark">Жасыл: мақұлданған. Янтарь: осы Локацияның негізінен кейін жаңа. Сұр: белгілі, мақұлданбаған.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">{0} құрылғымен сенімді негіз жасалды.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Ескерту: {0} белгісіз құрылғы табылды.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Ескерту: {0} белгісіз құрылғы табылды.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Осы Локацияның негізінен кейін жаңа:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">және тағы {0}</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Құрылғыны мақұлдау үшін оны тінтуірдің оң жақ түймесімен басыңыз.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Негіз орнатылды: {0} құрылғы енді белгілі. Әзірге ешқайсысы мақұлданбаған.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Негіз орнатылды: {0} құрылғы енді белгілі. Әзірге ол мақұлданбаған.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Локация</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Уақытша сканерлеу</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Тағайындалмаған</sys:String>
@@ -470,7 +474,7 @@
     <sys:String x:Key="Str_Loc_DeleteScan">Сканерлеуді жою</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">{0} атты сақталған сканерлеу бар. Басқа атау таңдаңыз.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Локацияны ауыстырмас бұрын сканерлеуді тоқтатыңыз.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">«{0}» Локациясы басқа терезеде жойылды. Бұл нәтижелер енді «Уақытша сканерлеу» режимінде. Оларды сақтап қалу үшін «Нәтижелерді Локацияға сақтау» тармағын таңдаңыз.</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">«{0}» Локациясы басқа терезеде жойылды. Бұл нәтижелерді сақтап қалу үшін «Нәтижелерді Локацияға сақтау» тармағын таңдаңыз.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Бұл Локация файлы {0} MB-тан үлкен, бұл KillerScan импорттайтын көлемнен асады.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Бұл нәтижелерді жою керек пе?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Бұл «Уақытша сканерлеу» нәтижелері ешқайда сақталмаған. Локацияны ауыстырсаңыз, олар өшіріледі. Оларды сақтап қалу үшін оның орнына «Нәтижелерді Локацияға сақтау» тармағын таңдаңыз.</sys:String>

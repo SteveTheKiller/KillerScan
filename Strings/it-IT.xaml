@@ -35,6 +35,7 @@
     <sys:String x:Key="Str_Btn_Stop">Interrompi</sys:String>
     <sys:String x:Key="Str_Status_Ready">Pronto - {0} produttori OUI caricati</sys:String>
     <sys:String x:Key="Str_Count_Found">{0} dispositivi trovati</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">{0} dispositivo trovato</sys:String>
     <sys:String x:Key="Str_Count_Shown">{0} di {1} mostrati</sys:String>
 
     <!-- Results pane -->
@@ -195,6 +196,7 @@
     <sys:String x:Key="Str_St_Probing">Analisi di {0} host attivi...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Risoluzione di {0} host...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Scansione completata - {0} dispositivi trovati</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Scansione completata - {0} dispositivo trovato</sys:String>
     <sys:String x:Key="Str_St_Ready">Pronto</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Scansione annullata</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Scansione approfondita di {0} ...</sys:String>
@@ -412,10 +414,12 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_TT_TrustMark">Verde: approvato. Ambra: nuovo rispetto alla base di riferimento di questa Sede. Grigio: noto, non approvato.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Base attendibile creata con {0} dispositivi.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Avviso: trovati {0} dispositivi sconosciuti.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Avviso: trovato {0} dispositivo sconosciuto.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Nuovi rispetto alla base di riferimento di questa Sede:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">e altri {0}</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Fai clic con il tasto destro su un dispositivo per approvarlo.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Base di riferimento impostata: {0} dispositivi sono ora noti. Nessuno è ancora approvato.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Base di riferimento impostata: {0} dispositivo è ora noto. Non è ancora approvato.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Sede</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Scansione temporanea</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Non assegnato</sys:String>
@@ -444,7 +448,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Elimina scansione</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">Esiste già una scansione salvata con il nome {0}. Scegli un altro nome.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Interrompi la scansione prima di cambiare Sede.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">La Sede {0} è stata eliminata in un'altra finestra. Questi risultati ora sono una «Scansione temporanea». Per conservarli, scegli «Salva i risultati nella Sede».</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">La Sede {0} è stata eliminata in un'altra finestra. Per conservare questi risultati, scegli «Salva i risultati nella Sede».</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Questo file di Sede supera {0} MB, più di quanto KillerScan importi.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Scartare questi risultati?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">I risultati di questa «Scansione temporanea» non vengono salvati da nessuna parte. Cambiare Sede li cancella. Per conservarli, scegli invece «Salva i risultati nella Sede».</sys:String>

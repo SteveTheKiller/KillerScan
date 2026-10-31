@@ -26,6 +26,7 @@
     <sys:String x:Key="Str_Btn_Stop">Dừng</sys:String>
     <sys:String x:Key="Str_Status_Ready">Sẵn sàng - đã tải {0} nhà cung cấp OUI</sys:String>
     <sys:String x:Key="Str_Count_Found">Tìm thấy {0} thiết bị</sys:String>
+    <sys:String x:Key="Str_Count_FoundOne">Tìm thấy {0} thiết bị</sys:String>
     <sys:String x:Key="Str_Count_Shown">Đang hiển thị {0} / {1}</sys:String>
     <sys:String x:Key="Str_DiscoveredDevices">Thiết bị đã phát hiện</sys:String>
     <sys:String x:Key="Str_Topology_Title">Sơ đồ mạng</sys:String>
@@ -171,6 +172,7 @@
     <sys:String x:Key="Str_St_Probing">Đang thăm dò {0} máy chủ đang hoạt động...</sys:String>
     <sys:String x:Key="Str_St_ResolvingHosts">Đang phân giải {0} máy chủ...</sys:String>
     <sys:String x:Key="Str_St_ScanComplete">Quét hoàn tất - tìm thấy {0} thiết bị</sys:String>
+    <sys:String x:Key="Str_St_ScanCompleteOne">Quét hoàn tất - tìm thấy {0} thiết bị</sys:String>
     <sys:String x:Key="Str_St_Ready">Sẵn sàng</sys:String>
     <sys:String x:Key="Str_St_ScanCanceled">Đã hủy quét</sys:String>
     <sys:String x:Key="Str_St_Rescanning">Đang quét sâu {0} ...</sys:String>
@@ -376,10 +378,12 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_TT_TrustMark">Xanh lá: đã phê duyệt. Hổ phách: mới so với đường cơ sở của địa điểm này. Xám: đã biết, chưa phê duyệt.</sys:String>
     <sys:String x:Key="Str_St_TrustedBaseline">Đã tạo đường cơ sở tin cậy với {0} thiết bị.</sys:String>
     <sys:String x:Key="Str_St_UnknownDevices">Cảnh báo: tìm thấy {0} thiết bị không xác định.</sys:String>
+    <sys:String x:Key="Str_St_UnknownDevicesOne">Cảnh báo: tìm thấy {0} thiết bị không xác định.</sys:String>
     <sys:String x:Key="Str_Tip_UnknownHead">Mới so với đường cơ sở của địa điểm này:</sys:String>
     <sys:String x:Key="Str_Tip_AndMore">và thêm {0}</sys:String>
     <sys:String x:Key="Str_Tip_TrustHint">Nhấp chuột phải vào thiết bị để phê duyệt.</sys:String>
     <sys:String x:Key="Str_St_KnownBaseline">Đã đặt đường cơ sở: {0} thiết bị hiện đã được biết. Chưa có thiết bị nào được phê duyệt.</sys:String>
+    <sys:String x:Key="Str_St_KnownBaselineOne">Đã đặt đường cơ sở: {0} thiết bị hiện đã được biết. Chưa có thiết bị nào được phê duyệt.</sys:String>
     <sys:String x:Key="Str_Loc_Title">Địa điểm</sys:String>
     <sys:String x:Key="Str_Loc_Temporary">Lần quét tạm thời</sys:String>
     <sys:String x:Key="Str_Loc_Unassigned">Chưa gán</sys:String>
@@ -408,7 +412,7 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Loc_DeleteScan">Xóa lần quét</sys:String>
     <sys:String x:Key="Str_Loc_ScanNameTaken">Đã có lần quét đã lưu tên {0}. Hãy chọn tên khác.</sys:String>
     <sys:String x:Key="Str_Loc_Busy">Hãy dừng quét trước khi đổi địa điểm.</sys:String>
-    <sys:String x:Key="Str_Loc_DeletedElsewhere">Địa điểm {0} đã bị xóa trong một cửa sổ khác. Các kết quả này giờ là “Lần quét tạm thời”. Để giữ lại, hãy chọn “Lưu kết quả vào địa điểm”.</sys:String>
+    <sys:String x:Key="Str_Loc_DeletedElsewhere">Địa điểm {0} đã bị xóa trong một cửa sổ khác. Để giữ lại các kết quả này, hãy chọn “Lưu kết quả vào địa điểm”.</sys:String>
     <sys:String x:Key="Str_Loc_ImportTooLarge">Tệp địa điểm này lớn hơn {0} MB, vượt quá mức KillerScan nhập được.</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTitle">Bỏ các kết quả này?</sys:String>
     <sys:String x:Key="Str_Loc_DiscardTemporary">Kết quả của “Lần quét tạm thời” này không được lưu ở đâu cả. Đổi địa điểm sẽ xóa chúng. Để giữ lại, hãy chọn “Lưu kết quả vào địa điểm”.</sys:String>
