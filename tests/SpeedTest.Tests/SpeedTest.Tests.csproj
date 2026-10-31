@@ -11,5 +11,6 @@
   <ItemGroup>
     <ProjectReference Include="../../KillerScan.csproj" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="Microsoft.VisualBasic" />
   </ItemGroup>
 </Project>

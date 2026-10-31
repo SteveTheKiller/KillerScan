@@ -79,16 +79,20 @@ namespace KillerScan.Services
         internal static string CsvField(string? value) =>
             "\"" + SpreadsheetSafeValue(value).Replace("\"", "\"\"") + "\"";
 
+        internal const string CsvHeader = "IP Address,Hostname,MAC Address,Vendor,Type,Open Ports,Confidence,Evidence,Access";
+
+        internal static string?[] CsvValues(NetworkDevice device) =>
+            [device.IpAddress, device.Hostname, device.MacAddress, device.Vendor, device.DeviceType, device.OpenPortsDisplay,
+                device.Recognition?.Confidence.ToString(), RecognitionText.Csv(device.Recognition), AccessWording.Csv(device)];
+
         internal static string BuildCsv(IEnumerable<NetworkDevice> devices)
         {
             var sb = new StringBuilder();
             // Confidence, Evidence and Access come last, so scripts that read the first six
             // columns by position keep working.
-            sb.AppendLine("IP Address,Hostname,MAC Address,Vendor,Type,Open Ports,Confidence,Evidence,Access");
+            sb.AppendLine(CsvHeader);
             foreach (var d in devices.OrderBy(d => d.IpSortKey))
-                sb.AppendLine(string.Join(",", CsvField(d.IpAddress), CsvField(d.Hostname),
-                    CsvField(d.MacAddress), CsvField(d.Vendor), CsvField(d.DeviceType), CsvField(d.OpenPortsDisplay),
-                    CsvField(d.Recognition?.Confidence.ToString()), CsvField(RecognitionText.Csv(d.Recognition)), CsvField(AccessWording.Csv(d))));
+                sb.AppendLine(string.Join(",", CsvValues(d).Select(CsvField)));
             return sb.ToString();
         }
 
