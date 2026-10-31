@@ -137,6 +137,7 @@ namespace KillerScan.Services
                     if (!sha.ComputeHash(original).SequenceEqual(sha.ComputeHash(helper)))
                         throw new InvalidDataException("The installed image changed after preparation. Nothing was removed.");
                 RemoveOwned(machine);
+                InstallationFiles.RemoveStaleHelpers(root, stage);
                 return 0;
             }
             catch (Exception error)
