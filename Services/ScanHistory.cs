@@ -39,6 +39,12 @@ namespace KillerScan.Services
         /// <summary>The adapter the run's traffic routed through. Empty in older entries and command-line runs.</summary>
         public string Adapter { get; set; } = string.Empty;
 
+        /// <summary>The gateway of the network scanned (<see cref="ScanNetwork"/>). Empty when unknown or in older entries.</summary>
+        public string GatewayMac { get; set; } = string.Empty;
+
+        /// <summary>The adapter's stable ID (<see cref="ScanNetwork"/>). Empty when unknown or in older entries.</summary>
+        public string AdapterId { get; set; } = string.Empty;
+
         /// <summary>The Location label shown when History lists every Location. Never saved.</summary>
         [System.Text.Json.Serialization.JsonIgnore]
         public string LocationName { get; set; } = string.Empty;
@@ -68,7 +74,21 @@ namespace KillerScan.Services
         internal bool IsBaselineFor(ScanHistoryEntry current) =>
             Completion == ScanCompletion.Complete && ComparisonKey is { } key &&
             string.Equals(key, current.ComparisonKey, StringComparison.OrdinalIgnoreCase) &&
-            Equals(Options, current.Options) && Deep == current.Deep;
+            Equals(Options, current.Options) && Deep == current.Deep && IsSameNetwork(current);
+
+        /// <summary>
+        /// True when the evidence puts two runs on one network: the same router, or failing that
+        /// the same adapter. Runs from before this was recorded have none, so they compare only
+        /// with each other, as they always did; a run with evidence never assumes one without.
+        /// </summary>
+        private bool IsSameNetwork(ScanHistoryEntry other)
+        {
+            if (GatewayMac.Length > 0 && other.GatewayMac.Length > 0)
+                return string.Equals(GatewayMac, other.GatewayMac, StringComparison.OrdinalIgnoreCase);
+            if (AdapterId.Length > 0 && other.AdapterId.Length > 0)
+                return string.Equals(AdapterId, other.AdapterId, StringComparison.OrdinalIgnoreCase);
+            return GatewayMac.Length + AdapterId.Length + other.GatewayMac.Length + other.AdapterId.Length == 0;
+        }
 
         /// <summary>What a screen reader announces for the entry's row in the history list.</summary>
         public override string ToString()
@@ -241,12 +261,14 @@ namespace KillerScan.Services
         /// decides which earlier runs are fair baselines.
         /// </summary>
         public ScanComparison Record(string caption, string targets, IEnumerable<NetworkDevice> devices,
-            ScanCompletion completion, ScanOptions options, bool deep, string adapter = "")
+            ScanCompletion completion, ScanOptions options, bool deep, string adapter = "", ScanNetwork? network = null)
         {
             var current = new ScanHistoryEntry
             {
                 ScannedAt = DateTimeOffset.Now,
                 Adapter = adapter,
+                GatewayMac = network?.GatewayMac ?? string.Empty,
+                AdapterId = network?.AdapterId ?? string.Empty,
                 Target = caption,
                 TargetKey = ScanHistoryEntry.KeyFor(targets),
                 Options = options,
@@ -273,7 +295,8 @@ namespace KillerScan.Services
             var copies = runs.Select(entry => new ScanHistoryEntry
             {
                 ScannedAt = entry.ScannedAt, Target = entry.Target, TargetKey = entry.TargetKey, Options = entry.Options,
-                Deep = entry.Deep, Completion = entry.Completion, Adapter = entry.Adapter, Name = entry.Name, Devices = [.. entry.Devices]
+                Deep = entry.Deep, Completion = entry.Completion, Adapter = entry.Adapter, GatewayMac = entry.GatewayMac,
+                AdapterId = entry.AdapterId, Name = entry.Name, Devices = [.. entry.Devices]
             }).ToList();
             if (MemoryOnly)
             {

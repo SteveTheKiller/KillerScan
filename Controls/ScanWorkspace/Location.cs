@@ -188,6 +188,7 @@ namespace KillerScan.Controls
             _active.Completion = ScanCompletion.Partial;
             _active.Refresh = null;
             _active.Adapter = string.Empty;
+            _active.Network = ScanNetwork.Unknown;
             _topologyPositions.Clear();
             _scanCompleted = false;
             RefreshDeviceCount();
@@ -485,42 +486,20 @@ namespace KillerScan.Controls
             // cache (an arp.exe run) happen off it, as the suggestion check does. Results count
             // only when they are this scan's: the table can hold a run of something else.
             bool sameScan = string.Equals(_active.SubnetText.Trim(), targets.Trim(), StringComparison.OrdinalIgnoreCase);
-            var known = sameScan
-                ? _active.Devices.Where(item => item.MacAddress.Length > 0)
-                    .GroupBy(item => item.IpAddress).ToDictionary(group => group.Key, group => group.First().MacAddress)
-                : [];
+            var known = sameScan ? ScanNetwork.Macs(_active.Devices) : [];
             string choice = _adapterChoice, ranOn = _active.Adapter;
-            string mac;
+            ScanNetwork network;
             try
             {
-                mac = await System.Threading.Tasks.Task.Run(() =>
+                network = await System.Threading.Tasks.Task.Run(() =>
                 {
-                    if (AttachedAdapter(targets, choice) is not { } adapter) return string.Empty;
-                    string gateway = AdapterGateway(adapter);
-                    if (gateway.Length == 0) return string.Empty;
-                    // From the results when the gateway is in them, otherwise from the neighbour cache
-                    // Windows already has (no traffic), so saving with an empty table still records the router.
-                    return string.Equals(ranOn, adapter.InterfaceName, StringComparison.OrdinalIgnoreCase) && known.TryGetValue(gateway, out var found) ? found
-                        : adapter.Neighbors().TryGetValue(gateway, out var cached) ? cached : string.Empty;
+                    string adapter = choice.Length > 0 ? choice : ScanNetwork.RouteAdapter(targets);
+                    bool sameAdapter = string.Equals(ranOn, adapter, StringComparison.OrdinalIgnoreCase);
+                    return ScanNetwork.Identify(targets, adapter, sameAdapter ? known : [], FindAdapter, AdapterGateway, AdapterIdentity);
                 });
             }
             catch (Exception ex) when (ex is not OutOfMemoryException) { return; }
-            if (mac.Length > 0) LocationService.AddGatewayMac(info, mac);
-        }
-
-        /// <summary>
-        /// The connected adapter these targets sit directly on, or null when that cannot be shown:
-        /// a chosen adapter that has gone, targets that do not parse, targets across two networks,
-        /// or targets reached through a route. The router of the PC's own network says nothing
-        /// about a site at the far end of a VPN, so a Location learns nothing from those.
-        /// </summary>
-        private ScanBinding? AttachedAdapter(string targets, string choice)
-        {
-            var parsed = ScanTargets.Parse(targets);
-            if (!parsed.Ok || parsed.Addresses.Count == 0) return null;
-            string name = choice.Length > 0 ? choice : RouteAdapter(targets);
-            var adapter = name.Length == 0 ? null : FindAdapter(name);
-            return adapter != null && parsed.Addresses.All(adapter.Contains) ? adapter : null;
+            if (network.GatewayMac.Length > 0) LocationService.AddGatewayMac(info, network.GatewayMac);
         }
 
         private int _suggestionCheck;
@@ -786,20 +765,14 @@ namespace KillerScan.Controls
         /// <summary>A connected adapter's default gateway. Tests supply their own.</summary>
         internal Func<ScanBinding, string> AdapterGateway { get; set; } = binding => binding.Gateway();
 
+        /// <summary>A connected adapter's stable ID. Tests supply their own.</summary>
+        internal Func<ScanBinding, string> AdapterIdentity { get; set; } = binding => binding.AdapterId();
+
         /// <summary>The adapters Scan settings offers. Tests supply their own.</summary>
         internal Func<IReadOnlyList<ScanBinding>> AvailableAdapters { get; set; } = ScanBinding.Available;
 
         /// <summary>Asks whether to scan on another adapter. Tests answer it without a dialog.</summary>
         internal Func<string, bool>? ConfirmAdapter { get; set; }
-
-        /// <summary>The adapter Windows would route these targets through, by its name, or empty.</summary>
-        private static string RouteAdapter(string targets)
-        {
-            var parsed = ScanTargets.Parse(targets);
-            if (!parsed.Ok || parsed.Addresses.Count == 0) return string.Empty;
-            try { return NetworkPlatform.Current.BestRoute(parsed.Addresses[0])?.Interface ?? string.Empty; }
-            catch (Exception ex) when (ex is not OutOfMemoryException) { return string.Empty; }
-        }
 
         /// <summary>
         /// Resolves the tab's adapter choice for one run. The choice is looked up again every
@@ -810,7 +783,7 @@ namespace KillerScan.Controls
         /// </summary>
         private bool AdapterAllowsScan(string targets, IReadOnlyList<System.Net.IPAddress> addresses, out string adapter)
         {
-            adapter = RouteAdapter(targets);
+            adapter = ScanNetwork.RouteAdapter(targets);
             if (_adapterChoice.Length == 0) { _active.Scanner.Binding = null; return true; }
             var binding = FindAdapter(_adapterChoice);
             if (binding == null)

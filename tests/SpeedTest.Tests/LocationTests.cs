@@ -27,6 +27,7 @@ internal static class LocationTests
             FailedImportMove(Path.Combine(root, "move"));
             DeletedDuringScan(Path.Combine(root, "deleted"));
             BaselineByTime(Path.Combine(root, "time"));
+            BaselineByNetwork(Path.Combine(root, "network"));
             AdoptKeepsTheRun(Path.Combine(root, "adopt"));
             SavedScanRename(Path.Combine(root, "rename"));
             ReloadKeepsUnsaved(Path.Combine(root, "reload"));
@@ -283,6 +284,60 @@ internal static class LocationTests
         var store = new HistoryStore(path);
         store.Load();
         return store;
+    }
+
+    // Two sites can share an address range. A run is compared only with one the evidence puts on
+    // the same network, and a gap in the evidence means no comparison rather than a wrong one.
+    private static void BaselineByNetwork(string root)
+    {
+        const string Targets = "192.168.1.0/24";
+        ScanNetwork Office = new("AA:AA:AA:00:00:01", "adapter-1"), Plant = new("BB:BB:BB:00:00:02", "adapter-2");
+        int store = 0;
+        HistoryStore Fresh()
+        {
+            var history = new HistoryStore(Path.Combine(root, (++store).ToString(), "history.json"));
+            history.Load();
+            return history;
+        }
+        ScanComparison Run(HistoryStore history, ScanNetwork network, string adapter = "Ethernet")
+        {
+            var result = history.Record(Targets, Targets, [Device("192.168.1.10")], ScanCompletion.Complete, new ScanOptions(), false, adapter, network);
+            System.Threading.Thread.Sleep(2);
+            return result;
+        }
+
+        var overlap = Fresh();
+        var first = Run(overlap, Office);
+        Require(first.Previous == null && Run(overlap, Plant).Previous == null, "Two networks on one address range are never compared.");
+        Require(Run(overlap, Office).Previous?.ScannedAt == first.Current.ScannedAt, "A run finds its own network's last run, even with another's in between.");
+
+        var renamed = Fresh();
+        Run(renamed, Office, "Ethernet");
+        Require(Run(renamed, Office, "Office LAN").Previous != null, "Renaming the adapter changes nothing.");
+
+        var unreadRouter = Fresh();
+        Run(unreadRouter, Office);
+        Require(Run(unreadRouter, new ScanNetwork("", "adapter-1")).Previous != null, "A gateway missing from the ARP cache falls back on the same adapter.");
+
+        var elsewhere = Fresh();
+        Run(elsewhere, new ScanNetwork("", "other-pc"));
+        Require(Run(elsewhere, new ScanNetwork("", "this-pc"), "Ethernet").Previous == null, "The same adapter name on another PC is not the same network.");
+        Run(elsewhere, new ScanNetwork(Office.GatewayMac, "other-pc"));
+        Require(Run(elsewhere, new ScanNetwork(Office.GatewayMac, "this-pc")).Previous != null, "The same router seen from another PC is the same network.");
+
+        var legacy = Fresh();
+        Require(legacy.Record(Targets, Targets, [Device("192.168.1.10")], ScanCompletion.Complete, new ScanOptions(), false).Previous == null, "A run with no evidence starts.");
+        System.Threading.Thread.Sleep(2);
+        Require(legacy.Record(Targets, Targets, [Device("192.168.1.10")], ScanCompletion.Complete, new ScanOptions(), false).Previous != null, "Older runs with no evidence still compare with each other.");
+        System.Threading.Thread.Sleep(2);
+        Require(Run(legacy, Office).Previous == null, "A run with evidence does not assume an older run was on its network.");
+
+        // The evidence travels with the run, through the file and a move to another Location.
+        var saved = Reread(overlap.HistoryPath);
+        Require(saved.Entries[0].GatewayMac == Office.GatewayMac && saved.Entries[0].AdapterId == Office.AdapterId, "The evidence reaches the file.");
+        var moved = Fresh();
+        Require(moved.Adopt([saved.Entries[0]]) == AdoptResult.Saved && Reread(moved.HistoryPath).Entries[0].GatewayMac == Office.GatewayMac, "Moving a run keeps its evidence.");
+        Require(Run(moved, Office).Previous != null, "A moved run can still be a baseline.");
     }
 
     // Adopting succeeds only when the run itself is in the file. A run the destination's retention

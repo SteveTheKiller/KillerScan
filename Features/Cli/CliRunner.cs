@@ -228,7 +228,10 @@ namespace KillerScan.Features.Cli
             var options = scanOptions ?? new ScanOptions();
             if (quick) options = options.Without("ports,http,tls,ssh");
             var history = location.History;
-            if (!history.Record(caption, targets, devices, ScanCompletion.Complete, options, deep: false, adapter).Saved)
+            ScanNetwork network;
+            try { network = ScanNetwork.Identify(targets, adapter.Length > 0 ? adapter : ScanNetwork.RouteAdapter(targets), ScanNetwork.Macs(devices)); }
+            catch (Exception ex) when (ex is not OutOfMemoryException) { network = ScanNetwork.Unknown; }
+            if (!history.Record(caption, targets, devices, ScanCompletion.Complete, options, deep: false, adapter, network).Saved)
                 err.WriteLine(PaintErr("Warning: the scan could not be saved to history - " + Flatten(history.SaveError), AnsiBad));
             if (devices.Count == 0) return;
             var seen = location.Devices.Observe(devices);

@@ -55,6 +55,7 @@ namespace KillerScan.Controls
             }
             if (!AdapterAllowsScan(Targets, targets.Addresses, out string adapter)) return;
             _active.Adapter = adapter;
+            _active.Network = ScanNetwork.Unknown;
             _active.SubnetText = Targets;
             _active.ScannedSubnet = targets.Summary;
             _active.ScannedAt = DateTimeOffset.Now;
@@ -88,6 +89,8 @@ namespace KillerScan.Controls
                 {
                     // Deleted elsewhere while scanning: the results stay, as a Temporary scan.
                     if (LeaveDeletedLocation()) location = _location;
+                    // A demo's fabricated network says nothing about the adapter of the PC running it.
+                    if (!DemoData.Enabled) _active.Network = await IdentifyNetwork();
                     if (!_runDeepAfterScan || _active.Devices.Count == 0) RecordCompletedRun(options, deep: false);
                     NoteKnownDevices(location);
                 }
@@ -144,10 +147,19 @@ namespace KillerScan.Controls
             _filteredView?.Refresh();
         }
 
+        // Off the UI thread: the ARP read is an arp.exe run. A run with no evidence just compares less.
+        private async Task<ScanNetwork> IdentifyNetwork()
+        {
+            var macs = ScanNetwork.Macs(_active.Devices);
+            string targets = _active.SubnetText, adapter = _active.Adapter;
+            try { return await Task.Run(() => ScanNetwork.Identify(targets, adapter, macs, FindAdapter, AdapterGateway, AdapterIdentity)); }
+            catch (Exception ex) when (ex is not OutOfMemoryException) { return ScanNetwork.Unknown; }
+        }
+
         private void RecordCompletedRun(ScanOptions options, bool deep, ScanCompletion completion = ScanCompletion.Complete)
         {
             var history = _location.History;
-            var recorded = history.Record(_active.ScannedSubnet, _active.SubnetText, _active.Devices, completion, options, deep, _active.Adapter);
+            var recorded = history.Record(_active.ScannedSubnet, _active.SubnetText, _active.Devices, completion, options, deep, _active.Adapter, _active.Network);
             _active.ScannedAt = recorded.Current.ScannedAt;
             _active.Completion = completion;
             if (_disposed) return;

@@ -25,6 +25,9 @@ namespace KillerScan.Models
         /// <summary>The adapter the scan's traffic routed through when it started.</summary>
         public string Adapter { get; set; } = string.Empty;
 
+        /// <summary>The evidence for which network the last run was on.</summary>
+        public ScanNetwork Network { get; set; } = ScanNetwork.Unknown;
+
         /// <summary>
         /// Manual rescans after the scan itself. They change some devices but not the scan's
         /// own time or completion, so reports state them separately. Null until a refresh.

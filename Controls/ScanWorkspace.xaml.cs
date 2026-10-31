@@ -250,6 +250,7 @@ namespace KillerScan.Controls
             _active.Completion = ScanCompletion.Complete;
             _active.Refresh = null;
             _active.Adapter = string.Empty;
+            _active.Network = ScanNetwork.Unknown;
             _active.Devices.Clear();
             foreach (var device in devices) _active.Devices.Add(device);
             RefreshDeviceCount();

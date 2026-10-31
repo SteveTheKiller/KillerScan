@@ -75,6 +75,8 @@ namespace KillerScan.Services
                     // here: DisplayName and the reports read them without null checks.
                     entry.Name ??= string.Empty;
                     entry.Adapter ??= string.Empty;
+                    entry.GatewayMac ??= string.Empty;
+                    entry.AdapterId ??= string.Empty;
                     entry.Devices ??= [];
                     entry.Devices.RemoveAll(device => device == null || string.IsNullOrWhiteSpace(device.Identity));
                     foreach (var device in entry.Devices)

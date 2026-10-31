@@ -304,6 +304,30 @@ internal static class LocationWorkspaceTests
             Require(Learned("10.8.5.0/24", "Office VPN").Count == 0, "A target behind a VPN teaches nothing.");
             Require(Learned("192.168.1.1, 10.0.0.1", "").Count == 0, "Targets on two networks teach nothing.");
             Require(Learned("192.168.1.0/24", "Missing").Count == 0, "An adapter that is gone teaches nothing.");
+            // The same address range on two adapters: each run compares only with its own network.
+            var second = new ScanBinding("Second", System.Net.IPAddress.Parse("192.168.1.6"), 24);
+            bindings.Add(second);
+            workspace.AdapterGateway = binding => binding == second ? "192.168.1.254" : binding == ethernet ? "192.168.1.1" : "";
+            workspace.AdapterIdentity = binding => "id-of-" + binding.InterfaceName;
+            platform.Cache["192.168.1.254"] = "CC:CC:CC:00:00:03";
+            Require(LocationService.Create("Overlap", out var overlap), "A Location is created.");
+            var data = LocationService.Get(overlap!);
+            workspace.SetLocation(data);
+            workspace.Targets = "192.168.1.10";
+            ScanHistoryEntry RunOn(string adapter)
+            {
+                int before = data.History.Entries.Count;
+                workspace.AdapterChoice = adapter;
+                workspace.Scan();
+                PumpUntil(() => !workspace.IsScanning && data.History.Entries.Count == before + 1);
+                Thread.Sleep(2);
+                return data.History.Entries.Last();
+            }
+            var onEthernet = RunOn("Ethernet");
+            Require(onEthernet.GatewayMac == "AA:AA:AA:00:00:01" && onEthernet.AdapterId == "id-of-Ethernet", "A run records its network.");
+            Require(data.History.Compare(RunOn("Second")).Previous == null, "The other adapter's run on the same range has no baseline.");
+            Require(data.History.Compare(RunOn("Ethernet")).Previous?.ScannedAt == onEthernet.ScannedAt, "A run compares with its own network's last run.");
+
             platform.Cache.Clear();
             Require(Learned("192.168.1.0/24", "").Count == 0, "A router Windows has not seen teaches nothing, and sends nothing.");
         }
