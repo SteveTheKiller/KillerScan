@@ -476,30 +476,51 @@ namespace KillerScan.Controls
         private void OnNetworkAddressChanged(object? sender, EventArgs e) =>
             Dispatcher.BeginInvoke(new Action(CheckLocationSuggestion));
 
-        private async void RecordGateway(LocationData location)
+        private async void RecordGateway(LocationData location, string targets)
         {
             if (location.Info is not { } info || location.IsShared) return;
             // The migrated "Saved scans" holding Location mixes every old site, so it never claims one.
             if (LocationService.IsImportedScans(info)) return;
-            // The results are read here, on the UI thread; adapter detection and the neighbour
-            // cache (an arp.exe run) happen off it, as the suggestion check does.
-            var known = _active.Devices.Where(item => item.MacAddress.Length > 0)
-                .GroupBy(item => item.IpAddress).ToDictionary(group => group.Key, group => group.First().MacAddress);
+            // The results are read here, on the UI thread; the adapter lookup and the neighbour
+            // cache (an arp.exe run) happen off it, as the suggestion check does. Results count
+            // only when they are this scan's: the table can hold a run of something else.
+            bool sameScan = string.Equals(_active.SubnetText.Trim(), targets.Trim(), StringComparison.OrdinalIgnoreCase);
+            var known = sameScan
+                ? _active.Devices.Where(item => item.MacAddress.Length > 0)
+                    .GroupBy(item => item.IpAddress).ToDictionary(group => group.Key, group => group.First().MacAddress)
+                : [];
+            string choice = _adapterChoice, ranOn = _active.Adapter;
             string mac;
             try
             {
                 mac = await System.Threading.Tasks.Task.Run(() =>
                 {
-                    string gateway = LocalNetwork.Detect()?.Gateway ?? string.Empty;
+                    if (AttachedAdapter(targets, choice) is not { } adapter) return string.Empty;
+                    string gateway = AdapterGateway(adapter);
                     if (gateway.Length == 0) return string.Empty;
                     // From the results when the gateway is in them, otherwise from the neighbour cache
                     // Windows already has (no traffic), so saving with an empty table still records the router.
-                    return known.TryGetValue(gateway, out var found) ? found
-                        : NetworkPlatform.Current.ReadNeighborCache().TryGetValue(gateway, out var cached) ? cached : string.Empty;
+                    return string.Equals(ranOn, adapter.InterfaceName, StringComparison.OrdinalIgnoreCase) && known.TryGetValue(gateway, out var found) ? found
+                        : adapter.Neighbors().TryGetValue(gateway, out var cached) ? cached : string.Empty;
                 });
             }
             catch (Exception ex) when (ex is not OutOfMemoryException) { return; }
             if (mac.Length > 0) LocationService.AddGatewayMac(info, mac);
+        }
+
+        /// <summary>
+        /// The connected adapter these targets sit directly on, or null when that cannot be shown:
+        /// a chosen adapter that has gone, targets that do not parse, targets across two networks,
+        /// or targets reached through a route. The router of the PC's own network says nothing
+        /// about a site at the far end of a VPN, so a Location learns nothing from those.
+        /// </summary>
+        private ScanBinding? AttachedAdapter(string targets, string choice)
+        {
+            var parsed = ScanTargets.Parse(targets);
+            if (!parsed.Ok || parsed.Addresses.Count == 0) return null;
+            string name = choice.Length > 0 ? choice : RouteAdapter(targets);
+            var adapter = name.Length == 0 ? null : FindAdapter(name);
+            return adapter != null && parsed.Addresses.All(adapter.Contains) ? adapter : null;
         }
 
         private int _suggestionCheck;
@@ -762,6 +783,9 @@ namespace KillerScan.Controls
         /// <summary>Finds a connected adapter by name. Tests supply their own adapters.</summary>
         internal Func<string, ScanBinding?> FindAdapter { get; set; } = ScanBinding.Find;
 
+        /// <summary>A connected adapter's default gateway. Tests supply their own.</summary>
+        internal Func<ScanBinding, string> AdapterGateway { get; set; } = binding => binding.Gateway();
+
         /// <summary>The adapters Scan settings offers. Tests supply their own.</summary>
         internal Func<IReadOnlyList<ScanBinding>> AvailableAdapters { get; set; } = ScanBinding.Available;
 
@@ -841,7 +865,7 @@ namespace KillerScan.Controls
             var store = location.SavedScans;
             bool saved = PersistenceFeedback.Check(store.SaveEdited(label, target, _active.Options, _adapterChoice),
                 store.Retry, () => store.SaveError);
-            if (saved) RecordGateway(location);   // this Location now knows this network
+            if (saved) RecordGateway(location, target);   // this Location now knows this network
             LocationChanged?.Invoke(this, EventArgs.Empty);
             return saved;
         }

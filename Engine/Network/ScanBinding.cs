@@ -42,6 +42,39 @@ namespace KillerScan.Engine
             return (ToUInt(address) & mask) == (ToUInt(LocalAddress) & mask);
         }
 
+        /// <summary>This adapter's IPv4 default gateway, or empty when it has none or has gone.</summary>
+        public string Gateway() => Adapter()?.GetIPProperties().GatewayAddresses
+            .FirstOrDefault(gateway => gateway.Address.AddressFamily == AddressFamily.InterNetwork)?.Address.ToString() ?? string.Empty;
+
+        /// <summary>The ID Windows keeps for this adapter when it is renamed, or empty when it has gone.</summary>
+        public string AdapterId() => Adapter()?.Id ?? string.Empty;
+
+        private NetworkInterface? Adapter()
+        {
+            try
+            {
+                return NetworkInterface.GetAllNetworkInterfaces()
+                    .FirstOrDefault(adapter => string.Equals(adapter.Name, InterfaceName, StringComparison.OrdinalIgnoreCase));
+            }
+            catch (NetworkInformationException) { return null; }
+        }
+
+        /// <summary>
+        /// The neighbor (ARP) cache as this adapter sees it, so another adapter carrying the same
+        /// subnet cannot answer for it.
+        /// </summary>
+        public IReadOnlyDictionary<string, string> Neighbors()
+        {
+            if (NetworkPlatform.Current is WindowsNetworkPlatform windows
+                && System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+            {
+#pragma warning disable CA1416
+                return windows.ReadNeighborCacheOn(LocalAddress);
+#pragma warning restore CA1416
+            }
+            return NetworkPlatform.Current.ReadNeighborCache();
+        }
+
         /// <summary>The adapter's network in CIDR form, such as 192.168.1.0/24.</summary>
         public string Network
         {

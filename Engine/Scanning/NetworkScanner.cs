@@ -410,17 +410,8 @@ namespace KillerScan.Engine
         }
 
         /// <summary>The neighbor (ARP) cache from the platform; a bound run reads only its own adapter's.</summary>
-        private static IReadOnlyDictionary<string, string> GetArpCache()
-        {
-            if (ScanSource.Current is { } binding && NetworkPlatform.Current is WindowsNetworkPlatform windows
-                && System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-            {
-#pragma warning disable CA1416
-                return windows.ReadNeighborCacheOn(binding.LocalAddress);
-#pragma warning restore CA1416
-            }
-            return NetworkPlatform.Current.ReadNeighborCache();
-        }
+        private static IReadOnlyDictionary<string, string> GetArpCache() =>
+            ScanSource.Current?.Neighbors() ?? NetworkPlatform.Current.ReadNeighborCache();
 
         /// <summary>
         /// Probe a single host for hostname, open ports, fingerprints, and device type.

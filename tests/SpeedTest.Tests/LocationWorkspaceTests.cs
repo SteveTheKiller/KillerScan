@@ -88,6 +88,7 @@ internal static class LocationWorkspaceTests
             SaveResultsIsDurable(Path.Combine(root, "move"));
             RetryRepeatsTheChange(Path.Combine(root, "retry", "history.json"));
             ImportedNullsReachHistorySafely(Path.Combine(root, "nulls"));
+            GatewayFollowsTheScan(Path.Combine(root, "gateway"));
             Suggestion(Path.Combine(root, "service"));
             AdapterPreference(Path.Combine(root, "adapter"));
             LocationControls(Path.Combine(root, "controls"));
@@ -247,6 +248,66 @@ internal static class LocationWorkspaceTests
                 "Results move without a saved scan when the scan bar is empty.");
         }
         finally { PersistenceFeedback.Answer = null; }
+    }
+
+    private sealed class TwoNetworks : INetworkPlatform
+    {
+        internal readonly Dictionary<string, string> Cache = new()
+        {
+            ["192.168.1.1"] = "AA:AA:AA:00:00:01",
+            ["10.0.0.1"] = "BB:BB:BB:00:00:02",
+        };
+        public IReadOnlyDictionary<string, string> ReadNeighborCache() => Cache;
+        public string ResolveMac(System.Net.IPAddress address) => "";
+        public void FlushDnsCache() { }
+        public (string Interface, string NextHop)? BestRoute(System.Net.IPAddress address)
+        {
+            string text = address.ToString();
+            return text.StartsWith("192.168.1.") ? ("Ethernet", "") : text.StartsWith("10.8.") ? ("Office VPN", "") : ("Wi-Fi", "10.0.0.1");
+        }
+    }
+
+    // Saving a scan teaches its Location the router of the network that scan is on, and nothing
+    // when that cannot be shown. Whatever adapter the PC happens to prefer has no say.
+    private static void GatewayFollowsTheScan(string root)
+    {
+        var original = NetworkPlatform.Current;
+        var platform = new TwoNetworks();
+        var ethernet = new ScanBinding("Ethernet", System.Net.IPAddress.Parse("192.168.1.5"), 24);
+        var wifi = new ScanBinding("Wi-Fi", System.Net.IPAddress.Parse("10.0.0.5"), 24);
+        var vpn = new ScanBinding("Office VPN", System.Net.IPAddress.Parse("10.8.0.2"), 32);
+        var bindings = new List<ScanBinding> { ethernet, wifi, vpn };
+        try
+        {
+            NetworkPlatform.Current = platform;
+            LocationService.Root = root;
+            LocationService.Load("Unassigned");
+            using var workspace = new ScanWorkspace("192.168.1.0/24", false, new SiteScanner());
+            workspace.FindAdapter = name => bindings.FirstOrDefault(binding => binding.InterfaceName == name);
+            workspace.AdapterGateway = binding => binding == ethernet ? "192.168.1.1" : binding == wifi ? "10.0.0.1" : "";
+            int site = 0;
+            System.Collections.Generic.List<string> Learned(string targets, string adapter)
+            {
+                Require(LocationService.Create("Site " + ++site, out var info), "A Location is created.");
+                workspace.OpenLocation(info!);
+                workspace.Targets = targets;
+                workspace.AdapterChoice = adapter;
+                Require(workspace.SaveCurrentScan(null), "The scan is saved: " + targets);
+                PumpUntil(() => LocationService.Find(info!.Id)!.GatewayMacs.Count > 0, 250);
+                return LocationService.Find(info!.Id)!.GatewayMacs;
+            }
+
+            Require(Learned("192.168.1.0/24", "").SequenceEqual(new[] { "AA:AA:AA:00:00:01" }), "Automatic learns the router of the adapter that carries the target.");
+            Require(Learned("10.0.0.0/24", "Wi-Fi").SequenceEqual(new[] { "BB:BB:BB:00:00:02" }), "A chosen adapter learns its own router.");
+            Require(Learned("10.0.0.0/24", "").SequenceEqual(new[] { "BB:BB:BB:00:00:02" }), "Automatic follows the route, whichever adapter is preferred.");
+            Require(Learned("8.8.8.8", "").Count == 0, "A remote target's local router says nothing about that site.");
+            Require(Learned("10.8.5.0/24", "Office VPN").Count == 0, "A target behind a VPN teaches nothing.");
+            Require(Learned("192.168.1.1, 10.0.0.1", "").Count == 0, "Targets on two networks teach nothing.");
+            Require(Learned("192.168.1.0/24", "Missing").Count == 0, "An adapter that is gone teaches nothing.");
+            platform.Cache.Clear();
+            Require(Learned("192.168.1.0/24", "").Count == 0, "A router Windows has not seen teaches nothing, and sends nothing.");
+        }
+        finally { NetworkPlatform.Current = original; }
     }
 
     // A .ksloc is data from somewhere else. Explicit nulls and missing fields reach the History table
@@ -593,12 +654,12 @@ internal static class LocationWorkspaceTests
         finally { NetworkPlatform.Current = original; }
     }
 
-    private static void PumpUntil(Func<bool> complete)
+    private static void PumpUntil(Func<bool> complete, int timeoutMs = 3000)
     {
         var frame = new System.Windows.Threading.DispatcherFrame();
         var elapsed = System.Diagnostics.Stopwatch.StartNew();
         var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(5) };
-        timer.Tick += (_, _) => { if (complete() || elapsed.ElapsedMilliseconds > 3000) frame.Continue = false; };
+        timer.Tick += (_, _) => { if (complete() || elapsed.ElapsedMilliseconds > timeoutMs) frame.Continue = false; };
         timer.Start();
         System.Windows.Threading.Dispatcher.PushFrame(frame);
         timer.Stop();

@@ -132,7 +132,7 @@ namespace KillerScan.Controls
             // A Location learns a network only from what was saved into it: a run that finishes on
             // one of its saved scans' targets records the router; any other run does not.
             if (location.SavedScans.Items.Any(saved => string.Equals(saved.Target.Trim(), _active.SubnetText.Trim(), StringComparison.OrdinalIgnoreCase)))
-                RecordGateway(location);
+                RecordGateway(location, _active.SubnetText);
             var devices = location.Devices;
             var seen = devices.Observe(_active.Devices.ToList());
             PersistenceFeedback.Check(seen.Saved, devices.Retry, () => devices.SaveError);
