@@ -7,20 +7,14 @@
   background: var(--modal) var(--grain-img) repeat;
   background-size: 256px 256px;
   border: 1px solid var(--pane-border);
-  border-left: 2px solid var(--tab-edge);
-  border-right: 2px solid var(--tab-edge);
   border-radius: 7px;
-  box-shadow: 0 12px 26px rgba(0,0,0,.26);
+  box-shadow: 0 0 0 1px var(--tab-edge), 0 12px 26px rgba(0,0,0,.26);
   overflow: hidden;
   transition: transform .12s, box-shadow .15s, border-color .12s;
 }
 .js .feature-carousel .feature-grid:hover {
   transform: translateY(-3px);
-  border-left-color: var(--accent);
-  border-right-color: var(--accent);
-  border-top-color: var(--dragline);
-  border-bottom-color: var(--dragline);
-  box-shadow: 0 20px 40px rgba(0,0,0,.5);
+  box-shadow: 0 0 0 1px var(--accent), 0 20px 40px rgba(0,0,0,.5);
 }
 .js .feature-carousel .feature-card {
   display: none;
