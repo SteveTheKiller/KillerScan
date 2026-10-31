@@ -5,8 +5,9 @@ namespace KillerScan.Services
     /// <summary>
     /// The evidence for which network a run was on. An address range is not that evidence: two
     /// sites can both be 192.168.1.0/24. The gateway's MAC is that one router's, and it means the
-    /// same on any PC. The adapter ID survives renaming the adapter and belongs to one PC, so it
-    /// covers a run with no gateway to read, such as one behind a VPN.
+    /// same on any PC. The adapter ID survives renaming the adapter and normally belongs to one PC,
+    /// though PCs cloned from one image can share it, so it only covers a run with no gateway to
+    /// read, such as one behind a VPN.
     /// </summary>
     internal sealed record ScanNetwork(string GatewayMac, string AdapterId)
     {
