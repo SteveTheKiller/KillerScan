@@ -816,7 +816,7 @@ namespace KillerScan.Features.Cli
         {
             "csv" => Csv(devices, !noHeader),
             "json" => JsonSerializer.Serialize(devices, new JsonSerializerOptions { WriteIndented = true }),
-            "html" => ReportExport.BuildHtml(devices, label, theme.ToLowerInvariant()),
+            "html" => ReportExport.BuildHtml(devices, label, theme.Equals("98se", StringComparison.OrdinalIgnoreCase) ? "se98" : theme.ToLowerInvariant()),
             _ => Table(devices, !noHeader),
         };
 
