@@ -4,7 +4,7 @@ KillerScan installs one application image. Per-user installations use %LOCALAPPD
 
 ## Silent uninstall
 
-Read QuietUninstallString from the installation's Software\Microsoft\Windows\CurrentVersion\Uninstall\KillerScan key in HKCU or HKLM. Execute that command as registered and wait for its process to exit. It uses the fixed Windows PowerShell executable with an immutable command, prepares a verified copy of the installed helper, waits for removal and deletes the stopped helper before returning success.
+Read QuietUninstallString from the installation's Software\Microsoft\Windows\CurrentVersion\Uninstall\KillerScan key in HKCU or HKLM. Execute that command as registered and wait for its process to exit. Start it directly, not through `cmd /c`: the all-users command is about 15,000 characters, and cmd.exe stops at 8,191. It uses the fixed Windows PowerShell executable with an immutable command, prepares a verified copy of the installed helper, waits for removal and deletes the stopped helper before returning success.
 
 Chocolatey's uninstall script uses this registered command and checks that the installed image is gone. If the registration is missing or uses an older completion protocol, repair or update the installation before retrying.
 
