@@ -151,16 +151,16 @@ namespace KillerScan.Services
         }
 
         /// <summary>
-        /// Where a new tab starts: the last Location used, or a Temporary scan. Hosts that never
-        /// loaded Locations get the app-wide stores, as before Locations existed.
+        /// Where a new tab starts: the last Location used, then Unassigned, which only an upgraded
+        /// install has. A fresh install has neither and starts as a Temporary scan, which saves
+        /// nothing and says so. Hosts that never loaded Locations get the app-wide stores, as
+        /// before Locations existed.
         /// </summary>
         public static LocationData Initial()
         {
             if (!Loaded) return LocationData.Shared();
             if (DemoData.Enabled) return LocationData.Shared();
             string? last = App.GetSetting("LastLocation");
-            // Every scan is unsaved until it is saved into a Location, and unsaved scans keep their
-            // history in Unassigned. There is no Temporary start any more (Steve, 2026-10-26).
             var info = Items.FirstOrDefault(item => item.Id == last)
                 ?? Items.FirstOrDefault(item => item.Id == LocationCatalog.UnassignedId);
             return info == null ? LocationData.Temporary() : Get(info);

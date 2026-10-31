@@ -58,6 +58,17 @@ internal static class LocationTests
         catalog.Load("Unassigned");
         Require(catalog.LoadError == null && catalog.Items.Count == 0, "A fresh install has no Locations and no error.");
         Require(File.Exists(Path.Combine(root, "locations.json")), "A fresh install publishes an empty catalog.");
+
+        // Two windows opening together on a clean profile.
+        string together = Path.Combine(root, "together");
+        var starts = System.Linq.Enumerable.Range(0, 2).Select(_ => System.Threading.Tasks.Task.Run(() =>
+        {
+            var window = new LocationCatalog(together);
+            window.Load("Unassigned");
+            return window.LoadError == null ? window.Items.Count : -1;
+        })).ToArray();
+        System.Threading.Tasks.Task.WaitAll(starts);
+        Require(starts.All(start => start.Result == 0), "Two first starts each find an empty, working catalog.");
     }
 
     private static void SeedLegacy(string root)

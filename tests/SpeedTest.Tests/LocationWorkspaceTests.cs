@@ -89,6 +89,7 @@ internal static class LocationWorkspaceTests
             RetryRepeatsTheChange(Path.Combine(root, "retry", "history.json"));
             ImportedNullsReachHistorySafely(Path.Combine(root, "nulls"));
             GatewayFollowsTheScan(Path.Combine(root, "gateway"));
+            FreshInstallIsTemporary(Path.Combine(root, "fresh"));
             Suggestion(Path.Combine(root, "service"));
             AdapterPreference(Path.Combine(root, "adapter"));
             LocationControls(Path.Combine(root, "controls"));
@@ -332,6 +333,81 @@ internal static class LocationWorkspaceTests
             Require(Learned("192.168.1.0/24", "").Count == 0, "A router Windows has not seen teaches nothing, and sends nothing.");
         }
         finally { NetworkPlatform.Current = original; }
+    }
+
+    // A fresh install starts as a Temporary scan, which saves nothing, and says so once there is
+    // something to lose. An upgraded profile starts in Unassigned, which keeps its runs.
+    private static void FreshInstallIsTemporary(string root)
+    {
+        string notice = (string)Application.Current.FindResource("Str_Loc_TemporaryNotice");
+        string fresh = Path.Combine(root, "fresh");
+        LocationService.Root = fresh;
+        LocationService.Load("Unassigned");
+        Require(LocationService.Items.Count == 0 && LocationService.Editable, "A clean profile has an empty, working catalog.");
+        var initial = LocationService.Initial();
+        Require(initial.IsTemporary, "A clean profile starts as a Temporary scan.");
+        using (var workspace = new ScanWorkspace("192.168.1.10", false, new SiteScanner()))
+        {
+            workspace.SetLocation(initial);
+            Require(workspace.LocationName == (string)Application.Current.FindResource("Str_Loc_Temporary"), "The Location button says Temporary scan.");
+            workspace.Scan();
+            PumpUntil(() => !workspace.IsScanning && initial.History.Entries.Count == 1);
+            Require(workspace.Status == notice, "A finished Temporary scan says it is not saved.");
+        }
+        Require(!Directory.EnumerateFiles(fresh, "history.json", SearchOption.AllDirectories).Any(), "Nothing is written to disk.");
+
+        // Closed and reopened: nothing came back, and it still starts Temporary.
+        LocationService.Load("Unassigned");
+        Require(LocationService.Items.Count == 0 && LocationService.Initial().IsTemporary, "Reopening a clean profile starts Temporary again.");
+
+        // A Temporary scan with no results to lose says nothing about saving them.
+        using (var empty = new ScanWorkspace("192.168.1.10", false, new EmptyScanner()))
+        {
+            var temporary = LocationData.Temporary();
+            empty.SetLocation(temporary);
+            empty.Scan();
+            PumpUntil(() => !empty.IsScanning && temporary.History.Entries.Count == 1);
+            Require(empty.Status != notice, "An empty Temporary scan has nothing to warn about.");
+        }
+
+        // An upgrade keeps saving: the same start, with files from an earlier version.
+        string upgraded = Path.Combine(root, "upgraded");
+        Directory.CreateDirectory(upgraded);
+        File.WriteAllText(Path.Combine(upgraded, "devices.json"), "{}");
+        LocationService.Root = upgraded;
+        LocationService.Load("Unassigned");
+        var unassigned = LocationService.Initial();
+        Require(!unassigned.IsTemporary && unassigned.Info?.Id == LocationCatalog.UnassignedId, "An upgraded profile starts in Unassigned.");
+        using (var workspace = new ScanWorkspace("192.168.1.10", false, new SiteScanner()))
+        {
+            workspace.SetLocation(unassigned);
+            workspace.Scan();
+            PumpUntil(() => !workspace.IsScanning && unassigned.History.Entries.Count == 1);
+            Require(workspace.Status != notice, "Unassigned keeps its runs, so it gives no warning.");
+        }
+
+        // A catalog that cannot be read is reported at startup, and has nothing to offer saving into.
+        string corrupt = Path.Combine(root, "corrupt");
+        Directory.CreateDirectory(corrupt);
+        File.WriteAllText(Path.Combine(corrupt, "locations.json"), "{broken");
+        LocationService.Root = corrupt;
+        LocationService.Load("Unassigned");
+        var unavailable = LocationService.Initial();
+        Require(unavailable.IsTemporary && LocationService.LoadError != null, "An unreadable catalog runs Temporary and says why.");
+        using (var workspace = new ScanWorkspace("192.168.1.10", false, new SiteScanner()))
+        {
+            workspace.SetLocation(unavailable);
+            workspace.Scan();
+            PumpUntil(() => !workspace.IsScanning && unavailable.History.Entries.Count == 1);
+            Require(workspace.Status != notice, "Save scan is not on offer, so the notice does not point to it.");
+        }
+        Require(File.ReadAllText(Path.Combine(corrupt, "locations.json")) == "{broken", "The unreadable catalog keeps its bytes.");
+    }
+
+    private sealed class EmptyScanner : NetworkScanner
+    {
+        public override Task<List<NetworkDevice>> ScanSubnetAsync(string target, CancellationToken token, ScanOptions options, bool fullScan = true) =>
+            Task.FromResult(new List<NetworkDevice>());
     }
 
     // A .ksloc is data from somewhere else. Explicit nulls and missing fields reach the History table

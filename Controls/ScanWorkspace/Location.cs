@@ -122,13 +122,13 @@ namespace KillerScan.Controls
             StateChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        /// <summary>Where a window goes when its Location is deleted: Unassigned, the normal
-        /// unsaved state. Temporary is only the fallback when Locations cannot be read at all.</summary>
+        /// <summary>Where a window goes when its Location is deleted: Unassigned on an upgraded
+        /// install, otherwise a Temporary scan, as a fresh install starts.</summary>
         private static LocationData UnsavedLocation() =>
             LocationService.Find(LocationCatalog.UnassignedId) is { } unassigned ? LocationService.Get(unassigned) : LocationData.Temporary();
 
         /// <summary>
-        /// Moves the tab to Unassigned when its Location was deleted, by another window or another
+        /// Moves the tab out when its Location was deleted, by another window or another
         /// KillerScan, since the tab opened it. Without this, every later rename, approval or
         /// recorded scan would quietly recreate the deleted Location's folder, where nothing lists
         /// it. The results stay on screen, so they can still be saved to a Location. Returns true
@@ -249,8 +249,8 @@ namespace KillerScan.Controls
         private ContextMenu BuildLocationMenu()
         {
             var menu = new ContextMenu { PlacementTarget = LocationButton, Placement = PlacementMode.Bottom, VerticalOffset = 4 };
-            // Unassigned is not a place, so it is never listed or switched to; scans run without a
-            // Location still keep their results in Scan history.
+            // Unassigned is not a place, so it is never listed or switched to; scans run there
+            // still keep their results in Scan history.
             foreach (var info in LocationService.Items.Where(item => item.Id != LocationCatalog.UnassignedId)
                          .OrderBy(item => item.Name, StringComparer.CurrentCultureIgnoreCase))
             {

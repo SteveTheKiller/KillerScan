@@ -88,11 +88,13 @@ namespace KillerScan.Controls
                 if (completed)
                 {
                     // Deleted elsewhere while scanning: the results stay, as a Temporary scan.
-                    if (LeaveDeletedLocation()) location = _location;
+                    bool left = LeaveDeletedLocation();
+                    if (left) location = _location;
                     // A demo's fabricated network says nothing about the adapter of the PC running it.
                     if (!DemoData.Enabled) _active.Network = await IdentifyNetwork();
                     if (!_runDeepAfterScan || _active.Devices.Count == 0) RecordCompletedRun(options, deep: false);
                     NoteKnownDevices(location);
+                    if (!left) NoteUnsaved(location);
                 }
             }
             catch (OperationCanceledException)
@@ -145,6 +147,14 @@ namespace KillerScan.Controls
             else if (seen.NewDevices.Count > 0)
                 StatusText.Text = string.Format(Loc("Str_St_UnknownDevices"), seen.NewDevices.Count);
             _filteredView?.Refresh();
+        }
+
+        // Only a Temporary scan can be lost by closing the app, so it says so once there is
+        // something to lose, and only where Save scan is on offer to keep it.
+        private void NoteUnsaved(LocationData location)
+        {
+            if (location.IsTemporary && _active.Devices.Count > 0 && LocationService.Editable)
+                StatusText.Text = Loc("Str_Loc_TemporaryNotice");
         }
 
         // Off the UI thread: the ARP read is an arp.exe run. A run with no evidence just compares less.

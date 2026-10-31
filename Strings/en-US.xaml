@@ -497,6 +497,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Location</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adapter</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Save results to Location</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">This Temporary scan is not saved and is gone when KillerScan closes. To keep it, choose Save scan in the Location menu.</sys:String>
     <sys:String x:Key="Str_Loc_SaveRetention">Nothing was moved, because the history limit of {0} would delete this scan right away. Raise that limit or save to another Location.</sys:String>
     <sys:String x:Key="Str_Loc_SaveIncomplete">Not everything could be saved to {0}, so the results stay here. Save them again to finish.</sys:String>
     <sys:String x:Key="Str_Tip_Scan">{0} devices, {1} with open ports</sys:String>
