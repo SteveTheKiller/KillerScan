@@ -37,6 +37,9 @@ internal static class LocationTests
             Transfer(Path.Combine(root, "transfer"));
             Suggestions(Path.Combine(root, "suggest"));
             Deletion(Path.Combine(root, "delete"));
+            DeletionThatCannotFinish(Path.Combine(root, "stuck"));
+            ImportIsPublishedLast(Path.Combine(root, "publish"));
+            ImportSurvivesAKill(Path.Combine(root, "kill"));
         }
         finally
         {
@@ -664,6 +667,122 @@ internal static class LocationTests
         reloaded.Load("Unassigned");
         Require(reloaded.Items.Count == 1, "The deletion survives a restart.");
         Require(!reloaded.Delete("no-such-id", out _), "Deleting an unknown Location changes nothing.");
+    }
+
+    // Deleting either finishes or changes nothing, and nothing it reports is untrue. A folder that
+    // cannot be set aside stops the delete, so no files are left behind with no list pointing at them.
+    private static void DeletionThatCannotFinish(string root)
+    {
+        LocationCatalog Reloaded()
+        {
+            var catalog = new LocationCatalog(root);
+            catalog.Load("Unassigned");
+            return catalog;
+        }
+        var catalog = Reloaded();
+        Require(catalog.Create("Site", out var site), "A Location is created.");
+        var data = catalog.Open(site!);
+        Require(data.Devices.SetName(Device("10.6.0.1"), "Router"), "It has data.");
+        string folder = catalog.DirectoryFor(site!), deleted = Path.Combine(root, "locations", ".deleted");
+        void StillThere(string message) => Require(File.Exists(Path.Combine(folder, "devices.json")) && Reloaded().Items.Any(item => item.Id == site!.Id), message);
+
+        // A file where the recovery folder belongs.
+        File.WriteAllText(deleted, "not a folder");
+        Require(!catalog.Delete(site!.Id, out string? kept) && kept == null && catalog.SaveError != null, "No recovery folder stops the delete and says why.");
+        StillThere("A delete that could not start changes nothing.");
+        File.Delete(deleted);
+
+        // A file in the Location is held open.
+        using (new FileStream(Path.Combine(folder, "devices.json"), FileMode.Open, FileAccess.Read, FileShare.None))
+            Require(!catalog.Delete(site.Id, out kept) && kept == null && catalog.SaveError != null, "A locked file stops the delete and says why.");
+        StillThere("A locked Location stays listed, with its files where they were.");
+
+        // The catalog cannot be written once the folder is aside: it goes back.
+        using (new FileStream(Path.Combine(root, "locations.json"), FileMode.Open, FileAccess.Read, FileShare.None))
+            Require(!catalog.Delete(site.Id, out kept) && kept == null, "A catalog that cannot be written stops the delete.");
+        StillThere("The folder is put back when the catalog cannot change.");
+        Require(!Directory.Exists(deleted) || !Directory.EnumerateFileSystemEntries(deleted).Any(), "Nothing is left in the recovery folder.");
+
+        // Everything clear: the same delete finishes, and the path it reports is real.
+        Require(catalog.Delete(site.Id, out kept) && kept != null && File.Exists(Path.Combine(kept, "devices.json")), "The delete finishes and reports where the files went.");
+        Require(catalog.SaveError == null, "The earlier failure is not reported after a success.");
+        Require(!Directory.Exists(folder) && !Reloaded().Items.Any(item => item.Id == site.Id), "The Location is gone after a restart.");
+
+        // A Location that never saved anything has no folder to move and reports none.
+        Require(catalog.Create("Empty", out var empty) && catalog.Delete(empty!.Id, out kept) && kept == null, "A Location with no folder deletes.");
+    }
+
+    private static readonly byte[] ImportFile = System.Text.Encoding.UTF8.GetBytes(
+        "{\"Format\":\"KillerScan.Location\",\"Version\":1,\"Name\":\"Imported\",\"Customer\":\"Acme\",\"Notes\":\"n\",\"Icon\":\"\"," +
+        "\"Files\":{\"profiles.json\":[{\"Name\":\"Office\",\"Target\":\"10.7.0.0/24\"}]}}");
+
+    private static bool HasCompleteImport(LocationCatalog catalog, string root) =>
+        catalog.Items.Any(item => item.Name == "Imported" && File.Exists(Path.Combine(root, "locations", item.Id, "profiles.json")));
+
+    // An entry is listed only once its files are in place. Listed and empty is the one state an
+    // import must never be seen in, by this process or another.
+    private static void ImportIsPublishedLast(string root)
+    {
+        var catalog = new LocationCatalog(root);
+        catalog.Load("Unassigned");
+        var move = LocationTransfer.MoveDirectory;
+        try
+        {
+            bool listedDuringMove = true;
+            LocationTransfer.MoveDirectory = (from, to) =>
+            {
+                listedDuringMove = new Func<bool>(() =>
+                {
+                    var other = new LocationCatalog(root);
+                    other.Load("Unassigned");
+                    return other.Items.Any(item => item.Name == "Imported");
+                })();
+                Directory.Move(from, to);
+            };
+            Require(LocationTransfer.Import(catalog, ImportFile, out _, out _) && !listedDuringMove, "Another window never sees the entry before its files.");
+        }
+        finally { LocationTransfer.MoveDirectory = move; }
+        Require(HasCompleteImport(catalog, root), "The import is complete.");
+
+        // The catalog refuses the entry after the files moved: the files leave again and the retry works.
+        int before = catalog.Items.Count;
+        using (new FileStream(Path.Combine(root, "locations.json"), FileMode.Open, FileAccess.Read, FileShare.None))
+            Require(!LocationTransfer.Import(catalog, ImportFile, out var refused, out string? error) && refused == null && !string.IsNullOrEmpty(error), "A catalog that cannot be written fails the import.");
+        Require(catalog.Items.Count == before, "Nothing is listed.");
+        var folders = Directory.GetDirectories(Path.Combine(root, "locations")).Select(Path.GetFileName).ToList();
+        Require(folders.Count == before, "No folder is left behind: " + string.Join(", ", folders));
+        Require(LocationTransfer.Import(catalog, ImportFile, out var again, out _) && File.Exists(Path.Combine(catalog.DirectoryFor(again!), "profiles.json")), "The same import works once the catalog is free.");
+    }
+
+    /// <summary>The child in <see cref="ImportSurvivesAKill"/>: an import stopped dead by a killed process.</summary>
+    internal static void ImportThenDie(string root, string boundary)
+    {
+        var catalog = new LocationCatalog(root);
+        catalog.Load("Unassigned");
+        LocationTransfer.MoveDirectory = (from, to) =>
+        {
+            if (boundary == "after-move") Directory.Move(from, to);
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
+        };
+        LocationTransfer.Import(catalog, ImportFile, out _, out _);
+    }
+
+    private static void ImportSurvivesAKill(string root)
+    {
+        foreach (string boundary in new[] { "before-move", "after-move" })
+        {
+            string site = Path.Combine(root, boundary);
+            Directory.CreateDirectory(site);
+            using (var process = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(typeof(LocationTests).Assembly.Location,
+                "--import-then-die \"" + site + "\" " + boundary) { UseShellExecute = false, CreateNoWindow = true })!)
+                Require(process.WaitForExit(15000) && process.ExitCode != 0, "The importing process dies: " + boundary);
+            var catalog = new LocationCatalog(site);
+            catalog.Load("Unassigned");
+            Require(catalog.Items.All(item => item.Name != "Imported"), "A killed import lists nothing half-made: " + boundary);
+            Require(LocationTransfer.Import(catalog, ImportFile, out var imported, out string? error) && HasCompleteImport(catalog, site),
+                "The same import works afterward: " + boundary + " " + error);
+            Require(catalog.Items.Count(item => item.Name == "Imported") == 1, "It is listed once: " + boundary);
+        }
     }
 
     private static void Require(bool condition, string message)

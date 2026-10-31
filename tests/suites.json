@@ -33,6 +33,7 @@
       "--terminal-memory-child": "Child process started by --terminal-memory.",
       "--history-writer": "Child process started by --history-retention.",
       "--observe-writer": "Child process started by --locations.",
+      "--import-then-die": "Child process started by --locations, which kills itself mid-import.",
       "---": "Not a flag: a table-separator string in a check."
     }
   }

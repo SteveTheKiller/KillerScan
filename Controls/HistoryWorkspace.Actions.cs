@@ -85,7 +85,7 @@ namespace KillerScan.Controls
         {
             var device = SelectedHistoryDevice;
             if (device == null) return string.Empty;
-            return action switch
+            return (action switch
             {
                 "ip" => device.IpAddress,
                 "mac" => device.MacAddress,
@@ -93,7 +93,7 @@ namespace KillerScan.Controls
                 "details" => string.Join("\t", device.IpAddress, device.Hostname, device.MacAddress,
                     device.Vendor, DeviceTypeConverter.Display(device.DeviceType), string.Join(", ", device.OpenPorts)),
                 _ => string.Empty
-            };
+            }) ?? string.Empty;
         }
 
         private async void ExecuteAction(string action)

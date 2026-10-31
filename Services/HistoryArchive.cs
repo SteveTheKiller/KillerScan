@@ -77,7 +77,15 @@ namespace KillerScan.Services
                     entry.Adapter ??= string.Empty;
                     entry.Devices ??= [];
                     entry.Devices.RemoveAll(device => device == null || string.IsNullOrWhiteSpace(device.Identity));
-                    foreach (var device in entry.Devices) device.OpenPorts ??= [];
+                    foreach (var device in entry.Devices)
+                    {
+                        device.IpAddress ??= string.Empty;
+                        device.Hostname ??= string.Empty;
+                        device.MacAddress ??= string.Empty;
+                        device.Vendor ??= string.Empty;
+                        device.DeviceType ??= string.Empty;
+                        device.OpenPorts ??= [];
+                    }
                 }
             }
             catch (Exception ex)

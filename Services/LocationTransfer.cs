@@ -125,28 +125,29 @@ namespace KillerScan.Services
         }
 
         /// <summary>
-        /// Adds a prepared Location to the catalog and moves its files into place. Runs on the UI
-        /// thread, which every other reader of the catalog uses.
+        /// Moves a prepared Location's files into place, then lists it in one save, so it is
+        /// listed complete or not at all, whatever happens in between. A process that dies between
+        /// the two leaves an unlisted folder and the .ksloc file as it was, so the import just
+        /// runs again. Runs on the UI thread, which every other reader of the catalog uses.
         /// </summary>
         internal static bool Commit(LocationCatalog catalog, Prepared prepared, out LocationInfo? imported, out string? error)
         {
             imported = null;
             try
             {
-                if (!catalog.Create(prepared.Name, prepared.Customer, prepared.Notes, out var created) || created == null)
+                var entry = LocationCatalog.NewEntry(prepared.Name, prepared.Customer, prepared.Notes,
+                    LocationIcons.IsKnown(prepared.Icon) ? prepared.Icon! : string.Empty);
+                string folder = catalog.DirectoryFor(entry);
+                MoveDirectory(prepared.Staging, folder);
+                if (!catalog.Publish(entry))
                 {
                     error = catalog.SaveError ?? catalog.LoadError ?? "The Location could not be added.";
+                    // Back to staging, which disposing clears. If it cannot go, nothing lists it.
+                    try { MoveDirectory(folder, prepared.Staging); }
+                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { }
                     return false;
                 }
-                if (LocationIcons.IsKnown(prepared.Icon)) catalog.SetIcon(created.Id, prepared.Icon!);
-                try { MoveDirectory(prepared.Staging, catalog.DirectoryFor(created)); }
-                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-                {
-                    // Its files never arrived, so the entry comes off the list again.
-                    catalog.Delete(created.Id, out _);
-                    throw;
-                }
-                imported = catalog.Items.FirstOrDefault(item => item.Id == created.Id) ?? created;
+                imported = catalog.Items.FirstOrDefault(item => item.Id == entry.Id) ?? entry;
                 error = null;
                 return true;
             }

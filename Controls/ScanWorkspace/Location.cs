@@ -648,13 +648,13 @@ namespace KillerScan.Controls
             if (!confirm.Confirmed) return;
             bool deleted;
             _deletingHere = true;
-            try { deleted = LocationService.Delete(info, out _); }
-            finally { _deletingHere = false; }
-            if (!deleted)
+            try
             {
-                PersistenceFeedback.Check(false, () => false, () => LocationService.SaveError ?? LocationService.LoadError);
-                return;
+                deleted = PersistenceFeedback.Attempt(() => LocationService.Delete(info, out _),
+                    () => LocationService.SaveError ?? LocationService.LoadError);
             }
+            finally { _deletingHere = false; }
+            if (!deleted) return;
             if (here) SetLocation(UnsavedLocation());
             else LocationChanged?.Invoke(this, EventArgs.Empty);
         }

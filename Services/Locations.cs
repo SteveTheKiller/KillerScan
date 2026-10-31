@@ -135,7 +135,8 @@ namespace KillerScan.Services
 
         /// <summary>Why the catalog could not be read or migrated. While set, nothing is changed.</summary>
         public string? LoadError { get; private set; }
-        public string? SaveError => _store.Error;
+        public string? SaveError => _deleteError ?? _store.Error;
+        private string? _deleteError;
 
         private JsonPreferenceFile<CatalogFile> CreateStore() => new(_path, () => new(), value =>
         {
@@ -238,34 +239,59 @@ namespace KillerScan.Services
         public bool Create(string name, string customer, string notes, out LocationInfo? created)
         {
             created = null;
-            if (LoadError != null) return false;
-            var info = new LocationInfo { Id = Guid.NewGuid().ToString("N"), Name = name.Trim(), Customer = customer.Trim(), Notes = notes };
-            if (!_store.Commit(value => value.Locations.Add(info))) return false;
+            var info = NewEntry(name, customer, notes);
+            if (!Publish(info)) return false;
             created = _store.Value.Locations.FirstOrDefault(item => item.Id == info.Id) ?? info;
             return true;
         }
 
+        /// <summary>A new Location's entry, not listed yet, so an import can fill its folder first.</summary>
+        internal static LocationInfo NewEntry(string name, string customer, string notes, string icon = "") =>
+            new() { Id = Guid.NewGuid().ToString("N"), Name = name.Trim(), Customer = customer.Trim(), Notes = notes, Icon = icon };
+
+        /// <summary>Lists a whole entry in one save.</summary>
+        internal bool Publish(LocationInfo info) => LoadError == null && _store.Commit(value => value.Locations.Add(info));
+
         /// <summary>
-        /// Removes a Location from the list and moves its folder to locations\.deleted, so a
-        /// mistaken delete can be recovered by hand. <paramref name="kept"/> is where it went.
+        /// Moves a Location's folder to locations\.deleted, so a mistaken delete can be recovered
+        /// by hand, and takes it off the list. The folder goes first: if it cannot move, such as
+        /// a file held open by another program, nothing has changed and <see cref="SaveError"/>
+        /// says why, rather than leaving files no list points to. <paramref name="kept"/> is where
+        /// the files are now when they are no longer in place.
         /// </summary>
         public bool Delete(string id, out string? kept)
         {
             kept = null;
+            _deleteError = null;
             if (LoadError != null || Items.FirstOrDefault(item => item.Id == id) is not { } info) return false;
-            if (!_store.Commit(value => value.Locations.RemoveAll(item => item.Id == id))) return false;
             string folder = DirectoryFor(info);
-            if (!Directory.Exists(folder)) return true;
-            string deleted = Path.Combine(LocationsDirectory, ".deleted");
-            Directory.CreateDirectory(deleted);
-            kept = Path.Combine(deleted, id + "-" + DateTime.Now.ToString("yyyyMMdd-HHmmss"));
-            try { Directory.Move(folder, kept); }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            string? aside = null;
+            if (Directory.Exists(folder))
             {
-                // The Location is already off the list; its files simply stay where they were.
-                kept = folder;
+                try
+                {
+                    string deleted = Path.Combine(LocationsDirectory, ".deleted");
+                    Directory.CreateDirectory(deleted);
+                    string target = Path.Combine(deleted, id + "-" + DateTime.Now.ToString("yyyyMMdd-HHmmss"));
+                    Directory.Move(folder, target);
+                    aside = target;
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                    _deleteError = ex.Message;
+                    return false;
+                }
             }
-            return true;
+            if (_store.Commit(value => value.Locations.RemoveAll(item => item.Id == id))) { kept = aside; return true; }
+            // Still listed, so its files go back to where the list says they are.
+            if (aside != null)
+                try { Directory.Move(aside, folder); }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                    _deleteError = ex.Message;
+                    kept = aside;
+                }
+            return false;
         }
 
         public bool Rename(string id, string name) => Update(id, item => item.Name = name.Trim());

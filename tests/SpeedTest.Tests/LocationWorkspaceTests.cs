@@ -87,6 +87,7 @@ internal static class LocationWorkspaceTests
             ResultsFollowLocation(a, b, scanner);
             SaveResultsIsDurable(Path.Combine(root, "move"));
             RetryRepeatsTheChange(Path.Combine(root, "retry", "history.json"));
+            ImportedNullsReachHistorySafely(Path.Combine(root, "nulls"));
             Suggestion(Path.Combine(root, "service"));
             AdapterPreference(Path.Combine(root, "adapter"));
             LocationControls(Path.Combine(root, "controls"));
@@ -246,6 +247,61 @@ internal static class LocationWorkspaceTests
                 "Results move without a saved scan when the scan bar is empty.");
         }
         finally { PersistenceFeedback.Answer = null; }
+    }
+
+    // A .ksloc is data from somewhere else. Explicit nulls and missing fields reach the History table
+    // and its actions as empty text, and a damaged file is refused with the existing data untouched.
+    private static void ImportedNullsReachHistorySafely(string root)
+    {
+        var catalog = new LocationCatalog(root);
+        catalog.Load("Unassigned");
+        const string device =
+            "{\"Identity\":\"ip:10.6.0.1\",\"IpAddress\":null,\"Hostname\":null,\"MacAddress\":null,\"Vendor\":null,\"DeviceType\":null,\"OpenPorts\":null}";
+        const string missing = "{\"Identity\":\"ip:10.6.0.2\"}";
+        const string stored =
+            "{\"Version\":1,\"Policy\":{\"Mode\":2,\"Count\":100,\"Days\":30},\"Entries\":[" +
+            "{\"ScannedAt\":\"2026-10-01T10:00:00+00:00\",\"Target\":null,\"Name\":null,\"Adapter\":null,\"Devices\":[" + device + "," + missing + ",null,{\"IpAddress\":\"no identity\"}]}]}";
+        byte[] file = System.Text.Encoding.UTF8.GetBytes(
+            "{\"Format\":\"KillerScan.Location\",\"Version\":1,\"Name\":\"Imported\",\"Files\":{\"history.json\":" + stored + "}}");
+        Require(LocationTransfer.Import(catalog, file, out var imported, out string? error), "A Location with null text imports: " + error);
+        var data = catalog.Open(imported!);
+        var entry = data.History.Entries.Single();
+        Require(entry.Devices.Count == 2, "Devices with no identity are dropped and the others kept.");
+        foreach (var kept in entry.Devices)
+            Require(kept.IpAddress == "" && kept.Hostname == "" && kept.MacAddress == "" && kept.Vendor == "" && kept.DeviceType == "" && kept.OpenPorts.Count == 0,
+                "Every historical text field is empty, never null.");
+
+        var history = new HistoryWorkspace();
+        entry.Owner = data.History;
+        history.ShowEntry(entry);
+        const System.Reflection.BindingFlags Hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+        string Copy(string action) => (string)typeof(HistoryWorkspace).GetMethod("CopyValue", Hidden)!.Invoke(history, [action])!;
+        foreach (bool all in new[] { false, true })
+        {
+            typeof(HistoryWorkspace).GetMethod("SetView", Hidden)!.Invoke(history, [all]);
+            var grid = (System.Windows.Controls.DataGrid)history.FindName(all ? "HistoryAllGrid" : "HistoryChangesGrid");
+            Require(grid.Items.Count == 2, "The table lists both devices.");
+            grid.SelectedIndex = 0;
+            foreach (string action in new[] { "ip", "mac", "host" }) Require(Copy(action).Length == 0, "A copy of null text is empty: " + action);
+            Require(Copy("details").Split('\t').Length == 6, "Copy details still has every column.");
+            grid.ContextMenu.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.ContextMenu.OpenedEvent, grid.ContextMenu));
+            Require(grid.ContextMenu.Items.OfType<System.Windows.Controls.MenuItem>().Any(item => (string)item.Tag == "ip" && !item.IsEnabled),
+                "The menu opens, with nothing to copy disabled.");
+            string csv = (string)typeof(HistoryWorkspace).GetMethod("BuildCsv", Hidden)!.Invoke(history, null)!;
+            Require(csv.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length == 3, "CSV export has a header and both devices.");
+        }
+
+        // Records that cannot be read refuse the import, and what is already there does not change.
+        data.Devices.SetName(new NetworkDevice { IpAddress = "10.6.0.1" }, "Existing");
+        string[] Files() => Directory.GetFiles(root, "*", SearchOption.AllDirectories).OrderBy(name => name).Select(File.ReadAllText).ToArray();
+        var before = Files();
+        int locations = catalog.Items.Count;
+        foreach (string broken in new[] { "{\"Entries\":[{\"Devices\":5}]}", "{\"Version\":1,\"Policy\":{\"Mode\":2,\"Count\":100,\"Days\":30},\"Entries\":[{\"ScannedAt\":\"not a date\"}]}" })
+        {
+            byte[] damaged = System.Text.Encoding.UTF8.GetBytes("{\"Format\":\"KillerScan.Location\",\"Version\":1,\"Name\":\"Broken\",\"Files\":{\"history.json\":" + broken + "}}");
+            Require(!LocationTransfer.Import(catalog, damaged, out _, out string? why) && why != null && why.Length > 0, "A damaged file is refused with a reason.");
+            Require(catalog.Items.Count == locations && Files().SequenceEqual(before), "A refused import changes nothing that was there.");
+        }
     }
 
     // Retry after a failed rename or delete repeats that change, once, on the file as it is by then.
