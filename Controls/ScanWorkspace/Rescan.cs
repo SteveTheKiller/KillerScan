@@ -57,6 +57,8 @@ namespace KillerScan.Controls
                 .OrderBy(d => d.IpSortKey)
                 .ToList();
             if (targets.Count == 0) return;
+            var refreshTargets = ScanTargets.Parse(string.Join(",", targets.Select(d => d.IpAddress)));
+            if (!refreshTargets.Ok || !AdapterAllowsScan(refreshTargets.Summary, refreshTargets.Addresses, out _)) return;
 
             var s = _active;
             var scanner = s.Scanner;
@@ -137,6 +139,12 @@ namespace KillerScan.Controls
             var s = _active;
             var scanner = s.Scanner;
             var targets = s.Devices.OrderBy(d => d.IpSortKey).ToList();
+            // The automatic deep phase belongs to the run that already validated its adapter.
+            if (!recordProfile)
+            {
+                var refreshTargets = ScanTargets.Parse(string.Join(",", targets.Select(d => d.IpAddress)));
+                if (!refreshTargets.Ok || !AdapterAllowsScan(refreshTargets.Summary, refreshTargets.Addresses, out _)) return;
+            }
             _rescanCts = new CancellationTokenSource();
             var ct = _rescanCts.Token;
             using var hostGate = new SemaphoreSlim(8);

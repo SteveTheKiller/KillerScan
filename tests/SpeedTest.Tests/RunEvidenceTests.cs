@@ -21,6 +21,13 @@ internal static class RunEvidenceTests
             ProfileSaveKeepsDeepScan();
             HistoryBaselines();
             ManualRefreshProvenance();
+            var platform = NetworkPlatform.Current;
+            try
+            {
+                NetworkPlatform.Current = new UnsupportedNetworkPlatform();
+                RefreshHonorsAdapter();
+            }
+            finally { NetworkPlatform.Current = platform; }
         }
         finally { DemoData.Enabled = demo; }
         Console.WriteLine("PASS: saved scans, baselines and refreshes describe what was actually run.");
@@ -129,6 +136,70 @@ internal static class RunEvidenceTests
                 "A new snapshot carries no refresh note from the previous one.");
         }
         finally { Directory.Delete(directory, true); }
+    }
+
+    private sealed class BoundRefreshScanner : NetworkScanner
+    {
+        internal int Calls;
+        internal ScanBinding? UsedBinding;
+        public override Task<NetworkDevice> DeepProbeHostAsync(string ip, CancellationToken token,
+            ScanOptions options, int portConcurrency = 256, bool flushLocalDnsCache = true)
+        {
+            Calls++;
+            UsedBinding = Binding;
+            return Task.FromResult(new NetworkDevice { IpAddress = ip, Hostname = "refreshed" });
+        }
+    }
+
+    private static void RefreshHonorsAdapter()
+    {
+        foreach (bool selected in new[] { true, false })
+        {
+            var scanner = new BoundRefreshScanner();
+            using var workspace = new ScanWorkspace("192.0.2.1", false, scanner);
+            var original = new NetworkDevice { IpAddress = "192.0.2.1" };
+            var time = new DateTimeOffset(2025, 1, 2, 3, 4, 0, TimeSpan.Zero);
+            workspace.LoadSnapshot("192.0.2.1", [original], time);
+            workspace.Session.Options = new ScanOptions { ReverseDns = false };
+            var binding = new ScanBinding("Test adapter", System.Net.IPAddress.Parse("192.0.2.5"), 24);
+            ScanBinding? connected = binding;
+            workspace.FindAdapter = _ => connected;
+            workspace.AdapterChoice = "Test adapter";
+            // Disconnect after loading the choice, then edit the bar to a different target.
+            connected = null;
+            workspace.Targets = "10.0.0.1";
+            int confirmations = 0;
+            bool accept = false;
+            workspace.ConfirmAdapter = _ => { confirmations++; return accept; };
+            void Refresh()
+            {
+                if (selected)
+                {
+                    ((DataGrid)workspace.FindName("ResultsGrid")).SelectAll();
+                    ((MenuItem)workspace.FindName("RescanMenuItem")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                }
+                else workspace.DeepScan();
+                PumpUntil(() => !workspace.IsScanning);
+            }
+            Refresh();
+            Require(scanner.Calls == 0 && confirmations == 1 && workspace.Session.Devices.Single() == original
+                && workspace.Session.Refresh == null && workspace.Session.ScannedAt == time,
+                "Declining the disconnected adapter refuses refresh without changing results or provenance.");
+            accept = true;
+            Refresh();
+            Require(scanner.Calls == 1 && scanner.UsedBinding == null && confirmations == 2,
+                "Accepting fallback refreshes with automatic routing.");
+            connected = binding;
+            Refresh();
+            Require(scanner.Calls == 2 && scanner.UsedBinding == binding && confirmations == 2,
+                "Reconnect refresh resolves the current binding and validates result addresses, not editable targets.");
+            connected = new ScanBinding("Test adapter", System.Net.IPAddress.Parse("198.51.100.5"), 24);
+            var before = workspace.Session.Refresh;
+            Refresh();
+            Require(scanner.Calls == 2 && workspace.Session.Refresh == before,
+                "An adapter moved off the result network refuses refresh before changing provenance.");
+        }
+        Console.WriteLine("PASS: 8 adapter refresh cases across selected rescan and Deep Scan All.");
     }
 
     private static void PumpUntil(Func<bool> complete)

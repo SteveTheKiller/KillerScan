@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
 ### Fixed
+- Rescan selected and Deep Scan All honor the chosen adapter again after it disconnects or changes, and refuse off-network results before probing.
 - An all-users update reopens KillerScan for the signed-in user at normal rights, whether it finishes or stops early. Windows was refusing that relaunch, so the app stayed closed. Files left behind by earlier failed updates are cleared when the next update is staged.
 - A command-line value of `uiscan`, such as a filter or Location name, no longer opens the app and starts a different scan.
 - A scan that finds one device says "1 device", in the footer, the status bar, the terminal and the command line.
