@@ -15,13 +15,17 @@ internal static class LocationWorkspaceTests
     private sealed class SiteScanner : NetworkScanner
     {
         internal TaskCompletionSource<bool>? Hold;
+        internal bool FindNothing, StopAfterFinding;
+        internal Func<NetworkDevice>? Result;
         public override async Task<List<NetworkDevice>> ScanSubnetAsync(string target, CancellationToken token,
             ScanOptions options, bool fullScan = true)
         {
             if (Hold != null) await Hold.Task;
-            var device = new NetworkDevice { IpAddress = "192.168.1.10", MacAddress = "", DeviceType = "Unknown" };
+            if (FindNothing) return [];
+            var device = Result?.Invoke() ?? new NetworkDevice { IpAddress = "192.168.1.10", MacAddress = "", DeviceType = "Unknown" };
             Completed?.Invoke(device);
             ReportDeviceFound(device);
+            if (StopAfterFinding) throw new OperationCanceledException();
             return [device];
         }
     }
@@ -86,6 +90,7 @@ internal static class LocationWorkspaceTests
             Require(workspace.Session.Devices.Count == 1, "Saved results stay on screen in the Location they moved to.");
             ResultsFollowLocation(a, b, scanner);
             SaveResultsIsDurable(Path.Combine(root, "move"));
+            SaveResultsEdges(Path.Combine(root, "edges"));
             RetryRepeatsTheChange(Path.Combine(root, "retry", "history.json"));
             ImportedNullsReachHistorySafely(Path.Combine(root, "nulls"));
             GatewayFollowsTheScan(Path.Combine(root, "gateway"));
@@ -283,7 +288,9 @@ internal static class LocationWorkspaceTests
             NetworkPlatform.Current = platform;
             LocationService.Root = root;
             LocationService.Load("Unassigned");
-            using var workspace = new ScanWorkspace("192.168.1.0/24", false, new SiteScanner());
+            var scanner = new SiteScanner();
+            using var workspace = new ScanWorkspace("192.168.1.0/24", false, scanner);
+            workspace.ConfirmDiscard = _ => true;
             workspace.FindAdapter = name => bindings.FirstOrDefault(binding => binding.InterfaceName == name);
             workspace.AdapterGateway = binding => binding == ethernet ? "192.168.1.1" : binding == wifi ? "10.0.0.1" : "";
             int site = 0;
@@ -329,6 +336,57 @@ internal static class LocationWorkspaceTests
             Require(data.History.Compare(RunOn("Second")).Previous == null, "The other adapter's run on the same range has no baseline.");
             Require(data.History.Compare(RunOn("Ethernet")).Previous?.ScannedAt == onEthernet.ScannedAt, "A run compares with its own network's last run.");
 
+            // The box stays editable during a run. What the run was does not change with it.
+            var held = new TaskCompletionSource<bool>();
+            scanner.Hold = held;
+            int ran = data.History.Entries.Count;
+            workspace.AdapterChoice = "Ethernet";
+            workspace.Targets = "192.168.1.10";
+            workspace.Scan();
+            workspace.Targets = "10.8.0.0/24";
+            held.SetResult(true);
+            scanner.Hold = null;
+            PumpUntil(() => !workspace.IsScanning && data.History.Entries.Count == ran + 1);
+            var edited = data.History.Entries.Last();
+            Require(edited.TargetKey == ScanHistoryEntry.KeyFor("192.168.1.10"), "A run keeps the targets it scanned, whatever the box says now.");
+            Require(edited.GatewayMac == "AA:AA:AA:00:00:01", "A run's network comes from the targets it scanned.");
+
+            // Results on screen count as evidence only for the scan they came from.
+            scanner.Result = () => new NetworkDevice { IpAddress = "192.168.1.1", MacAddress = "DD:DD:DD:00:00:04" };
+            System.Collections.Generic.List<string> Saved(string typed)
+            {
+                workspace.AdapterChoice = "";
+                workspace.SetLocation(LocationData.Temporary());
+                workspace.Targets = "192.168.1.1";
+                workspace.Scan();
+                PumpUntil(() => !workspace.IsScanning && workspace.Session.Devices.Count == 1);
+                workspace.Targets = typed;
+                Require(LocationService.Create("Saved " + ++site, out var info), "A Location is created.");
+                Require(workspace.SaveResultsTo(LocationService.Get(info!)), "The results are saved.");
+                PumpUntil(() => LocationService.Find(info!.Id)!.GatewayMacs.Count > 0, 250);
+                return LocationService.Find(info!.Id)!.GatewayMacs;
+            }
+            Require(Saved("192.168.1.1").SequenceEqual(new[] { "DD:DD:DD:00:00:04" }), "The scan's own results name its router.");
+            Require(Saved("192.168.1.0/24").SequenceEqual(new[] { "AA:AA:AA:00:00:01" }), "A different target in the box is not judged by a table of something else.");
+            scanner.Result = null;
+
+            // A Location deleted while the run's network is being read is left before anything is recorded.
+            Require(LocationService.Create("Vanishes", out var vanishing), "A Location is created.");
+            workspace.SetLocation(LocationService.Get(vanishing!));
+            workspace.Targets = "192.168.1.10";
+            workspace.FindAdapter = name =>
+            {
+                var otherProcess = new LocationCatalog(root);
+                otherProcess.Load("Unassigned");
+                otherProcess.Delete(vanishing!.Id, out _);
+                return bindings.FirstOrDefault(binding => binding.InterfaceName == name);
+            };
+            workspace.Scan();
+            PumpUntil(() => !workspace.IsScanning);
+            workspace.FindAdapter = name => bindings.FirstOrDefault(binding => binding.InterfaceName == name);
+            Require(!Directory.Exists(Path.Combine(root, "locations", vanishing!.Id)), "Nothing recreates the deleted Location's folder.");
+            Require(workspace.Location.Info?.Id != vanishing.Id, "The tab left the deleted Location.");
+
             platform.Cache.Clear();
             Require(Learned("192.168.1.0/24", "").Count == 0, "A router Windows has not seen teaches nothing, and sends nothing.");
         }
@@ -353,6 +411,7 @@ internal static class LocationWorkspaceTests
             workspace.Scan();
             PumpUntil(() => !workspace.IsScanning && initial.History.Entries.Count == 1);
             Require(workspace.Status == notice, "A finished Temporary scan says it is not saved.");
+            Require(notice.Length <= 60, "The notice fits the footer at the default window size, Save scan included.");
         }
         Require(!Directory.EnumerateFiles(fresh, "history.json", SearchOption.AllDirectories).Any(), "Nothing is written to disk.");
 
@@ -465,6 +524,104 @@ internal static class LocationWorkspaceTests
         }
     }
 
+    // What a save has to get right beyond the writes themselves: results that are in no run yet, a
+    // destination that has gone, and what the tab says and asks afterward.
+    private static void SaveResultsEdges(string root)
+    {
+        Directory.CreateDirectory(root);
+        File.WriteAllText(Path.Combine(root, "devices.json"), "{}");
+        LocationService.Root = root;
+        LocationService.Load("Unassigned");
+        Require(LocationService.Create("Site", out var siteInfo), "A Location is created.");
+        Require(LocationService.Create("Gone", out var goneInfo), "A Location is created.");
+        var unassigned = LocationService.Get(LocationService.Find(LocationCatalog.UnassignedId)!);
+        var site = LocationService.Get(siteInfo!);
+        var gone = LocationService.Get(goneInfo!);
+        string HistoryOf(LocationData data) => Path.Combine(root, "locations", data.Info!.Id, "history.json");
+        string notice = (string)Application.Current.FindResource("Str_Loc_TemporaryNotice");
+        var scanner = new SiteScanner();
+        using var workspace = new ScanWorkspace("192.168.1.10", false, scanner);
+        workspace.ConfirmDiscard = _ => true;
+        void RunIn(LocationData location, Func<bool> done)
+        {
+            workspace.SetLocation(location);
+            workspace.Scan();
+            PumpUntil(() => !workspace.IsScanning && done());
+        }
+
+        // A stopped scan is in no history, so saving it writes it as the run it is.
+        scanner.StopAfterFinding = true;
+        RunIn(unassigned, () => workspace.Session.Devices.Count == 1);
+        scanner.StopAfterFinding = false;
+        Require(unassigned.History.Entries.Count == 0, "A stopped scan records no run.");
+        Require(workspace.SaveResultsTo(site) && workspace.Location == site && workspace.Session.Devices.Count == 1, "A stopped scan's results can be saved.");
+        var stopped = Reread(HistoryOf(site)).Entries.Single();
+        Require(stopped.Completion == ScanCompletion.Canceled && stopped.Devices.Single().IpAddress == "192.168.1.10" && stopped.ComparisonKey == ScanHistoryEntry.KeyFor("192.168.1.10"),
+            "Saved results reach the file as a canceled run with their devices.");
+
+        // A finished Temporary run and stopped results on screen both move.
+        var temporary = LocationData.Temporary();
+        RunIn(temporary, () => temporary.History.Entries.Count == 1);
+        scanner.StopAfterFinding = true;
+        RunIn(temporary, () => workspace.Session.Devices.Count == 1);
+        scanner.StopAfterFinding = false;
+        int before = Reread(HistoryOf(site)).Entries.Count;
+        Require(workspace.SaveResultsTo(site) && Reread(HistoryOf(site)).Entries.Count == before + 2, "A Temporary scan's finished run and the results on screen both reach the file.");
+        var finished = LocationData.Temporary();
+        RunIn(finished, () => finished.History.Entries.Count == 1);
+        Require(workspace.Status == notice, "A finished Temporary scan says it is not saved.");
+        Require(workspace.SaveResultsTo(site) && workspace.Status != notice, "After saving, the status no longer says the scan is unsaved.");
+
+        // A destination another KillerScan deleted. The picker's list here is stale.
+        var left = RunAndKeep(unassigned);
+        ScanHistoryEntry RunAndKeep(LocationData location)
+        {
+            int count = location.History.Entries.Count;
+            RunIn(location, () => location.History.Entries.Count == count + 1);
+            return location.History.Entries.Last();
+        }
+        var otherProcess = new LocationCatalog(root);
+        otherProcess.Load("Unassigned");
+        Require(otherProcess.Delete(gone.Info!.Id, out _), "Another KillerScan deletes the Location.");
+        string goneFolder = Path.Combine(root, "locations", gone.Info!.Id);
+        Require(!workspace.SaveResultsTo(gone) && workspace.Location == unassigned && workspace.Session.Devices.Count == 1, "A deleted destination is refused and the tab stays.");
+        Require(workspace.Status == string.Format((string)Application.Current.FindResource("Str_Loc_SaveGone"), "Gone"), "The status says why.");
+        Require(!Directory.Exists(goneFolder) && LocationService.Find(gone.Info!.Id) == null, "Nothing recreates its folder, and the list drops it.");
+        Require(Reread(HistoryOf(unassigned)).Entries.Any(entry => entry.IsSameRun(left)), "The run stays in Unassigned.");
+        Require(!workspace.SaveScanInto(gone, null) && !Directory.Exists(goneFolder), "Saving a scan into a deleted Location is refused too.");
+
+        // A name or type given in a Temporary scan moves with it, on screen or not.
+        temporary = LocationData.Temporary();
+        RunIn(temporary, () => temporary.History.Entries.Count == 1);
+        Require(temporary.Devices.SetName(new NetworkDevice { IpAddress = "192.168.1.77" }, "From an earlier run"), "A name is typed against an earlier run.");
+        Require(temporary.Overrides.Set("00:11:22:33:44:55", "Printer"), "A type is set.");
+        Require(workspace.SaveResultsTo(site), "The results move.");
+        var names = new DevicePreferenceStore(Path.Combine(root, "locations", site.Info!.Id, "devices.json"));
+        names.Load();
+        var types = new DeviceOverrideStore(Path.Combine(root, "locations", site.Info!.Id, "overrides.json"));
+        types.Load();
+        Require(names.GetName(new NetworkDevice { IpAddress = "192.168.1.77" }) == "From an earlier run", "A name not on screen reaches the file.");
+        Require(types.Get("00:11:22:33:44:55") == "Printer", "A device type reaches the file.");
+
+        // Leaving a Temporary scan asks whenever it holds a run with devices, whatever the table shows.
+        temporary = LocationData.Temporary();
+        RunIn(temporary, () => temporary.History.Entries.Count == 1);
+        scanner.FindNothing = true;
+        workspace.Scan();
+        PumpUntil(() => !workspace.IsScanning && temporary.History.Entries.Count == 2);
+        Require(workspace.Session.Devices.Count == 0, "The second run found nothing.");
+        string? asked = null;
+        workspace.ConfirmDiscard = message => { asked = message; return false; };
+        Require(!workspace.SetLocation(site) && workspace.Location == temporary && asked != null, "An empty table does not stop the question.");
+        workspace.ConfirmDiscard = _ => true;
+        Require(workspace.SetLocation(site) && workspace.Status != notice, "Discarding clears the unsaved notice.");
+        var empty = LocationData.Temporary();
+        RunIn(empty, () => empty.History.Entries.Count == 1);
+        asked = null;
+        workspace.ConfirmDiscard = message => { asked = message; return true; };
+        Require(workspace.SetLocation(site) && asked == null, "A Temporary scan with nothing found asks nothing.");
+    }
+
     // Retry after a failed rename or delete repeats that change, once, on the file as it is by then.
     private static void RetryRepeatsTheChange(string path)
     {
@@ -506,6 +663,9 @@ internal static class LocationWorkspaceTests
             answer = Freed(1);
             Require(HistoryRuns.Rename(store, named, "Renamed"), "Retry reports success.");
             Require(Stored(named).Name == "Renamed", "Retry applied the rename.");
+            var chosen = HistoryRuns.Selection(store.Entries.Reverse().ToList(), named);
+            Require(chosen != null && chosen.IsSameRun(named) && chosen.Name == "Renamed", "After a rename the list keeps the renamed run selected, not the newest.");
+            Require(HistoryRuns.Selection(store.Entries.ToList(), new ScanHistoryEntry { Target = "gone" }) == store.Entries[0], "A run no longer listed falls back to the first.");
             Require(Reread(path).Entries.Count == 4, "The run another window recorded survives.");
 
             held = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None);

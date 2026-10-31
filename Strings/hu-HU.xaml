@@ -470,7 +470,8 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_St_AdapterOffLink">{0} nincs ennek az adapternek a hálózatán: {1} ({2}), és a Windows nem a(z) {1} adapteren keresztül irányítja. A vizsgálathoz válassza az Automatikus elemet a Hálózati adapter menüben.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Helyszín</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adapter</sys:String>
-    <sys:String x:Key="Str_Loc_TemporaryNotice">Ez az ideiglenes vizsgálat nincs mentve, és a KillerScan bezárásakor elvész. Megtartásához válassza a Helyszín menü „Vizsgálat mentése” pontját.</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">Ideiglenes vizsgálat, nincs mentve. Válassza a „Vizsgálat mentése” pontot.</sys:String>
+    <sys:String x:Key="Str_Loc_SaveGone">A(z) {0} Helyszínt egy másik ablakban törölték, ezért semmi sem lett áthelyezve. Válasszon másik Helyszínt.</sys:String>
     <sys:String x:Key="Str_Loc_SaveRetention">Semmi sem lett áthelyezve, mert a(z) {0} előzménykorlátja azonnal törölné ezt a vizsgálatot. Növelje a korlátot, vagy mentsen másik Helyszínre.</sys:String>
     <sys:String x:Key="Str_Loc_SaveIncomplete">Nem minden menthető a(z) {0} Helyszínre, ezért az eredmények itt maradnak. A befejezéshez mentse őket újra.</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Eredmények mentése a Helyszínre</sys:String>

@@ -81,7 +81,11 @@ namespace KillerScan.Controls
             }
             if (IsCurrentLocation(data)) return true;
             bool clear = !keepResults && _active.Devices.Count > 0;
-            if (clear && _location.IsTemporary)
+            // A Temporary scan's runs are nowhere else, so it asks even when the table is empty,
+            // as it is after a later run that found nothing or was stopped.
+            bool unsaved = !keepResults && _location.IsTemporary
+                && (clear || _location.History.Entries.Any(entry => entry.Devices.Count > 0));
+            if (unsaved)
             {
                 string message = Loc("Str_Loc_DiscardTemporary");
                 bool discard;
@@ -118,6 +122,8 @@ namespace KillerScan.Controls
             RefreshLocationSuggestion();
             _filteredView?.Refresh();
             if (_showTopology) RefreshTopology();
+            // The tab has left the Temporary scan, so saying it is unsaved no longer applies.
+            if (StatusText.Text == Loc("Str_Loc_TemporaryNotice")) RefreshLocalizedText();
             LocationChanged?.Invoke(this, EventArgs.Empty);
             StateChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -185,6 +191,7 @@ namespace KillerScan.Controls
             _active.Devices.Clear();
             _active.NewIdentities.Clear();
             _active.ScannedSubnet = string.Empty;
+            _active.ScannedTargets = string.Empty;
             _active.Completion = ScanCompletion.Partial;
             _active.Refresh = null;
             _active.Adapter = string.Empty;
@@ -485,7 +492,7 @@ namespace KillerScan.Controls
             // The results are read here, on the UI thread; the adapter lookup and the neighbour
             // cache (an arp.exe run) happen off it, as the suggestion check does. Results count
             // only when they are this scan's: the table can hold a run of something else.
-            bool sameScan = string.Equals(_active.SubnetText.Trim(), targets.Trim(), StringComparison.OrdinalIgnoreCase);
+            bool sameScan = string.Equals(_active.ScannedTargets.Trim(), targets.Trim(), StringComparison.OrdinalIgnoreCase);
             var known = sameScan ? ScanNetwork.Macs(_active.Devices) : [];
             string choice = _adapterChoice, ranOn = _active.Adapter;
             ScanNetwork network;
@@ -821,7 +828,20 @@ namespace KillerScan.Controls
         internal bool SaveCurrentScan(string? name) => SaveScanTo(_location, name);
 
         /// <summary>Saves the scan bar's scan into another Location (from the holding Location).</summary>
-        internal bool SaveScanInto(LocationData location, string? name) => SaveScanTo(location, name);
+        internal bool SaveScanInto(LocationData location, string? name) => !DeletedElsewhere(location) && SaveScanTo(location, name);
+
+        /// <summary>
+        /// True when another KillerScan deleted a Location this process still lists, so a save
+        /// into it stops here instead of recreating its folder where nothing lists it. The list
+        /// is read again and the status says what happened.
+        /// </summary>
+        private bool DeletedElsewhere(LocationData target)
+        {
+            if (target.Info is not { } info || LocationService.StillExists(info.Id)) return false;
+            LocationService.Forget(info.Id);
+            StatusText.Text = string.Format(Loc("Str_Loc_SaveGone"), info.Name);
+            return true;
+        }
 
         /// <summary>True while the tab is in the migrated "Saved scans" holding Location.</summary>
         internal bool InImportedScans => _location.Info is { } info && LocationService.IsImportedScans(info);
@@ -850,21 +870,31 @@ namespace KillerScan.Controls
         /// <summary>
         /// Saves the unsaved scan on screen into an existing Location: its run moves into that
         /// Location's history (and out of Unassigned's), with the device names given to it, and
-        /// approves nothing. A Temporary scan hands over everything it has. The tab moves only
-        /// when all of that has reached disk; otherwise it stays here with its results, and saving
-        /// again picks up where this left off, because every step is safe to repeat.
+        /// approves nothing. A Temporary scan hands over all its runs, names and device types. The
+        /// tab moves only when all of that has reached disk; otherwise it stays here with its
+        /// results, and saving again picks up where this left off, because every step is safe to
+        /// repeat.
         /// </summary>
         internal bool SaveResultsTo(LocationData target, string? name = null)
         {
             if (_disposed || IsScanning || !IsUnsaved || target.IsTemporary || ReferenceEquals(target, _location)) return false;
+            if (DeletedElsewhere(target)) return false;
             var source = _location;
             // From Unassigned, only the run on screen: Unassigned is shared by every window, so its
             // newest run may be another window's, and an empty table has no run to move at all.
             var runs = source.IsTemporary ? source.History.Entries.ToList()
                 : _active.Devices.Count == 0 ? []
                 : source.History.Entries.Where(entry => entry.ScannedAt == _active.ScannedAt).Take(1).ToList();
-            var names = _active.Devices.Where(device => source.Devices.GetName(device) != null)
-                .Select(device => (Device: device, Name: source.Devices.GetName(device))).ToList();
+            // A stopped scan left results on screen that are in no history, so they go in as the
+            // run they are. Saving again adds no second copy, because the time and target match.
+            if (_active.Devices.Count > 0 && !runs.Any(run => run.ScannedAt == _active.ScannedAt))
+                runs.Add(HistoryStore.Run(_active.ScannedAt, _active.ScannedSubnet, _active.ScannedTargets, _active.Devices,
+                    _active.Completion, _active.Options, false, _active.Adapter, _active.Network));
+            // Unassigned is shared too, so from there only the names of the devices on screen go.
+            var names = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            if (source.IsTemporary) foreach (var pair in source.Devices.Names) names[pair.Key] = pair.Value;
+            else foreach (var device in _active.Devices)
+                    if (source.Devices.GetName(device) is { } deviceName) names[DeviceIdentity.For(device)] = deviceName;
             string targetName = target.Info is { } info ? LocationService.Find(info.Id)?.Name ?? info.Name : string.Empty;
 
             // The destination takes the runs before anything else is written, so a refusal leaves
@@ -882,12 +912,8 @@ namespace KillerScan.Controls
             // takes nothing new; neither stops the results moving.
             bool wantsScan = Targets.Trim().Length > 0 && !(target.Info is { } held && LocationService.IsImportedScans(held));
             saved = saved && (!wantsScan || SaveScanTo(target, name))
-                && PersistenceFeedback.Attempt(() =>
-                {
-                    bool all = true;
-                    foreach (var item in names) all &= target.Devices.SetName(item.Device, item.Name);
-                    return all;
-                }, () => target.Devices.SaveError)
+                && PersistenceFeedback.Attempt(() => target.Devices.SetNames(names), () => target.Devices.SaveError)
+                && (!source.IsTemporary || PersistenceFeedback.Attempt(() => target.Overrides.SetAll(source.Overrides.All), () => target.Overrides.SaveError))
                 && (source.IsTemporary || PersistenceFeedback.Attempt(() => runs.All(source.History.Remove), () => source.History.SaveError));
             if (saved)
                 // The results now belong to the target, so they stay on screen there.

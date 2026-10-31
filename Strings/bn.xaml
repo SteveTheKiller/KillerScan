@@ -454,7 +454,8 @@
     <sys:String x:Key="Str_St_AdapterOffLink">{0} {1}-এর নেটওয়ার্কে ({2}) নেই, এবং Windows এটিকে {1}-এর মাধ্যমে রাউট করে না। এটি স্ক্যান করতে নেটওয়ার্ক অ্যাডাপ্টার থেকে স্বয়ংক্রিয় বেছে নিন।</sys:String>
     <sys:String x:Key="Str_Rep_Location">লোকেশন</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">অ্যাডাপ্টার</sys:String>
-    <sys:String x:Key="Str_Loc_TemporaryNotice">এই অস্থায়ী স্ক্যান সংরক্ষিত নেই এবং KillerScan বন্ধ করলে মুছে যাবে। রেখে দিতে লোকেশন মেনুতে “স্ক্যান সংরক্ষণ” বেছে নিন।</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">অস্থায়ী স্ক্যান, সংরক্ষিত নেই। রাখতে “স্ক্যান সংরক্ষণ” বেছে নিন।</sys:String>
+    <sys:String x:Key="Str_Loc_SaveGone">{0} অন্য উইন্ডোতে মুছে ফেলা হয়েছে, তাই কিছুই সরানো হয়নি। অন্য একটি লোকেশন বেছে নিন।</sys:String>
     <sys:String x:Key="Str_Loc_SaveRetention">কিছুই সরানো হয়নি, কারণ {0}-এর ইতিহাসের সীমা এই স্ক্যানটি সঙ্গে সঙ্গে মুছে ফেলবে। সীমাটি বাড়ান অথবা অন্য কোনো লোকেশনে সংরক্ষণ করুন।</sys:String>
     <sys:String x:Key="Str_Loc_SaveIncomplete">সবকিছু {0}-এ সংরক্ষণ করা যায়নি, তাই ফলাফল এখানেই থাকছে। শেষ করতে আবার সংরক্ষণ করুন।</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">ফলাফল লোকেশনে সংরক্ষণ করুন</sys:String>

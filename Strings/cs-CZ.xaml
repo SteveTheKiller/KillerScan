@@ -452,7 +452,8 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_St_AdapterOffLink">{0} není v síti adaptéru {1} ({2}) a Windows ho přes {1} nesměruje. Pro skenování zvolte Automaticky v nabídce Síťový adaptér.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Lokalita</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adaptér</sys:String>
-    <sys:String x:Key="Str_Loc_TemporaryNotice">Tento dočasný sken není uložen a po zavření KillerScanu zmizí. Chcete-li ho zachovat, zvolte v nabídce Lokality „Uložit sken“.</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">Dočasný sken, neuložený. Zachováte ho volbou „Uložit sken“.</sys:String>
+    <sys:String x:Key="Str_Loc_SaveGone">Lokalita {0} byla smazána v jiném okně, takže nic nebylo přesunuto. Zvolte jinou Lokalitu.</sys:String>
     <sys:String x:Key="Str_Loc_SaveRetention">Nic nebylo přesunuto, protože limit historie Lokality {0} by tento sken okamžitě smazal. Zvyšte limit nebo uložte do jiné Lokality.</sys:String>
     <sys:String x:Key="Str_Loc_SaveIncomplete">Do Lokality {0} se nepodařilo uložit vše, takže výsledky zůstávají zde. Dokončete to opětovným uložením.</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Uložit výsledky do Lokality</sys:String>

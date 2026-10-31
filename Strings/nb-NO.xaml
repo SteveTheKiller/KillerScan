@@ -496,7 +496,8 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_St_AdapterOffLink">{0} er ikke på nettverket til {1} ({2}), og Windows ruter den ikke gjennom {1}. Velg Automatisk under Nettverksadapter for å skanne den.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Lokasjon</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adapter</sys:String>
-    <sys:String x:Key="Str_Loc_TemporaryNotice">Denne midlertidige skanningen er ikke lagret og forsvinner når KillerScan lukkes. For å beholde den, velg «Lagre skanning» i Lokasjon-menyen.</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">Midlertidig skanning, ikke lagret. Velg «Lagre skanning» for å beholde den.</sys:String>
+    <sys:String x:Key="Str_Loc_SaveGone">{0} ble slettet i et annet vindu, så ingenting ble flyttet. Velg en annen Lokasjon.</sys:String>
     <sys:String x:Key="Str_Loc_SaveRetention">Ingenting ble flyttet, fordi grensen for skanneloggen i {0} ville slettet denne skanningen med en gang. Øk grensen eller lagre i en annen Lokasjon.</sys:String>
     <sys:String x:Key="Str_Loc_SaveIncomplete">Ikke alt kunne lagres i {0}, så resultatene blir her. Lagre dem på nytt for å fullføre.</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Lagre resultater i Lokasjonen</sys:String>

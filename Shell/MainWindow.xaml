@@ -700,6 +700,7 @@
                          because the unknown-device list is read, not glanced at. -->
                     <!-- No fixed MaxWidth: FitFooterStatus measures the room up to the badge. -->
                     <TextBlock x:Name="StatusText" Text="Ready" TextTrimming="CharacterEllipsis"
+                               AutomationProperties.LiveSetting="Polite"
                                Margin="{DynamicResource FooterCellPadding}" HorizontalAlignment="Left"
                                Foreground="{DynamicResource MutedTextBrush}" FontFamily="{DynamicResource BrandSansFont}"
                                FontSize="16" TextOptions.TextFormattingMode="Ideal" VerticalAlignment="Center"

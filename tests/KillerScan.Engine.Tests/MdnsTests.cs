@@ -81,6 +81,20 @@ internal static class MdnsTests
         Require(!mixed.Values.Any(info => info.Services.Any(service => service.Contains("hap"))), "A relayed service with no owner is dropped, not given to the first host.");
         TwoHosts(mixed, "With an orphan");
 
+        // A service whose SRV names a host with no address here is that host's, not the packet's one known host's.
+        (string, int, byte[])[] stray =
+        [
+            ("printer.local", 1, Address("192.0.2.40")),
+            ("_airplay._tcp.local", 12, Name("Speaker._airplay._tcp.local")),
+            ("Speaker._airplay._tcp.local", 33, Srv("speaker.local")),
+        ];
+        foreach (string source in new[] { "192.0.2.1", "192.0.2.40" })
+        {
+            var strayed = Parse(Packet(true, stray), source);
+            Require(!strayed.Values.Any(info => info.Services.Any(service => service.Contains("airplay"))), "A service is never given to a host its SRV does not name: " + source);
+            Require(strayed["192.0.2.40"].Name == "printer", "The known host keeps its own name: " + source);
+        }
+
         var listing = Parse(Packet(true, ("_services._dns-sd._udp.local", 12, Name("_ipp._tcp.local"))), "192.0.2.40");
         Require(listing["192.0.2.40"].Services.Contains("_ipp._tcp.local"), "A service-type listing belongs to its sender.");
 

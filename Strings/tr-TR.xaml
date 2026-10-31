@@ -454,7 +454,8 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_St_AdapterOffLink">{0}, {1} ağında değil ({2}) ve Windows onu {1} üzerinden yönlendirmiyor. Taramak için Ağ bağdaştırıcısı altında Otomatik seçeneğini seçin.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Lokasyon</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Bağdaştırıcı</sys:String>
-    <sys:String x:Key="Str_Loc_TemporaryNotice">Bu geçici tarama kaydedilmedi ve KillerScan kapatıldığında kaybolur. Saklamak için Lokasyon menüsünde “Taramayı kaydet” seçeneğini kullanın.</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">Geçici tarama kaydedilmedi. Saklamak için “Taramayı kaydet” seçeneğini kullanın.</sys:String>
+    <sys:String x:Key="Str_Loc_SaveGone">{0} başka bir pencerede silindi, bu yüzden hiçbir şey taşınmadı. Başka bir Lokasyon seçin.</sys:String>
     <sys:String x:Key="Str_Loc_SaveRetention">Hiçbir şey taşınmadı, çünkü {0} geçmiş sınırı bu taramayı hemen siler. Bu sınırı artırın veya başka bir Lokasyona kaydedin.</sys:String>
     <sys:String x:Key="Str_Loc_SaveIncomplete">Her şey {0} Lokasyonuna kaydedilemedi, bu yüzden sonuçlar burada kalıyor. Bitirmek için yeniden kaydedin.</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Sonuçları Lokasyona kaydet</sys:String>

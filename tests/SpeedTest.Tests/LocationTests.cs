@@ -575,6 +575,20 @@ internal static class LocationTests
             blocked = stale.Observe([first, second, third]);
         Require(!blocked.Saved && blocked.NewDevices.Single() == third && !blocked.BaselineCreated, "A blocked file still flags the new device.");
         Require(stale.Retry() && OpenDevices(path).IsKnown(third), "The retry saves it.");
+
+        // A file unreadable at the scan and before it: no baseline is claimed over what is really there,
+        // and the devices stay unseen, so the next readable scan still flags them.
+        var fourth = Device("10.9.0.4", "00:00:00:00:09:04");
+        Observation unreadable;
+        DevicePreferenceStore blind;
+        using (new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))
+        {
+            blind = OpenDevices(path);
+            unreadable = blind.Observe([first, fourth]);
+        }
+        Require(!unreadable.Saved && !unreadable.BaselineCreated && unreadable.NewDevices.Count == 0, "An unreadable file claims no baseline: " + unreadable);
+        var later = OpenDevices(path).Observe([first, fourth]);
+        Require(later.NewDevices.Single() == fourth, "The next readable scan flags the device the unreadable one could not judge.");
     }
 
     private static void CommandLine(string root)
@@ -768,6 +782,13 @@ internal static class LocationTests
             Require(!catalog.Delete(site.Id, out kept) && kept == null, "A catalog that cannot be written stops the delete.");
         StillThere("The folder is put back when the catalog cannot change.");
         Require(!Directory.Exists(deleted) || !Directory.EnumerateFileSystemEntries(deleted).Any(), "Nothing is left in the recovery folder.");
+
+        // A delete that failed does not speak for a later failure that has its own reason.
+        using (new FileStream(Path.Combine(folder, "devices.json"), FileMode.Open, FileAccess.Read, FileShare.None))
+            Require(!catalog.Delete(site.Id, out kept), "A locked file stops the delete.");
+        string deleteReason = catalog.SaveError!;
+        using (new FileStream(Path.Combine(root, "locations.json"), FileMode.Open, FileAccess.Read, FileShare.None))
+            Require(!catalog.Rename(site.Id, "New name") && catalog.SaveError != deleteReason, "A later failure reports its own reason.");
 
         // Everything clear: the same delete finishes, and the path it reports is real.
         Require(catalog.Delete(site.Id, out kept) && kept != null && File.Exists(Path.Combine(kept, "devices.json")), "The delete finishes and reports where the files went.");

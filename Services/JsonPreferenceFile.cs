@@ -39,6 +39,16 @@ namespace KillerScan.Services
             }
         }
 
+        /// <summary>Reads the file again. Unlike <see cref="Load"/>, a failed read keeps the value as it was.</summary>
+        internal bool Refresh()
+        {
+            lock (_gate)
+            {
+                try { Value = Read(); Error = null; return true; }
+                catch (Exception ex) when (IsUnreadable(ex)) { Error = Describe(ex); return false; }
+            }
+        }
+
         // InvalidDataException covers a file that parses but is not usable: a literal null, or a
         // normalizer refusing it, such as a newer format version. It is reported like any other
         // unreadable file instead of escaping to the caller and stopping the app.

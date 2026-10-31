@@ -92,8 +92,7 @@ namespace KillerScan.Shell
                 var selected = HistoryList.SelectedItem as ScanHistoryEntry;
                 var entries = HistoryEntries();
                 HistoryList.ItemsSource = entries;
-                HistoryList.SelectedItem = selected != null && entries.Contains(selected)
-                    ? selected : entries.FirstOrDefault();
+                HistoryList.SelectedItem = HistoryRuns.Selection(entries, selected);
             }
             finally { _syncingHistory = false; }
         }
@@ -147,6 +146,8 @@ namespace KillerScan.Shell
             HistoryRuns.Rename(entry.Owner ?? ShellLocation.History, entry, (dialog.Value ?? string.Empty).Trim());
             RefreshHistoryList();
             RefreshLocationsList();
+            // The list now holds a fresh copy of the run; the pane is told, as it is after a delete.
+            if (_workspaceView == "history") ShowHistoryEntry();
         }
 
         private void DeleteSelectedHistoryEntry()

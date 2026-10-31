@@ -172,6 +172,25 @@ internal static partial class HistoryUiTests
         var all = (DataGrid)history.FindName("HistoryAllGrid");
         var title = (TextBlock)history.FindName("HistoryIdentity");
         var sidebarTitle = (TextBlock)window.FindName("SidebarHeading");
+
+        // A status the footer trims can still be read in full, and a screen reader hears it.
+        var footer = (TextBlock)window.FindName("StatusText");
+        Require(System.Windows.Automation.AutomationProperties.GetLiveSetting(footer) == System.Windows.Automation.AutomationLiveSetting.Polite,
+            "The footer status is a live region.");
+        string shownStatus = footer.Text;
+        double shownWidth = footer.MaxWidth;
+        var viewField = window.GetType().GetField("_workspaceView", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        object shownView = viewField.GetValue(window)!;
+        viewField.SetValue(window, "scan");
+        footer.MaxWidth = 60;
+        footer.Text = "A status far too long for the footer, with what to do next at the end.";
+        Require(((string)Call(window, "BuildStatusTooltip")!).StartsWith(footer.Text, StringComparison.Ordinal), "The tooltip carries the whole of a trimmed status.");
+        footer.MaxWidth = 2000;
+        Require(!((string)Call(window, "BuildStatusTooltip")!).StartsWith(footer.Text, StringComparison.Ordinal), "A status that fits is not repeated in the tooltip.");
+        footer.MaxWidth = shownWidth;
+        footer.Text = shownStatus;
+        viewField.SetValue(window, shownView);
+
         Require(title.FontSize == sidebarTitle.FontSize && Equals(title.FontFamily, sidebarTitle.FontFamily),
             "The history table header is the same size and face as the Scan History heading.");
         string Identity() => string.Concat(title.Inlines.OfType<Run>().Select(run => run.Text));

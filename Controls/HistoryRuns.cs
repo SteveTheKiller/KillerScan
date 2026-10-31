@@ -14,5 +14,14 @@ namespace KillerScan.Controls
 
         internal static bool Delete(HistoryStore store, ScanHistoryEntry entry) =>
             PersistenceFeedback.Attempt(() => store.Remove(entry), () => store.SaveError);
+
+        /// <summary>
+        /// The row to keep selected after the list is rebuilt: the same run, matched by what it
+        /// is, because a rename reads the entries afresh from the file. Delete acts on the
+        /// selection without asking, so it must never slide to another run.
+        /// </summary>
+        internal static ScanHistoryEntry? Selection(List<ScanHistoryEntry> entries, ScanHistoryEntry? selected) =>
+            (selected == null ? null : entries.FirstOrDefault(entry => ReferenceEquals(entry.Owner, selected.Owner) && entry.IsSameRun(selected)))
+            ?? entries.FirstOrDefault();
     }
 }

@@ -496,7 +496,8 @@
     <sys:String x:Key="Str_St_AdapterOffLink">{0} не перебуває в мережі адаптера {1} ({2}), і Windows не спрямовує трафік до нього через {1}. Щоб просканувати його, виберіть «Автоматично» в меню «Мережевий адаптер».</sys:String>
     <sys:String x:Key="Str_Rep_Location">Локація</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Адаптер</sys:String>
-    <sys:String x:Key="Str_Loc_TemporaryNotice">Це тимчасове сканування не збережено і зникне після закриття KillerScan. Щоб залишити його, виберіть «Зберегти сканування» в меню локації.</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">Тимчасове сканування не збережено. Щоб залишити, виберіть «Зберегти сканування».</sys:String>
+    <sys:String x:Key="Str_Loc_SaveGone">Локацію {0} видалено в іншому вікні, тому нічого не переміщено. Виберіть іншу локацію.</sys:String>
     <sys:String x:Key="Str_Loc_SaveRetention">Нічого не переміщено: ліміт історії локації {0} одразу видалив би це сканування. Збільште ліміт або збережіть в іншу локацію.</sys:String>
     <sys:String x:Key="Str_Loc_SaveIncomplete">Не все вдалося зберегти в локацію {0}, тому результати залишаються тут. Збережіть їх ще раз, щоб завершити.</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Зберегти результати в локацію</sys:String>

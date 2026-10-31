@@ -19,6 +19,9 @@ namespace KillerScan.Models
         public bool IsScanning => Cts != null;
 
         public string ScannedSubnet { get; set; } = "";
+
+        /// <summary>The target text the results came from. <see cref="SubnetText"/> follows the box, which stays editable during a run.</summary>
+        public string ScannedTargets { get; set; } = "";
         public DateTimeOffset ScannedAt { get; set; } = DateTimeOffset.Now;
         public ScanCompletion Completion { get; set; } = ScanCompletion.Partial;
 

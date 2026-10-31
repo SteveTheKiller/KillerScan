@@ -250,7 +250,11 @@ namespace KillerScan.Services
             new() { Id = Guid.NewGuid().ToString("N"), Name = name.Trim(), Customer = customer.Trim(), Notes = notes, Icon = icon };
 
         /// <summary>Lists a whole entry in one save.</summary>
-        internal bool Publish(LocationInfo info) => LoadError == null && _store.Commit(value => value.Locations.Add(info));
+        internal bool Publish(LocationInfo info)
+        {
+            _deleteError = null;
+            return LoadError == null && _store.Commit(value => value.Locations.Add(info));
+        }
 
         /// <summary>
         /// Moves a Location's folder to locations\.deleted, so a mistaken delete can be recovered
@@ -326,6 +330,7 @@ namespace KillerScan.Services
         {
             // False when the Location is gone from the catalog on disk (another window deleted it),
             // so a rename or note is never reported as saved when it was not.
+            _deleteError = null;
             bool found = false;
             bool saved = LoadError == null && _store.Commit(value =>
             {

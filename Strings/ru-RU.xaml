@@ -480,7 +480,8 @@
     <sys:String x:Key="Str_St_AdapterOffLink">{0} не находится в сети адаптера {1} ({2}), и Windows не направляет трафик к нему через {1}. Чтобы просканировать его, выберите Автоматически в меню Сетевой адаптер.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Объект</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Адаптер</sys:String>
-    <sys:String x:Key="Str_Loc_TemporaryNotice">Это временное сканирование не сохранено и пропадёт при закрытии KillerScan. Чтобы оставить его, выберите «Сохранить сканирование» в меню Объекта.</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">Временное сканирование не сохранено. Чтобы оставить, выберите «Сохранить сканирование».</sys:String>
+    <sys:String x:Key="Str_Loc_SaveGone">Объект {0} удалён в другом окне, поэтому ничего не перемещено. Выберите другой Объект.</sys:String>
     <sys:String x:Key="Str_Loc_SaveRetention">Ничего не перемещено: лимит истории объекта {0} сразу удалил бы это сканирование. Увеличьте лимит или сохраните в другой Объект.</sys:String>
     <sys:String x:Key="Str_Loc_SaveIncomplete">Не всё удалось сохранить в объект {0}, поэтому результаты остаются здесь. Сохраните их ещё раз, чтобы завершить.</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Сохранить результаты в Объект</sys:String>

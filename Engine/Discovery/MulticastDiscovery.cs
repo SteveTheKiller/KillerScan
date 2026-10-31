@@ -210,7 +210,10 @@ namespace KillerScan.Engine
             var addresses = hosts.Values.SelectMany(known => known).Distinct().ToList();
             string? sender = addresses.Count == 0 || addresses.Contains(srcIp) ? srcIp : hosts.Count == 1 ? addresses[0] : null;
             string Address(List<string> known) => known.Contains(srcIp) ? srcIp : known[0];
-            string? Owner(string instance) => targets.TryGetValue(instance, out var host) && hosts.TryGetValue(host, out var known) ? Address(known) : sender;
+            // An SRV names its host. With no address for that host here, it can only be the sender,
+            // and only in a packet that gives no addresses to say otherwise.
+            string? Owner(string instance) => !targets.TryGetValue(instance, out var host) ? sender
+                : hosts.TryGetValue(host, out var known) ? Address(known) : addresses.Count == 0 ? srcIp : null;
             MdnsInfo Entry(string ip) => map.TryGetValue(ip, out var found) ? found : map[ip] = new MdnsInfo();
 
             foreach (var (service, instance) in services)
@@ -220,11 +223,10 @@ namespace KillerScan.Engine
                 var info = Entry(Address(host.Value));
                 if (info.Name.Length == 0) info.Name = host.Key;
             }
-            // A host with an SRV record and no address here is the sender's own name, if anyone's.
-            if (sender != null)
-                foreach (string host in targets.Values.Where(host => !hosts.ContainsKey(host)))
+            if (addresses.Count == 0)
+                foreach (string host in targets.Values)
                 {
-                    var info = Entry(sender);
+                    var info = Entry(srcIp);
                     if (info.Name.Length == 0) info.Name = host;
                 }
         }

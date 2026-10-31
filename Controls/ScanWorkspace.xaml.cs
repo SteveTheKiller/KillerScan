@@ -246,6 +246,7 @@ namespace KillerScan.Controls
             if (_disposed || IsScanning) return;
             Targets = target;
             _active.ScannedSubnet = target;
+            _active.ScannedTargets = target;
             _active.ScannedAt = scannedAt ?? DateTimeOffset.Now;
             _active.Completion = ScanCompletion.Complete;
             _active.Refresh = null;

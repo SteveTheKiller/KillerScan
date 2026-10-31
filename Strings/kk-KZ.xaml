@@ -496,7 +496,8 @@
     <sys:String x:Key="Str_St_AdapterOffLink">{0} {1} адаптерінің желісінде ({2}) емес және Windows оны {1} арқылы бағыттамайды. Оны сканерлеу үшін Желі адаптері мәзірінен Автоматты тармағын таңдаңыз.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Локация</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Адаптер</sys:String>
-    <sys:String x:Key="Str_Loc_TemporaryNotice">Бұл уақытша сканерлеу сақталмаған және KillerScan жабылғанда жоғалады. Оны сақтау үшін Локация мәзірінен «Сканерлеуді сақтау» тармағын таңдаңыз.</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">Уақытша сканерлеу сақталмаған. Сақтау үшін «Сканерлеуді сақтау» таңдаңыз.</sys:String>
+    <sys:String x:Key="Str_Loc_SaveGone">{0} басқа терезеде жойылды, сондықтан ештеңе жылжытылмады. Басқа Локацияны таңдаңыз.</sys:String>
     <sys:String x:Key="Str_Loc_SaveRetention">Ештеңе жылжытылмады, себебі {0} тарихының шегі бұл сканерлеуді бірден жояды. Шекті көбейтіңіз немесе басқа Локацияға сақтаңыз.</sys:String>
     <sys:String x:Key="Str_Loc_SaveIncomplete">Барлығын {0} ішіне сақтау мүмкін болмады, сондықтан нәтижелер осында қалады. Аяқтау үшін оларды қайта сақтаңыз.</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Нәтижелерді Локацияға сақтау</sys:String>

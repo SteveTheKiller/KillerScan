@@ -470,7 +470,8 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_St_AdapterOffLink">{0} non è nella rete di {1} ({2}) e Windows non lo instrada tramite {1}. Per eseguirne la scansione, scegli Automatica in Scheda di rete.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Sede</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Scheda</sys:String>
-    <sys:String x:Key="Str_Loc_TemporaryNotice">Questa scansione temporanea non è salvata e andrà persa alla chiusura di KillerScan. Per conservarla, scegli «Salva scansione» nel menu Sede.</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">Scansione temporanea non salvata. Per conservarla, scegli «Salva scansione».</sys:String>
+    <sys:String x:Key="Str_Loc_SaveGone">{0} è stata eliminata in un'altra finestra, quindi non è stato spostato nulla. Scegli un'altra Sede.</sys:String>
     <sys:String x:Key="Str_Loc_SaveRetention">Non è stato spostato nulla, perché il limite della cronologia di {0} eliminerebbe subito questa scansione. Aumenta il limite o salva in un'altra Sede.</sys:String>
     <sys:String x:Key="Str_Loc_SaveIncomplete">Non è stato possibile salvare tutto in {0}, quindi i risultati restano qui. Salvali di nuovo per finire.</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Salva i risultati nella Sede</sys:String>

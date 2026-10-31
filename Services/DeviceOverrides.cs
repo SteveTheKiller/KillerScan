@@ -41,6 +41,20 @@ namespace KillerScan.Services
             }, MemoryOnly);
         }
 
+        /// <summary>Every manual override, by MAC address.</summary>
+        internal IReadOnlyDictionary<string, string> All => _overrides;
+
+        /// <summary>Adds overrides by MAC address in one save.</summary>
+        internal bool SetAll(IReadOnlyDictionary<string, string> overrides)
+        {
+            if (overrides.Count == 0) return true;
+            var added = overrides.ToArray();
+            return _store.Change(values =>
+            {
+                foreach (var pair in added) values[pair.Key] = pair.Value;
+            }, MemoryOnly);
+        }
+
         /// <summary>
         /// Try to get the manual override for a MAC address.
         /// </summary>

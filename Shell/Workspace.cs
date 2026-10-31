@@ -367,9 +367,16 @@ namespace KillerScan.Shell
         {
             // Str_St_Ready rather than nothing: before the first scan the cell would otherwise be
             // empty in every language except English, where the XAML's design-time "Ready" showed.
-            StatusText.Text = ActiveScan?.Status ?? (_workspaceView == "watch" ? Loc("Str_View_KeepAlive")
+            string status = ActiveScan?.Status ?? (_workspaceView == "watch" ? Loc("Str_View_KeepAlive")
                 : _workspaceView == "history" ? Loc("Str_History_Title")
                 : _workspaceView == "services" ? Loc("Str_Services_Title") : Loc("Str_St_Ready"));
+            bool changed = status != StatusText.Text;
+            StatusText.Text = status;
+            // The text is a live region, so a screen reader hears where things stand. Not while a
+            // scan runs, when its progress lines would talk over each other.
+            if (changed && ActiveScan?.IsProgressVisible != true)
+                System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(StatusText)?
+                    .RaiseAutomationEvent(System.Windows.Automation.Peers.AutomationEvents.LiveRegionChanged);
             ScanProgress.Value = ActiveScan?.Progress ?? 0;
             ScanProgress.Visibility = ActiveScan?.IsProgressVisible == true ? Visibility.Visible : Visibility.Collapsed;
             if (_workspaceView == "terminal") UpdateTerminalPanelStatus();
@@ -400,6 +407,18 @@ namespace KillerScan.Shell
             StatusText.ToolTip = tip;
         }
 
+        // Measured on a copy: a trimmed TextBlock reports the width of what it drew, not of its text.
+        private bool StatusIsTrimmed()
+        {
+            var whole = new TextBlock
+            {
+                Text = StatusText.Text, FontFamily = StatusText.FontFamily, FontSize = StatusText.FontSize,
+                FontWeight = StatusText.FontWeight, FontStyle = StatusText.FontStyle
+            };
+            whole.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            return whole.DesiredSize.Width > StatusText.MaxWidth;
+        }
+
         private string BuildStatusTooltip()
         {
             if (_workspaceView == "terminal") return StatusText.Text;
@@ -415,8 +434,11 @@ namespace KillerScan.Shell
                         entry.ScannedAt.ToLocalTime().ToString("g"), entry.Devices.Count)
                     : string.Empty;
 
+            // A status the footer trims is read here in full, ahead of the counts.
+            string whole = StatusIsTrimmed() ? StatusText.Text : string.Empty;
             var devices = _scanWorkspace?.ScannedDevices;
-            if (devices == null || devices.Count == 0) return string.Empty;
+            if (devices == null || devices.Count == 0) return whole;
+            if (whole.Length > 0) whole += "\n\n";
 
             // The alert the status bar raises is a count. This is the part that answers "which?".
             var unknown = _scanWorkspace!.NewDevices;
@@ -430,10 +452,10 @@ namespace KillerScan.Shell
                 string body = string.Join("\n", lines);
                 if (unknown.Count > Listed)
                     body += "\n" + string.Format(Loc("Str_Tip_AndMore"), unknown.Count - Listed);
-                return Loc("Str_Tip_UnknownHead") + "\n" + body + "\n\n" + Loc("Str_Tip_TrustHint");
+                return whole + Loc("Str_Tip_UnknownHead") + "\n" + body + "\n\n" + Loc("Str_Tip_TrustHint");
             }
             int withPorts = devices.Count(device => device.OpenPorts.Count > 0);
-            return string.Format(Loc("Str_Tip_Scan"), devices.Count, withPorts);
+            return whole + string.Format(Loc("Str_Tip_Scan"), devices.Count, withPorts);
         }
 
         private void DisposeWorkspace()

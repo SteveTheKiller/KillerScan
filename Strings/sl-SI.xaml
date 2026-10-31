@@ -429,7 +429,8 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_St_AdapterOffLink">{0} ni v omrežju vmesnika {1} ({2}) in Windows ga ne usmerja prek {1}. Za pregled izberi Samodejno pod Omrežni vmesnik.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Lokacija</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Vmesnik</sys:String>
-    <sys:String x:Key="Str_Loc_TemporaryNotice">Ta začasni pregled ni shranjen in se ob zaprtju programa KillerScan izgubi. Če ga želiš obdržati, v meniju Lokacija izberi »Shrani pregled«.</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">Začasni pregled ni shranjen. Če ga želiš obdržati, izberi »Shrani pregled«.</sys:String>
+    <sys:String x:Key="Str_Loc_SaveGone">Lokacija {0} je bila izbrisana v drugem oknu, zato ni bilo nič premaknjeno. Izberi drugo Lokacijo.</sys:String>
     <sys:String x:Key="Str_Loc_SaveRetention">Nič ni bilo premaknjeno, ker bi omejitev zgodovine Lokacije {0} ta pregled takoj izbrisala. Povečaj omejitev ali shrani v drugo Lokacijo.</sys:String>
     <sys:String x:Key="Str_Loc_SaveIncomplete">V Lokacijo {0} ni bilo mogoče shraniti vsega, zato rezultati ostanejo tukaj. Za dokončanje jih shrani znova.</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Shrani rezultate v Lokacijo</sys:String>

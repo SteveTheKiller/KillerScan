@@ -439,7 +439,8 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_St_AdapterOffLink">{0} nie należy do sieci karty {1} ({2}), a system Windows nie kieruje do niego ruchu przez {1}. Aby go przeskanować, wybierz Automatycznie w menu Karta sieciowa.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Lokalizacja</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Karta sieciowa</sys:String>
-    <sys:String x:Key="Str_Loc_TemporaryNotice">To tymczasowe skanowanie nie jest zapisane i zniknie po zamknięciu programu KillerScan. Aby je zachować, wybierz „Zapisz skan” w menu Lokalizacji.</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">Skanowanie tymczasowe, niezapisane. Aby je zachować, wybierz „Zapisz skan”.</sys:String>
+    <sys:String x:Key="Str_Loc_SaveGone">Lokalizacja {0} została usunięta w innym oknie, więc nic nie przeniesiono. Wybierz inną Lokalizację.</sys:String>
     <sys:String x:Key="Str_Loc_SaveRetention">Nic nie zostało przeniesione, ponieważ limit historii Lokalizacji {0} od razu usunąłby ten skan. Zwiększ limit lub zapisz w innej Lokalizacji.</sys:String>
     <sys:String x:Key="Str_Loc_SaveIncomplete">Nie udało się zapisać wszystkiego w Lokalizacji {0}, więc wyniki pozostają tutaj. Zapisz je ponownie, aby dokończyć.</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Zapisz wyniki w Lokalizacji</sys:String>

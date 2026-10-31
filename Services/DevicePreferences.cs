@@ -39,7 +39,8 @@ namespace KillerScan.Services
         {
             // A file that was briefly locked when the Location opened loaded as empty. It is read
             // again first, or this run would be taken as a fresh baseline and flag nothing as new.
-            if (!MemoryOnly && _store.Error != null) _store.Load();
+            // Still unreadable, nothing can be said: these devices stay unseen for the next scan.
+            if (!MemoryOnly && _store.Error != null && !_store.Refresh()) return new Observation(false, [], false);
             var identities = devices.Select(DeviceIdentity.For).ToArray();
             bool baseline = false;
             IReadOnlyList<NetworkDevice> fresh = [];
@@ -98,6 +99,20 @@ namespace KillerScan.Services
             {
                 if (string.IsNullOrWhiteSpace(name)) value.Names.Remove(identity);
                 else value.Names[identity] = name!.Trim();
+            }, MemoryOnly);
+        }
+
+        /// <summary>Every custom name, by device identity.</summary>
+        internal IReadOnlyDictionary<string, string> Names => _data.Names;
+
+        /// <summary>Adds names by device identity in one save.</summary>
+        internal bool SetNames(IReadOnlyDictionary<string, string> names)
+        {
+            if (names.Count == 0) return true;
+            var added = names.ToArray();
+            return _store.Change(value =>
+            {
+                foreach (var pair in added) value.Names[pair.Key] = pair.Value;
             }, MemoryOnly);
         }
 

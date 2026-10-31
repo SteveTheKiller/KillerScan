@@ -58,6 +58,7 @@ namespace KillerScan.Controls
             _active.Network = ScanNetwork.Unknown;
             _active.SubnetText = Targets;
             _active.ScannedSubnet = targets.Summary;
+            _active.ScannedTargets = Targets;
             _active.ScannedAt = DateTimeOffset.Now;
             _active.Completion = ScanCompletion.Partial;
             _active.Refresh = null;
@@ -88,10 +89,11 @@ namespace KillerScan.Controls
                 if (completed)
                 {
                     // Deleted elsewhere while scanning: the results stay, as a Temporary scan.
-                    bool left = LeaveDeletedLocation();
-                    if (left) location = _location;
                     // A demo's fabricated network says nothing about the adapter of the PC running it.
                     if (!DemoData.Enabled) _active.Network = await IdentifyNetwork();
+                    // Checked after that wait, right before the write it protects.
+                    bool left = LeaveDeletedLocation();
+                    if (left) location = _location;
                     if (!_runDeepAfterScan || _active.Devices.Count == 0) RecordCompletedRun(options, deep: false);
                     NoteKnownDevices(location);
                     if (!left) NoteUnsaved(location);
@@ -136,8 +138,8 @@ namespace KillerScan.Controls
             if (location.IsTemporary || _active.Devices.Count == 0) return;
             // A Location learns a network only from what was saved into it: a run that finishes on
             // one of its saved scans' targets records the router; any other run does not.
-            if (location.SavedScans.Items.Any(saved => string.Equals(saved.Target.Trim(), _active.SubnetText.Trim(), StringComparison.OrdinalIgnoreCase)))
-                RecordGateway(location, _active.SubnetText);
+            if (location.SavedScans.Items.Any(saved => string.Equals(saved.Target.Trim(), _active.ScannedTargets.Trim(), StringComparison.OrdinalIgnoreCase)))
+                RecordGateway(location, _active.ScannedTargets);
             var devices = location.Devices;
             var seen = devices.Observe(_active.Devices.ToList());
             PersistenceFeedback.Check(seen.Saved, devices.Retry, () => devices.SaveError);
@@ -161,7 +163,7 @@ namespace KillerScan.Controls
         private async Task<ScanNetwork> IdentifyNetwork()
         {
             var macs = ScanNetwork.Macs(_active.Devices);
-            string targets = _active.SubnetText, adapter = _active.Adapter;
+            string targets = _active.ScannedTargets, adapter = _active.Adapter;
             try { return await Task.Run(() => ScanNetwork.Identify(targets, adapter, macs, FindAdapter, AdapterGateway, AdapterIdentity)); }
             catch (Exception ex) when (ex is not OutOfMemoryException) { return ScanNetwork.Unknown; }
         }
@@ -169,7 +171,7 @@ namespace KillerScan.Controls
         private void RecordCompletedRun(ScanOptions options, bool deep, ScanCompletion completion = ScanCompletion.Complete)
         {
             var history = _location.History;
-            var recorded = history.Record(_active.ScannedSubnet, _active.SubnetText, _active.Devices, completion, options, deep, _active.Adapter, _active.Network);
+            var recorded = history.Record(_active.ScannedSubnet, _active.ScannedTargets, _active.Devices, completion, options, deep, _active.Adapter, _active.Network);
             _active.ScannedAt = recorded.Current.ScannedAt;
             _active.Completion = completion;
             if (_disposed) return;

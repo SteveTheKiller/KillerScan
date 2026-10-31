@@ -222,15 +222,12 @@ namespace KillerScan.Features.Cli
         /// </summary>
         internal static void RecordToLocation(LocationData location, string caption, string targets,
             IReadOnlyList<NetworkDevice> devices, bool quick, TextWriter err, bool quiet, bool keyed, ScanOptions? scanOptions = null,
-            string adapter = "")
+            string adapter = "", ScanNetwork? network = null)
         {
             // A quick scan checks no ports, so it never becomes the baseline for a full one.
             var options = scanOptions ?? new ScanOptions();
             if (quick) options = options.Without("ports,http,tls,ssh");
             var history = location.History;
-            ScanNetwork network;
-            try { network = ScanNetwork.Identify(targets, adapter.Length > 0 ? adapter : ScanNetwork.RouteAdapter(targets), ScanNetwork.Macs(devices)); }
-            catch (Exception ex) when (ex is not OutOfMemoryException) { network = ScanNetwork.Unknown; }
             if (!history.Record(caption, targets, devices, ScanCompletion.Complete, options, deep: false, adapter, network).Saved)
                 err.WriteLine(PaintErr("Warning: the scan could not be saved to history - " + Flatten(history.SaveError), AnsiBad));
             if (devices.Count == 0) return;
@@ -670,13 +667,16 @@ namespace KillerScan.Features.Cli
             // History and the Known list get everything the scan found, before display filters.
             if (location != null && !probe && !demo)
             {
+                string adapter = binding?.InterfaceName ?? string.Empty;
+                ScanNetwork network;
+                try { network = ScanNetwork.Identify(targetText, adapter.Length > 0 ? adapter : ScanNetwork.RouteAdapter(targetText), ScanNetwork.Macs(devices)); }
+                catch (Exception ex) when (ex is not OutOfMemoryException) { network = ScanNetwork.Unknown; }
                 // The Location can be deleted in the app while this scan runs. Writing then would
                 // recreate its folder as an orphan nobody can open, so the run is not recorded.
                 if (location.Info is { } info && !LocationService.StillExists(info.Id))
                     err.WriteLine(PaintErr("Warning: Location \"" + info.Name + "\" was deleted during the scan, so the run was not recorded.", AnsiBad));
                 else
-                    RecordToLocation(location, parsed!.Summary, targetText, devices, quick, err, quiet, terminalProgress, scanOptions,
-                        binding?.InterfaceName ?? string.Empty);
+                    RecordToLocation(location, parsed!.Summary, targetText, devices, quick, err, quiet, terminalProgress, scanOptions, adapter, network);
             }
 
             devices = ApplyFilters(devices, options, ports);

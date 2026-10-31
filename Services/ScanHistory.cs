@@ -263,19 +263,7 @@ namespace KillerScan.Services
         public ScanComparison Record(string caption, string targets, IEnumerable<NetworkDevice> devices,
             ScanCompletion completion, ScanOptions options, bool deep, string adapter = "", ScanNetwork? network = null)
         {
-            var current = new ScanHistoryEntry
-            {
-                ScannedAt = DateTimeOffset.Now,
-                Adapter = adapter,
-                GatewayMac = network?.GatewayMac ?? string.Empty,
-                AdapterId = network?.AdapterId ?? string.Empty,
-                Target = caption,
-                TargetKey = ScanHistoryEntry.KeyFor(targets),
-                Options = options,
-                Deep = deep,
-                Completion = completion,
-                Devices = [.. devices.Select(ToHistorical).OrderBy(device => device.IpAddress)]
-            };
+            var current = Run(DateTimeOffset.Now, caption, targets, devices, completion, options, deep, adapter, network);
             var comparison = Compare(current, Baseline(current));
             if (MemoryOnly) _entries = _demoRetention.Retained(_entries.Concat([current]), current.ScannedAt);
             else
@@ -285,6 +273,22 @@ namespace KillerScan.Services
             }
             return comparison;
         }
+
+        /// <summary>A history entry for a run that happened at <paramref name="scannedAt"/>, not yet in any history.</summary>
+        internal static ScanHistoryEntry Run(DateTimeOffset scannedAt, string caption, string targets, IEnumerable<NetworkDevice> devices,
+            ScanCompletion completion, ScanOptions options, bool deep, string adapter, ScanNetwork? network) => new()
+        {
+            ScannedAt = scannedAt,
+            Adapter = adapter,
+            GatewayMac = network?.GatewayMac ?? string.Empty,
+            AdapterId = network?.AdapterId ?? string.Empty,
+            Target = caption,
+            TargetKey = ScanHistoryEntry.KeyFor(targets),
+            Options = options,
+            Deep = deep,
+            Completion = completion,
+            Devices = [.. devices.Select(ToHistorical).OrderBy(device => device.IpAddress)]
+        };
 
         /// <summary>
         /// Adds runs recorded elsewhere, such as a scan saved to a Location, all of them or none.
