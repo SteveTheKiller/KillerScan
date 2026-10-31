@@ -86,6 +86,7 @@ internal static class LocationWorkspaceTests
             Require(workspace.Session.Devices.Count == 1, "Saved results stay on screen in the Location they moved to.");
             ResultsFollowLocation(a, b, scanner);
             SaveResultsIsDurable(Path.Combine(root, "move"));
+            RetryRepeatsTheChange(Path.Combine(root, "retry", "history.json"));
             Suggestion(Path.Combine(root, "service"));
             AdapterPreference(Path.Combine(root, "adapter"));
             LocationControls(Path.Combine(root, "controls"));
@@ -245,6 +246,63 @@ internal static class LocationWorkspaceTests
                 "Results move without a saved scan when the scan bar is empty.");
         }
         finally { PersistenceFeedback.Answer = null; }
+    }
+
+    // Retry after a failed rename or delete repeats that change, once, on the file as it is by then.
+    private static void RetryRepeatsTheChange(string path)
+    {
+        var store = new HistoryStore(path);
+        store.Load();
+        foreach (string target in new[] { "10.5.0.1", "10.5.0.2", "10.5.0.3" })
+        {
+            store.Record(target, [new NetworkDevice { IpAddress = target }]);
+            Thread.Sleep(2);
+        }
+        var named = store.Entries[0];
+        var deleted = store.Entries[1];
+        var kept = store.Entries[2];
+        ScanHistoryEntry Stored(ScanHistoryEntry run) => Reread(path).Entries.Single(entry => entry.IsSameRun(run));
+        bool Listed(ScanHistoryEntry run) => store.Entries.Any(entry => entry.IsSameRun(run));
+        // The prompt comes up with the file blocked; another window records a run before Retry is pressed.
+        FileStream? held = null;
+        Func<bool> Freed(int stamp) => () =>
+        {
+            held!.Dispose();
+            Reread(path).Record("10.5.1." + stamp, []);
+            return true;
+        };
+        Func<bool> answer = () => false;
+        PersistenceFeedback.Answer = _ => answer();
+        try
+        {
+            held = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None);
+            Require(!HistoryRuns.Rename(store, named, "Declined"), "A declined rename reports failure.");
+            held.Dispose();
+            Require(Stored(named).Name.Length == 0 && store.Entries.Count == 3 && store.Entries[0].Name.Length == 0, "A declined rename changes nothing and hides nothing.");
+
+            held = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None);
+            Require(!HistoryRuns.Delete(store, deleted), "A declined delete reports failure.");
+            held.Dispose();
+            Require(Reread(path).Entries.Count == 3 && Listed(deleted), "A declined delete keeps the run in the file and the list.");
+
+            held = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None);
+            answer = Freed(1);
+            Require(HistoryRuns.Rename(store, named, "Renamed"), "Retry reports success.");
+            Require(Stored(named).Name == "Renamed", "Retry applied the rename.");
+            Require(Reread(path).Entries.Count == 4, "The run another window recorded survives.");
+
+            held = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None);
+            answer = Freed(2);
+            Require(HistoryRuns.Delete(store, deleted), "Retry reports success.");
+            var after = Reread(path).Entries;
+            Require(!after.Any(entry => entry.IsSameRun(deleted)), "Retry deleted the run.");
+            Require(after.Count == 4 && after.Any(entry => entry.IsSameRun(kept)) && Stored(named).Name == "Renamed", "Only that run went.");
+            Require(store.Retry() && Reread(path).Entries.Count == 4, "Another retry changes nothing.");
+            Require(HistoryRuns.Delete(store, deleted) && Reread(path).Entries.Count == 4, "Deleting a run already gone is not an error.");
+            answer = () => throw new InvalidOperationException("Nothing failed, so nothing should ask.");
+            Require(HistoryRuns.Rename(store, deleted, "Gone") && Reread(path).Entries.All(entry => entry.Name != "Gone"), "Renaming a run already gone asks nothing and adds nothing.");
+        }
+        finally { held?.Dispose(); PersistenceFeedback.Answer = null; }
     }
 
     // The banner offers a Location this gateway was seen in, and never switches by itself.

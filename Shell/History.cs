@@ -144,8 +144,7 @@ namespace KillerScan.Shell
                 Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = this };
             dialog.ShowDialog();
             if (!dialog.Confirmed) return;
-            var store = entry.Owner ?? ShellLocation.History;
-            PersistenceFeedback.Check(store.Rename(entry, (dialog.Value ?? string.Empty).Trim()), store.Retry, () => store.SaveError);
+            HistoryRuns.Rename(entry.Owner ?? ShellLocation.History, entry, (dialog.Value ?? string.Empty).Trim());
             RefreshHistoryList();
             RefreshLocationsList();
         }
@@ -157,8 +156,7 @@ namespace KillerScan.Shell
 
         private void DeleteHistoryEntry(ScanHistoryEntry entry)
         {
-            var store = entry.Owner ?? ShellLocation.History;
-            PersistenceFeedback.Check(store.Remove(entry), store.Retry, () => store.SaveError);
+            HistoryRuns.Delete(entry.Owner ?? ShellLocation.History, entry);
             RefreshHistoryList();
             RefreshLocationsList();
             // The refresh selects another run without raising its change, so the pane is told here;

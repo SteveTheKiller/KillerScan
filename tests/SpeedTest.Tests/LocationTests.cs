@@ -28,9 +28,11 @@ internal static class LocationTests
             DeletedDuringScan(Path.Combine(root, "deleted"));
             BaselineByTime(Path.Combine(root, "time"));
             AdoptKeepsTheRun(Path.Combine(root, "adopt"));
+            SavedScanRename(Path.Combine(root, "rename"));
             ReloadKeepsUnsaved(Path.Combine(root, "reload"));
             Isolation(Path.Combine(root, "isolation"));
             KnownAndApproved(Path.Combine(root, "known"));
+            KnownAcrossProcesses(Path.Combine(root, "processes"));
             CommandLine(Path.Combine(root, "cli"));
             Transfer(Path.Combine(root, "transfer"));
             Suggestions(Path.Combine(root, "suggest"));
@@ -328,6 +330,51 @@ internal static class LocationTests
         Require(all.Adopt([blocked]) == AdoptResult.Saved && Reread(pathAll).Entries.Count == 2, "The same run is saved once the file is free.");
     }
 
+    // A rename reaches the file, measured the way the menu calls it: with the object from the list.
+    private static void SavedScanRename(string root)
+    {
+        string path = Path.Combine(root, "profiles.json");
+        SavedScanStore Fresh()
+        {
+            var opened = new SavedScanStore(path);
+            opened.Load();
+            return opened;
+        }
+        var store = new SavedScanStore(path);
+        Require(store.Save(new ScanProfile { Name = "Original", Target = "10.0.0.0/24", DeepScanAfter = true, Adapter = "Ethernet" }), "A scan is saved.");
+        Require(store.Save(new ScanProfile { Name = "Other", Target = "10.0.1.0/24" }), "A second scan is saved.");
+
+        Require(store.Rename(store.Items.First(item => item.Name == "Original"), "Renamed", out bool taken) && !taken, "The rename reports success.");
+        var reread = Fresh().Items.Single(item => item.Target == "10.0.0.0/24");
+        Require(reread.Name == "Renamed" && reread.DeepScanAfter && reread.Adapter == "Ethernet", "The new name reaches the file with everything else the scan holds.");
+        Require(store.Items.Any(item => item.Name == "Renamed"), "The list shows the new name.");
+
+        Require(store.Rename(store.Items.First(item => item.Name == "Renamed"), "RENAMED", out taken) && !taken
+                && Fresh().Items.Any(item => item.Name == "RENAMED"), "A case-only rename reaches the file.");
+
+        Require(!store.Rename(store.Items.First(item => item.Name == "RENAMED"), "other", out taken) && taken
+                && Fresh().Items.Count(item => item.Target == "10.0.0.0/24" && item.Name == "RENAMED") == 1, "A name in use is refused.");
+
+        // Another window took the name since this one loaded. Only the file knows that.
+        var otherWindow = Fresh();
+        Require(otherWindow.Rename(otherWindow.Items.First(item => item.Name == "Other"), "Taken", out _), "Another window renames its scan.");
+        Require(!store.Rename(store.Items.First(item => item.Name == "RENAMED"), "taken", out taken) && taken, "A name another window just took is refused.");
+        Require(Fresh().Items.Count == 2 && Fresh().Items.Any(item => item.Name == "RENAMED") && Fresh().Items.Any(item => item.Name == "Taken"), "Neither scan changed.");
+
+        var selected = store.Items.First(item => item.Name == "RENAMED");
+        using (new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))
+            Require(!store.Rename(selected, "After retry", out taken) && !taken && store.SaveError != null, "A blocked file reports the failure.");
+        Require(selected.Name == "RENAMED" && store.Items.Any(item => item.Name == "RENAMED"), "A failed rename shows what is really saved.");
+        Require(store.Rename(selected, "After retry", out taken) && Fresh().Items.Any(item => item.Name == "After retry" && item.DeepScanAfter),
+            "Retrying with the same selected object reaches the file.");
+
+        var deleted = Fresh();
+        Require(deleted.Delete(deleted.Items.First(item => item.Name == "After retry")), "Another window deletes the scan.");
+        Require(!store.Rename(store.Items.First(item => item.Name == "After retry"), "Gone", out taken) && !taken && store.SaveError == null,
+            "Renaming a scan that no longer exists does not claim success.");
+        Require(Fresh().Items.Single().Name == "Taken", "Nothing comes back.");
+    }
+
     // Rereading history after another process wrote keeps a run this process could not save.
     private static void ReloadKeepsUnsaved(string root)
     {
@@ -413,6 +460,52 @@ internal static class LocationTests
         legacy.Load();
         Require(legacy.HasBaseline && legacy.IsTrusted(a) && legacy.IsKnown(a), "Older trust lists become the baseline.");
         Require(legacy.Observe([a, b]).NewDevices.Single() == b, "An older install keeps flagging devices outside its trusted list once.");
+    }
+
+    /// <summary>The other process in <see cref="KnownAcrossProcesses"/>: one scan seeing one device.</summary>
+    internal static void ObserveOnce(string path, string mac) => OpenDevices(path).Observe([Device("10.9.0.1", mac)]);
+
+    private static DevicePreferenceStore OpenDevices(string path)
+    {
+        var store = new DevicePreferenceStore(path);
+        store.Load();
+        return store;
+    }
+
+    // Two KillerScans open the same new Location before either has scanned. What counts as new is
+    // decided by the file, so the second scan still alerts on what the first never saw, and
+    // neither loses what the other recorded.
+    private static void KnownAcrossProcesses(string root)
+    {
+        Directory.CreateDirectory(root);
+        string path = Path.Combine(root, "devices.json");
+        NetworkDevice first = Device("10.9.0.1", "00:00:00:00:09:01"), second = Device("10.9.0.2", "00:00:00:00:09:02");
+        var stale = OpenDevices(path);
+        var writer = OpenDevices(path);
+        Require(!stale.HasBaseline, "Neither window has a baseline yet.");
+        using (var process = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(typeof(LocationTests).Assembly.Location,
+            "--observe-writer \"" + path + "\" " + first.MacAddress) { UseShellExecute = false, CreateNoWindow = true })!)
+            Require(process.WaitForExit(15000) && process.ExitCode == 0, "The other KillerScan finishes its first scan.");
+
+        var seen = stale.Observe([first, second]);
+        Require(!seen.BaselineCreated && seen.NewDevices.Single() == second, "The second scan flags the device the baseline never saw.");
+        Require(stale.HasBaseline && stale.IsKnown(first) && stale.IsKnown(second), "This window now knows both.");
+        var reread = OpenDevices(path);
+        Require(reread.IsKnown(first) && reread.IsKnown(second), "Neither scan lost the other's devices.");
+
+        // An approval revoked in another window is not shown as current after the next scan.
+        Require(writer.SetTrusted(first, true) && stale.Observe([first]).Saved, "Another window approves a device.");
+        Require(stale.IsTrusted(first), "This window picks the approval up.");
+        Require(writer.SetTrusted(first, false) && stale.Observe([first]).Saved, "Another window revokes it.");
+        Require(!stale.IsTrusted(first), "The revocation is picked up by the next scan.");
+
+        // A file that cannot be written still gives an answer, keeps the devices for a retry, and does not lose them.
+        var third = Device("10.9.0.3", "00:00:00:00:09:03");
+        Observation blocked;
+        using (new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))
+            blocked = stale.Observe([first, second, third]);
+        Require(!blocked.Saved && blocked.NewDevices.Single() == third && !blocked.BaselineCreated, "A blocked file still flags the new device.");
+        Require(stale.Retry() && OpenDevices(path).IsKnown(third), "The retry saves it.");
     }
 
     private static void CommandLine(string root)

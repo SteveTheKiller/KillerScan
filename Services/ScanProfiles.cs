@@ -92,19 +92,28 @@ namespace KillerScan.Services
         /// <summary>
         /// Renames one saved scan in place, keeping everything else it holds (Deep Scan included).
         /// A name only differing in case is a plain rename. A name another saved scan already uses
-        /// is refused rather than replacing that scan; <paramref name="taken"/> says so.
+        /// is refused rather than replacing that scan; <paramref name="taken"/> says so. Worked out
+        /// over the latest file, so a name another window just took counts, and a failed save
+        /// changes nothing here: repeat the call to retry. False with no error and not taken means
+        /// the scan is gone from the file.
         /// </summary>
         public bool Rename(ScanProfile profile, string name, out bool taken)
         {
-            bool collision = Items.Any(item => !string.Equals(item.Name, profile.Name, StringComparison.OrdinalIgnoreCase)
-                && string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
-            taken = collision;
-            if (collision) return false;
-            return _store.Change(items =>
+            // Read once, because the change runs over more than one copy of the list and the
+            // object passed in may be among them.
+            string original = profile.Name;
+            bool collision = false, found = false;
+            static bool Named(ScanProfile item, string text) => string.Equals(item.Name, text, StringComparison.OrdinalIgnoreCase);
+            void Apply(List<ScanProfile> items)
             {
-                var found = items.FirstOrDefault(item => string.Equals(item.Name, profile.Name, StringComparison.OrdinalIgnoreCase));
-                if (found != null) found.Name = name;
-            }, MemoryOnly);
+                var match = items.FirstOrDefault(item => Named(item, original));
+                found = match != null;
+                collision = items.Any(item => !Named(item, original) && Named(item, name));
+                if (match != null && !collision) match.Name = name;
+            }
+            bool saved = MemoryOnly ? _store.Change(Apply, memoryOnly: true) : _store.Commit(Apply);
+            taken = collision;
+            return saved && found && !collision;
         }
 
         public bool Delete(ScanProfile profile) => _store.Change(items =>

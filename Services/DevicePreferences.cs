@@ -40,14 +40,21 @@ namespace KillerScan.Services
             // A file that was briefly locked when the Location opened loaded as empty. It is read
             // again first, or this run would be taken as a fresh baseline and flag nothing as new.
             if (!MemoryOnly && _store.Error != null) _store.Load();
-            bool baseline = !_data.Baseline;
-            var fresh = baseline ? [] : devices.Where(device => !IsKnown(device)).ToList();
             var identities = devices.Select(DeviceIdentity.For).ToArray();
-            bool saved = _store.Change(value =>
+            bool baseline = false;
+            IReadOnlyList<NetworkDevice> fresh = [];
+            // Worked out over the latest file under its lock, not this window's copy: another
+            // KillerScan may have scanned this Location since this one loaded it.
+            void Record(DevicePreferenceData value)
             {
+                baseline = !value.Baseline;
+                fresh = baseline ? [] : devices.Where(device => !value.Known.Contains(DeviceIdentity.For(device))).ToList();
                 foreach (string identity in identities) value.Known.Add(identity);
                 value.Baseline = true;
-            }, MemoryOnly);
+            }
+            // A file that cannot be written falls back on what this window has, kept for a retry.
+            bool saved = !MemoryOnly && _store.Commit(Record);
+            if (!saved) saved = _store.Change(Record, MemoryOnly);
             return new Observation(baseline, fresh, saved);
         }
 

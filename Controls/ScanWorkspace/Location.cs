@@ -432,11 +432,11 @@ namespace KillerScan.Controls
             string name = dialog.Value.Trim();
             if (name.Length == 0) name = profile.Target;
             if (name == profile.Name) return;
-            if (!store.Rename(profile, name, out bool taken))
-            {
-                if (taken) StatusText.Text = string.Format(Loc("Str_Loc_ScanNameTaken"), name);
-                else PersistenceFeedback.Check(false, store.Retry, () => store.SaveError);
-            }
+            // Only a failed write asks. A taken name has its own message, and a scan another window
+            // deleted simply leaves the list.
+            bool taken = false;
+            PersistenceFeedback.Attempt(() => store.Rename(profile, name, out taken) || taken || store.SaveError == null, () => store.SaveError);
+            if (taken) StatusText.Text = string.Format(Loc("Str_Loc_ScanNameTaken"), name);
             LocationChanged?.Invoke(this, EventArgs.Empty);
         }
 

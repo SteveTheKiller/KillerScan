@@ -32,6 +32,7 @@
       "--theme-dump": "Writes every resolved theme value to KILLERSCAN_THEME_DUMP for before-and-after comparison; passes or fails nothing.",
       "--terminal-memory-child": "Child process started by --terminal-memory.",
       "--history-writer": "Child process started by --history-retention.",
+      "--observe-writer": "Child process started by --locations.",
       "---": "Not a flag: a table-separator string in a check."
     }
   }

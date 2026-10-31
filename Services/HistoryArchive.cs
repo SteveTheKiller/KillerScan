@@ -161,7 +161,7 @@ namespace KillerScan.Services
                 {
                     ReadCurrent(); EnsureReadable();
                     var match = Entries.FirstOrDefault(item => item.IsSameRun(entry));
-                    if (match == null) return false;
+                    if (match == null) { SaveError = null; return false; }
                     match.Name = name;
                     Persist(Entries, Policy);
                     _pending.Clear();

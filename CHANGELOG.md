@@ -10,6 +10,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 
 ### Fixed
 - Save results to Location moves a scan only once all of it is on disk in the destination. A run the destination's history limit would delete is refused with the reason, a save that fails leaves the results and the tab where they were, and saving again finishes the move without doubling anything.
+- Retry after a failed rename or delete in History repeats that change, a failed one no longer empties the list, and two KillerScans open on the same Location each alert on devices the other never saw.
 - Dialog title bars match the rest of the dialog in every theme except 98SE. They had their own band, a lighter strip in Light and a gradient in several dark themes, and the title bar painted its film grain twice.
 - Update and uninstall helpers load PowerShell modules only from Windows' own folder, so a module planted in your Documents cannot run inside them as administrator; a failed uninstall reports the real reason and retries when a copy is still running; a stalled update says so; and the window no longer freezes while an update is handed off.
 - The terminal keeps 10,000 lines of history, so a ping -t or a long SSH session no longer grows memory without end; a flood of combining marks cannot stall it; resizing during vim or less no longer loses the latest output; and pasting several lines asks first when the shell would run them at once.

@@ -67,6 +67,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--conpty-backpressure" })) { ConPtyBackpressureTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--scan-lifecycle" })) { await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.Length == 4 && args[0] == "--history-writer") { HistoryRetentionTests.WriteConcurrent(args[1], args[2], args[3]); return 0; }
+            if (args.Length == 3 && args[0] == "--observe-writer") { LocationTests.ObserveOnce(args[1], args[2]); return 0; }
             if (args.SequenceEqual(new[] { "--scan-presentation" })) { await ScanPresentation(); return 0; }
             if (args.SequenceEqual(new[] { "--terminal" })) { await View(); return 0; }
             if (args.SequenceEqual(new[] { "--menu-separators" })) { await MenuSeparatorThemeTests.Run(); return 0; }
