@@ -5,6 +5,9 @@ namespace KillerScan.Services
 {
     internal enum ScanCompletion { Complete, Partial, Canceled }
 
+    /// <summary>What became of runs handed to another history. Saved means every run is in its file.</summary>
+    internal enum AdoptResult { Saved, Failed, NotRetained }
+
     internal sealed class ScanHistoryEntry
     {
         public DateTimeOffset ScannedAt { get; set; }
@@ -43,6 +46,9 @@ namespace KillerScan.Services
         /// <summary>The history this entry was listed from, which picks its baseline. Never saved.</summary>
         [System.Text.Json.Serialization.JsonIgnore]
         internal HistoryStore? Owner { get; set; }
+
+        /// <summary>The same run, in any copy: entries are read fresh from the file, so objects never match.</summary>
+        internal bool IsSameRun(ScanHistoryEntry other) => ScannedAt == other.ScannedAt && Target == other.Target;
 
         /// <summary>The normalized key for a target list, or null when it does not parse.</summary>
         internal static string? KeyFor(string targets)
@@ -258,18 +264,26 @@ namespace KillerScan.Services
             return comparison;
         }
 
-        /// <summary>Adds a run recorded elsewhere, such as a Temporary scan saved to a Location.</summary>
-        public bool Adopt(ScanHistoryEntry entry)
+        /// <summary>
+        /// Adds runs recorded elsewhere, such as a scan saved to a Location, all of them or none.
+        /// Saved means they are in this history's file, so the caller may let go of its own copy.
+        /// </summary>
+        public AdoptResult Adopt(IReadOnlyList<ScanHistoryEntry> runs)
         {
-            var copy = new ScanHistoryEntry
+            var copies = runs.Select(entry => new ScanHistoryEntry
             {
                 ScannedAt = entry.ScannedAt, Target = entry.Target, TargetKey = entry.TargetKey, Options = entry.Options,
                 Deep = entry.Deep, Completion = entry.Completion, Adapter = entry.Adapter, Name = entry.Name, Devices = [.. entry.Devices]
-            };
-            if (MemoryOnly) { _entries = _demoRetention.Retained(_entries.Concat([copy]), DateTimeOffset.Now); return true; }
-            bool saved = _archive.Append(copy, DateTimeOffset.Now);
+            }).ToList();
+            if (MemoryOnly)
+            {
+                if (_demoRetention.Adopting(_entries, copies, DateTimeOffset.Now) is not { } kept) return AdoptResult.NotRetained;
+                _entries = kept;
+                return AdoptResult.Saved;
+            }
+            var result = _archive.Adopt(copies, DateTimeOffset.Now);
             _entries = _archive.Entries;
-            return saved;
+            return result;
         }
 
         private static ScanComparison Compare(ScanHistoryEntry current, ScanHistoryEntry? previous)

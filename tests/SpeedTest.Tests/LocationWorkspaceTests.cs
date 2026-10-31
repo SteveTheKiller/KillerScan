@@ -85,6 +85,7 @@ internal static class LocationWorkspaceTests
             Require(!workspace.SaveResultsTo(b), "Only a Temporary scan's results can be saved to a Location.");
             Require(workspace.Session.Devices.Count == 1, "Saved results stay on screen in the Location they moved to.");
             ResultsFollowLocation(a, b, scanner);
+            SaveResultsIsDurable(Path.Combine(root, "move"));
             Suggestion(Path.Combine(root, "service"));
             AdapterPreference(Path.Combine(root, "adapter"));
             LocationControls(Path.Combine(root, "controls"));
@@ -127,6 +128,123 @@ internal static class LocationWorkspaceTests
         workspace.ConfirmDiscard = _ => true;
         Require(workspace.SetLocation(a) && workspace.Location == a && workspace.Session.Devices.Count == 0,
             "Discarding moves to the Location with an empty tab.");
+    }
+
+    private static HistoryStore Reread(string path)
+    {
+        var store = new HistoryStore(path);
+        store.Load();
+        return store;
+    }
+
+    // Saving unsaved results moves them only once every write has landed. Until then the tab stays
+    // where it was, with its results, and the run is on disk at least once. Saving again after a
+    // failure finishes the move without doubling anything.
+    private static void SaveResultsIsDurable(string root)
+    {
+        // Files from an earlier version make the first start create Unassigned.
+        Directory.CreateDirectory(root);
+        File.WriteAllText(Path.Combine(root, "devices.json"), "{}");
+        LocationService.Root = root;
+        LocationService.Load("Unassigned");
+        Require(LocationService.Create("Keeps one", out var keepsOneInfo), "A Location is created.");
+        Require(LocationService.Create("Site", out var siteInfo), "A Location is created.");
+        var unassigned = LocationService.Get(LocationService.Find(LocationCatalog.UnassignedId)!);
+        var keepsOne = LocationService.Get(keepsOneInfo!);
+        var site = LocationService.Get(siteInfo!);
+        string FileOf(LocationData data, string name) => Path.Combine(root, "locations", data.Info!.Id, name);
+        var asked = new List<string>();
+        Func<bool> answer = () => false;
+        PersistenceFeedback.Answer = message => { asked.Add(message); return answer(); };
+        using var workspace = new ScanWorkspace("192.168.1.10", false, new SiteScanner());
+        workspace.ConfirmDiscard = _ => true;
+        ScanHistoryEntry ScanIn(LocationData location)
+        {
+            workspace.SetLocation(location);
+            int before = location.History.Entries.Count;
+            workspace.Scan();
+            PumpUntil(() => !workspace.IsScanning && location.History.Entries.Count == before + 1);
+            Require(workspace.Session.Devices.Count == 1, "The scan is on screen.");
+            return location.History.Entries.Last();
+        }
+        bool Stayed(LocationData location) => workspace.Location == location && workspace.Session.Devices.Count == 1;
+        int Copies(LocationData location, ScanHistoryEntry run) => Reread(FileOf(location, "history.json")).Entries.Count(entry => entry.IsSameRun(run));
+
+        try
+        {
+            // An older run on screen, and a destination that keeps only its newest run.
+            Require(keepsOne.History.ApplyRetention(new HistoryRetention(HistoryRetentionMode.Count, 1), _ => true), "The destination keeps one run.");
+            Require(keepsOne.History.Adopt([new ScanHistoryEntry { Target = "newer", ScannedAt = DateTimeOffset.Now.AddDays(1), Completion = ScanCompletion.Complete }]) == AdoptResult.Saved,
+                "The destination holds a newer run.");
+            var older = ScanIn(unassigned);
+            Require(!workspace.SaveResultsTo(keepsOne) && Stayed(unassigned), "A run the destination would drop is refused and the tab keeps it.");
+            Require(workspace.Status == string.Format((string)Application.Current.FindResource("Str_Loc_SaveRetention"), "Keeps one"), "The status says why nothing moved.");
+            Require(Copies(unassigned, older) == 1 && Reread(FileOf(keepsOne, "history.json")).Entries.Single().Target == "newer"
+                    && keepsOne.SavedScans.Items.Count == 0 && asked.Count == 0, "A refused run writes nothing and stays in the source.");
+
+            // The destination's history cannot be written, and the retry is declined.
+            string siteHistory = FileOf(site, "history.json");
+            Require(site.History.Adopt([new ScanHistoryEntry { Target = "existing", ScannedAt = DateTimeOffset.Now.AddHours(-1), Completion = ScanCompletion.Complete }]) == AdoptResult.Saved,
+                "The destination holds a run.");
+            using (new FileStream(siteHistory, FileMode.Open, FileAccess.Read, FileShare.None))
+                Require(!workspace.SaveResultsTo(site) && Stayed(unassigned) && asked.Count == 1, "A declined retry reports failure and stays put.");
+            Require(workspace.Status == string.Format((string)Application.Current.FindResource("Str_Loc_SaveIncomplete"), "Site"), "The status says the save did not finish.");
+            Require(Copies(unassigned, older) == 1 && Copies(site, older) == 0, "Nothing moved.");
+
+            // The same failure, with the file freed during Retry.
+            asked.Clear();
+            var held = new FileStream(siteHistory, FileMode.Open, FileAccess.Read, FileShare.None);
+            answer = () => { held.Dispose(); return true; };
+            Require(workspace.SaveResultsTo(site) && Stayed(site) && asked.Count == 1, "Retry finishes the move.");
+            Require(Copies(unassigned, older) == 0 && Copies(site, older) == 1, "The run moved, once.");
+            answer = () => false;
+
+            // The saved scan cannot be written after the history landed.
+            var temporary = LocationData.Temporary();
+            var typed = ScanIn(temporary);
+            using (new FileStream(FileOf(site, "profiles.json"), FileMode.Open, FileAccess.Read, FileShare.None))
+                Require(!workspace.SaveResultsTo(site, "Office") && Stayed(temporary), "A failed saved scan leaves the tab on its results.");
+            Require(Copies(site, typed) == 1, "The history had landed.");
+            Require(workspace.SaveResultsTo(site, "Office") && Stayed(site) && Copies(site, typed) == 1, "Saving again finishes the move without a second copy.");
+            var scans = new SavedScanStore(FileOf(site, "profiles.json"));
+            scans.Load();
+            Require(scans.Items.Any(item => item.Name == "Office"), "The saved scan reached the file.");
+
+            // A typed name cannot be written.
+            temporary = LocationData.Temporary();
+            typed = ScanIn(temporary);
+            Require(temporary.Devices.SetName(workspace.Session.Devices.Single(), "Typed name"), "A name is typed.");
+            Require(site.Devices.SetName(new NetworkDevice { IpAddress = "192.168.1.11" }, "Already named"), "The destination has a devices file to block.");
+            using (new FileStream(FileOf(site, "devices.json"), FileMode.Open, FileAccess.Read, FileShare.None))
+                Require(!workspace.SaveResultsTo(site) && Stayed(temporary), "A failed name leaves the tab on its results.");
+            Require(workspace.SaveResultsTo(site) && Stayed(site) && Copies(site, typed) == 1, "Saving again finishes the names.");
+            var names = new DevicePreferenceStore(FileOf(site, "devices.json"));
+            names.Load();
+            Require(names.GetName(new NetworkDevice { IpAddress = "192.168.1.10" }) == "Typed name", "The name reached the file.");
+
+            // The source cannot let go of the run after the destination has it.
+            var moved = ScanIn(unassigned);
+            using (new FileStream(FileOf(unassigned, "history.json"), FileMode.Open, FileAccess.Read, FileShare.None))
+                Require(!workspace.SaveResultsTo(site) && Stayed(unassigned), "A source that cannot be changed leaves the tab where it was.");
+            Require(Copies(unassigned, moved) == 1 && Copies(site, moved) == 1, "The run is in both files, never in neither.");
+            Require(workspace.SaveResultsTo(site) && Stayed(site), "Saving again finishes the move.");
+            Require(Copies(unassigned, moved) == 0 && Copies(site, moved) == 1, "The source lets go only after the destination has it.");
+
+            // Another window removed the run from Unassigned in the meantime.
+            var gone = ScanIn(unassigned);
+            Require(Reread(FileOf(unassigned, "history.json")).Remove(gone), "Another window deletes the run.");
+            asked.Clear();
+            Require(workspace.SaveResultsTo(site) && Stayed(site) && asked.Count == 0 && Copies(site, gone) == 1, "A run already gone from the source is not an error.");
+
+            // An empty scan bar has no saved scan to write, which does not stop the results moving.
+            temporary = LocationData.Temporary();
+            typed = ScanIn(temporary);
+            int savedScans = site.SavedScans.Items.Count;
+            workspace.Targets = string.Empty;
+            Require(workspace.SaveResultsTo(site) && Stayed(site) && Copies(site, typed) == 1 && site.SavedScans.Items.Count == savedScans,
+                "Results move without a saved scan when the scan bar is empty.");
+        }
+        finally { PersistenceFeedback.Answer = null; }
     }
 
     // The banner offers a Location this gateway was seen in, and never switches by itself.

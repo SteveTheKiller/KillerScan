@@ -121,17 +121,20 @@ namespace KillerScan.Services
 
         /// <summary>
         /// Deletes one run, matched by when it ran and what it scanned: entries are read fresh from
-        /// the file each time, so the caller's object is never the stored one.
+        /// the file each time, so the caller's object is never the stored one. A run another window
+        /// already deleted counts: true means it is not in the file.
         /// </summary>
         internal bool Remove(ScanHistoryEntry entry)
         {
+            // A failed attempt shows what was there before it: a blocked read leaves Entries empty.
+            var session = Entries;
             try
             {
                 return Locked(() =>
                 {
                     ReadCurrent(); EnsureReadable();
-                    var kept = Entries.Where(item => item.ScannedAt != entry.ScannedAt || item.Target != entry.Target).ToList();
-                    if (kept.Count == Entries.Count) return false;
+                    var kept = Entries.Where(item => !item.IsSameRun(entry)).ToList();
+                    if (kept.Count == Entries.Count) { SaveError = null; return true; }
                     Persist(kept, Policy);
                     Entries = kept;
                     // The pending runs are in the file now; keeping them would write them twice.
@@ -142,6 +145,7 @@ namespace KillerScan.Services
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
+                Entries = session;
                 SaveError = ex.Message;
                 return false;
             }
@@ -150,12 +154,13 @@ namespace KillerScan.Services
         /// <summary>Names one run, matched the same way <see cref="Remove"/> matches.</summary>
         internal bool Rename(ScanHistoryEntry entry, string name)
         {
+            var session = Entries;
             try
             {
                 return Locked(() =>
                 {
                     ReadCurrent(); EnsureReadable();
-                    var match = Entries.FirstOrDefault(item => item.ScannedAt == entry.ScannedAt && item.Target == entry.Target);
+                    var match = Entries.FirstOrDefault(item => item.IsSameRun(entry));
                     if (match == null) return false;
                     match.Name = name;
                     Persist(Entries, Policy);
@@ -166,6 +171,7 @@ namespace KillerScan.Services
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
+                Entries = session;
                 SaveError = ex.Message;
                 return false;
             }
@@ -175,6 +181,39 @@ namespace KillerScan.Services
         {
             _pending.Add(entry);
             return Retry(now);
+        }
+
+        /// <summary>
+        /// Adds runs recorded elsewhere in one write, all of them or none. Runs the retention
+        /// policy would drop at once are refused rather than written and lost. Unlike
+        /// <see cref="Append"/> nothing stays pending on failure, because the caller still holds
+        /// the runs, and a run already here from an earlier attempt is not added again.
+        /// </summary>
+        internal AdoptResult Adopt(IReadOnlyList<ScanHistoryEntry> runs, DateTimeOffset now)
+        {
+            var session = Entries;
+            try
+            {
+                return Locked(() =>
+                {
+                    ReadCurrent(); EnsureReadable();
+                    if (Policy.Adopting(Entries, runs, now) is not { } kept) return AdoptResult.NotRetained;
+                    if (_pending.Count > 0 || runs.Any(run => !Entries.Any(run.IsSameRun)))
+                    {
+                        Persist(kept, Policy);
+                        Entries = kept;
+                        _pending.Clear();
+                    }
+                    SaveError = null;
+                    return AdoptResult.Saved;
+                });
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                Entries = session;
+                SaveError = ex.Message;
+                return AdoptResult.Failed;
+            }
         }
 
         internal bool Retry(DateTimeOffset now)

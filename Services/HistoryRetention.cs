@@ -20,5 +20,15 @@ namespace KillerScan.Services
             var latest = new HashSet<ScanHistoryEntry>(source.OrderByDescending(entry => entry.ScannedAt).Take(Count));
             return [.. source.Where(latest.Contains)];
         }
+
+        /// <summary>
+        /// The entries with these runs added, or null when this policy would drop any of them at
+        /// once. A run already among the entries is not added a second time.
+        /// </summary>
+        internal List<ScanHistoryEntry>? Adopting(IReadOnlyList<ScanHistoryEntry> entries, IReadOnlyList<ScanHistoryEntry> runs, DateTimeOffset now)
+        {
+            var kept = Retained(entries.Concat(runs.Where(run => !entries.Any(run.IsSameRun))), now);
+            return runs.All(run => kept.Any(run.IsSameRun)) ? kept : null;
+        }
     }
 }

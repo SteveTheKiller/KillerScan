@@ -27,6 +27,7 @@ internal static class LocationTests
             FailedImportMove(Path.Combine(root, "move"));
             DeletedDuringScan(Path.Combine(root, "deleted"));
             BaselineByTime(Path.Combine(root, "time"));
+            AdoptKeepsTheRun(Path.Combine(root, "adopt"));
             ReloadKeepsUnsaved(Path.Combine(root, "reload"));
             Isolation(Path.Combine(root, "isolation"));
             KnownAndApproved(Path.Combine(root, "known"));
@@ -265,11 +266,66 @@ internal static class LocationTests
         System.Threading.Thread.Sleep(20);
         history.Record("10.3.0.0/24", "10.3.0.0/24", [Device("10.3.0.2")], ScanCompletion.Complete, new ScanOptions(), deep: false);
         var newer = history.Entries.Last();
-        history.Adopt(temporary.Entries.Single());
+        history.Adopt([temporary.Entries.Single()]);
         System.Threading.Thread.Sleep(20);
         var latest = history.Record("10.3.0.0/24", "10.3.0.0/24", [Device("10.3.0.2")], ScanCompletion.Complete, new ScanOptions(), deep: false);
         Require(latest.Previous?.ScannedAt == newer.ScannedAt, "The baseline is the newest earlier run, not the one adopted last.");
         Require(history.Compare(history.Entries.Last()).Previous?.ScannedAt == newer.ScannedAt, "Viewing the run later picks the same baseline.");
+    }
+
+    private static HistoryStore Reread(string path)
+    {
+        var store = new HistoryStore(path);
+        store.Load();
+        return store;
+    }
+
+    // Adopting succeeds only when the run itself is in the file. A run the destination's retention
+    // would drop at once is refused, so the caller keeps its own copy.
+    private static void AdoptKeepsTheRun(string root)
+    {
+        ScanHistoryEntry Run(string target, DateTimeOffset at) => new() { Target = target, ScannedAt = at, Completion = ScanCompletion.Complete };
+        var now = DateTimeOffset.Now;
+
+        string countPath = Path.Combine(root, "count", "history.json");
+        var count = new HistoryStore(countPath);
+        count.Load();
+        Require(count.ApplyRetention(new HistoryRetention(HistoryRetentionMode.Count, 1), _ => true), "The destination keeps one run.");
+        Require(count.Adopt([Run("newer", now)]) == AdoptResult.Saved, "A run that fits is saved.");
+        byte[] before = File.ReadAllBytes(countPath);
+        Require(count.Adopt([Run("older", now.AddDays(-1))]) == AdoptResult.NotRetained, "An older run the count would drop is refused.");
+        Require(File.ReadAllBytes(countPath).SequenceEqual(before) && count.Entries.Single().Target == "newer" && Reread(countPath).Entries.Single().Target == "newer",
+            "A refused run changes nothing.");
+        Require(count.Adopt([Run("newest", now.AddDays(1))]) == AdoptResult.Saved && Reread(countPath).Entries.Single().Target == "newest",
+            "A newer run replaces the oldest, as any new run does.");
+
+        string timePath = Path.Combine(root, "time", "history.json");
+        var time = new HistoryStore(timePath);
+        time.Load();
+        Require(time.ApplyRetention(new HistoryRetention(HistoryRetentionMode.Time, Days: 7), _ => true), "The destination keeps a week.");
+        Require(time.Adopt([Run("stale", now.AddDays(-30))]) == AdoptResult.NotRetained && Reread(timePath).Entries.Count == 0, "A run older than the time limit is refused.");
+        Require(time.Adopt([Run("recent", now.AddDays(-1))]) == AdoptResult.Saved && Reread(timePath).Entries.Single().Target == "recent", "A run inside the time limit is saved.");
+
+        string pathAll = Path.Combine(root, "all", "history.json");
+        var all = new HistoryStore(pathAll);
+        all.Load();
+        Require(all.ApplyRetention(new HistoryRetention(HistoryRetentionMode.Count, 2), _ => true), "The destination keeps two runs.");
+        Require(all.Adopt([Run("first", now), Run("second", now.AddMinutes(1)), Run("third", now.AddMinutes(2))]) == AdoptResult.NotRetained
+            && Reread(pathAll).Entries.Count == 0, "Runs that do not all fit add nothing, so a move never lands in part.");
+
+        var once = Run("once", now);
+        Require(all.Adopt([once]) == AdoptResult.Saved && all.Adopt([once]) == AdoptResult.Saved && Reread(pathAll).Entries.Count == 1,
+            "Adopting the same run again adds no second copy.");
+
+        var blocked = Run("blocked", now.AddMinutes(1));
+        using (new FileStream(pathAll, FileMode.Open, FileAccess.Read, FileShare.None))
+        {
+            Require(all.Adopt([blocked]) == AdoptResult.Failed && all.SaveError != null, "A write that fails is reported as failed.");
+            Require(all.Entries.Single().Target == "once", "A failed adoption shows what is really saved.");
+        }
+        Require(Reread(pathAll).Entries.Single().Target == "once" && all.Retry() && Reread(pathAll).Entries.Count == 1,
+            "A failed adoption leaves nothing behind for a later save to write.");
+        Require(all.Adopt([blocked]) == AdoptResult.Saved && Reread(pathAll).Entries.Count == 2, "The same run is saved once the file is free.");
     }
 
     // Rereading history after another process wrote keeps a run this process could not save.

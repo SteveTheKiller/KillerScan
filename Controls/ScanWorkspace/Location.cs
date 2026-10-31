@@ -817,11 +817,6 @@ namespace KillerScan.Controls
         }
 
         /// <summary>
-        /// Moves a Temporary scan's results into a Location: its history entries and any names
-        /// typed while it was temporary. Nothing is approved and the baseline is not touched,
-        /// then the tab moves to that Location.
-        /// </summary>
-        /// <summary>
         /// Saves the scan bar's target, settings and adapter as one of this Location's networks,
         /// under a name (the target when none is given). What is saved is the place to scan,
         /// never a result: every run is already in Scan history.
@@ -844,9 +839,9 @@ namespace KillerScan.Controls
             if (target.Length == 0) { FocusTargets(); return false; }
             string label = string.IsNullOrWhiteSpace(name) ? target : name!.Trim();
             var store = location.SavedScans;
-            bool saved = store.SaveEdited(label, target, _active.Options, _adapterChoice);
+            bool saved = PersistenceFeedback.Check(store.SaveEdited(label, target, _active.Options, _adapterChoice),
+                store.Retry, () => store.SaveError);
             if (saved) RecordGateway(location);   // this Location now knows this network
-            PersistenceFeedback.Check(saved, store.Retry, () => store.SaveError);
             LocationChanged?.Invoke(this, EventArgs.Empty);
             return saved;
         }
@@ -857,36 +852,52 @@ namespace KillerScan.Controls
 
         /// <summary>
         /// Saves the unsaved scan on screen into an existing Location: its run moves into that
-        /// Location's history (and out of Unassigned's), with the device names given to it. A
-        /// Temporary scan hands over everything it has, as before.
+        /// Location's history (and out of Unassigned's), with the device names given to it, and
+        /// approves nothing. A Temporary scan hands over everything it has. The tab moves only
+        /// when all of that has reached disk; otherwise it stays here with its results, and saving
+        /// again picks up where this left off, because every step is safe to repeat.
         /// </summary>
         internal bool SaveResultsTo(LocationData target, string? name = null)
         {
             if (_disposed || IsScanning || !IsUnsaved || target.IsTemporary || ReferenceEquals(target, _location)) return false;
             var source = _location;
-            bool saved = true;
             // From Unassigned, only the run on screen: Unassigned is shared by every window, so its
             // newest run may be another window's, and an empty table has no run to move at all.
             var runs = source.IsTemporary ? source.History.Entries.ToList()
                 : _active.Devices.Count == 0 ? []
                 : source.History.Entries.Where(entry => entry.ScannedAt == _active.ScannedAt).Take(1).ToList();
-            // The name, if one was given, labels the run being saved (one run from Unassigned).
-            // The scan itself (target and settings) is saved as one of the target's networks.
-            SaveScanTo(target, name);
-            foreach (var entry in runs)
+            var names = _active.Devices.Where(device => source.Devices.GetName(device) != null)
+                .Select(device => (Device: device, Name: source.Devices.GetName(device))).ToList();
+            string targetName = target.Info is { } info ? LocationService.Find(info.Id)?.Name ?? info.Name : string.Empty;
+
+            // The destination takes the runs before anything else is written, so a refusal leaves
+            // no trace, and before the source lets go, so a run is never in neither file.
+            var adopted = AdoptResult.Failed;
+            bool saved = PersistenceFeedback.Attempt(() => (adopted = target.History.Adopt(runs)) != AdoptResult.Failed,
+                () => target.History.SaveError);
+            if (saved && adopted == AdoptResult.NotRetained)
             {
-                bool adopted = target.History.Adopt(entry);
-                saved &= adopted;
-                if (adopted && !source.IsTemporary) source.History.Remove(entry);
+                StatusText.Text = string.Format(Loc("Str_Loc_SaveRetention"), targetName);
+                return false;
             }
-            foreach (var device in _active.Devices)
-                if (source.Devices.GetName(device) is { } deviceName) saved &= target.Devices.SetName(device, deviceName);
-            PersistenceFeedback.Check(saved, () => target.History.Retry() && target.Devices.Retry(),
-                () => target.History.SaveError ?? target.Devices.SaveError);
-            // The results now belong to the target, so they stay on screen there.
-            SetLocation(target, keepResults: true);
+            // The scan (target and settings) is saved as one of the target's networks, under the
+            // name given. An empty scan bar has nothing to save, and the migrated holding Location
+            // takes nothing new; neither stops the results moving.
+            bool wantsScan = Targets.Trim().Length > 0 && !(target.Info is { } held && LocationService.IsImportedScans(held));
+            saved = saved && (!wantsScan || SaveScanTo(target, name))
+                && PersistenceFeedback.Attempt(() =>
+                {
+                    bool all = true;
+                    foreach (var item in names) all &= target.Devices.SetName(item.Device, item.Name);
+                    return all;
+                }, () => target.Devices.SaveError)
+                && (source.IsTemporary || PersistenceFeedback.Attempt(() => runs.All(source.History.Remove), () => source.History.SaveError));
+            if (saved)
+                // The results now belong to the target, so they stay on screen there.
+                SetLocation(target, keepResults: true);
+            else StatusText.Text = string.Format(Loc("Str_Loc_SaveIncomplete"), targetName);
             HistoryRecorded?.Invoke(this, EventArgs.Empty);
-            return true;
+            return saved;
         }
 
         private string? AskName(string titleKey, string current, string? detail = null)
