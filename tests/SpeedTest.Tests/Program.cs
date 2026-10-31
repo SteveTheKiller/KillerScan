@@ -70,10 +70,10 @@ internal static class Program
             if (args.Length == 4 && args[0] == "--history-writer") { HistoryRetentionTests.WriteConcurrent(args[1], args[2], args[3]); return 0; }
             if (args.Length == 3 && args[0] == "--observe-writer") { LocationTests.ObserveOnce(args[1], args[2]); return 0; }
             if (args.Length == 3 && args[0] == "--import-then-die") { LocationTests.ImportThenDie(args[1], args[2]); return 0; }
-            if (args.SequenceEqual(new[] { "--scan-presentation" })) { await ScanPresentation(); return 0; }
+            if (args.SequenceEqual(new[] { "--scan-presentation" })) { await ScanPresentation(); Console.WriteLine("PASS: scan presentation regression suite (1 selected)."); return 0; }
             if (args.SequenceEqual(new[] { "--terminal" })) { await View(); return 0; }
-            if (args.SequenceEqual(new[] { "--menu-separators" })) { await MenuSeparatorThemeTests.Run(); return 0; }
-            if (args.SequenceEqual(new[] { "--startup-fade" })) { await StartupFadeTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--menu-separators" })) { await MenuSeparatorThemeTests.Run(); Console.WriteLine("PASS: menu separator regression suite (1 selected)."); return 0; }
+            if (args.SequenceEqual(new[] { "--startup-fade" })) { await StartupFadeTests.Run(); Console.WriteLine("PASS: startup fade regression suite (1 selected)."); return 0; }
             if (args.SequenceEqual(new[] { "--release-ui" })) { await ReleaseUiTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--scan-options-ui" })) { await ReleaseUiTests.Run(scanOptionsOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--history-ui" })) { await HistoryUiTests.Run(); return 0; }
@@ -100,11 +100,11 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--executable-deployment" })) { await ExecutableDeploymentTests.Run(); return 0; }
             if (args.Length == 2 && args[0] == "--executable-deployment" && int.TryParse(args[1], out int publicationError)
                 && (publicationError == 1176 || publicationError == 1177)) { await ExecutableDeploymentTests.RunPartial(publicationError); return 0; }
-            if (args.SequenceEqual(new[] { "--report-logo" })) { await ReportLogoTests.Run(); return 0; }
-            if (args.SequenceEqual(new[] { "--outline-hover-ui" })) { await OutlineHoverThemeTests.Run(); return 0; }
-            if (args.SequenceEqual(new[] { "--radio-center-ui" })) { await RadioCenterUiTests.Run(); return 0; }
-            if (args.SequenceEqual(new[] { "--shrink-to-fit" })) { await ShrinkToFitTests.Run(); return 0; }
-            if (args.SequenceEqual(new[] { "--rail-order" })) { await RailOrderTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--report-logo" })) { await ReportLogoTests.Run(); Console.WriteLine("PASS: report logo regression suite (1 selected)."); return 0; }
+            if (args.SequenceEqual(new[] { "--outline-hover-ui" })) { await OutlineHoverThemeTests.Run(); Console.WriteLine("PASS: outline hover regression suite (1 selected)."); return 0; }
+            if (args.SequenceEqual(new[] { "--radio-center-ui" })) { await RadioCenterUiTests.Run(); Console.WriteLine("PASS: radio alignment regression suite (1 selected)."); return 0; }
+            if (args.SequenceEqual(new[] { "--shrink-to-fit" })) { await ShrinkToFitTests.Run(); Console.WriteLine("PASS: shrink-to-fit regression suite (1 selected)."); return 0; }
+            if (args.SequenceEqual(new[] { "--rail-order" })) { await RailOrderTests.Run(); Console.WriteLine("PASS: rail order regression suite (1 selected)."); return 0; }
             Require(args.All(value => value == "--worker" || value == "--internet" || value == "--speed-loopback"),
                 "Usage: SpeedTest.Tests.exe [--speed-loopback] [--worker] [--internet]");
             if (!args.Contains("--speed-loopback"))
