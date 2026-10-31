@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
 ### Fixed
+- An all-users update reopens KillerScan for the signed-in user at normal rights, whether it finishes or stops early. Windows was refusing that relaunch, so the app stayed closed. Files left behind by earlier failed updates are cleared when the next update is staged.
 - Save results to Location moves a scan only once all of it is on disk in the destination. A run the destination's history limit would delete, or a Location deleted in another window, is refused with the reason, a stopped scan's results are saved as a canceled run and can be saved from the menu, a Temporary scan's names and device types all go with it, a save that fails leaves the results and the tab where they were, and saving again finishes the move without doubling anything.
 - Retry after a failed rename or delete in History repeats that change, a failed one no longer empties the list, and two KillerScans open on the same Location each alert on devices the other never saw.
 - A Location appears in the list only once its imported files are in place, even if KillerScan is killed mid-import. Deleting a Location finishes or changes nothing, so a locked file or a blocked recovery folder can no longer crash it or leave files no list points to. Imported history with empty fields can no longer crash History's copy menu.

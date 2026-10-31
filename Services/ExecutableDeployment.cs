@@ -96,8 +96,12 @@ namespace KillerScan.Services
         /// A cleanup that failed (the old image still mapped by another session) leaves them, and
         /// they would keep the folder at uninstall. They go once the installed exe is in place and
         /// they are over a day old, so a recovery copy from a failed update is never taken while
-        /// it could still matter.
+        /// it could still matter. The trusted staging (TrustedUpdate.Stage) runs this with the
+        /// installed exe once its own copy is verified; a per-user publication runs it on the exe
+        /// it replaces.
         /// </summary>
+        internal static void RemovePublicationLeftovers(string installedExe) => RemovePublicationLeftovers(installedExe, new FileOperations());
+
         private static void RemovePublicationLeftovers(string destination, FileOperations files)
         {
             string? directory = Path.GetDirectoryName(destination);

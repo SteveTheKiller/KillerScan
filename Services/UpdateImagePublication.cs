@@ -29,10 +29,12 @@ namespace KillerScan.Services
         }
 
         /// <summary>The publication script. With <paramref name="showReport"/> a failure opens the recovery report.
-        /// <paramref name="overrides"/> replaces individual operations and exists for checks only.</summary>
+        /// <paramref name="overrides"/> replaces individual operations and exists for checks only. A caller
+        /// that has already emitted <see cref="Guard"/> ahead of this text passes <paramref name="guardEmitted"/>,
+        /// so the helper stays within the Windows command limit.</summary>
         internal static string Script(string download, string target, bool elevated,
             string releasesUrl, string displayName, string? version = null, string? hive = null,
-            string? reopen = null, bool showReport = false, string? overrides = null)
+            string? reopen = null, bool showReport = false, string? overrides = null, bool guardEmitted = false)
         {
             download = Path.GetFullPath(download);
             target = Path.GetFullPath(target);
@@ -61,7 +63,7 @@ namespace KillerScan.Services
             Value(script, "Explorer", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe"));
             script.AppendLine("Elevated = " + (elevated ? "$true" : "$false"));
             script.AppendLine("ShowReport = " + (showReport ? "$true" : "$false")).AppendLine("}");
-            script.AppendLine(Guard);
+            if (!guardEmitted) script.AppendLine(Guard);
             script.AppendLine(Operations);
             if (overrides is not null) script.AppendLine(overrides);
             // The elevated helper must not open a window as administrator, so instead of showing the
@@ -348,8 +350,9 @@ $ops.Releases = { param($url)
 }
 """;
 
-        // Compiled by Windows PowerShell 5.1, so it stays within C# 5.
-        private const string Guard = """
+        // Compiled by Windows PowerShell 5.1, so it stays within C# 5. TrustedUpdate.Publication emits
+        // it ahead of its own prologue too; the type check at the top makes a second copy a no-op.
+        internal const string Guard = """
 if (-not ('KillerUpdateGuard' -as [type])) {
 # A helper running as administrator (the trusted machine path, or a per-user copy run as
 # administrator) compiles in a fresh folder only Administrators and SYSTEM can open. Add-Type
@@ -471,7 +474,7 @@ public static class KillerUpdateGuard {
         if (shell == IntPtr.Zero || GetWindowThreadProcessId(shell, out shellPid) == 0) throw new IOException("The normal desktop shell is unavailable.");
         using (var shellProcess = Process.GetProcessById((int)shellPid))
             if (shellProcess.SessionId != Process.GetCurrentProcess().SessionId) throw new IOException("The shell is in another session.");
-        IntPtr processHandle = OpenProcess(0x1000, false, shellPid), token = IntPtr.Zero, environment = IntPtr.Zero;
+        IntPtr processHandle = OpenProcess(0x1000, false, shellPid), token = IntPtr.Zero, primary = IntPtr.Zero, environment = IntPtr.Zero;
         if (processHandle == IntPtr.Zero) throw new Win32Exception(Marshal.GetLastWin32Error());
         try {
             if (!OpenProcessToken(processHandle, 0xB, out token)) throw new Win32Exception(Marshal.GetLastWin32Error());
@@ -481,14 +484,18 @@ public static class KillerUpdateGuard {
             int elevation, returned;
             if (!GetTokenInformation(token, 20, out elevation, sizeof(int), out returned) || returned != sizeof(int) || elevation != 0)
                 throw new IOException("A normal-integrity shell token could not be established.");
-            if (!CreateEnvironmentBlock(out environment, token, false)) throw new Win32Exception(Marshal.GetLastWin32Error());
+            // Windows refuses the shell's own token here with access denied; a primary copy that can
+            // adjust its session and defaults is what CreateProcessWithToken accepts.
+            if (!DuplicateTokenEx(token, 0x18B, IntPtr.Zero, 2, 1, out primary)) throw new Win32Exception(Marshal.GetLastWin32Error());
+            if (!CreateEnvironmentBlock(out environment, primary, false)) throw new Win32Exception(Marshal.GetLastWin32Error());
             var startup = new StartupInfo(); startup.Size = Marshal.SizeOf(typeof(StartupInfo)); startup.Desktop = @"winsta0\default";
             ProcessInfo info;
-            if (!CreateProcessWithToken(token, 0, target, new StringBuilder(Quote(target) + " " + arguments), 0x400, environment, Path.GetDirectoryName(target), ref startup, out info))
+            if (!CreateProcessWithToken(primary, 0, target, new StringBuilder(Quote(target) + " " + arguments), 0x400, environment, Path.GetDirectoryName(target), ref startup, out info))
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             CloseHandle(info.Thread); CloseHandle(info.Process);
         } finally {
             if (environment != IntPtr.Zero) DestroyEnvironmentBlock(environment);
+            if (primary != IntPtr.Zero) CloseHandle(primary);
             if (token != IntPtr.Zero) CloseHandle(token);
             CloseHandle(processHandle);
         }
@@ -522,6 +529,7 @@ public static class KillerUpdateGuard {
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)] [DllImport("kernel32.dll", SetLastError = true)] private static extern IntPtr OpenProcess(uint access, bool inherit, uint pid);
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)] [DllImport("kernel32.dll")] private static extern bool CloseHandle(IntPtr handle);
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)] [DllImport("advapi32.dll", SetLastError = true)] private static extern bool OpenProcessToken(IntPtr process, uint access, out IntPtr token);
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)] [DllImport("advapi32.dll", SetLastError = true)] private static extern bool DuplicateTokenEx(IntPtr token, uint access, IntPtr attributes, int impersonation, int type, out IntPtr duplicate);
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)] [DllImport("advapi32.dll", SetLastError = true)] private static extern bool GetTokenInformation(IntPtr token, int kind, out int value, int length, out int returned);
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)] [DllImport("userenv.dll", SetLastError = true)] private static extern bool CreateEnvironmentBlock(out IntPtr environment, IntPtr token, bool inherit);
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)] [DllImport("userenv.dll")] private static extern bool DestroyEnvironmentBlock(IntPtr environment);

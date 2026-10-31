@@ -48,8 +48,20 @@ internal static class UpdateHandoffTests
             Console.WriteLine("PASS an untrusted target never elevates a mutable temporary script.");
             string target = Path.Combine(root, "KillerScan.exe");
             var publication = TrustedUpdate.Publication(payload, target, "9.9.9", new string('0', 64), 1234, 5678, 4321, 8765);
-            UninstallCommandTests.Parse(UninstallCommandTests.Decode(publication.Arguments));
+            string script = UninstallCommandTests.Decode(publication.Arguments);
+            UninstallCommandTests.Parse(script);
             Console.WriteLine("PASS Windows PowerShell parses the immutable protected publication command.");
+
+            // A helper that gives up before publishing reopens the installed copy as the signed-in
+            // user. The guard has to exist by then, and an Explorer hand-off could run it as administrator.
+            int guard = script.IndexOf("'KillerUpdateGuard' -as [type]", StringComparison.Ordinal);
+            int wait = script.IndexOf("$p=$null;try{$p=[Diagnostics.Process]::GetProcessById(", StringComparison.Ordinal);
+            if (guard < 0 || guard > wait)
+                throw new InvalidOperationException("The guard type is defined after the wait, so an early failure cannot use it.");
+            string earlyFailure = script.Substring(script.LastIndexOf("}catch{$message=", StringComparison.Ordinal));
+            if (!earlyFailure.Contains("[KillerUpdateGuard]::Launch(") || earlyFailure.Contains("explorer.exe"))
+                throw new InvalidOperationException("An early failure does not relaunch through the guard.");
+            Console.WriteLine("PASS an early helper failure relaunches through the guard, never Explorer.");
         }
         finally
         {

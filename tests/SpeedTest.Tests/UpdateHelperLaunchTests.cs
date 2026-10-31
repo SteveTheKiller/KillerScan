@@ -56,6 +56,7 @@ internal static class UpdateHelperLaunchTests
                     && !Directory.EnumerateFiles(Path.Combine(root, "reopen-fails"), "*.old*").Any(),
                 "A relaunch failure after a finished publication is not reported as a failed update: " + reopenFails);
             Console.WriteLine("PASS a relaunch failure leaves a finished update finished.");
+            ElevatedRelaunch(root, standIn);
 
             // Downloads from earlier attempts are swept; recent ones and other files are not.
             string temp = Path.Combine(root, "temp");
@@ -74,6 +75,37 @@ internal static class UpdateHelperLaunchTests
         {
             try { Directory.Delete(root, true); } catch (IOException) { } catch (UnauthorizedAccessException) { }
         }
+    }
+
+    // The cases above record the relaunch instead of running it, and only a real one proves Windows
+    // accepts the token, so this needs an elevated process on the signed-in desktop (SN02, not CI).
+    private static void ElevatedRelaunch(string root, byte[] standIn)
+    {
+        using var self = Process.GetCurrentProcess();
+        if (!KillerFamily.Deployment.InstallerExitCodes.IsElevated()
+            || !Process.GetProcessesByName("explorer").Any(shell => shell.SessionId == self.SessionId))
+        {
+            Console.WriteLine("SKIP the real elevated relaunch needs an elevated process on the signed-in desktop.");
+            return;
+        }
+        string name = "relaunch-" + Guid.NewGuid().ToString("N");
+        string target = Path.Combine(root, name + ".exe");
+        File.WriteAllBytes(target, standIn);
+        string script = "$ErrorActionPreference='Stop'\n" + UpdateImagePublication.Guard
+            + "\n[KillerUpdateGuard]::Launch('" + target + "','',$true)";
+        using var helper = Process.Start(UpdateService.HelperStart(script)) ?? throw new IOException("The update helper did not start.");
+        if (!helper.WaitForExit(60000)) { helper.Kill(); throw new TimeoutException("The update helper did not finish."); }
+        Process[] started = Process.GetProcessesByName(name);
+        try
+        {
+            Require(helper.ExitCode == 0 && started.Length == 1,
+                "An elevated helper starts the app with the desktop shell's token: exit " + helper.ExitCode + ", started " + started.Length);
+        }
+        finally
+        {
+            foreach (var process in started) { process.Kill(); process.WaitForExit(10000); process.Dispose(); }
+        }
+        Console.WriteLine("PASS an elevated helper really starts the app with the desktop shell's token.");
     }
 
     private static void LaunchShape(string root, byte[] standIn)
