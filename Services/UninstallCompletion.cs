@@ -91,7 +91,7 @@ namespace KillerScan.Services
                 string elevation = "$ErrorActionPreference='Stop';try{"
                     + (silent ? "" : "$image=[IO.Path]::Combine(" + Data(InstallDirectory(machine)) + ",'KillerScan.exe');" + confirmation)
                     + "$s=New-Object Diagnostics.ProcessStartInfo;"
-                    + "$s.FileName=" + Data(powershell) + ";$s.Arguments='" + inner + "';"
+                    + "$s.FileName=" + Data(powershell) + ";$s.Arguments='" + inner.Replace("'", "''") + "';"
                     + "$s.UseShellExecute=$true;$s.Verb='runas';$s.WindowStyle=[Diagnostics.ProcessWindowStyle]::Hidden;"
                     + "$p=[Diagnostics.Process]::Start($s);if($null -eq $p){exit 1};$p.WaitForExit();$code=$p.ExitCode;$p.Dispose();exit $code"
                     + "}catch{$e=$_.Exception.GetBaseException();[Console]::Error.WriteLine($e.Message);"

@@ -55,13 +55,14 @@ internal static class UpdateHandoffTests
             // A helper that gives up before publishing reopens the installed copy as the signed-in
             // user. The guard has to exist by then, and an Explorer hand-off could run it as administrator.
             int guard = script.IndexOf("'KillerUpdateGuard' -as [type]", StringComparison.Ordinal);
+            int relaunch = script.IndexOf("function Start-KillerUpdatedApp {", StringComparison.Ordinal);
             int wait = script.IndexOf("$p=$null;try{$p=[Diagnostics.Process]::GetProcessById(", StringComparison.Ordinal);
-            if (guard < 0 || guard > wait)
-                throw new InvalidOperationException("The guard type is defined after the wait, so an early failure cannot use it.");
+            if (guard < 0 || guard > wait || relaunch < 0 || relaunch > wait)
+                throw new InvalidOperationException("The guard and safe relaunch function must exist before the wait so early failures can reopen the app.");
             string earlyFailure = script.Substring(script.LastIndexOf("}catch{$message=", StringComparison.Ordinal));
-            if (!earlyFailure.Contains("[KillerUpdateGuard]::Launch(") || earlyFailure.Contains("explorer.exe"))
-                throw new InvalidOperationException("An early failure does not relaunch through the guard.");
-            Console.WriteLine("PASS an early helper failure relaunches through the guard, never Explorer.");
+            if (!earlyFailure.Contains("Start-KillerUpdatedApp ") || earlyFailure.Contains("explorer.exe"))
+                throw new InvalidOperationException("An early failure does not use the safe relaunch function.");
+            Console.WriteLine("PASS an early helper failure uses the safe relaunch function, never Explorer.");
         }
         finally
         {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -10,6 +11,7 @@ internal static class UninstallCommandTests
 {
     internal static void Run()
     {
+        var failures = new List<Exception>();
         foreach (bool machine in new[] { false, true })
             foreach (bool silent in new[] { false, true })
             {
@@ -17,12 +19,17 @@ internal static class UninstallCommandTests
                 if (start.UseShellExecute || !start.CreateNoWindow || start.Arguments.Length >= 30000)
                     throw new InvalidOperationException("The registered completion command is not bounded and headless.");
                 string script = Decode(start.Arguments);
-                Parse(script);
+                try { Parse(script); }
+                catch (Exception error)
+                {
+                    failures.Add(new InvalidOperationException("machine=" + machine + ", silent=" + silent, error));
+                    continue;
+                }
                 if (machine)
                 {
-                    var nested = Regex.Match(script, @"-EncodedCommand ([A-Za-z0-9+/=]+)");
+                    var nested = Regex.Match(script, @"\$s\.Arguments='((?:[^']|'')*)';");
                     if (!nested.Success) throw new InvalidOperationException("The elevation wrapper lost its immutable child command.");
-                    string elevated = Decode("-EncodedCommand " + nested.Groups[1].Value);
+                    string elevated = Decode(nested.Groups[1].Value.Replace("''", "'"));
                     Parse(elevated);
                     // Ask before UAC, not after: cancelling must not cost an elevation, and the
                     // confirmation window must not run as administrator.
@@ -34,6 +41,7 @@ internal static class UninstallCommandTests
                 else if (silent == script.Contains("/confirm-uninstall"))
                     throw new InvalidOperationException("A per-user uninstall confirms exactly when it is not silent.");
             }
+        if (failures.Count != 0) throw new AggregateException("Generated uninstall commands must parse in every mode.", failures);
         Console.WriteLine("PASS Windows PowerShell parses all user/machine, silent/interactive completion commands.");
 
         // Another user's KillerScan cannot be inspected; it is a different image, not a reason to abort.
@@ -49,14 +57,22 @@ internal static class UninstallCommandTests
 
     internal static string Decode(string arguments)
     {
-        var match = Regex.Match(arguments, @"-EncodedCommand ([A-Za-z0-9+/=]+)$");
-        string bootstrap = Encoding.Unicode.GetString(Convert.FromBase64String(match.Groups[1].Value));
+        string bootstrap = Bootstrap(arguments);
         Parse(bootstrap);
         var compressed = Regex.Match(bootstrap, @"FromBase64String\('([A-Za-z0-9+/=]+)'\)");
         using var input = new MemoryStream(Convert.FromBase64String(compressed.Groups[1].Value));
         using var gzip = new GZipStream(input, CompressionMode.Decompress);
         using var reader = new StreamReader(gzip, Encoding.UTF8);
         return reader.ReadToEnd();
+    }
+
+    internal static string Bootstrap(string arguments)
+    {
+        var encoded = Regex.Match(arguments, @"-EncodedCommand ([A-Za-z0-9+/=]+)$");
+        if (encoded.Success) return Encoding.Unicode.GetString(Convert.FromBase64String(encoded.Groups[1].Value));
+        var command = Regex.Match(arguments, "-Command \"([^\"]*)\"$", RegexOptions.Singleline);
+        if (command.Success) return command.Groups[1].Value;
+        throw new InvalidOperationException("The immutable helper has no recognized command bootstrap.");
     }
 
     internal static void Parse(string script)

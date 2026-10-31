@@ -26,7 +26,7 @@ internal static class UpdateHelperLaunchTests
             // Every helper's first statement limits modules to Windows PowerShell's own folder, before
             // any cmdlet can autoload one planted in the user's Documents (review D2-001).
             string arguments = ImmutablePowerShell.Arguments("exit 0");
-            string bootstrap = Encoding.Unicode.GetString(Convert.FromBase64String(arguments.Substring(arguments.LastIndexOf(' ') + 1)));
+            string bootstrap = UninstallCommandTests.Bootstrap(arguments);
             Require(bootstrap.StartsWith("$env:PSModulePath=[IO.Path]::Combine($PSHOME,'Modules');", StringComparison.Ordinal),
                 "The immutable helper resets PSModulePath before anything else runs.");
             Console.WriteLine("PASS every PowerShell helper loads modules only from Windows PowerShell's own folder.");
