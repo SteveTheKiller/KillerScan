@@ -78,6 +78,7 @@ namespace KillerScan.Controls
             StateChanged?.Invoke(this, EventArgs.Empty);
             bool completed = false;
             var options = _active.Options;
+            bool runDeep = _runDeepAfterScan;
             // The run belongs to the Location it started in; switching is locked until it ends.
             var location = _location;
             _active.NewIdentities.Clear();
@@ -94,7 +95,7 @@ namespace KillerScan.Controls
                     // Checked after that wait, right before the write it protects.
                     bool left = LeaveDeletedLocation();
                     if (left) location = _location;
-                    if (!_runDeepAfterScan || _active.Devices.Count == 0) RecordCompletedRun(options, deep: false);
+                    if (!runDeep || _active.Devices.Count == 0) RecordCompletedRun(options, deep: false);
                     NoteKnownDevices(location);
                     if (!left) NoteUnsaved(location);
                 }
@@ -109,8 +110,7 @@ namespace KillerScan.Controls
             {
                 _active.Cts = null;
                 cts.Dispose();
-                bool deep = completed && _runDeepAfterScan && _active.Devices.Count > 0 && !_disposed;
-                _runDeepAfterScan = false;
+                bool deep = completed && runDeep && _active.Devices.Count > 0 && !_disposed;
                 _scanCompleted = completed;
                 // A Location deleted elsewhere while this scan ran is left now, however it ended;
                 // the completed path above already did, the canceled and failed ones did not.

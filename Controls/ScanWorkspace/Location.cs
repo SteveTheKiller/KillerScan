@@ -110,6 +110,8 @@ namespace KillerScan.Controls
         {
             _inCatalog = data.Info is { } entered && LocationService.Find(entered.Id) != null;
             _location = data;
+            _loadedScan = null;
+            _runDeepAfterScan = false;
             _active.NewIdentities.Clear();
             if (data.Info is { } info && LocationService.Find(info.Id) is { } current && current.LastTargets.Length > 0)
             {
@@ -351,6 +353,7 @@ namespace KillerScan.Controls
         {
             if (IsScanning) return;
             LoadProfile(profile);
+            _runDeepAfterScan = profile.DeepScanAfter;
             AdapterChoice = profile.Adapter ?? string.Empty;
             _loadedScan = profile;
         }

@@ -15,12 +15,20 @@ internal static class LocationWorkspaceTests
     private sealed class SiteScanner : NetworkScanner
     {
         internal TaskCompletionSource<bool>? Hold;
-        internal bool FindNothing, StopAfterFinding;
+        internal bool FindNothing, StopAfterFinding, Fail;
         internal Func<NetworkDevice>? Result;
+        internal int DeepCalls;
+        public override Task<NetworkDevice> DeepProbeHostAsync(string ip, CancellationToken token,
+            ScanOptions options, int portConcurrency = 256, bool flushLocalDnsCache = true)
+        {
+            DeepCalls++;
+            return Task.FromResult(new NetworkDevice { IpAddress = ip, Hostname = "deep result" });
+        }
         public override async Task<List<NetworkDevice>> ScanSubnetAsync(string target, CancellationToken token,
             ScanOptions options, bool fullScan = true)
         {
             if (Hold != null) await Hold.Task;
+            if (Fail) throw new InvalidOperationException("Controlled scan failure.");
             if (FindNothing) return [];
             var device = Result?.Invoke() ?? new NetworkDevice { IpAddress = "192.168.1.10", MacAddress = "", DeviceType = "Unknown" };
             Completed?.Invoke(device);
@@ -40,6 +48,7 @@ internal static class LocationWorkspaceTests
         string originalRoot = LocationService.Root;
         try
         {
+            SavedScanPickerRunsDeep(Path.Combine(root, "picker"));
             var catalog = new LocationCatalog(root);
             catalog.Load("Unassigned");
             catalog.Create("Site A", out var infoA);
@@ -137,6 +146,83 @@ internal static class LocationWorkspaceTests
         workspace.ConfirmDiscard = _ => true;
         Require(workspace.SetLocation(a) && workspace.Location == a && workspace.Session.Devices.Count == 0,
             "Discarding moves to the Location with an empty tab.");
+    }
+
+    private static void SavedScanPickerRunsDeep(string root)
+    {
+        var platform = NetworkPlatform.Current;
+        NetworkPlatform.Current = new UnsupportedNetworkPlatform();
+        try
+        {
+            var catalog = new LocationCatalog(root);
+            catalog.Load("Unassigned");
+            byte[] importedFile = System.Text.Encoding.UTF8.GetBytes(
+                "{\"Format\":\"KillerScan.Location\",\"Version\":1,\"Name\":\"Imported\",\"Files\":{\"profiles.json\":[" +
+                "{\"Name\":\"Deep\",\"Target\":\"192.168.1.10\",\"DeepScanAfter\":true,\"Options\":{\"ReverseDns\":false}}," +
+                "{\"Name\":\"Normal\",\"Target\":\"192.168.1.10\",\"DeepScanAfter\":false,\"Options\":{\"ReverseDns\":false}}]}}");
+            Require(LocationTransfer.Import(catalog, importedFile, out var imported, out var error), "Saved scans import: " + error);
+            var location = catalog.Open(imported!);
+            var scanner = new SiteScanner();
+            using var workspace = new ScanWorkspace("192.168.1.10", false, scanner);
+            workspace.SetLocation(location);
+            void Pick(string name)
+            {
+                var button = (System.Windows.Controls.Button)workspace.FindName("LocationButton");
+                button.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                button.ContextMenu.Items.OfType<System.Windows.Controls.MenuItem>().Single(item => Equals(item.Header, name))
+                    .RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.ClickEvent));
+                button.ContextMenu.IsOpen = false;
+            }
+            void Run(bool deep)
+            {
+                int before = location.History.Entries.Count;
+                int calls = scanner.DeepCalls;
+                workspace.Scan();
+                PumpUntil(() => !workspace.IsScanning);
+                Require(location.History.Entries.Count == before + 1 && scanner.DeepCalls == calls + (deep ? 1 : 0)
+                    && location.History.Entries.Last().Deep == deep
+                    && location.History.Entries.Last().Completion == ScanCompletion.Complete,
+                    "The picker-to-Scan path records the selected depth and actually runs that depth.");
+            }
+            Pick("Deep");
+            Require(scanner.DeepCalls == 0 && location.History.Entries.Count == 0, "Picking a saved scan starts no work.");
+            Run(true);
+            Run(true);
+            Pick("Normal");
+            Run(false);
+            Pick("Deep");
+            workspace.Targets = "bad target";
+            workspace.Scan();
+            Require(!workspace.IsScanning && location.History.Entries.Count == 3, "Invalid targets record no run.");
+            Pick("Normal");
+            Run(false);
+            Pick("Deep");
+            scanner.StopAfterFinding = true;
+            workspace.Scan();
+            PumpUntil(() => !workspace.IsScanning);
+            Require(workspace.Session.Completion == ScanCompletion.Canceled && scanner.DeepCalls == 2,
+                "A canceled shallow phase never starts deep probing.");
+            scanner.StopAfterFinding = false;
+            Pick("Normal");
+            Run(false);
+            Pick("Deep");
+            scanner.Fail = true;
+            workspace.Scan();
+            PumpUntil(() => !workspace.IsScanning);
+            Require(workspace.Session.Completion == ScanCompletion.Partial && scanner.DeepCalls == 2,
+                "A failed scan never starts deep probing or claims completion.");
+            scanner.Fail = false;
+            Pick("Normal");
+            Run(false);
+            Pick("Deep");
+            workspace.SetLocation(LocationData.Temporary());
+            workspace.Scan();
+            PumpUntil(() => !workspace.IsScanning);
+            Require(scanner.DeepCalls == 2 && workspace.Location.History.Entries.Single().Deep == false,
+                "Changing Location clears the prior saved scan's depth.");
+            Console.WriteLine("PASS: 10 picker cases cover imported depth, repeat, normal, invalid, canceled, failed and changed Location.");
+        }
+        finally { NetworkPlatform.Current = platform; }
     }
 
     private static HistoryStore Reread(string path)
