@@ -24,8 +24,71 @@ internal static class MdnsTests
         Require(map.ContainsKey("192.0.2.50") && map["192.0.2.50"].Services.Contains("bridge._hap._tcp.local"),
             "A response without an A record still belongs to its sender.");
 
+        MixedHosts();
+
         Console.WriteLine("PASS: mDNS names and services land only on the host the records describe.");
         return Task.CompletedTask;
+    }
+
+    private static byte[] Srv(string target) => [0, 0, 0, 0, 2, 119, .. Name(target)];
+
+    // One packet can describe several devices, as a reflector's does. The SRV record says which
+    // host each service instance runs on, and the A record says where that host is.
+    private static void MixedHosts()
+    {
+        (string, int, byte[])[] records =
+        [
+            ("printer.local", 1, Address("192.0.2.40")),
+            ("_ipp._tcp.local", 12, Name("Office._ipp._tcp.local")),
+            ("Office._ipp._tcp.local", 33, Srv("printer.local")),
+            ("speaker.local", 1, Address("192.0.2.50")),
+            ("_airplay._tcp.local", 12, Name("Speaker._airplay._tcp.local")),
+            ("Speaker._airplay._tcp.local", 33, Srv("speaker.local")),
+        ];
+        void TwoHosts(Dictionary<string, MulticastDiscovery.MdnsInfo> found, string label)
+        {
+            Require(found.Count == 2 && !found.ContainsKey("192.0.2.1"), label + ": the reflector gets nothing and both hosts appear.");
+            var printer = found["192.0.2.40"];
+            var speaker = found["192.0.2.50"];
+            Require(printer.Name == "printer" && speaker.Name == "speaker", label + ": each host keeps its own name.");
+            Require(printer.Services.Contains("office._ipp._tcp.local") && printer.Services.Contains("_ipp._tcp.local")
+                    && !printer.Services.Any(service => service.Contains("airplay")), label + ": the printer has only printer services.");
+            Require(speaker.Services.Contains("speaker._airplay._tcp.local") && speaker.Services.Contains("_airplay._tcp.local")
+                    && !speaker.Services.Any(service => service.Contains("ipp")), label + ": the speaker has only speaker services.");
+        }
+        TwoHosts(Parse(Packet(true, records), "192.0.2.1"), "Relayed");
+        TwoHosts(Parse(Packet(true, Enumerable.Reverse(records).ToArray()), "192.0.2.1"), "Reordered");
+        TwoHosts(Parse(Packet(true, records.Concat(records).ToArray()), "192.0.2.1"), "Duplicated");
+        TwoHosts(Parse(Packet(true, records), "192.0.2.40"), "Sent by one of them");
+
+        // Names compressed the way responders send them: pointers back into the packet.
+        var compressed = new List<byte> { 0, 0, 0x84, 0, 0, 0, 0, 2, 0, 0, 0, 0 };
+        int hostName = compressed.Count;
+        compressed.AddRange(Name("printer.local"));
+        compressed.AddRange(new byte[] { 0, 1, 0, 1, 0, 0, 0, 120, 0, 4 });
+        compressed.AddRange(Address("192.0.2.40"));
+        compressed.AddRange(Name("Office._ipp._tcp.local"));
+        compressed.AddRange(new byte[] { 0, 33, 0, 1, 0, 0, 0, 120, 0, 8, 0, 0, 0, 0, 2, 119, 0xC0, (byte)hostName });
+        var one = Parse(compressed.ToArray(), "192.0.2.1");
+        Require(one.Count == 1 && one["192.0.2.40"].Services.Contains("office._ipp._tcp.local"), "A compressed SRV target still finds its host.");
+
+        // A service with no A record for its host belongs to the sender when the sender is the only host in sight.
+        var direct = Parse(Packet(true, ("Office._ipp._tcp.local", 33, Srv("printer.local"))), "192.0.2.40");
+        Require(direct["192.0.2.40"].Name == "printer" && direct["192.0.2.40"].Services.Contains("office._ipp._tcp.local"), "An SRV with no A record names its sender.");
+
+        // Never guessed: a relayed service that says nothing about its host lands on no host at all.
+        var mixed = Parse(Packet(true, [.. records, ("_hap._tcp.local", 12, Name("Bridge._hap._tcp.local"))]), "192.0.2.1");
+        Require(!mixed.Values.Any(info => info.Services.Any(service => service.Contains("hap"))), "A relayed service with no owner is dropped, not given to the first host.");
+        TwoHosts(mixed, "With an orphan");
+
+        var listing = Parse(Packet(true, ("_services._dns-sd._udp.local", 12, Name("_ipp._tcp.local"))), "192.0.2.40");
+        Require(listing["192.0.2.40"].Services.Contains("_ipp._tcp.local"), "A service-type listing belongs to its sender.");
+
+        // Damaged packets keep what was read before the damage and throw nothing.
+        byte[] whole = Packet(true, records);
+        for (int length = 0; length < whole.Length; length++) Parse(whole.Take(length).ToArray(), "192.0.2.1");
+        var cut = Parse(whole.Take(whole.Length - 8).ToArray(), "192.0.2.1");
+        Require(cut["192.0.2.40"].Services.Contains("office._ipp._tcp.local"), "A truncated packet keeps the records before the cut.");
     }
 
     private static Dictionary<string, MulticastDiscovery.MdnsInfo> Parse(byte[] packet, string source)

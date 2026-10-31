@@ -148,9 +148,12 @@ namespace KillerScan.Engine
 
         /// <summary>
         /// Adds one mDNS packet to <paramref name="map"/>. Only responses count: another host's query
-        /// can carry known-answer records about someone else. The records describe the address in
-        /// their A record, which is the sender unless a reflector or repeater (UniFi, Avahi, a
-        /// Bonjour gateway) relayed them, so a relayed packet is filed under the address it names.
+        /// can carry known-answer records about someone else. A packet can describe several hosts,
+        /// because a reflector or repeater (UniFi, Avahi, a Bonjour gateway) relays other devices'
+        /// answers, so each service goes to the host its SRV record names, at the address that
+        /// host's A record gives. A record that names no host belongs to the sender when the sender
+        /// is the host in question, to the packet's one host when it describes one, and otherwise
+        /// to nobody: it is dropped rather than guessed onto a device.
         /// </summary>
         internal static void ParseResponse(byte[] buf, string srcIp, Dictionary<string, MdnsInfo> map)
         {
@@ -160,8 +163,10 @@ namespace KillerScan.Engine
             int pos = 12;
             for (int i = 0; i < qd; i++) { ReadName(buf, ref pos); pos += 4; if (pos > buf.Length) return; }
 
-            var services = new List<string>();
-            var names = new List<(string Name, string? Address)>();   // Address set for A records
+            // The whole packet is read before anything is attributed, since records come in any order.
+            var hosts = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);    // from A records
+            var targets = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);        // service instance to host, from SRV records
+            var services = new List<(string Service, string Instance)>();
             for (int i = 0; i < total; i++)
             {
                 string name = ReadName(buf, ref pos);
@@ -173,40 +178,58 @@ namespace KillerScan.Engine
                 if (rdStart + rdlen > buf.Length) break;
 
                 string lname = name.ToLowerInvariant();
-                if (lname.Contains("._tcp.") || lname.Contains("._udp."))
-                    services.Add(lname);
+                string instance = lname;                          // the instance this record speaks for
 
-                if (type == 1 && rdlen == 4)                      // A record -> hostname for its address
+                if (type == 1 && rdlen == 4)                      // A record -> where a host is
                 {
                     if (name.EndsWith(".local", StringComparison.OrdinalIgnoreCase))
-                        names.Add((name[..^6], new IPAddress(new[] { buf[rdStart], buf[rdStart + 1], buf[rdStart + 2], buf[rdStart + 3] }).ToString()));
+                    {
+                        string host = name[..^6];
+                        if (!hosts.TryGetValue(host, out var known)) hosts[host] = known = [];
+                        string address = new IPAddress(new[] { buf[rdStart], buf[rdStart + 1], buf[rdStart + 2], buf[rdStart + 3] }).ToString();
+                        if (!known.Contains(address)) known.Add(address);
+                    }
                 }
                 else if (type == 12)                              // PTR -> service instance
                 {
                     int p = rdStart;
                     string ptr = ReadName(buf, ref p).ToLowerInvariant();
-                    if (ptr.Contains("._tcp.") || ptr.Contains("._udp.")) services.Add(ptr);
+                    if (IsService(ptr)) { services.Add((ptr, ptr)); instance = ptr; }
                 }
-                else if (type == 33 && rdlen >= 6)                // SRV -> target host
+                else if (type == 33 && rdlen >= 6)                // SRV -> which host runs the instance
                 {
                     int p = rdStart + 6;
                     string target = ReadName(buf, ref p);
-                    if (target.EndsWith(".local", StringComparison.OrdinalIgnoreCase)) names.Add((target[..^6], null));
+                    if (target.EndsWith(".local", StringComparison.OrdinalIgnoreCase)) targets[lname] = target[..^6];
                 }
+                if (IsService(lname)) services.Add((lname, instance));
 
                 pos = rdStart + rdlen;
             }
 
-            // The sender owns the packet when one of its A records is its own address, or it has none.
-            var addresses = names.Where(n => n.Address != null).Select(n => n.Address!).Distinct().ToList();
-            string subject = addresses.Count == 0 || addresses.Contains(srcIp) ? srcIp : addresses[0];
-            var info = map.TryGetValue(subject, out var ex) ? ex : new MdnsInfo();
-            foreach (var service in services) info.Services.Add(service);
-            if (info.Name.Length == 0)
-                info.Name = names.FirstOrDefault(n => n.Address == subject).Name
-                    ?? names.FirstOrDefault(n => n.Address == null).Name ?? "";
-            if (info.Services.Count > 0 || info.Name.Length > 0) map[subject] = info;
+            var addresses = hosts.Values.SelectMany(known => known).Distinct().ToList();
+            string? sender = addresses.Count == 0 || addresses.Contains(srcIp) ? srcIp : hosts.Count == 1 ? addresses[0] : null;
+            string Address(List<string> known) => known.Contains(srcIp) ? srcIp : known[0];
+            string? Owner(string instance) => targets.TryGetValue(instance, out var host) && hosts.TryGetValue(host, out var known) ? Address(known) : sender;
+            MdnsInfo Entry(string ip) => map.TryGetValue(ip, out var found) ? found : map[ip] = new MdnsInfo();
+
+            foreach (var (service, instance) in services)
+                if (Owner(instance) is { } owner) Entry(owner).Services.Add(service);
+            foreach (var host in hosts)
+            {
+                var info = Entry(Address(host.Value));
+                if (info.Name.Length == 0) info.Name = host.Key;
+            }
+            // A host with an SRV record and no address here is the sender's own name, if anyone's.
+            if (sender != null)
+                foreach (string host in targets.Values.Where(host => !hosts.ContainsKey(host)))
+                {
+                    var info = Entry(sender);
+                    if (info.Name.Length == 0) info.Name = host;
+                }
         }
+
+        private static bool IsService(string name) => name.Contains("._tcp.") || name.Contains("._udp.");
 
         // Reads a DNS name, following 0xC0 compression pointers; leaves pos just past the name.
         private static string ReadName(byte[] buf, ref int pos)
