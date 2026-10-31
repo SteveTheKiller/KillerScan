@@ -44,14 +44,14 @@ internal static class InstallationCleanupTests
             string otherFile = Stage(".uninstall-" + Guid.NewGuid().ToString("N"), "report.txt");
             string busy = Stage(".uninstall-" + Guid.NewGuid().ToString("N"), "KillerScan.exe");
             using (new FileStream(Path.Combine(busy, "KillerScan.exe"), FileMode.Open, FileAccess.Read, FileShare.Read))
-                InstallationFiles.RemoveStaleHelpers(install, current);
+                UninstallCompletion.RemoveStaleHelpers(install, current);
             Require(!Directory.Exists(stale), "A helper an earlier uninstall left behind is removed.");
             Require(File.Exists(Path.Combine(current, "KillerScan.exe")), "The running helper is left alone.");
             Require(File.Exists(Path.Combine(withNotes, "notes.txt")) && File.Exists(Path.Combine(withNotes, "KillerScan.exe")), "A folder holding anything else is left alone.");
             Require(File.Exists(Path.Combine(badName, "KillerScan.exe")), "A folder that only looks like a helper's is left alone.");
             Require(File.Exists(Path.Combine(otherFile, "report.txt")), "A folder without the helper is left alone.");
             Require(File.Exists(Path.Combine(busy, "KillerScan.exe")), "A helper still in use stays, and does not fail the uninstall.");
-            InstallationFiles.RemoveStaleHelpers(Path.Combine(install, "missing"), current);
+            UninstallCompletion.RemoveStaleHelpers(Path.Combine(install, "missing"), current);
             Directory.Delete(install, true);
             Console.WriteLine("PASS uninstall clears only its own stale helpers.");
 

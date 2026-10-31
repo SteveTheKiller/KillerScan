@@ -137,13 +137,42 @@ namespace KillerScan.Services
                     if (!sha.ComputeHash(original).SequenceEqual(sha.ComputeHash(helper)))
                         throw new InvalidDataException("The installed image changed after preparation. Nothing was removed.");
                 RemoveOwned(machine);
-                InstallationFiles.RemoveStaleHelpers(root, stage);
+                RemoveStaleHelpers(root, stage);
                 return 0;
             }
             catch (Exception error)
             {
                 Console.Error.WriteLine(error);
                 return KillerFamily.Deployment.InstallerExitCodes.FromException(error);
+            }
+        }
+
+        /// <summary>
+        /// Removes the helper folders earlier uninstalls left behind, such as one refused because
+        /// the app was running. Only a folder named .uninstall-&lt;32 hex&gt; holding nothing but the
+        /// helper copy is touched, and never <paramref name="current"/>, the one running now. The
+        /// installation is already gone by now, so anything that cannot go simply stays.
+        /// </summary>
+        internal static void RemoveStaleHelpers(string root, string current)
+        {
+            string[] folders;
+            try { folders = Directory.GetDirectories(root, ".uninstall-*"); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { return; }
+            foreach (string folder in folders)
+            {
+                if (string.Equals(Path.GetFullPath(folder), Path.GetFullPath(current), StringComparison.OrdinalIgnoreCase)) continue;
+                if (!Guid.TryParseExact(Path.GetFileName(folder).Substring(".uninstall-".Length), "N", out _)) continue;
+                string helper = Path.Combine(folder, "KillerScan.exe");
+                try
+                {
+                    if ((File.GetAttributes(folder) & FileAttributes.ReparsePoint) != 0) continue;
+                    var entries = Directory.GetFileSystemEntries(folder);
+                    if (entries.Length != 1 || !string.Equals(entries[0], helper, StringComparison.OrdinalIgnoreCase)) continue;
+                    if ((File.GetAttributes(helper) & FileAttributes.ReparsePoint) != 0) continue;
+                    File.Delete(helper);
+                    Directory.Delete(folder, recursive: false);
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { }
             }
         }
 
