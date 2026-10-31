@@ -465,6 +465,9 @@
     <sys:String x:Key="Str_St_AdapterOffLink">{0} は {1} のネットワーク ({2}) 上になく、Windows も {1} 経由でルーティングしません。スキャンするには、「ネットワーク アダプター」で「自動」を選択してください。</sys:String>
     <sys:String x:Key="Str_Rep_Location">ロケーション</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">アダプター</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">この一時スキャンは保存されておらず、KillerScan を閉じると失われます。残すには、ロケーションメニューの「スキャンを保存」を選択してください。</sys:String>
+    <sys:String x:Key="Str_Loc_SaveRetention">何も移動していません。{0} の履歴の上限により、このスキャンはすぐに削除されるためです。上限を増やすか、別のロケーションに保存してください。</sys:String>
+    <sys:String x:Key="Str_Loc_SaveIncomplete">{0} にすべてを保存できなかったため、結果はここに残っています。完了するにはもう一度保存してください。</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">結果をロケーションに保存</sys:String>
     <sys:String x:Key="Str_History_AllLocations">すべてのロケーションを表示</sys:String>
     <sys:String x:Key="Str_Tip_Scan">{0} 台のデバイス、うち {1} 台に開いているポートあり</sys:String>

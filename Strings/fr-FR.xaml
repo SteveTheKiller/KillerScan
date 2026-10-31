@@ -454,6 +454,9 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_St_AdapterOffLink">{0} n’est pas sur le réseau de {1} ({2}) et Windows ne le route pas via {1}. Choisissez Automatique sous Carte réseau pour l’analyser.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Site</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Carte réseau</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">Cette analyse temporaire n'est pas enregistrée et disparaîtra à la fermeture de KillerScan. Pour la conserver, choisissez « Enregistrer l'analyse » dans le menu Site.</sys:String>
+    <sys:String x:Key="Str_Loc_SaveRetention">Rien n'a été déplacé, car la limite d'historique de {0} supprimerait aussitôt cette analyse. Augmentez cette limite ou enregistrez dans un autre Site.</sys:String>
+    <sys:String x:Key="Str_Loc_SaveIncomplete">Tout n'a pas pu être enregistré dans {0}, les résultats restent donc ici. Enregistrez-les de nouveau pour terminer.</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Enregistrer les résultats dans le Site</sys:String>
     <sys:String x:Key="Str_History_AllLocations">Afficher tous les Sites</sys:String>
     <sys:String x:Key="Str_Tip_Scan">{0} appareils, {1} avec des ports ouverts</sys:String>

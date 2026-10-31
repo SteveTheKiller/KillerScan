@@ -454,6 +454,9 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_St_AdapterOffLink">{0} no está en la red de {1} ({2}) y Windows no lo enruta a través de {1}. Elija Automático en Adaptador de red para escanearlo.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Ubicación</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adaptador</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">Este escaneo temporal no está guardado y se perderá al cerrar KillerScan. Para conservarlo, elija «Guardar escaneo» en el menú de Ubicación.</sys:String>
+    <sys:String x:Key="Str_Loc_SaveRetention">No se movió nada, porque el límite del historial de {0} borraría este escaneo de inmediato. Aumente ese límite o guarde en otra Ubicación.</sys:String>
+    <sys:String x:Key="Str_Loc_SaveIncomplete">No se pudo guardar todo en {0}, así que los resultados se quedan aquí. Guárdelos de nuevo para terminar.</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Guardar resultados en la Ubicación</sys:String>
     <sys:String x:Key="Str_History_AllLocations">Mostrar todas las Ubicaciones</sys:String>
     <sys:String x:Key="Str_Tip_Scan">{0} dispositivos, {1} con puertos abiertos</sys:String>

@@ -496,6 +496,9 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_St_AdapterOffLink">{0} não está na rede de {1} ({2}) e o Windows não o roteia por {1}. Escolha Automático em Adaptador de rede para verificá-lo.</sys:String>
     <sys:String x:Key="Str_Rep_Location">Local</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">Adaptador</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">Esta verificação temporária não está salva e será perdida ao fechar o KillerScan. Para mantê-la, escolha “Salvar varredura” no menu Local.</sys:String>
+    <sys:String x:Key="Str_Loc_SaveRetention">Nada foi movido, porque o limite de histórico de {0} apagaria esta verificação na hora. Aumente esse limite ou salve em outro Local.</sys:String>
+    <sys:String x:Key="Str_Loc_SaveIncomplete">Não foi possível salvar tudo em {0}, então os resultados continuam aqui. Salve de novo para concluir.</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">Salvar resultados no Local</sys:String>
     <sys:String x:Key="Str_History_AllLocations">Mostrar todos os Locais</sys:String>
     <sys:String x:Key="Str_Tip_Scan">{0} dispositivos, {1} com portas abertas</sys:String>

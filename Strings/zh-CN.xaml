@@ -454,6 +454,9 @@
     <sys:String x:Key="Str_St_AdapterOffLink">{0} 不在 {1} 的网络（{2}）中，Windows 也不会经由 {1} 路由到它。请在“网卡”下选择“自动”以扫描它。</sys:String>
     <sys:String x:Key="Str_Rep_Location">站点</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">网卡</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">此临时扫描尚未保存，关闭 KillerScan 后将丢失。如需保留，请在站点菜单中选择“保存扫描”。</sys:String>
+    <sys:String x:Key="Str_Loc_SaveRetention">未移动任何内容，因为 {0} 的历史记录上限会立即删除此扫描。请提高上限或保存到其他站点。</sys:String>
+    <sys:String x:Key="Str_Loc_SaveIncomplete">未能将全部内容保存到 {0}，因此结果保留在此处。请再次保存以完成操作。</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">将结果保存到站点</sys:String>
     <sys:String x:Key="Str_History_AllLocations">显示所有站点</sys:String>
     <sys:String x:Key="Str_Tip_Scan">{0} 台设备，其中 {1} 台有开放端口</sys:String>

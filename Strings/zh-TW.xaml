@@ -454,6 +454,9 @@
     <sys:String x:Key="Str_St_AdapterOffLink">{0} 不在 {1} 的網路（{2}）中，Windows 也不會經由 {1} 路由到它。請在「網路卡」下選擇「自動」以掃描它。</sys:String>
     <sys:String x:Key="Str_Rep_Location">站點</sys:String>
     <sys:String x:Key="Str_Rep_Adapter">網路卡</sys:String>
+    <sys:String x:Key="Str_Loc_TemporaryNotice">此暫時掃描尚未儲存，關閉 KillerScan 後將遺失。如需保留，請在站點選單中選擇「儲存掃描」。</sys:String>
+    <sys:String x:Key="Str_Loc_SaveRetention">未移動任何內容，因為 {0} 的歷史記錄上限會立即刪除此掃描。請提高上限或儲存到其他站點。</sys:String>
+    <sys:String x:Key="Str_Loc_SaveIncomplete">未能將全部內容儲存到 {0}，因此結果保留在此處。請再次儲存以完成操作。</sys:String>
     <sys:String x:Key="Str_Loc_SaveResults">將結果儲存到站點</sys:String>
     <sys:String x:Key="Str_History_AllLocations">顯示所有站點</sys:String>
     <sys:String x:Key="Str_Tip_Scan">{0} 台裝置，其中 {1} 台有開放連接埠</sys:String>
