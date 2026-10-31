@@ -10,6 +10,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 
 ### Fixed
 - An all-users update reopens KillerScan for the signed-in user at normal rights, whether it finishes or stops early. Windows was refusing that relaunch, so the app stayed closed. Files left behind by earlier failed updates are cleared when the next update is staged.
+- A command-line value of `uiscan`, such as a filter or Location name, no longer opens the app and starts a different scan.
 - A scan that finds one device says "1 device", in the footer, the status bar, the terminal and the command line.
 - When another window deletes a Location, the tab's message no longer calls the results a Temporary scan, which was not always true.
 - Save results to Location moves a scan only once all of it is on disk in the destination. A run the destination's history limit would delete, or a Location deleted in another window, is refused with the reason, a stopped scan's results are saved as a canceled run and can be saved from the menu, a Temporary scan's names and device types all go with it, a save that fails leaves the results and the tab where they were, and saving again finishes the move without doubling anything.

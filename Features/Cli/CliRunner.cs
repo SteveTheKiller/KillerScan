@@ -263,6 +263,17 @@ namespace KillerScan.Features.Cli
             "decay", "malaise", "sepulchre", "delirium", "mourning"
         ];
 
+        /// <summary>
+        /// Where the uiscan command is, or -1. It has to come first, after any demo switch, because
+        /// a later word can be a value: /location uiscan names a Location and must not open the app.
+        /// </summary>
+        internal static int UiScanIndex(string[] args)
+        {
+            int index = 0;
+            while (index < args.Length && (Eq(args[index], "/demo") || Eq(args[index], "--demo"))) index++;
+            return index < args.Length && (Eq(args[index], "/uiscan") || Eq(args[index], "--uiscan") || Eq(args[index], "uiscan")) ? index : -1;
+        }
+
         internal static bool TryRunCli(string[] args, out int exitCode)
         {
             exitCode = 0;

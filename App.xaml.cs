@@ -126,10 +126,7 @@ namespace KillerScan
                 return;
             }
 
-            int uiScanIndex = Array.FindIndex(e.Args, a =>
-                string.Equals(a, "/uiscan", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(a, "--uiscan", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(a, "uiscan", StringComparison.OrdinalIgnoreCase));
+            int uiScanIndex = Features.Cli.CliRunner.UiScanIndex(e.Args);
             bool startUiScan = uiScanIndex >= 0;
             string? uiScanTarget = startUiScan
                 ? string.Join(",", e.Args.Skip(uiScanIndex + 1))

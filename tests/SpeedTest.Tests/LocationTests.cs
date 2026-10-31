@@ -665,6 +665,17 @@ internal static class LocationTests
     private static void CommandLine(string root)
     {
         Listing(Path.Combine(root, "listing"));
+        // uiscan is a command only at the front. Later it is a value, and a value must not open the app.
+        foreach (string[] words in new[]
+        {
+            new[] { "/scan", "10.0.0.0/24", "/json", "/location", "uiscan" }, new[] { "/probe", "10.0.0.1", "/adapter", "--uiscan" },
+            new[] { "scan", "/filter", "/uiscan" }, new[] { "/scan", "10.0.0.1" }, new string[0],
+        })
+            Require(KillerScan.Features.Cli.CliRunner.UiScanIndex(words) == -1, "A value named uiscan stays a value: " + string.Join(" ", words));
+        Require(KillerScan.Features.Cli.CliRunner.UiScanIndex(new[] { "uiscan", "10.0.0.1" }) == 0
+            && KillerScan.Features.Cli.CliRunner.UiScanIndex(new[] { "/UISCAN" }) == 0
+            && KillerScan.Features.Cli.CliRunner.UiScanIndex(new[] { "--uiscan", "10.0.0.1" }) == 0, "uiscan at the front opens the interface.");
+        Require(KillerScan.Features.Cli.CliRunner.UiScanIndex(new[] { "--demo", "/uiscan" }) == 1, "The demo switch can come before it.");
         var catalog = new LocationCatalog(root);
         catalog.Load("Unassigned");
         catalog.Create("Acme Dental", out var acme);
