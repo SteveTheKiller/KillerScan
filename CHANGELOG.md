@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
 ### Fixed
+- Concurrent Windows sessions sharing a profile keep each other's successful changes to settings, Locations and scan history.
 - Rescan selected and Deep Scan All honor the chosen adapter again after it disconnects or changes, and refuse off-network results before probing.
 - Picking a saved scan keeps its Deep Scan setting for each run and clears it when another saved scan or Location is selected.
 - Command-line CSV exports include recognition confidence, evidence and access details, matching the app's exports.

@@ -32,6 +32,7 @@
       "--theme-dump": "Writes every resolved theme value to KILLERSCAN_THEME_DUMP for before-and-after comparison; passes or fails nothing.",
       "--terminal-memory-child": "Child process started by --terminal-memory.",
       "--history-writer": "Child process started by --history-retention.",
+      "--profile-lock-child": "Child process started by --preference-persistence and terminated while holding a lease.",
       "--observe-writer": "Child process started by --locations.",
       "--import-then-die": "Child process started by --locations, which kills itself mid-import.",
       "---": "Not a flag: a table-separator string in a check."

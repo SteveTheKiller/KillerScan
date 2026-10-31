@@ -257,16 +257,8 @@ namespace KillerScan.Services
 
         private T Locked<T>(Func<T> operation)
         {
-            using var mutex = new Mutex(false, ProfileLock.Name("History", _path));
-            bool owned = false;
-            try
-            {
-                try { owned = mutex.WaitOne(TimeSpan.FromSeconds(2)); }
-                catch (AbandonedMutexException) { owned = true; }
-                if (!owned) throw new IOException("The scan history file is busy. Try again.");
-                return operation();
-            }
-            finally { if (owned) mutex.ReleaseMutex(); }
+            using var lease = ProfileLock.Acquire("History", _path, TimeSpan.FromSeconds(2), "The scan history file is busy. Try again.");
+            return operation();
         }
 
         private void Persist(List<ScanHistoryEntry> entries, HistoryRetention policy)

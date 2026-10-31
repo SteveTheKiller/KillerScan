@@ -60,6 +60,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--terminal-accessibility" })) { TerminalAccessibilityTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--history-retention" })) { HistoryRetentionTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--preference-persistence" })) { PreferencePersistenceTests.Run(); return 0; }
+            if (args.Length == 2 && args[0] == "--profile-lock-child") { ProfilePersistenceTests.HoldUntilKilled(args[1]); return 0; }
             if (args.SequenceEqual(new[] { "--demo-stores" })) { DemoStoreTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--osc-parser" })) { OscParserTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--terminal-safety" })) { TerminalSafetyTests.Run(); return 0; }

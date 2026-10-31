@@ -166,26 +166,19 @@ namespace KillerScan.Services
         }
 
         // Two windows starting together would otherwise both migrate, and the second could
-        // delete the folder the first had just published. One named mutex per catalog path
+        // delete the folder the first had just published. One migration lease per catalog path
         // serializes them, and whoever waits finds the catalog already there and just loads it.
         private void MigrateOnce(string unassignedName)
         {
-            using var mutex = new System.Threading.Mutex(false, ProfileLock.Name("Migrate", _path));
-            bool owned = false;
-            try
+            using var lease = ProfileLock.Acquire("Migrate", _path, TimeSpan.FromSeconds(30),
+                "Another KillerScan window is still moving your data into Locations. Restart KillerScan to try again.");
+            if (File.Exists(_path))
             {
-                try { owned = mutex.WaitOne(TimeSpan.FromSeconds(30)); }
-                catch (System.Threading.AbandonedMutexException) { owned = true; }
-                if (!owned) throw new IOException("Another KillerScan window is still moving your data into Locations. Restart KillerScan to try again.");
-                if (File.Exists(_path))
-                {
-                    _store.Load();
-                    LoadError = _store.Error;
-                    return;
-                }
-                Migrate(unassignedName);
+                _store.Load();
+                LoadError = _store.Error;
+                return;
             }
-            finally { if (owned) mutex.ReleaseMutex(); }
+            Migrate(unassignedName);
         }
 
         // Copy into a staging folder, verify every byte, move it into place, then publish the

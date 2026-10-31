@@ -9,6 +9,7 @@ internal static class PreferencePersistenceTests
 {
     internal static void Run()
     {
+        ProfilePersistenceTests.Run();
         string scratch = Path.Combine(Path.GetTempPath(), "KillerScan-preferences-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(scratch);
         try

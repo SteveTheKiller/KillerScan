@@ -14,10 +14,8 @@ namespace KillerScan.Services
         private readonly Func<T, T> _normalize;
         private readonly Action<Stream, byte[]>? _write;
         private readonly List<Action<T>> _pending = [];
-        // The named mutex keeps other processes out, but it is owned per thread. A Location import
-        // on a pool thread and the UI thread can both write one store, so every store for the same
-        // file in this process also takes this lock: pending changes are never replayed while
-        // another thread adds to them, and no thread waits out the mutex timeout on its own process.
+        // Protect pending changes and session state before entering the cross-process lease.
+        // Location imports and the UI thread can both use one store at the same time.
         private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, object> Gates = new(StringComparer.OrdinalIgnoreCase);
         private readonly object _gate;
         internal T Value { get; private set; }
@@ -92,20 +90,12 @@ namespace KillerScan.Services
         {
             try
             {
-                using var mutex = new Mutex(false, ProfileLock.Name("Preferences", _path));
-                bool owned = false;
-                try
-                {
-                    try { owned = mutex.WaitOne(TimeSpan.FromSeconds(2)); }
-                    catch (AbandonedMutexException) { owned = true; }
-                    if (!owned) throw new IOException("The preferences file is busy. Try again.");
-                    var latest = Read();
-                    foreach (var mutation in _pending) mutation(latest);
-                    Publish(_path, Encoding.UTF8.GetBytes(JsonSerializer.Serialize(latest, new JsonSerializerOptions { WriteIndented = true })), _write);
-                    Value = latest; _pending.Clear(); Error = null;
-                    return true;
-                }
-                finally { if (owned) mutex.ReleaseMutex(); }
+                using var lease = ProfileLock.Acquire("Preferences", _path, TimeSpan.FromSeconds(2), "The preferences file is busy. Try again.");
+                var latest = Read();
+                foreach (var mutation in _pending) mutation(latest);
+                Publish(_path, Encoding.UTF8.GetBytes(JsonSerializer.Serialize(latest, new JsonSerializerOptions { WriteIndented = true })), _write);
+                Value = latest; _pending.Clear(); Error = null;
+                return true;
             }
             catch (Exception ex) when (IsUnreadable(ex))
             { Error = Describe(ex); return false; }
