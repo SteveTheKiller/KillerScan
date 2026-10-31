@@ -111,7 +111,7 @@ The five current stores are global: `profiles.json`, `history.json`, `devices.js
 1. **Tabs:** picking a Location changes only the active scan tab, so two sites can be open side by side.
 2. **Saved scans list:** in the Location picker's dropdown under the Location name, plus a "Manage Locations" item that opens the existing Profiles sidebar section, renamed Locations.
 3. **History:** shows the active Location by default, with an "All Locations" switch; each row is labeled with its Location.
-4. **Command line and terminal:** `/scan` and `/probe` take `/location <name>`, and the PowerShell `scan` and `probe` commands take `-Location`. With it, the run reads that Location's names and approvals, records history there and uses its Known list. Without it, they stay Temporary scans. An unknown or ambiguous name is a usage error (exit 2), never a silent Temporary scan.
+4. **Command line and terminal:** `/scan` and `/probe` take `/location <name>`, and the PowerShell `scan` and `probe` commands take `-Location`. Both apply that Location's device names and types. A completed scan records history there and updates its Known list. A probe changes neither history nor the Known list. Without it, neither command reads nor writes saved Location data. An unknown or ambiguous name is a usage error (exit 2), never a silent Temporary scan.
 5. **Retention:** per Location, defaulting to the current global setting at migration.
 6. **Keep Alive:** unchanged and not Location-aware in the first release.
 

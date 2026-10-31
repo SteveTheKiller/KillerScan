@@ -605,7 +605,8 @@ namespace KillerScan.Features.Cli
                 if (OffLinkTarget(binding, reach, out string? offLink)) return Usage(err, offLink!);
             }
 
-            // With /location the run reads that Location's names and types and records there.
+            // With /location both commands apply its names and types. Only a scan records
+            // history and updates Known; a probe changes no saved Location data.
             // Without it, it is a Temporary scan: nothing saved is read and nothing is written.
             string? locationText = Value(options, "/location", "--location");
             LocationData? location = null;
@@ -928,7 +929,10 @@ namespace KillerScan.Features.Cli
             "  /limit <count>         keep the first N rows after filtering and sorting",
             "  /fail-empty            return exit code 3 when no rows remain",
             "  /demo                  fabricated network for screenshots; scans nothing (with /scan)",
-            "  /location <name|id>    use and record into a saved Location; without it nothing is saved",
+            "  /location <name|id>    apply a saved Location's device names and types",
+            "                        scan: records history and updates its Known list",
+            "                        probe: changes neither history nor the Known list",
+            "                        without /location, nothing saved is read or written",
             "  /skip <check,...>      turn checks off: " + string.Join(", ", ScanOptions.Features),
             "  /adapter <name|ip>     send every probe from one adapter; only its own network is reachable", "", "OUTPUT OPTIONS",
             "  /format <kind>         table, csv, json, or html",

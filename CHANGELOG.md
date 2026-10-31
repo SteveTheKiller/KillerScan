@@ -12,7 +12,6 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Rescan selected and Deep Scan All honor the chosen adapter again after it disconnects or changes, and refuse off-network results before probing.
 - Picking a saved scan keeps its Deep Scan setting for each run and clears it when another saved scan or Location is selected.
 - Command-line CSV exports include recognition confidence, evidence and access details, matching the app's exports.
-- HTML reports exported with `/theme 98se` open in the selected theme.
 - An all-users update reopens KillerScan for the signed-in user at normal rights, whether it finishes or stops early. Windows was refusing that relaunch, so the app stayed closed. Files left behind by earlier failed updates are cleared when the next update is staged.
 - A command-line value of `uiscan`, such as a filter or Location name, no longer opens the app and starts a different scan.
 - A scan that finds one device says "1 device", in the footer, the status bar, the terminal and the command line.
@@ -35,6 +34,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - The prompt's git status runs without the repository's fsmonitor or hooks, so changing into a downloaded repository cannot run its code.
 - Clearing a device's custom name brings back the name the scan found, and a blank rename clears it.
 - The command line escapes control characters in device names when it prints CSV to a live console.
+- HTML reports exported with `/theme 98se` open in the selected theme, and command-line help distinguishes saved scans from probes that only read Location annotations.
 - An update that cannot finish because KillerScan did not close says so in its recovery report, the Update button stays off once an update has started, and a translation file can no longer give a setting the wrong kind of value.
 - Topology builds once per refresh when card sizes have not changed, and a card resizes with its border when the theme changes.
 - A device can add at most 64 mDNS service names, each bounded in length, however many it announces.
