@@ -85,6 +85,9 @@ namespace KillerScan.Services
         /// </summary>
         internal static LocationData Shared(LocationInfo? info = null) => new(info);
 
+        internal static LocationData Demo(LocationInfo info) =>
+            new(info, Path.Combine(Path.GetTempPath(), "KillerScan-demo", info.Id), memoryOnly: true);
+
         internal static LocationData Open(LocationInfo info, string directory)
         {
             var data = new LocationData(info, directory, memoryOnly: false);

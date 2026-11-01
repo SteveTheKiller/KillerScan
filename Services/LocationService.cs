@@ -13,6 +13,7 @@ namespace KillerScan.Services
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerScan");
         private static LocationCatalog? _catalog;
         private static LocationData? _fallback;
+        private static readonly List<LocationInfo> DemoLocations = [];
         private static readonly Dictionary<string, LocationData> Open = new(StringComparer.Ordinal);
 
         /// <summary>False until <see cref="Load"/> runs. Hosts that never load keep the app-wide stores.</summary>
@@ -24,7 +25,7 @@ namespace KillerScan.Services
 
         /// <summary>Every Location, or just the original data as Unassigned when the catalog is unavailable.</summary>
         public static IReadOnlyList<LocationInfo> Items =>
-            _fallback?.Info is { } fallback ? [fallback] : _catalog?.Items ?? [];
+            DemoData.Enabled ? DemoLocations : _fallback?.Info is { } fallback ? [fallback] : _catalog?.Items ?? [];
 
         public static event EventHandler? Changed;
 
@@ -34,12 +35,25 @@ namespace KillerScan.Services
         {
             _unassignedName = unassignedName;
             Open.Clear();
+            DemoLocations.Clear();
             _fallback = null;
             Loaded = true;
             if (DemoData.Enabled)
             {
                 // Demo mode never creates or migrates real Locations.
                 _catalog = null;
+                foreach (var profile in DemoData.Profiles())
+                {
+                    var info = new LocationInfo
+                    {
+                        Id = "demo-" + DemoLocations.Count, Name = profile.Name,
+                        LastTargets = profile.Target, Icon = "office"
+                    };
+                    DemoLocations.Add(info);
+                    var data = LocationData.Demo(info);
+                    data.SavedScans.Save(profile);
+                    Open[info.Id] = data;
+                }
                 return;
             }
             _catalog = new LocationCatalog(Root);
@@ -143,6 +157,7 @@ namespace KillerScan.Services
         /// <summary>The data for a Location, shared by every tab that has it open.</summary>
         public static LocationData Get(LocationInfo info)
         {
+            if (DemoData.Enabled && Open.TryGetValue(info.Id, out var demo)) return demo;
             if (_fallback != null) return _fallback;
             if (!Loaded || _catalog == null) return LocationData.Shared(info);
             if (!Open.TryGetValue(info.Id, out var data))
@@ -159,7 +174,7 @@ namespace KillerScan.Services
         public static LocationData Initial()
         {
             if (!Loaded) return LocationData.Shared();
-            if (DemoData.Enabled) return LocationData.Shared();
+            if (DemoData.Enabled) return DemoLocations.Count > 0 ? Get(DemoLocations[0]) : LocationData.Shared();
             string? last = App.GetSetting("LastLocation");
             var info = Items.FirstOrDefault(item => item.Id == last)
                 ?? Items.FirstOrDefault(item => item.Id == LocationCatalog.UnassignedId);

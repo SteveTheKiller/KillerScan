@@ -15,7 +15,7 @@ internal static class LocationsSidebarTests
 
     internal static void Run()
     {
-        // Demo mode skips Locations entirely; this check needs the real path, on scratch data.
+        CheckDemoLocations();
         DemoData.Enabled = false;
         var window = new MainWindow();
         Require(LocationService.Loaded && LocationService.Editable && LocationService.Items.Count == 0,
@@ -55,6 +55,43 @@ internal static class LocationsSidebarTests
         Require(window.FindName("ProfilesList") == null && window.FindName("SaveProfileButton") == null,
             "Saved scans are Locations now: the separate saved-scans section is gone.");
         Console.WriteLine("PASS: the Locations sidebar lists, marks and opens Locations.");
+    }
+
+    private static void CheckDemoLocations()
+    {
+        DemoData.Enabled = true;
+        var window = new MainWindow();
+        try
+        {
+            var content = (FrameworkElement)window.Content;
+            content.Measure(new Size(1200, 800));
+            content.Arrange(new Rect(0, 0, 1200, 800));
+            content.UpdateLayout();
+            ((Button)window.FindName("LocationsButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            var list = (ListBox)window.FindName("LocationsList");
+            Require(list.Items.Count == 3, "Demo Locations shows three sample sites instead of an empty panel.");
+            var workspace = FindWorkspace(content) ?? throw new InvalidOperationException("The demo window contains its scan workspace.");
+            var picker = ((Button)workspace.FindName("LocationButton")).ContextMenu;
+            var sites = picker.Items.OfType<MenuItem>().Where(item => item.IsCheckable).ToList();
+            Require(sites.Count == 3 && sites.Count(item => item.IsChecked) == 1,
+                "The demo picker shows Locations and marks the current site, not just legacy saved scans.");
+            Require(picker.Items.OfType<MenuItem>().Any(item => Equals(item.Header,
+                Application.Current.FindResource("Str_Loc_Manage")) && item.IsEnabled),
+                "The demo Location picker includes Manage Locations.");
+            sites.Last().RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            Require(((TextBlock)workspace.FindName("LocationLabel")).Text == sites.Last().Header.ToString(),
+                "Picking a demo Location changes the current site.");
+            Require(!System.IO.Directory.Exists(LocationService.Root), "Demo Locations creates no profile directory.");
+        }
+        finally { window.Close(); }
+    }
+
+    private static KillerScan.Controls.ScanWorkspace? FindWorkspace(DependencyObject root)
+    {
+        if (root is KillerScan.Controls.ScanWorkspace workspace) return workspace;
+        for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); i++)
+            if (FindWorkspace(System.Windows.Media.VisualTreeHelper.GetChild(root, i)) is { } found) return found;
+        return null;
     }
 
     private static object? Call(object target, string name, params object[] args) =>

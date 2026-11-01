@@ -322,17 +322,18 @@ namespace KillerScan.Controls
                 menu.Items.Add(saveTo);
             }
 
-            if (LocationService.Editable && !DemoMode)
+            if (LocationService.Editable || DemoMode)
             {
-                bool own = _location.Info != null && !_location.IsShared;
+                bool editable = LocationService.Editable && !DemoMode;
+                bool own = editable && _location.Info != null && !_location.IsShared;
                 menu.Items.Add(new Separator());
                 // Icons and shortcuts like every other family menu; only the actions that have a
                 // shortcut show one (Shell/Shortcuts.cs).
-                menu.Items.Add(MenuText("Str_Loc_New", CreateLocation, !IsScanning, 0xE710, "Ctrl+Alt+S"));
+                menu.Items.Add(MenuText("Str_Loc_New", CreateLocation, editable && !IsScanning, 0xE710, "Ctrl+Alt+S"));
                 menu.Items.Add(MenuText("Str_Loc_Edit", RenameLocation, own, 0xE70F, "F2"));
                 menu.Items.Add(new Separator());
                 menu.Items.Add(MenuText("Str_Loc_Export", ExportLocation, own, 0xEDE1));
-                menu.Items.Add(MenuText("Str_Loc_Import", ImportLocation, !IsScanning, 0xE8B5));
+                menu.Items.Add(MenuText("Str_Loc_Import", ImportLocation, editable && !IsScanning, 0xE8B5));
                 menu.Items.Add(MenuText("Str_Loc_Manage", () => ManageLocationsRequested?.Invoke(this, EventArgs.Empty), true, 0xE707, "Ctrl+Shift+P"));
             }
             return menu;

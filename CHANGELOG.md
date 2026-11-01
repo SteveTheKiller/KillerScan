@@ -15,6 +15,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Command-line CSV exports include recognition confidence, evidence and access details, matching the app's exports.
 - An all-users update reopens KillerScan for the signed-in user at normal rights, whether it finishes or stops early. Windows was refusing that relaunch, so the app stayed closed. Files left behind by earlier failed updates are cleared when the next update is staged.
 - Toolbar controls, tabs, links and tables show keyboard focus. Contrast refreshes avoid duplicate work and restore frame colors. Picker selections keep text and icons shadow-free.
+- Demo mode shows sample Locations in the sidebar and picker instead of an empty panel and the old profile-only menu.
 - All-users uninstall commands quote their nested helper correctly in both silent and interactive modes.
 - A command-line value of `uiscan`, such as a filter or Location name, no longer opens the app and starts a different scan.
 - A scan that finds one device says "1 device", in the footer, the status bar, the terminal and the command line.
