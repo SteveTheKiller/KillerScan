@@ -21,6 +21,7 @@ internal static class LocationsSidebarTests
         Require(LocationService.Loaded && LocationService.Editable && LocationService.Items.Count == 0,
             "The window loads an empty scratch catalog, never the real one.");
         LocationService.Create("Acme Dental", out var acme);
+        if (acme == null) throw new InvalidOperationException("The fixture Location was not created.");
         LocationService.Create("Branch office", out var branch);
         LocationService.SetNotes(branch!, "\nGateway 10.9.0.1\nVLAN 30");
 

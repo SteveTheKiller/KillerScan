@@ -369,7 +369,7 @@ namespace KillerScan.Shell
             clip.Freeze();
             double span = bottom - top;
             // Unchanged geometry keeps the brushes it already has instead of building new ones each pass.
-            var shape = (top, span, pane.X, pane.Width, tab.Top, tab.Height, face);
+            var shape = (top, span, pane.X, pane.Width, tab.Top, tab.Height, (Border?)face);
             if (shape.Equals(_shadowShape)) return;
             _shadowShape = shape;
             var margin = new Thickness(0, top - origin.Y, 0, 0);
