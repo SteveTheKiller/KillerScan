@@ -652,4 +652,8 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Analyse approfondie : identifier les ports inconnus (jamais les ports d’imprimante)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Carte réseau</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Automatique (choix de Windows)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">Utilisez les touches fléchées pour parcourir le tableau.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">Gauche</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">Droite</sys:String>
+    <sys:String x:Key="Str_Sidebar">PANNEAU LATÉRAL</sys:String>
 </ResourceDictionary>

@@ -653,4 +653,8 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Tiefenscan: unbekannte Ports identifizieren (nie Druckerports)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Netzwerkadapter</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Automatisch (Windows wählt)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">Verwenden Sie die Pfeiltasten, um in der Tabelle zu navigieren.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">Links</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">Rechts</sys:String>
+    <sys:String x:Key="Str_Sidebar">SEITENLEISTE</sys:String>
 </ResourceDictionary>

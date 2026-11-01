@@ -668,4 +668,8 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Scansione approfondita: identifica porte sconosciute (mai porte stampante)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Scheda di rete</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Automatica (sceglie Windows)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">Usa i tasti freccia per spostarti nella tabella.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">A sinistra</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">A destra</sys:String>
+    <sys:String x:Key="Str_Sidebar">BARRA LATERALE</sys:String>
 </ResourceDictionary>

@@ -421,8 +421,15 @@ namespace KillerScan.Shell
 
     /// <summary>A view tab (Devices, Services, Topology, Keep Alive, Terminal). Its peer gives
     /// screen readers the tab role, which tab is showing, and a way to switch to it.</summary>
-    internal sealed class ViewTab(Action activate, Func<bool> isActive) : Controls.TabSurfaceBorder
+    internal sealed class ViewTab : Controls.TabSurfaceBorder
     {
+        internal ViewTab(Action activate, Func<bool> isActive)
+        {
+            _activate = activate;
+            _isActive = isActive;
+            FocusVisualStyle = AccessibleControls.FocusStyleFor(this);
+        }
+
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new ViewTabPeer(this);
 
         private sealed class ViewTabPeer(ViewTab tab) : System.Windows.Automation.Peers.FrameworkElementAutomationPeer(tab),
@@ -443,7 +450,7 @@ namespace KillerScan.Shell
             public void RemoveFromSelection() { }
         }
 
-        private readonly Action _activate = activate;
-        private readonly Func<bool> _isActive = isActive;
+        private readonly Action _activate;
+        private readonly Func<bool> _isActive;
     }
 }

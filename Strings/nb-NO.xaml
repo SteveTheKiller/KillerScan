@@ -694,4 +694,8 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Dypskanning: identifiser ukjente porter (aldri skriverporter)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Nettverksadapter</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Automatisk (Windows velger)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">Bruk piltastene for å navigere i tabellen.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">Venstre</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">Høyre</sys:String>
+    <sys:String x:Key="Str_Sidebar">SIDEPANEL</sys:String>
 </ResourceDictionary>

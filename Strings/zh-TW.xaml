@@ -652,4 +652,8 @@
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">深度掃描：識別未知連接埠（絕不探測印表機連接埠）</sys:String>
     <sys:String x:Key="Str_Options_Adapter">網路卡</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">自動（由 Windows 選擇）</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">使用方向鍵在表格中導覽。</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">左側</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">右側</sys:String>
+    <sys:String x:Key="Str_Sidebar">側邊欄</sys:String>
 </ResourceDictionary>

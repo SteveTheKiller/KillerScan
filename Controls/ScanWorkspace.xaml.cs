@@ -111,6 +111,8 @@ namespace KillerScan.Controls
             SubnetInput.KeyDown += (_, e) => { if (e.Key == Key.Enter) { Scan(); e.Handled = true; } };
             ResultsGrid.PreviewKeyDown += TabOutOfGrid;
             ServicesGrid.PreviewKeyDown += TabOutOfGrid;
+            ResultsGrid.GotKeyboardFocus += EnterGridCell;
+            ServicesGrid.GotKeyboardFocus += EnterGridCell;
             Loaded += (_, _) => GrainTexture.Track(GrainBrush);
             if (demo) GenerateDemoScan();
         }
@@ -258,6 +260,30 @@ namespace KillerScan.Controls
             UpdateDeepScanButton();
             UpdateExportButtonAvailability();
         }
+        private static void EnterGridCell(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (sender is not DataGrid grid || !ReferenceEquals(e.NewFocus, grid) || grid.Items.Count == 0) return;
+            if (Mouse.LeftButton == MouseButtonState.Pressed || Mouse.RightButton == MouseButtonState.Pressed ||
+                Mouse.MiddleButton == MouseButtonState.Pressed) return;
+            grid.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input, new Action(() =>
+            {
+                if (!grid.IsKeyboardFocused || grid.Items.Count == 0) return;
+                var item = grid.CurrentCell.IsValid && grid.Items.Contains(grid.CurrentCell.Item)
+                    ? grid.CurrentCell.Item : grid.SelectedItem ?? grid.Items[0];
+                var column = grid.CurrentCell.IsValid && grid.CurrentCell.Column.Visibility == Visibility.Visible
+                    ? grid.CurrentCell.Column
+                    : grid.Columns.Where(c => c.Visibility == Visibility.Visible).OrderBy(c => c.DisplayIndex).FirstOrDefault();
+                if (column == null) return;
+                grid.CurrentCell = new DataGridCellInfo(item, column);
+                if (grid.SelectedItems.Count == 0) grid.SelectedItem = item;
+                grid.ScrollIntoView(item, column);
+                grid.UpdateLayout();
+                DependencyObject? content = column.GetCellContent(item);
+                while (content != null && content is not DataGridCell) content = VisualTreeHelper.GetParent(content);
+                if (content is DataGridCell cell) cell.Focus();
+            }));
+        }
+
         /// <summary>
         /// Tab leaves a results grid in one step, as it leaves a list box, and the arrow keys
         /// still move between cells. The grid's own Tab handling visits every cell in the row first.

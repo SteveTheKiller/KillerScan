@@ -678,4 +678,8 @@
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Глубокое сканирование: определять неизвестные порты (никогда порты принтеров)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Сетевой адаптер</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Автоматически (выбирает Windows)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">Используйте клавиши со стрелками для перемещения по таблице.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">Слева</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">Справа</sys:String>
+    <sys:String x:Key="Str_Sidebar">БОКОВАЯ ПАНЕЛЬ</sys:String>
 </ResourceDictionary>

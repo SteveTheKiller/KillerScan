@@ -663,4 +663,8 @@
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">詳細スキャン: 不明なポートを識別 (プリンターポートは除外)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">ネットワーク アダプター</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">自動 (Windows が選択)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">矢印キーで表内を移動できます。</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">左</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">右</sys:String>
+    <sys:String x:Key="Str_Sidebar">サイドバー</sys:String>
 </ResourceDictionary>

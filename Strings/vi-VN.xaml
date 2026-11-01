@@ -633,4 +633,8 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Quét sâu: nhận dạng cổng không xác định (không bao giờ quét cổng máy in)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Bộ điều hợp mạng</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Tự động (Windows chọn)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">Dùng các phím mũi tên để di chuyển trong bảng.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">Trái</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">Phải</sys:String>
+    <sys:String x:Key="Str_Sidebar">THANH BÊN</sys:String>
 </ResourceDictionary>

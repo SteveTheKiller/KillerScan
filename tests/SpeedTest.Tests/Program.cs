@@ -91,6 +91,10 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--run-evidence" })) { HistoryUiTests.Isolated = RunEvidenceTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--locations" })) { LocationTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--locations-sidebar" })) { HistoryUiTests.Isolated = LocationsSidebarTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
+            if (args.SequenceEqual(new[] { "--sidebar-placement" })) { HistoryUiTests.Isolated = SidebarPlacementTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
+            if (args.SequenceEqual(new[] { "--keyboard-focus" })) { HistoryUiTests.Isolated = KeyboardFocusTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
+            if (args.SequenceEqual(new[] { "--contrast-transitions" })) { await ContrastTransitionTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--picker-selection" })) { HistoryUiTests.Isolated = PickerSelectionTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--location-workspace" })) { HistoryUiTests.Isolated = LocationWorkspaceTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--access-ui" })) { HistoryUiTests.Isolated = AccessUiTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--theme-dump" })) { HistoryUiTests.Isolated = ThemeDumpTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }

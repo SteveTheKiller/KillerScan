@@ -694,4 +694,8 @@
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Глибоке сканування: визначати невідомі порти (ніколи порти принтерів)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Мережевий адаптер</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Автоматично (вибирає Windows)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">Використовуйте клавіші зі стрілками для переміщення таблицею.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">Ліворуч</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">Праворуч</sys:String>
+    <sys:String x:Key="Str_Sidebar">БІЧНА ПАНЕЛЬ</sys:String>
 </ResourceDictionary>

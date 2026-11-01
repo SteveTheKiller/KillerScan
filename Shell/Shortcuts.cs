@@ -80,6 +80,8 @@ namespace KillerScan.Shell
 
             ("Alt + Shift + Up",   "Str_Layout_TabsTop",    "Views"),
             ("Alt + Shift + Down", "Str_Layout_TabsBottom", "Views"),
+            ("Alt + Shift + Left", "Str_Sidebar_Left",      "Views"),
+            ("Alt + Shift + Right", "Str_Sidebar_Right",    "Views"),
 
             ("Ctrl + Shift + +", "Str_Sc_AppBigger",        "App"),
             ("Ctrl + Shift + -", "Str_Sc_AppSmaller",       "App"),
@@ -177,6 +179,11 @@ namespace KillerScan.Shell
             if (alt && shift && !ctrl && key is Key.Up or Key.Down)
             {
                 SetTabPlacement(key == Key.Down);
+                e.Handled = true; return;
+            }
+            if (alt && shift && !ctrl && key is Key.Left or Key.Right)
+            {
+                if (!e.IsRepeat) SidebarSideShortcut(key == Key.Right);
                 e.Handled = true; return;
             }
             if (alt && shift && !ctrl && key == Key.G)

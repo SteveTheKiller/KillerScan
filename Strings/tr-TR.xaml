@@ -652,4 +652,8 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Derin tarama: bilinmeyen portları tanımla (yazıcı portları asla)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Ağ bağdaştırıcısı</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Otomatik (Windows seçer)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">Tabloda gezinmek için ok tuşlarını kullanın.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">Sol</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">Sağ</sys:String>
+    <sys:String x:Key="Str_Sidebar">KENAR ÇUBUĞU</sys:String>
 </ResourceDictionary>

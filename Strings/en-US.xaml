@@ -694,4 +694,8 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Deep scan: fingerprint unknown ports (never printer ports)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Network adapter</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Automatic (Windows chooses)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">Use the arrow keys to navigate the table.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">Left</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">Right</sys:String>
+    <sys:String x:Key="Str_Sidebar">SIDEBAR</sys:String>
 </ResourceDictionary>

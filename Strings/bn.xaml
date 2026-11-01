@@ -652,4 +652,8 @@
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">ডিপ স্ক্যান: অজানা পোর্ট শনাক্ত করুন (প্রিন্টার পোর্ট কখনো নয়)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">নেটওয়ার্ক অ্যাডাপ্টার</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">স্বয়ংক্রিয় (Windows বেছে নেয়)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">টেবিলে চলাচল করতে তীরচিহ্নের কীগুলি ব্যবহার করুন।</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">বাঁ দিকে</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">ডান দিকে</sys:String>
+    <sys:String x:Key="Str_Sidebar">সাইডবার</sys:String>
 </ResourceDictionary>

@@ -694,4 +694,8 @@
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Терең сканерлеу: белгісіз порттарды анықтау (принтер порттарын ешқашан)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Желі адаптері</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Автоматты (Windows таңдайды)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">Кестеде жылжу үшін көрсеткі пернелерін пайдаланыңыз.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">Сол</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">Оң</sys:String>
+    <sys:String x:Key="Str_Sidebar">БҮЙІРЛІК ПАНЕЛЬ</sys:String>
 </ResourceDictionary>

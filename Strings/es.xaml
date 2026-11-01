@@ -652,4 +652,8 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Escaneo profundo: identificar puertos desconocidos (nunca puertos de impresora)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Adaptador de red</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Automático (lo elige Windows)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">Use las teclas de flecha para desplazarse por la tabla.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">Izquierda</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">Derecha</sys:String>
+    <sys:String x:Key="Str_Sidebar">BARRA LATERAL</sys:String>
 </ResourceDictionary>

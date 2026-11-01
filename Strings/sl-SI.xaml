@@ -629,4 +629,8 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Globinsko skeniranje: prepoznaj neznana vrata (nikoli vrat tiskalnikov)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Omrežni vmesnik</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Samodejno (izbere Windows)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">Za pomikanje po tabeli uporabite puščične tipke.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">Levo</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">Desno</sys:String>
+    <sys:String x:Key="Str_Sidebar">STRANSKA VRSTICA</sys:String>
 </ResourceDictionary>

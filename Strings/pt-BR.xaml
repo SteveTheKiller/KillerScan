@@ -694,4 +694,8 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Varredura profunda: identificar portas desconhecidas (nunca portas de impressora)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Adaptador de rede</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Automático (o Windows escolhe)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">Use as teclas de seta para navegar pela tabela.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">Esquerda</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">Direita</sys:String>
+    <sys:String x:Key="Str_Sidebar">BARRA LATERAL</sys:String>
 </ResourceDictionary>

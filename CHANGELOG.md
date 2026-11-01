@@ -14,6 +14,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Picking a saved scan keeps its Deep Scan setting for each run and clears it when another saved scan or Location is selected.
 - Command-line CSV exports include recognition confidence, evidence and access details, matching the app's exports.
 - An all-users update reopens KillerScan for the signed-in user at normal rights, whether it finishes or stops early. Windows was refusing that relaunch, so the app stayed closed. Files left behind by earlier failed updates are cleared when the next update is staged.
+- Toolbar controls, tabs, links and tables show keyboard focus. Contrast refreshes avoid duplicate work and restore frame colors. Picker selections keep text and icons shadow-free.
 - All-users uninstall commands quote their nested helper correctly in both silent and interactive modes.
 - A command-line value of `uiscan`, such as a filter or Location name, no longer opens the app and starts a different scan.
 - A scan that finds one device says "1 device", in the footer, the status bar, the terminal and the command line.
@@ -162,6 +163,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - The file picker's recent locations and places lists are named for screen readers.
 
 ### Added
+- Move the History and Locations sidebar to either side, independently of tab placement.
 - Locations can carry an icon (Home, Office, Shop, School, Server room, Cloud, Wi-Fi spot or the pin), picked from a button beside the name in New and Rename Location, and shown in the Locations list and on the Location button.
 - Save to puts the unsaved scan on screen into an existing Location, with an optional name.
 - Scans in history can be named (right-click Rename scan, or F2); an unnamed scan shows its target.

@@ -637,4 +637,8 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Głębokie skanowanie: identyfikuj nieznane porty (nigdy porty drukarek)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Karta sieciowa</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Automatycznie (wybiera Windows)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">Użyj klawiszy strzałek, aby poruszać się po tabeli.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">Lewa</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">Prawa</sys:String>
+    <sys:String x:Key="Str_Sidebar">PASEK BOCZNY</sys:String>
 </ResourceDictionary>

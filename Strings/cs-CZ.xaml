@@ -650,4 +650,8 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Options_ProbeUnknownPorts">Hloubkový sken: identifikovat neznámé porty (nikdy porty tiskáren)</sys:String>
     <sys:String x:Key="Str_Options_Adapter">Síťový adaptér</sys:String>
     <sys:String x:Key="Str_Options_AdapterAuto">Automaticky (vybere Windows)</sys:String>
+    <sys:String x:Key="Str_Table_KeyboardHelp">K pohybu v tabulce použijte klávesy se šipkami.</sys:String>
+    <sys:String x:Key="Str_Sidebar_Left">Vlevo</sys:String>
+    <sys:String x:Key="Str_Sidebar_Right">Vpravo</sys:String>
+    <sys:String x:Key="Str_Sidebar">POSTRANNÍ PANEL</sys:String>
 </ResourceDictionary>

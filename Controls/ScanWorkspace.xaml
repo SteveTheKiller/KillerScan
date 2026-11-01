@@ -379,6 +379,7 @@
                 </Border>
 
                 <DataGrid Grid.Row="0" x:Name="ResultsGrid" AutomationProperties.Name="{DynamicResource Str_View_Devices}"
+                          AutomationProperties.HelpText="{DynamicResource Str_Table_KeyboardHelp}"
                           Margin="0"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"
@@ -714,6 +715,8 @@
                 </DataGrid>
 
                 <DataGrid Grid.Row="0" x:Name="ServicesGrid" Visibility="Collapsed"
+                          AutomationProperties.Name="{DynamicResource Str_Services_Title}"
+                          AutomationProperties.HelpText="{DynamicResource Str_Table_KeyboardHelp}"
                           ContextMenuOpening="ServicesGrid_ContextMenuOpening"
                           PreviewMouseRightButtonDown="ServicesGrid_RightClick"
                           AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent"
