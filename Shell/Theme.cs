@@ -68,7 +68,7 @@ namespace KillerScan.Shell
         ///     wordmark and subtitle collapse and PlainTitle takes over. This is not cosmetic
         ///     preference: the wordmark's two runs are TextBrush and PrimaryBrush, which on 98SE
         ///     are black and navy - both invisible on the navy caption.
-        ///   - A Win98 caption is 22px, not 32. The row height and WindowChrome.CaptionHeight have
+        ///   - A Win98 caption is 18px, not 32. The row height and WindowChrome.CaptionHeight have
         ///     to move together or the draggable strip stops matching the bar you can see.
         /// </summary>
         private void ApplyFlatChrome()
@@ -92,19 +92,45 @@ namespace KillerScan.Shell
             if (FindName("LogoBar")      is UIElement lb) lb.Visibility = wordmark;
             if (FindName("PlainTitle")   is UIElement pt) pt.Visibility = plain;
 
-            // The icon shrinks with the bar; 27px does not fit a 22px caption.
+            // The classic caption carries the original 16-pixel small icon.
             if (FindName("TitleIcon") is FrameworkElement icon)
             {
                 icon.Width = icon.Height = flat ? 16 : 27;
                 icon.Margin = new Thickness(0, 0, flat ? 5 : 7, 0);
             }
 
-            double h = flat ? 22 : 32;
+            double h = flat ? 18 : 32;
             if (FindName("RootGrid") is System.Windows.Controls.Grid root && root.RowDefinitions.Count > 0)
                 root.RowDefinitions[0].Height = new GridLength(h);
             var chrome = System.Windows.Shell.WindowChrome.GetWindowChrome(this);
             chrome?.CaptionHeight = h;
+            PlaceClassicToolbar(flat);
             UpdateCaptionGlyphs();
+        }
+
+        private Panel? _toolbarCaptionParent, _filterCaptionParent;
+
+        private void PlaceClassicToolbar(bool classic)
+        {
+            if (classic) ScaleHost.SetResourceReference(Panel.BackgroundProperty, "BackgroundBrush");
+            else ScaleHost.ClearValue(Panel.BackgroundProperty);
+            _toolbarCaptionParent ??= TitleToolbarHost.Parent as Panel;
+            _filterCaptionParent ??= TitleTools.Parent as Panel;
+            Move(TitleToolbarHost, _toolbarCaptionParent, first: false);
+            Move(TitleTools, _filterCaptionParent, first: true);
+
+            void Move(FrameworkElement control, Panel? captionParent, bool first)
+            {
+                Panel? destination = classic ? ScaleHost : captionParent;
+                if (destination == null || ReferenceEquals(control.Parent, destination)) return;
+                (control.Parent as Panel)?.Children.Remove(control);
+                if (!classic && first) destination.Children.Insert(0, control);
+                else destination.Children.Add(control);
+                Grid.SetRow(control, 0);
+                Grid.SetColumn(control, 0);
+                Grid.SetColumnSpan(control, 2);
+                control.HorizontalAlignment = classic && first ? HorizontalAlignment.Right : HorizontalAlignment.Stretch;
+            }
         }
 
         private void UpdateCaptionGlyphs()

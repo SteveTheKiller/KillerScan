@@ -173,6 +173,19 @@ internal static class ReleaseUiTests
                 if (flat)
                 {
                     var maximize = (Button)window.FindName("MaximizeBtn");
+                    var classicImage = Render(root, 1200, 780);
+                    var toolbarPixel = new byte[4];
+                    classicImage.CopyPixels(new Int32Rect(1100, 32, 1, 1), toolbarPixel, 4, 0);
+                    Require(toolbarPixel[0] == 192 && toolbarPixel[1] == 192 && toolbarPixel[2] == 192,
+                        "The classic client toolbar uses the Windows 98 gray face, without a black gap.");
+                    var captionRoot = (Grid)window.FindName("RootGrid");
+                    var captionBox = maximize.TransformToAncestor(captionRoot).TransformBounds(new Rect(maximize.RenderSize));
+                    var tools = (FrameworkElement)window.FindName("TitleToolbarHost");
+                    Require(tools.TransformToAncestor(captionRoot).TransformBounds(new Rect(tools.RenderSize)).Top >= 18,
+                        "The scan toolbar sits below the original Windows 98 caption instead of being clipped inside it.");
+                    Require(Math.Abs(captionRoot.RowDefinitions[0].ActualHeight - 18) < 0.1 &&
+                        Math.Abs(captionBox.Top - 2) < 0.1 && Math.Abs(captionBox.Bottom - 16) < 0.1,
+                        "Windows 98 has an eighteen-pixel caption with fourteen-pixel buttons inset two pixels above and below.");
                     Require(maximize.Content is FrameworkElement,
                         "98SE caption buttons use the established drawn classic glyphs, not modern font glyphs.");
                     Require(((UIElement)window.FindName("ClassicMinimizeGlyph")).Visibility == Visibility.Visible &&

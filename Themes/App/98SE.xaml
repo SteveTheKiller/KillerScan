@@ -5,9 +5,8 @@
                     xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <Thickness x:Key="ScanTitleBarPadding">2,0,0,0</Thickness>
-    <!-- The title-bar scan bar: the bar's content row starts at the padding's top, so a -4 top margin recentres it on the whole bar (2px up). -->
-    <Thickness x:Key="ScanTitleToolbarMargin">16,0,0,0</Thickness>
-    <Thickness x:Key="ScanCaptionButtonsMargin">0,3,3,0</Thickness>
+    <Thickness x:Key="ScanTitleToolbarMargin">4,2,42,2</Thickness>
+    <Thickness x:Key="ScanCaptionButtonsMargin">0,2,2,0</Thickness>
     <DrawingBrush x:Key="ScanContentPaneBrush" Viewport="0,0,2,2"
                   ViewportUnits="Absolute" TileMode="Tile" Stretch="None">
         <DrawingBrush.Drawing>

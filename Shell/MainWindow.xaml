@@ -127,9 +127,8 @@
                         </TextBlock>
                         <TextBlock theme:Bevel.Enabled="True" FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Scan" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
                     </Grid>
-                    <!-- The active view's own bar (address box, Scan, settings) rides in the title bar
-                         after the wordmark, so the content pane starts right under it
-                         (Shell/Workspace.cs). It took the place of the "Network Scanner" subtitle. -->
+                    <!-- The active view's bar rides after the wordmark. The classic theme moves
+                         this same host below the caption so its controls remain full-sized. -->
                     <Border x:Name="TitleToolbarHost" VerticalAlignment="Center" Margin="{DynamicResource ScanTitleToolbarMargin}"
                             WindowChrome.IsHitTestVisibleInChrome="True"/>
                 </StackPanel>
@@ -141,24 +140,21 @@
                      the wordmark and the window controls only. -->
 
                 <!-- Window Controls (Segoe MDL2 glyphs, matched to KillerPDF) -->
-                <!-- CaptionButtonsMargin: 0 on every flat theme so the buttons run flush to the
-                     window edge; on 98SE it insets them from the raised frame. VerticalAlignment
-                     is Top rather than Stretch because the 98SE buttons are 16px in a 22px bar and
-                     must sit against the top, not be stretched down it. -->
+                <!-- The classic caption gives its buttons the original two-pixel insets. -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top"
                             Margin="{DynamicResource ScanCaptionButtonsMargin}"
                             WindowChrome.IsHitTestVisibleInChrome="True">
                     <!-- The device filter, where KillerShell keeps its search: left of the window
                          controls (Shell/Workspace.cs moves it here from the scan bar). -->
                     <StackPanel x:Name="TitleTools" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                    <Button Click="MinimizeBtn_Click" Style="{StaticResource ChromeButton}" ToolTip="{DynamicResource Str_Sys_Minimize}">
+                    <Button VerticalAlignment="Top" Click="MinimizeBtn_Click" Style="{StaticResource ChromeButton}" ToolTip="{DynamicResource Str_Sys_Minimize}">
                         <Grid Height="{DynamicResource CaptionButtonHeight}">
                             <TextBlock x:Name="MinimizeGlyph" Text="&#xE921;" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             <Rectangle x:Name="ClassicMinimizeGlyph" Width="6" Height="2" Fill="{DynamicResource CaptionGlyphBrush}"
                                        HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,3" SnapsToDevicePixels="True" Visibility="Collapsed"/>
                         </Grid>
                     </Button>
-                    <Button x:Name="MaximizeBtn" Click="MaximizeBtn_Click" Style="{StaticResource ChromeButton}" ToolTip="{DynamicResource Str_Sys_Maximize}">
+                    <Button x:Name="MaximizeBtn" VerticalAlignment="Top" Click="MaximizeBtn_Click" Style="{StaticResource ChromeButton}" ToolTip="{DynamicResource Str_Sys_Maximize}">
                         <Grid>
                             <TextBlock x:Name="MaximizeGlyph" Text="&#xE922;"/>
                             <Grid x:Name="ClassicMaximizeGlyph" Width="9" Height="9" Margin="0,0,0,1" SnapsToDevicePixels="True" Visibility="Collapsed">
@@ -171,7 +167,7 @@
                             </Grid>
                         </Grid>
                     </Button>
-                    <Button Click="CloseBtn_Click" Style="{StaticResource ChromeCloseButton}" ToolTip="{DynamicResource Str_Sys_Close}">
+                    <Button VerticalAlignment="Top" Click="CloseBtn_Click" Style="{StaticResource ChromeCloseButton}" ToolTip="{DynamicResource Str_Sys_Close}">
                         <Grid>
                             <TextBlock x:Name="CloseGlyph" Text="&#xE8BB;"/>
                             <Grid x:Name="ClassicCloseGlyph" Width="8" Height="8" Visibility="Collapsed">
