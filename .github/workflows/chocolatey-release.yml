@@ -49,6 +49,7 @@ jobs:
           # The package pins whatever was downloaded, so check it is the release release.ps1 built:
           # the published checksum and a valid signature from the release certificate.
           $sums = (Invoke-WebRequest -Uri "$base/SHA256SUMS.txt" -UseBasicParsing).Content
+          if ($sums -is [byte[]]) { $sums = [Text.Encoding]::UTF8.GetString($sums) }
           $listed = [regex]::Match($sums, '(?m)^KillerScan\.exe\s+([0-9A-Fa-f]{64})\s*$').Groups[1].Value
           if ($listed -ne $hash) { throw "KillerScan.exe does not match SHA256SUMS.txt (listed '$listed', downloaded $hash)." }
           $signature = Get-AuthenticodeSignature "$env:RUNNER_TEMP\KillerScan.exe"

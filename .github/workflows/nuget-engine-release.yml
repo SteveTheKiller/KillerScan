@@ -98,6 +98,8 @@ jobs:
 
       - name: Test
         run: |
+          # The hosted image includes IIS, which can reserve the loopback HTTP fixture's port.
+          Get-Service W3SVC, WAS -ErrorAction SilentlyContinue | Stop-Service -Force -ErrorAction Stop
           dotnet build tests/KillerScan.Engine.Tests/KillerScan.Engine.Tests.csproj -c Release --no-restore
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           foreach ($tfm in 'net48', 'net10.0') {

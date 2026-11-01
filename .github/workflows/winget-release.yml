@@ -123,6 +123,7 @@ jobs:
           Invoke-WebRequest -Uri $url -OutFile $exe
           $hash = (Get-FileHash $exe -Algorithm SHA256).Hash
           $sums = (Invoke-WebRequest -Uri "$base/SHA256SUMS.txt" -UseBasicParsing).Content
+          if ($sums -is [byte[]]) { $sums = [Text.Encoding]::UTF8.GetString($sums) }
           $listed = [regex]::Match($sums, '(?m)^KillerScan\.exe\s+([0-9A-Fa-f]{64})\s*$').Groups[1].Value
           if ($listed -ne $hash) { Write-Error "KillerScan.exe does not match SHA256SUMS.txt (listed '$listed', downloaded $hash)."; exit 1 }
           $signature = Get-AuthenticodeSignature $exe

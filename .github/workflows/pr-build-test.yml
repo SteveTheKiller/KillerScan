@@ -70,6 +70,7 @@ jobs:
           FRAMEWORK: ${{ matrix.framework }}
         run: |
           if (!$env:WINDIR) { $env:WINDIR = $env:SYSTEMROOT }
+          Get-Service W3SVC, WAS -ErrorAction SilentlyContinue | Stop-Service -Force -ErrorAction Stop
           # No --worker or --internet: SpeedTest uses local fixtures only.
           dotnet run --project $env:PROJECT --framework $env:FRAMEWORK --configuration Release --no-build --no-restore 2>&1 | Tee-Object ci-results/console.log
           if ($LASTEXITCODE -ne 0) { throw 'Regression checks failed. See console.log.' }
@@ -87,6 +88,8 @@ jobs:
       - name: Check the suite inventory and the PowerShell module contract
         if: matrix.name == 'application'
         run: |
+          ./tests/Release.Tests/PackageChecksum.Tests.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'Package checksum response contract failed.' }
           ./tests/Run-FocusedSuites.ps1 -CheckOnly
           if ($LASTEXITCODE -ne 0) { throw 'tests/suites.json does not match the test runners.' }
           $exe = 'bin/Release/net48/KillerScan.exe'
