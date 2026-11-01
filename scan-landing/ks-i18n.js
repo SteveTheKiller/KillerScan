@@ -13798,3 +13798,384 @@ I18N.sl = {
   "mcp_version": "Različica",
   "mcp_store": "Prenesi KillerMCP iz trgovine Microsoft Store"
 };
+
+
+if (I18N["ru"]) Object.assign(I18N["ru"], {
+  "gallery_preview": "Предварительный обзор KillerScan 1.9",
+  "shot_1": "Обнаружение устройств с IP-адресами, именами узлов, MAC-адресами, производителями, типами устройств и открытыми портами.",
+  "shot_2": "Представление служб показывает открытые порты по службам и устройствам.",
+  "shot_3": "Боковая панель расположений хранит объекты клиентов и данные их сканирования отдельно.",
+  "shot_4": "Наблюдение за соединением отслеживает четыре узла с графиками задержки, потерями пакетов и диагностическими проверками.",
+  "shot_5": "Встроенный терминал с информацией о сети и ответами ping.",
+  "shot_6": "HTML-отчет о сканировании с сортируемыми результатами устройств и переключаемыми темами.",
+  "shot_7": "Сочетания клавиш для представлений, сканирования, действий с устройствами и настроек приложения.",
+  "shot_8": "Результаты устройств в классической теме 98SE.",
+  "shot_9": "Информация о сети и ping из командной строки во встроенном терминале.",
+  "f_profiles_t": "Расположения и глубокое сканирование",
+  "f_profiles_d": "Храните каждый объект клиента в отдельном расположении с собственными сохраненными сканированиями, именами устройств, одобрениями и историей. Загрузите сохраненные цели из списка расположений, затем нажмите «Сканировать». Глубокое сканирование проверяет порты 1-1024 и дополнительные служебные порты, собирая больше идентификационных признаков. KillerSpeed доступен на боковой панели.",
+  "f_history_d": "Сохраненные расположения хранят собственную историю сканирований. Сравнения используют предыдущие сканирования той же цели в той же сети. Первое сканирование определяет известные устройства; последующие отмечают незнакомые. Одобрение устройства выполняется отдельно.",
+  "b3_d6": "<b>Спрашивают, что изменилось.</b> История сканирований сравнивает запуски для одной цели в одной сети и показывает устройства, которые появились, исчезли или изменили набор открытых портов.",
+  "tk_privacy_reports": "HTML-отчеты содержат свой логотип и доступны для просмотра без интернета. Этот сайт загружает собственный скрипт аналитики. Настольное приложение не отправляет аналитику использования.",
+  "b1_d": "<li>ARP-кэш плюс параллельный ping-обход, затем повторное чтение ARP, чтобы поймать устройства, блокирующие ICMP</li>\n<li>TCP-фингерпринтинг по более чем 30 служебным портам</li>\n<li>Обнаружение через mDNS (Bonjour) и SSDP (UPnP)</li>\n<li>Определение производителя по IEEE OUI - MA-L, MA-M и MA-S</li>\n<li>Взвешенный классификатор: маршрутизаторы, NAS, принтеры, камеры, IoT, телефоны и не только</li>\n<li>Топология, Наблюдение за соединением и встроенный терминал рядом со списком устройств</li>\n<li>История сканирований с исходным списком известных устройств и отдельным одобрением устройств</li>\n<li>Экспорт соответствует виду: CSV, HTML или топология в виде PNG, JPG или HTML с SVG</li>\n<li>Тест скорости, диагностика устройства и трассировка маршрута, не выходя из приложения</li>\n<li>Безоконный режим командной строки для скриптов, планировщика задач и RMM</li>\n<li>Тринадцать тем с живыми акцентными цветами и запоминанием настроек оформления</li>",
+  "b3_d2": "<b>Приходите на незнакомый объект.</b> Просканируйте подсеть, чтобы определить доступные маршрутизаторы, коммутаторы, гипервизоры, NAS, принтеры и камеры еще до получения документации по сети."
+});
+
+if (I18N["it"]) Object.assign(I18N["it"], {
+  "gallery_preview": "Anteprima di KillerScan 1.9",
+  "shot_1": "Rilevamento dei dispositivi con indirizzi IP, nomi host, indirizzi MAC, produttori, tipi di dispositivo e porte aperte.",
+  "shot_2": "La vista servizi elenca le porte aperte per servizio e dispositivo.",
+  "shot_3": "La barra laterale delle sedi mantiene separati i siti dei clienti e i relativi dati di scansione.",
+  "shot_4": "Monitoraggio connessione controlla quattro host con grafici della latenza, perdita di pacchetti e verifiche diagnostiche.",
+  "shot_5": "Terminale integrato con informazioni di rete e risposte ping.",
+  "shot_6": "Report HTML della scansione con risultati dei dispositivi ordinabili e temi selezionabili.",
+  "shot_7": "Scorciatoie da tastiera per viste, scansioni, azioni sui dispositivi e impostazioni dell'app.",
+  "shot_8": "Risultati dei dispositivi nel tema classico 98SE.",
+  "shot_9": "Informazioni di rete e ping dalla riga di comando nel terminale integrato.",
+  "f_profiles_t": "Sedi e scansione approfondita",
+  "f_profiles_d": "Organizza ogni sito cliente in una sede distinta, con scansioni salvate, nomi dei dispositivi, approvazioni e cronologia separati. Carica gli obiettivi salvati dal selettore delle sedi, poi premi Scansiona. La scansione approfondita controlla le porte 1-1024 e altre porte di servizio e raccoglie più informazioni identificative. KillerSpeed è disponibile sulla barra laterale.",
+  "f_history_d": "Ogni sede salvata conserva la propria cronologia. I confronti usano scansioni precedenti dello stesso obiettivo sulla stessa rete. La prima scansione stabilisce quali dispositivi sono conosciuti; le successive segnalano quelli sconosciuti. L'approvazione dei dispositivi è una scelta separata.",
+  "b3_d6": "<b>Ti chiedono cosa è cambiato.</b> La cronologia confronta scansioni dello stesso obiettivo sulla stessa rete e mostra i dispositivi comparsi, scomparsi o con porte aperte diverse.",
+  "tk_privacy_reports": "I report HTML includono il logo e si possono consultare offline. Questo sito carica un proprio script di analisi. L'app desktop non invia analisi di utilizzo.",
+  "b1_d": "<li>Cache ARP più uno sweep di ping in parallelo, poi una seconda lettura ARP per catturare chi blocca ICMP</li>\n<li>Fingerprinting TCP su oltre 30 porte di servizio</li>\n<li>Rilevamento mDNS (Bonjour) e SSDP (UPnP)</li>\n<li>Identificazione dei produttori OUI IEEE - MA-L, MA-M e MA-S</li>\n<li>Classificatore ponderato: router, NAS, stampanti, telecamere, IoT, telefoni e altro</li>\n<li>Topologia, Monitoraggio connessione e un terminale integrato accanto all'elenco dei dispositivi</li>\n<li>Cronologia delle scansioni con una base di dispositivi conosciuti e approvazioni esplicite dei dispositivi</li>\n<li>L'esportazione segue la vista: CSV, HTML, o la topologia come PNG, JPG o HTML con SVG</li>\n<li>KillerSpeed, diagnostica dei dispositivi e traceroute senza uscire dall'app</li>\n<li>Riga di comando senza interfaccia per script, attività pianificate e RMM</li>\n<li>Tredici temi con colori d'accento in tempo reale e impostazioni di aspetto memorizzate</li>",
+  "b3_d2": "<b>Arrivi in un sito che non hai mai visto.</b> Scansiona una sottorete per identificare router, switch, hypervisor, NAS, stampanti e telecamere raggiungibili prima di avere la documentazione di rete."
+});
+
+if (I18N["hu"]) Object.assign(I18N["hu"], {
+  "gallery_preview": "KillerScan 1.9 előzetes",
+  "shot_1": "Eszközfelderítés IP-címekkel, gépnevekkel, MAC-címekkel, gyártókkal, eszköztípusokkal és nyitott portokkal.",
+  "shot_2": "A szolgáltatásnézet szolgáltatásonként és eszközönként listázza a nyitott portokat.",
+  "shot_3": "A helyszínek oldalsávja elkülöníti az ügyfelek telephelyeit és azok vizsgálati adatait.",
+  "shot_4": "A Kapcsolatfigyelés négy gépet figyel késleltetési grafikonokkal, csomagvesztési adatokkal és diagnosztikai ellenőrzésekkel.",
+  "shot_5": "A beépített terminál hálózati információkat és pingválaszokat jelenít meg.",
+  "shot_6": "HTML-vizsgálati jelentés rendezhető eszközeredményekkel és váltható témákkal.",
+  "shot_7": "Billentyűparancsok a nézetekhez, vizsgálatokhoz, eszközműveletekhez és az alkalmazás beállításaihoz.",
+  "shot_8": "Eszközeredmények a klasszikus 98SE témában.",
+  "shot_9": "Parancssori hálózati információk és ping a beépített terminálban.",
+  "f_profiles_t": "Helyszínek és mélyvizsgálat",
+  "f_profiles_d": "Minden ügyféltelephelyet külön helyszínben kezelhetsz, saját mentett vizsgálatokkal, eszköznevekkel, jóváhagyásokkal és előzményekkel. Töltsd be a mentett célpontokat a helyszínválasztóból, majd nyomd meg a Vizsgálat gombot. A mélyvizsgálat az 1-1024 portot és további szolgáltatásportokat ellenőriz, és több azonosító adatot gyűjt. A KillerSpeed az oldalsávon érhető el.",
+  "f_history_d": "A mentett helyszínek saját vizsgálati előzményeket őriznek. Az összehasonlítások ugyanazon célpont ugyanazon hálózaton végzett korábbi vizsgálatait használják. Az első vizsgálat rögzíti az ismert eszközöket; a későbbiek jelzik az ismeretleneket. Az eszköz jóváhagyása külön döntés.",
+  "b3_d6": "<b>Megkérdezik, mi változott.</b> A vizsgálati előzmények ugyanazon célpont ugyanazon hálózaton végzett vizsgálatait hasonlítják össze, és megmutatják a megjelent, eltűnt vagy eltérő nyitott portokkal rendelkező eszközöket.",
+  "tk_privacy_reports": "A HTML-jelentések tartalmazzák a logójukat, és offline is megtekinthetők. Ez a webhely saját analitikai szkriptet tölt be. Az asztali alkalmazás nem küld használati analitikát.",
+  "b1_d": "\n<li>ARP gyorsítótár és párhuzamos ping sweep, majd egy második ARP olvasás az ICMP-blokkolók elkapásához</li>\n<li>TCP-ujjlenyomat 30+ szolgáltatási porton keresztül</li>\n<li>mDNS (Bonjour) és SSDP (UPnP) felfedezés</li>\n<li>IEEE OUI szállítóazonosító - MA-L, MA-M és MA-S</li>\n<li>Súlyozott osztályozó: útválasztók, NAS, nyomtatók, kamerák, IoT, telefonok és egyebek</li>\n<li>Topológia, Kapcsolatfigyelés és egy beépített terminál az eszközlista mellett</li>\n<li>Vizsgálati előzmények az ismert eszközök alapállapotával és az eszközök kifejezett jóváhagyásával</li>\n<li>Az exportálás a nézetet követi: CSV, HTML, vagy a topológia PNG, JPG vagy SVG-t tartalmazó HTML formátumban</li>\n<li>KillerSpeed, eszközdiagnosztika és traceroute az alkalmazás elhagyása nélkül</li>\n<li>Fej nélküli parancssor szkriptekhez, ütemezett feladatokhoz és RMM-hez</li>\n<li>Tizenhárom téma élő hangsúlyos színekkel és megjegyzett megjelenési beállításokkal</li>",
+  "b3_d2": "<b>Egy még ismeretlen telephelyre érkezel.</b> Vizsgálj meg egy alhálózatot az elérhető útválasztók, kapcsolók, hipervizorok, NAS-eszközök, nyomtatók és kamerák azonosításához, még mielőtt megkapnád a hálózati dokumentációt."
+});
+
+if (I18N["pl"]) Object.assign(I18N["pl"], {
+  "gallery_preview": "Podgląd KillerScan 1.9",
+  "shot_1": "Wykrywanie urządzeń z adresami IP, nazwami hostów, adresami MAC, producentami, typami urządzeń i otwartymi portami.",
+  "shot_2": "Widok usług pokazuje otwarte porty według usługi i urządzenia.",
+  "shot_3": "Panel lokalizacji oddziela obiekty klientów i ich dane skanowania.",
+  "shot_4": "Monitorowanie połączenia śledzi cztery hosty z wykresami opóźnień, utratą pakietów i testami diagnostycznymi.",
+  "shot_5": "Wbudowany terminal z informacjami o sieci i odpowiedziami ping.",
+  "shot_6": "Raport HTML ze skanowania z sortowalnymi wynikami urządzeń i przełączaniem motywów.",
+  "shot_7": "Skróty klawiaturowe do widoków, skanowania, działań na urządzeniach i ustawień aplikacji.",
+  "shot_8": "Wyniki urządzeń w klasycznym motywie 98SE.",
+  "shot_9": "Informacje o sieci i ping z wiersza poleceń we wbudowanym terminalu.",
+  "f_profiles_t": "Lokalizacje i głębokie skanowanie",
+  "f_profiles_d": "Przechowuj każdy obiekt klienta w osobnej lokalizacji z oddzielnymi zapisanymi skanami, nazwami urządzeń, zatwierdzeniami i historią. Wczytaj zapisane cele z selektora lokalizacji, a potem naciśnij Skanuj. Głębokie skanowanie sprawdza porty 1-1024 i dodatkowe porty usług oraz zbiera więcej danych identyfikacyjnych. KillerSpeed jest dostępny na pasku bocznym.",
+  "f_history_d": "Zapisane lokalizacje zachowują własną historię skanowania. Porównania wykorzystują wcześniejsze skany tego samego celu w tej samej sieci. Pierwszy skan ustala, które urządzenia są znane; kolejne oznaczają nieznane urządzenia. Zatwierdzenie urządzenia to osobny wybór.",
+  "b3_d6": "<b>Pytają cię, co się zmieniło.</b> Historia skanowania porównuje skany tego samego celu w tej samej sieci i pokazuje urządzenia, które pojawiły się, zniknęły lub zmieniły otwarte porty.",
+  "tk_privacy_reports": "Raporty HTML zawierają własne logo i można je przeglądać offline. Ta witryna ładuje własny skrypt analityczny. Aplikacja komputerowa nie wysyła analityki użytkowania.",
+  "b1_d": "<li>Pamięć podręczna ARP plus równoległy ping sweep, a potem drugi odczyt ARP, aby wychwycić urządzenia blokujące ICMP</li>\n<li>Identyfikacja TCP na ponad 30 portach usług</li>\n<li>Wykrywanie mDNS (Bonjour) i SSDP (UPnP)</li>\n<li>Ustalanie producenta z IEEE OUI - MA-L, MA-M i MA-S</li>\n<li>Ważony klasyfikator: routery, NAS, drukarki, kamery, IoT, telefony i inne</li>\n<li>Topologia, Monitorowanie połączenia i wbudowany terminal obok listy urządzeń</li>\n<li>Historia skanowania z bazą znanych urządzeń i jawnym zatwierdzaniem urządzeń</li>\n<li>Eksport podąża za widokiem: CSV, HTML, lub topologia jako PNG, JPG czy HTML z SVG</li>\n<li>KillerSpeed, diagnostyka urządzeń i traceroute bez opuszczania aplikacji</li>\n<li>Wiersz poleceń bez okna do skryptów, zaplanowanych zadań i RMM</li>\n<li>Trzynaście motywów z kolorami akcentu na żywo i zapamiętywanymi ustawieniami wyglądu</li>",
+  "b3_d2": "<b>Wchodzisz do obiektu, którego jeszcze nie znasz.</b> Przeskanuj podsieć, aby zidentyfikować osiągalne routery, przełączniki, hipernadzorców, urządzenia NAS, drukarki i kamery, zanim otrzymasz dokumentację sieci."
+});
+
+if (I18N["cs"]) Object.assign(I18N["cs"], {
+  "gallery_preview": "Náhled KillerScan 1.9",
+  "shot_1": "Vyhledávání zařízení s IP adresami, názvy hostitelů, MAC adresami, výrobci, typy zařízení a otevřenými porty.",
+  "shot_2": "Zobrazení služeb uvádí otevřené porty podle služby a zařízení.",
+  "shot_3": "Postranní panel lokalit odděluje pracoviště zákazníků a jejich data skenování.",
+  "shot_4": "Sledování připojení monitoruje čtyři hostitele pomocí grafů latence, údajů o ztrátě paketů a diagnostických kontrol.",
+  "shot_5": "Vestavěný terminál s informacemi o síti a odpověďmi na ping.",
+  "shot_6": "HTML sestava skenování s řaditelnými výsledky zařízení a přepínáním motivů.",
+  "shot_7": "Klávesové zkratky pro zobrazení, skenování, akce zařízení a nastavení aplikace.",
+  "shot_8": "Výsledky zařízení v klasickém motivu 98SE.",
+  "shot_9": "Informace o síti a ping z příkazového řádku ve vestavěném terminálu.",
+  "f_profiles_t": "Lokality a hloubkový sken",
+  "f_profiles_d": "Každé pracoviště zákazníka uchovávejte v samostatné lokalitě s vlastními uloženými skeny, názvy zařízení, schváleními a historií. Načtěte uložené cíle z výběru lokalit a stiskněte Skenovat. Hloubkový sken kontroluje porty 1-1024 i další porty služeb a získává více identifikačních údajů. KillerSpeed je k dispozici na boční liště.",
+  "f_history_d": "Uložené lokality mají vlastní historii skenování. Porovnání používají starší skeny stejného cíle ve stejné síti. První sken určí známá zařízení; další označují neznámá zařízení. Schválení zařízení je samostatná volba.",
+  "b3_d6": "<b>Ptají se vás, co se změnilo.</b> Historie porovnává skeny stejného cíle ve stejné síti a ukazuje zařízení, která přibyla, zmizela nebo změnila otevřené porty.",
+  "tk_privacy_reports": "HTML sestavy obsahují vlastní logo a lze je prohlížet offline. Tento web načítá vlastní analytický skript. Desktopová aplikace neodesílá analytiku používání.",
+  "b1_d": "<li>ARP cache plus paralelní ping sweep, poté druhé čtení ARP pro zachycení zařízení blokujících ICMP</li>\n<li>Identifikace přes TCP na více než 30 servisních portech</li>\n<li>Vyhledávání mDNS (Bonjour) a SSDP (UPnP)</li>\n<li>Určení výrobce z IEEE OUI - MA-L, MA-M a MA-S</li>\n<li>Vážený klasifikátor: routery, NAS, tiskárny, kamery, IoT, telefony a další</li>\n<li>Topologie, Sledování připojení a vestavěný terminál vedle seznamu zařízení</li>\n<li>Historie skenování s výchozím seznamem známých zařízení a výslovným schvalováním zařízení</li>\n<li>Export sleduje zobrazení: CSV, HTML, nebo topologie jako PNG, JPG či HTML s SVG</li>\n<li>Test rychlosti, diagnostika zařízení a traceroute bez opuštění aplikace</li>\n<li>Příkazový řádek bez okna pro skripty, naplánované úlohy a RMM</li>\n<li>Třináct motivů se živými akcentovými barvami a zapamatovaným nastavením vzhledu</li>",
+  "b3_d2": "<b>Přicházíte na pracoviště, které ještě neznáte.</b> Proskenujte podsíť a identifikujte dosažitelné směrovače, přepínače, hypervizory, zařízení NAS, tiskárny a kamery ještě před získáním dokumentace sítě."
+});
+
+if (I18N["es"]) Object.assign(I18N["es"], {
+  "gallery_preview": "Vista previa de KillerScan 1.9",
+  "shot_1": "Detección de dispositivos con direcciones IP, nombres de host, direcciones MAC, fabricantes, tipos de dispositivo y puertos abiertos.",
+  "shot_2": "La vista de servicios enumera los puertos abiertos por servicio y dispositivo.",
+  "shot_3": "La barra lateral de ubicaciones mantiene separados los sitios de los clientes y sus datos de escaneo.",
+  "shot_4": "Supervisión de conexión vigila cuatro hosts con gráficos de latencia, pérdida de paquetes y comprobaciones de diagnóstico.",
+  "shot_5": "Terminal integrado con información de red y respuestas de ping.",
+  "shot_6": "Informe HTML del escaneo con resultados de dispositivos ordenables y temas intercambiables.",
+  "shot_7": "Atajos de teclado para vistas, escaneos, acciones de dispositivos y ajustes de la aplicación.",
+  "shot_8": "Resultados de dispositivos en el tema clásico 98SE.",
+  "shot_9": "Información de red y ping desde la línea de comandos en el terminal integrado.",
+  "f_profiles_t": "Ubicaciones y análisis profundo",
+  "f_profiles_d": "Organiza cada sitio de cliente en su propia ubicación, con escaneos guardados, nombres de dispositivos, aprobaciones e historial separados. Carga los destinos guardados desde el selector de ubicaciones y pulsa Escanear. El análisis profundo comprueba los puertos 1-1024 y otros puertos de servicio, y recoge más datos de identificación. KillerSpeed está disponible en la barra lateral.",
+  "f_history_d": "Las ubicaciones guardadas conservan su propio historial de escaneos. Las comparaciones usan escaneos anteriores del mismo destino en la misma red. El primer escaneo establece qué dispositivos son conocidos; los siguientes señalan los desconocidos. La aprobación de dispositivos es una decisión aparte.",
+  "b3_d6": "<b>Te preguntan qué ha cambiado.</b> El historial compara escaneos del mismo destino en la misma red y muestra los dispositivos que aparecieron, desaparecieron o cambiaron sus puertos abiertos.",
+  "tk_privacy_reports": "Los informes HTML incluyen su logotipo y se pueden consultar sin conexión. Este sitio carga su propio script de análisis. La aplicación de escritorio no envía análisis de uso.",
+  "b1_d": "<li>Caché ARP más un barrido de ping en paralelo, y luego una segunda lectura ARP para detectar los que bloquean ICMP</li>\n<li>Identificación TCP en más de 30 puertos de servicio</li>\n<li>Descubrimiento mDNS (Bonjour) y SSDP (UPnP)</li>\n<li>ID de fabricante por OUI de IEEE - MA-L, MA-M y MA-S</li>\n<li>Clasificador ponderado: routers, NAS, impresoras, cámaras, IoT, teléfonos y más</li>\n<li>Topología, Supervisión de conexión y un terminal integrado junto a la lista de dispositivos</li>\n<li>Historial de escaneos con una base de dispositivos conocidos y aprobaciones explícitas de dispositivos</li>\n<li>La exportación sigue la vista: CSV, HTML, o la topología como PNG, JPG o HTML con SVG</li>\n<li>Prueba de velocidad, diagnóstico de dispositivos y traceroute sin salir de la aplicación</li>\n<li>Línea de comandos sin ventana para scripts, tareas programadas y RMM</li>\n<li>Trece temas con colores de acento en vivo y ajustes de apariencia recordados</li>",
+  "b3_d2": "<b>Llegas a un sitio que nunca has visto.</b> Escanea una subred para identificar routers, switches, hipervisores, dispositivos NAS, impresoras y cámaras accesibles antes de tener la documentación de red."
+});
+
+if (I18N["de"]) Object.assign(I18N["de"], {
+  "gallery_preview": "Vorschau auf KillerScan 1.9",
+  "shot_1": "Geräteerkennung mit IP-Adressen, Hostnamen, MAC-Adressen, Herstellern, Gerätetypen und offenen Ports.",
+  "shot_2": "Die Dienstansicht zeigt offene Ports nach Dienst und Gerät.",
+  "shot_3": "Die Standort-Seitenleiste hält Kundenstandorte und ihre Scandaten getrennt.",
+  "shot_4": "Die Verbindungsüberwachung überwacht vier Hosts mit Latenzdiagrammen, Paketverlust und Diagnoseprüfungen.",
+  "shot_5": "Integriertes Terminal mit Netzwerkinformationen und Ping-Antworten.",
+  "shot_6": "HTML-Scanbericht mit sortierbaren Geräteergebnissen und wechselbaren Themes.",
+  "shot_7": "Tastenkürzel für Ansichten, Scans, Geräteaktionen und App-Einstellungen.",
+  "shot_8": "Geräteergebnisse im klassischen 98SE-Theme.",
+  "shot_9": "Netzwerkinformationen und Ping per Befehlszeile im integrierten Terminal.",
+  "f_profiles_t": "Standorte und Tiefen-Scan",
+  "f_profiles_d": "Verwalte jeden Kundenstandort als eigenen Standort mit getrennten gespeicherten Scans, Gerätenamen, Freigaben und Verlauf. Lade gespeicherte Ziele über die Standortauswahl und drücke dann Scannen. Der Tiefen-Scan prüft die Ports 1-1024 sowie zusätzliche Dienstports und sammelt weitere Erkennungsmerkmale. KillerSpeed ist über die Seitenleiste verfügbar.",
+  "f_history_d": "Gespeicherte Standorte behalten ihren eigenen Scanverlauf. Vergleiche verwenden frühere Scans desselben Ziels im selben Netzwerk. Der erste Scan legt fest, welche Geräte bekannt sind; spätere Scans markieren unbekannte Geräte. Die Gerätefreigabe ist eine separate Entscheidung.",
+  "b3_d6": "<b>Jemand fragt, was sich geändert hat.</b> Der Scanverlauf vergleicht Scans desselben Ziels im selben Netzwerk und zeigt Geräte, die hinzugekommen sind, verschwunden sind oder andere offene Ports haben.",
+  "tk_privacy_reports": "HTML-Berichte enthalten ihr Logo und lassen sich offline ansehen. Diese Website lädt ihr eigenes Analyseskript. Die Desktop-App sendet keine Nutzungsanalysen.",
+  "b1_d": "<li>ARP-Cache plus paralleler Ping-Sweep, dann ein zweiter ARP-Durchlauf, um ICMP-Blocker zu erfassen</li>\n<li>TCP-Fingerprinting über mehr als 30 Dienstports</li>\n<li>mDNS- (Bonjour) und SSDP- (UPnP) Erkennung</li>\n<li>IEEE-OUI-Herstellerkennung - MA-L, MA-M und MA-S</li>\n<li>Gewichteter Klassifikator: Router, NAS, Drucker, Kameras, IoT, Telefone und mehr</li>\n<li>Topologie, Verbindungsüberwachung und ein eingebettetes Terminal neben der Geräteliste</li>\n<li>Scanverlauf mit einer Basis bekannter Geräte und ausdrücklichen Gerätefreigaben</li>\n<li>Export folgt der Ansicht: CSV, HTML oder die Topologie als PNG, JPG oder HTML mit SVG</li>\n<li>Geschwindigkeitstest, Gerätediagnose und Traceroute, ohne die App zu verlassen</li>\n<li>Fensterlose Befehlszeile für Skripte, geplante Aufgaben und RMM</li>\n<li>Dreizehn Designs mit Live-Akzentfarben und gespeicherten Darstellungseinstellungen</li>",
+  "b3_d2": "<b>Du kommst an einen unbekannten Standort.</b> Scanne ein Subnetz, um erreichbare Router, Switches, Hypervisoren, NAS-Geräte, Drucker und Kameras zu erkennen, bevor dir die Netzwerkdokumentation vorliegt."
+});
+
+if (I18N["fr"]) Object.assign(I18N["fr"], {
+  "gallery_preview": "Aperçu de KillerScan 1.9",
+  "shot_1": "Découverte des appareils avec adresses IP, noms d'hôte, adresses MAC, fabricants, types d'appareil et ports ouverts.",
+  "shot_2": "La vue des services répertorie les ports ouverts par service et par appareil.",
+  "shot_3": "La barre latérale des sites sépare les sites clients et leurs données de scan.",
+  "shot_4": "La surveillance de connexion suit quatre hôtes avec des graphiques de latence, les pertes de paquets et des contrôles de diagnostic.",
+  "shot_5": "Terminal intégré affichant les informations réseau et les réponses ping.",
+  "shot_6": "Rapport HTML du scan avec résultats des appareils triables et thèmes interchangeables.",
+  "shot_7": "Raccourcis clavier pour les vues, les scans, les actions sur les appareils et les paramètres de l'application.",
+  "shot_8": "Résultats des appareils dans le thème classique 98SE.",
+  "shot_9": "Informations réseau et ping en ligne de commande dans le terminal intégré.",
+  "f_profiles_t": "Sites et analyse approfondie",
+  "f_profiles_d": "Conservez chaque site client dans un site distinct, avec ses propres scans enregistrés, noms d'appareils, approbations et historique. Chargez les cibles enregistrées depuis le sélecteur de sites, puis appuyez sur Scanner. L'analyse approfondie vérifie les ports 1-1024 ainsi que d'autres ports de service et recueille davantage d'empreintes d'identification. KillerSpeed est disponible dans la barre latérale.",
+  "f_history_d": "Les sites enregistrés conservent leur propre historique de scans. Les comparaisons utilisent des scans précédents de la même cible sur le même réseau. Le premier scan établit quels appareils sont connus ; les suivants signalent les appareils inconnus. L'approbation des appareils est un choix distinct.",
+  "b3_d6": "<b>On vous demande ce qui a changé.</b> L'historique compare les scans de la même cible sur le même réseau et montre les appareils apparus, disparus ou dont les ports ouverts ont changé.",
+  "tk_privacy_reports": "Les rapports HTML incluent leur logo et sont consultables hors ligne. Ce site charge son propre script d'analyse. L'application de bureau n'envoie aucune analyse d'utilisation.",
+  "b1_d": "<li>Cache ARP plus un balayage ping en parallèle, puis une seconde lecture ARP pour attraper les bloqueurs ICMP</li>\n<li>Empreinte TCP sur plus de 30 ports de service</li>\n<li>Découverte mDNS (Bonjour) et SSDP (UPnP)</li>\n<li>Identifiant fabricant OUI de l'IEEE - MA-L, MA-M et MA-S</li>\n<li>Classificateur pondéré : routeurs, NAS, imprimantes, caméras, IoT, téléphones et plus</li>\n<li>Topologie, Surveillance de connexion et un terminal intégré à côté de la liste des appareils</li>\n<li>Historique des scans avec une référence d'appareils connus et des approbations explicites des appareils</li>\n<li>L'export suit la vue : CSV, HTML, ou la topologie en PNG, JPG ou HTML avec SVG</li>\n<li>KillerSpeed, diagnostic d'appareil et traceroute sans quitter l'application</li>\n<li>Ligne de commande sans fenêtre pour les scripts, les tâches planifiées et le RMM</li>\n<li>Treize thèmes avec couleurs d'accent en direct et réglages d'apparence mémorisés</li>",
+  "b3_d2": "<b>Vous arrivez sur un site que vous ne connaissez pas.</b> Scannez un sous-réseau pour identifier les routeurs, commutateurs, hyperviseurs, NAS, imprimantes et caméras joignables avant même d'avoir la documentation réseau."
+});
+
+if (I18N["tr"]) Object.assign(I18N["tr"], {
+  "gallery_preview": "KillerScan 1.9 önizlemesi",
+  "shot_1": "IP adresleri, ana bilgisayar adları, MAC adresleri, üreticiler, cihaz türleri ve açık bağlantı noktalarıyla cihaz keşfi.",
+  "shot_2": "Hizmet görünümü, açık bağlantı noktalarını hizmete ve cihaza göre listeler.",
+  "shot_3": "Konumlar kenar çubuğu, müşteri tesislerini ve tarama verilerini ayrı tutar.",
+  "shot_4": "Bağlantı izleme, dört ana bilgisayarı gecikme grafikleri, paket kaybı ve tanılama kontrolleriyle izler.",
+  "shot_5": "Ağ bilgilerini ve ping yanıtlarını gösteren yerleşik terminal.",
+  "shot_6": "Sıralanabilir cihaz sonuçları ve değiştirilebilir temalar içeren HTML tarama raporu.",
+  "shot_7": "Görünümler, tarama, cihaz işlemleri ve uygulama ayarları için klavye kısayolları.",
+  "shot_8": "Klasik 98SE temasında cihaz sonuçları.",
+  "shot_9": "Yerleşik terminalde komut satırından ağ bilgileri ve ping.",
+  "f_profiles_t": "Konumlar ve derin tarama",
+  "f_profiles_d": "Her müşteri tesisini, ayrı kayıtlı taramalar, cihaz adları, onaylar ve geçmiş içeren kendi konumunda tutun. Konum seçicisinden kayıtlı hedefleri yükleyin ve ardından Tara düğmesine basın. Derin tarama, 1-1024 bağlantı noktaları ile ek hizmet bağlantı noktalarını kontrol eder ve daha fazla tanımlama verisi toplar. KillerSpeed yan çubukta bulunur.",
+  "f_history_d": "Kayıtlı konumlar kendi tarama geçmişlerini tutar. Karşılaştırmalar, aynı ağda aynı hedefin önceki taramalarını kullanır. İlk tarama hangi cihazların bilindiğini belirler; sonraki taramalar tanınmayan cihazları işaretler. Cihaz onayı ayrı bir tercihtir.",
+  "b3_d6": "<b>Ne değiştiği sorulduğunda.</b> Tarama geçmişi, aynı ağda aynı hedefin taramalarını karşılaştırır ve ortaya çıkan, kaybolan veya açık bağlantı noktaları değişen cihazları gösterir.",
+  "tk_privacy_reports": "HTML raporları logolarını içerir ve çevrimdışı görüntülenebilir. Bu web sitesi kendi analiz betiğini yükler. Masaüstü uygulaması kullanım analizi göndermez.",
+  "b1_d": "\n<li>ARP önbelleği artı paralel bir ping taraması, ardından ICMP engelleyicileri yakalamak için ikinci bir ARP okuması</li>\n<li>30'dan fazla hizmet bağlantı noktasında TCP parmak izi</li>\n<li>mDNS (Bonjour) ve SSDP (UPnP) keşfi</li>\n<li>IEEE OUI üretici kimliği - MA-L, MA-M ve MA-S</li>\n<li>Ağırlıklı sınıflandırıcı: yönlendiriciler, NAS'lar, yazıcılar, kameralar, IoT, telefonlar ve daha fazlası</li>\n<li>Topoloji, Bağlantı izleme ve cihaz listesinin yanında yerleşik bir terminal</li>\n<li>Bilinen cihazları temel alan tarama geçmişi ve açıkça verilen cihaz onayları</li>\n<li>Görünüme göre dışa aktarma: CSV, HTML veya topoloji PNG, JPG ya da SVG içeren HTML olarak</li>\n<li>Uygulamadan çıkmadan KillerSpeed, cihaz tanılaması ve traceroute</li>\n<li>Betikler, zamanlanmış görevler ve RMM için penceresiz komut satırı</li>\n<li>Canlı vurgu renkleri ve hatırlanan görünüm ayarlarıyla on üç tema</li>",
+  "b3_d2": "<b>Daha önce görmediğiniz bir tesise girdiğinizde.</b> Ağ belgeleri elinizde olmadan önce erişilebilir yönlendiricileri, anahtarları, hipervizörleri, NAS cihazlarını, yazıcıları ve kameraları belirlemek için bir alt ağı tarayın."
+});
+
+if (I18N["zh"]) Object.assign(I18N["zh"], {
+  "gallery_preview": "KillerScan 1.9 預覽",
+  "shot_1": "裝置探索結果顯示 IP 位址、主機名稱、MAC 位址、製造商、裝置類型及開放連接埠。",
+  "shot_2": "服務檢視依服務和裝置列出開放連接埠。",
+  "shot_3": "位置側邊欄將各客戶據點及其掃描資料分開儲存。",
+  "shot_4": "連線監控追蹤四台主機，顯示延遲圖表、封包遺失及診斷檢查。",
+  "shot_5": "內建終端機顯示網路資訊及 ping 回覆。",
+  "shot_6": "HTML 掃描報告提供可排序的裝置結果及可切換的主題。",
+  "shot_7": "用於檢視、掃描、裝置操作及應用程式設定的鍵盤快速鍵。",
+  "shot_8": "經典 98SE 主題中的裝置結果。",
+  "shot_9": "在內建終端機中透過命令列查看網路資訊及執行 ping。",
+  "f_profiles_t": "位置與深度掃描",
+  "f_profiles_d": "將每個客戶據點存放在各自的位置中，分別保存掃描、裝置名稱、核准狀態及歷史記錄。從位置選擇器載入已儲存的目標，再按下「掃描」。深度掃描會檢查連接埠 1-1024 及額外的服務連接埠，並收集更多識別特徵。KillerSpeed 可從側邊欄開啟。",
+  "f_history_d": "已儲存的位置各自保有掃描歷史記錄。比較時會使用同一網路中同一目標的先前掃描。首次掃描建立已知裝置的基準；後續掃描會標示不熟悉的裝置。核准裝置是另一項獨立選擇。",
+  "b3_d6": "<b>有人問起有哪些變更。</b> 掃描歷史記錄會比較同一網路中同一目標的掃描，顯示新增、消失或開放連接埠有變動的裝置。",
+  "tk_privacy_reports": "HTML 報告內含標誌，可離線檢視。本網站會載入自己的分析指令碼。桌面應用程式不會傳送使用情況分析資料。",
+  "b1_d": "<li>ARP 快取加上並行 ping 掃描，再進行第二次 ARP 讀取以捕捉封鎖 ICMP 的裝置</li>\n<li>跨 30 多個服務連接埠的 TCP 指紋辨識</li>\n<li>mDNS（Bonjour）與 SSDP（UPnP）探索</li>\n<li>IEEE OUI 製造商識別 - MA-L、MA-M 與 MA-S</li>\n<li>加權分類器：路由器、NAS、印表機、攝影機、IoT、手機等</li>\n<li>拓撲圖、連線監控，以及裝置清單旁的內嵌終端機</li>\n<li>掃描歷史記錄包含已知裝置基準，並提供明確的裝置核准操作</li>\n<li>匯出依檢視而定：CSV、HTML，或將拓撲圖匯出為 PNG、JPG 或 內含 SVG 的 HTML</li>\n<li>不必離開應用程式即可使用 KillerSpeed、裝置診斷與 traceroute</li>\n<li>無視窗命令列，適用於指令碼、排程工作與 RMM</li>\n<li>十三種主題，具備即時強調色與記憶的外觀設定</li>",
+  "b3_d2": "<b>走進從未到訪過的據點。</b> 掃描子網路，在取得網路文件前辨識可連線的路由器、交換器、虛擬機器監視器、NAS 裝置、印表機及攝影機。"
+});
+
+if (I18N["zh-cn"]) Object.assign(I18N["zh-cn"], {
+  "gallery_preview": "KillerScan 1.9 预览",
+  "shot_1": "设备发现结果显示 IP 地址、主机名、MAC 地址、制造商、设备类型和开放端口。",
+  "shot_2": "服务视图按服务和设备列出开放端口。",
+  "shot_3": "位置侧边栏将各客户站点及其扫描数据分别保存。",
+  "shot_4": "连接监控跟踪四台主机，显示延迟图表、丢包情况和诊断检查。",
+  "shot_5": "内置终端显示网络信息和 ping 回复。",
+  "shot_6": "HTML 扫描报告提供可排序的设备结果和可切换的主题。",
+  "shot_7": "用于视图、扫描、设备操作和应用设置的键盘快捷键。",
+  "shot_8": "经典 98SE 主题中的设备结果。",
+  "shot_9": "在内置终端中通过命令行查看网络信息并执行 ping。",
+  "f_profiles_t": "位置与深度扫描",
+  "f_profiles_d": "将每个客户站点保存在独立的位置中，分别保存扫描、设备名称、批准状态和历史记录。从位置选择器加载已保存的目标，再点击“扫描”。深度扫描检查端口 1-1024 及额外的服务端口，并收集更多识别特征。KillerSpeed 可从侧边栏打开。",
+  "f_history_d": "已保存的位置各自保留扫描历史记录。比较使用同一网络中同一目标的先前扫描。首次扫描建立已知设备基线；后续扫描会标记不熟悉的设备。批准设备是另一项独立选择。",
+  "b3_d6": "<b>有人问起有哪些变化。</b> 扫描历史记录会比较同一网络中同一目标的扫描，显示新增、消失或开放端口有变化的设备。",
+  "tk_privacy_reports": "HTML 报告内含徽标，可离线查看。本网站会加载自己的分析脚本。桌面应用不会发送使用情况分析数据。",
+  "b1_d": "<li>ARP 缓存加上并行 ping 扫描，再进行第二次 ARP 读取以捕捉屏蔽 ICMP 的设备</li>\n<li>跨 30 多个服务端口的 TCP 指纹识别</li>\n<li>mDNS（Bonjour）与 SSDP（UPnP）发现</li>\n<li>IEEE OUI 制造商识别 - MA-L、MA-M 与 MA-S</li>\n<li>加权分类器：路由器、NAS、打印机、摄像头、IoT、手机等</li>\n<li>拓扑、连接监控，以及设备列表旁的内置终端</li>\n<li>扫描历史记录包含已知设备基线，并提供明确的设备批准操作</li>\n<li>导出取决于视图：CSV、HTML，或将拓扑导出为 PNG、JPG 或 内含 SVG 的 HTML</li>\n<li>无需离开应用即可进行速度测试、设备诊断和 traceroute</li>\n<li>无窗口命令行，适用于脚本、计划任务与 RMM</li>\n<li>十三种主题，具备实时强调色和记忆的外观设置</li>",
+  "b3_d2": "<b>走进从未到访过的站点。</b> 扫描子网，在获得网络文档前识别可访问的路由器、交换机、虚拟机监控程序、NAS 设备、打印机和摄像头。"
+});
+
+if (I18N["bn"]) Object.assign(I18N["bn"], {
+  "gallery_preview": "KillerScan 1.9-এর পূর্বরূপ",
+  "shot_1": "IP ঠিকানা, হোস্টের নাম, MAC ঠিকানা, নির্মাতা, ডিভাইসের ধরন ও খোলা পোর্টসহ ডিভাইস শনাক্তকরণ।",
+  "shot_2": "পরিষেবা ভিউ পরিষেবা ও ডিভাইস অনুযায়ী খোলা পোর্টের তালিকা দেখায়।",
+  "shot_3": "অবস্থান সাইডবার গ্রাহকদের সাইট ও তাদের স্ক্যানের তথ্য আলাদা রাখে।",
+  "shot_4": "সংযোগ পর্যবেক্ষণ চারটি হোস্টের বিলম্বের গ্রাফ, প্যাকেট হারানোর তথ্য ও ডায়াগনস্টিক পরীক্ষা দেখায়।",
+  "shot_5": "নেটওয়ার্কের তথ্য ও ping-এর উত্তর দেখানো বিল্ট-ইন টার্মিনাল।",
+  "shot_6": "ডিভাইসের ফলাফল সাজানো ও থিম বদলানোর সুবিধাসহ HTML স্ক্যান প্রতিবেদন।",
+  "shot_7": "ভিউ, স্ক্যান, ডিভাইসের কাজ ও অ্যাপের সেটিংসের জন্য কিবোর্ড শর্টকাট।",
+  "shot_8": "ক্লাসিক 98SE থিমে ডিভাইসের ফলাফল।",
+  "shot_9": "বিল্ট-ইন টার্মিনালে কমান্ড লাইন থেকে নেটওয়ার্কের তথ্য ও ping।",
+  "f_profiles_t": "অবস্থান ও ডিপ স্ক্যান",
+  "f_profiles_d": "প্রতিটি গ্রাহক সাইটকে নিজস্ব অবস্থানে রাখুন, যেখানে সংরক্ষিত স্ক্যান, ডিভাইসের নাম, অনুমোদন ও ইতিহাস আলাদা থাকে। অবস্থান নির্বাচক থেকে সংরক্ষিত লক্ষ্য লোড করে স্ক্যান চাপুন। ডিপ স্ক্যান 1-1024 পোর্ট ও অতিরিক্ত পরিষেবা পোর্ট পরীক্ষা করে এবং আরও শনাক্তকরণ তথ্য সংগ্রহ করে। KillerSpeed পাশের বারে পাওয়া যায়।",
+  "f_history_d": "সংরক্ষিত অবস্থানগুলো নিজস্ব স্ক্যান ইতিহাস রাখে। তুলনার জন্য একই নেটওয়ার্কে একই লক্ষ্যের আগের স্ক্যান ব্যবহার করা হয়। প্রথম স্ক্যান কোন ডিভাইসগুলো পরিচিত তা নির্ধারণ করে; পরের স্ক্যানগুলো অপরিচিত ডিভাইস চিহ্নিত করে। ডিভাইস অনুমোদন একটি আলাদা সিদ্ধান্ত।",
+  "b3_d6": "<b>কী বদলেছে জানতে চাইলে।</b> স্ক্যান ইতিহাস একই নেটওয়ার্কে একই লক্ষ্যের স্ক্যান তুলনা করে এবং নতুন আসা, হারিয়ে যাওয়া বা খোলা পোর্ট বদলানো ডিভাইস দেখায়।",
+  "tk_privacy_reports": "HTML প্রতিবেদনে নিজস্ব লোগো থাকে এবং ইন্টারনেট ছাড়াই দেখা যায়। এই ওয়েবসাইট নিজস্ব বিশ্লেষণ স্ক্রিপ্ট লোড করে। ডেস্কটপ অ্যাপ ব্যবহারের বিশ্লেষণ পাঠায় না।",
+  "b1_d": "<li>ARP ক্যাশে এবং একটি সমান্তরাল পিং সুইপ, তারপর ICMP-ব্লককারীদের ধরতে দ্বিতীয়বার ARP পাঠ</li>\n<li>৩০+ পরিষেবা পোর্ট জুড়ে TCP ফিঙ্গারপ্রিন্টিং</li>\n<li>mDNS (Bonjour) এবং SSDP (UPnP) আবিষ্কার</li>\n<li>IEEE OUI বিক্রেতা শনাক্তকরণ - MA-L, MA-M এবং MA-S</li>\n<li>ওজনযুক্ত শ্রেণিবিন্যাসকারী: রাউটার, NAS, প্রিন্টার, ক্যামেরা, IoT, ফোন এবং আরও অনেক কিছু</li>\n<li>টপোলজি, সংযোগ পর্যবেক্ষণ, এবং ডিভাইস তালিকার পাশে একটি এমবেডেড টার্মিনাল</li>\n<li>পরিচিত ডিভাইসের বেসলাইন ও ডিভাইসের স্পষ্ট অনুমোদনসহ স্ক্যান ইতিহাস</li>\n<li>এক্সপোর্ট ভিউ অনুযায়ী হয়: CSV, HTML, অথবা টপোলজি PNG, JPG বা SVG-সহ HTML হিসেবে</li>\n<li>অ্যাপ ছেড়ে না গিয়ে KillerSpeed, ডিভাইস ডায়াগনস্টিকস ও ট্রেসরুট</li>\n<li>স্ক্রিপ্ট, শিডিউল করা টাস্ক এবং RMM-এর জন্য হেডলেস কমান্ড লাইন</li>\n<li>লাইভ অ্যাকসেন্ট রঙ ও মনে রাখা চেহারা সেটিংসহ তেরোটি থিম</li>",
+  "b3_d2": "<b>আগে কখনো না দেখা কোনো সাইটে গেলে।</b> নেটওয়ার্কের নথি হাতে পাওয়ার আগেই যোগাযোগযোগ্য রাউটার, সুইচ, হাইপারভাইজর, NAS ডিভাইস, প্রিন্টার ও ক্যামেরা শনাক্ত করতে একটি সাবনেট স্ক্যান করুন।"
+});
+
+if (I18N["ja"]) Object.assign(I18N["ja"], {
+  "gallery_preview": "KillerScan 1.9 プレビュー",
+  "shot_1": "IP アドレス、ホスト名、MAC アドレス、メーカー、デバイスの種類、開いているポートを表示するデバイス検出。",
+  "shot_2": "サービスビューでは、開いているポートをサービスとデバイス別に表示します。",
+  "shot_3": "場所サイドバーでは、顧客の拠点とそのスキャンデータを分けて管理します。",
+  "shot_4": "接続監視で4台のホストを監視し、遅延グラフ、パケット損失、診断チェックを表示します。",
+  "shot_5": "ネットワーク情報と ping の応答を表示する内蔵ターミナル。",
+  "shot_6": "デバイスの結果を並べ替え、テーマを切り替えられる HTML スキャンレポート。",
+  "shot_7": "ビュー、スキャン、デバイス操作、アプリ設定のキーボードショートカット。",
+  "shot_8": "クラシックな 98SE テーマで表示したデバイスの結果。",
+  "shot_9": "内蔵ターミナルのコマンドラインでネットワーク情報を表示し、ping を実行。",
+  "f_profiles_t": "場所とディープスキャン",
+  "f_profiles_d": "顧客の各拠点を個別の場所として管理し、保存済みスキャン、デバイス名、承認、履歴を分けて保持します。場所の選択欄から保存済みの対象を読み込み、スキャンを押します。ディープスキャンではポート 1-1024 と追加のサービスポートを確認し、より多くの識別情報を収集します。KillerSpeed はサイドバーから利用できます。",
+  "f_history_d": "保存した場所ごとにスキャン履歴を保持します。比較には、同じネットワークで同じ対象をスキャンした過去の結果を使用します。最初のスキャンで既知のデバイスを定め、その後のスキャンで見慣れないデバイスを示します。デバイスの承認は別途選択します。",
+  "b3_d6": "<b>何が変わったか聞かれたときに。</b> スキャン履歴では、同じネットワークで同じ対象をスキャンした結果を比較し、出現、消失、または開いているポートの変更があったデバイスを表示します。",
+  "tk_privacy_reports": "HTML レポートにはロゴが含まれ、オフラインで閲覧できます。このウェブサイトは独自の分析スクリプトを読み込みます。デスクトップアプリは利用状況の分析データを送信しません。",
+  "b1_d": "\n<li>ARP キャッシュと並列 ping スイープ、さらに 2 回目の ARP 読み取りで ICMP を遮断するデバイスも捕捉</li>\n<li>30 以上のサービスポートに対する TCP フィンガープリント</li>\n<li>mDNS (Bonjour) と SSDP (UPnP) による検出</li>\n<li>IEEE OUI ベンダー特定 - MA-L、MA-M、MA-S 対応</li>\n<li>重み付き分類器: ルーター、NAS、プリンター、カメラ、IoT、スマートフォンなど</li>\n<li>トポロジー、接続監視、デバイス一覧の横に組み込まれたターミナル</li>\n<li>既知のデバイスを基準にしたスキャン履歴と、明示的なデバイス承認</li>\n<li>エクスポートはビューに応じて決まる: CSV、HTML、またはトポロジーを PNG、JPG、SVG を含む HTML として</li>\n<li>アプリを離れずに実行できる KillerSpeed、デバイス診断、traceroute</li>\n<li>スクリプト、スケジュールされたタスク、RMM 向けのヘッドレスコマンドライン</li>\n<li>ライブアクセントカラーと記憶される外観設定を備えた 13 テーマ</li>\n",
+  "b3_d2": "<b>初めて訪れる拠点で。</b> ネットワークの資料が手元になくても、サブネットをスキャンして到達可能なルーター、スイッチ、ハイパーバイザー、NAS デバイス、プリンター、カメラを特定できます。"
+});
+
+if (I18N["kk"]) Object.assign(I18N["kk"], {
+  "gallery_preview": "KillerScan 1.9 алдын ала көрінісі",
+  "shot_1": "IP мекенжайлары, хост атаулары, MAC мекенжайлары, өндірушілері, құрылғы түрлері және ашық порттары көрсетілген құрылғыларды табу.",
+  "shot_2": "Қызметтер көрінісі ашық порттарды қызмет пен құрылғы бойынша көрсетеді.",
+  "shot_3": "Орындар бүйірлік тақтасы клиент нысандары мен олардың сканерлеу деректерін бөлек сақтайды.",
+  "shot_4": "Қосылымды бақылау төрт хостты кідіріс графиктері, пакет жоғалуы және диагностикалық тексерулер арқылы бақылайды.",
+  "shot_5": "Желі ақпаратын және ping жауаптарын көрсететін кірістірілген терминал.",
+  "shot_6": "Құрылғы нәтижелерін сұрыптауға және тақырыптарды ауыстыруға болатын HTML сканерлеу есебі.",
+  "shot_7": "Көріністерге, сканерлеуге, құрылғы әрекеттеріне және қолданба параметрлеріне арналған пернетақта тіркесімдері.",
+  "shot_8": "Классикалық 98SE тақырыбындағы құрылғы нәтижелері.",
+  "shot_9": "Кірістірілген терминалда пәрмен жолы арқылы желі ақпаратын көру және ping орындау.",
+  "f_profiles_t": "Орындар және терең сканерлеу",
+  "f_profiles_d": "Әр клиент нысанын жеке орында сақтаңыз: сақталған сканерлеулер, құрылғы атаулары, мақұлдаулар және тарих бөлек болады. Орын таңдағышынан сақталған нысаналарды жүктеп, Сканерлеу түймесін басыңыз. Терең сканерлеу 1-1024 порттарын және қосымша қызмет порттарын тексеріп, көбірек сәйкестендіру белгілерін жинайды. KillerSpeed бүйірлік тақтада қолжетімді.",
+  "f_history_d": "Сақталған орындар өз сканерлеу тарихын сақтайды. Салыстырулар бір желідегі бір нысананың бұрынғы сканерлеулерін пайдаланады. Алғашқы сканерлеу белгілі құрылғыларды анықтайды; кейінгілері бейтаныс құрылғыларды белгілейді. Құрылғыны мақұлдау бөлек таңдалады.",
+  "b3_d6": "<b>Не өзгергенін сұрағанда.</b> Сканерлеу тарихы бір желідегі бір нысананың сканерлеулерін салыстырып, пайда болған, жоғалған немесе ашық порттары өзгерген құрылғыларды көрсетеді.",
+  "tk_privacy_reports": "HTML есептерінің ішінде логотипі бар және оларды желісіз көруге болады. Бұл веб-сайт өз аналитика скриптін жүктейді. Жұмыс үстелі қолданбасы пайдалану аналитикасын жібермейді.",
+  "b1_d": "<li>ARP кэші және параллель ping шолуы, содан кейін ICMP-ді бұғаттайтындарды ұстау үшін екінші ARP оқуы</li>\n<li>30+ қызмет порты бойынша TCP саусақ ізін алу</li>\n<li>mDNS (Bonjour) және SSDP (UPnP) арқылы анықтау</li>\n<li>IEEE OUI өндіруші идентификациясы - MA-L, MA-M және MA-S</li>\n<li>Салмақталған жіктеуіш: маршрутизаторлар, NAS, принтерлер, камералар, IoT, телефондар және басқалары</li>\n<li>Топология, Қосылымды бақылау және құрылғылар тізімінің қасындағы кірістірілген терминал</li>\n<li>Белгілі құрылғылардың бастапқы тізімі және құрылғыларды айқын мақұлдау мүмкіндігі бар сканерлеу тарихы</li>\n<li>Экспорт көрініске сай келеді: CSV, HTML немесе топология PNG, JPG не SVG бар HTML түрінде</li>\n<li>Қолданбадан шықпай-ақ жылдамдық сынағы, құрылғы диагностикасы және traceroute</li>\n<li>Сценарийлерге, жоспарланған тапсырмаларға және RMM жүйелеріне арналған терезесіз пәрмен жолы</li>\n<li>Тірі акцент түстері және есте сақталатын көрініс параметрлері бар он үш тақырып</li>",
+  "b3_d2": "<b>Бұрын болмаған нысанға келгенде.</b> Желі құжаттамасын алмай тұрып, қолжетімді маршрутизаторларды, коммутаторларды, гипервизорларды, NAS құрылғыларын, принтерлерді және камераларды анықтау үшін ішкі желіні сканерлеңіз."
+});
+
+if (I18N["vi"]) Object.assign(I18N["vi"], {
+  "gallery_preview": "Xem trước KillerScan 1.9",
+  "shot_1": "Phát hiện thiết bị với địa chỉ IP, tên máy, địa chỉ MAC, nhà sản xuất, loại thiết bị và cổng mở.",
+  "shot_2": "Chế độ xem dịch vụ liệt kê các cổng mở theo dịch vụ và thiết bị.",
+  "shot_3": "Thanh bên vị trí tách riêng các cơ sở khách hàng và dữ liệu quét của từng cơ sở.",
+  "shot_4": "Giám sát kết nối theo dõi bốn máy với biểu đồ độ trễ, tình trạng mất gói và các kiểm tra chẩn đoán.",
+  "shot_5": "Terminal tích hợp hiển thị thông tin mạng và phản hồi ping.",
+  "shot_6": "Báo cáo quét HTML với kết quả thiết bị có thể sắp xếp và giao diện có thể chuyển đổi.",
+  "shot_7": "Phím tắt cho các chế độ xem, quét, thao tác thiết bị và cài đặt ứng dụng.",
+  "shot_8": "Kết quả thiết bị trong giao diện 98SE cổ điển.",
+  "shot_9": "Thông tin mạng và ping bằng dòng lệnh trong terminal tích hợp.",
+  "f_profiles_t": "Vị trí và quét sâu",
+  "f_profiles_d": "Lưu mỗi cơ sở khách hàng trong một vị trí riêng, với các bản quét đã lưu, tên thiết bị, phê duyệt và lịch sử tách biệt. Nạp mục tiêu đã lưu từ bộ chọn vị trí, rồi nhấn Quét. Quét sâu kiểm tra các cổng 1-1024 cùng các cổng dịch vụ bổ sung và thu thập thêm dấu hiệu nhận dạng. KillerSpeed có trên thanh biểu tượng.",
+  "f_history_d": "Các vị trí đã lưu giữ lịch sử quét riêng. Việc so sánh sử dụng những lần quét trước của cùng mục tiêu trên cùng mạng. Lần quét đầu xác định các thiết bị đã biết; các lần sau đánh dấu thiết bị lạ. Phê duyệt thiết bị là một lựa chọn riêng.",
+  "b3_d6": "<b>Khi được hỏi điều gì đã thay đổi.</b> Lịch sử quét so sánh các lần quét cùng mục tiêu trên cùng mạng và hiển thị những thiết bị xuất hiện, biến mất hoặc thay đổi cổng mở.",
+  "tk_privacy_reports": "Báo cáo HTML chứa sẵn logo và có thể xem ngoại tuyến. Trang web này tải tập lệnh phân tích riêng. Ứng dụng máy tính không gửi dữ liệu phân tích sử dụng.",
+  "b1_d": "\n<li>Bộ nhớ cache ARP cùng với quét ping song song, sau đó đọc ARP lần thứ hai để phát hiện các thiết bị chặn ICMP</li>\n<li>Định danh TCP trên hơn 30 cổng dịch vụ</li>\n<li>Khám phá mDNS (Bonjour) và SSDP (UPnP)</li>\n<li>ID nhà cung cấp IEEE OUI - MA-L, MA-M và MA-S</li>\n<li>Bộ phân loại có trọng số: router, NAS, máy in, camera, IoT, điện thoại và nhiều hơn nữa</li>\n<li>Sơ đồ mạng, Giám sát kết nối và một terminal nhúng bên cạnh danh sách thiết bị</li>\n<li>Lịch sử quét với danh sách cơ sở các thiết bị đã biết và thao tác phê duyệt thiết bị rõ ràng</li>\n<li>Xuất dữ liệu theo chế độ xem: CSV, HTML hoặc sơ đồ mạng dưới dạng PNG, JPG hoặc HTML kèm SVG</li>\n<li>KillerSpeed, chẩn đoán thiết bị và traceroute mà không cần rời khỏi ứng dụng</li>\n<li>Dòng lệnh không giao diện cho script, nhiệm vụ theo lịch và RMM</li>\n<li>Mười ba giao diện với màu nhấn sống động và ghi nhớ cài đặt hiển thị</li>\n",
+  "b3_d2": "<b>Khi đến một cơ sở chưa từng ghé qua.</b> Quét một mạng con để nhận diện các bộ định tuyến, bộ chuyển mạch, trình giám sát máy ảo, thiết bị NAS, máy in và camera có thể truy cập trước khi có tài liệu mạng."
+});
+
+if (I18N["uk"]) Object.assign(I18N["uk"], {
+  "gallery_preview": "Попередній огляд KillerScan 1.9",
+  "shot_1": "Виявлення пристроїв з IP-адресами, іменами вузлів, MAC-адресами, виробниками, типами пристроїв і відкритими портами.",
+  "shot_2": "Подання служб показує відкриті порти за службами та пристроями.",
+  "shot_3": "Бічна панель розташувань зберігає об'єкти клієнтів і дані їхніх сканувань окремо.",
+  "shot_4": "Спостереження за з'єднанням відстежує чотири вузли з графіками затримки, втратами пакетів і діагностичними перевірками.",
+  "shot_5": "Вбудований термінал з інформацією про мережу та відповідями ping.",
+  "shot_6": "HTML-звіт сканування з результатами пристроїв, які можна сортувати, і перемиканням тем.",
+  "shot_7": "Сполучення клавіш для подань, сканування, дій із пристроями та налаштувань застосунку.",
+  "shot_8": "Результати пристроїв у класичній темі 98SE.",
+  "shot_9": "Інформація про мережу та ping із командного рядка у вбудованому терміналі.",
+  "f_profiles_t": "Розташування та глибоке сканування",
+  "f_profiles_d": "Зберігайте кожен об'єкт клієнта в окремому розташуванні з власними збереженими скануваннями, іменами пристроїв, схваленнями та історією. Завантажте збережені цілі зі списку розташувань, потім натисніть «Сканувати». Глибоке сканування перевіряє порти 1-1024 і додаткові службові порти та збирає більше ідентифікаційних ознак. KillerSpeed доступний на бічній панелі.",
+  "f_history_d": "Збережені розташування мають власну історію сканувань. Порівняння використовують попередні сканування тієї самої цілі в тій самій мережі. Перше сканування визначає відомі пристрої; наступні позначають незнайомі. Схвалення пристрою є окремим вибором.",
+  "b3_d6": "<b>Запитують, що змінилося.</b> Історія сканувань порівнює запуски для тієї самої цілі в тій самій мережі та показує пристрої, що з'явилися, зникли або змінили відкриті порти.",
+  "tk_privacy_reports": "HTML-звіти містять власний логотип і доступні для перегляду без інтернету. Цей сайт завантажує власний скрипт аналітики. Настільний застосунок не надсилає аналітику використання.",
+  "b1_d": "<li>ARP-кеш плюс паралельний ping-обхід, потім повторне читання ARP, щоб упіймати пристрої, які блокують ICMP</li>\n<li>TCP-фінгерпринтинг за понад 30 службовими портами</li>\n<li>Виявлення через mDNS (Bonjour) і SSDP (UPnP)</li>\n<li>Визначення виробника за IEEE OUI - MA-L, MA-M і MA-S</li>\n<li>Зважений класифікатор: маршрутизатори, NAS, принтери, камери, IoT, телефони й не тільки</li>\n<li>Топологія, Спостереження за з'єднанням та вбудований термінал поруч зі списком пристроїв</li>\n<li>Історія сканувань із базовим списком відомих пристроїв та явним схваленням пристроїв</li>\n<li>Експорт відповідає поданню: CSV, HTML або топологія у вигляді PNG, JPG чи HTML з SVG</li>\n<li>Тест швидкості, діагностика пристрою й трасування маршруту, не виходячи із застосунку</li>\n<li>Безвіконний режим командного рядка для скриптів, планувальника завдань і RMM</li>\n<li>Тринадцять тем із живими акцентними кольорами та запам'ятовуванням налаштувань оформлення</li>",
+  "b3_d2": "<b>Приходите на незнайомий об'єкт.</b> Проскануйте підмережу, щоб визначити доступні маршрутизатори, комутатори, гіпервізори, пристрої NAS, принтери та камери ще до отримання документації мережі."
+});
+
+if (I18N["nb"]) Object.assign(I18N["nb"], {
+  "gallery_preview": "Forhåndsvisning av KillerScan 1.9",
+  "shot_1": "Enhetsoppdagelse med IP-adresser, vertsnavn, MAC-adresser, produsenter, enhetstyper og åpne porter.",
+  "shot_2": "Tjenestevisningen viser åpne porter etter tjeneste og enhet.",
+  "shot_3": "Stedssidepanelet holder kundesteder og skannedataene deres atskilt.",
+  "shot_4": "Tilkoblingsovervåking følger fire verter med forsinkelsesgrafer, pakketap og diagnostiske kontroller.",
+  "shot_5": "Innebygd terminal som viser nettverksinformasjon og ping-svar.",
+  "shot_6": "HTML-skannerapport med sorterbare enhetsresultater og temaer du kan bytte mellom.",
+  "shot_7": "Hurtigtaster for visninger, skanning, enhetshandlinger og appinnstillinger.",
+  "shot_8": "Enhetsresultater i det klassiske 98SE-temaet.",
+  "shot_9": "Nettverksinformasjon og ping fra kommandolinjen i den innebygde terminalen.",
+  "f_profiles_t": "Steder og dypskann",
+  "f_profiles_d": "Hold hvert kundested i sitt eget sted med egne lagrede skanninger, enhetsnavn, godkjenninger og historikk. Last inn lagrede mål fra stedsvelgeren, og trykk deretter på Skann. Dypskann sjekker portene 1-1024 og flere tjenesteporter og samler flere identifikasjonsdata. KillerSpeed er tilgjengelig på sidelinjen.",
+  "f_history_d": "Lagrede steder beholder sin egen skannelogg. Sammenligninger bruker tidligere skanninger av samme mål på samme nettverk. Den første skanningen fastslår hvilke enheter som er kjente; senere skanninger markerer ukjente enheter. Godkjenning av enheter er et eget valg.",
+  "b3_d6": "<b>Når noen spør hva som har endret seg.</b> Skanneloggen sammenligner skanninger av samme mål på samme nettverk og viser enheter som har dukket opp, forsvunnet eller endret åpne porter.",
+  "tk_privacy_reports": "HTML-rapporter inneholder logoen sin og kan vises uten nettilkobling. Dette nettstedet laster inn sitt eget analyseskript. Skrivebordsappen sender ingen bruksanalyse.",
+  "b1_d": "\n<li>ARP-buffer pluss et parallelt ping-sveip, deretter en andre ARP-lesing for å fange ICMP-blokkerere</li>\n<li>TCP-fingeravtrykk over 30+ tjenesteporter</li>\n<li>mDNS (Bonjour)- og SSDP (UPnP)-oppdagelse</li>\n<li>IEEE OUI-produsent-ID - MA-L, MA-M og MA-S</li>\n<li>Vektet klassifiserer: rutere, NAS, skrivere, kameraer, IoT, telefoner og mer</li>\n<li>Topologi, Tilkoblingsovervåking og en innebygd terminal ved siden av enhetslisten</li>\n<li>Skannelogg med en grunnlinje av kjente enheter og uttrykkelige enhetsgodkjenninger</li>\n<li>Eksport følger visningen: CSV, HTML, eller topologien som PNG, JPG eller HTML med SVG</li>\n<li>KillerSpeed, enhetsdiagnostikk og traceroute uten å forlate appen</li>\n<li>Hodeløs kommandolinje for skript, planlagte oppgaver og RMM</li>\n<li>Tretten temaer med levende aksentfarger og husket utseendeinnstillinger</li>\n",
+  "b3_d2": "<b>Du kommer til et sted du aldri har sett før.</b> Skann et delnett for å identifisere tilgjengelige rutere, svitsjer, hypervisorer, NAS-enheter, skrivere og kameraer før du har nettverksdokumentasjonen."
+});
+
+if (I18N["pt"]) Object.assign(I18N["pt"], {
+  "gallery_preview": "Prévia do KillerScan 1.9",
+  "shot_1": "Descoberta de dispositivos com endereços IP, nomes de host, endereços MAC, fabricantes, tipos de dispositivo e portas abertas.",
+  "shot_2": "A visualização de serviços lista as portas abertas por serviço e dispositivo.",
+  "shot_3": "A barra lateral de locais mantém separados os sites dos clientes e seus dados de varredura.",
+  "shot_4": "O Monitoramento de conexão acompanha quatro hosts com gráficos de latência, perda de pacotes e verificações de diagnóstico.",
+  "shot_5": "Terminal embutido mostrando informações de rede e respostas de ping.",
+  "shot_6": "Relatório HTML da varredura com resultados de dispositivos que podem ser ordenados e temas que podem ser alternados.",
+  "shot_7": "Atalhos de teclado para visualizações, varreduras, ações em dispositivos e configurações do aplicativo.",
+  "shot_8": "Resultados de dispositivos no tema clássico 98SE.",
+  "shot_9": "Informações de rede e ping pela linha de comando no terminal embutido.",
+  "f_profiles_t": "Locais e varredura profunda",
+  "f_profiles_d": "Mantenha cada site de cliente em seu próprio local, com varreduras salvas, nomes de dispositivos, aprovações e histórico separados. Carregue os alvos salvos pelo seletor de locais e pressione Varrer. A varredura profunda verifica as portas 1-1024 e portas de serviço adicionais e coleta mais dados de identificação. O KillerSpeed está disponível na barra lateral.",
+  "f_history_d": "Os locais salvos mantêm seu próprio histórico de varreduras. As comparações usam varreduras anteriores do mesmo alvo na mesma rede. A primeira varredura estabelece quais dispositivos são conhecidos; as seguintes sinalizam dispositivos desconhecidos. A aprovação de dispositivos é uma escolha separada.",
+  "b3_d6": "<b>Quando perguntam o que mudou.</b> O histórico compara varreduras do mesmo alvo na mesma rede e mostra dispositivos que apareceram, desapareceram ou mudaram suas portas abertas.",
+  "tk_privacy_reports": "Os relatórios HTML incluem seu logotipo e podem ser vistos offline. Este site carrega seu próprio script de análise. O aplicativo para desktop não envia análises de uso.",
+  "b1_d": "<li>Cache ARP mais uma varredura de ping paralela e uma segunda leitura de ARP para pegar bloqueadores de ICMP</li>\n<li>Identificação TCP em mais de 30 portas de serviço</li>\n<li>Descoberta mDNS (Bonjour) e SSDP (UPnP)</li>\n<li>Identificação de fabricante por OUI do IEEE - MA-L, MA-M e MA-S</li>\n<li>Classificador ponderado: roteadores, NAS, impressoras, câmeras, IoT, celulares e mais</li>\n<li>Topologia, Monitoramento de conexão e um terminal embutido ao lado da lista de dispositivos</li>\n<li>Histórico de varreduras com uma base de dispositivos conhecidos e aprovações explícitas de dispositivos</li>\n<li>A exportação acompanha a visualização: CSV, HTML ou a topologia em PNG, JPG ou HTML com SVG</li>\n<li>KillerSpeed, diagnóstico de dispositivos e traceroute sem sair do aplicativo</li>\n<li>Linha de comando sem janela para scripts, tarefas agendadas e RMM</li>\n<li>Treze temas com cores de destaque ao vivo e configurações de aparência lembradas</li>",
+  "b3_d2": "<b>Ao chegar a um site que você nunca viu.</b> Faça uma varredura de uma sub-rede para identificar roteadores, switches, hipervisores, dispositivos NAS, impressoras e câmeras acessíveis antes de ter a documentação da rede."
+});
+
+if (I18N["sl"]) Object.assign(I18N["sl"], {
+  "gallery_preview": "Predogled KillerScan 1.9",
+  "shot_1": "Odkrivanje naprav z naslovi IP, imeni gostiteljev, naslovi MAC, proizvajalci, vrstami naprav in odprtimi vrati.",
+  "shot_2": "Pogled storitev prikazuje odprta vrata po storitvah in napravah.",
+  "shot_3": "Stranska vrstica lokacij ločuje lokacije strank in njihove podatke pregledov.",
+  "shot_4": "Nadzor povezave spremlja štiri gostitelje z grafi zakasnitve, podatki o izgubi paketov in diagnostičnimi preverjanji.",
+  "shot_5": "Vgrajeni terminal prikazuje podatke o omrežju in odgovore na ping.",
+  "shot_6": "Poročilo pregleda HTML z razvrščanjem rezultatov naprav in preklapljanjem tem.",
+  "shot_7": "Bližnjice na tipkovnici za poglede, preglede, dejanja naprav in nastavitve programa.",
+  "shot_8": "Rezultati naprav v klasični temi 98SE.",
+  "shot_9": "Podatki o omrežju in ping iz ukazne vrstice v vgrajenem terminalu.",
+  "f_profiles_t": "Lokacije in podroben pregled",
+  "f_profiles_d": "Vsako lokacijo stranke hrani v svoji lokaciji z ločenimi shranjenimi pregledi, imeni naprav, odobritvami in zgodovino. Naloži shranjene cilje iz izbirnika lokacij in pritisni Preglej. Podroben pregled preveri vrata 1-1024 in dodatna vrata storitev ter zbere več prepoznavnih podatkov. KillerSpeed je na stranski vrstici.",
+  "f_history_d": "Shranjene lokacije imajo svojo zgodovino pregledov. Primerjave uporabljajo prejšnje preglede istega cilja v istem omrežju. Prvi pregled določi znane naprave; naslednji označijo neznane. Odobritev naprave je ločena izbira.",
+  "b3_d6": "<b>Kaj se je spremenilo?</b> Zgodovina primerja preglede istega cilja v istem omrežju in pokaže naprave, ki so se pojavile, izginile ali spremenile odprta vrata.",
+  "tk_privacy_reports": "Poročila HTML vsebujejo svoj logotip in si jih lahko ogledaš brez povezave. To spletno mesto naloži svoj analitični skript. Namizni program ne pošilja analitike uporabe.",
+  "b1_d": "\n<li>Predpomnilnik ARP, vzporedni ping in ponovno branje ARP za naprave, ki blokirajo ICMP</li>\n<li>Prepoznavanje TCP prek več kot 30 vrat storitev</li>\n<li>Odkrivanje mDNS (Bonjour) in SSDP (UPnP)</li>\n<li>Prepoznavanje proizvajalcev IEEE OUI: MA-L, MA-M in MA-S</li>\n<li>Uteženo razvrščanje: usmerjevalniki, NAS, tiskalniki, kamere, IoT, telefoni in drugo</li>\n<li>Topologija, Nadzor povezave in vgrajeni terminal ob seznamu naprav</li>\n<li>Zgodovina pregledov z osnovnim seznamom znanih naprav in izrecnimi odobritvami naprav</li>\n<li>Izvoz glede na pogled: CSV, HTML ali topologija kot PNG, JPG oziroma HTML s SVG</li>\n<li>KillerSpeed, diagnostika naprav in sledenje poti znotraj programa</li>\n<li>Ukazna vrstica brez okna za skripte, načrtovana opravila in RMM</li>\n<li>Trinajst tem s sprotnimi poudarjenimi barvami in shranjenimi nastavitvami videza</li>\n",
+  "b3_d2": "<b>Ko prideš na lokacijo, ki je še ne poznaš.</b> Preglej podomrežje in prepoznaj dosegljive usmerjevalnike, stikala, hipervizorje, naprave NAS, tiskalnike in kamere, še preden dobiš dokumentacijo omrežja."
+});

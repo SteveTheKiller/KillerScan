@@ -11,9 +11,9 @@ Part of [killertools.net](https://killertools.net).
 - **Discovery:** ARP cache, a parallel ping sweep and a second ARP pass, plus mDNS and SSDP for Chromecasts, printers, Sonos, AirPlay and NAS boxes. The target box takes several subnets, single hosts and ranges at once.
 - **Fingerprinting:** TCP ports, HTTP title, SSH banner, TLS certificate, NetBIOS, SNMP and TTL feed a weighted-score classifier, with MAC vendors from the full IEEE registries. [Scan settings](docs/scan-options.md) choose which checks run.
 - **Locations:** each customer site keeps its own saved scans, device names, approvals and history, picked from the Location button in the scan bar. [How Locations work](docs/locations.md).
-- **Views:** Devices, Services, Topology, Keep Alive and Terminal, each keeping its own state. Topology exports as PNG, JPG or SVG, and Keep Alive watches up to 16 devices with latency and loss.
+- **Views:** Devices, Services, Topology, Keep Alive and Terminal, each keeping its own state. Topology exports as PNG, JPG or HTML containing SVG, and Keep Alive watches up to 16 devices with latency and loss.
 - **Deep Scan** rescans every host or the selection across ports 1-1024 and more.
-- **Scan history** compares each run with the last one and flags new devices against an approved baseline.
+- **Scan history** compares earlier scans of the same target on the same network, with matching scan settings. Known-device baselines flag unfamiliar devices; approving a device is a separate choice.
 - **Tools:** built-in PowerShell, ping and SSH terminals, device diagnostics, and a native speed test.
 - **Command line** for scripts, RMM and KillerMCP, with JSON output and distinct exit codes.
 - **Looks:** thirteen themes, 20 languages and app-wide sizing from 70% to 250%. Press F1 for every shortcut.
@@ -22,19 +22,21 @@ The [help page](https://killerscan.net/help.html) covers every view, tool and sh
 
 ## Screenshots
 
+KillerScan 1.9 preview.
+
 <table>
 <tr>
-<td width="50%"><img src="scan-landing/screenshots/01.png" alt="KillerScan device list beside the scan history sidebar"><br><sub>A completed scan with addresses, hostnames, vendors, device types and open ports, beside the scan history.</sub></td>
-<td width="50%"><img src="scan-landing/screenshots/03.png" alt="KillerScan network topology with the scan history sidebar collapsed"><br><sub>Topology draws the same devices as a map you can rearrange and export.</sub></td>
+<td width="50%"><img src="scan-landing/screenshots/devices-1.9.png" alt="KillerScan device discovery with addresses, vendors, device types and open ports"><br><sub>Device discovery puts addresses, hostnames, MAC addresses, vendors, device types and open ports in one table.</sub></td>
+<td width="50%"><img src="scan-landing/screenshots/keep-alive-1.9.png" alt="KillerScan Keep Alive monitoring four hosts with latency graphs, packet loss and diagnostic checks"><br><sub>Keep Alive shows latency, packet loss, diagnostic checks and recent connection changes for each host.</sub></td>
 </tr>
 </table>
 
 ## Install
 
-Windows 10 or 11 (x64) with .NET Framework 4.8, which Windows 10 version 1903 and later already include. Run as admin for the best ARP results on some networks.
+Windows 10 or 11 (x64) with .NET Framework 4.8, which Windows 10 version 1903 and later already include.
 
 ```powershell
-winget install killerscan
+winget install --id SteveTheKiller.KillerScan --exact
 ```
 
 ```powershell
@@ -51,11 +53,11 @@ cd KillerScan
 dotnet publish -c Release
 ```
 
-Needs the .NET 8 SDK or later. Output lands in `bin/Release/net48/publish/`. Speed-test internals and tests are in [docs/speed-test.md](docs/speed-test.md).
+Needs the .NET 10 SDK or later. Output lands in `bin/Release/net48/publish/`. Speed-test internals and tests are in [docs/speed-test.md](docs/speed-test.md).
 
 ## Privacy
 
-KillerScan has no usage analytics and never uploads scan results. Vendor lookup and classification run locally. It connects out only when you scan or diagnose, open About (update check), refresh vendors, or run a speed test against `speed.killerscan.net`. HTML reports carry their own logo, so opening one contacts nothing. The speed test runs through Cloudflare, which sees your public IP, and sends only generated test data. The website has its own analytics; this statement covers the app. The [technical page](https://killerscan.net/technical.html#speedtest-network) has the details.
+KillerScan has no usage analytics and does not automatically upload scan results. Vendor lookup and classification run locally. Network connections include scans, diagnostics and device actions, vendor-database downloads, speed tests, and update checks at startup or from About. The startup update check can be disabled. HTML reports include their logo and work offline. Speed tests use generated data through `speed.killerscan.net`; Cloudflare sees your public IP and normal connection metadata. The website has its own analytics; this statement covers the app. The [technical page](https://killerscan.net/technical.html#speedtest-network) has the details.
 
 ## More
 
