@@ -136,7 +136,7 @@ internal static class UpdateHelperLaunchTests
         UninstallCommandTests.Parse(script);
         Require(script.Contains("Invoke-UpdateImagePublication") && script.Contains("ShowReport = $true"),
             "The unelevated helper carries the publication script and shows its recovery report on failure");
-        Require(script.Contains("StartTime.ToUniversalTime().Ticks -eq") && script.Contains("WaitForExit(60000)") && !script.Contains("Get-Process -Id"),
+        Require(script.Contains("StartTime.ToUniversalTime().Ticks -ne") && script.Contains("WaitForExit(60000)") && !script.Contains("Get-Process -Id"),
             "The unelevated helper waits for this process by id and start time, for at most a minute, so a reused id cannot hold it forever");
         Require(File.ReadAllBytes(download).SequenceEqual(standIn), "Building the helper leaves the verified download untouched");
 
