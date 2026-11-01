@@ -351,6 +351,7 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
         if (empty) { empty.remove(); empty = null; }
         var b = document.createElement('button');
         var description = descriptions[n - 1];
+        img.alt = description; img.title = description;
         b.className = 'sb-thumb'; b.title = description; b.dataset.idx = n;
         b.setAttribute('aria-label', description);
         b.appendChild(img);

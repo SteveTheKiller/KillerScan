@@ -4,7 +4,7 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.9.0] - Unreleased
+## [1.9.0] - 2026-11-01
 
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
@@ -197,6 +197,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - About groups settings in two columns and can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts. Hover tooltips clear large pointers while preserving custom placement.
 
 ### Changed
+- Refreshed the bundled MAC vendor database to 58,645 assignments.
 - KillerScan is per-monitor DPI aware, so text and icons stay sharp when the window moves between monitors with different scaling, instead of being stretched by Windows.
 - HTML reports carry their own logo in every theme and accent, so opening a report no longer contacts killerscan.net.
 - Confirmation prompts, including the install prompt, use the family dialog frame shared with KillerShell, and dragging a pinned place in the file dialog shows the plain arrow.

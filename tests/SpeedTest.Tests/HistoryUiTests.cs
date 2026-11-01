@@ -139,7 +139,8 @@ internal static partial class HistoryUiTests
         }
         var window = new MainWindow();
         if (menusOnly) { CheckMenuIcons(window, assembly, directory.FullName, Theme); return; }
-        var historyType = assembly.GetType("KillerScan.Services.ScanHistory", true)!;
+        var location = (KillerScan.Services.LocationData)window.GetType().GetProperty("ShellLocation", Instance)!.GetValue(window)!;
+        void SeedHistory(IList values) => location.History.SeedDemo(values.Cast<KillerScan.Services.ScanHistoryEntry>());
         var entryType = assembly.GetType("KillerScan.Services.ScanHistoryEntry", true)!;
         var deviceType = assembly.GetType("KillerScan.Services.HistoricalDevice", true)!;
         object Device(string identity, string ip, string name)
@@ -164,7 +165,7 @@ internal static partial class HistoryUiTests
         var before = Entry(time, missing, Device("common", "192.0.2.41", "server-old"));
         var after = Entry(time.AddHours(1), Device("common", "192.0.2.41", "server-new"), Device("added", "192.0.2.42", "new-device"));
         var entries = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(entryType))!;
-        entries.Add(before); entries.Add(after); historyType.GetMethod("SeedDemo", Static)!.Invoke(null, new object[] { entries });
+        entries.Add(before); entries.Add(after); SeedHistory(entries);
         Call(window, "RefreshHistoryList"); Call(window, "ShowHistoryEntry");
         var history = (HistoryWorkspace)Field(window, "_historyWorkspace")!;
         Call(history, "SetView", false);
@@ -340,7 +341,7 @@ internal static partial class HistoryUiTests
         Call(window, "OpenSidebar"); Call(window, "ApplySidebarState", false);
         var dense = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(entryType))!;
         for (int i = 0; i < 30; i++) dense.Add(Entry(time.AddHours(i)));
-        historyType.GetMethod("SeedDemo", Static)!.Invoke(null, new object[] { dense });
+        SeedHistory(dense);
         Call(window, "RefreshHistoryList"); Call(window, "ShowHistoryEntry");
         Save(RenderWindow(1200, 780), Path.Combine(output, "History-compact-sidebar.png"));
         var heading = (TextBlock)window.FindName("SidebarHeading");
@@ -386,7 +387,7 @@ internal static partial class HistoryUiTests
         // so the theme's "pack://application:,,,/" font would otherwise fall back to Segoe UI.
         var widest = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(entryType))!;
         widest.Add(Entry(new DateTimeOffset(2026, 12, 28, 22, 58, 0, TimeSpan.Zero)));
-        historyType.GetMethod("SeedDemo", Static)!.Invoke(null, new object[] { widest });
+        SeedHistory(widest);
         Call(window, "RefreshHistoryList");
         var widthSaved = window.GetType().GetField("_sidebarWidthSaved", BindingFlags.Instance | BindingFlags.NonPublic)!;
         var baseWidth = window.GetType().GetField("_sidebarBaseWidth", BindingFlags.Instance | BindingFlags.NonPublic)!;
@@ -443,7 +444,7 @@ internal static partial class HistoryUiTests
         widthSaved.SetValue(window, false);
         baseWidth.SetValue(window, defaultWidth);
         Call(window, "ApplySidebarState", false);
-        historyType.GetMethod("SeedDemo", Static)!.Invoke(null, new object[] { entries });
+        SeedHistory(entries);
         Call(window, "RefreshHistoryList"); Call(window, "ShowHistoryEntry");
         Console.WriteLine("RENDERED: " + output);
     }
