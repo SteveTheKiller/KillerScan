@@ -170,6 +170,17 @@ internal static class ReleaseUiTests
                 Theme(theme, accent);
                 window.GetType().GetMethod("ApplyFlatChrome", Instance)!.Invoke(window, null);
                 bool flat = theme == "SE98";
+                if (flat)
+                {
+                    var maximize = (Button)window.FindName("MaximizeBtn");
+                    Require(maximize.Content is FrameworkElement,
+                        "98SE caption buttons use the established drawn classic glyphs, not modern font glyphs.");
+                    Require(((UIElement)window.FindName("ClassicMinimizeGlyph")).Visibility == Visibility.Visible &&
+                        ((UIElement)window.FindName("ClassicMaximizeGlyph")).Visibility == Visibility.Visible &&
+                        ((UIElement)window.FindName("ClassicCloseGlyph")).Visibility == Visibility.Visible &&
+                        ((UIElement)window.FindName("MaximizeGlyph")).Visibility == Visibility.Collapsed,
+                        "98SE displays its drawn minimize, maximize and close symbols and hides modern glyphs.");
+                }
                 var panel = new StackPanel { Background = (Brush)app.FindResource("BackgroundBrush"), Width = 370 };
                 foreach (string style in new[] { "PrimaryButton", "OutlineButton" })
                 {
@@ -412,7 +423,9 @@ internal static class ReleaseUiTests
             var click = new System.Windows.Input.MouseButtonEventArgs(System.Windows.Input.Mouse.PrimaryDevice, 0,
                 System.Windows.Input.MouseButton.Right) { RoutedEvent = UIElement.MouseRightButtonDownEvent };
             canvas.RaiseEvent(click);
-            Require(click.Handled && settings.IsOpen && settings.PlacementTarget == canvas && settings.Placement == PlacementMode.MousePoint,
+            var viewport = (ScrollViewer)workspace.FindName("TopologyScrollViewer");
+            Require(click.Handled && settings.IsOpen && settings.PlacementTarget == viewport &&
+                settings.Placement == PlacementMode.RelativePoint && settings.PlacementRectangle.TopLeft == click.GetPosition(viewport),
                 "Right-clicking the topology background opens settings at the pointer.");
         }
         finally { settings.IsOpen = false; settings.Visibility = Visibility.Visible; }

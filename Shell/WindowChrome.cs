@@ -209,7 +209,7 @@ namespace KillerScan.Shell
             // Square the corners when maximized (flush to screen edges), round when floating.
             SyncWindowCorners();
             // Maximize glyph toggles to a restore glyph when maximized (matches KillerPDF).
-            MaximizeBtn?.Content = WindowState == WindowState.Maximized ? "" : "";
+            UpdateCaptionGlyphs();
         }
 
         // ---- Content fade-in on open ----

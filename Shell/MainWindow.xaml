@@ -151,9 +151,39 @@
                     <!-- The device filter, where KillerShell keeps its search: left of the window
                          controls (Shell/Workspace.cs moves it here from the scan bar). -->
                     <StackPanel x:Name="TitleTools" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                    <Button Content="&#xE921;" Click="MinimizeBtn_Click" Style="{StaticResource ChromeButton}" ToolTip="{DynamicResource Str_Sys_Minimize}"/>
-                    <Button x:Name="MaximizeBtn" Content="&#xE922;" Click="MaximizeBtn_Click" Style="{StaticResource ChromeButton}" ToolTip="{DynamicResource Str_Sys_Maximize}"/>
-                    <Button Content="&#xE8BB;" Click="CloseBtn_Click" Style="{StaticResource ChromeCloseButton}" ToolTip="{DynamicResource Str_Sys_Close}"/>
+                    <Button Click="MinimizeBtn_Click" Style="{StaticResource ChromeButton}" ToolTip="{DynamicResource Str_Sys_Minimize}">
+                        <Grid Height="{DynamicResource CaptionButtonHeight}">
+                            <TextBlock x:Name="MinimizeGlyph" Text="&#xE921;" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Rectangle x:Name="ClassicMinimizeGlyph" Width="6" Height="2" Fill="{DynamicResource CaptionGlyphBrush}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,3" SnapsToDevicePixels="True" Visibility="Collapsed"/>
+                        </Grid>
+                    </Button>
+                    <Button x:Name="MaximizeBtn" Click="MaximizeBtn_Click" Style="{StaticResource ChromeButton}" ToolTip="{DynamicResource Str_Sys_Maximize}">
+                        <Grid>
+                            <TextBlock x:Name="MaximizeGlyph" Text="&#xE922;"/>
+                            <Grid x:Name="ClassicMaximizeGlyph" Width="9" Height="9" Margin="0,0,0,1" SnapsToDevicePixels="True" Visibility="Collapsed">
+                                <Rectangle Stroke="{DynamicResource CaptionGlyphBrush}" StrokeThickness="1" Fill="Transparent"/>
+                                <Rectangle Height="2" Fill="{DynamicResource CaptionGlyphBrush}" VerticalAlignment="Top"/>
+                            </Grid>
+                            <Grid x:Name="ClassicRestoreGlyph" Width="10" Height="9" SnapsToDevicePixels="True" Visibility="Collapsed">
+                                <Border Width="7" Height="7" HorizontalAlignment="Right" VerticalAlignment="Top" Background="{DynamicResource CaptionButtonBrush}" BorderBrush="{DynamicResource CaptionGlyphBrush}" BorderThickness="1,2,1,1"/>
+                                <Border Width="7" Height="7" HorizontalAlignment="Left" VerticalAlignment="Bottom" Background="{DynamicResource CaptionButtonBrush}" BorderBrush="{DynamicResource CaptionGlyphBrush}" BorderThickness="1,2,1,1"/>
+                            </Grid>
+                        </Grid>
+                    </Button>
+                    <Button Click="CloseBtn_Click" Style="{StaticResource ChromeCloseButton}" ToolTip="{DynamicResource Str_Sys_Close}">
+                        <Grid>
+                            <TextBlock x:Name="CloseGlyph" Text="&#xE8BB;"/>
+                            <Grid x:Name="ClassicCloseGlyph" Width="8" Height="8" Visibility="Collapsed">
+                                <Rectangle Width="10" Height="2" Fill="{DynamicResource CaptionGlyphBrush}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Rectangle.RenderTransform><RotateTransform Angle="45" CenterX="5" CenterY="1"/></Rectangle.RenderTransform>
+                                </Rectangle>
+                                <Rectangle Width="10" Height="2" Fill="{DynamicResource CaptionGlyphBrush}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Rectangle.RenderTransform><RotateTransform Angle="-45" CenterX="5" CenterY="1"/></Rectangle.RenderTransform>
+                                </Rectangle>
+                            </Grid>
+                        </Grid>
+                    </Button>
                 </StackPanel>
             </Grid>
         </Border>

@@ -72,6 +72,7 @@ namespace KillerScan.Controls
             if (TopologyOrderButton.ContextMenu == null) return;
             UpdateTopologyOrderUi();
             TopologyOrderButton.ContextMenu.PlacementTarget = TopologyOrderButton;
+            TopologyOrderButton.ContextMenu.ClearValue(ContextMenu.PlacementRectangleProperty);
             TopologyOrderButton.ContextMenu.Placement =
                 System.Windows.Controls.Primitives.PlacementMode.Top;
             TopologyOrderButton.ContextMenu.IsOpen = true;

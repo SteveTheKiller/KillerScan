@@ -241,6 +241,19 @@ internal static class TopologyTests
         Require(grid.ContextMenu.PlacementTarget == deviceNode, "Device menu remains anchored to the selected box.");
         grid.ContextMenu.IsOpen = false;
         var settingsButton = (Button)workspace.FindName("TopologyOrderButton");
+        var rightClick = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Right)
+            { RoutedEvent = UIElement.MouseRightButtonDownEvent, Source = canvas };
+        canvas.RaiseEvent(rightClick);
+        Require(settingsButton.ContextMenu.PlacementTarget == scroll &&
+            settingsButton.ContextMenu.Placement == PlacementMode.RelativePoint,
+            "Topology's background menu anchors the clicked point to the viewport, outside the zoomed canvas.");
+        Require(settingsButton.ContextMenu.PlacementRectangle.TopLeft == rightClick.GetPosition(scroll),
+            "The topology menu captures the right-click position in viewport coordinates.");
+        settingsButton.ContextMenu.IsOpen = false;
+        settingsButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Require(settingsButton.ContextMenu.PlacementTarget == settingsButton && settingsButton.ContextMenu.PlacementRectangle.IsEmpty,
+            "Opening topology settings from its button clears the previous canvas click position.");
+        settingsButton.ContextMenu.IsOpen = false;
         var zoomMenu = settingsButton.ContextMenu.Items.OfType<MenuItem>().Single(item => item.InputGestureText == "Ctrl+Wheel");
         var normal = zoomMenu.Items.OfType<MenuItem>().Single(item => Equals(item.Tag, 1.0));
         normal.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));

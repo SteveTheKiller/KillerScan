@@ -160,8 +160,9 @@ namespace KillerScan.Controls
             TopologyCanvas.Focus();
             UpdateTopologyOrderUi();
             var menu = TopologyOrderButton.ContextMenu;
-            menu.PlacementTarget = TopologyCanvas;
-            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
+            menu.PlacementTarget = TopologyScrollViewer;
+            menu.PlacementRectangle = new Rect(e.GetPosition(TopologyScrollViewer), new Size());
+            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.RelativePoint;
             menu.IsOpen = true;
             e.Handled = true;
         }

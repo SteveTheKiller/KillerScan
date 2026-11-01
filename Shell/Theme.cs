@@ -104,6 +104,20 @@ namespace KillerScan.Shell
                 root.RowDefinitions[0].Height = new GridLength(h);
             var chrome = System.Windows.Shell.WindowChrome.GetWindowChrome(this);
             chrome?.CaptionHeight = h;
+            UpdateCaptionGlyphs();
+        }
+
+        private void UpdateCaptionGlyphs()
+        {
+            if (MaximizeGlyph == null) return;
+            bool classic = ThemeManager.Current == Theme.SE98;
+            bool restored = WindowState == WindowState.Maximized;
+            MaximizeGlyph.Text = ((char)(restored ? 0xE923 : 0xE922)).ToString();
+            foreach (var glyph in new UIElement[] { MinimizeGlyph, MaximizeGlyph, CloseGlyph })
+                glyph.Visibility = classic ? Visibility.Collapsed : Visibility.Visible;
+            ClassicMinimizeGlyph.Visibility = ClassicCloseGlyph.Visibility = classic ? Visibility.Visible : Visibility.Collapsed;
+            ClassicMaximizeGlyph.Visibility = classic && !restored ? Visibility.Visible : Visibility.Collapsed;
+            ClassicRestoreGlyph.Visibility = classic && restored ? Visibility.Visible : Visibility.Collapsed;
         }
 
         // KillerShell's accent pills: AccentDot borders (AccentSwatchCornerRadius) stretched down
