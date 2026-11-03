@@ -9,6 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 Exported reports, keep-alive logs and file names no longer change with the Windows region, and updates and the file picker recover from more failures.
 
 ### Fixed
+
 - Exported scan reports and keep-alive logs write dates, times and decimals the same way on every Windows region, so Thai and Finnish settings no longer produce years like 2569 or times like 14.30.
 - Suggested file names and set-aside folder names use the same digits on every Windows region.
 - A per-user or portable update that fails now reopens KillerScan instead of leaving it closed, including when antivirus or a locked-down PowerShell stops the update helper from loading, and a published copy that fails its final check is swapped back for the previous version and never started.
@@ -23,6 +24,7 @@ Exported reports, keep-alive logs and file names no longer change with the Windo
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.
 
 ### Fixed
+
 - Concurrent Windows sessions sharing a profile keep each other's successful changes to settings, Locations and scan history.
 - Rescan selected and Deep Scan All honor the chosen adapter again after it disconnects or changes, and refuse off-network results before probing.
 - Picking a saved scan keeps its Deep Scan setting for each run and clears it when another saved scan or Location is selected.
@@ -179,6 +181,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - The file picker's recent locations and places lists are named for screen readers.
 
 ### Added
+
 - Move the History and Locations sidebar to either side, independently of tab placement.
 - Locations can carry an icon (Home, Office, Shop, School, Server room, Cloud, Wi-Fi spot or the pin), picked from a button beside the name in New and Rename Location, and shown in the Locations list and on the Location button.
 - Save to puts the unsaved scan on screen into an existing Location, with an optional name.
@@ -211,6 +214,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - About groups settings in two columns and can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts. Hover tooltips clear large pointers while preserving custom placement.
 
 ### Changed
+
 - Refreshed the bundled MAC vendor database to 58,645 assignments.
 - KillerScan is per-monitor DPI aware, so text and icons stay sharp when the window moves between monitors with different scaling, instead of being stretched by Windows.
 - HTML reports carry their own logo in every theme and accent, so opening a report no longer contacts killerscan.net.
@@ -246,10 +250,12 @@ Locations keep each customer site separate, scan settings choose which checks ru
 ## [1.8.3] - 2026-10-19
 
 ### Changed
+
 - Refreshed the bundled MAC vendor database to 58,575 assignments.
 - Scan History and Scan Profiles open wide enough to show every date in full. Dragging the sidebar narrower draws their text up to 15% smaller before it is cut off.
 
 ### Fixed
+
 - The theme and language menus open beside their own rail buttons instead of at the corner of the device list.
 - A thin black line no longer shows under the title bar. The film grain now covers the whole bar.
 - The dot in a selected radio button sits in the middle of its ring, and radio buttons and checkboxes line up with the capitals of their labels in Killer Sans UI and on 98SE.
@@ -257,6 +263,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 ## [1.8.2] - 2026-10-19
 
 ### Added
+
 - Commands run as `killerscan scan` without a command prefix. `killerscan --help` lists them, and existing command forms stay compatible. Installed copies use PATH; portable copies run from their folder or full path.
 - KillerScan checks for updates on startup and offers a newer release in a dialog with an Always check on startup box. A Check for updates on startup checkbox on the About card turns the check back on.
 - Alt+Shift+G turns Film Grain on or off. It is listed in the shortcuts overlay, and the keyboard map has a new Alt+Shift layer for it.
@@ -264,6 +271,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - The website's About page lists KillerBench and KillerShot under Also try, with larger app icons.
 
 ### Changed
+
 - Refreshed the bundled MAC vendor database to 58,575 assignments.
 - Film grain is softer and shows on every theme, Black included. Its specks come in many shades, and some lean toward a color opposite the theme accent, such as purple on green and orange-brown on blue and red.
 - Rail buttons and the collapse arrow sit centered across the rail, and the arrow is larger.
@@ -278,6 +286,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Primary, outline and secondary buttons sit raised on a soft shadow that lifts on hover and sets down when pressed. 98SE keeps its flat beveled buttons.
 
 ### Fixed
+
 - CSV exports keep device and scan text from running as spreadsheet formulas. (#10)
 - Overlapping scan targets count each address once against the 65,536 address limit, so a /16 with hosts inside it no longer reports as too large. (#11)
 - The public subnet helper rejects oversized ranges before expanding them. (#13)
@@ -309,19 +318,23 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - On phones, the website's logo and download hash fit the screen instead of making the home page scroll sideways.
 - The Network Scanner subtitle in the title bar sits on the baseline of Killer in the wordmark instead of 2px below it.
 - The footer copyright sits a few pixels further from the corner grip instead of running into it.
+
 ## [1.8.1] - 2026-10-14
 
 ### Added
+
 - Added a Film Grain switch to the theme menu. It is on by default, and turning it off removes the grain texture from every surface.
 - Added the Windows 11 snap layouts menu to the maximize button.
 - The Scan History and Scan Profiles lists fade out at the top or bottom while more entries lie past that edge.
 
 ### Changed
+
 - Refreshed the bundled MAC vendor database to 58,526 assignments.
 - The wordmarks use Punktype and Lacquer, and the interface text, headings and footers use Killer Sans, in place of the typewriter font in the app and on the website.
 - Confirm, install and uninstall dialogs use the family setup dialog layout, with a notice icon, a larger Killer Sans heading and evenly sized buttons, so the Uninstall button is no longer cut off.
 
 ### Fixed
+
 - Silent installs refuse an exe without a valid signature, return specific Windows error codes and reject a second concurrent install instead of reporting a general failure.
 - A silent install started without admin rights, as the Microsoft Store runs it, installs for the current user with no prompt instead of failing.
 - Screen readers announce every button by its name, including buttons with a detailed tooltip, the subnet box, the scroll arrows and the close buttons on dialogs, and read the Scan History and Scan Profiles lists and their rows by date or name and target. Controls reached with the keyboard show a dotted focus outline, drawn around small icon buttons instead of over them.
@@ -344,6 +357,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 ## [1.8.0] - 2026-10-08
 
 ### Added
+
 - Topology settings for box size, layout, orientation, fonts and connection lines, with Ctrl+wheel zoom, zoom presets, compact radial layouts and hand cursors for dragging. Open settings from the toolbar or the map's right-click menu.
 - Scan history settings for retaining scans by age, entry count or without a limit, with confirmation before a changed policy removes saved scans. History menus also copy saved device details, switch views and export snapshots.
 - A Services context menu for copying service details and connecting with the selected service's protocol and port.
@@ -352,6 +366,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Added yellow and magenta accents to the neutral and 98SE themes and to the HTML export.
 
 ### Changed
+
 - Refreshed the bundled MAC vendor database to 58,482 assignments.
 - Scanning, discovery and device classification now live in KillerScan.Engine, a separate library the app, its command line and other programs share.
 - Context actions show consistent glyphs and keyboard shortcuts in menus, with shortcuts also listed in both F1 help views and the online guide. Additional shortcuts cover Services, profiles, Keep Alive and the terminal.
@@ -359,6 +374,7 @@ Locations keep each customer site separate, scan settings choose which checks ru
 - Refined file-picker and dialog frames, added sharper title bar icons, and gave the uninstaller its own labeled taskbar button.
 
 ### Fixed
+
 - Kept app icons sharp at fractional display DPI and app zoom by caching exact pixel sizes from a covering source and aligning the final draw to device pixels.
 - Unsigned test builds can no longer push, tag or publish a release.
 - Stopping a deep scan no longer waits for stalled fingerprint requests.
@@ -376,9 +392,11 @@ Locations keep each customer site separate, scan settings choose which checks ru
 KillerScan 1.7.5 improves the in-app update handoff.
 
 ### Changed
+
 - Refreshed the bundled MAC vendor database to 58,417 assignments.
 
 ### Fixed
+
 - Retried the executable replacement and showed the failure reason when an in-app update could not finish.
 
 ## [1.7.4] - 2026-09-28
@@ -386,13 +404,16 @@ KillerScan 1.7.5 improves the in-app update handoff.
 KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localization.
 
 ### Added
+
 - Added headless ping, traceroute, diagnostics, availability monitoring, and native speed tests for KillerMCP and automation.
 - Added Vietnamese localization for the app and killerscan.net.
 
 ### Changed
+
 - Refreshed the bundled MAC vendor database to 58,417 assignments.
 
 ### Fixed
+
 - Allowed more time for upload acknowledgments during KillerSpeed tests on busy connections.
 - Improved accessibility labels for window controls and file dialogs.
 - Aligned the sidebar rail with the family footer spacing.
@@ -400,6 +421,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 ## [1.7.3] - 2026-09-21
 
 ### Fixed
+
 - Kept the About update action readable and usable in every theme, including 98SE.
 - Gave 98SE confirmation dialogs their classic caption bar, beveled frame, and gray close button.
 - Made KillerSpeed tolerate brief network stalls and let the terminal `speedtest` command start a fresh run.
@@ -409,16 +431,19 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 1.7.2 runs speed tests with a native engine in the themed terminal.
 
 ### Added
+
 - KillerSpeed, a native speed test in the terminal backed by a dedicated KillerScan server, with adaptive connections, aligned result tables, and consent before any transfer. It replaces the Ookla download and the HTTP fallback.
 - A Scan box in the terminal with in-place progress, width-aware tables, and scan status and trust alerts in the footer.
 - A terminal font and size selector with a live preview, plus consistent colors for addresses, MACs, ports, timing, and results in network command output.
 
 ### Changed
+
 - Keep Alive's Copy results button was replaced by a TXT export in the Export menu, alongside CSV, HTML and PNG.
 - Trust markers are now small centered dots, matched in the trusted-device menu and the device list header spacing.
 - The terminal defaults to a smaller 11 point font, and command-line scan status starts with a KillerScan prefix.
 
 ### Fixed
+
 - The 98SE file picker close button now keeps its gray caption treatment.
 - Stop now cancels active host probes without waiting for their network timeouts.
 - 98SE now uses the same rail as every other theme, restoring Export, the speed test, and the history and profiles sidebar.
@@ -432,6 +457,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 1.7.1 fixes installation and update failures, clipboard crashes, and reliability issues found during the maintenance audit.
 
 ### Fixed
+
 - Completed shortcut references and translations throughout the app and website.
 - Themed install and uninstall prompts, with black/orange defaults for standalone dialogs.
 - Made installs and updates replace executables safely, report failures accurately, and support silent uninstall.
@@ -444,6 +470,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 - Selected device rows now use their theme's established selection colors.
 
 ### Changed
+
 - Updated the website's feature descriptions, help instructions, and keyboard shortcut reference; kept release updates compatible with translated labels.
 - Refreshed the bundled MAC vendor database from Wireshark to 58,195 entries.
 
@@ -452,6 +479,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 1.7.0 brings permanent Devices, Services, Topology, Keep Alive and Terminal views, alongside scan history, trusted-device baselines, scan profiles and an embedded terminal.
 
 ### Added
+
 - Permanent Devices, Services, Topology, Keep Alive and Terminal views on the right of the toolbar. Each keeps its own state, a right-click menu sets icon size and caption placement, and buttons that do not fit overflow into a menu rather than squeezing the input bar.
 - An embedded terminal running PowerShell, ping and SSH, preferring PowerShell 7. It uses KillerShell's font, palette and prompt, the prompt unpacks to a file you can edit and keeps your version across upgrades, and the KillerScripts module travels inside the exe so it is there on a machine you cannot install anything on. Device ping is colored by result and says that Escape stops it.
 - Keep Alive (F9) watches any number of selected devices at once, each as a status card with a latency sparkline, packet loss, its own checks on banded rows and its own event log. Right-click a card to copy the address, rerun its checks, reset its counters or drop it from the run.
@@ -473,6 +501,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 - `/uiscan [targets]` opens the full interface and begins scanning the supplied targets immediately. (#1)
 
 ### Changed
+
 - The scan view is now called Devices, so it reads as the counterpart to Services. Scan remains the name of the button that starts a scan.
 - Export moved from the toolbar to the icon rail, with the same flyout and the same Ctrl+E.
 - Demo mode now fills every view, including topology, history, trusted devices, profiles and a scripted terminal session, and keeps all of it in memory so it never touches your real history, device or profile files.
@@ -486,6 +515,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 - The bundled vendor database is refreshed to 58,107 entries.
 
 ### Fixed
+
 - The taskbar button had no icon. A window with no caption never hands one to the shell, so it is now set on the window directly.
 - The status line was capped at a fixed width and trimmed to an ellipsis on a window with room to spare. It now measures the space up to the portable badge.
 - Device detection now distinguishes physical printers from Windows servers that share print queues, including domain controllers.
@@ -502,12 +532,14 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 1.6.1 makes the command line actually work and grows it into a full scripting tool, brings the app and killerscan.net to fifteen languages, and cleans up install, uninstall and theme rough edges.
 
 ### Added
+
 - Italian, Hungarian, Kazakh and Russian localizations for the complete app interface and killerscan.net, bringing both to fifteen languages - the same set as KillerPDF.
 - The command line now includes `/probe`, `/network`, and offline `/vendor` commands; table, CSV, JSON, and themed HTML output; text, device-type, vendor, and port filters; sorting, descending order, result limits, custom port checks, progress reporting, timeouts, header control, extension-based export formats, and an optional empty-result exit code for automation.
 - `/scan /demo` produces the same fabricated network as the GUI's demo mode, for screenshots that show no real environment.
 - On an interactive console the command line shows a spinner while scanning and colors its output - each results column in its own color, errors red, and a green "KillerScan complete." when done. When `/export`'s file extension picks the format, the console still shows the readable table while the file gets that format. Redirected output, pipes, exports and explicit `/csv` or `/json` stay plain.
 
 ### Changed
+
 - The bundled OUI vendor database was refreshed to the current Wireshark manuf list (58,049 entries).
 - F12 now opens the About window, matching the rest of the family, and the shortcut list in the app and on killerscan.net now covers every shortcut, including the device actions.
 - The language menu now uses the family's radio-row list with the locale code right-aligned, matching KillerPDF.
@@ -522,6 +554,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 - The About card now takes its outer edge from the app-frame color and its information panel directly from the context-menu surface, with the pane-border color around that panel. The old About-only color override is gone, so every theme uses the same semantic keys as the rest of its interface.
 
 ### Fixed
+
 - The About card's info panel has its film grain back instead of being the one flat surface on the card.
 - Command-line scans no longer hang forever after printing the "Scanning..." line, so `/export` actually writes its file. The CLI had deadlocked this way since it shipped in 1.6.0.
 - Machine-wide uninstall now requests administrator access and removes the Program Files copy, Common Start Menu shortcut, machine PATH entry and HKLM registration instead of targeting the per-user installation.
@@ -534,16 +567,19 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 1.6.0 adds a command line, stops SSH guessing your username, and moves theme and language onto a rail like the other Killer Tools apps.
 
 ### Added
+
 - **A command line**: `/scan [targets]`, `/export <path>` to CSV or HTML, `/quick`, `/quiet`, `/help` and `/version`. Headless, works while the app is open, with real exit codes. Installed copies are added to PATH, so `KillerScan` works from any directory in a new terminal. Requested in issue #1.
 - **SSH asks which account to sign in as** the first time you reach a device and remembers it against that device's MAC. New **SSH as...** on the right-click menu always asks. Leaving it blank restores plain `ssh <ip>`.
 - Seven more themes, ported from KillerShell: 98SE, Ectoplasm, Decay, Malaise, Sepulchre, Delirium and Mourning. Thirteen in total. 98SE squares every corner and carries its own six Windows 98 accents.
 - Dark, Light, and Black now open with KillerScan orange as their default accent instead of inheriting green; each can still remember a different user-selected accent.
 
 ### Changed
+
 - Theme, language and the shortcuts button moved from the title bar to an icon rail down the left side, matching the rest of the Killer Tools apps. The theme picker is a named list now instead of color dots.
 - Project reorganized into the family folder layout: `Shell/`, `Services/`, `Features/`, `Controls/`, `Models/`.
 
 ### Fixed
+
 - Text on accent-filled buttons was unreadable on the Dark themes. It is near-black now instead of white; Light keeps white.
 - The window kept its rounded corners when snapped to a screen edge. It squares off now, as it already did when maximized.
 - The Black theme has its film grain back. It was at half the strength the rest of the Killer Tools apps use, so the app read as flat.
@@ -553,6 +589,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 ## [1.5.4] - 2026-07-25
 
 ### Added
+
 - **Scan several networks at once**: the subnet box now takes a comma-separated list, so `192.168.9.0/24, 192.168.10.0/24` sweeps both in one pass, with overlapping targets counted once. Alongside CIDR blocks each entry can be a single host (`192.168.1.7`) or a range, written either in full (`192.168.1.10-192.168.1.50`) or with just the last octet on the right (`192.168.1.10-50`). Spacing is forgiving: whitespace inside an entry is ignored and empty entries are skipped, so `192.168.9.0 /24 , , 192.168.10.10 - 50` reads the same as the tight form, and semicolons work as separators too. A malformed entry now names itself in the status bar instead of throwing a scan error, and a range larger than 65,536 addresses is refused with its actual size rather than locking the app up. The tab caption shows the first target plus a count.
 - **App-wide size control**: roll the mouse wheel over the KillerScan wordmark in the title bar to scale the whole interface from 70% to 250%, in fine 2% steps. The scan toolbar and the devices pane grow together while the title bar and footer stay put, so the wordmark you are scrolling over never moves under the pointer. Text reflows and re-renders at the new size rather than being stretched, and the chosen size is remembered for the next launch. Matches the accessibility zoom already in KillerNotes and KillerPDF.
 - Czech (cs-CZ) interface translation, selectable from the language picker, bringing KillerScan to ten languages.
@@ -562,6 +599,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 - **Install for all users** checkbox on the install confirmation. Ticking it puts KillerScan in Program Files with a Start Menu entry and an Add/Remove Programs entry for every account on the PC, rather than just yours. It routes through the same machine-wide install winget and Chocolatey already use, and Windows asks for permission only when the box is ticked, so the default per-user install still needs no admin rights. Declining that prompt leaves the app running as it was. Installing for all users removes an existing per-user copy so there is only ever one install, one Start Menu entry, and one uninstall entry; your theme, accent, language and window placement are kept.
 
 ### Changed
+
 - Context menus now carry icons in a left gutter: the export menu, every action on the right-click device menu, all 21 device types under Set Device Type, and the new window menu. Menu items without an icon are unaffected - the gutter collapses - so nothing else shifted.
 - Set Device Type now ticks the type the selected device currently has, so the menu shows where it stands before you change it. The tick follows the device's effective type, whether that came from the classifier or a manual override, and is recomputed each time the submenu opens so a rescan or Clear Override is reflected.
 - Bundled MAC vendor database refreshed from the current Wireshark OUI list: 57,700 entries (was 57,644).
@@ -570,6 +608,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 - Status bar: "Scan cancelled" and "Install cancelled" now read "canceled" (American spelling, matching the rest of the app). A handful of stray British spellings on killerscan.net were corrected too.
 
 ### Fixed
+
 - The top of the Scan button and the subnet box could not be clicked. WindowChrome measures its 36px caption from below the 8px resize border, so the caption region actually reaches 44px down the window - past the 36px title row and 9px into the scan toolbar. Windows swallows anything in that region as caption, so the upper third of both controls was dead and only their lower part responded. The toolbar now opts into chrome hit-testing, which hands those pixels back; dragging the bar is unaffected.
 - Submenus could never open. The shared MenuItem style overrides the default template, which discards WPF's own submenu popup along with it, and nothing replaced it - so a parent item highlighted on hover and did nothing. This is why Set Device Type appeared dead. The template now supplies its own popup, using the same chrome as the context menu, plus a chevron on items that have children.
 - The PORTABLE badge and the Install button appeared on machine-wide installs. `IsPortable()` compared the running exe against the per-user install path only, so a copy installed to Program Files by winget, Chocolatey, or an RMM never matched and was reported as portable. It now recognizes both install locations.
@@ -579,17 +618,20 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 ## [1.5.3] - 2026-07-13
 
 ### Added
+
 - **Rescan selected hosts** (right-click -> "Rescan IP" / "Rescan IPs"): the results table is now multi-select (shift for a range, ctrl to pick individually), and rescanning re-probes just the chosen hosts and swaps each refreshed result back into its row in place. Runs independently of the subnet scan and is disabled while that tab is mid-scan.
 - **Deep single-host probe** behind the rescan: far more thorough than the subnet sweep's per-host pass. It sweeps every well-known TCP port (1-1024) plus the curated high service ports, with longer connect timeouts and a retry so slow or loaded hosts still answer, then refreshes MAC, hostname, and TTL and runs the full fingerprint pass. Deep mode widens the HTTP and TLS fingerprinters to every open port (not just the standard web/TLS ones), so a panel or certificate on a non-standard port is still identified.
 - Open Ports now show the full list in a hover tooltip, so a long port list no longer has to be read by widening the column.
 
 ### Changed
+
 - Footer: the scan progress bar sits in its own zone and no longer crowds the PORTABLE install button, and the corner version/copyright text is 0.5pt smaller.
 - Bundled MAC vendor database refreshed from the current Wireshark OUI list: 57,644 entries (was 57,591).
 
 ## [1.5.2] - 2026-07-12
 
 ### Added
+
 - Japanese (ja-JP) interface translation, selectable from the language picker.
 - Status-bar messages now follow the selected language: scan progress (discovering/resolving/probing), scan complete/canceled, export confirmations, device-type overrides, and the PORTABLE badge with its install button were hardcoded English and are now translated across all nine locales.
 - Column widths in the results table are user-resizable again (the custom header style had dropped the resize grips).
@@ -597,6 +639,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 - The window remembers its size, position, and maximized state, and the results table remembers your column order and any widths you resized, restoring both on the next launch.
 
 ### Changed
+
 - Footer/status bar matched to the family standard set by KillerPDF and killerpdf.net: 24px row, 11.5 status text, 10.5 corner version/copyright. The devices pane sits flush against the toolbar and footer (its shadow overlays them), spacing around the subnet box and the Discovered Devices header is an even 8px, and the table keeps an even 8px to both pane edges with the scrollbar hugging the pane edge, clear of the header, scrolling by pixel so no dead band is left after the last row.
 - Bundled MAC vendor database refreshed from the current Wireshark OUI list: 57,591 entries (was 57,430). The app now loads whichever list is larger - the bundle or your last in-app refresh - so upgrading to a version with a fresher bundled database takes effect immediately instead of being shadowed by an older local copy.
 - Window, dialog and flyout animations are now consistent. The theme flyout, language menu and install dialog previously appeared instantly; they now fade in over 150ms with an ease-out curve, matching the main window (retimed from 180ms) and the About overlay (retimed from 120ms). The shared timing lives in `Anim.cs`.
@@ -605,11 +648,13 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 - About card: the description now reads "A GPLv3 Killer Tools utility", the card's own copyright footer is gone (the app footer already carries it), and the card padding is an even 18px with the width trimmed so the SHA-256 line fits exactly.
 
 ### Fixed
+
 - The window no longer renders black over console-session screen-sharing tools (ScreenConnect, Kaseya LiveConnect, VNC, TeamViewer). WPF composited through the GPU, whose surfaces those tools can't capture, and because they aren't Terminal Services sessions WPF never fell back on its own. Rendering is now forced to software mode (`RenderOptions.ProcessRenderMode`) at startup.
 
 ## [1.5.1] - 2026-07-02
 
 ### Fixed
+
 - Scanning over a routed link or VPN (e.g. FortiClient SSL VPN) no longer collapses every device to the same MAC and vendor. ARP can't resolve hosts across the tunnel, so `SendARP` returns the next-hop (VPN adapter) MAC for every remote IP; a MAC returned for more than two distinct IPs is now treated as that artifact and discarded, letting those hosts classify by their port and fingerprint signals instead of being mislabeled as the VPN's vendor.
 - Host discovery no longer misses devices that block ICMP. A host that doesn't answer ping now gets a quick TCP-connect probe on a few common ports (445, 3389, 80, 443, 22) and counts as alive if any responds, closing the large undercount seen when scanning over a VPN where ARP can't help.
 - Install confirmation dialog now matches the KillerDialog style: the title bar is transparent so it blends into the window with the shared film grain, and it carries the KillerScan wordmark instead of a flat solid bar with plain text.
@@ -617,6 +662,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 ## [1.5.0] - 2026-06-28
 
 ### Added
+
 - **mDNS (Bonjour) and SSDP (UPnP) discovery** (`MulticastDiscovery.cs`): a network-wide multicast pass runs alongside the ping sweep, mapping service types and SSDP SERVER strings back to hosts for much stronger device identification.
 - **MA-M (28-bit) and MA-S (36-bit) OUI support**: vendor lookup now matches longest-prefix first (MA-S -> MA-M -> MA-L) so small vendors sharing a 24-bit block resolve correctly.
 - **In-app vendor database updater**: the About screen shows the current OUI entry count and last-refresh date, with a one-click refresh that pulls the latest data (Wireshark `manuf`, with an Nmap fallback), is gzip-aware, and applies a never-shrink guard so a blocked or partial download can never wipe or downgrade the list.
@@ -631,6 +677,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 - Column-header sort-direction chevron plus hover and press states, and rounded top corners on the header strip.
 
 ### Changed
+
 - **Gateway / DNS-aware classification**: the gateway is labeled Router, DNS Server, or Router/DNS, with Router/DNS used only when the gateway *is* the configured DNS server.
 - Classifier gained mDNS service-type signals (Chromecast, printers, Sonos/Spotify, AirPlay, HomeKit/Hue), SSDP SERVER signals (Roku, Synology/QNAP, Plex, DLNA, Samsung TV), and new port signals.
 - Known PC / workstation vendors (Dell, HP, Lenovo, MSI, Asus, and similar) with no open ports now classify as Windows instead of falling through to the IoT catch-all during standby.
@@ -642,12 +689,14 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 ## [1.4.0] - 2026-05-16
 
 ### Added
+
 - Portable mode detection: app now launches directly without a dialog; if running outside the install location a **PORTABLE** badge and **Install KillerScan...** button appear in the status bar.
 - Custom themed install confirmation dialog replaces the system MessageBox.
 - Film grain overlay on the results area background.
 - `OutlineButton` style (green border, green text, transparent background) matching killertools.net aesthetics.
 
 ### Changed
+
 - Version bumped to 1.4.0.
 - Startup flow simplified: removed the launch dialog entirely; main window opens immediately.
 - Scan button switched to outlined style to match killertools.net.
@@ -661,6 +710,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 ## [1.3.0] - 2026-04-25
 
 ### Added
+
 - Self-installer: on first launch from outside the install location, a launcher dialog offers **Install** or **Run without installing**. Install copies the EXE to `%LOCALAPPDATA%\Programs\KillerScan\`, creates a Start Menu shortcut, and optionally a desktop shortcut.
 - Registers in `HKCU\...\Uninstall\KillerScan` so the app appears in Windows Add/Remove Programs with a working uninstall entry.
 - `KillerScan.exe /uninstall` flag for removal via Add/Remove Programs; self-deletes the install directory via a deferred batch script after exit.
@@ -669,6 +719,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 - Expanded Android/Mobile OUI vendor list: Google, BBK Electronics (Vivo/OnePlus parent), Realme, Nothing Technology, Fairphone.
 
 ### Changed
+
 - Version bumped to 1.3.0.
 - Second ARP cache read added immediately after the ping sweep, so devices that block ICMP but respond to ARP (phones, tablets, some IoT) are caught without a separate scan pass.
 - Apple device classification renamed from "Apple Device" to "iPhone"; port 62078 now scores toward iPhone regardless of OUI (catches randomized-MAC iDevices when USB-tethered).
@@ -679,11 +730,13 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 ## [1.2.1] - 2026-04-18
 
 ### Fixed
+
 - Maximize no longer covers the Windows taskbar. Added a `WM_GETMINMAXINFO` hook so the frameless window clamps to the monitor's work area (multi-monitor aware).
 
 ## [1.2.0] - 2026-04-16
 
 ### Changed
+
 - Retargeted from .NET 8 to .NET Framework 4.8 so end users no longer need to install a separate .NET runtime.
 - Forced 64-bit build via `PlatformTarget=x64`.
 - Added PolySharp polyfills for modern C# language features on net48.
@@ -693,6 +746,7 @@ KillerScan 1.7.4 adds more network commands for KillerMCP and Vietnamese localiz
 - Replaced `string.Contains(string, StringComparison)` with `IndexOf(string, StringComparison) >= 0`.
 
 ### Added
+
 - Post-publish MSBuild target that automatically bundles a GPL3-compliant source zip alongside the published EXE.
 - CHANGELOG.md.
 
