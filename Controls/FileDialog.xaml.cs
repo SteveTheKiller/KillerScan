@@ -1506,6 +1506,14 @@ namespace KillerScan.Controls
         /// </summary>
         private async void Accept()
         {
+            // A name no path can carry is refused with its message straight away: that needs no
+            // listing, so a folder still loading (after a filter change, say) must not swallow it.
+            if (_mode != FileDialogMode.Folder && !_accepting)
+            {
+                string raw = FileNameBox.Text?.Trim() ?? "";
+                bool quotedList = Multiselect && _mode == FileDialogMode.Open && QuotedNames(raw) is { Length: > 1 };
+                if (!quotedList && raw.Trim('"').Length > 0 && IsMalformedTyped(raw.Trim('"'))) { RejectTyped(); return; }
+            }
             // Accept stays off while a listing loads or an accept is already running, so a double
             // press or an Enter during the overwrite prompt cannot run it twice.
             if (!PickerAcceptRule.CanAccept(IsDirectoryListingBusy, IsDirectoryListingAvailable, _accepting, _mode == FileDialogMode.Folder, FileNameBox.Text)) return;
