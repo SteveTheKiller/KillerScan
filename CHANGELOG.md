@@ -10,6 +10,7 @@ Exported reports, keep-alive logs and file names no longer change with the Windo
 
 ### Fixed
 
+- The file picker loads icons and picture previews in the background, refreshes overwritten previews, and restores its position on any monitor.
 - Exported scan reports and keep-alive logs write dates, times and decimals the same way on every Windows region, so Thai and Finnish settings no longer produce years like 2569 or times like 14.30.
 - Suggested file names and set-aside folder names use the same digits on every Windows region.
 - A per-user or portable update that fails now reopens KillerScan instead of leaving it closed, including when antivirus or a locked-down PowerShell stops the update helper from loading, and a published copy that fails its final check is swapped back for the previous version and never started.
