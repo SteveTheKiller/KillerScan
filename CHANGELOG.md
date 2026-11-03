@@ -13,10 +13,9 @@ Exported reports, keep-alive logs and file names no longer change with the Windo
 - Suggested file names and set-aside folder names use the same digits on every Windows region.
 - A per-user or portable update that fails now reopens KillerScan instead of leaving it closed, including when antivirus or a locked-down PowerShell stops the update helper from loading, and a published copy that fails its final check is swapped back for the previous version and never started.
 - An update started from an administrator's copy reopens KillerScan at normal rights. An update that is applied but cannot record its version in the registry now finishes and reopens instead of reporting failure, and putting the previous copy back after a failed update retries a busy file and survives a leftover from an earlier attempt.
-- Update downloads stream to disk with a size cap and an overall deadline, a download refused by its checksum or signature is reported apart from a network failure, and the update check reads only the release's own fields, so release notes that quote them cannot confuse it.
+- Update downloads stream to disk with a size cap and an overall deadline, and the update check reads only the release's own fields, so release notes that quote them cannot confuse it.
 - Updating KillerScan no longer removes a relaunch another Killer app scheduled for its own update.
 - The file picker no longer stalls on a disconnected network folder when it opens, a relative or malformed path typed in the path box is refused instead of being looked up against the wrong folder, a pattern such as *.log typed in the name box filters the list, and a full path typed in the name box can be accepted even when the shown folder failed to list.
-- The close button on tabs sits as far from the right edge as the icon does from the left.
 
 ## [1.9.0] - 2026-11-01
 
