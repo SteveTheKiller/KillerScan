@@ -370,6 +370,7 @@
     <sys:String x:Key="Str_Dlg_NoPreview">无预览</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">该文件不存在。</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">该文件夹不存在。</sys:String>
+    <sys:String x:Key="Str_Dlg_InvalidPath">请输入有效的文件名或路径。</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">替换 {0}?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">替换</sys:String>
     <sys:String x:Key="Str_Btn_Select">选择</sys:String>

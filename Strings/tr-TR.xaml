@@ -370,6 +370,7 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Önizleme yok</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Bu dosya mevcut değil.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Bu klasör mevcut değil.</sys:String>
+    <sys:String x:Key="Str_Dlg_InvalidPath">Geçerli bir dosya adı veya yol girin.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">{0} değiştirilsin mi?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Değiştir</sys:String>
     <sys:String x:Key="Str_Btn_Select">Seç</sys:String>

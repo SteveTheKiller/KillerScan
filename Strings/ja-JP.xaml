@@ -381,6 +381,7 @@
     <sys:String x:Key="Str_Dlg_NoPreview">プレビューはありません</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">そのファイルは存在しません。</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">そのフォルダーは存在しません。</sys:String>
+    <sys:String x:Key="Str_Dlg_InvalidPath">有効なファイル名またはパスを入力してください。</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">{0} を置き換えますか?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">置き換え</sys:String>
     <sys:String x:Key="Str_Btn_Select">選択</sys:String>

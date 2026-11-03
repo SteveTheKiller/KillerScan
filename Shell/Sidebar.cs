@@ -111,8 +111,8 @@ namespace KillerScan.Shell
             }
             SidebarToggleStrip.ContextMenu = menu;
             SidebarToggleBtn.ToolTipOpening += (_, _) =>
-                SidebarToggleBtn.ToolTip = Loc(_sidebarCollapsed ? "Str_TT_ExpandSidebar" : "Str_TT_CollapseSidebar")
-                    + (_sidebarRight ? " (Alt+Shift+Right)" : " (Alt+Shift+Left)");
+                SidebarToggleBtn.ToolTip = KillerFamily.Layout.ShortcutHints.WithHint(Loc(_sidebarCollapsed ? "Str_TT_ExpandSidebar" : "Str_TT_CollapseSidebar"),
+                    _sidebarRight ? "Alt+Shift+Right" : "Alt+Shift+Left");
             menu.Opened += (_, _) => UpdateSidebarSideMenu();
             SelectSidebarSide(string.Equals(App.GetSetting(SidebarSides.SettingName), "Right", StringComparison.OrdinalIgnoreCase), save: false);
             KillerScan.Services.ThemeManager.ThemeChanged += RefreshSidebarTheme;

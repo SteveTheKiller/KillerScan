@@ -413,6 +413,7 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">No preview available</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">That file does not exist.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">That folder does not exist.</sys:String>
+    <sys:String x:Key="Str_Dlg_InvalidPath">Enter a valid file name or path.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Replace {0}?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Replace</sys:String>
     <sys:String x:Key="Str_Dlg_Preview">Preview</sys:String>

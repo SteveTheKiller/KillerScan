@@ -386,6 +386,7 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Nessuna anteprima disponibile</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Quel file non esiste.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Quella cartella non esiste.</sys:String>
+    <sys:String x:Key="Str_Dlg_InvalidPath">Inserisci un nome file o un percorso valido.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Sostituire {0}?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Sostituisci</sys:String>
     <sys:String x:Key="Str_Btn_Select">Seleziona</sys:String>

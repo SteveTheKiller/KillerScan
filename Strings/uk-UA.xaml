@@ -412,6 +412,7 @@
     <sys:String x:Key="Str_Dlg_NoPreview">Попередній перегляд недоступний</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Такого файлу не існує.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Такої папки не існує.</sys:String>
+    <sys:String x:Key="Str_Dlg_InvalidPath">Введіть припустиме ім’я файлу або шлях.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Замінити {0}?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Замінити</sys:String>
     <sys:String x:Key="Str_Btn_Select">Вибрати</sys:String>

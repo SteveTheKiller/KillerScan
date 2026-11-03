@@ -169,7 +169,7 @@ namespace KillerScan.Shell
             if (FindName("FilmGrainCheck") is CheckBox filmGrain)
             {
                 filmGrain.IsChecked = FilmGrain.Enabled;
-                filmGrain.ToolTip = $"{Loc("Str_Theme_FilmGrain")} (Alt+Shift+G)";
+                filmGrain.ToolTip = KillerFamily.Layout.ShortcutHints.WithHint(Loc("Str_Theme_FilmGrain"), "Alt+Shift+G");
             }
             _syncingThemeRadios = true;
             try

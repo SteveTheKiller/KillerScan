@@ -370,6 +370,7 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Vista previa no disponible</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Ese archivo no existe.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Esa carpeta no existe.</sys:String>
+    <sys:String x:Key="Str_Dlg_InvalidPath">Escriba un nombre de archivo o una ruta válidos.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">¿Reemplazar {0}?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Reemplazar</sys:String>
     <sys:String x:Key="Str_Btn_Select">Seleccionar</sys:String>

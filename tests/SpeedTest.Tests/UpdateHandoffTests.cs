@@ -47,7 +47,7 @@ internal static class UpdateHandoffTests
                 throw new InvalidOperationException("A rejected elevated handoff changed its retained download.");
             Console.WriteLine("PASS an untrusted target never elevates a mutable temporary script.");
             string target = Path.Combine(root, "KillerScan.exe");
-            var publication = TrustedUpdate.Publication(payload, target, "9.9.9", new string('0', 64), 1234, 5678, 4321, 8765);
+            var publication = TrustedUpdate.Publication(payload, target, "9.9.9", new string('0', 64), 1234, 5678, 4321, 8765, new string('B', 40));
             string script = UninstallCommandTests.Decode(publication.Arguments);
             UninstallCommandTests.Parse(script);
             Console.WriteLine("PASS Windows PowerShell parses the immutable protected publication command.");

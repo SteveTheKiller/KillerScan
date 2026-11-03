@@ -370,6 +370,7 @@
     <sys:String x:Key="Str_Dlg_NoPreview">কোনো প্রিভিউ নেই</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">ওই ফাইলটি নেই।</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">ওই ফোল্ডারটি নেই।</sys:String>
+    <sys:String x:Key="Str_Dlg_InvalidPath">একটি বৈধ ফাইলের নাম বা পথ লিখুন।</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">{0} প্রতিস্থাপন করবেন?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">পরিবর্তন</sys:String>
     <sys:String x:Key="Str_Btn_Select">নির্বাচন করুন</sys:String>

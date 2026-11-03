@@ -350,6 +350,7 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Không có bản xem trước</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Tệp đó không tồn tại.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Thư mục đó không tồn tại.</sys:String>
+    <sys:String x:Key="Str_Dlg_InvalidPath">Nhập tên tệp hoặc đường dẫn hợp lệ.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Thay thế {0}?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Thay thế</sys:String>
     <sys:String x:Key="Str_Btn_Select">Chọn</sys:String>

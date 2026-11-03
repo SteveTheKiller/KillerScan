@@ -370,6 +370,7 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Dlg_NoPreview">Aucun aperçu disponible</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFile">Ce fichier n'existe pas.</sys:String>
     <sys:String x:Key="Str_Dlg_NoSuchFolder">Ce dossier n'existe pas.</sys:String>
+    <sys:String x:Key="Str_Dlg_InvalidPath">Saisissez un nom de fichier ou un chemin valide.</sys:String>
     <sys:String x:Key="Str_Dlg_OverwriteMsg">Remplacer {0} ?</sys:String>
     <sys:String x:Key="Str_Btn_Replace">Remplacer</sys:String>
     <sys:String x:Key="Str_Btn_Select">Sélectionner</sys:String>
