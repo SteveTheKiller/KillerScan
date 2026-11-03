@@ -66,6 +66,7 @@ namespace KillerScan.Controls
             Events.Add(new CardEvent
             {
                 Time = time.ToLocalTime().ToString("HH:mm:ss"),
+                ExportTime = time.ToLocalTime().ToString("HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture),
                 State = state,
                 Up = up,
                 StateBrush = StateColor(up ? "WatchUpBrush" : "WatchDownBrush", palette.Ansi[up ? 2 : 1])
@@ -77,6 +78,10 @@ namespace KillerScan.Controls
         public string Latest { get => _latest; private set => Set(ref _latest, value); }
         public string Average { get => _average; private set => Set(ref _average, value); }
         public string Loss { get => _loss; private set => Set(ref _loss, value); }
+        /// <summary>Average and loss as the exports write them: the same on every Windows region, unlike the card text.</summary>
+        internal string ExportAverage { get; private set; } = "?";
+        internal string ExportLoss { get; private set; } = "0.0%";
+
         public string Sent { get => _sent; private set => Set(ref _sent, value); }
         public string Changed { get => _changed; private set => Set(ref _changed, value); }
         public Brush StateBrush { get => _stateBrush; private set => Set(ref _stateBrush, value); }
@@ -95,6 +100,8 @@ namespace KillerScan.Controls
             Latest = sample.Latest?.ToString() ?? "?";
             Average = sample.Received == 0 ? "?" : sample.Average.ToString("0.0");
             Loss = sample.Loss.ToString("0.0") + "%";
+            ExportAverage = sample.Received == 0 ? "?" : sample.Average.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
+            ExportLoss = sample.Loss.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + "%";
             Sent = sample.Sent.ToString();
             Changed = sample.Changed?.ToLocalTime().ToString("HH:mm:ss") ?? string.Empty;
 
@@ -119,6 +126,8 @@ namespace KillerScan.Controls
             Latest = "?";
             Average = "?";
             Loss = "0.0%";
+            ExportAverage = "?";
+            ExportLoss = "0.0%";
             Sent = "0";
             Changed = string.Empty;
             Spark = [];
@@ -151,7 +160,7 @@ namespace KillerScan.Controls
             // The log lines are immutable, so they are rebuilt rather than edited. Rebuilding also
             // gives the list something to notice: editing a property on them would not.
             var rewritten = Events
-                .Select(e => new CardEvent { Time = e.Time, Up = e.Up, StateBrush = e.StateBrush,
+                .Select(e => new CardEvent { Time = e.Time, ExportTime = e.ExportTime, Up = e.Up, StateBrush = e.StateBrush,
                                              State = e.Up ? reply : noReply })
                 .ToList();
             Events.Clear();

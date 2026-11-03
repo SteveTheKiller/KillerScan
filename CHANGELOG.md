@@ -4,6 +4,14 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.1] - Unreleased
+
+Exported reports, keep-alive logs and file names no longer change with the Windows region.
+
+### Fixed
+- Exported scan reports and keep-alive logs write dates, times and decimals the same way on every Windows region, so Thai and Finnish settings no longer produce years like 2569 or times like 14.30.
+- Suggested file names and set-aside folder names use the same digits on every Windows region.
+
 ## [1.9.0] - 2026-11-01
 
 Locations keep each customer site separate, scan settings choose which checks run, Slovenian joins the languages, and updates, installs and network probes are hardened throughout.

@@ -198,11 +198,11 @@ namespace KillerScan.Services
             // Manual rescans changed some rows after the scan time above, so say when and how many.
             if (refresh != null)
             {
-                status += $" &middot; {Esc(L("Str_Rep_Refreshed", "Refreshed later"))} <b>{refresh.At:yyyy-MM-dd HH:mm}</b>" +
+                status += $" &middot; {Esc(L("Str_Rep_Refreshed", "Refreshed later"))} <b>{refresh.At.ToString("yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture)}</b>" +
                     $" &middot; <b>{refresh.Refreshed}</b> {Esc(L("Str_Rep_Devices", "devices"))}";
                 if (refresh.Partial) status += " &middot; <b>" + Esc(L("Str_Rep_RefreshPartial", "Partial refresh")) + "</b>";
             }
-            sb.AppendLine($"<p class='meta'>{Esc(L("Str_Rep_Subnet", "Subnet"))} <b>{Esc(subnetText)}</b> &middot; {Esc(L("Str_Rep_Scanned", "Scanned"))} <b>{scannedAt:yyyy-MM-dd HH:mm}</b> &middot; <b>{list.Count}</b> {Esc(L("Str_Rep_Devices", "devices"))}{status}</p>");
+            sb.AppendLine($"<p class='meta'>{Esc(L("Str_Rep_Subnet", "Subnet"))} <b>{Esc(subnetText)}</b> &middot; {Esc(L("Str_Rep_Scanned", "Scanned"))} <b>{scannedAt.ToString("yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture)}</b> &middot; <b>{list.Count}</b> {Esc(L("Str_Rep_Devices", "devices"))}{status}</p>");
 
             // The report's headers reuse the grid's own column keys, so the two never disagree.
             sb.AppendLine("<div class='tablewrap'><table id='tbl'><thead><tr>");

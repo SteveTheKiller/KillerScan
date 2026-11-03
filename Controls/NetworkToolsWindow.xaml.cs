@@ -518,11 +518,11 @@ namespace KillerScan.Controls
             foreach (var card in _cards)
             {
                 csv.AppendLine(string.Join(",", Cell(card.Address), Cell(card.State),
-                    Cell(card.Latest + " / " + card.Average), Cell(card.Loss), Cell(card.Sent)));
+                    Cell(card.Latest + " / " + card.ExportAverage), Cell(card.ExportLoss), Cell(card.Sent)));
                 foreach (var check in card.Checks)
                     csv.AppendLine(string.Join(",", Cell(card.Address), Cell(check.Check), Cell(check.Result), "", ""));
                 foreach (var entry in card.Events)
-                    csv.AppendLine(string.Join(",", Cell(card.Address), Cell(entry.Time), Cell(entry.State), "", ""));
+                    csv.AppendLine(string.Join(",", Cell(card.Address), Cell(entry.ExportTime), Cell(entry.State), "", ""));
             }
             return csv.ToString();
         }
@@ -547,13 +547,13 @@ namespace KillerScan.Controls
             {
                 html.Append("<h2>").Append(Esc(card.Address)).Append(" &mdash; ").Append(Esc(card.State)).Append("</h2>\n<table>\n");
                 html.Append("<tr><td>").Append(Esc(L("Str_Watch_Latency"))).Append("</td><td>")
-                    .Append(Esc(card.Latest + " / " + card.Average)).Append("</td></tr>\n");
-                html.Append("<tr><td>").Append(Esc(L("Str_Watch_Loss"))).Append("</td><td>").Append(Esc(card.Loss)).Append("</td></tr>\n");
+                    .Append(Esc(card.Latest + " / " + card.ExportAverage)).Append("</td></tr>\n");
+                html.Append("<tr><td>").Append(Esc(L("Str_Watch_Loss"))).Append("</td><td>").Append(Esc(card.ExportLoss)).Append("</td></tr>\n");
                 html.Append("<tr><td>").Append(Esc(L("Str_Watch_Sent"))).Append("</td><td>").Append(Esc(card.Sent)).Append("</td></tr>\n");
                 foreach (var check in card.Checks)
                     html.Append("<tr><td>").Append(Esc(check.Check)).Append("</td><td>").Append(Esc(check.Result)).Append("</td></tr>\n");
                 foreach (var entry in card.Events)
-                    html.Append("<tr><td>").Append(Esc(entry.Time)).Append("</td><td>").Append(Esc(entry.State)).Append("</td></tr>\n");
+                    html.Append("<tr><td>").Append(Esc(entry.ExportTime)).Append("</td><td>").Append(Esc(entry.State)).Append("</td></tr>\n");
                 html.Append("</table>\n");
             }
             return html.Append("</body>\n</html>\n").ToString();
@@ -577,8 +577,8 @@ namespace KillerScan.Controls
             {
                 text.AppendLine();
                 text.AppendLine(string.Join("\t", card.Address, card.State,
-                    L("Str_Watch_Latency") + " " + card.Latest + " / " + card.Average,
-                    L("Str_Watch_Loss") + " " + card.Loss,
+                    L("Str_Watch_Latency") + " " + card.Latest + " / " + card.ExportAverage,
+                    L("Str_Watch_Loss") + " " + card.ExportLoss,
                     L("Str_Watch_Sent") + " " + card.Sent));
                 foreach (var check in card.Checks) text.AppendLine("\t" + check.Check + "\t" + check.Result);
                 foreach (var entry in card.Events) text.AppendLine("\t" + entry.Time + "\t" + entry.State);

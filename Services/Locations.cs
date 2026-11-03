@@ -210,7 +210,7 @@ namespace KillerScan.Services
                 {
                     string deleted = Path.Combine(locations, ".deleted");
                     Directory.CreateDirectory(deleted);
-                    Directory.Move(target, Path.Combine(deleted, UnassignedId + "-" + DateTime.Now.ToString("yyyyMMdd-HHmmss-fff")));
+                    Directory.Move(target, Path.Combine(deleted, UnassignedId + "-" + DateTime.Now.ToString("yyyyMMdd-HHmmss-fff", System.Globalization.CultureInfo.InvariantCulture)));
                 }
                 Directory.Move(staging, target);
             }
@@ -293,7 +293,7 @@ namespace KillerScan.Services
                 {
                     string deleted = Path.Combine(LocationsDirectory, ".deleted");
                     Directory.CreateDirectory(deleted);
-                    string target = Path.Combine(deleted, id + "-" + DateTime.Now.ToString("yyyyMMdd-HHmmss"));
+                    string target = Path.Combine(deleted, id + "-" + DateTime.Now.ToString("yyyyMMdd-HHmmss", System.Globalization.CultureInfo.InvariantCulture));
                     Directory.Move(folder, target);
                     aside = target;
                 }

@@ -13,9 +13,9 @@
     <ApplicationIcon>Resources\ks-icon.ico</ApplicationIcon>
     <!-- Per-monitor DPI awareness (PerMonitorV2) and the Windows 10/11 compatibility block, as in the family. -->
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.9.0</Version>
-    <FileVersion>1.9.0.0</FileVersion>
-    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+    <Version>1.9.1</Version>
+    <FileVersion>1.9.1.0</FileVersion>
+    <AssemblyVersion>1.9.1.0</AssemblyVersion>
     <Authors>Steve the Killer</Authors>
     <Copyright>Copyright (c) 2026 Steve the Killer</Copyright>
     <!-- Shown in the About card beside the version so a user can tell how old their build

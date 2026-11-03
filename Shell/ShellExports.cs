@@ -48,7 +48,7 @@ namespace KillerScan.Shell
             var dlg = new FileDialog(FileDialogMode.Save)
             {
                 Filter = Loc(filterKey) + "|*" + extension,
-                FileName = $"KillerScan_KeepAlive_{DateTime.Now:yyyyMMdd_HHmmss}{extension}",
+                FileName = $"KillerScan_KeepAlive_{DateTime.Now.ToString("yyyyMMdd_HHmmss", System.Globalization.CultureInfo.InvariantCulture)}{extension}",
                 DefaultExt = extension,
                 AddExtension = true
             };
@@ -78,7 +78,7 @@ namespace KillerScan.Shell
             var dlg = new FileDialog(FileDialogMode.Save)
             {
                 Filter = Loc("Str_Filter_Text") + "|*.txt",
-                FileName = $"KillerScan_Terminal_{DateTime.Now:yyyyMMdd_HHmmss}.txt",
+                FileName = $"KillerScan_Terminal_{DateTime.Now.ToString("yyyyMMdd_HHmmss", System.Globalization.CultureInfo.InvariantCulture)}.txt",
                 DefaultExt = ".txt",
                 AddExtension = true
             };

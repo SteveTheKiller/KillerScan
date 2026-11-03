@@ -127,7 +127,7 @@ namespace KillerScan.Controls
             var dlg = new FileDialog(FileDialogMode.Save)
             {
                 Filter = Loc("Str_Filter_Csv") + "|*.csv",
-                FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
+                FileName = $"KillerScan_{DateTime.Now.ToString("yyyyMMdd_HHmmss", System.Globalization.CultureInfo.InvariantCulture)}.csv"
             };
             try
             {
@@ -149,7 +149,7 @@ namespace KillerScan.Controls
             var dlg = new FileDialog(FileDialogMode.Save)
             {
                 Filter = Loc("Str_Filter_Csv") + "|*.csv",
-                FileName = $"KillerScan_Services_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
+                FileName = $"KillerScan_Services_{DateTime.Now.ToString("yyyyMMdd_HHmmss", System.Globalization.CultureInfo.InvariantCulture)}.csv"
             };
             try
             {
@@ -173,7 +173,7 @@ namespace KillerScan.Controls
             var dlg = new FileDialog(FileDialogMode.Save)
             {
                 Filter = Loc("Str_Filter_Html") + "|*.html",
-                FileName = $"KillerScan_{DateTime.Now:yyyyMMdd_HHmmss}.html"
+                FileName = $"KillerScan_{DateTime.Now.ToString("yyyyMMdd_HHmmss", System.Globalization.CultureInfo.InvariantCulture)}.html"
             };
             try
             {

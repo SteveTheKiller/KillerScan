@@ -39,7 +39,7 @@ namespace KillerScan.Controls
             var dlg = new FileDialog(FileDialogMode.Save)
             {
                 Filter = filter,
-                FileName = $"KillerScan_Topology_{DateTime.Now:yyyyMMdd_HHmmss}{extension}",
+                FileName = $"KillerScan_Topology_{DateTime.Now.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture)}{extension}",
                 DefaultExt = extension,
                 AddExtension = true
             };
