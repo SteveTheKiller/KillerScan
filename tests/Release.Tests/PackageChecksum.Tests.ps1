@@ -20,3 +20,4 @@ foreach ($workflow in 'chocolatey-release.yml', 'winget-release.yml') {
     }
     Write-Output "PASS: $workflow reads textual and binary checksum responses."
 }
+exit 0

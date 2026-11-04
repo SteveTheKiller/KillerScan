@@ -5,7 +5,7 @@
     "program": "tests/KillerScan.Engine.Tests/Program.cs",
     "ci": [
       "--vendor-db", "--vendor-snapshot", "--subnet", "--fingerprint-cancellation", "--http-redirects",
-      "--mac-cancellation", "--snmp", "--upload-accounting", "--scan-options", "--safe-probes", "--netbios", "--mdns",
+      "--mac-cancellation", "--arp-sweep", "--snmp", "--upload-accounting", "--scan-options", "--safe-probes", "--netbios", "--mdns",
       "--api-contract", "--dns-budget", "--binding", "--recognition", "--access"
     ],
     "excluded": {}
