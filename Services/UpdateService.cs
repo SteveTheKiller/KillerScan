@@ -90,8 +90,8 @@ namespace KillerScan.Services
             try
             {
                 using var http = NewClient(4);
-                var json = await http.GetStringAsync(
-                    $"https://api.github.com/repos/{AppInfo.GitHubRepo}/releases/latest")
+                var json = await DownloadMetadataAsync(http,
+                    new Uri($"https://api.github.com/repos/{AppInfo.GitHubRepo}/releases/latest"), TimeSpan.FromSeconds(4))
                     .ConfigureAwait(false);
                 return NewerReleaseTag(json, current);
             }
@@ -271,7 +271,7 @@ namespace KillerScan.Services
         internal static async Task<string> DownloadVerifiedAsync(HttpClient http, Uri exeUrl, Uri sumsUrl, string asset,
             bool isPackage, string tag, string directory, long maximumBytes, TimeSpan deadline)
         {
-            var sumsTxt = await http.GetStringAsync(sumsUrl).ConfigureAwait(false);
+            var sumsTxt = await DownloadMetadataAsync(http, sumsUrl, deadline).ConfigureAwait(false);
             string? expected = ChecksumFor(sumsTxt, asset);
             if (string.IsNullOrEmpty(expected)) throw new UpdateVerificationException("checksum entry not found");
 
@@ -301,6 +301,13 @@ namespace KillerScan.Services
             catch { DiscardDownload(path); throw; }
             UpdateImagePublication.RememberVerified(path, actual, signer);
             return path;
+        }
+
+        internal static async Task<string> DownloadMetadataAsync(HttpClient http, Uri url, TimeSpan deadline)
+        {
+            using var output = new MemoryStream();
+            await HttpDownload.CopyToAsync(http, url, output, deadline, 1024 * 1024).ConfigureAwait(false);
+            return Encoding.UTF8.GetString(output.ToArray());
         }
 
         /// <summary>Streams <paramref name="url"/> into a new file at <paramref name="path"/> through
@@ -399,7 +406,8 @@ namespace KillerScan.Services
                 + (elevated ? TrustedUpdate.Wait(self.Id, self.StartTime.ToUniversalTime().Ticks)
                     : TrustedUpdate.Wait(self.Id, self.StartTime.ToUniversalTime().Ticks, NotClosed(newExe + ".recovery.txt"))) + "\n"
                 + UpdateImagePublication.Script(newExe, curExe, elevated, ReleasesUrl, AppInfo.DisplayName,
-                    newVersion, hive, reopen: RelaunchArgument, showReport: !elevated);
+                    newVersion, hive, reopen: RelaunchArgument, showReport: !elevated, companion: AppInfo.UpdateCompanionPath,
+                    companionArguments: AppInfo.UpdateCompanionArguments, companionName: AppInfo.UpdateCompanionName);
             var psi = HelperStart(script);
             if (platform.Start(psi) is null)
                 throw new IOException("The update helper did not start. Download retained at: " + newExe);
@@ -537,7 +545,9 @@ namespace KillerScan.Services
             {
                 string name = Path.GetFileName(file);
                 string rest = name.Substring(prefix.Length);
-                if (!rest.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) && !rest.EndsWith(".exe.recovery.txt", StringComparison.OrdinalIgnoreCase))
+                if (!rest.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
+                    && !rest.EndsWith(".exe.recovery.txt", StringComparison.OrdinalIgnoreCase)
+                    && !rest.EndsWith(".exe.update-failure.txt", StringComparison.OrdinalIgnoreCase))
                     continue;
                 if (rest.Length < 32 || !Guid.TryParseExact(rest.Substring(0, 32), "N", out _) || rest[32] != '.') continue;
                 try

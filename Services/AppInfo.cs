@@ -20,6 +20,11 @@ namespace KillerScan.Services
         /// <summary>Product website, opened from the title-bar wordmark and stamped into reports.</summary>
         internal const string SiteUrl = "https://scan.killertools.net";
 
+        /// <summary>Optional companion refresh after self-update. Empty values disable it.</summary>
+        internal static string UpdateCompanionPath => string.Empty;
+        internal static string UpdateCompanionArguments => string.Empty;
+        internal static string UpdateCompanionName => string.Empty;
+
         /// <summary>Certificate subject fragment that unlocks the alias line on the About card. The
         /// subject is a legal name, so the card ties it back to the publicly known alias. A build
         /// signed by anyone else must not claim that alias, and an unsigned build has no subject.

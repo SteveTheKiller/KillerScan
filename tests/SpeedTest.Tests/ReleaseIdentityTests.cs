@@ -22,21 +22,25 @@ internal static class ReleaseIdentityTests
     {
         var running = new Version(1, 9, 0, 0);
         AssemblyName Image(string name, string version) => new AssemblyName(name) { Version = new Version(version) };
-        void Accept(string what, AssemblyName image, string tag, (bool, string) installed, (bool, string) incoming, bool strict = false)
+        void Accept(string what, AssemblyName image, string tag, (bool, string) installed, (bool, string) incoming, bool strict = false, string? thumb = null)
         {
-            try { ReleaseIdentity.Verify(image, tag, running, installed, incoming, strict); }
+            try { ReleaseIdentity.Verify(image, tag, running, installed, incoming, strict, thumb); }
             catch (SecurityException error) { throw new InvalidOperationException("Rejected " + what + ": " + error.Message); }
         }
-        void Refuse(string what, AssemblyName image, string tag, (bool, string) installed, (bool, string) incoming, bool strict = false)
+        void Refuse(string what, AssemblyName image, string tag, (bool, string) installed, (bool, string) incoming, bool strict = false, string? thumb = null)
         {
-            try { ReleaseIdentity.Verify(image, tag, running, installed, incoming, strict); }
+            try { ReleaseIdentity.Verify(image, tag, running, installed, incoming, strict, thumb); }
             catch (SecurityException) { return; }
             throw new InvalidOperationException("Accepted " + what + ".");
         }
 
         Accept("a newer release from the installed publisher", Image("KillerScan", "1.9.1.0"), "v1.9.1", (true, Publisher), (true, Publisher));
         Accept("a release signed by the publisher's renewed certificate", Image("KillerScan", "1.9.1.0"), "v1.9.1", (true, Publisher), (true, Publisher.ToUpperInvariant()));
-        Accept("a signed release on an unsigned local build", Image("KillerScan", "1.9.1.0"), "1.9.1", (false, "(none)"), (true, Publisher));
+        // An unsigned local build cannot vouch for a publisher, so it takes only the pinned release certificate.
+        Accept("a release signed by the pinned certificate on an unsigned local build", Image("KillerScan", "1.9.1.0"), "1.9.1",
+            (false, "(none)"), (true, Publisher), thumb: ReleaseIdentity.DevelopmentUpdateSigner);
+        Refuse("a release signed by another certificate on an unsigned local build", Image("KillerScan", "1.9.1.0"), "1.9.1",
+            (false, "(none)"), (true, Publisher), thumb: new string('0', 40));
         Refuse("an unsigned download", Image("KillerScan", "1.9.1.0"), "v1.9.1", (true, Publisher), (false, "(none)"));
         Refuse("an unsigned download on an unsigned build", Image("KillerScan", "1.9.1.0"), "v1.9.1", (false, "(none)"), (false, "(none)"));
         Refuse("another publisher's signature", Image("KillerScan", "1.9.1.0"), "v1.9.1", (true, Publisher), (true, "Open Source Developer Someone Else"));

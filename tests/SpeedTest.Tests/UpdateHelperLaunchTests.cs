@@ -39,8 +39,9 @@ internal static class UpdateHelperLaunchTests
             Require(ran.Exit == 0 && ran.Target.SequenceEqual(standIn) && ran.Relaunched && !ran.ReportShown && !ran.DownloadLeft,
                 "A verified update is published from the command-line helper and relaunched: " + ran);
             var swapped = Case(root, "swapped", standIn.Concat(new byte[] { 0 }).ToArray(), standIn);
-            Require(swapped.Exit != 0 && swapped.Target.SequenceEqual(Original) && !swapped.Relaunched && swapped.ReportShown,
-                "A download replaced after verification is refused and its recovery report is shown: " + swapped);
+            // The refused update leaves the installed copy untouched, reopens it and shows why.
+            Require(swapped.Exit != 0 && swapped.Target.SequenceEqual(Original) && swapped.Relaunched && swapped.ReportShown,
+                "A download replaced after verification is refused, the installed copy reopens and its recovery report is shown: " + swapped);
             Console.WriteLine("PASS the unelevated update helper publishes only the verified image and refuses a swapped download.");
 
             // The elevated helper has no window to report in, so a refused update reopens the
@@ -181,7 +182,10 @@ internal static class UpdateHelperLaunchTests
         string overrides = (relaunchFails ? "$ops.Relaunch = { param($plan) throw 'The shell belongs to another account.' }\n"
                 : "$ops.Relaunch = { param($plan) [IO.File]::WriteAllText('" + relaunched + "', 'yes') }\n") +
             "$ops.ShowReport = { param($path) [IO.File]::WriteAllText('" + shown + "', $path) }\n" +
-            "$ops.Publisher = { param($path, $plan) $plan.Thumb -eq '" + Signer + "' }";
+            "$ops.Publisher = { param($path, $plan) $plan.Thumb -eq '" + Signer + "' }\n" +
+            // The stand-in installed copy carries no signature, so its certificate identity is replaced
+            // too: recovery reopens only an image whose identity was recorded before publication.
+            "$ops.VerifiedTargetThumb = { param($path, $signer) '" + Signer + "' }";
         // The elevated publication never opens a report window; TrustedUpdate builds it without one.
         string script = UpdateImagePublication.Script(path, target, elevated, "https://example.invalid/releases", "KillerScan",
             showReport: !elevated, overrides: overrides);

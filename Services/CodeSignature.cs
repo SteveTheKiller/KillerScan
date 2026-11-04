@@ -32,13 +32,13 @@ namespace KillerScan.Services
             public IntPtr pPolicyCallbackData;
             public IntPtr pSIPClientData;
             public uint   dwUIChoice;          // 2 = WTD_UI_NONE
-            public uint   fdwRevocationChecks; // 0 = WTD_REVOKE_NONE
+            public uint   fdwRevocationChecks; // 1 = WTD_REVOKE_WHOLECHAIN
             public uint   dwUnionChoice;       // 1 = WTD_CHOICE_FILE
             public IntPtr pUnion;              // -> WINTRUST_FILE_INFO
             public uint   dwStateAction;       // 0 = WTD_STATEACTION_IGNORE
             public IntPtr hWVTStateData;
             public IntPtr pwszURLReference;
-            public uint   dwProvFlags;         // 0x1000 = WTD_CACHE_ONLY_URL_RETRIEVAL
+            public uint   dwProvFlags;         // 0x80 = WTD_REVOCATION_CHECK_CHAIN_EXCLUDE_ROOT
             public uint   dwUIContext;
             public IntPtr pSignatureSettings;
         }
@@ -52,9 +52,8 @@ namespace KillerScan.Services
             IntPtr hwnd, ref Guid pgActionID, IntPtr pWVTData);
 
         /// <summary>Reads the running exe's Authenticode certificate for display and validates the
-        /// signature. Valid is false for unsigned, expired or tampered files. Retrieval is cache-only
-        /// (0x1000), so nothing here waits on the network: a signed exe carries its own intermediates,
-        /// so the chain still builds offline.</summary>
+        /// signature, including chain revocation. An offline revocation server permits a second
+        /// cache-only integrity and chain check; other trust failures remain rejected.</summary>
         internal static (bool valid, string subject, string thumb) GetSignerInfo()
         {
             try { return GetSignerInfo(Process.GetCurrentProcess().MainModule?.FileName ?? string.Empty); }
@@ -159,17 +158,18 @@ namespace KillerScan.Services
                     pcwszFilePath = pathPtr
                 }, fileInfoPtr, false);
 
-                Marshal.StructureToPtr(new WINTRUST_DATA
+                bool valid = VerifyTrust((revocation, flags) =>
                 {
-                    cbStruct      = (uint)Marshal.SizeOf<WINTRUST_DATA>(),
-                    dwUIChoice    = 2,       // WTD_UI_NONE
-                    dwUnionChoice = 1,       // WTD_CHOICE_FILE
-                    pUnion        = fileInfoPtr,
-                    dwProvFlags   = 0x1000   // WTD_CACHE_ONLY_URL_RETRIEVAL, never hit the network
-                }, dataPtr, false);
-
-                var actionId = WTD_VERIFY_GENERIC;
-                return (WinVerifyTrust(IntPtr.Zero, ref actionId, dataPtr) == 0, subject, thumb, publisher);
+                    Marshal.StructureToPtr(new WINTRUST_DATA
+                    {
+                        cbStruct = (uint)Marshal.SizeOf<WINTRUST_DATA>(), dwUIChoice = 2,
+                        dwUnionChoice = 1, pUnion = fileInfoPtr,
+                        fdwRevocationChecks = revocation, dwProvFlags = flags
+                    }, dataPtr, false);
+                    var actionId = WTD_VERIFY_GENERIC;
+                    return WinVerifyTrust(IntPtr.Zero, ref actionId, dataPtr);
+                });
+                return (valid, subject, thumb, publisher);
             }
             catch { return (false, subject, thumb, publisher); }
             finally
@@ -178,6 +178,14 @@ namespace KillerScan.Services
                 Marshal.FreeHGlobal(fileInfoPtr);
                 Marshal.FreeHGlobal(pathPtr);
             }
+        }
+
+        internal static bool VerifyTrust(Func<uint, uint, uint> nativeVerify)
+        {
+            uint status = nativeVerify(1, 0x80);
+            if (status == 0) return true;
+            // Only an offline revocation server permits an integrity and trusted-chain retry.
+            return status == 0x80092013 && nativeVerify(0, 0x1010) == 0;
         }
 
         /// <summary>SHA-256 of the running exe as lower-case hex. Slow on a large file, so callers

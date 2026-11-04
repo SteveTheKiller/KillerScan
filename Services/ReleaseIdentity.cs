@@ -12,19 +12,22 @@ namespace KillerScan.Services
     /// elevated helper on the held-open download and again on the protected staged copy.
     ///
     /// Trust rule: the incoming file needs a valid Authenticode signature with a trusted chain, and its
-    /// certificate subject must name AppInfo.SignerName. When the running copy is signed, the incoming
+    /// certificate common name must exactly match the release publisher. When the running copy is signed, the incoming
     /// subject must also name the running copy's publisher (CodeSignature.SamePublisher), and a running
-    /// copy whose own signature is present but fails refuses every update. Thumbprints are never
-    /// compared with the installed copy: a renewed certificate has a new thumbprint for the same
-    /// publisher, and updates must keep working across the renewal. The thumbprint returned here is the
+    /// copy whose own signature is present but fails refuses every update. An unsigned development
+    /// build also requires its pinned release certificate. Signed copies accept a renewed certificate
+    /// from the same publisher. The thumbprint returned here is the
     /// verified file's own, which the publication helper pins the staged image to.
     /// </summary>
     internal static class ReleaseIdentity
     {
+        internal const string PublisherCommonName = "Open Source Developer Stephen Riley";
+        internal const string DevelopmentUpdateSigner = "E478E4940DFD3547DAF2199494B399214FB3E0FD";
+
         /// <summary>Throws <see cref="SecurityException"/> unless <paramref name="exe"/> is a validly
         /// signed <paramref name="version"/> that is newer than the running copy and, when
         /// the running copy is signed, signed by the same publisher (any certificate of it). An unsigned running copy is a
-        /// local build that cannot vouch for a publisher, so it accepts any validly signed release;
+        /// local build that requires its pinned release signer;
         /// <paramref name="requireInstalledSignature"/> removes that allowance for the elevated path.</summary>
         /// <returns>The thumbprint of the certificate that signed <paramref name="exe"/>, which the
         /// publication helper holds the published image to.</returns>
@@ -34,7 +37,7 @@ namespace KillerScan.Services
             var incoming = CodeSignature.GetSignerInfo(exe);
             AssemblyName name = ReadIdentity(exe);
             Verify(name, version, Assembly.GetExecutingAssembly().GetName().Version!,
-                (installed.valid, installed.subject), (incoming.valid, incoming.subject), requireInstalledSignature);
+                (installed.valid, installed.subject), (incoming.valid, incoming.subject), requireInstalledSignature, incoming.thumb);
             // KillerShell's same-publisher rule: a signed copy only takes a replacement from the same
             // publisher, and a copy whose own signature is present but fails is refused outright
             // instead of being treated as an unsigned local build.
@@ -73,7 +76,7 @@ namespace KillerScan.Services
                 version, Assembly.GetExecutingAssembly().GetName().Version!);
             var installed = CodeSignature.GetSignerInfo();
             var incoming = CodeSignature.GetSignerInfo(package);
-            VerifySigner((installed.valid, installed.subject), (incoming.valid, incoming.subject), requireInstalledSignature: false);
+            VerifySigner((installed.valid, installed.subject), (incoming.valid, incoming.subject), requireInstalledSignature: false, incoming.thumb);
             string current;
             using (var self = Process.GetCurrentProcess()) current = self.MainModule?.FileName ?? string.Empty;
             if (!CodeSignature.MayReplace(current, package))
@@ -95,9 +98,9 @@ namespace KillerScan.Services
         /// CodeSignature.GetSignerInfo reports them.</summary>
         internal static void Verify(AssemblyName incoming, string version, Version installed,
             (bool valid, string subject) installedSigner, (bool valid, string subject) incomingSigner,
-            bool requireInstalledSignature)
+            bool requireInstalledSignature, string? incomingThumbprint = null)
         {
-            VerifySigner(installedSigner, incomingSigner, requireInstalledSignature);
+            VerifySigner(installedSigner, incomingSigner, requireInstalledSignature, incomingThumbprint);
             string requested = NormalizeVersion(version);
             if (incoming.Name != AppInfo.DisplayName || incoming.Version == null
                 || NormalizeVersion(incoming.Version.ToString()) != requested
@@ -105,18 +108,19 @@ namespace KillerScan.Services
                 throw new SecurityException("The update's product or release version does not match a newer " + AppInfo.DisplayName + " release.");
         }
 
-        /// <summary>Throws unless the incoming signature is valid, its subject names AppInfo.SignerName
-        /// and, when the running copy is signed, it names the running copy's publisher. Never compares
-        /// thumbprints, so a renewed certificate of the same publisher is accepted.</summary>
+        /// <summary>Requires the exact release publisher and a valid signature. Unsigned development
+        /// builds require the pinned certificate; signed copies accept that publisher's renewed certificates.</summary>
         internal static void VerifySigner((bool valid, string subject) installedSigner,
-            (bool valid, string subject) incomingSigner, bool requireInstalledSignature)
+            (bool valid, string subject) incomingSigner, bool requireInstalledSignature, string? incomingThumbprint = null)
         {
             if (requireInstalledSignature && !installedSigner.valid)
                 throw new SecurityException("The installed update helper has no valid signature.");
             if (!incomingSigner.valid)
                 throw new SecurityException("The update has no valid Authenticode signature.");
-            if ((incomingSigner.subject ?? string.Empty).IndexOf(AppInfo.SignerName, StringComparison.OrdinalIgnoreCase) < 0)
+            if (!CodeSignature.SamePublisher(incomingSigner.subject, PublisherCommonName))
                 throw new SecurityException("The update is not signed by the publisher.");
+            if (!installedSigner.valid && !string.Equals(incomingThumbprint, DevelopmentUpdateSigner, StringComparison.OrdinalIgnoreCase))
+                throw new SecurityException("The update signer is not trusted by this development build.");
             if (installedSigner.valid && !CodeSignature.SamePublisher(installedSigner.subject, incomingSigner.subject))
                 throw new SecurityException("The update is not signed by the publisher of the installed copy.");
         }

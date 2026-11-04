@@ -70,7 +70,7 @@ namespace KillerScan.Services
                 using var self = Process.GetCurrentProcess();
                 if (!string.Equals(self.MainModule!.FileName, target, StringComparison.OrdinalIgnoreCase))
                     throw new SecurityException("The update helper is not the protected installed application.");
-                using var lease = KillerFamily.Deployment.InstallerExitCodes.Acquire(AppInfo.DisplayName);
+                using var lease = KillerFamily.Deployment.InstallerExitCodes.Acquire(AppInfo.DisplayName, directory);
                 using var pinned = InstallationFiles.PinDirectory(directory, mustExist: true);
                 using var creator = WindowsIdentity.GetCurrent();
                 ValidateMachineOwner(directory, creator.Owner
@@ -107,7 +107,7 @@ namespace KillerScan.Services
                 {
                     originalHash = Hex(hash.ComputeHash(original));
                     var identity = CodeSignature.GetSignerInfo(target);
-                    if (!identity.valid || !CodeSignature.SamePublisher(identity.subject, AppInfo.SignerName))
+                    if (!identity.valid || !CodeSignature.SamePublisher(identity.subject, ReleaseIdentity.PublisherCommonName))
                         throw new SecurityException("The installed recovery image publisher is invalid.");
                     originalSigner = identity.thumb;
                 }
@@ -156,7 +156,8 @@ namespace KillerScan.Services
         {
             string publication = UpdateImagePublication.Script(staged, target, true, UpdateService.ReleasesUrl,
                 AppInfo.DisplayName, version, "HKLM", reopen: UpdateService.RelaunchArgument, guardEmitted: true,
-                    originalHash: originalHash, originalSigner: originalSigner);
+                    originalHash: originalHash, originalSigner: originalSigner, companion: AppInfo.UpdateCompanionPath,
+                    companionArguments: AppInfo.UpdateCompanionArguments, companionName: AppInfo.UpdateCompanionName);
             string report = staged + ".recovery.txt";
             // The guard type comes first, so a failure before the publication text has run (the app
             // did not close, another install holds the mutex, the installed image changed) can still
@@ -164,7 +165,7 @@ namespace KillerScan.Services
             string body = "$ErrorActionPreference='Stop';$lease=$null;$owned=$false;$exited=$false;try{\n"
                 + UpdateImagePublication.Guard + "\n"
                 + Wait(parentId, parentTicks, Abandoned) + Wait(helperId, helperTicks, Abandoned) + "$exited=$true;"
-                + "$lease=New-Object Threading.Mutex($false,'Global\\KillerTools-Install-" + AppInfo.DisplayName + "');"
+                + "$lease=New-Object Threading.Mutex($false," + Data(KillerFamily.Deployment.InstallerExitCodes.MutexName(AppInfo.DisplayName, Path.GetDirectoryName(target)!)) + ");"
                 + "try{$owned=$lease.WaitOne(5000)}catch [Threading.AbandonedMutexException]{$owned=$true};if(-not $owned){throw 'Another KillerTools install or update is running, so this update was not applied.'};"
                 + "$original=[IO.File]::OpenRead(" + Data(target) + ");$hash=[Security.Cryptography.SHA256]::Create();"
                 + "try{if([BitConverter]::ToString($hash.ComputeHash($original)).Replace('-','') -ne " + Data(originalHash)
@@ -178,7 +179,7 @@ namespace KillerScan.Services
                 // old copy has exited, and it follows even when another install holds the lock (waited on
                 // briefly), which only means nothing is published. An app still running is left alone.
                 + "if(-not $exited){exit 1};try{Start-KillerUpdatedApp (" + Data(target) + ") '" + UpdateService.RelaunchArgument.Replace("'", "''") + "' $true (" + Data(originalSigner) + ") ("
-                + Data(AppInfo.SignerName) + ") (" + Data(report) + ") (" + Data(originalHash) + ")}catch{};exit 1}"
+                + Data(ReleaseIdentity.PublisherCommonName) + ") (" + Data(report) + ") (" + Data(originalHash) + ")}catch{};exit 1}"
                 + "finally{if($null -ne $lease){if($owned){$lease.ReleaseMutex()};$lease.Dispose()}}";
             return new ProcessStartInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
                 @"WindowsPowerShell\v1.0\powershell.exe"), ImmutablePowerShell.Arguments(body))

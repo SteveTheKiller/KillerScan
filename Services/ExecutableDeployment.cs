@@ -126,7 +126,7 @@ namespace KillerScan.Services
 
         private static bool IsPublicationLeftover(string name, string exe)
         {
-            foreach (string marker in new[] { ".old-", ".new-", ".restore-" })
+            foreach (string marker in new[] { ".old-", ".new-", ".restore-", ".install-", ".previous-", ".failed-" })
                 if (name.Length == exe.Length + marker.Length + 32 && name.StartsWith(exe + marker, StringComparison.OrdinalIgnoreCase)
                     && Guid.TryParseExact(name.Substring(exe.Length + marker.Length), "N", out _))
                     return true;
@@ -222,6 +222,13 @@ namespace KillerScan.Services
         }
 
         private const string KeepMarker = ".keep";
+
+        internal static void RemoveCompanionIfUnowned(string machineImage, string companion)
+        {
+            if (File.Exists(machineImage)) return;
+            File.Delete(companion);
+            if (File.Exists(companion)) throw new IOException("The companion helper remains after removal.");
+        }
 
         /// <summary>Marks the backup as a recovery file before naming it, so a later publication leaves it alone.</summary>
         private static IOException RecoveryError(string staged, string backup, Exception error)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace KillerScan.Services
@@ -31,17 +32,28 @@ namespace KillerScan.Services
         /// <summary>The publication script. With <paramref name="showReport"/> a failure opens the recovery report.
         /// <paramref name="overrides"/> replaces individual operations and exists for checks only. A caller
         /// that has already emitted <see cref="Guard"/> ahead of this text passes <paramref name="guardEmitted"/>,
-        /// so the helper stays within the Windows command limit.</summary>
+        /// so the helper stays within the Windows command limit. That caller owns the lifecycle lease
+        /// and original-image validation; other callers acquire and validate in this script.</summary>
         internal static string Script(string download, string target, bool elevated,
             string releasesUrl, string displayName, string? version = null, string? hive = null,
             string? reopen = null, bool showReport = false, string? overrides = null, bool guardEmitted = false,
-            string? originalHash = null, string? originalSigner = null)
+            string? originalHash = null, string? originalSigner = null, string? companion = null,
+            string? companionArguments = null, string? companionName = null)
         {
+            if (!string.IsNullOrEmpty(companion)
+                && (string.IsNullOrWhiteSpace(companionArguments) || string.IsNullOrWhiteSpace(companionName)))
+                throw new ArgumentException("A configured companion requires launch arguments and a display name.", nameof(companion));
             download = Path.GetFullPath(download);
             target = Path.GetFullPath(target);
             if (!VerifiedHashes.TryGetValue(download, out var verified))
                 throw new InvalidDataException("This update has no retained verification hash. Download retained at: " + download);
             string expected = verified.Hash;
+            if (!guardEmitted && originalHash == null)
+            {
+                using var original = new FileStream(target, FileMode.Open, FileAccess.Read, FileShare.Read);
+                using var hash = SHA256.Create();
+                originalHash = BitConverter.ToString(hash.ComputeHash(original)).Replace("-", "");
+            }
             string staged = target + ".new-" + Guid.NewGuid().ToString("N");
             string backup = target + ".old-" + Guid.NewGuid().ToString("N");
             string restore = target + ".restore-" + Guid.NewGuid().ToString("N");
@@ -60,11 +72,15 @@ namespace KillerScan.Services
             Value(script, "Releases", releasesUrl); Value(script, "DisplayName", displayName);
             Value(script, "Version", version ?? ""); Value(script, "Hive", hive ?? "");
             Value(script, "Reopen", reopen ?? "");
-            Value(script, "Signer", AppInfo.SignerName); Value(script, "Thumb", verified.Signer);
+            Value(script, "Companion", companion ?? "");
+            Value(script, "CompanionArguments", companionArguments ?? ""); Value(script, "CompanionName", companionName ?? "");
+            Value(script, "Signer", ReleaseIdentity.PublisherCommonName); Value(script, "Thumb", verified.Signer);
             Value(script, "OriginalHash", originalHash ?? ""); Value(script, "OriginalThumb", originalSigner ?? "");
+            Value(script, "LifecycleMutex", KillerFamily.Deployment.InstallerExitCodes.MutexName(displayName, Path.GetDirectoryName(target)!));
             script.AppendLine("IsInstaller = $false");
             script.AppendLine("Elevated = " + (elevated ? "$true" : "$false"));
             script.AppendLine("Unsafe = $false");
+            script.AppendLine("CompanionFailed = $false");
             script.AppendLine("ShowReport = " + (showReport ? "$true" : "$false")).AppendLine("}");
             // An antivirus or a locked-down PowerShell can refuse Add-Type, which would end the helper
             // with the app already closed. The per-user helper runs as the same user at the same rights
@@ -78,12 +94,23 @@ namespace KillerScan.Services
             else if (!guardEmitted) script.AppendLine(Guard);
             script.AppendLine(Operations);
             if (overrides is not null) script.AppendLine(overrides);
+            // TrustedUpdate already owns this lease around its emitted guard and publication.
+            if (!guardEmitted)
+            {
+                script.AppendLine("$publicationLease=$null;$publicationLeaseOwned=$false;try {");
+                script.AppendLine("$publicationLease=New-Object Threading.Mutex($false,$plan.LifecycleMutex)");
+                script.AppendLine("try{$publicationLeaseOwned=$publicationLease.WaitOne(0)}catch [Threading.AbandonedMutexException]{$publicationLeaseOwned=$true}");
+                script.AppendLine("if(-not $publicationLeaseOwned){[IO.File]::AppendAllText($plan.Report,[Environment]::NewLine+'Another KillerTools install or update is running, so this update was not applied.');if($plan.ShowReport){try{& $ops.ShowReport $plan.Report}catch{}};exit 1618}");
+                script.AppendLine("$originalImage=$null;try{$originalImage=& $ops.OpenImage $plan.Target;if((& $ops.HashStream $originalImage) -ne $plan.OriginalHash){throw 'The installed image changed before update publication.'}}catch{[IO.File]::AppendAllText($plan.Report,[Environment]::NewLine+'The original installation is missing or changed, so this update was not applied. '+$_.Exception.Message);if($plan.ShowReport){try{& $ops.ShowReport $plan.Report}catch{}};exit 1618}finally{if($null -ne $originalImage){$originalImage.Dispose()}}");
+            }
             // Whatever the mode, a failed publication reopens the copy that is installed (after the
             // report, where one is shown): the user is not left with the app closed. The elevated
             // helper must not open a window as administrator, so it shows no report. The old version then runs without a message; the report stays beside the staged copy
             // in the installation folder, and the next update check offers the release again.
-            script.AppendLine("if (Invoke-UpdateImagePublication $plan $ops) { exit 0 } else { if ($plan.ShowReport) { try { & $ops.ShowReport $plan.Report } catch { } }; "
+            script.AppendLine("if (Invoke-UpdateImagePublication $plan $ops) { if ($plan.CompanionFailed) { if ($plan.ShowReport) { try { & $ops.ShowReport $plan.Report } catch { } }; exit 1 }; exit 0 } else { if ($plan.ShowReport) { try { & $ops.ShowReport $plan.Report } catch { } }; "
                 + "if ((& $ops.Exists $plan.Target) -and -not $plan.Unsafe) { try { & $ops.Recover $plan } catch { } }; exit 1 }");
+            if (!guardEmitted)
+                script.AppendLine("}finally{if($null -ne $publicationLease){if($publicationLeaseOwned){$publicationLease.ReleaseMutex()};$publicationLease.Dispose()}}");
             return script.ToString();
         }
 
@@ -101,7 +128,7 @@ namespace KillerScan.Services
             var script = new StringBuilder(InstallerFunction);
             script.AppendLine("$plan = [pscustomobject]@{");
             Value(script, "Download", download); Value(script, "Hash", verified.Hash.ToUpperInvariant());
-            Value(script, "Signer", AppInfo.SignerName); Value(script, "Thumb", verified.Signer);
+            Value(script, "Signer", ReleaseIdentity.PublisherCommonName); Value(script, "Thumb", verified.Signer);
             Value(script, "Arguments", arguments); Value(script, "Setup", AppInfo.DisplayName + "-Setup.exe");
             Value(script, "Target", Path.GetFullPath(relaunch)); Value(script, "Reopen", UpdateService.RelaunchArgument);
             Value(script, "StageRoot", Path.GetFullPath(stageRoot));
@@ -136,6 +163,9 @@ function Invoke-UpdateImagePublication {
     $image = $null
     $warning = $null
     try {
+        # The installed copy's identity comes first, so a download that fails its checks below can
+        # still be recovered from: the app has already closed by now.
+        if ($ops.ContainsKey('CaptureOriginal')) { & $ops.CaptureOriginal $plan }
         # The download and the staged copy are each held open against writers, renames and
         # deletion while their hash and publisher signature are checked (Killendar's helper checks).
         $hold = & $ops.OpenImage $plan.Download
@@ -145,7 +175,6 @@ function Invoke-UpdateImagePublication {
             if (-not (& $ops.Publisher $plan.Download $plan)) { throw 'The downloaded update is not signed by the publisher.' }
         }
         finally { $hold.Dispose() }
-        if ($ops.ContainsKey('CaptureOriginal')) { & $ops.CaptureOriginal $plan }
         $parents = & $ops.PinParents $plan.Target
         & $ops.Stage $plan.Staged $bytes
         $hold = & $ops.OpenImage $plan.Staged
@@ -167,10 +196,18 @@ function Invoke-UpdateImagePublication {
         if (-not (& $ops.Publisher $plan.Target $plan)) { throw 'The published image is not signed by the publisher.' }
         $unverified = $false
         $published = $true
+        if (-not [string]::IsNullOrEmpty($plan.Companion)) {
+            try { & $ops.RefreshCompanion $plan }
+            catch {
+                $plan.CompanionFailed = $true
+                $warning = 'The update was applied, but the ' + $plan.CompanionName + ' could not be refreshed: ' + $_.Exception.ToString() +
+                    [Environment]::NewLine + 'To retry, run "' + $plan.Target + '" ' + $plan.CompanionArguments + ' as administrator.'
+            }
+        }
         # The verified image is in place. Recording its version in the registry is bookkeeping, and
         # failing to do it must not undo the update: the cleanup and the relaunch below still run.
         try { & $ops.Metadata $plan }
-        catch { $warning = 'The update was applied, but its version could not be recorded in the registry: ' + $_.Exception.ToString() }
+        catch { $warning = $warning + [Environment]::NewLine + 'The update was applied, but its version could not be recorded in the registry: ' + $_.Exception.ToString() }
     }
     catch {
         $failure = $_.Exception.ToString()
@@ -308,6 +345,23 @@ $ops = @{
         $process.Dispose()
     }
     Delete = { param($path) [IO.File]::Delete($path) }
+    RefreshCompanion = { param($plan)
+        if (-not [IO.File]::Exists($plan.Companion)) { return }
+        $start = New-Object Diagnostics.ProcessStartInfo
+        $start.FileName = $plan.Target
+        $start.Arguments = $plan.CompanionArguments
+        $start.WorkingDirectory = [Environment]::SystemDirectory
+        $start.WindowStyle = [Diagnostics.ProcessWindowStyle]::Hidden
+        $start.UseShellExecute = -not $plan.Elevated
+        if ($plan.Elevated) { $start.CreateNoWindow = $true } else { $start.Verb = 'runas' }
+        $child = [Diagnostics.Process]::Start($start)
+        if ($null -eq $child) { throw ('The ' + $plan.CompanionName + ' installer did not start.') }
+        try {
+            if (-not $child.WaitForExit(30000)) { throw ('The ' + $plan.CompanionName + ' installer has not finished.') }
+            if ($child.ExitCode -ne 0) { throw ('The ' + $plan.CompanionName + ' installer returned ' + $child.ExitCode + '.') }
+        }
+        finally { $child.Dispose() }
+    }
     Metadata = { param($plan)
         if ($plan.Version.Length -eq 0 -or $plan.Hive.Length -eq 0) { return }
         if ($plan.Hive -eq 'HKLM') { $root = [Microsoft.Win32.Registry]::LocalMachine }
@@ -582,7 +636,7 @@ public static class KillerUpdateGuard {
         string thumb, subject;
         if (!Signature(path, out thumb, out subject)) return false;
         return string.Equals(thumb, thumbprint, StringComparison.OrdinalIgnoreCase)
-            && subject.IndexOf(signer, StringComparison.OrdinalIgnoreCase) >= 0;
+            && string.Equals(subject, signer, StringComparison.OrdinalIgnoreCase);
     }
     public static bool Signature(string path, out string thumbprint, out string subject) {
         thumbprint = ""; subject = "";
@@ -591,7 +645,7 @@ public static class KillerUpdateGuard {
             using (var source = X509Certificate.CreateFromSignedFile(path))
             using (var certificate = new X509Certificate2(source)) {
                 thumbprint = certificate.Thumbprint ?? "";
-                subject = certificate.Subject ?? "";
+                subject = certificate.GetNameInfo(X509NameType.SimpleName, false);
             }
             name = Marshal.StringToHGlobalUni(path);
             file = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(TrustFile)));
@@ -599,10 +653,13 @@ public static class KillerUpdateGuard {
             var fileInfo = new TrustFile(); fileInfo.Size = (uint)Marshal.SizeOf(typeof(TrustFile)); fileInfo.Path = name;
             Marshal.StructureToPtr(fileInfo, file, false);
             var trust = new TrustData(); trust.Size = (uint)Marshal.SizeOf(typeof(TrustData));
-            trust.UiChoice = 2; trust.UnionChoice = 1; trust.File = file; trust.ProviderFlags = 0x1000;
-            Marshal.StructureToPtr(trust, data, false);
+            trust.UiChoice = 2; trust.UnionChoice = 1; trust.File = file;
             var action = new Guid("00AAC56B-CD44-11d0-8CC2-00C04FC295EE");
-            return thumbprint.Length > 0 && WinVerifyTrust(IntPtr.Zero, ref action, data) == 0;
+            return thumbprint.Length > 0 && VerifyTrust(delegate(uint revocation, uint flags) {
+                trust.RevocationChecks = revocation; trust.ProviderFlags = flags;
+                Marshal.StructureToPtr(trust, data, false);
+                return WinVerifyTrust(IntPtr.Zero, ref action, data);
+            });
         }
         catch { return false; }
         finally {
@@ -610,6 +667,11 @@ public static class KillerUpdateGuard {
             if (file != IntPtr.Zero) Marshal.FreeHGlobal(file);
             if (name != IntPtr.Zero) Marshal.FreeHGlobal(name);
         }
+    }
+    public static bool VerifyTrust(Func<uint, uint, uint> nativeVerify) {
+        uint status = nativeVerify(1, 0x80);
+        if (status == 0) return true;
+        return status == 0x80092013 && nativeVerify(0, 0x1010) == 0;
     }
     // Starts the published image and fails unless a process was actually created. An elevated
     // helper starts it with the desktop shell's own token, at normal integrity, and only when that

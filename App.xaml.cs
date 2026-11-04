@@ -231,7 +231,7 @@ namespace KillerScan
 
         private static void RemoveMachineInstallConflict()
         {
-            using var lease = KillerFamily.Deployment.InstallerExitCodes.Acquire(AppName);
+            using var lease = KillerFamily.Deployment.InstallerExitCodes.Acquire(AppName, MachineInstallDir);
             Services.UninstallCompletion.RemoveOwned(machine: true);
             Services.InstallationFiles.RemoveEmpty(MachineInstallDir);
         }
@@ -298,7 +298,7 @@ namespace KillerScan
         private static void RemovePerUserInstall()
         {
             if (!Directory.Exists(InstallDir)) return;
-            using var lease = KillerFamily.Deployment.InstallerExitCodes.Acquire(AppName);
+            using var lease = KillerFamily.Deployment.InstallerExitCodes.Acquire(AppName, InstallDir);
             Services.UninstallCompletion.RemoveOwned(machine: false);
             Services.InstallationFiles.RemoveEmpty(InstallDir);
         }
@@ -362,7 +362,10 @@ namespace KillerScan
         {
             try
             {
-                using var installLease = KillerFamily.Deployment.InstallerExitCodes.Acquire(AppName);
+                // The same per-folder lease the update helpers take, so an install and an update of
+                // one folder never publish over each other. With admin rights it is the machine folder.
+                using var installLease = KillerFamily.Deployment.InstallerExitCodes.Acquire(AppName,
+                    KillerFamily.Deployment.InstallerExitCodes.IsElevated() ? MachineInstallDir : InstallDir);
 
                 // An unsigned or tampered exe must not be able to write itself into
                 // Program Files, least of all while elevated.
@@ -431,7 +434,7 @@ namespace KillerScan
         {
             try
             {
-                using var lease = KillerFamily.Deployment.InstallerExitCodes.Acquire(AppName);
+                using var lease = KillerFamily.Deployment.InstallerExitCodes.Acquire(AppName, InstallDir);
                 Directory.CreateDirectory(InstallDir);
                 string src = Process.GetCurrentProcess().MainModule!.FileName;
                 Services.ExecutableDeployment.Install(src, InstallExe);

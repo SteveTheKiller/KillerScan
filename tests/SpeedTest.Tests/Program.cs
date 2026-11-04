@@ -32,6 +32,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--installation-cleanup" }))
             {
                 InstallationCleanupTests.Run();
+                UpdateTrustRegressionTests.Run();
                 UpdateHandoffTests.Run();
                 UpdateHelperLaunchTests.Run();
                 ReleaseIdentityTests.Run();

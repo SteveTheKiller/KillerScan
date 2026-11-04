@@ -66,7 +66,15 @@ namespace KillerFamily.Deployment
         /// install serialize per directory instead of blocking each other. The folder is hashed to
         /// keep the mutex name short and free of path characters.</summary>
         internal static IDisposable Acquire(string product, string directory)
+            => Acquire(ScopedProduct(product, directory));
+
+        internal static string MutexName(string product, string directory)
+            => @"Global\KillerTools-Install-" + ScopedProduct(product, directory);
+
+        private static string ScopedProduct(string product, string directory)
         {
+            if (string.IsNullOrWhiteSpace(product) || ContainsPathSeparator(product))
+                throw new ArgumentException("A product name is required.", nameof(product));
             string scope = Path.GetFullPath(directory).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToUpperInvariant();
             byte[] scopeBytes = System.Text.Encoding.UTF8.GetBytes(scope);
 #if NET8_0_OR_GREATER
@@ -76,7 +84,7 @@ namespace KillerFamily.Deployment
             using (var sha = System.Security.Cryptography.SHA256.Create())
                 token = BitConverter.ToString(sha.ComputeHash(scopeBytes)).Replace("-", "");
 #endif
-            return Acquire(product + "-" + token);
+            return product + "-" + token;
         }
 
         internal static IDisposable Acquire(string product)

@@ -128,7 +128,7 @@ namespace KillerScan.Services
                     || !Guid.TryParseExact(stageName.Substring(11), "N", out _)
                     || !string.Equals(Path.GetFileName(current), "KillerScan.exe", StringComparison.OrdinalIgnoreCase))
                     throw new UnauthorizedAccessException("The completion helper must run from its owned installation staging directory.");
-                using var lease = KillerFamily.Deployment.InstallerExitCodes.Acquire("KillerScan");
+                using var lease = KillerFamily.Deployment.InstallerExitCodes.Acquire("KillerScan", root);
                 using var pinned = InstallationFiles.PinDirectory(stage);
                 string image = Path.Combine(root, "KillerScan.exe");
                 using (var original = new FileStream(image, FileMode.Open, FileAccess.Read, FileShare.Read))
