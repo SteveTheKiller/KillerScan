@@ -23,7 +23,8 @@ function Get-ItemProperty {
     if (-not $global:KsDeploymentFixtureHasRegistration) {
         throw (New-Object Management.Automation.ItemNotFoundException('The fixture registration is absent.'))
     }
-    [pscustomobject]@{ QuietUninstallString = 'A registered application with an unavailable image' }
+    $registered = if ($global:KsDeploymentFixtureCommand) { $global:KsDeploymentFixtureCommand } else { 'A registered application with an unavailable image' }
+    [pscustomobject]@{ QuietUninstallString = $registered }
 }
 
 try {
@@ -57,6 +58,34 @@ try {
         throw 'An image without completion registration was removed or falsely reported success.'
     }
     Write-Output 'PASS an image without registration is preserved and requires repair.'
+
+    # 1.9.0 and later register UninstallCompletion.Command(machine: true, silent: true): the System32
+    # Windows PowerShell with -NoLogo -NoProfile -NonInteractive -Command and one double-quoted
+    # bootstrap that holds no other double quote. The stand-in bootstrap removes the fixture image,
+    # the way the real completion helper removes the installed one.
+    $powershell = Join-Path ([Environment]::GetFolderPath('System')) 'WindowsPowerShell\v1.0\powershell.exe'
+    # A literal fixture path: a child Windows PowerShell recomputes ProgramFiles, so the variable
+    # would point at the real installation.
+    $removal = "[IO.File]::Delete('" + $fixtureImage.Replace("'", "''") + "');exit 0"
+    $global:KsDeploymentFixtureHasRegistration = $true
+    $global:KsDeploymentFixtureCommand = '"' + $powershell + '" -NoLogo -NoProfile -NonInteractive -Command "' + $removal + '"'
+    & $UninstallScript
+    if ([IO.File]::Exists($fixtureImage)) { throw 'The registered -Command completion helper did not run.' }
+    Write-Output 'PASS the -Command registration that 1.9.x writes runs its completion helper.'
+
+    [IO.File]::WriteAllText($fixtureImage, 'A fixture placeholder that must never be launched')
+    foreach ($bad in @(
+        ('"' + $powershell + '" -NoLogo -NoProfile -Command "' + $removal + '"'),
+        ('"C:\Elsewhere\powershell.exe" -NoLogo -NoProfile -NonInteractive -Command "' + $removal + '"'),
+        ('"' + $powershell + '" -NoLogo -NoProfile -NonInteractive -Command "' + $removal + '" -File evil.ps1'),
+        ('"' + $powershell + '" -NoLogo -NoProfile -NonInteractive -Command "' + $removal))) {
+        $global:KsDeploymentFixtureCommand = $bad
+        $failed = $false
+        try { & $UninstallScript } catch { $failed = $true }
+        if (-not $failed -or -not [IO.File]::Exists($fixtureImage)) { throw "A malformed registration ran: $bad" }
+    }
+    $global:KsDeploymentFixtureCommand = $null
+    Write-Output 'PASS registrations with another host, other switches or extra arguments are refused.'
 }
 finally {
     $env:ProgramFiles = $originalProgramFiles

@@ -11,6 +11,17 @@ internal static class UninstallCommandTests
 {
     internal static void Run()
     {
+        // choco/tools/chocolateyUninstall.ps1 runs the machine registration only in this exact shape:
+        // the System32 Windows PowerShell, these switches, and one double-quoted bootstrap that holds
+        // no other double quote. Both sides change together or Chocolatey cannot uninstall.
+        string powershell = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"WindowsPowerShell\v1.0\powershell.exe");
+        string chocoPrefix = "\"" + powershell + "\" -NoLogo -NoProfile -NonInteractive -Command \"";
+        string registered = UninstallCompletion.Command(machine: true, silent: true);
+        string body = registered.StartsWith(chocoPrefix, StringComparison.OrdinalIgnoreCase) ? registered.Substring(chocoPrefix.Length) : "";
+        if (body.Length < 2 || !body.EndsWith("\"", StringComparison.Ordinal) || body.Substring(0, body.Length - 1).Contains("\""))
+            throw new InvalidOperationException("The machine uninstall registration no longer has the shape the Chocolatey uninstall script runs.");
+        Console.WriteLine("PASS the machine uninstall registration has the shape the Chocolatey uninstall script runs.");
+
         var failures = new List<Exception>();
         foreach (bool machine in new[] { false, true })
             foreach (bool silent in new[] { false, true })
