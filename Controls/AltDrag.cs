@@ -17,12 +17,19 @@ namespace KillerScan.Controls
     /// snapping and multi-monitor behaviour are Windows'. A maximized window restores first and
     /// keeps the cursor at the same relative spot across its width, as Windows' title-bar drag
     /// does. Letting go of Alt after a drag would normally open the window menu (SC_KEYMENU) or
-    /// put WPF into access-key mode; both are swallowed for that one release.
+    /// put WPF into access-key mode; both are swallowed for that one release. A window that must
+    /// stay put, such as a full-screen overlay, sets <c>AltDrag.IsEnabled="False"</c>.
     /// </remarks>
     public static class AltDrag
     {
         private const int WM_SYSCOMMAND = 0x0112;
         private const int SC_KEYMENU = 0xF100;
+
+        public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.RegisterAttached(
+            "IsEnabled", typeof(bool), typeof(AltDrag), new PropertyMetadata(true));
+
+        public static bool GetIsEnabled(Window window) => (bool)window.GetValue(IsEnabledProperty);
+        public static void SetIsEnabled(Window window, bool value) => window.SetValue(IsEnabledProperty, value);
 
         private static bool _registered;
         private static bool _swallowAltRelease;
@@ -50,7 +57,7 @@ namespace KillerScan.Controls
 
         private static void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is not Window window || Keyboard.Modifiers != ModifierKeys.Alt || e.ButtonState != MouseButtonState.Pressed) return;
+            if (sender is not Window window || !ShouldHandle(window) || Keyboard.Modifiers != ModifierKeys.Alt || e.ButtonState != MouseButtonState.Pressed) return;
             e.Handled = true;
             _swallowAltRelease = true;
             if (window.WindowState == WindowState.Maximized)
@@ -68,6 +75,9 @@ namespace KillerScan.Controls
             try { window.DragMove(); }
             catch (InvalidOperationException) { }   // the button was already up
         }
+
+        /// <summary>Whether an Alt+press in <paramref name="window"/> starts a move.</summary>
+        internal static bool ShouldHandle(Window window) => GetIsEnabled(window);
 
         private static void OnPreviewKeyUp(object sender, KeyEventArgs e)
         {
