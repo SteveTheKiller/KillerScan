@@ -17,6 +17,7 @@ namespace KillerScan.Engine
         public NetworkScanner() : this(new MulticastScanDiscovery()) { }
         public NetworkScanner(IScanDiscovery discovery) => _discovery = discovery ?? throw new ArgumentNullException(nameof(discovery));
         private static readonly SemaphoreSlim NativeMacSlots = new(8);
+        private static readonly SemaphoreSlim ArpSweepSlots = new(64);
 
         // Common ports to probe for device type detection
         private static readonly int[] ProbePorts = [
@@ -280,6 +281,23 @@ namespace KillerScan.Engine
                     discoveredHosts.TryAdd(entry.Key, (IPAddress.Parse(entry.Key), entry.Value));
             }
 
+            // ARP sweep: phones, printers and locked-down devices often drop ping, expose none of the
+            // liveness ports and age out of the neighbor cache before the second read. Ask every
+            // remaining on-link address directly, the way an ARP scanner does. Dead addresses block
+            // SendARP for a few seconds, so the sweep has its own wider pool than MAC resolution.
+            if (options.Arp)
+            {
+                var silent = addresses.Where(a => !discoveredHosts.ContainsKey(a.ToString()) && IsOnLink(a)).ToList();
+                var arpTasks = silent.Select(async addr =>
+                {
+                    string mac = await ResolveMacAsync(addr, ArpSweepSlots, ct);
+                    if (!string.IsNullOrEmpty(mac))
+                        discoveredHosts.TryAdd(addr.ToString(), (addr, mac));
+                });
+                await Task.WhenAll(arpTasks);
+                ct.ThrowIfCancellationRequested();
+            }
+
             // Resolve MAC addresses via ARP for discovered hosts (fast, they're alive)
             StatusChanged?.Invoke(new ScanStatus(ScanStage.ResolvingMacs, discoveredHosts.Count));
             var macTasks = discoveredHosts.Keys.ToList().Select(async ip =>
@@ -462,17 +480,31 @@ namespace KillerScan.Engine
             }
         }
 
-        private static async Task<string> ResolveMacAsync(IPAddress address, CancellationToken ct)
+        private static Task<string> ResolveMacAsync(IPAddress address, CancellationToken ct) =>
+            ResolveMacAsync(address, NativeMacSlots, ct);
+
+        private static async Task<string> ResolveMacAsync(IPAddress address, SemaphoreSlim slots, CancellationToken ct)
         {
-            await NativeMacSlots.WaitAsync(ct);
+            await slots.WaitAsync(ct);
             // A started native call owns its slot until it actually returns, even when the
             // caller has canceled and a later scan is waiting for the same capacity.
             var lookup = Task.Run(() =>
             {
                 try { ct.ThrowIfCancellationRequested(); return GetMacAddress(address); }
-                finally { NativeMacSlots.Release(); }
+                finally { slots.Release(); }
             });
             return await AwaitWithCancellation(lookup, ct);
+        }
+
+        /// <summary>
+        /// True when the OS reaches this address directly on a local segment. SendARP to an
+        /// off-link address answers with the next hop's MAC, so only on-link addresses can be
+        /// declared alive by ARP.
+        /// </summary>
+        private static bool IsOnLink(IPAddress address)
+        {
+            try { return NetworkPlatform.Current.BestRoute(address) is { } route && route.NextHop.Length == 0; }
+            catch { return false; }
         }
 
         private static async Task AwaitWithCancellation(Task task, CancellationToken token)
