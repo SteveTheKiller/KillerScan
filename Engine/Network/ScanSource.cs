@@ -21,6 +21,9 @@ namespace KillerScan.Engine
             set => Run.Value = value;
         }
 
+        /// <summary>Tests only: replaces the echo request, the one probe the suite cannot fake through the platform.</summary>
+        internal static Func<IPAddress, int, Task<(bool Success, int Ttl)>>? PingOverride { get; set; }
+
         internal static TcpClient Tcp()
         {
             var client = new TcpClient(AddressFamily.InterNetwork);
@@ -34,6 +37,7 @@ namespace KillerScan.Engine
         /// <summary>An echo request; bound runs send it from the adapter's address.</summary>
         internal static async Task<(bool Success, int Ttl)> PingAsync(IPAddress address, int timeoutMs)
         {
+            if (PingOverride is { } fake) return await fake(address, timeoutMs);
             if (Current is not { } binding)
             {
                 using var ping = new Ping();

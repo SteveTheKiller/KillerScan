@@ -112,14 +112,15 @@ internal static class ScanOptionsTests
                 None().WithFeature("neighbor-cache", true), fullScan: false);
             Require(devices.Count == 1 && devices[0].MacAddress.Length == 0 && devices[0].Hostname.Length == 0,
                 "Neighbor-only discovery preserves the cached device without active ARP or DNS enrichment.");
-            Require(platform.Reads == 2 && platform.Macs == 0 && platform.Flushes == 0,
+            // Before the liveness wave, after it, and after the ARP sweep's turn.
+            Require(platform.Reads == 3 && platform.Macs == 0 && platform.Flushes == 0,
                 "Neighbor selection reads the OS cache without requesting active resolution.");
 
             devices = await scanner.ScanSubnetAsync("127.0.0.1", deadline.Token,
                 None().WithFeature("icmp", true).WithFeature("arp", true), fullScan: false);
             Require(devices.Count == 1 && devices[0].MacAddress == "00:00:0C:12:34:56" && platform.Macs == 1,
                 "Real loopback ICMP discovers the host and enabled ARP obtains its address.");
-            Require(platform.Reads == 2 && platform.Flushes == 0,
+            Require(platform.Reads == 3 && platform.Flushes == 0,
                 "An ICMP scan still respects disabled neighbor and DNS choices.");
         }
         finally { NetworkPlatform.Current = original; }

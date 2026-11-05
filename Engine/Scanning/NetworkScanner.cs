@@ -17,14 +17,34 @@ namespace KillerScan.Engine
         public NetworkScanner() : this(new MulticastScanDiscovery()) { }
         public NetworkScanner(IScanDiscovery discovery) => _discovery = discovery ?? throw new ArgumentNullException(nameof(discovery));
         private static readonly SemaphoreSlim NativeMacSlots = new(8);
-        // A dead address holds its SendARP call for about 3.7 seconds. Measured on SN02 on a /24 with
-        // four live hosts: 64 at a time added 16 seconds to a 6-second quick scan, 256 added 4.
-        private static readonly SemaphoreSlim ArpSweepSlots = new(256);
+
+        /// <summary>
+        /// The most on-link addresses discovery resolves at once, across every scan in the process.
+        /// Each ping, TCP connect or ARP request to an unresolved on-link address holds a neighbor
+        /// cache entry until it answers or times out, and Windows keeps 256 entries per interface by
+        /// default. A busy /24 already has 150 or so live entries, so discovery keeps its own share
+        /// well under the rest; past the limit Windows starts dropping entries, and a host whose
+        /// entry is dropped mid-request is reported missing. A dead address holds its SendARP call
+        /// for about 4 seconds, so a quiet /24 pays roughly 15 seconds of sweep at this width.
+        /// </summary>
+        internal const int DiscoveryWidth = 64;
+        private static readonly SemaphoreSlim NeighborSlots = new(DiscoveryWidth);
 
         /// <summary>The most silent on-link addresses the ARP sweep asks one by one: 1,024 (a /22)
-        /// is four waves of 256, about 15 seconds. A larger range relies on ping, TCP liveness and
+        /// is sixteen waves of 64, about a minute. A larger range relies on ping, TCP liveness and
         /// the neighbor cache.</summary>
         internal static int ArpSweepLimit = 1024;
+
+        /// <summary>A SendARP that fails faster than this never waited out Windows' retransmits
+        /// (a dead address takes about 4 seconds), so the sweep asks that address once more.</summary>
+        internal static TimeSpan ArpQuickFailure = TimeSpan.FromSeconds(1.5);
+
+        /// <summary>The first liveness ping is short so a quiet range moves fast; the second, for
+        /// addresses the ARP sweep cannot ask, outlasts one ARP retransmit (1 second).</summary>
+        private const int FirstPingTimeoutMs = 500, SecondPingTimeoutMs = 1200;
+
+        /// <summary>The most silent addresses the second liveness pass asks again.</summary>
+        internal static int SecondPassLimit = 1024;
 
         // Common ports to probe for device type detection
         private static readonly int[] ProbePorts = [
@@ -72,10 +92,13 @@ namespace KillerScan.Engine
         // only for hosts already found alive.
         private static readonly int[] LivenessPorts = [445, 3389, 80, 443, 22];
 
-        // A MAC resolved for more than this many distinct IPs is treated as a next-hop/gateway artifact
-        // (routed or VPN link) rather than a real per-host address, and is discarded. Real LAN hosts each
-        // have a unique MAC, so a low ceiling is safe; 2 tolerates the odd multi-homed NIC.
+        // A MAC resolved for more than MaxIpsPerMac distinct IPs may be a next-hop artifact: a router
+        // answering ARP for addresses it does not own (proxy ARP), or a TAP adapter answering for
+        // every address. It is discarded when it is the gateway's own MAC or turns up on at least
+        // SharedMacCeiling addresses. Below that it is one NIC carrying a few addresses (a Linux
+        // server with aliases, a firewall's virtual IPs), and every one of them is a real device.
         private const int MaxIpsPerMac = 2;
+        private const int SharedMacCeiling = 8;
 
         public static void FlushLocalDnsCache() => NetworkPlatform.Current.FlushDnsCache();
 
@@ -244,27 +267,36 @@ namespace KillerScan.Engine
             var ssdpTask = options.Ssdp ? _discovery.CollectSsdpAsync(ct)
                 : Task.FromResult(new Dictionary<string, string>());
 
-            // Fast parallel ping sweep (async, no blocking ARP calls)
+            // Which addresses Windows reaches directly. Only those take a neighbor cache entry while
+            // they resolve, so only they count against DiscoveryWidth, and only they can be swept
+            // with ARP. One route lookup per address, kept off the caller's (UI) thread.
+            var onLink = await Task.Run(() => new HashSet<string>(addresses.Where(IsOnLink).Select(a => a.ToString())), ct);
+
+            // Liveness wave: ping, then TCP on a few ports for hosts that drop ICMP (Windows Firewall
+            // default). ARP cannot reach a host across a router or VPN, so for those this is the
+            // only evidence, and it is what closes the "20 found vs 200 real" gap over a VPN.
             var semaphore = new SemaphoreSlim(200);
+            async Task<bool> AliveAsync(IPAddress addr, int pingTimeoutMs)
+            {
+                bool neighbor = onLink.Contains(addr.ToString());
+                if (neighbor) await NeighborSlots.WaitAsync(ct);
+                try
+                {
+                    if (options.Icmp && (await ScanSource.PingAsync(addr, pingTimeoutMs)).Success) return true;
+                    return options.TcpLiveness && await TcpAliveAsync(addr);
+                }
+                finally { if (neighbor) NeighborSlots.Release(); }
+            }
+
             var scanTasks = addresses.Select(async addr =>
             {
                 await semaphore.WaitAsync(ct);
                 try
                 {
-                    bool alive = false;
-                    if (options.Icmp)
-                    {
-                        alive = (await ScanSource.PingAsync(addr, 500)).Success;
-                    }
-                    // ICMP is commonly blocked (Windows Firewall default), and ARP can't reach a host
-                    // across a routed/VPN link, so a silent host isn't necessarily down. Fall back to a
-                    // quick TCP connect on a few common ports - anything that answers is alive even when
-                    // it drops ping. This is what closes the "20 found vs 200 real" gap over a VPN.
-                    if (!alive && options.TcpLiveness)
-                        alive = await TcpAliveAsync(addr);
-                    if (alive)
+                    if (await AliveAsync(addr, FirstPingTimeoutMs))
                         discoveredHosts.TryAdd(addr.ToString(), (addr, ""));
                 }
+                catch (OperationCanceledException) { throw; }
                 catch { }
                 finally
                 {
@@ -288,25 +320,50 @@ namespace KillerScan.Engine
                     discoveredHosts.TryAdd(entry.Key, (IPAddress.Parse(entry.Key), entry.Value));
             }
 
+            // Second liveness pass for silent addresses the ARP sweep below cannot ask: routed ones,
+            // or every one when ARP is off. It waits out at least one ARP retransmit (1 second), so a
+            // host whose first ping was lost while its next hop resolved still answers.
+            var silentNow = addresses.Where(a => !discoveredHosts.ContainsKey(a.ToString())).ToList();
+            var unswept = silentNow.Where(a => !options.Arp || !onLink.Contains(a.ToString())).ToList();
+            if ((options.Icmp || options.TcpLiveness) && unswept.Count > 0 && unswept.Count <= SecondPassLimit)
+            {
+                await Task.WhenAll(unswept.Select(async addr =>
+                {
+                    await semaphore.WaitAsync(ct);
+                    try
+                    {
+                        if (await AliveAsync(addr, SecondPingTimeoutMs))
+                            discoveredHosts.TryAdd(addr.ToString(), (addr, ""));
+                    }
+                    catch (OperationCanceledException) { throw; }
+                    catch { }
+                    finally { semaphore.Release(); }
+                }));
+                ct.ThrowIfCancellationRequested();
+            }
+
             // ARP sweep: phones, printers and locked-down devices often drop ping, expose none of the
             // liveness ports and age out of the neighbor cache before the second read. Ask every
             // remaining on-link address directly, the way an ARP scanner does. Dead addresses block
-            // SendARP for a few seconds, so the sweep has its own wider pool of dedicated threads and
-            // reports progress (25 to 30) as each address answers or times out. A range with more
-            // silent addresses than ArpSweepLimit is left to the checks above.
+            // SendARP for a few seconds, so the sweep runs on dedicated threads, shares the neighbor
+            // budget with the liveness wave, and reports progress (25 to 30) as each address answers
+            // or times out. A range with more silent addresses than ArpSweepLimit is left to the
+            // checks above.
             var sweptOnly = new HashSet<string>();
             if (options.Arp)
             {
-                // One route lookup per address: kept off the caller's (UI) thread.
-                var silent = await Task.Run(() =>
-                    addresses.Where(a => !discoveredHosts.ContainsKey(a.ToString()) && IsOnLink(a)).ToList(), ct);
+                var silent = silentNow.Where(a => onLink.Contains(a.ToString()) && !discoveredHosts.ContainsKey(a.ToString())).ToList();
                 if (silent.Count <= ArpSweepLimit)
                 {
                     int swept = 0;
                     var answered = new System.Collections.Concurrent.ConcurrentBag<string>();
                     var arpTasks = silent.Select(async addr =>
                     {
-                        string mac = await ResolveMacAsync(addr, ArpSweepSlots, ct, dedicated: true);
+                        var (mac, took) = await ResolveMacTimedAsync(addr, NeighborSlots, ct, dedicated: true);
+                        // A dead address holds SendARP for seconds while Windows retransmits. One
+                        // that fails at once never got those retransmits, so it is asked once more.
+                        if (string.IsNullOrEmpty(mac) && took < ArpQuickFailure)
+                            mac = await ResolveMacAsync(addr, NeighborSlots, ct, dedicated: true);
                         if (!string.IsNullOrEmpty(mac) && discoveredHosts.TryAdd(addr.ToString(), (addr, mac)))
                             answered.Add(addr.ToString());
                         int done = Interlocked.Increment(ref swept);
@@ -316,6 +373,15 @@ namespace KillerScan.Engine
                     ct.ThrowIfCancellationRequested();
                     sweptOnly.UnionWith(answered);
                 }
+            }
+
+            // Last look at the neighbor cache: SendARP can give up on a host whose reply Windows
+            // records a moment later, and reading the cache sends nothing.
+            if (options.NeighborCache)
+            {
+                foreach (var entry in await Task.Run(GetArpCache, ct))
+                    if (addressSet.Contains(entry.Key))
+                        discoveredHosts.TryAdd(entry.Key, (IPAddress.Parse(entry.Key), entry.Value));
             }
 
             // Resolve MAC addresses via ARP for discovered hosts (fast, they're alive)
@@ -338,10 +404,16 @@ namespace KillerScan.Engine
             // (e.g. Fortinet) would otherwise stamp every device with the wrong vendor and device type.
             // A real LAN gives each host a unique MAC, so a MAC shared across several IPs is an artifact:
             // blank it and let the port/fingerprint signals classify those hosts instead.
+            // The gateway's MAC, from this scan when the gateway is in range, else from the cache.
+            string gatewayMac = discoveredHosts.TryGetValue(GatewayIp, out var gatewayHost) && gatewayHost.Mac.Length > 0
+                ? gatewayHost.Mac
+                : arpCache2.TryGetValue(GatewayIp, out var cachedGateway) ? cachedGateway
+                : arpCache.TryGetValue(GatewayIp, out cachedGateway) ? cachedGateway : string.Empty;
             var bogusMacs = new HashSet<string>(discoveredHosts.Values
                 .Where(h => !string.IsNullOrEmpty(h.Mac))
                 .GroupBy(h => h.Mac)
-                .Where(g => g.Count() > MaxIpsPerMac)
+                .Where(g => g.Count() > MaxIpsPerMac && (g.Count() >= SharedMacCeiling
+                    || string.Equals(g.Key, gatewayMac, StringComparison.OrdinalIgnoreCase)))
                 .Select(g => g.Key));
             if (bogusMacs.Count > 0)
             {
@@ -506,18 +578,24 @@ namespace KillerScan.Engine
         private static Task<string> ResolveMacAsync(IPAddress address, CancellationToken ct) =>
             ResolveMacAsync(address, NativeMacSlots, ct);
 
-        private static async Task<string> ResolveMacAsync(IPAddress address, SemaphoreSlim slots, CancellationToken ct, bool dedicated = false)
+        private static async Task<string> ResolveMacAsync(IPAddress address, SemaphoreSlim slots, CancellationToken ct, bool dedicated = false) =>
+            (await ResolveMacTimedAsync(address, slots, ct, dedicated)).Mac;
+
+        /// <summary>The MAC and how long the native call itself took, not counting the wait for a slot.</summary>
+        private static async Task<(string Mac, TimeSpan Took)> ResolveMacTimedAsync(IPAddress address, SemaphoreSlim slots, CancellationToken ct, bool dedicated = false)
         {
             await slots.WaitAsync(ct);
             // A started native call owns its slot until it actually returns, even when the
             // caller has canceled and a later scan is waiting for the same capacity.
-            Func<string> work = () =>
+            Func<(string, TimeSpan)> work = () =>
             {
                 try
                 {
                     ct.ThrowIfCancellationRequested();
+                    var clock = Stopwatch.StartNew();
                     // Off-link, SendARP answers with the next hop's MAC, which belongs to the router.
-                    return IsOnLink(address) ? GetMacAddress(address) : string.Empty;
+                    string mac = IsOnLink(address) ? GetMacAddress(address) : string.Empty;
+                    return (mac, clock.Elapsed);
                 }
                 finally { slots.Release(); }
             };

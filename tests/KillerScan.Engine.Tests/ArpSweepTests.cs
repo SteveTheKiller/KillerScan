@@ -12,6 +12,11 @@ internal static class ArpSweepTests
     {
         var original = NetworkPlatform.Current;
         int originalLimit = NetworkScanner.ArpSweepLimit;
+        var originalQuickFailure = NetworkScanner.ArpQuickFailure;
+        string originalGateway = NetworkScanner.GatewayIp;
+        // The fakes answer at once, where a real dead address holds SendARP for seconds, so the
+        // quick-failure retry is off except in the test that is about it.
+        NetworkScanner.ArpQuickFailure = TimeSpan.Zero;
         try
         {
             await OnLinkArpOnlyHostIsFound();
@@ -22,8 +27,21 @@ internal static class ArpSweepTests
             await RoutedHostsNeverBorrowTheNextHopMac();
             await RouteLookupsStayOffTheCallersThread();
             await BoundScanTreatsItsOwnNetworkAsOnLink();
+            await CacheReadAfterTheSweepFindsLateAnswers();
+            await QuickArpFailuresAreAskedAgain();
+            await SilentRoutedAddressesGetASecondLivenessPass();
+            await SharedMacOutsideTheGatewayKeepsItsHosts();
+            await GatewayMacOnOtherAddressesAddsNothing();
+            await DiscoveryStaysInsideItsWidth();
         }
-        finally { NetworkPlatform.Current = original; NetworkScanner.ArpSweepLimit = originalLimit; }
+        finally
+        {
+            NetworkPlatform.Current = original;
+            NetworkScanner.ArpSweepLimit = originalLimit;
+            NetworkScanner.ArpQuickFailure = originalQuickFailure;
+            NetworkScanner.GatewayIp = originalGateway;
+            ScanSource.PingOverride = null;
+        }
         Console.WriteLine("PASS: the ARP sweep finds on-link ARP-only hosts, reports progress, and adds or stamps nothing off-link.");
     }
 
@@ -67,9 +85,10 @@ internal static class ArpSweepTests
 
     private static async Task OneMacForEveryAddressIsNotADevice()
     {
-        // A proxy-ARP router or a TAP adapter answers for every on-link address with one MAC.
+        // A proxy-ARP router or a TAP adapter answers for every on-link address with one MAC, so on
+        // any real range that MAC turns up on far more addresses than one host's own aliases would.
         NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "00:09:0F:AA:BB:CC");
-        Require((await Quick("192.0.2.74-79")).Count == 0, "Addresses whose only evidence is one shared ARP answer are not devices.");
+        Require((await Quick("192.0.2.70-89")).Count == 0, "Addresses whose only evidence is one shared ARP answer are not devices.");
     }
 
     private static async Task LargeRangesSkipTheSweep()
@@ -120,17 +139,141 @@ internal static class ArpSweepTests
         Require(swept.Count == 2, "A bound scan sweeps its own network with ARP even when Windows routes that subnet elsewhere.");
     }
 
-    private sealed class ArpPlatform(Func<string, string> nextHop, Func<string, string> answer) : INetworkPlatform
+    private static async Task CacheReadAfterTheSweepFindsLateAnswers()
     {
-        private int _calls, _active;
+        // SendARP can give up on a host whose reply Windows still records a moment later. The
+        // neighbor cache read after the sweep is the last look, and it sends no traffic.
+        var platform = new ArpPlatform(_ => "", _ => "",
+            reads => reads >= 3 ? new Dictionary<string, string> { ["192.0.2.77"] = "00:04:F2:12:34:56" } : new Dictionary<string, string>());
+        NetworkPlatform.Current = platform;
+        var found = await Quick("192.0.2.74-79", Silent);
+        Require(found.Count == 1 && found[0].IpAddress == "192.0.2.77" && found[0].MacAddress == "00:04:F2:12:34:56",
+            "A host the neighbor cache holds only after the ARP sweep is still found.");
+    }
+
+    private static async Task QuickArpFailuresAreAskedAgain()
+    {
+        // A dead address holds SendARP for seconds. One that fails at once never got a fair
+        // chance (a busy phone, a request the stack dropped), so it is asked one more time.
+        NetworkScanner.ArpQuickFailure = TimeSpan.FromMilliseconds(150);
+        int seventySeven = 0;
+        var platform = new ArpPlatform(_ => "", ip =>
+        {
+            if (ip == "192.0.2.77") return Interlocked.Increment(ref seventySeven) >= 2 ? "00:04:F2:12:34:56" : "";
+            Thread.Sleep(250);
+            return "";
+        });
+        NetworkPlatform.Current = platform;
+        try
+        {
+            var found = await Quick("192.0.2.74-79", Silent);
+            Require(found.Count == 1 && found[0].IpAddress == "192.0.2.77", "An address whose ARP request failed at once is asked again and found.");
+            Require(platform.CallsFor("192.0.2.77") == 2 && platform.CallsFor("192.0.2.74") == 1,
+                "Only the quick failure is asked again; an address that waited out the full ARP timeout is not.");
+        }
+        finally { NetworkScanner.ArpQuickFailure = TimeSpan.Zero; }
+    }
+
+    private static async Task SilentRoutedAddressesGetASecondLivenessPass()
+    {
+        // Across a router the ARP sweep cannot help, so a routed address that missed its first
+        // ping gets a second one with a longer wait. On-link addresses already get the sweep.
+        var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
+        int longest = 0;
+        ScanSource.PingOverride = (address, timeout) =>
+        {
+            int n = pings.AddOrUpdate(address.ToString(), 1, (_, count) => count + 1);
+            if (n == 2) InterlockedMax(ref longest, timeout);
+            return Task.FromResult((address.ToString() == "192.0.2.77" && n == 2, 64));
+        };
+        try
+        {
+            NetworkPlatform.Current = new ArpPlatform(_ => "192.0.2.1", _ => "");
+            var found = await Quick("192.0.2.74-79", new ScanOptions().Without("tcp-liveness"));
+            Require(found.Count == 1 && found[0].IpAddress == "192.0.2.77", "A routed host that answers only its second ping is found.");
+            Require(longest >= 1000, "The second ping waits out at least one ARP retransmit.");
+
+            pings.Clear();
+            NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "");
+            await Quick("192.0.2.74-79", new ScanOptions().Without("tcp-liveness"));
+            Require(pings.Values.All(count => count == 1), "On-link addresses are left to the ARP sweep, not pinged twice.");
+        }
+        finally { ScanSource.PingOverride = null; }
+    }
+
+    private static async Task SharedMacOutsideTheGatewayKeepsItsHosts()
+    {
+        // One NIC with a few addresses (a Linux server with aliases, a firewall's virtual IPs) is
+        // three real addresses on one MAC, not a proxy-ARP artifact.
+        NetworkScanner.GatewayIp = "192.0.2.1";
+        NetworkPlatform.Current = new ArpPlatform(_ => "", ip => ip is "192.0.2.74" or "192.0.2.75" or "192.0.2.76" ? "00:04:F2:AA:BB:CC" : "");
+        var found = await Quick("192.0.2.74-79", Silent);
+        Require(found.Count == 3 && found.All(d => d.MacAddress == "00:04:F2:AA:BB:CC"),
+            "Three addresses answering ARP with one MAC that is not the gateway's are three devices that keep it.");
+    }
+
+    private static async Task GatewayMacOnOtherAddressesAddsNothing()
+    {
+        // A router answering ARP for addresses it does not own answers with its own MAC.
+        NetworkScanner.GatewayIp = "192.0.2.74";
+        NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "00:11:22:33:44:55");
+        var found = await Quick("192.0.2.74-79", Silent);
+        Require(found.Count == 1 && found[0].IpAddress == "192.0.2.74", "Addresses answered only by the gateway's MAC are not devices; the gateway stays.");
+    }
+
+    private static async Task DiscoveryStaysInsideItsWidth()
+    {
+        // Every ping and ARP request to an unresolved address takes a neighbor cache entry, and
+        // Windows keeps 256 per interface by default. Discovery keeps few enough in flight that
+        // the live hosts of a busy /24 and its own requests fit together.
+        var platform = new ArpPlatform(_ => "", _ => { Thread.Sleep(60); return ""; });
+        NetworkPlatform.Current = platform;
+        int pinging = 0, peakPing = 0;
+        ScanSource.PingOverride = async (_, _) =>
+        {
+            InterlockedMax(ref peakPing, Interlocked.Increment(ref pinging));
+            await Task.Delay(30);
+            Interlocked.Decrement(ref pinging);
+            return (false, 0);
+        };
+        Require(NetworkScanner.DiscoveryWidth + 150 <= 256,
+            "A /24 with 150 live hosts and every request in flight fits Windows' default 256-entry neighbor cache.");
+        try
+        {
+            await Quick("192.0.2.1-200", new ScanOptions().Without("tcp-liveness"));
+            Require(platform.Calls == 200, "Every silent on-link address is swept.");
+            Require(platform.PeakActive <= NetworkScanner.DiscoveryWidth, $"At most {NetworkScanner.DiscoveryWidth} ARP requests are in flight; saw {platform.PeakActive}.");
+            Require(peakPing <= NetworkScanner.DiscoveryWidth, $"At most {NetworkScanner.DiscoveryWidth} pings are in flight; saw {peakPing}.");
+        }
+        finally { ScanSource.PingOverride = null; }
+    }
+
+    // No ping and no TCP: the ARP sweep and the neighbor cache are the only evidence.
+    private static readonly ScanOptions Silent = new ScanOptions().Without("icmp,tcp-liveness");
+
+    private static void InterlockedMax(ref int target, int value)
+    {
+        int seen;
+        while (value > (seen = Volatile.Read(ref target)) && Interlocked.CompareExchange(ref target, value, seen) != seen) { }
+    }
+
+    private sealed class ArpPlatform(Func<string, string> nextHop, Func<string, string> answer,
+        Func<int, IReadOnlyDictionary<string, string>>? cache = null) : INetworkPlatform
+    {
+        private int _calls, _active, _peak, _reads;
+        private readonly System.Collections.Concurrent.ConcurrentDictionary<string, int> _perAddress = new();
         internal int Calls => Volatile.Read(ref _calls);
         internal int Active => Volatile.Read(ref _active);
+        internal int PeakActive => Volatile.Read(ref _peak);
+        internal int CallsFor(string ip) => _perAddress.TryGetValue(ip, out int n) ? n : 0;
         internal System.Collections.Concurrent.ConcurrentBag<int> RouteThreads { get; } = new();
-        public IReadOnlyDictionary<string, string> ReadNeighborCache() => new Dictionary<string, string>();
+        public IReadOnlyDictionary<string, string> ReadNeighborCache() =>
+            cache?.Invoke(Interlocked.Increment(ref _reads)) ?? new Dictionary<string, string>();
         public string ResolveMac(IPAddress address)
         {
             Interlocked.Increment(ref _calls);
-            Interlocked.Increment(ref _active);
+            _perAddress.AddOrUpdate(address.ToString(), 1, (_, n) => n + 1);
+            InterlockedMax(ref _peak, Interlocked.Increment(ref _active));
             try { return answer(address.ToString()); }
             finally { Interlocked.Decrement(ref _active); }
         }
