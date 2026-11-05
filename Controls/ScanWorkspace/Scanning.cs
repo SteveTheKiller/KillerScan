@@ -92,6 +92,8 @@ namespace KillerScan.Controls
                     // Deleted elsewhere while scanning: the results stay, as a Temporary scan.
                     // A demo's fabricated network says nothing about the adapter of the PC running it.
                     if (!DemoData.Enabled) _active.Network = await IdentifyNetwork();
+                    // Stop pressed during that wait ends the run here: no configured deep pass follows it.
+                    if (cts.IsCancellationRequested) runDeep = false;
                     // Checked after that wait, right before the write it protects.
                     bool left = LeaveDeletedLocation();
                     if (left) location = _location;

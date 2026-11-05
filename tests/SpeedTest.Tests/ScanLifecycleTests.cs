@@ -62,6 +62,7 @@ internal static class ScanLifecycleTests
         Require(ScanHistory.Entries.Count == 1 && !DevicePreferences.HasTrustedDevices,
             "A first empty scan is recorded without creating a trusted-device baseline.");
         CheckDeepProfile();
+        CheckStopWhileIdentifyingNetwork();
         ExportSnapshotTests.Run();
         ExportActionTests.Run();
         WatchActionTests.Run();
@@ -146,6 +147,39 @@ internal static class ScanLifecycleTests
         finally { NetworkPlatform.Current = originalPlatform; }
     }
 
+    private sealed class RoutedPlatform : INetworkPlatform
+    {
+        public IReadOnlyDictionary<string, string> ReadNeighborCache() => new Dictionary<string, string>();
+        public string ResolveMac(System.Net.IPAddress address) => string.Empty;
+        public void FlushDnsCache() { }
+        public (string Interface, string NextHop)? BestRoute(System.Net.IPAddress address) => ("Ethernet", "192.0.2.254");
+    }
+
+    private static void CheckStopWhileIdentifyingNetwork()
+    {
+        var originalPlatform = NetworkPlatform.Current;
+        bool demo = DemoData.Enabled;
+        NetworkPlatform.Current = new RoutedPlatform();
+        DemoData.Enabled = false;
+        try
+        {
+            var scanner = new ControlledScanner();
+            scanner.Results.Enqueue(() => Task.FromResult(new List<NetworkDevice> { new() { IpAddress = "192.0.2.1", OpenPorts = [80] } }));
+            int deepCalls = 0;
+            scanner.DeepResult = ip => { deepCalls++; return Task.FromResult(new NetworkDevice { IpAddress = ip, OpenPorts = [80] }); };
+            using var workspace = new ScanWorkspace("192.0.2.1", false, scanner);
+            using var entered = new ManualResetEventSlim();
+            using var release = new ManualResetEventSlim();
+            workspace.FindAdapter = _ => { entered.Set(); release.Wait(5000); return null; };
+            workspace.RunProfile(new ScanProfile { Target = "192.0.2.1", DeepScanAfter = true });
+            Require(entered.Wait(2000) && workspace.IsScanning, "The scan is waiting on network identification.");
+            workspace.Stop();
+            release.Set();
+            PumpUntil(() => !workspace.IsScanning);
+            Require(deepCalls == 0, "Stop pressed while the network is being identified does not start the configured deep pass (" + deepCalls + " probes).");
+        }
+        finally { NetworkPlatform.Current = originalPlatform; DemoData.Enabled = demo; }
+    }
     private static void PumpUntil(Func<bool> complete)
     {
         var frame = new System.Windows.Threading.DispatcherFrame();
