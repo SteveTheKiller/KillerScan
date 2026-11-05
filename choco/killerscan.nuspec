@@ -41,7 +41,7 @@
 - Keyboard shortcuts on F1, with a shortcut list and a color-coded keyboard map, plus an app-wide size control from 70% to 250%
 - Checks for updates on startup and offers a newer release in a dialog, with a switch to turn the check off
 - One self-contained Windows EXE that requires .NET Framework 4.8; installs per-user or for all users, or runs portable
-- GPLv3, no account, no telemetry; device identification runs locally, and only network features such as update checks, vendor database refresh and speed tests connect out; an HTML report loads the KillerScan logo from killerscan.net when opened
+- GPLv3, no account, no telemetry; device identification runs locally, and only network features such as update checks, vendor database refresh and speed tests connect out; HTML reports carry their own logo and contact nothing when opened
     </description>
     <releaseNotes>https://github.com/SteveTheKiller/KillerScan/releases/tag/vREPLACE_VERSION</releaseNotes>
   </metadata>
