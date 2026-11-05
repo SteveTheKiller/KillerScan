@@ -80,9 +80,32 @@ internal static class KeyboardFocusTests
             Require(grid.IsKeyboardFocused && HasFamilyRing(grid.FocusVisualStyle), "An empty table keeps its named container focus and family cue.");
         }
         finally { window.Close(); }
+        CheckTitleBarDrags();
         Console.WriteLine($"PASS: button, hyperlink and tab focus styles, table entry and native navigation ({_checks} checks).");
     }
 
+    /// <summary>
+    /// A title-bar press that arrives with the button already up makes DragMove throw, and the app has
+    /// no unhandled-exception handler. An unshown window never reaches that throw, so this checks the
+    /// source shape: every dialog's DragMove call sits inside a try that swallows InvalidOperationException.
+    /// </summary>
+    private static void CheckTitleBarDrags()
+    {
+        foreach (string name in new[] { "ConfirmDialog", "InputDialog", "HistorySettingsDialog", "TerminalFontDialog" })
+        {
+            string source = System.IO.File.ReadAllText(System.IO.Path.Combine(TestRepository.Find().FullName, "Controls", name + ".xaml.cs"));
+            int calls = 0;
+            for (int at = source.IndexOf("DragMove()", StringComparison.Ordinal); at >= 0; at = source.IndexOf("DragMove()", at + 1, StringComparison.Ordinal))
+            {
+                calls++;
+                string before = source.Substring(Math.Max(0, at - 12), Math.Min(12, at));
+                string after = source.Substring(at, Math.Min(200, source.Length - at));
+                Require(before.Contains("try {") && after.Contains("catch (System.InvalidOperationException)") || before.Contains("try {") && after.Contains("catch (InvalidOperationException)"),
+                    name + " guards DragMove against a title-bar press with the button already up.");
+            }
+            Require(calls > 0, name + " still drags from its title bar.");
+        }
+    }
     private static bool HasFamilyRing(Style? style)
     {
         if (style == null) return false;

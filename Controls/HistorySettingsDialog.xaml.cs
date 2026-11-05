@@ -86,6 +86,10 @@ namespace KillerScan.Controls
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e) => Close();
-        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => DragMove();
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            try { DragMove(); }
+            catch (System.InvalidOperationException) { }   // the button was already up
+        }
     }
 }
