@@ -633,27 +633,7 @@ namespace KillerScan.Features.Cli
                 Completed = device => location?.Devices.Apply(device),
                 Binding = binding
             };
-            if (terminalProgress)
-            {
-                int found = 0;
-                scanner.DeviceFound += _ => err.WriteLine("Devices: " + Interlocked.Increment(ref found));
-            }
-            int lastProgress = -1;
-            if (progress && !quiet)
-            {
-                // The in-app terminal reads key|argument lines and localizes them itself.
-                scanner.StatusChanged += s => err.WriteLine(terminalProgress ? ScanStatusText.Protocol(s) : s.ToString());
-                scanner.ProgressChanged += p =>
-                {
-                    if (p == 100 || p >= lastProgress + 5)
-                    {
-                        lastProgress = p;
-                        string percent = $"{p}%";
-                        if (_errAnsi && !terminalProgress) percent = "\x1b[94m" + percent + AnsiReset;
-                        err.WriteLine("Progress: " + percent);
-                    }
-                };
-            }
+            AttachProgress(scanner, err, terminalProgress, progress && !quiet);
             string target = probe ? positionals[0] : demo ? demoScan!.Subnet : parsed!.Summary;
             string suffix = probe ? "..." : $" ({(demo ? 254 : parsed!.Addresses.Count):N0} addresses)...";
             string verb = probe ? "deep-probing " : "scanning ";
@@ -1005,6 +985,44 @@ namespace KillerScan.Features.Cli
             if (errRedirected) set(StdErrorHandle, savedErr);
         }
 
+        /// <summary>
+        /// Wires the scanner's progress events to the error stream. The scanner raises these from
+        /// many threads at once, so the writer is synchronized and the percent step check is atomic.
+        /// </summary>
+        internal static void AttachProgress(NetworkScanner scanner, TextWriter err, bool terminalProgress, bool showProgress)
+        {
+            err = TextWriter.Synchronized(err);
+            if (terminalProgress)
+            {
+                int found = 0;
+                scanner.DeviceFound += _ => err.WriteLine("Devices: " + Interlocked.Increment(ref found));
+            }
+            int lastProgress = -1;
+            if (showProgress)
+            {
+                // The in-app terminal reads key|argument lines and localizes them itself.
+                scanner.StatusChanged += s => err.WriteLine(terminalProgress ? ScanStatusText.Protocol(s) : s.ToString());
+                scanner.ProgressChanged += p =>
+                {
+                    if (ClaimProgress(ref lastProgress, p))
+                    {
+                        string percent = $"{p}%";
+                        if (_errAnsi && !terminalProgress) percent = "\x1b[94m" + percent + AnsiReset;
+                        err.WriteLine("Progress: " + percent);
+                    }
+                };
+            }
+        }
+        /// <summary>True for exactly one caller per reported step; 100 always reports.</summary>
+        private static bool ClaimProgress(ref int last, int p)
+        {
+            while (true)
+            {
+                int seen = Volatile.Read(ref last);
+                if (p != 100 && p < seen + 5) return false;
+                if (Interlocked.CompareExchange(ref last, p, seen) == seen) return true;
+            }
+        }
         private static (TextWriter, TextWriter) OpenConsole()
         {
             try
@@ -1013,8 +1031,8 @@ namespace KillerScan.Features.Cli
                     () => AttachConsole(AttachParentProcess));
                 _outAnsi = TryEnableVt(StdOutputHandle);
                 _errAnsi = TryEnableVt(StdErrorHandle);
-                var @out = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
-                var err = new StreamWriter(Console.OpenStandardError()) { AutoFlush = true };
+                var @out = TextWriter.Synchronized(new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true });
+                var err = TextWriter.Synchronized(new StreamWriter(Console.OpenStandardError()) { AutoFlush = true });
                 Console.SetOut(@out);
                 Console.SetError(err);
                 return (@out, err);
