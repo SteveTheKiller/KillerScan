@@ -54,10 +54,26 @@ internal static class WatchActionTests
             freshStop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             PumpUntil(() => !freshStop.IsEnabled, TimeSpan.FromSeconds(1));
         }
+        CheckStopThenCheckAgain();
         CheckShellCommands();
         Console.WriteLine("PASS: active Keep Alive and Diagnose requests add targets without resetting existing counters.");
     }
-    private static void CheckShellCommands()
+    private static void CheckStopThenCheckAgain()
+    {
+        using var watch = new NetworkToolsWindow("", 1);
+        var stop = (Button)watch.FindName("StopButton");
+        var cards = (ListBox)watch.FindName("Cards");
+        watch.ShowDetails("192.0.2.9", new[] { 8080 });
+        var card = cards.Items.OfType<WatchCard>().Single(c => c.Address == "192.0.2.9");
+        Require(card.Checks.Count > 0, "The first diagnosis fills the card's rows.");
+        stop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        PumpUntil(() => !stop.IsEnabled, TimeSpan.FromSeconds(1));
+        // Check again after Stop must run on a fresh token rather than the canceled one.
+        var click = typeof(NetworkToolsWindow).GetMethod("CardDiagnose_Click", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+        click.Invoke(watch, new object[] { new FrameworkElement { DataContext = card }, new RoutedEventArgs() });
+        PumpUntil(() => card.Checks.Any(row => row.Check == "TCP 8080"), TimeSpan.FromSeconds(2));
+        Require(card.Checks.Count > 1, "Check again after Stop repopulates the card instead of wiping it.");
+    }    private static void CheckShellCommands()
     {
         var previous = DemoData.Current;
         DemoData.Generate(new Random(1729));

@@ -289,7 +289,10 @@ namespace KillerScan.Controls
         private void CardDiagnose_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as FrameworkElement)?.DataContext is not WatchCard card) return;
-            RunChecks(card, _checks?.Token ?? CancellationToken.None);
+            // After Stop the last sweep's token is canceled; a fresh one lets Check again run. The old source
+            // is left for RunAllChecks to dispose, because a sweep may still hold its token.
+            if (_checks == null || _checks.IsCancellationRequested) _checks = new CancellationTokenSource();
+            RunChecks(card, _checks.Token);
         }
 
         /// <summary>
@@ -326,9 +329,9 @@ namespace KillerScan.Controls
                 try { DiagnoseRequested?.Invoke(card.Address); }
                 finally { _portsOnly = false; }
             }
-            card.Checks.Clear();
             var slots = _checkSlots;
             if (slots != null) await slots.WaitAsync(token);
+            card.Checks.Clear();
             try { await InspectAsync(card, address, token); }
             catch (OperationCanceledException) { }
             catch (Exception ex) when (ex is not OutOfMemoryException)
