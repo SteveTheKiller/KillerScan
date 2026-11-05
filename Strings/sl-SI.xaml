@@ -15,7 +15,7 @@
     <sys:String x:Key="Str_Lbl_Theme">TEMA</sys:String>
     <sys:String x:Key="Str_Lbl_Accent">POUDARJENA BARVA</sys:String>
     <sys:String x:Key="Str_Lbl_Subnet">Podomrežje</sys:String>
-    <sys:String x:Key="Str_Btn_Scan">Scan</sys:String>
+    <sys:String x:Key="Str_Btn_Scan">Preglej</sys:String>
     <sys:String x:Key="Str_Btn_DeepScanAll">Podroben pregled</sys:String>
     <sys:String x:Key="Str_Lbl_Local">Lokalni naslov</sys:String>
     <sys:String x:Key="Str_Lbl_Gateway">Prehod</sys:String>
