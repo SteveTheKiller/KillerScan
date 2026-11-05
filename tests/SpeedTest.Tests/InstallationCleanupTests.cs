@@ -89,6 +89,26 @@ internal static class InstallationCleanupTests
             Require(notifications == 2, "Completed removal did not notify the environment boundary.");
             InstallationFiles.Remove(install);
             Console.WriteLine("PASS registry failure restores the image; completed removal owns both outcomes.");
+
+            // Update working files would otherwise keep the folder (and a full old image) after an
+            // uninstall. A recovery copy a failed publication marked to keep stays.
+            Directory.CreateDirectory(install);
+            File.WriteAllText(owned, "installed image");
+            string backup = owned + ".old-" + Guid.NewGuid().ToString("N");
+            string staged = Path.Combine(install, ".update-" + Guid.NewGuid().ToString("N") + ".exe");
+            string kept = owned + ".restore-" + Guid.NewGuid().ToString("N");
+            string[] leftovers = [backup, staged, staged + ".recovery.txt", kept, kept + ".keep"];
+            try
+            {
+                foreach (string leftover in leftovers) File.WriteAllText(leftover, "update working file");
+                RemovalTransaction.Run(install, () => registered = false, () => registered = true);
+                Require(!File.Exists(backup) && !File.Exists(staged) && !File.Exists(staged + ".recovery.txt"),
+                    "Uninstall removes the update working files it owns.");
+                Require(File.Exists(kept), "Uninstall keeps a recovery copy marked to keep.");
+            }
+            finally { foreach (string leftover in leftovers) if (File.Exists(leftover)) File.Delete(leftover); }
+            InstallationFiles.Remove(install);
+            Console.WriteLine("PASS uninstall takes update working files along and keeps marked recovery copies.");
             UninstallCommandTests.Run();
 
             Directory.CreateDirectory(install);

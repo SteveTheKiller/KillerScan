@@ -32,9 +32,13 @@ namespace KillerScan.Services
                         catch (UnauthorizedAccessException) { throw new IOException("KillerTools is still running in another session.", unchecked((int)0x80070020)); }
                     if (File.Exists(image) || File.Exists(retired))
                         throw new IOException("Owned installation files remain. Removal was not completed.");
-                    // Backups left by an upgrade over a running copy are ours too; a missed one only
-                    // keeps the folder, it never fails a removal that already succeeded.
-                    ExecutableDeployment.RemoveRetiredBackups(image);
+                    // Backups and update working files are ours too, whatever their age: nothing will
+                    // recover from them once the app is gone. A missed one only keeps the folder; it
+                    // never fails a removal that already succeeded. Copies marked to keep stay.
+                    foreach (string leftover in ExecutableDeployment.UninstallLeftovers(directory, AppInfo.ExeName))
+                        try { File.Delete(Path.Combine(directory, leftover)); }
+                        catch (IOException) { }
+                        catch (UnauthorizedAccessException) { }
                 }
                 catch (Exception failure)
                 {
