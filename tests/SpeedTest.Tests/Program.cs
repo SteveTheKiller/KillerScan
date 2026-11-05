@@ -110,6 +110,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--radio-center-ui" })) { await RadioCenterUiTests.Run(); Console.WriteLine("PASS: radio alignment regression suite (1 selected)."); return 0; }
             if (args.SequenceEqual(new[] { "--shrink-to-fit" })) { await ShrinkToFitTests.Run(); Console.WriteLine("PASS: shrink-to-fit regression suite (1 selected)."); return 0; }
             if (args.SequenceEqual(new[] { "--cli-progress" })) { CliProgressTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--module-path" })) { ModulePathTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--rail-order" })) { await RailOrderTests.Run(); Console.WriteLine("PASS: rail order regression suite (1 selected)."); return 0; }
             Require(args.All(value => value == "--worker" || value == "--internet" || value == "--speed-loopback"),
                 "Usage: SpeedTest.Tests.exe [--speed-loopback] [--worker] [--internet]");
@@ -162,6 +163,8 @@ internal static class Program
             await Run("Measured rate limit never retries or waits inside throughput timing", MeasurementRateLimit);
             await Run("Loaded-latency rate limit stops payload traffic", () => Reject(Mode.LoadedRate, SpeedTestFailureKind.RateLimited));
             await Run("HTTP 503 classified as HTTP error", () => Reject(Mode.Unavailable, SpeedTestFailureKind.HttpError));
+            await Run("HTTP 503 names whether Cloudflare answered", UnavailableOrigin);
+            await Run("One HTTP 503 among the uploads does not fail the speed test", TransientUnavailable);
             await Run("Cloudflare challenge on upload is named as a challenge", () => Reject(Mode.Challenge, SpeedTestFailureKind.Challenged));
             await Run("Rejected upload acknowledgment reports what came back", RejectedAckDetail);
             await Run("Stalled response bounded by request timeout", Timeout);
@@ -1056,6 +1059,24 @@ internal static class Program
         Require(result.Download.StreamCount == 4, "Four concurrent streams used");
     }
 
+    private static async Task UnavailableOrigin()
+    {
+        // The loopback server sends no cf-ray, as a local security product or proxy would not.
+        var ex = await Reject(Mode.Unavailable, SpeedTestFailureKind.HttpError);
+        Require(ex.Message.Contains("HTTP 503") && ex.Message.Contains("no Cloudflare Ray ID"),
+            "A 503 says whether Cloudflare answered it: " + ex.Message);
+    }
+
+    private static async Task TransientUnavailable()
+    {
+        // Toni's report on issue #4: the upload starts, then one 503 mid-test ended the whole run.
+        using var server = new LoopbackServer(Mode.TransientUnavailable);
+        var result = await new SpeedTestEngine().RunAsync(Options(server), null, CancellationToken.None);
+        Require(server.TransientErrors == 1, "The server returned exactly one 503: " + server.TransientErrors);
+        Require(result.Download.Mbps > 0 && result.Upload.Mbps > 0,
+            "The run completes with both directions measured after one 503.");
+    }
+
     private static async Task RejectedAckDetail()
     {
         var ex = await Reject(Mode.WrongAck, SpeedTestFailureKind.InvalidResponse);
@@ -1143,7 +1164,7 @@ internal static class Program
         }
     }
 
-    private enum Mode { Normal, SlowDownload, SharedDownload, WrongAck, StringAck, ShortDownload, Compressed, RateLimited, Unavailable, Stall, NoPayload, NoAck,
+    private enum Mode { Normal, SlowDownload, SharedDownload, WrongAck, StringAck, ShortDownload, Compressed, RateLimited, Unavailable, TransientUnavailable, Stall, NoPayload, NoAck,
         FirstRetry, RepeatedRetry, LongRetry, MeasuredRate, LoadedRate, Challenge, HtmlAck }
 
     private sealed class LoopbackServer : IDisposable
@@ -1158,6 +1179,9 @@ internal static class Program
         private long _uploadBytes;
         private int _requestCount;
         private int _rateResponses;
+        private int _uploadsSeen;
+        private int _transientErrors;
+        internal int TransientErrors => Volatile.Read(ref _transientErrors);
         public int RateResponses => Volatile.Read(ref _rateResponses);
         public readonly ConcurrentQueue<string> Requests = new ConcurrentQueue<string>();
         public Uri Endpoint { get; }
@@ -1241,6 +1265,15 @@ internal static class Program
                         {
                             await WriteHeader(stream, _mode == Mode.RateLimited ? "429 Too Many Requests" : "503 Service Unavailable", 0);
                             continue;
+                        }
+                        if (upload && _mode == Mode.TransientUnavailable && requested > 0
+                            && Interlocked.Increment(ref _uploadsSeen) == 3)
+                        {
+                            // One mid-phase upload is refused before its body is read; the connection
+                            // closes, as a server that gave up on the request would.
+                            Interlocked.Increment(ref _transientErrors);
+                            await WriteHeader(stream, "503 Service Unavailable", 0, "Connection: close\r\n");
+                            return;
                         }
                         if (upload)
                         {

@@ -230,15 +230,27 @@ namespace KillerScan.Engine.SpeedTest
                         bool publicService = IsCloudflareEndpoint(options.Endpoint);
                         int payload = Math.Min(payloadSizes?[index] > 0 ? payloadSizes[index] :
                             (publicService ? 100000 : BufferSize), maximumPayload);
+                        int serverErrors = 0;
                         while (!stop.IsCancellationRequested)
                         {
                             int size = counters.Reserve(payload, budget);
                             if (size == 0) break;
                             var exchange = Stopwatch.StartNew();
-                            if (upload)
-                                await UploadAsync(client, options, size, buffer, counters.Add, counters.Acknowledge, stop.Token).ConfigureAwait(false);
-                            else
-                                await DownloadAsync(client, options, size, buffer, counters.Add, stop.Token).ConfigureAwait(false);
+                            try
+                            {
+                                if (upload)
+                                    await UploadAsync(client, options, size, buffer, counters.Add, counters.Acknowledge, stop.Token).ConfigureAwait(false);
+                                else
+                                    await DownloadAsync(client, options, size, buffer, counters.Add, stop.Token).ConfigureAwait(false);
+                            }
+                            // One server error on a stream drops that exchange, not the whole test:
+                            // among hundreds of requests a single 5xx is a blip. A second on the
+                            // same stream fails the phase, and 429 is never retried here.
+                            catch (SpeedTestException ex) when (ex.Kind == SpeedTestFailureKind.HttpError
+                                && ex.StatusCode is >= 500 and <= 599 && !stop.IsCancellationRequested && ++serverErrors == 1)
+                            {
+                                continue;
+                            }
                             // Keep acknowledgments frequent on slow links without imposing tiny
                             // HTTP requests on fast links. Configured payload sizes are ceilings.
                             double next = size * 1000d / Math.Max(1, exchange.Elapsed.TotalMilliseconds);
@@ -379,7 +391,7 @@ namespace KillerScan.Engine.SpeedTest
                     "Cloudflare challenged the request (HTTP " + (int)response.StatusCode + ").", statusCode: (int)response.StatusCode);
             if (response.StatusCode != HttpStatusCode.OK)
                 throw new SpeedTestException((int)response.StatusCode == 429 ? SpeedTestFailureKind.RateLimited : SpeedTestFailureKind.HttpError,
-                    "The speed-test endpoint returned HTTP " + (int)response.StatusCode + ".",
+                    "The speed-test endpoint returned HTTP " + (int)response.StatusCode + Origin(response) + ".",
                     statusCode: (int)response.StatusCode, retryAfter: ReadRetryAfter(response));
             if (response.Content.Headers.ContentEncoding.Any(encoding => !encoding.Equals("identity", StringComparison.OrdinalIgnoreCase)))
                 throw new SpeedTestException(SpeedTestFailureKind.InvalidResponse, "The speed-test endpoint compressed the payload.");
@@ -497,6 +509,19 @@ namespace KillerScan.Engine.SpeedTest
             string text = new string(body.Select(c => char.IsControl(c) ? ' ' : c).ToArray()).Trim();
             if (text.Length > 120) text = text.Substring(0, 120) + "...";
             return ": HTTP " + (int)response.StatusCode + ", " + type + ", " + (text.Length == 0 ? "empty body" : "body \"" + text + "\"") + ".";
+        }
+
+        /// <summary>Who answered an error: a Cloudflare Ray ID means the request reached Cloudflare,
+        /// and its absence points at something between the user and Cloudflare, such as a security
+        /// product or proxy. The Ray ID also finds the request in the Worker's logs.</summary>
+        private static string Origin(HttpResponseMessage response)
+        {
+            string ray = response.Headers.TryGetValues("cf-ray", out var rays) ? rays.FirstOrDefault() ?? "" : "";
+            string server = response.Headers.Server?.ToString() ?? "";
+            string type = response.Content?.Headers.ContentType?.MediaType ?? "no content type";
+            static string Clean(string value) => new string(value.Where(c => !char.IsControl(c)).Take(80).ToArray()).Trim();
+            return " (" + type + (server.Length > 0 ? ", server " + Clean(server) : "")
+                + (ray.Length > 0 ? ", Cloudflare Ray " + Clean(ray) : ", no Cloudflare Ray ID") + ")";
         }
 
         private static bool IsCloudflareEndpoint(Uri endpoint) => endpoint.Scheme == Uri.UriSchemeHttps && endpoint.Port == 443 &&
