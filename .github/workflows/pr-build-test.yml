@@ -90,6 +90,10 @@ jobs:
         run: |
           ./tests/Release.Tests/PackageChecksum.Tests.ps1
           if ($LASTEXITCODE -ne 0) { throw 'Package checksum response contract failed.' }
+          ./tests/Release.Tests/InvariantNumbers.Tests.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'release.ps1 formats a published number with the machine culture.' }
+          ./tests/Release.Tests/ChocolateyPublisher.Tests.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'Chocolatey must be published only by chocolatey-release.yml.' }
           ./tests/Run-FocusedSuites.ps1 -CheckOnly
           if ($LASTEXITCODE -ne 0) { throw 'tests/suites.json does not match the test runners.' }
           $exe = 'bin/Release/net48/KillerScan.exe'

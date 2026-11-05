@@ -35,7 +35,7 @@ Scans find devices that only answer ARP, Chocolatey can uninstall KillerScan aga
 - Update downloads stream to disk with a size cap and an overall deadline, and the update check reads only the release's own fields, so release notes that quote them cannot confuse it.
 - An update download that fails its checksum or signature check now says it was refused and nothing was installed, instead of opening the releases page as if the network had failed. An update helper that cannot start offers the releases page, unless the administrator prompt was declined.
 - Updating KillerScan no longer removes a relaunch another Killer app scheduled for its own update.
-- The file picker no longer stalls on a disconnected network folder when it opens, a relative or malformed path typed in the path box is refused instead of being looked up against the wrong folder, a pattern such as *.log typed in the name box filters the list, and a full path typed in the name box can be accepted even when the shown folder failed to list.
+- The file picker no longer stalls on a disconnected network folder when it opens, a relative or malformed path typed in the path box is refused instead of being looked up against the wrong folder, a pattern such as *.log typed in the name box filters the list, a full path typed in the name box can be accepted even when the shown folder failed to list, and a typed folder that cannot be opened keeps its reason on screen after the picker goes back to the last folder that worked.
 - Changing the file type in the save picker while the name box holds characters no file name can carry no longer crashes KillerScan; the name keeps its text and shows the invalid-path message.
 
 ## [1.9.0] - 2026-11-01

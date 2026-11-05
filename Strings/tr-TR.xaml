@@ -285,7 +285,7 @@
     <sys:String x:Key="Str_Db_SaveFailed">Veritabanı kaydedilemedi: {0}</sys:String>
     <sys:String x:Key="Str_Db_Failed">Güncelleme başarısız: {0}</sys:String>
     <sys:String x:Key="Str_About_UpdateAvailable">Güncelleme mevcut: {0}</sys:String>
-    <sys:String x:Key="Str_About_UpdateNotVerified">İndirilen güncelleme doğrulanamadı ve silindi.</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">İndirilen güncelleme doğrulanamadı ve silindi. Hiçbir şey yüklenmedi.</sys:String>
     <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">Güncelleme başlatılamadı.&#10;{0}&#10;&#10;Kendiniz indirmek için sürümler sayfası açılsın mı?</sys:String>
     <sys:String x:Key="Str_About_Downloading">İndiriliyor...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">{0} {1} indirilip yüklensin mi?</sys:String>
