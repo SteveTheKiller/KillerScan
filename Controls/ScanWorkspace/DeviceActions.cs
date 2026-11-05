@@ -92,7 +92,7 @@ namespace KillerScan.Controls
                 d.DeviceType = type;
                 _filteredView?.Refresh();
                 if (_showTopology) RefreshTopology();
-                StatusText.Text = string.Format(Loc("Str_St_OverrideSet"), d.MacAddress, type);
+                StatusText.Text = string.Format(Loc("Str_St_OverrideSet"), d.MacAddress, DeviceTypeConverter.Display(type));
             }
         }
 

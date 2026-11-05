@@ -71,6 +71,19 @@ internal static class RecognitionUiTests
 
             // A manual type keeps the automatic result; clearing it restores the evidence.
             Invoke(workspace, "SetType_Click", new MenuItem { Tag = "NAS" }, new RoutedEventArgs());
+            {
+                // The status line names the type in the language on screen, not by its English storage key.
+                var resources = Application.Current.Resources;
+                object? saved = resources["Str_Dev_NAS"];
+                resources["Str_Dev_NAS"] = "Netzspeicher";
+                try
+                {
+                    Invoke(workspace, "SetType_Click", new MenuItem { Tag = "NAS" }, new RoutedEventArgs());
+                    Require(((TextBlock)workspace.GetType().GetField("StatusText", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.GetValue(workspace)!).Text.Contains("Netzspeicher"),
+                        "The Set type status line shows the localized type name.");
+                }
+                finally { if (saved == null) resources.Remove("Str_Dev_NAS"); else resources["Str_Dev_NAS"] = saved; }
+            }
             Require(shown.DeviceType == "NAS" && shown.Recognition!.Confidence == RecognitionConfidence.Manual &&
                     shown.Recognition.AutomaticType == "Printer", "A manual type is recorded as Manual over the automatic result.");
             Require(Tip(shown).Contains(string.Format(Res("Str_Rec_Automatic"), DeviceTypeConverter.Display("Printer"), Res("Str_Rec_Conf_High"))),
