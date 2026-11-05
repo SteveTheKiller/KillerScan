@@ -13,6 +13,9 @@ Scans find devices that only answer ARP, Chocolatey can uninstall KillerScan aga
 - SSH to a device starts Windows' OpenSSH client or a client installed on PATH, never a file named ssh.exe sitting beside a portable copy.
 - Updates check the publisher's certificate for revocation and hold every signature to the full release publisher name. A revocation server that cannot be reached does not block a validly signed update, and the check never holds up the About card.
 
+### Changed
+- Refreshed the bundled MAC vendor database to 58,697 assignments.
+
 ### Fixed
 
 - Uninstalling with Chocolatey works again on installs of 1.9.0 and later, which it refused as unregistered.
