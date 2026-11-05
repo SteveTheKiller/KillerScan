@@ -215,6 +215,13 @@ internal static class LocationWorkspaceTests
             Pick("Normal");
             Run(false);
             Pick("Deep");
+            // The loaded scan's deep pass belongs to its own target; a manual scan of another one stays shallow.
+            workspace.Targets = "192.168.1.20";
+            int deepBeforeOther = scanner.DeepCalls;
+            workspace.Scan();
+            PumpUntil(() => !workspace.IsScanning);
+            Require(scanner.DeepCalls == deepBeforeOther && location.History.Entries.Last().Deep == false,
+                "A loaded saved scan's deep pass does not carry over to a manual scan of a different target.");
             workspace.SetLocation(LocationData.Temporary());
             workspace.Scan();
             PumpUntil(() => !workspace.IsScanning);

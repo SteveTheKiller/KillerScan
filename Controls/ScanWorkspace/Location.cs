@@ -355,6 +355,7 @@ namespace KillerScan.Controls
             if (IsScanning) return;
             LoadProfile(profile);
             _runDeepAfterScan = profile.DeepScanAfter;
+            _deepAfterTarget = profile.Target;
             AdapterChoice = profile.Adapter ?? string.Empty;
             _loadedScan = profile;
         }

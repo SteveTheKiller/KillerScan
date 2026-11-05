@@ -78,6 +78,7 @@ namespace KillerScan.Controls
             StateChanged?.Invoke(this, EventArgs.Empty);
             bool completed = false;
             var options = _active.Options;
+            if (!string.Equals(Targets.Trim(), _deepAfterTarget.Trim(), StringComparison.OrdinalIgnoreCase)) _runDeepAfterScan = false;
             bool runDeep = _runDeepAfterScan;
             // The run belongs to the Location it started in; switching is locked until it ends.
             var location = _location;

@@ -24,6 +24,8 @@ namespace KillerScan.Controls
         private ICollectionView? _filteredView;
         private bool _disposed;
         private bool _runDeepAfterScan;
+        /// <summary>The target the deep-after flag was loaded with; a scan of any other target does not inherit it.</summary>
+        private string _deepAfterTarget = string.Empty;
         private readonly TextBlock StatusText = new();
         private readonly TextBlock PaneTitle = new();
         private readonly ProgressBar ScanProgress = new() { Visibility = Visibility.Collapsed };
@@ -235,6 +237,7 @@ namespace KillerScan.Controls
             if (_disposed || IsScanning) return;
             LoadProfile(profile);
             _runDeepAfterScan = profile.DeepScanAfter;
+            _deepAfterTarget = profile.Target;
             Scan();
         }
         internal void LoadProfile(ScanProfile profile)
