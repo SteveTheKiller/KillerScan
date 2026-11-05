@@ -55,6 +55,7 @@ internal static class WatchActionTests
             PumpUntil(() => !freshStop.IsEnabled, TimeSpan.FromSeconds(1));
         }
         CheckStopThenCheckAgain();
+        CheckLanguageChangeAfterStop();
         CheckShellCommands();
         Console.WriteLine("PASS: active Keep Alive and Diagnose requests add targets without resetting existing counters.");
     }
@@ -73,6 +74,22 @@ internal static class WatchActionTests
         click.Invoke(watch, new object[] { new FrameworkElement { DataContext = card }, new RoutedEventArgs() });
         PumpUntil(() => card.Checks.Any(row => row.Check == "TCP 8080"), TimeSpan.FromSeconds(2));
         Require(card.Checks.Count > 1, "Check again after Stop repopulates the card instead of wiping it.");
+    }    private static void CheckLanguageChangeAfterStop()
+    {
+        using var watch = new NetworkToolsWindow("", 1);
+        var stop = (Button)watch.FindName("StopButton");
+        var cards = (ListBox)watch.FindName("Cards");
+        watch.ShowDetails("192.0.2.9", new[] { 8080 });
+        var card = cards.Items.OfType<WatchCard>().Single(c => c.Address == "192.0.2.9");
+        stop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        PumpUntil(() => !stop.IsEnabled, TimeSpan.FromSeconds(1));
+        PumpUntil(() => card.Checks.Count > 1, TimeSpan.FromSeconds(1));
+        var marker = new CheckRow { Check = "marker" };
+        card.Checks.Add(marker);
+        typeof(NetworkToolsWindow).GetMethod("OnLocaleChanged", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+            .Invoke(watch, null);
+        Pump(TimeSpan.FromMilliseconds(400));
+        Require(card.Checks.Contains(marker), "Changing language after Stop leaves the stopped run's rows alone instead of rerunning every check.");
     }    private static void CheckShellCommands()
     {
         var previous = DemoData.Current;
@@ -112,7 +129,13 @@ internal static class WatchActionTests
         foreach (var child in LogicalTreeHelper.GetChildren(root).OfType<DependencyObject>())
             foreach (var descendant in Descendants(child)) yield return descendant;
     }
-    private static void PumpUntil(Func<bool> condition, TimeSpan timeout)
+    private static void Pump(TimeSpan span)
+    {
+        var frame = new DispatcherFrame();
+        var timer = new DispatcherTimer(DispatcherPriority.Background) { Interval = span };
+        timer.Tick += (_, _) => { timer.Stop(); frame.Continue = false; };
+        timer.Start(); Dispatcher.PushFrame(frame);
+    }    private static void PumpUntil(Func<bool> condition, TimeSpan timeout)
     {
         var deadline = DateTime.UtcNow + timeout;
         while (!condition() && DateTime.UtcNow < deadline)

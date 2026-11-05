@@ -447,7 +447,8 @@ namespace KillerScan.Controls
             string reply = L("Str_Watch_Reply"), noReply = L("Str_Watch_NoReply"), waiting = L("Str_Watch_Waiting");
             foreach (var card in _cards) card.Relabel(reply, noReply, waiting);
             if (Status.Text.Length > 0 && _run == null) Status.Text = L("Str_Watch_Stopped");
-            if (_targets.Count > 0) RunAllChecks();
+            // Only an active run re-words its rows; a stopped run keeps what it showed and reruns nothing.
+            if (_targets.Count > 0 && _run != null) RunAllChecks();
         }
 
         /// <summary>
