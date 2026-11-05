@@ -25,6 +25,11 @@ namespace KillerScan.Controls
             }
         }
 
+        /// <summary>The answer as the exports write it. Differs from Result only for values that depend on the region.</summary>
+        public string ExportResult => ExportOverride ?? _result;
+
+        public string? ExportOverride { get; init; }
+
         public event PropertyChangedEventHandler? PropertyChanged;
     }
 

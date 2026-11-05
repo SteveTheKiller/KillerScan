@@ -364,7 +364,7 @@ namespace KillerScan.Controls
             if (DemoData.Enabled)
             {
                 FillDemoChecks(address, routeRow, reverseRow, forwardRow, icmpRow, ports, portRows);
-                card.Checks.Add(new CheckRow { Check = L("Str_Diag_Time"), Result = DateTime.Now.ToString("h:mm:ss tt") });
+                card.Checks.Add(CheckedAtRow());
                 return;
             }
 
@@ -425,10 +425,20 @@ namespace KillerScan.Controls
 
             await Task.WhenAll(DnsAsync(), IcmpAsync(), PortsAsync(), TraceAsync());
             token.ThrowIfCancellationRequested();
-            card.Checks.Add(new CheckRow
-            { Check = L("Str_Diag_Time"), Result = DateTime.Now.ToString("h:mm:ss tt") });
+            card.Checks.Add(CheckedAtRow());
         }
 
+        /// <summary>The "Checked at" row: 24-hour like the event log on screen, invariant in the exports.</summary>
+        private CheckRow CheckedAtRow()
+        {
+            var now = DateTime.Now;
+            return new CheckRow
+            {
+                Check = L("Str_Diag_Time"),
+                Result = now.ToString("HH:mm:ss"),
+                ExportOverride = now.ToString("HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)
+            };
+        }
         /// <summary>Repaints the cards after a theme swap. Past log lines keep the colors they were written with.</summary>
         private void OnThemeChanged()
         {
@@ -524,7 +534,7 @@ namespace KillerScan.Controls
                 csv.AppendLine(string.Join(",", Cell(card.Address), Cell(card.State),
                     Cell(card.Latest + " / " + card.ExportAverage), Cell(card.ExportLoss), Cell(card.Sent)));
                 foreach (var check in card.Checks)
-                    csv.AppendLine(string.Join(",", Cell(card.Address), Cell(check.Check), Cell(check.Result), "", ""));
+                    csv.AppendLine(string.Join(",", Cell(card.Address), Cell(check.Check), Cell(check.ExportResult), "", ""));
                 foreach (var entry in card.Events)
                     csv.AppendLine(string.Join(",", Cell(card.Address), Cell(entry.ExportTime), Cell(entry.State), "", ""));
             }
@@ -555,7 +565,7 @@ namespace KillerScan.Controls
                 html.Append("<tr><td>").Append(Esc(L("Str_Watch_Loss"))).Append("</td><td>").Append(Esc(card.ExportLoss)).Append("</td></tr>\n");
                 html.Append("<tr><td>").Append(Esc(L("Str_Watch_Sent"))).Append("</td><td>").Append(Esc(card.Sent)).Append("</td></tr>\n");
                 foreach (var check in card.Checks)
-                    html.Append("<tr><td>").Append(Esc(check.Check)).Append("</td><td>").Append(Esc(check.Result)).Append("</td></tr>\n");
+                    html.Append("<tr><td>").Append(Esc(check.Check)).Append("</td><td>").Append(Esc(check.ExportResult)).Append("</td></tr>\n");
                 foreach (var entry in card.Events)
                     html.Append("<tr><td>").Append(Esc(entry.ExportTime)).Append("</td><td>").Append(Esc(entry.State)).Append("</td></tr>\n");
                 html.Append("</table>\n");
@@ -584,7 +594,7 @@ namespace KillerScan.Controls
                     L("Str_Watch_Latency") + " " + card.Latest + " / " + card.ExportAverage,
                     L("Str_Watch_Loss") + " " + card.ExportLoss,
                     L("Str_Watch_Sent") + " " + card.Sent));
-                foreach (var check in card.Checks) text.AppendLine("\t" + check.Check + "\t" + check.Result);
+                foreach (var check in card.Checks) text.AppendLine("\t" + check.Check + "\t" + check.ExportResult);
                 foreach (var entry in card.Events) text.AppendLine("\t" + entry.Time + "\t" + entry.State);
             }
             return text.ToString();

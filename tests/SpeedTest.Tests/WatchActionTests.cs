@@ -56,6 +56,7 @@ internal static class WatchActionTests
         }
         CheckStopThenCheckAgain();
         CheckLanguageChangeAfterStop();
+        CheckCheckedAtTime();
         CheckShellCommands();
         Console.WriteLine("PASS: active Keep Alive and Diagnose requests add targets without resetting existing counters.");
     }
@@ -90,6 +91,29 @@ internal static class WatchActionTests
             .Invoke(watch, null);
         Pump(TimeSpan.FromMilliseconds(400));
         Require(card.Checks.Contains(marker), "Changing language after Stop leaves the stopped run's rows alone instead of rerunning every check.");
+    }    private static void CheckCheckedAtTime()
+    {
+        var previous = Thread.CurrentThread.CurrentCulture;
+        try
+        {
+            // fi-FI writes a time separator of "." so a culture-formatted export would differ from the invariant one.
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("fi-FI");
+            using var watch = new NetworkToolsWindow("", 1);
+            var stop = (Button)watch.FindName("StopButton");
+            var cards = (ListBox)watch.FindName("Cards");
+            watch.ShowDetails("192.0.2.9", new[] { 8080 });
+            var card = cards.Items.OfType<WatchCard>().Single(c => c.Address == "192.0.2.9");
+            PumpUntil(() => card.Checks.Count > 1, TimeSpan.FromSeconds(2));
+            var timeRow = card.Checks.Last();
+            Require(System.Text.RegularExpressions.Regex.IsMatch(timeRow.Result, @"^\d\d[:.]\d\d[:.]\d\d$"),
+                "The Checked at row is 24-hour hh:mm:ss like the event log, not 12-hour with AM/PM (" + timeRow.Result + ").");
+            string stamp = timeRow.ExportResult;
+            Require(System.Text.RegularExpressions.Regex.IsMatch(stamp, @"^\d\d:\d\d:\d\d$"), "The Checked at export value is invariant 24-hour (" + stamp + ").");
+            Require(watch.BuildCsv().Contains(stamp) && watch.BuildHtml().Contains(stamp) && watch.BuildText().Contains(stamp),
+                "CSV, HTML and text exports write the Checked at time in the invariant form.");
+            stop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        }
+        finally { Thread.CurrentThread.CurrentCulture = previous; }
     }    private static void CheckShellCommands()
     {
         var previous = DemoData.Current;
