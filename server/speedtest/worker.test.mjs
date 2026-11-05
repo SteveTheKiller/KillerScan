@@ -198,6 +198,28 @@ test("rate limiter denial, exceptions and malformed results fail closed", async 
   }
 });
 
+test("a limiter failure is logged with its cause and without the client address", async () => {
+  const logged = [];
+  const original = console.error;
+  console.error = (...args) => logged.push(args.map(String).join(" "));
+  try {
+    for (const binding of ["CLIENT_RATE_LIMITER", "SERVICE_RATE_LIMITER"]) {
+      const limit = async () => { throw new Error("counter store timed out"); };
+      const response = await worker.fetch(request("/__up", { method: "POST", body: "", headers: { "CF-Connecting-IP": "198.51.100.23" } }, true), { ...production(), [binding]: { limit } });
+      assert.equal(response.status, 503);
+    }
+  } finally { console.error = original; }
+  assert.equal(logged.length, 2);
+  for (const line of logged) {
+    assert.match(line, /rate limiter/i);
+    assert.match(line, /counter store timed out/);
+    assert.match(line, /\/__up/);
+    assert.doesNotMatch(line, /198\.51\.100\.23/);
+  }
+  assert.match(logged[0], /client/i);
+  assert.match(logged[1], /service/i);
+});
+
 test("cache-busting parameters do not change rate-limit keys", async () => {
   const clientKeys = [], serviceKeys = [];
   const env = {

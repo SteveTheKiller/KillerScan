@@ -47,15 +47,21 @@ async function authorize(request, env, url) {
       !service || typeof service.limit !== "function" || !ip || ip.length > 64) {
     return error(503, "Speed test rate limiting is not configured.");
   }
+  let stage = "client";
   try {
     const result = await client.limit({ key: "client:" + clientKey(ip) });
     if (!result || typeof result.success !== "boolean") throw new Error("Invalid counter result");
     if (!result.success) return error(429, "Please wait before testing again.", { "Retry-After": "60" });
+    stage = "service";
     const overall = await service.limit({ key: "speedtest" });
     if (!overall || typeof overall.success !== "boolean") throw new Error("Invalid counter result");
     if (!overall.success) return error(429, "Speed test capacity is temporarily limited.", { "Retry-After": "60" });
     return null;
-  } catch {
+  } catch (ex) {
+    // Workers Logs keeps this line, so a 503 a user reports can be matched to its cause.
+    // The client address is deliberately left out.
+    console.error("Speed test " + stage + " rate limiter failed on " + request.method + " " + url.pathname + ": "
+      + (ex instanceof Error ? ex.name + ": " + ex.message : String(ex)));
     return error(503, "Speed test rate limiting is unavailable.", { "Retry-After": "60" });
   }
 }
