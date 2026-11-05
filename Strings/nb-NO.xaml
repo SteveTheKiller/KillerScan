@@ -299,6 +299,8 @@
 
     <!-- Self-update. {0} is the release tag; in the heading {0} is the app name and {1} the tag. -->
     <sys:String x:Key="Str_About_UpdateAvailable">Oppdatering tilgjengelig: {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">Den nedlastede oppdateringen kunne ikke bekreftes og ble forkastet. Ingenting ble installert.</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">Oppdateringen kunne ikke starte.&#10;{0}&#10;&#10;Åpne utgivelsessiden for å laste den ned selv?</sys:String>
     <sys:String x:Key="Str_About_Downloading">Laster ned...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">Laste ned og installere {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Appen lukkes og åpnes på nytt automatisk.</sys:String>

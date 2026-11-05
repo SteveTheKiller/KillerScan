@@ -296,6 +296,8 @@
     <sys:String x:Key="Str_Db_SaveFailed">データベースを保存できませんでした: {0}</sys:String>
     <sys:String x:Key="Str_Db_Failed">更新に失敗しました: {0}</sys:String>
     <sys:String x:Key="Str_About_UpdateAvailable">更新が利用可能: {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">ダウンロードした更新を検証できなかったため、破棄しました。何もインストールされていません。</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">更新を開始できませんでした。&#10;{0}&#10;&#10;リリースページを開いて、自分でダウンロードしますか？</sys:String>
     <sys:String x:Key="Str_About_Downloading">ダウンロード中...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">{0} {1} をダウンロードしてインストールしますか?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">アプリは終了し、自動的に再起動します。</sys:String>

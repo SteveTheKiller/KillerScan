@@ -11,7 +11,7 @@ Scans find devices that only answer ARP, Chocolatey can uninstall KillerScan aga
 ### Security
 
 - SSH to a device starts Windows' OpenSSH client or a client installed on PATH, never a file named ssh.exe sitting beside a portable copy.
-- Updates check the publisher's certificate for revocation and hold every signature to the full release publisher name.
+- Updates check the publisher's certificate for revocation and hold every signature to the full release publisher name. A revocation server that cannot be reached does not block a validly signed update, and the check never holds up the About card.
 
 ### Fixed
 
@@ -33,6 +33,7 @@ Scans find devices that only answer ARP, Chocolatey can uninstall KillerScan aga
 - A per-user or portable update that fails now reopens KillerScan instead of leaving it closed, including when antivirus or a locked-down PowerShell stops the update helper from loading, and a published copy that fails its final check is swapped back for the previous version and never started.
 - An update started from an administrator's copy reopens KillerScan at normal rights. An update that is applied but cannot record its version in the registry now finishes and reopens instead of reporting failure, and putting the previous copy back after a failed update retries a busy file and survives a leftover from an earlier attempt.
 - Update downloads stream to disk with a size cap and an overall deadline, and the update check reads only the release's own fields, so release notes that quote them cannot confuse it.
+- An update download that fails its checksum or signature check now says it was refused and nothing was installed, instead of opening the releases page as if the network had failed. An update helper that cannot start offers the releases page, unless the administrator prompt was declined.
 - Updating KillerScan no longer removes a relaunch another Killer app scheduled for its own update.
 - The file picker no longer stalls on a disconnected network folder when it opens, a relative or malformed path typed in the path box is refused instead of being looked up against the wrong folder, a pattern such as *.log typed in the name box filters the list, and a full path typed in the name box can be accepted even when the shown folder failed to list.
 - Changing the file type in the save picker while the name box holds characters no file name can carry no longer crashes KillerScan; the name keeps its text and shows the invalid-path message.

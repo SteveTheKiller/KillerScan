@@ -270,6 +270,8 @@
     <sys:String x:Key="Str_Db_SaveFailed">Nie można zapisać bazy danych: {0}</sys:String>
     <sys:String x:Key="Str_Db_Failed">Aktualizacja nie powiodła się: {0}</sys:String>
     <sys:String x:Key="Str_About_UpdateAvailable">Dostępna aktualizacja: {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">Nie udało się zweryfikować pobranej aktualizacji, więc została odrzucona. Nic nie zostało zainstalowane.</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">Nie udało się uruchomić aktualizacji.&#10;{0}&#10;&#10;Otworzyć stronę wydań, aby pobrać ją samodzielnie?</sys:String>
     <sys:String x:Key="Str_About_Downloading">Pobieranie...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">Pobrać i zainstalować {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Aplikacja zamknie się i uruchomi ponownie automatycznie.</sys:String>

@@ -285,6 +285,8 @@
     <sys:String x:Key="Str_Db_SaveFailed">Impossible d'enregistrer la base de données : {0}</sys:String>
     <sys:String x:Key="Str_Db_Failed">Échec de la mise à jour : {0}</sys:String>
     <sys:String x:Key="Str_About_UpdateAvailable">Mise à jour disponible : {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">La mise à jour téléchargée n'a pas pu être vérifiée et a été supprimée. Rien n'a été installé.</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">La mise à jour n'a pas pu démarrer.&#10;{0}&#10;&#10;Ouvrir la page des versions pour la télécharger vous-même ?</sys:String>
     <sys:String x:Key="Str_About_Downloading">Téléchargement...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">Télécharger et installer {0} {1} ?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">L'application se fermera et redémarrera automatiquement.</sys:String>

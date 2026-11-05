@@ -285,6 +285,8 @@
     <sys:String x:Key="Str_Db_SaveFailed">無法儲存資料庫：{0}</sys:String>
     <sys:String x:Key="Str_Db_Failed">更新失敗：{0}</sys:String>
     <sys:String x:Key="Str_About_UpdateAvailable">有可用更新：{0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">無法驗證已下載的更新，已將其捨棄。未安裝任何內容。</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">無法啟動更新。&#10;{0}&#10;&#10;要開啟發行頁面自行下載嗎？</sys:String>
     <sys:String x:Key="Str_About_Downloading">正在下載...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">下載並安裝 {0} {1}？</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">應用程式將關閉並自動重新開啟。</sys:String>

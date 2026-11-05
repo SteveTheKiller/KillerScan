@@ -299,6 +299,8 @@
 
     <!-- Self-update. {0} is the release tag; in the heading {0} is the app name and {1} the tag. -->
     <sys:String x:Key="Str_About_UpdateAvailable">Доступно обновление: {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">Не удалось проверить загруженное обновление, поэтому оно было удалено. Ничего не установлено.</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">Не удалось запустить обновление.&#10;{0}&#10;&#10;Открыть страницу релизов, чтобы скачать его самостоятельно?</sys:String>
     <sys:String x:Key="Str_About_Downloading">Загрузка...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">Загрузить и установить {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Приложение автоматически закроется и снова откроется.</sys:String>

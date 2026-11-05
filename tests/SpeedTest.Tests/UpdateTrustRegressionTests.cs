@@ -89,7 +89,10 @@ internal static class UpdateTrustRegressionTests
     {
         foreach (var (first, retry, trusted) in new[]
         {
+            // 0x800B010E is what an unreachable revocation server returns when Windows' offline-OK
+            // policy is off (measured on SN02, 2026-11-05); a revoked certificate is never retried.
             (0u, 0u, true), (0x80092013u, 0u, true), (0x80092013u, 0x800B0101u, false),
+            (0x800B010Eu, 0u, true), (0x800B010Eu, 0x800B0101u, false),
             (0x800B010Cu, 0u, false), (0x80096010u, 0u, false)
         })
         {
@@ -102,7 +105,7 @@ internal static class UpdateTrustRegressionTests
             Require(result == trusted, $"Trust result for 0x{first:X8} then 0x{retry:X8}.");
             // WTD_REVOKE_WHOLECHAIN first; the retry is WTD_REVOKE_NONE with cache-only retrieval.
             Require(calls[0] == (1u, 0x80u), "The first check asks for whole-chain revocation.");
-            Require(calls.Count == (first == 0x80092013u ? 2 : 1), "Only an offline revocation server earns a retry.");
+            Require(calls.Count == (first is 0x80092013u or 0x800B010Eu ? 2 : 1), "Only an unreachable revocation server earns a retry.");
             if (calls.Count == 2) Require(calls[1] == (0u, 0x1010u), "The retry is cache-only with no revocation.");
         }
     }

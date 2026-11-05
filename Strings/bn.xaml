@@ -285,6 +285,8 @@
     <sys:String x:Key="Str_Db_SaveFailed">ডেটাবেস সংরক্ষণ করা যায়নি: {0}</sys:String>
     <sys:String x:Key="Str_Db_Failed">আপডেট ব্যর্থ হয়েছে: {0}</sys:String>
     <sys:String x:Key="Str_About_UpdateAvailable">আপডেট উপলব্ধ: {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">ডাউনলোড করা আপডেটটি যাচাই করা যায়নি এবং এটি বাতিল করা হয়েছে। কিছুই ইনস্টল করা হয়নি।</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">আপডেট শুরু করা যায়নি।&#10;{0}&#10;&#10;নিজে ডাউনলোড করতে রিলিজ পেজ খুলবেন?</sys:String>
     <sys:String x:Key="Str_About_Downloading">ডাউনলোড হচ্ছে...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">{0} {1} ডাউনলোড করে ইনস্টল করবেন?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">অ্যাপটি বন্ধ হয়ে স্বয়ংক্রিয়ভাবে আবার চালু হবে।</sys:String>

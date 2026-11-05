@@ -312,6 +312,8 @@
     <sys:String x:Key="Str_Db_SaveFailed">Az adatbázist nem sikerült menteni: {0}</sys:String>
     <sys:String x:Key="Str_Db_Failed">A frissítés sikertelen: {0}</sys:String>
     <sys:String x:Key="Str_About_UpdateAvailable">Elérhető frissítés: {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">A letöltött frissítést nem sikerült ellenőrizni, ezért elvetettük. Semmi sem lett telepítve.</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">A frissítést nem sikerült elindítani.&#10;{0}&#10;&#10;Megnyitja a kiadások oldalát, hogy saját maga letöltse?</sys:String>
     <sys:String x:Key="Str_About_Downloading">Letöltés...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">Letölti és telepíti a következőt: {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Az alkalmazás bezárul, és automatikusan újraindul.</sys:String>

@@ -111,6 +111,9 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--shrink-to-fit" })) { await ShrinkToFitTests.Run(); Console.WriteLine("PASS: shrink-to-fit regression suite (1 selected)."); return 0; }
             if (args.SequenceEqual(new[] { "--cli-progress" })) { CliProgressTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--module-path" })) { ModulePathTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--about-signature" })) { AboutSignatureTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--about-update-failure" })) { AboutUpdateFailureTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--picker-recovery" })) { PickerRecoveryTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--rail-order" })) { await RailOrderTests.Run(); Console.WriteLine("PASS: rail order regression suite (1 selected)."); return 0; }
             Require(args.All(value => value == "--worker" || value == "--internet" || value == "--speed-loopback"),
                 "Usage: SpeedTest.Tests.exe [--speed-loopback] [--worker] [--internet]");

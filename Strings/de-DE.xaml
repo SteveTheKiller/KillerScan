@@ -285,6 +285,8 @@
     <sys:String x:Key="Str_Db_SaveFailed">Die Datenbank konnte nicht gespeichert werden: {0}</sys:String>
     <sys:String x:Key="Str_Db_Failed">Aktualisierung fehlgeschlagen: {0}</sys:String>
     <sys:String x:Key="Str_About_UpdateAvailable">Update verfügbar: {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">Das heruntergeladene Update konnte nicht überprüft werden und wurde verworfen. Es wurde nichts installiert.</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">Das Update konnte nicht gestartet werden.&#10;{0}&#10;&#10;Die Releases-Seite öffnen, um es selbst herunterzuladen?</sys:String>
     <sys:String x:Key="Str_About_Downloading">Wird heruntergeladen...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">{0} {1} herunterladen und installieren?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Die App wird geschlossen und automatisch neu gestartet.</sys:String>

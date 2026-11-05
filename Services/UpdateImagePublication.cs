@@ -89,6 +89,9 @@ namespace KillerScan.Services
             if (!guardEmitted && !elevated)
                 script.AppendLine("try {").AppendLine(Guard).AppendLine("} catch {")
                     .AppendLine("    try { [IO.File]::AppendAllText($plan.Report, [Environment]::NewLine + 'The update helper could not load: ' + $_.Exception.Message) } catch { }")
+                    // The helper runs with PSModulePath cut down to PowerShell's own folder; the app gets the user's back.
+                    .AppendLine("    if ($env:KillerOriginalPSModulePath) { $env:PSModulePath = $env:KillerOriginalPSModulePath }")
+                    .AppendLine("    Remove-Item -LiteralPath Env:KillerOriginalPSModulePath -ErrorAction SilentlyContinue")
                     .AppendLine("    if (Test-Path -LiteralPath $plan.Target) { try { if ($plan.Reopen) { Start-Process -FilePath $plan.Target -ArgumentList $plan.Reopen } else { Start-Process -FilePath $plan.Target } } catch { } }")
                     .AppendLine("    exit 1").AppendLine("}");
             else if (!guardEmitted) script.AppendLine(Guard);
@@ -671,7 +674,8 @@ public static class KillerUpdateGuard {
     public static bool VerifyTrust(Func<uint, uint, uint> nativeVerify) {
         uint status = nativeVerify(1, 0x80);
         if (status == 0) return true;
-        return status == 0x80092013 && nativeVerify(0, 0x1010) == 0;
+        // CRYPT_E_REVOCATION_OFFLINE or CERT_E_REVOCATION_FAILURE: the revocation server could not be reached.
+        return (status == 0x80092013 || status == 0x800B010E) && nativeVerify(0, 0x1010) == 0;
     }
     // Starts the published image and fails unless a process was actually created. An elevated
     // helper starts it with the desktop shell's own token, at normal integrity, and only when that

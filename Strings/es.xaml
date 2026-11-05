@@ -285,6 +285,8 @@
     <sys:String x:Key="Str_Db_SaveFailed">No se pudo guardar la base de datos: {0}</sys:String>
     <sys:String x:Key="Str_Db_Failed">Error en la actualización: {0}</sys:String>
     <sys:String x:Key="Str_About_UpdateAvailable">Actualización disponible: {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">No se pudo verificar la actualización descargada y se ha descartado. No se ha instalado nada.</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">No se pudo iniciar la actualización.&#10;{0}&#10;&#10;¿Abrir la página de versiones para descargarla usted mismo?</sys:String>
     <sys:String x:Key="Str_About_Downloading">Descargando...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">¿Descargar e instalar {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">La aplicación se cerrará y volverá a abrirse automáticamente.</sys:String>

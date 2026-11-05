@@ -184,8 +184,10 @@ namespace KillerScan.Services
         {
             uint status = nativeVerify(1, 0x80);
             if (status == 0) return true;
-            // Only an offline revocation server permits an integrity and trusted-chain retry.
-            return status == 0x80092013 && nativeVerify(0, 0x1010) == 0;
+            // Only a revocation server that could not be reached permits an integrity and trusted-chain
+            // retry. Windows reports that as CRYPT_E_REVOCATION_OFFLINE or, when its offline-OK policy is
+            // off, CERT_E_REVOCATION_FAILURE. A revoked certificate is never retried.
+            return (status == 0x80092013 || status == 0x800B010E) && nativeVerify(0, 0x1010) == 0;
         }
 
         /// <summary>SHA-256 of the running exe as lower-case hex. Slow on a large file, so callers

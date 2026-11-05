@@ -1,4 +1,6 @@
 using System;
+using System.ComponentModel;
+using KillerScan.Controls;
 using KillerScan.Services;
 
 namespace KillerScan.Features.About
@@ -45,6 +47,27 @@ namespace KillerScan.Features.About
         {
             if (value is "(none)" or "(unavailable)") value = _host.Loc("Str_Diag_Unavailable");
         }
+
+        partial void UpdateNotVerified(Exception failure)
+        {
+            // The download arrived but was refused, so the releases page is no remedy: say so.
+            new ConfirmDialog(AppInfo.DisplayName, _host.Loc("Str_About_UpdateNotVerified"), _host.Loc("Str_Sys_Close"), notice: true)
+                { Owner = _host.Window }.ShowDialog();
+        }
+
+        partial void UpdateHandoffFailed(Exception failure)
+        {
+            if (!OffersManualDownload(failure)) return;
+            var dialog = new ConfirmDialog(AppInfo.DisplayName, string.Format(_host.Loc("Str_About_UpdateHandoffFailed"), failure.Message),
+                _host.Loc("Str_Btn_Open"), _host.Loc("Str_Btn_Cancel")) { Owner = _host.Window };
+            dialog.ShowDialog();
+            if (dialog.Confirmed) WebLink.Open(UpdateService.ReleasesUrl);
+        }
+
+        /// <summary>Whether a failed hand-off tells the user and offers the releases page. Declining the UAC
+        /// prompt (Win32 1223) is the user's own answer, so it stays quiet.</summary>
+        internal static bool OffersManualDownload(Exception failure)
+            => !(failure is Win32Exception { NativeErrorCode: 1223 });
 
         // Captures stay clean under --demo.
         partial void SkipStartupCheck(ref bool skip) => skip |= DemoData.Enabled;

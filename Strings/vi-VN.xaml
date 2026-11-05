@@ -263,6 +263,8 @@
     <sys:String x:Key="Str_Db_SaveFailed">Không thể lưu cơ sở dữ liệu: {0}</sys:String>
     <sys:String x:Key="Str_Db_Failed">Cập nhật thất bại: {0}</sys:String>
     <sys:String x:Key="Str_About_UpdateAvailable">Có bản cập nhật: {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">Không thể xác minh bản cập nhật đã tải xuống nên bản cập nhật đã bị loại bỏ. Chưa có gì được cài đặt.</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">Không thể bắt đầu bản cập nhật.&#10;{0}&#10;&#10;Mở trang bản phát hành để tự tải xuống?</sys:String>
     <sys:String x:Key="Str_About_Downloading">Đang tải xuống...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">Tải xuống và cài đặt {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Ứng dụng sẽ tự động đóng và mở lại.</sys:String>

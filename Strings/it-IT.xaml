@@ -312,6 +312,8 @@
     <sys:String x:Key="Str_Db_SaveFailed">Impossibile salvare il database: {0}</sys:String>
     <sys:String x:Key="Str_Db_Failed">Aggiornamento non riuscito: {0}</sys:String>
     <sys:String x:Key="Str_About_UpdateAvailable">Aggiornamento disponibile: {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">Non è stato possibile verificare l'aggiornamento scaricato, che è stato scartato. Non è stato installato nulla.</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">Impossibile avviare l'aggiornamento.&#10;{0}&#10;&#10;Aprire la pagina delle versioni per scaricarlo manualmente?</sys:String>
     <sys:String x:Key="Str_About_Downloading">Download...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">Scaricare e installare {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">L'app si chiuderà e si riaprirà automaticamente.</sys:String>

@@ -299,6 +299,8 @@
 
     <!-- Self-update. {0} is the release tag; in the heading {0} is the app name and {1} the tag. -->
     <sys:String x:Key="Str_About_UpdateAvailable">Жаңарту бар: {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">Жүктелген жаңартуды тексеру мүмкін болмады, сондықтан ол жойылды. Ештеңе орнатылған жоқ.</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">Жаңартуды іске қосу мүмкін болмады.&#10;{0}&#10;&#10;Өзіңіз жүктеп алу үшін шығарылымдар бетін ашу керек пе?</sys:String>
     <sys:String x:Key="Str_About_Downloading">Жүктелуде...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">{0} {1} жүктеп орнату керек пе?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Қолданба автоматты түрде жабылып, қайта ашылады.</sys:String>

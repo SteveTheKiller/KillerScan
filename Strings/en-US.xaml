@@ -297,6 +297,8 @@
 
     <!-- Self-update. {0} is the release tag; in the heading {0} is the app name and {1} the tag. -->
     <sys:String x:Key="Str_About_UpdateAvailable">Update available: {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">The downloaded update could not be verified and was discarded. Nothing was installed.</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">The update could not start.&#10;{0}&#10;&#10;Open the releases page to download it yourself?</sys:String>
     <sys:String x:Key="Str_About_Downloading">Downloading...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">Download and install {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">The app will close and reopen automatically.</sys:String>

@@ -283,6 +283,8 @@
     <sys:String x:Key="Str_Db_SaveFailed">Databázi se nepodařilo uložit: {0}</sys:String>
     <sys:String x:Key="Str_Db_Failed">Aktualizace selhala: {0}</sys:String>
     <sys:String x:Key="Str_About_UpdateAvailable">Je dostupná aktualizace: {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">Staženou aktualizaci nebylo možné ověřit, proto byla zahozena. Nic nebylo nainstalováno.</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">Aktualizaci se nepodařilo spustit.&#10;{0}&#10;&#10;Otevřít stránku vydání a stáhnout ji ručně?</sys:String>
     <sys:String x:Key="Str_About_Downloading">Stahování...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">Stáhnout a nainstalovat {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Aplikace se zavře a znovu se automaticky spustí.</sys:String>

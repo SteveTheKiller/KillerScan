@@ -259,6 +259,8 @@
     <sys:String x:Key="Str_Db_SaveFailed">Zbirke ni bilo mogoče shraniti: {0}</sys:String>
     <sys:String x:Key="Str_Db_Failed">Posodobitev ni uspela: {0}</sys:String>
     <sys:String x:Key="Str_About_UpdateAvailable">Na voljo je posodobitev: {0}</sys:String>
+    <sys:String x:Key="Str_About_UpdateNotVerified">Prenesene posodobitve ni bilo mogoče preveriti, zato je bila zavržena. Nič ni bilo nameščeno.</sys:String>
+    <sys:String x:Key="Str_About_UpdateHandoffFailed" xml:space="preserve">Posodobitve ni bilo mogoče zagnati.&#10;{0}&#10;&#10;Želite odpreti stran z izdajami in jo prenesti sami?</sys:String>
     <sys:String x:Key="Str_About_Downloading">Prenašanje...</sys:String>
     <sys:String x:Key="Str_About_UpdateHeading">Prenesem in namestim {0} {1}?</sys:String>
     <sys:String x:Key="Str_About_UpdateDetail">Program se bo samodejno zaprl in ponovno odprl.</sys:String>
