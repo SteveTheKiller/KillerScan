@@ -7,7 +7,10 @@
 #   .\release.ps1              # full release for the version in the csproj
 #   .\release.ps1 -DryRun      # everything except the site push, tag push and gh release
 #   .\release.ps1 -SkipSign    # unsigned dry run; never push, tag or publish
-#   .\release.ps1 -Choco       # also pack/push the Chocolatey package after the release
+#
+# Chocolatey is NOT pushed from here. .github/workflows/chocolatey-release.yml fires on
+# "release: published", checks the exe against SHA256SUMS.txt and its signature, then packs and
+# pushes; a second push from here would fail on the version it already published.
 #
 # winget is NOT submitted from here. .github/workflows/winget-release.yml fires on
 # "release: published" and runs komac itself, so doing it here too would double-submit.
@@ -27,9 +30,7 @@ param(
     [string]$CertThumbprint = "",
     # Fallback: CN match in the Windows cert store, as in the other Killer release scripts.
     [string]$CertName = "Open Source Developer Stephen Riley",
-    [switch]$SkipSign,
-    [switch]$Choco,
-    [string]$ChocoApiKey = $env:CHOCO_API_KEY
+    [switch]$SkipSign
 )
 
 $ErrorActionPreference = 'Stop'
@@ -51,6 +52,12 @@ function Step([string]$Message) {
     Write-Host "==> $Message" -ForegroundColor Cyan
 }
 
+# Published numbers (the changelog's vendor count, the landing page's exe size) read the same
+# whatever region the build machine uses; -f would follow the machine's culture.
+function Format-Invariant([string]$Format) {
+    return [string]::Format([System.Globalization.CultureInfo]::InvariantCulture, $Format, [object[]]$args)
+}
+
 function Get-OuiChangelogText {
     param(
         [Parameter(Mandatory)][string]$Text,
@@ -58,7 +65,7 @@ function Get-OuiChangelogText {
         [Parameter(Mandatory)][int]$EntryCount
     )
 
-    $entry = '- Refreshed the bundled MAC vendor database to {0:N0} assignments.' -f $EntryCount
+    $entry = Format-Invariant '- Refreshed the bundled MAC vendor database to {0:N0} assignments.' $EntryCount
     $nl = if ($Text.Contains("`r`n")) { "`r`n" } else { "`n" }
     $sectionPattern = '(?ms)(^## \[' + [regex]::Escape($ReleaseVersion) + '\][^\r\n]*\r?\n)(.*?)(?=^## \[|\z)'
     $sectionMatch = [regex]::Match($Text, $sectionPattern)
@@ -199,7 +206,7 @@ try {
     $ouiEntryCount = [int]$ouiResult.EntryCount
     $ouiChangelog = Get-OuiChangelogText -Text $changelog -ReleaseVersion $Version -EntryCount $ouiEntryCount
     if ($DryRun) {
-        Write-Host ("DryRun: would record {0:N0} OUI assignments in CHANGELOG.md." -f $ouiEntryCount) -ForegroundColor Yellow
+        Write-Host (Format-Invariant 'DryRun: would record {0:N0} OUI assignments in CHANGELOG.md.' $ouiEntryCount) -ForegroundColor Yellow
         Write-Host 'DryRun: OUI download was written only to the temporary directory.' -ForegroundColor Yellow
     } else {
         if ($ouiChangelog -ne $changelog) {
@@ -212,9 +219,9 @@ try {
             if ($LASTEXITCODE -ne 0) { Fail 'OUI database release commit failed' }
             git push origin $defaultBranch --quiet
             if ($LASTEXITCODE -ne 0) { Fail 'OUI database release commit failed to push' }
-            Write-Host ("Committed and pushed {0:N0} OUI assignments for v{1}." -f $ouiEntryCount, $Version)
+            Write-Host (Format-Invariant 'Committed and pushed {0:N0} OUI assignments for v{1}.' $ouiEntryCount $Version)
         } else {
-            Write-Host ("OUI database and changelog already record {0:N0} assignments." -f $ouiEntryCount)
+            Write-Host (Format-Invariant 'OUI database and changelog already record {0:N0} assignments.' $ouiEntryCount)
         }
     }
 } finally {
@@ -352,7 +359,7 @@ if ($fileVersion -notlike "$Version*") {
 # adds ~10KB and the site would otherwise advertise a size the downloaded file does not have.
 Step "Verifying single-exe packaging"
 $exeSize = (Get-Item $exe).Length
-$unsignedMB = '{0:N2} MB' -f ($exeSize / 1MB)
+$unsignedMB = Format-Invariant '{0:N2} MB' ($exeSize / 1MB)
 if ($exeSize -lt 1.5MB) {
     Fail "KillerScan.exe is only $unsignedMB - Costura does not appear to have embedded the dependencies. Check Fody/FodyWeavers.xml."
 }
@@ -412,7 +419,7 @@ if ($SkipSign) {
 # Size and hash both come from the exe in its FINAL, signed state - this is the file people
 # actually download, so it is what the landing page and SHA256SUMS.txt must describe.
 Step "Measuring the signed exe"
-$exeMB    = '{0:N2} MB' -f ((Get-Item $exe).Length / 1MB)
+$exeMB    = Format-Invariant '{0:N2} MB' ((Get-Item $exe).Length / 1MB)
 Write-Host "Signed KillerScan.exe is $exeMB"
 $exeHash  = (Get-FileHash $exe -Algorithm SHA256).Hash
 
@@ -544,7 +551,7 @@ Step "Bundling source"
 & (Join-Path $PSScriptRoot 'build\bundle-source.ps1') -ProjectDir $PSScriptRoot -Version $Version -AppName 'KillerScan' -PublishDir $publishDir
 $srcZip = Join-Path $publishDir "KillerScan-$Version-src.zip"
 if (-not (Test-Path $srcZip)) { Fail "Source bundle not produced: $srcZip (is git installed and is this a repo?)" }
-$srcZipMB = '{0:N2} MB' -f ((Get-Item $srcZip).Length / 1MB)
+$srcZipMB = Format-Invariant '{0:N2} MB' ((Get-Item $srcZip).Length / 1MB)
 Write-Host "Source bundle: $srcZip ($srcZipMB)"
 
 # --- 7d. Checksums (SHA256SUMS.txt) ---
@@ -606,45 +613,6 @@ if ($LASTEXITCODE -ne 0) {
     Write-Warning 'The release is published, but thekiller.net refresh could not be started. Run: gh workflow run deploy.yml --repo SteveTheKiller/thekiller-site'
 }
 
-# --- 11. Chocolatey pack/push (opt-in) ---
-# Runs AFTER the release is published so the package never points at a release that failed.
-# Non-fatal: the GitHub release is already out, so a choco hiccup must not fail the run.
-if ($Choco) {
-    Step "Packing Chocolatey package"
-    $chocoDir   = Join-Path $PSScriptRoot 'choco'
-    $nuspec     = Join-Path $chocoDir 'killerscan.nuspec'
-    $installPs1 = Join-Path $chocoDir 'tools\chocolateyInstall.ps1'
-
-    $nuspecOrig  = Get-Content $nuspec -Raw
-    $installOrig = Get-Content $installPs1 -Raw
-    $nupkg = $null
-    try {
-        $nuspecOrig  -replace 'REPLACE_VERSION', $Version | Set-Content $nuspec -NoNewline
-        $installOrig -replace 'REPLACE_HASH',    $exeHash | Set-Content $installPs1 -NoNewline
-
-        Push-Location $chocoDir
-        choco pack killerscan.nuspec
-        if ($LASTEXITCODE -ne 0) { Write-Warning 'choco pack failed' } else {
-            $nupkg = Join-Path $chocoDir "killerscan.$Version.nupkg"
-            Write-Host "Packed: $nupkg" -ForegroundColor Green
-        }
-        Pop-Location
-    } finally {
-        # Always restore the templates so the placeholders survive in git.
-        $nuspecOrig  | Set-Content $nuspec -NoNewline
-        $installOrig | Set-Content $installPs1 -NoNewline
-    }
-
-    if ($nupkg -and $ChocoApiKey) {
-        Step "Pushing to the Chocolatey community repo"
-        choco push $nupkg --source https://push.chocolatey.org --api-key $ChocoApiKey
-        if ($LASTEXITCODE -ne 0) { Write-Warning 'choco push failed - push it by hand.' }
-        else { Write-Host 'Pushed OK' -ForegroundColor Green }
-    } elseif ($nupkg) {
-        Write-Host 'Skipping push - set CHOCO_API_KEY or pass -ChocoApiKey to push automatically.' -ForegroundColor Yellow
-    }
-}
-
 Step "Submitting $Tag to the Microsoft Store"
 # The GitHub release is already published, so a Store failure is reported with the exact retry
 # command rather than failing the release.
@@ -660,4 +628,5 @@ Write-Host "Release $Tag published:"
 gh release view $Tag --json url --jq '.url'
 Write-Host ""
 Write-Host "  winget: submitted automatically by .github/workflows/winget-release.yml" -ForegroundColor Yellow
+Write-Host "  choco : pushed automatically by .github/workflows/chocolatey-release.yml" -ForegroundColor Yellow
 Write-Host "  site  : scan-landing/ is committed and current - drag it into Cloudflare Pages to deploy." -ForegroundColor Yellow

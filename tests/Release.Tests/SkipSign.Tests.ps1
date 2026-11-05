@@ -40,7 +40,7 @@ $folder = Join-Path $env:TEMP ('KillerScan-SkipSign-tests-' + [guid]::NewGuid().
 $null = New-Item -ItemType Directory -Path $folder
 $driver = Join-Path $folder 'driver.ps1'
 $prefix = @'
-param([switch]$SkipSign, [switch]$DryRun, [switch]$Choco, [string]$Log)
+param([switch]$SkipSign, [switch]$DryRun, [string]$Log)
 $ErrorActionPreference = 'Stop'
 function Step { }
 function git { Add-Content -LiteralPath $Log -Value ('git ' + ($args -join ' ')); $global:LASTEXITCODE = 0 }
@@ -57,7 +57,6 @@ $body = $prefix + "`n" + $guard.Extent.Text + "`n" + $stop.Extent.Text + "`n" +
 $hostExe = (Get-Process -Id $PID).Path
 $cases = @(
     @{ Name = 'SkipSign'; Args = @('-SkipSign'); Publishes = $false },
-    @{ Name = 'SkipSignWithChoco'; Args = @('-SkipSign', '-Choco'); Publishes = $false },
     @{ Name = 'SkipSignWithDryRun'; Args = @('-SkipSign', '-DryRun'); Publishes = $false },
     @{ Name = 'DryRun'; Args = @('-DryRun'); Publishes = $false },
     @{ Name = 'NormalRelease'; Args = @(); Publishes = $true }
