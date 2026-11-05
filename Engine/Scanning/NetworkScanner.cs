@@ -18,20 +18,12 @@ namespace KillerScan.Engine
         public NetworkScanner(IScanDiscovery discovery) => _discovery = discovery ?? throw new ArgumentNullException(nameof(discovery));
         private static readonly SemaphoreSlim NativeMacSlots = new(8);
 
-        /// <summary>
-        /// The most on-link addresses discovery resolves at once, across every scan in the process.
-        /// Each ping, TCP connect or ARP request to an unresolved on-link address holds a neighbor
-        /// cache entry until it answers or times out, and Windows keeps 256 entries per interface by
-        /// default. A busy /24 already has 150 or so live entries, so discovery keeps its own share
-        /// well under the rest; past the limit Windows starts dropping entries, and a host whose
-        /// entry is dropped mid-request is reported missing. A dead address holds its SendARP call
-        /// for about 4 seconds, so a quiet /24 pays roughly 15 seconds of sweep at this width.
-        /// </summary>
-        internal const int DiscoveryWidth = 64;
-        private static readonly SemaphoreSlim NeighborSlots = new(DiscoveryWidth);
+        // A dead address holds its SendARP call for about 3.7 seconds. Measured on SN02 on a /24 with
+        // four live hosts: 64 at a time added 16 seconds to a 6-second quick scan, 256 added 4.
+        private static readonly SemaphoreSlim ArpSweepSlots = new(256);
 
         /// <summary>The most silent on-link addresses the ARP sweep asks one by one: 1,024 (a /22)
-        /// is sixteen waves of 64, about a minute. A larger range relies on ping, TCP liveness and
+        /// is four waves of 256, about 15 seconds. A larger range relies on ping, TCP liveness and
         /// the neighbor cache.</summary>
         internal static int ArpSweepLimit = 1024;
 
@@ -94,9 +86,11 @@ namespace KillerScan.Engine
 
         // A MAC resolved for more than MaxIpsPerMac distinct IPs may be a next-hop artifact: a router
         // answering ARP for addresses it does not own (proxy ARP), or a TAP adapter answering for
-        // every address. It is discarded when it is the gateway's own MAC or turns up on at least
-        // SharedMacCeiling addresses. Below that it is one NIC carrying a few addresses (a Linux
-        // server with aliases, a firewall's virtual IPs), and every one of them is a real device.
+        // every address. Hosts the ARP sweep alone found behind such a MAC are dropped, since that
+        // answer is their only evidence. A host that answered ping, TCP or sat in the neighbor
+        // cache is real either way, and keeps the MAC unless it is the gateway's own or turns up on
+        // at least SharedMacCeiling addresses: below that it is one NIC carrying a few addresses
+        // (a Linux server with aliases, a firewall's virtual IPs).
         private const int MaxIpsPerMac = 2;
         private const int SharedMacCeiling = 8;
 
@@ -267,9 +261,9 @@ namespace KillerScan.Engine
             var ssdpTask = options.Ssdp ? _discovery.CollectSsdpAsync(ct)
                 : Task.FromResult(new Dictionary<string, string>());
 
-            // Which addresses Windows reaches directly. Only those take a neighbor cache entry while
-            // they resolve, so only they count against DiscoveryWidth, and only they can be swept
-            // with ARP. One route lookup per address, kept off the caller's (UI) thread.
+            // Which addresses Windows reaches directly: only those can be swept with ARP, and the
+            // rest get the second liveness pass instead. One route lookup per address, kept off the
+            // caller's (UI) thread.
             var onLink = await Task.Run(() => new HashSet<string>(addresses.Where(IsOnLink).Select(a => a.ToString())), ct);
 
             // Liveness wave: ping, then TCP on a few ports for hosts that drop ICMP (Windows Firewall
@@ -278,14 +272,8 @@ namespace KillerScan.Engine
             var semaphore = new SemaphoreSlim(200);
             async Task<bool> AliveAsync(IPAddress addr, int pingTimeoutMs)
             {
-                bool neighbor = onLink.Contains(addr.ToString());
-                if (neighbor) await NeighborSlots.WaitAsync(ct);
-                try
-                {
-                    if (options.Icmp && (await ScanSource.PingAsync(addr, pingTimeoutMs)).Success) return true;
-                    return options.TcpLiveness && await TcpAliveAsync(addr);
-                }
-                finally { if (neighbor) NeighborSlots.Release(); }
+                if (options.Icmp && (await ScanSource.PingAsync(addr, pingTimeoutMs)).Success) return true;
+                return options.TcpLiveness && await TcpAliveAsync(addr);
             }
 
             var scanTasks = addresses.Select(async addr =>
@@ -345,10 +333,9 @@ namespace KillerScan.Engine
             // ARP sweep: phones, printers and locked-down devices often drop ping, expose none of the
             // liveness ports and age out of the neighbor cache before the second read. Ask every
             // remaining on-link address directly, the way an ARP scanner does. Dead addresses block
-            // SendARP for a few seconds, so the sweep runs on dedicated threads, shares the neighbor
-            // budget with the liveness wave, and reports progress (25 to 30) as each address answers
-            // or times out. A range with more silent addresses than ArpSweepLimit is left to the
-            // checks above.
+            // SendARP for a few seconds, so the sweep has its own wider pool of dedicated threads and
+            // reports progress (25 to 30) as each address answers or times out. A range with more
+            // silent addresses than ArpSweepLimit is left to the checks above.
             var sweptOnly = new HashSet<string>();
             if (options.Arp)
             {
@@ -359,11 +346,11 @@ namespace KillerScan.Engine
                     var answered = new System.Collections.Concurrent.ConcurrentBag<string>();
                     var arpTasks = silent.Select(async addr =>
                     {
-                        var (mac, took) = await ResolveMacTimedAsync(addr, NeighborSlots, ct, dedicated: true);
+                        var (mac, took) = await ResolveMacTimedAsync(addr, ArpSweepSlots, ct, dedicated: true);
                         // A dead address holds SendARP for seconds while Windows retransmits. One
                         // that fails at once never got those retransmits, so it is asked once more.
                         if (string.IsNullOrEmpty(mac) && took < ArpQuickFailure)
-                            mac = await ResolveMacAsync(addr, NeighborSlots, ct, dedicated: true);
+                            mac = await ResolveMacAsync(addr, ArpSweepSlots, ct, dedicated: true);
                         if (!string.IsNullOrEmpty(mac) && discoveredHosts.TryAdd(addr.ToString(), (addr, mac)))
                             answered.Add(addr.ToString());
                         int done = Interlocked.Increment(ref swept);
@@ -409,25 +396,21 @@ namespace KillerScan.Engine
                 ? gatewayHost.Mac
                 : arpCache2.TryGetValue(GatewayIp, out var cachedGateway) ? cachedGateway
                 : arpCache.TryGetValue(GatewayIp, out cachedGateway) ? cachedGateway : string.Empty;
-            var bogusMacs = new HashSet<string>(discoveredHosts.Values
+            var macCounts = discoveredHosts.Values
                 .Where(h => !string.IsNullOrEmpty(h.Mac))
                 .GroupBy(h => h.Mac)
-                .Where(g => g.Count() > MaxIpsPerMac && (g.Count() >= SharedMacCeiling
-                    || string.Equals(g.Key, gatewayMac, StringComparison.OrdinalIgnoreCase)))
-                .Select(g => g.Key));
-            if (bogusMacs.Count > 0)
+                .ToDictionary(g => g.Key, g => g.Count());
+            foreach (var ip in discoveredHosts.Keys.ToList())
             {
-                foreach (var ip in discoveredHosts.Keys.ToList())
-                {
-                    var (hAddr, hMac) = discoveredHosts[ip];
-                    // The gateway is the one host that really owns that MAC: off-link hosts
-                    // resolve to it, so it keeps its own and the rest lose the borrowed copy.
-                    if (string.IsNullOrEmpty(hMac) || !bogusMacs.Contains(hMac) || ip == GatewayIp) continue;
-                    // A host the ARP sweep added had no other evidence than that shared answer
-                    // (a proxy-ARP router or a TAP adapter answering for every address): not a device.
-                    if (sweptOnly.Contains(ip)) discoveredHosts.TryRemove(ip, out _);
-                    else discoveredHosts[ip] = (hAddr, "");
-                }
+                var (hAddr, hMac) = discoveredHosts[ip];
+                // The gateway is the one host that really owns its MAC: off-link hosts resolve
+                // to it, so it keeps its own and the rest lose the borrowed copy.
+                if (string.IsNullOrEmpty(hMac) || ip == GatewayIp || macCounts[hMac] <= MaxIpsPerMac) continue;
+                // A host the ARP sweep added had no other evidence than that shared answer
+                // (a proxy-ARP router or a TAP adapter answering for every address): not a device.
+                if (sweptOnly.Contains(ip)) discoveredHosts.TryRemove(ip, out _);
+                else if (macCounts[hMac] >= SharedMacCeiling || string.Equals(hMac, gatewayMac, StringComparison.OrdinalIgnoreCase))
+                    discoveredHosts[ip] = (hAddr, "");
             }
 
             // Phase 2: Probe discovered hosts for details (parallel, throttled)

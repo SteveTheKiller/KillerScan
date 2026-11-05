@@ -31,8 +31,7 @@ internal static class ArpSweepTests
             await QuickArpFailuresAreAskedAgain();
             await SilentRoutedAddressesGetASecondLivenessPass();
             await SharedMacOutsideTheGatewayKeepsItsHosts();
-            await GatewayMacOnOtherAddressesAddsNothing();
-            await DiscoveryStaysInsideItsWidth();
+            await GatewayMacIsBlankedOnOtherHosts();
         }
         finally
         {
@@ -85,10 +84,11 @@ internal static class ArpSweepTests
 
     private static async Task OneMacForEveryAddressIsNotADevice()
     {
-        // A proxy-ARP router or a TAP adapter answers for every on-link address with one MAC, so on
-        // any real range that MAC turns up on far more addresses than one host's own aliases would.
+        // A proxy-ARP router or a TAP adapter answers for every on-link address with one MAC. The
+        // gateway is outside the range and the cache is empty, so nothing names that MAC a router's.
+        NetworkScanner.GatewayIp = "192.0.2.1";
         NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "00:09:0F:AA:BB:CC");
-        Require((await Quick("192.0.2.70-89")).Count == 0, "Addresses whose only evidence is one shared ARP answer are not devices.");
+        Require((await Quick("192.0.2.74-79")).Count == 0, "Addresses whose only evidence is one shared ARP answer are not devices.");
     }
 
     private static async Task LargeRangesSkipTheSweep()
@@ -203,47 +203,34 @@ internal static class ArpSweepTests
 
     private static async Task SharedMacOutsideTheGatewayKeepsItsHosts()
     {
-        // One NIC with a few addresses (a Linux server with aliases, a firewall's virtual IPs) is
-        // three real addresses on one MAC, not a proxy-ARP artifact.
+        // One NIC with a few addresses (a Linux server with aliases, a firewall's virtual IPs)
+        // answers ping at each of them: three real devices on one MAC, and they keep it.
         NetworkScanner.GatewayIp = "192.0.2.1";
-        NetworkPlatform.Current = new ArpPlatform(_ => "", ip => ip is "192.0.2.74" or "192.0.2.75" or "192.0.2.76" ? "00:04:F2:AA:BB:CC" : "");
-        var found = await Quick("192.0.2.74-79", Silent);
-        Require(found.Count == 3 && found.All(d => d.MacAddress == "00:04:F2:AA:BB:CC"),
-            "Three addresses answering ARP with one MAC that is not the gateway's are three devices that keep it.");
-    }
-
-    private static async Task GatewayMacOnOtherAddressesAddsNothing()
-    {
-        // A router answering ARP for addresses it does not own answers with its own MAC.
-        NetworkScanner.GatewayIp = "192.0.2.74";
-        NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "00:11:22:33:44:55");
-        var found = await Quick("192.0.2.74-79", Silent);
-        Require(found.Count == 1 && found[0].IpAddress == "192.0.2.74", "Addresses answered only by the gateway's MAC are not devices; the gateway stays.");
-    }
-
-    private static async Task DiscoveryStaysInsideItsWidth()
-    {
-        // Every ping and ARP request to an unresolved address takes a neighbor cache entry, and
-        // Windows keeps 256 per interface by default. Discovery keeps few enough in flight that
-        // the live hosts of a busy /24 and its own requests fit together.
-        var platform = new ArpPlatform(_ => "", _ => { Thread.Sleep(60); return ""; });
-        NetworkPlatform.Current = platform;
-        int pinging = 0, peakPing = 0;
-        ScanSource.PingOverride = async (_, _) =>
-        {
-            InterlockedMax(ref peakPing, Interlocked.Increment(ref pinging));
-            await Task.Delay(30);
-            Interlocked.Decrement(ref pinging);
-            return (false, 0);
-        };
-        Require(NetworkScanner.DiscoveryWidth + 150 <= 256,
-            "A /24 with 150 live hosts and every request in flight fits Windows' default 256-entry neighbor cache.");
+        ScanSource.PingOverride = (address, _) => Task.FromResult((address.ToString() is "192.0.2.74" or "192.0.2.75" or "192.0.2.76", 64));
         try
         {
-            await Quick("192.0.2.1-200", new ScanOptions().Without("tcp-liveness"));
-            Require(platform.Calls == 200, "Every silent on-link address is swept.");
-            Require(platform.PeakActive <= NetworkScanner.DiscoveryWidth, $"At most {NetworkScanner.DiscoveryWidth} ARP requests are in flight; saw {platform.PeakActive}.");
-            Require(peakPing <= NetworkScanner.DiscoveryWidth, $"At most {NetworkScanner.DiscoveryWidth} pings are in flight; saw {peakPing}.");
+            NetworkPlatform.Current = new ArpPlatform(_ => "", ip => ip is "192.0.2.74" or "192.0.2.75" or "192.0.2.76" ? "00:04:F2:AA:BB:CC" : "");
+            var found = await Quick("192.0.2.74-79", new ScanOptions().Without("tcp-liveness"));
+            Require(found.Count == 3 && found.All(d => d.MacAddress == "00:04:F2:AA:BB:CC"),
+                "Three addresses that answer ping with one MAC that is not the gateway's are three devices that keep it.");
+        }
+        finally { ScanSource.PingOverride = null; }
+    }
+
+    private static async Task GatewayMacIsBlankedOnOtherHosts()
+    {
+        // Hosts that answer ping but resolve to the gateway's own MAC borrowed it (proxy ARP):
+        // they stay as devices, the gateway keeps its MAC, and the rest lose the borrowed copy.
+        NetworkScanner.GatewayIp = "192.0.2.74";
+        ScanSource.PingOverride = (address, _) => Task.FromResult((address.ToString() is "192.0.2.74" or "192.0.2.75" or "192.0.2.76", 64));
+        try
+        {
+            NetworkPlatform.Current = new ArpPlatform(_ => "", ip => ip is "192.0.2.74" or "192.0.2.75" or "192.0.2.76" ? "00:11:22:33:44:55" : "");
+            var found = await Quick("192.0.2.74-79", new ScanOptions().Without("tcp-liveness"));
+            Require(found.Count == 3, "Hosts that answer ping stay devices whatever MAC they resolved to.");
+            Require(found.Single(d => d.IpAddress == "192.0.2.74").MacAddress == "00:11:22:33:44:55"
+                && found.Where(d => d.IpAddress != "192.0.2.74").All(d => d.MacAddress.Length == 0),
+                "Only the gateway keeps the gateway's MAC.");
         }
         finally { ScanSource.PingOverride = null; }
     }

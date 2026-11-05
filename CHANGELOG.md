@@ -6,16 +6,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.9.2] - Unreleased
 
-Scans of busy networks find the devices they used to miss on the first pass, such as IP phones and servers that answer ping.
+Scans give devices that miss their first chance another one, so fewer turn up only after a rescan.
 
 ### Fixed
 
-- Scans of a busy local network no longer miss devices that answer ping or ARP and turn up only after several rescans. Discovery keeps few enough requests in flight that Windows does not drop them, asks again when an ARP request fails at once, reads the neighbor cache once more after the ARP sweep, and gives routed addresses a second, longer ping.
-- A server or firewall with a few addresses on one network card is listed at every address instead of being dropped as a router artifact. Only the gateway's own MAC, or one MAC answering for eight or more addresses, is treated that way.
-
-### Changed
-
-- A quick scan of a quiet /24 takes about 10 seconds longer, because the ARP sweep asks fewer silent addresses at a time.
+- Scans give a device that misses its first chance another one. An ARP request that fails at once is asked again, the neighbor cache is read once more after the ARP sweep, and a silent address reached through a router or VPN gets a second, longer ping.
+- A server or firewall that answers ping at a few addresses on one network card keeps its MAC address, vendor and device type at every address instead of losing them as a router artifact.
 
 ## [1.9.1] - 2026-11-05
 
