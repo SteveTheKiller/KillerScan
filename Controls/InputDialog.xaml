@@ -134,9 +134,9 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="16,2,16,14">
-                    <Button x:Name="CancelButton" Content="{DynamicResource Str_Btn_Cancel}" Click="Cancel_Click"
+                    <Button x:Name="CancelButton" Content="{DynamicResource Str_Btn_Cancel}" Click="Cancel_Click" IsCancel="True"
                             Style="{StaticResource SurfaceButton}" MinWidth="86" Margin="0,0,8,0"/>
-                    <Button x:Name="OkButton" Content="OK" Click="OK_Click"
+                    <Button x:Name="OkButton" Content="OK" Click="OK_Click" IsDefault="True"
                             Style="{StaticResource OutlineButton}" MinWidth="86"/>
                 </StackPanel>
             </Grid>

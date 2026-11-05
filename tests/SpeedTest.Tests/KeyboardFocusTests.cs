@@ -81,6 +81,7 @@ internal static class KeyboardFocusTests
         }
         finally { window.Close(); }
         CheckTitleBarDrags();
+        CheckInputDialogKeys();
         Console.WriteLine($"PASS: button, hyperlink and tab focus styles, table entry and native navigation ({_checks} checks).");
     }
 
@@ -105,6 +106,15 @@ internal static class KeyboardFocusTests
             }
             Require(calls > 0, name + " still drags from its title bar.");
         }
+    }
+    /// <summary>Escape cancels and Enter confirms from the buttons too, while the notes box keeps Enter as a new line.</summary>
+    private static void CheckInputDialogKeys()
+    {
+        var dialog = new InputDialog("Heading", "Detail", "Label", "value", "OK", "Cancel");
+        var notes = (TextBox)dialog.FindName("NotesBox");
+        Require(((Button)dialog.FindName("CancelButton")).IsCancel, "Escape cancels the input dialog from any control, not only the name box.");
+        Require(((Button)dialog.FindName("OkButton")).IsDefault && notes.AcceptsReturn,
+            "Enter confirms the input dialog, and the notes box still takes Enter as a new line.");
     }
     private static bool HasFamilyRing(Style? style)
     {
