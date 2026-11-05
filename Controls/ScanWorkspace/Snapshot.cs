@@ -139,7 +139,9 @@ namespace KillerScan.Controls
                    .Append("\" y2=\"").Append(line.Y2.ToString("0.##", ci))
                    .Append("\" stroke=\"").Append(Hex(line.Stroke, "#808080"))
                    .Append("\" stroke-width=\"").Append(line.StrokeThickness.ToString("0.##", ci))
-                   .Append("\" stroke-dasharray=\"2 3\" opacity=\"")
+                   .Append("\" stroke-dasharray=\"")
+                   .Append(string.Join(" ", line.StrokeDashArray.Select(dash => (dash * line.StrokeThickness).ToString("0.##", ci))))
+                   .Append("\" opacity=\"")
                    .Append(line.Opacity.ToString("0.##", ci)).Append("\"/>\n");
             }
 

@@ -165,7 +165,10 @@ internal static class TopologyTests
         Call(workspace, "WriteTopologyRaster", baselineRaster, transparent);
         Require(canvas.Children.OfType<Border>().Count(n => n.Tag is NetworkDevice) == 31, "Every synthetic device has one node.");
         Require(canvas.Children.OfType<Line>().Count() == 31, "Topology links retain every device.");
-        double oldRadius = 28 * (Math.Sqrt(126 * 126 + 40 * 40) + 22) / (2 * Math.PI);
+        var sample = canvas.Children.OfType<Line>().First();
+        string dashes = string.Join(" ", sample.StrokeDashArray.Select(dash => (dash * sample.StrokeThickness).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)));
+        Require(dashes.Length > 0 && baselineSvg.Contains("stroke-dasharray=\"" + dashes + "\""),
+            "The SVG export draws connector dashes the way the canvas does (" + dashes + ").");        double oldRadius = 28 * (Math.Sqrt(126 * 126 + 40 * 40) + 22) / (2 * Math.PI);
         Require(canvas.Width * canvas.Height < (2 * oldRadius + 170) * (2 * oldRadius + 84) * 0.65,
             "The 31-device radial canvas uses substantially less area than the single ring.");
         var nodes = canvas.Children.OfType<Border>().ToArray();
