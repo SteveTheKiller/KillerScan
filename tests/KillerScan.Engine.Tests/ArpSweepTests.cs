@@ -30,7 +30,7 @@ internal static class ArpSweepTests
             await CacheReadAfterTheSweepFindsLateAnswers();
             await QuickArpFailuresAreAskedAgain();
             await SilentRoutedAddressesGetASecondLivenessPass();
-            await SharedMacOutsideTheGatewayKeepsItsHosts();
+            await TapMacIsBlankedOnHostsThatAnswerPing();
             await GatewayMacIsBlankedOnOtherHosts();
         }
         finally
@@ -201,18 +201,19 @@ internal static class ArpSweepTests
         finally { ScanSource.PingOverride = null; }
     }
 
-    private static async Task SharedMacOutsideTheGatewayKeepsItsHosts()
+    private static async Task TapMacIsBlankedOnHostsThatAnswerPing()
     {
-        // One NIC with a few addresses (a Linux server with aliases, a firewall's virtual IPs)
-        // answers ping at each of them: three real devices on one MAC, and they keep it.
+        // An on-link VPN or TAP adapter answers ARP for every host behind it with its own MAC
+        // (Fortinet here). Hosts that answer ping are real, but that MAC is not theirs: it would
+        // stamp each with the adapter's vendor and type, so they keep their address and lose it.
         NetworkScanner.GatewayIp = "192.0.2.1";
         ScanSource.PingOverride = (address, _) => Task.FromResult((address.ToString() is "192.0.2.74" or "192.0.2.75" or "192.0.2.76", 64));
         try
         {
-            NetworkPlatform.Current = new ArpPlatform(_ => "", ip => ip is "192.0.2.74" or "192.0.2.75" or "192.0.2.76" ? "00:04:F2:AA:BB:CC" : "");
+            NetworkPlatform.Current = new ArpPlatform(_ => "", ip => ip is "192.0.2.74" or "192.0.2.75" or "192.0.2.76" ? "00:09:0F:AA:BB:CC" : "");
             var found = await Quick("192.0.2.74-79", new ScanOptions().Without("tcp-liveness"));
-            Require(found.Count == 3 && found.All(d => d.MacAddress == "00:04:F2:AA:BB:CC"),
-                "Three addresses that answer ping with one MAC that is not the gateway's are three devices that keep it.");
+            Require(found.Count == 3 && found.All(d => d.MacAddress.Length == 0),
+                "Hosts that answer ping behind one shared MAC stay devices without that MAC.");
         }
         finally { ScanSource.PingOverride = null; }
     }

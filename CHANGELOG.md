@@ -11,7 +11,6 @@ Scans give devices that miss their first chance another one, so fewer turn up on
 ### Fixed
 
 - Scans give a device that misses its first chance another one. An ARP request that fails at once is asked again, the neighbor cache is read once more after the ARP sweep, and a silent address reached through a router or VPN gets a second, longer ping.
-- A server or firewall that answers ping at a few addresses on one network card keeps its MAC address, vendor and device type at every address instead of losing them as a router artifact.
 
 ## [1.9.1] - 2026-11-05
 

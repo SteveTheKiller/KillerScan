@@ -84,15 +84,10 @@ namespace KillerScan.Engine
         // only for hosts already found alive.
         private static readonly int[] LivenessPorts = [445, 3389, 80, 443, 22];
 
-        // A MAC resolved for more than MaxIpsPerMac distinct IPs may be a next-hop artifact: a router
-        // answering ARP for addresses it does not own (proxy ARP), or a TAP adapter answering for
-        // every address. Hosts the ARP sweep alone found behind such a MAC are dropped, since that
-        // answer is their only evidence. A host that answered ping, TCP or sat in the neighbor
-        // cache is real either way, and keeps the MAC unless it is the gateway's own or turns up on
-        // at least SharedMacCeiling addresses: below that it is one NIC carrying a few addresses
-        // (a Linux server with aliases, a firewall's virtual IPs).
+        // A MAC resolved for more than this many distinct IPs is treated as a next-hop/gateway artifact
+        // (routed or VPN link) rather than a real per-host address, and is discarded. Real LAN hosts each
+        // have a unique MAC, so a low ceiling is safe; 2 tolerates the odd multi-homed NIC.
         private const int MaxIpsPerMac = 2;
-        private const int SharedMacCeiling = 8;
 
         public static void FlushLocalDnsCache() => NetworkPlatform.Current.FlushDnsCache();
 
@@ -261,11 +256,6 @@ namespace KillerScan.Engine
             var ssdpTask = options.Ssdp ? _discovery.CollectSsdpAsync(ct)
                 : Task.FromResult(new Dictionary<string, string>());
 
-            // Which addresses Windows reaches directly: only those can be swept with ARP, and the
-            // rest get the second liveness pass instead. One route lookup per address, kept off the
-            // caller's (UI) thread.
-            var onLink = await Task.Run(() => new HashSet<string>(addresses.Where(IsOnLink).Select(a => a.ToString())), ct);
-
             // Liveness wave: ping, then TCP on a few ports for hosts that drop ICMP (Windows Firewall
             // default). ARP cannot reach a host across a router or VPN, so for those this is the
             // only evidence, and it is what closes the "20 found vs 200 real" gap over a VPN.
@@ -312,7 +302,13 @@ namespace KillerScan.Engine
             // or every one when ARP is off. It waits out at least one ARP retransmit (1 second), so a
             // host whose first ping was lost while its next hop resolved still answers.
             var silentNow = addresses.Where(a => !discoveredHosts.ContainsKey(a.ToString())).ToList();
-            var unswept = silentNow.Where(a => !options.Arp || !onLink.Contains(a.ToString())).ToList();
+            // Which silent addresses Windows reaches directly, and so can be swept with ARP. Only
+            // asked when ARP is on: one route lookup per address, off the caller's (UI) thread.
+            var onLink = options.Arp
+                ? await Task.Run(() => new HashSet<string>(silentNow.Where(a =>
+                    { ct.ThrowIfCancellationRequested(); return IsOnLink(a); }).Select(a => a.ToString())), ct)
+                : new HashSet<string>();
+            var unswept = silentNow.Where(a => !onLink.Contains(a.ToString())).ToList();
             if ((options.Icmp || options.TcpLiveness) && unswept.Count > 0 && unswept.Count <= SecondPassLimit)
             {
                 await Task.WhenAll(unswept.Select(async addr =>
@@ -391,26 +387,24 @@ namespace KillerScan.Engine
             // (e.g. Fortinet) would otherwise stamp every device with the wrong vendor and device type.
             // A real LAN gives each host a unique MAC, so a MAC shared across several IPs is an artifact:
             // blank it and let the port/fingerprint signals classify those hosts instead.
-            // The gateway's MAC, from this scan when the gateway is in range, else from the cache.
-            string gatewayMac = discoveredHosts.TryGetValue(GatewayIp, out var gatewayHost) && gatewayHost.Mac.Length > 0
-                ? gatewayHost.Mac
-                : arpCache2.TryGetValue(GatewayIp, out var cachedGateway) ? cachedGateway
-                : arpCache.TryGetValue(GatewayIp, out cachedGateway) ? cachedGateway : string.Empty;
-            var macCounts = discoveredHosts.Values
+            var bogusMacs = new HashSet<string>(discoveredHosts.Values
                 .Where(h => !string.IsNullOrEmpty(h.Mac))
                 .GroupBy(h => h.Mac)
-                .ToDictionary(g => g.Key, g => g.Count());
-            foreach (var ip in discoveredHosts.Keys.ToList())
+                .Where(g => g.Count() > MaxIpsPerMac)
+                .Select(g => g.Key));
+            if (bogusMacs.Count > 0)
             {
-                var (hAddr, hMac) = discoveredHosts[ip];
-                // The gateway is the one host that really owns its MAC: off-link hosts resolve
-                // to it, so it keeps its own and the rest lose the borrowed copy.
-                if (string.IsNullOrEmpty(hMac) || ip == GatewayIp || macCounts[hMac] <= MaxIpsPerMac) continue;
-                // A host the ARP sweep added had no other evidence than that shared answer
-                // (a proxy-ARP router or a TAP adapter answering for every address): not a device.
-                if (sweptOnly.Contains(ip)) discoveredHosts.TryRemove(ip, out _);
-                else if (macCounts[hMac] >= SharedMacCeiling || string.Equals(hMac, gatewayMac, StringComparison.OrdinalIgnoreCase))
-                    discoveredHosts[ip] = (hAddr, "");
+                foreach (var ip in discoveredHosts.Keys.ToList())
+                {
+                    var (hAddr, hMac) = discoveredHosts[ip];
+                    // The gateway is the one host that really owns that MAC: off-link hosts
+                    // resolve to it, so it keeps its own and the rest lose the borrowed copy.
+                    if (string.IsNullOrEmpty(hMac) || !bogusMacs.Contains(hMac) || ip == GatewayIp) continue;
+                    // A host the ARP sweep added had no other evidence than that shared answer
+                    // (a proxy-ARP router or a TAP adapter answering for every address): not a device.
+                    if (sweptOnly.Contains(ip)) discoveredHosts.TryRemove(ip, out _);
+                    else discoveredHosts[ip] = (hAddr, "");
+                }
             }
 
             // Phase 2: Probe discovered hosts for details (parallel, throttled)
