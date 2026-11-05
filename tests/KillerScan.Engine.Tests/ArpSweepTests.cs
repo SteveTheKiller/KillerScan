@@ -21,6 +21,7 @@ internal static class ArpSweepTests
             await LargeRangesSkipTheSweep();
             await RoutedHostsNeverBorrowTheNextHopMac();
             await RouteLookupsStayOffTheCallersThread();
+            await BoundScanTreatsItsOwnNetworkAsOnLink();
         }
         finally { NetworkPlatform.Current = original; NetworkScanner.ArpSweepLimit = originalLimit; }
         Console.WriteLine("PASS: the ARP sweep finds on-link ARP-only hosts, reports progress, and adds or stamps nothing off-link.");
@@ -102,6 +103,21 @@ internal static class ArpSweepTests
         await context.Run(() => Quick("192.0.2.74-79"));
         Require(platform.RouteThreads.Count > 0, "The sweep looked up routes.");
         Require(!platform.RouteThreads.Contains(context.ThreadId), "Route lookups for the sweep run off the caller's thread.");
+    }
+
+    private static async Task BoundScanTreatsItsOwnNetworkAsOnLink()
+    {
+        // A client VPN pushes the site's own subnet through a next hop, so Windows' best route for
+        // every address goes elsewhere. A scan bound to the local adapter still reaches its own
+        // network directly (ScanBinding.Reaches) and must sweep and resolve MACs there.
+        NetworkPlatform.Current = new ArpPlatform(_ => "127.0.0.254",
+            ip => "00:04:F2:00:00:" + int.Parse(ip.Split('.')[3]).ToString("X2"));
+        var bound = new NetworkScanner(new IsolatedDiscovery()) { Binding = new ScanBinding("Loopback", IPAddress.Loopback, 8) };
+        var pinged = await Quick("127.0.0.5-6", scanner: bound);
+        Require(pinged.Count == 2 && pinged.All(d => d.MacAddress.StartsWith("00:04:F2", StringComparison.Ordinal)),
+            "A bound scan resolves MACs on its own network even when Windows routes that subnet elsewhere.");
+        var swept = await Quick("127.0.0.5-6", new ScanOptions().Without("icmp,tcp-liveness"), bound);
+        Require(swept.Count == 2, "A bound scan sweeps its own network with ARP even when Windows routes that subnet elsewhere.");
     }
 
     private sealed class ArpPlatform(Func<string, string> nextHop, Func<string, string> answer) : INetworkPlatform

@@ -536,6 +536,9 @@ namespace KillerScan.Engine
         /// </summary>
         private static bool IsOnLink(IPAddress address)
         {
+            // A bound scan sends from its adapter, which reaches its own subnet directly even when
+            // Windows' best route for that subnet goes elsewhere (a client VPN pushing the same range).
+            if (ScanSource.Current is { } binding && binding.Contains(address)) return true;
             try { return NetworkPlatform.Current.BestRoute(address) is { } route && route.NextHop.Length == 0; }
             catch { return false; }
         }
