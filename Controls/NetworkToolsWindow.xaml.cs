@@ -595,7 +595,7 @@ namespace KillerScan.Controls
                     L("Str_Watch_Loss") + " " + card.ExportLoss,
                     L("Str_Watch_Sent") + " " + card.Sent));
                 foreach (var check in card.Checks) text.AppendLine("\t" + check.Check + "\t" + check.ExportResult);
-                foreach (var entry in card.Events) text.AppendLine("\t" + entry.Time + "\t" + entry.State);
+                foreach (var entry in card.Events) text.AppendLine("\t" + entry.ExportTime + "\t" + entry.State);
             }
             return text.ToString();
         }

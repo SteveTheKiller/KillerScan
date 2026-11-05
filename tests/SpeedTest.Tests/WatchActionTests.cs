@@ -57,6 +57,7 @@ internal static class WatchActionTests
         CheckStopThenCheckAgain();
         CheckLanguageChangeAfterStop();
         CheckCheckedAtTime();
+        CheckExportText();
         CheckShellCommands();
         Console.WriteLine("PASS: active Keep Alive and Diagnose requests add targets without resetting existing counters.");
     }
@@ -111,6 +112,25 @@ internal static class WatchActionTests
             Require(System.Text.RegularExpressions.Regex.IsMatch(stamp, @"^\d\d:\d\d:\d\d$"), "The Checked at export value is invariant 24-hour (" + stamp + ").");
             Require(watch.BuildCsv().Contains(stamp) && watch.BuildHtml().Contains(stamp) && watch.BuildText().Contains(stamp),
                 "CSV, HTML and text exports write the Checked at time in the invariant form.");
+            stop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        }
+        finally { Thread.CurrentThread.CurrentCulture = previous; }
+    }    private static void CheckExportText()
+    {
+        var previous = Thread.CurrentThread.CurrentCulture;
+        try
+        {
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("fi-FI");
+            using var watch = new NetworkToolsWindow("", 1);
+            var stop = (Button)watch.FindName("StopButton");
+            var cards = (ListBox)watch.FindName("Cards");
+            watch.ShowDetails("192.0.2.9", new[] { 8080 });
+            var card = cards.Items.OfType<WatchCard>().Single(c => c.Address == "192.0.2.9");
+            card.LogEvent(new DateTimeOffset(2026, 1, 2, 13, 4, 5, TimeSpan.Zero), "Reply", true);
+            var entry = card.Events.Last();
+            Require(entry.Time != entry.ExportTime, "The fi-FI event time differs from the invariant one, so the check can tell them apart.");
+            Require(watch.BuildText().Contains("\t" + entry.ExportTime + "\t") && !watch.BuildText().Contains("\t" + entry.Time + "\t"),
+                "The text export writes the invariant event time like CSV and HTML do.");
             stop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         }
         finally { Thread.CurrentThread.CurrentCulture = previous; }
