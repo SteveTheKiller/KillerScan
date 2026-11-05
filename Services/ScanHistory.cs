@@ -122,9 +122,7 @@ namespace KillerScan.Services
     /// <summary>The app-wide history, until every caller works through a Location.</summary>
     internal static class ScanHistory
     {
-        private static readonly string FilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "KillerScan", "history.json");
+        private static string FilePath => AppDataFolder.File("history.json");
         internal static HistoryStore Store { get; private set; } = new(FilePath);
 
         public static IReadOnlyList<ScanHistoryEntry> Entries => Store.Entries;

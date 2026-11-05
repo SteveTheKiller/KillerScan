@@ -126,9 +126,7 @@ namespace KillerScan.Services
     /// <summary>The app-wide saved scans, until every caller works through a Location.</summary>
     internal static class ScanProfiles
     {
-        private static readonly string FilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "KillerScan", "profiles.json");
+        internal static string FilePath => AppDataFolder.File("profiles.json");
         internal static SavedScanStore Store { get; private set; } = new(FilePath);
 
         public static string? SaveError => Store.SaveError;

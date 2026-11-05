@@ -14,13 +14,11 @@ internal static class PreferencePersistenceTests
         Directory.CreateDirectory(scratch);
         try
         {
-            var type = typeof(KillerScan.Services.DeviceOverrides);
-            var pathField = type.GetField("FilePath", BindingFlags.NonPublic | BindingFlags.Static)!;
-            object originalPath = pathField.GetValue(null)!;
+            string originalPath = AppDataFolder.Path;
             string path = Path.Combine(scratch, "overrides.json");
             try
             {
-                pathField.SetValue(null, path);
+                AppDataFolder.Path = scratch;
                 File.WriteAllText(path, "{unreadable-original");
                 KillerScan.Services.DeviceOverrides.Load();
                 bool saved = KillerScan.Services.DeviceOverrides.Set("00:11:22:33:44:55", "Printer");
@@ -48,30 +46,26 @@ internal static class PreferencePersistenceTests
                 if (KillerScan.Services.DeviceOverrides.Get("00:11:22:33:44:55") != "Server")
                     throw new InvalidOperationException("Retry publishes the full intended change.");
             }
-            finally { pathField.SetValue(null, originalPath); }
+            finally { AppDataFolder.Path = originalPath; }
 
             var logins = typeof(KillerScan.App).Assembly.GetType("KillerScan.Services.DeviceLogins", true)!;
-            var loginPath = logins.GetField("FilePath", BindingFlags.NonPublic | BindingFlags.Static)!;
-            object originalLoginPath = loginPath.GetValue(null)!;
             string loginFile = Path.Combine(scratch, "logins.json");
             try
             {
-                loginPath.SetValue(null, loginFile);
+                AppDataFolder.Path = scratch;
                 File.WriteAllText(loginFile, "{unreadable-logins");
                 logins.GetMethod("Load")!.Invoke(null, null);
                 logins.GetMethod("Set")!.Invoke(null, new object[] { "00:11:22:33:44:55", "192.0.2.1", "fixture-user" });
                 if (File.ReadAllText(loginFile) != "{unreadable-logins")
                     throw new InvalidOperationException("Saving a username must preserve unreadable original bytes.");
             }
-            finally { loginPath.SetValue(null, originalLoginPath); }
+            finally { AppDataFolder.Path = originalPath; }
 
             var profiles = typeof(KillerScan.App).Assembly.GetType("KillerScan.Services.ScanProfiles", true)!;
-            var profilePath = profiles.GetField("FilePath", BindingFlags.NonPublic | BindingFlags.Static)!;
-            object originalProfilePath = profilePath.GetValue(null)!;
             string profileFile = Path.Combine(scratch, "profiles.json");
             try
             {
-                profilePath.SetValue(null, profileFile);
+                AppDataFolder.Path = scratch;
                 File.WriteAllText(profileFile, "{unreadable-profiles");
                 profiles.GetMethod("Load")!.Invoke(null, null);
                 object profile = Activator.CreateInstance(typeof(KillerScan.App).Assembly.GetType("KillerScan.Services.ScanProfile", true)!)!;
@@ -80,15 +74,13 @@ internal static class PreferencePersistenceTests
                 if (File.ReadAllText(profileFile) != "{unreadable-profiles")
                     throw new InvalidOperationException("Saving a profile must preserve unreadable original bytes.");
             }
-            finally { profilePath.SetValue(null, originalProfilePath); }
+            finally { AppDataFolder.Path = originalPath; }
 
             var preferences = typeof(KillerScan.App).Assembly.GetType("KillerScan.Services.DevicePreferences", true)!;
-            var preferencesPath = preferences.GetField("FilePath", BindingFlags.NonPublic | BindingFlags.Static)!;
-            object originalPreferencesPath = preferencesPath.GetValue(null)!;
             string preferencesFile = Path.Combine(scratch, "devices.json");
             try
             {
-                preferencesPath.SetValue(null, preferencesFile);
+                AppDataFolder.Path = scratch;
                 File.WriteAllText(preferencesFile, "{unreadable-preferences");
                 preferences.GetMethod("Load")!.Invoke(null, null);
                 object device = new KillerScan.Engine.NetworkDevice { IpAddress = "192.0.2.1", MacAddress = "00:11:22:33:44:55" };
@@ -100,7 +92,7 @@ internal static class PreferencePersistenceTests
                 if (why == null || !why.Contains(preferencesFile))
                     throw new InvalidOperationException("A save refused by an unreadable file names that file: " + why);
             }
-            finally { preferencesPath.SetValue(null, originalPreferencesPath); }
+            finally { AppDataFolder.Path = originalPath; }
 
             string faultFile = Path.Combine(scratch, "partial-write.json");
             File.WriteAllText(faultFile, "{\"committed\":\"original\"}");

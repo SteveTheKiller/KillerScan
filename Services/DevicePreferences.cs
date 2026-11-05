@@ -166,9 +166,7 @@ namespace KillerScan.Services
     /// <summary>The app-wide device store, until every caller works through a Location.</summary>
     internal static class DevicePreferences
     {
-        private static readonly string FilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "KillerScan", "devices.json");
+        internal static string FilePath => AppDataFolder.File("devices.json");
         internal static DevicePreferenceStore Store { get; private set; } = new(FilePath);
 
         public static string? SaveError => Store.SaveError;

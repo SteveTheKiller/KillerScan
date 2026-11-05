@@ -20,14 +20,13 @@ internal static class DemoStoreTests
 
         void Check(Type type, string name, string realValue, string demoValue)
         {
-            var field = type.GetField("FilePath", BindingFlags.Static | BindingFlags.NonPublic)!;
-            object original = field.GetValue(null)!;
+            string original = AppDataFolder.Path;
             string path = Path.Combine(directory, name);
             string sentinel = "{\"00:11:22:33:44:55\":\"" + realValue + "\"}";
             File.WriteAllText(path, sentinel);
             try
             {
-                field.SetValue(null, path);
+                AppDataFolder.Path = directory;
                 DemoData.Enabled = true;
                 Load();
                 Require(Get() == null, "Demo mode must not read the real " + name);
@@ -43,7 +42,7 @@ internal static class DemoStoreTests
                 Load();
                 Require(Get() == "normal-change", "Normal edits survive reload.");
             }
-            finally { field.SetValue(null, original); DemoData.Enabled = originalDemo; }
+            finally { AppDataFolder.Path = original; DemoData.Enabled = originalDemo; }
 
             void Load() => type.GetMethod("Load")!.Invoke(null, null);
             string? Get() => (string?)type.GetMethod("Get")!.Invoke(null,

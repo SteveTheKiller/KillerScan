@@ -25,7 +25,29 @@ internal static class Program
     private static int _passed;
     private static SpeedTestResult? _internetResult;
 
+    private const string TestDataVariable = "KILLERSCAN_TEST_DATA";
+
     private static async Task<int> Main(string[] args)
+    {
+        // Before anything touches a store: the app's data folder is a scratch folder, shared with
+        // the child processes some suites start, so no test reads or writes the user's real data.
+        string? owned = null;
+        string? data = Environment.GetEnvironmentVariable(TestDataVariable);
+        if (string.IsNullOrEmpty(data))
+        {
+            data = owned = Path.Combine(Path.GetTempPath(), "KillerScanTests", Guid.NewGuid().ToString("N"));
+            Environment.SetEnvironmentVariable(TestDataVariable, data);
+        }
+        Directory.CreateDirectory(data);
+        KillerScan.Services.AppDataFolder.Path = data;
+        try { return await RunSuites(args); }
+        finally
+        {
+            if (owned != null) try { Directory.Delete(owned, recursive: true); } catch (IOException) { } catch (UnauthorizedAccessException) { }
+        }
+    }
+
+    private static async Task<int> RunSuites(string[] args)
     {
         try
         {
@@ -114,11 +136,13 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--about-signature" })) { AboutSignatureTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--about-update-failure" })) { AboutUpdateFailureTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--picker-recovery" })) { PickerRecoveryTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--appdata-isolation" })) { AppDataIsolationTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--rail-order" })) { await RailOrderTests.Run(); Console.WriteLine("PASS: rail order regression suite (1 selected)."); return 0; }
             Require(args.All(value => value == "--worker" || value == "--internet" || value == "--speed-loopback"),
                 "Usage: SpeedTest.Tests.exe [--speed-loopback] [--worker] [--internet]");
             if (!args.Contains("--speed-loopback"))
             {
+                await Run("No test reaches the user's real data folder", () => { AppDataIsolationTests.Run(); return Task.CompletedTask; });
                 await Run("Menu dividers resolve declared palettes and preserve the fallback", MenuSeparatorThemeTests.Run);
                 await Run("Startup content becomes visible when its animation stalls", StartupFadeTests.Run);
                 await Run("Topology radial geometry, zoom and rendered interactions", TopologyTests.RunIsolated);

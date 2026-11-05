@@ -77,9 +77,7 @@ namespace KillerScan.Services
     /// <summary>The app-wide override store, until every caller works through a Location.</summary>
     public static class DeviceOverrides
     {
-        private static readonly string FilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "KillerScan", "overrides.json");
+        internal static string FilePath => AppDataFolder.File("overrides.json");
         internal static DeviceOverrideStore Store { get; private set; } = new(FilePath);
 
         public static string? SaveError => Store.SaveError;

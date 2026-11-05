@@ -74,9 +74,7 @@ namespace KillerScan.Services
     /// <summary>The app-wide login store, until every caller works through a Location.</summary>
     internal static class DeviceLogins
     {
-        private static readonly string FilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "KillerScan", "logins.json");
+        internal static string FilePath => AppDataFolder.File("logins.json");
         internal static DeviceLoginStore Store { get; private set; } = new(FilePath);
 
         public static string? SaveError => Store.SaveError;

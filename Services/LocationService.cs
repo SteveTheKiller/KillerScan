@@ -9,8 +9,7 @@ namespace KillerScan.Services
     internal static class LocationService
     {
         /// <summary>Where Locations live. Isolated tests point it at a scratch folder before loading.</summary>
-        internal static string Root { get; set; } = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerScan");
+        internal static string Root { get; set; } = AppDataFolder.Path;
         private static LocationCatalog? _catalog;
         private static LocationData? _fallback;
         private static readonly List<LocationInfo> DemoLocations = [];
