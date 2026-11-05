@@ -6,11 +6,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.9.1] - Unreleased
 
-Exported reports, keep-alive logs and file names no longer change with the Windows region, and updates and the file picker recover from more failures.
+Scans find devices that only answer ARP, Chocolatey can uninstall KillerScan again, a speed test survives a single server error, and exports, updates and the file picker hold up on more systems.
 
 ### Fixed
 
-- Scans find devices on the local network that answer ARP but ignore ping and have no common ports open, such as IP phones, instead of missing them when Windows had not cached them.
+- Uninstalling with Chocolatey works again on installs of 1.9.0 and later, which it refused as unregistered.
+- Scans find devices on the local network that answer ARP but ignore ping and have no common ports open, such as IP phones, instead of missing them when Windows had not cached them. The sweep shows its progress and covers up to 1,024 silent addresses.
+- Devices reached through a router or VPN no longer take the router's MAC address, vendor and device type, so they no longer merge with the router in history, known devices, manual types and saved logins.
+- A speed test no longer ends when one of its many requests gets a server error, and an error now says whether Cloudflare answered it or something closer to the PC did (#4).
+- Uninstalling removes leftover update files along with KillerScan instead of leaving the install folder and an old copy behind.
+- SSH to a device starts Windows' OpenSSH client or a client installed on PATH, never a file named ssh.exe sitting beside a portable copy.
+- Command-line scans no longer garble or abort their progress lines when many devices answer at once.
+- Keep Alive: Check again after Stop runs the checks instead of clearing the card, changing the language after Stop no longer reruns every check, the Checked at time reads 24-hour like the event log, the text export writes times the same way on every Windows region, and HTML card headings separate address and state with a plain hyphen.
+- The input, history settings and terminal font dialogs no longer crash on a quick title-bar click, and the input dialog closes with Escape from any field.
+- Pressing Stop while a scan identifies its network no longer starts the deep pass, and a loaded saved scan's deep pass no longer carries over to a manual scan of another target.
+- Two KillerScan windows opening their first terminal at the same moment both get the bundled PowerShell modules.
+- The Set type status line names the device type in the language on screen, and the Scan button is translated in Slovenian.
+- The topology SVG export draws connector dashes at the same length as the screen, and the Chocolatey description no longer claims HTML reports load their logo from the website.
 - The file picker loads icons and picture previews in the background, refreshes overwritten previews, and restores its position on any monitor.
 - Exported scan reports and keep-alive logs write dates, times and decimals the same way on every Windows region, so Thai and Finnish settings no longer produce years like 2569 or times like 14.30.
 - Suggested file names and set-aside folder names use the same digits on every Windows region.
