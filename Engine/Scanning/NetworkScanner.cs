@@ -19,6 +19,11 @@ namespace KillerScan.Engine
         private static readonly SemaphoreSlim NativeMacSlots = new(8);
         private static readonly SemaphoreSlim ArpSweepSlots = new(64);
 
+        /// <summary>The most silent on-link addresses the ARP sweep asks one by one. A dead address
+        /// holds its SendARP call for about three seconds, so 1,024 (a /22) costs under a minute at
+        /// 64 at a time; a larger range relies on ping, TCP liveness and the neighbor cache.</summary>
+        internal static int ArpSweepLimit = 1024;
+
         // Common ports to probe for device type detection
         private static readonly int[] ProbePorts = [
             22,    // SSH
@@ -263,7 +268,7 @@ namespace KillerScan.Engine
                 {
                     semaphore.Release();
                     int done = Interlocked.Increment(ref completed);
-                    ProgressChanged?.Invoke((int)(done * 30.0 / total));
+                    ProgressChanged?.Invoke((int)(done * 25.0 / total));
                 }
             });
 
@@ -284,18 +289,31 @@ namespace KillerScan.Engine
             // ARP sweep: phones, printers and locked-down devices often drop ping, expose none of the
             // liveness ports and age out of the neighbor cache before the second read. Ask every
             // remaining on-link address directly, the way an ARP scanner does. Dead addresses block
-            // SendARP for a few seconds, so the sweep has its own wider pool than MAC resolution.
+            // SendARP for a few seconds, so the sweep has its own wider pool of dedicated threads and
+            // reports progress (25 to 30) as each address answers or times out. A range with more
+            // silent addresses than ArpSweepLimit is left to the checks above.
+            var sweptOnly = new HashSet<string>();
             if (options.Arp)
             {
-                var silent = addresses.Where(a => !discoveredHosts.ContainsKey(a.ToString()) && IsOnLink(a)).ToList();
-                var arpTasks = silent.Select(async addr =>
+                // One route lookup per address: kept off the caller's (UI) thread.
+                var silent = await Task.Run(() =>
+                    addresses.Where(a => !discoveredHosts.ContainsKey(a.ToString()) && IsOnLink(a)).ToList(), ct);
+                if (silent.Count <= ArpSweepLimit)
                 {
-                    string mac = await ResolveMacAsync(addr, ArpSweepSlots, ct);
-                    if (!string.IsNullOrEmpty(mac))
-                        discoveredHosts.TryAdd(addr.ToString(), (addr, mac));
-                });
-                await Task.WhenAll(arpTasks);
-                ct.ThrowIfCancellationRequested();
+                    int swept = 0;
+                    var answered = new System.Collections.Concurrent.ConcurrentBag<string>();
+                    var arpTasks = silent.Select(async addr =>
+                    {
+                        string mac = await ResolveMacAsync(addr, ArpSweepSlots, ct, dedicated: true);
+                        if (!string.IsNullOrEmpty(mac) && discoveredHosts.TryAdd(addr.ToString(), (addr, mac)))
+                            answered.Add(addr.ToString());
+                        int done = Interlocked.Increment(ref swept);
+                        ProgressChanged?.Invoke(25 + (int)(done * 5.0 / silent.Count));
+                    });
+                    await Task.WhenAll(arpTasks);
+                    ct.ThrowIfCancellationRequested();
+                    sweptOnly.UnionWith(answered);
+                }
             }
 
             // Resolve MAC addresses via ARP for discovered hosts (fast, they're alive)
@@ -330,8 +348,11 @@ namespace KillerScan.Engine
                     var (hAddr, hMac) = discoveredHosts[ip];
                     // The gateway is the one host that really owns that MAC: off-link hosts
                     // resolve to it, so it keeps its own and the rest lose the borrowed copy.
-                    if (!string.IsNullOrEmpty(hMac) && bogusMacs.Contains(hMac) && ip != GatewayIp)
-                        discoveredHosts[ip] = (hAddr, "");
+                    if (string.IsNullOrEmpty(hMac) || !bogusMacs.Contains(hMac) || ip == GatewayIp) continue;
+                    // A host the ARP sweep added had no other evidence than that shared answer
+                    // (a proxy-ARP router or a TAP adapter answering for every address): not a device.
+                    if (sweptOnly.Contains(ip)) discoveredHosts.TryRemove(ip, out _);
+                    else discoveredHosts[ip] = (hAddr, "");
                 }
             }
 
@@ -483,16 +504,26 @@ namespace KillerScan.Engine
         private static Task<string> ResolveMacAsync(IPAddress address, CancellationToken ct) =>
             ResolveMacAsync(address, NativeMacSlots, ct);
 
-        private static async Task<string> ResolveMacAsync(IPAddress address, SemaphoreSlim slots, CancellationToken ct)
+        private static async Task<string> ResolveMacAsync(IPAddress address, SemaphoreSlim slots, CancellationToken ct, bool dedicated = false)
         {
             await slots.WaitAsync(ct);
             // A started native call owns its slot until it actually returns, even when the
             // caller has canceled and a later scan is waiting for the same capacity.
-            var lookup = Task.Run(() =>
+            Func<string> work = () =>
             {
-                try { ct.ThrowIfCancellationRequested(); return GetMacAddress(address); }
+                try
+                {
+                    ct.ThrowIfCancellationRequested();
+                    // Off-link, SendARP answers with the next hop's MAC, which belongs to the router.
+                    return IsOnLink(address) ? GetMacAddress(address) : string.Empty;
+                }
                 finally { slots.Release(); }
-            });
+            };
+            // The sweep's calls mostly wait out dead addresses; on their own threads they cannot
+            // starve the pool the rest of the scan runs on.
+            var lookup = dedicated
+                ? Task.Factory.StartNew(work, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default)
+                : Task.Run(work);
             return await AwaitWithCancellation(lookup, ct);
         }
 
