@@ -8,6 +8,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 Scans find devices that only answer ARP, Chocolatey can uninstall KillerScan again, a speed test survives a single server error, and exports, updates and the file picker hold up on more systems.
 
+### Security
+
+- SSH to a device starts Windows' OpenSSH client or a client installed on PATH, never a file named ssh.exe sitting beside a portable copy.
+- Updates check the publisher's certificate for revocation and hold every signature to the full release publisher name.
+
 ### Fixed
 
 - Uninstalling with Chocolatey works again on installs of 1.9.0 and later, which it refused as unregistered.
@@ -15,7 +20,6 @@ Scans find devices that only answer ARP, Chocolatey can uninstall KillerScan aga
 - Devices reached through a router or VPN no longer take the router's MAC address, vendor and device type, so they no longer merge with the router in history, known devices, manual types and saved logins.
 - A speed test no longer ends when one of its many requests gets a server error, and an error now says whether Cloudflare answered it or something closer to the PC did (#4).
 - Uninstalling removes leftover update files along with KillerScan instead of leaving the install folder and an old copy behind.
-- SSH to a device starts Windows' OpenSSH client or a client installed on PATH, never a file named ssh.exe sitting beside a portable copy.
 - Command-line scans no longer garble or abort their progress lines when many devices answer at once.
 - Keep Alive: Check again after Stop runs the checks instead of clearing the card, changing the language after Stop no longer reruns every check, the Checked at time reads 24-hour like the event log, the text export writes times the same way on every Windows region, and HTML card headings separate address and state with a plain hyphen.
 - The input, history settings and terminal font dialogs no longer crash on a quick title-bar click, and the input dialog closes with Escape from any field.
