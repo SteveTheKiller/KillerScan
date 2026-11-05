@@ -17,11 +17,13 @@ namespace KillerScan.Engine
         public NetworkScanner() : this(new MulticastScanDiscovery()) { }
         public NetworkScanner(IScanDiscovery discovery) => _discovery = discovery ?? throw new ArgumentNullException(nameof(discovery));
         private static readonly SemaphoreSlim NativeMacSlots = new(8);
-        private static readonly SemaphoreSlim ArpSweepSlots = new(64);
+        // A dead address holds its SendARP call for about 3.7 seconds. Measured on SN02 on a /24 with
+        // four live hosts: 64 at a time added 16 seconds to a 6-second quick scan, 256 added 4.
+        private static readonly SemaphoreSlim ArpSweepSlots = new(256);
 
-        /// <summary>The most silent on-link addresses the ARP sweep asks one by one. A dead address
-        /// holds its SendARP call for about three seconds, so 1,024 (a /22) costs under a minute at
-        /// 64 at a time; a larger range relies on ping, TCP liveness and the neighbor cache.</summary>
+        /// <summary>The most silent on-link addresses the ARP sweep asks one by one: 1,024 (a /22)
+        /// is four waves of 256, about 15 seconds. A larger range relies on ping, TCP liveness and
+        /// the neighbor cache.</summary>
         internal static int ArpSweepLimit = 1024;
 
         // Common ports to probe for device type detection
