@@ -559,7 +559,7 @@ namespace KillerScan.Controls
 
             foreach (var card in _cards)
             {
-                html.Append("<h2>").Append(Esc(card.Address)).Append(" &mdash; ").Append(Esc(card.State)).Append("</h2>\n<table>\n");
+                html.Append("<h2>").Append(Esc(card.Address)).Append(" - ").Append(Esc(card.State)).Append("</h2>\n<table>\n");
                 html.Append("<tr><td>").Append(Esc(L("Str_Watch_Latency"))).Append("</td><td>")
                     .Append(Esc(card.Latest + " / " + card.ExportAverage)).Append("</td></tr>\n");
                 html.Append("<tr><td>").Append(Esc(L("Str_Watch_Loss"))).Append("</td><td>").Append(Esc(card.ExportLoss)).Append("</td></tr>\n");

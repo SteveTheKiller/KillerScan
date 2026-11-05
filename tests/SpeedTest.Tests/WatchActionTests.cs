@@ -131,6 +131,9 @@ internal static class WatchActionTests
             Require(entry.Time != entry.ExportTime, "The fi-FI event time differs from the invariant one, so the check can tell them apart.");
             Require(watch.BuildText().Contains("\t" + entry.ExportTime + "\t") && !watch.BuildText().Contains("\t" + entry.Time + "\t"),
                 "The text export writes the invariant event time like CSV and HTML do.");
+            string html = watch.BuildHtml();
+            foreach (var banned in new[] { "&" + "mdash;", "&" + "ndash;", "\u2013", "\u2014" })
+                Require(!html.Contains(banned), "The HTML export has no dash entities or characters in its card headings (" + banned + ").");
             stop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         }
         finally { Thread.CurrentThread.CurrentCulture = previous; }
