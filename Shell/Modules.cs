@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 // KillerScripts, shipped inside the exe. Partial of MainWindow. Same mechanism as KillerShell,
@@ -51,10 +52,8 @@ namespace KillerScan.Shell
                     System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName ?? "");
 
                 string current = Environment.GetEnvironmentVariable("PSModulePath") ?? string.Empty;
-                if (current.IndexOf(root, StringComparison.OrdinalIgnoreCase) >= 0) return;
-
                 Environment.SetEnvironmentVariable("PSModulePath",
-                    current.Length == 0 ? root : current.TrimEnd(';') + ";" + root);
+                    ComposeModulePath(current, root, Path.GetDirectoryName(root)!));
             }
             catch
             {
@@ -74,6 +73,27 @@ namespace KillerScan.Shell
 
         private static string AppVersion() =>
             Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0";
+
+        /// <summary>
+        /// PSModulePath with this version's bundled folder last and no other version's. A per-user
+        /// update reopens the app with the PSModulePath the old copy had, which already names the
+        /// old version's folder; PowerShell takes the first match, so leaving it would load the
+        /// previous release's modules. Entries outside <paramref name="bundledParent"/> are the
+        /// user's and keep their order.
+        /// </summary>
+        internal static string ComposeModulePath(string current, string root, string bundledParent)
+        {
+            static string Normal(string path) => path.Trim().TrimEnd('\\', '/');
+            string parent = Normal(bundledParent);
+            var kept = current.Split(';')
+                .Where(entry => Normal(entry).Length > 0)
+                .Where(entry => !string.Equals(Path.GetDirectoryName(Normal(entry)), parent, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+            kept.Add(root);
+            return string.Join(";", kept);
+        }
+
+        internal static void UnpackBundled(string module, string root) => Unpack(module, root);
 
         private static void Unpack(string module, string root)
         {
@@ -103,16 +123,27 @@ namespace KillerScan.Shell
 
                 // Written to a temp name and moved into place, so an interrupted write cannot
                 // leave a truncated .psd1 that the check above would then accept as complete.
+                // The temp name is unique per writer: two KillerScan windows opening their first
+                // terminal at once unpack into the same version folder, and a shared temp name made
+                // the second fail with a sharing violation and run without modules all session.
                 string target = Path.Combine(dir, file);
-                string temp   = target + ".tmp";
+                string temp   = target + "." + Guid.NewGuid().ToString("N") + ".tmp";
 
-                using (var dst = File.Create(temp)) src.CopyTo(dst);
-
-                if (File.Exists(target)) File.Delete(target);
-                File.Move(temp, target);
+                // A target only ever appears by moving a complete temp file into place, so one that
+                // exists is whole (the folder is version-stamped, so it is this build's content).
+                if (File.Exists(target)) continue;
+                try
+                {
+                    using (var dst = File.Create(temp)) src.CopyTo(dst);
+                    // Another writer placed the same embedded file first; its copy is identical.
+                    try { File.Move(temp, target); }
+                    catch (IOException) when (File.Exists(target)) { }
+                }
+                finally { if (File.Exists(temp)) File.Delete(temp); }
             }
 
-            File.WriteAllText(done, string.Empty);
+            try { File.WriteAllText(done, string.Empty); }
+            catch (IOException) when (File.Exists(done)) { }
         }
     }
 }
