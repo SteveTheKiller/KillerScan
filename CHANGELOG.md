@@ -22,6 +22,7 @@ Scans give devices that miss their first chance another one, so fewer turn up on
 - Uninstalling from Windows Settings while KillerScan is open asks you to close it and try again, instead of failing without a word and leaving KillerScan installed.
 - When KillerScan finds itself installed twice and cannot remove the all-users copy, it says why instead of asking again at every start.
 - Enter on a focused button, such as Scan or a view tab, presses that button instead of opening the selected device in the browser.
+- Command-line options placed before the command, such as `/demo /scan` or `/export devices.csv /scan`, are honored instead of dropped, so the scan no longer runs on the real network or finishes without writing the file.
 - Keep Alive: Check again or Reset on a card whose checks are still running replaces that run instead of letting it keep adding traceroute hops and a second Checked at row to the card and its exports.
 
 ## [1.9.1] - 2026-11-05

@@ -941,9 +941,12 @@ namespace KillerScan.Features.Cli
         {
             var positionals = new List<string>();
             var options = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            int start = Array.FindIndex(args, a => Eq(a, command)) + 1;
-            for (int i = start; i < args.Length; i++)
+            // Options and targets may come before the command as well as after it: the window
+            // accepts /demo anywhere, and an option placed first must never be dropped silently.
+            int commandAt = Array.FindIndex(args, a => Eq(a, command));
+            for (int i = 0; i < args.Length; i++)
             {
+                if (i == commandAt) continue;
                 string a = args[i];
                 if (a.StartsWith("/", StringComparison.Ordinal) || a.StartsWith("-", StringComparison.Ordinal))
                 {

@@ -15,6 +15,7 @@ internal static class CsvExportTests
     {
         EvidenceMatchesGui();
         CommandRoutes();
+        OptionsBeforeTheCommand();
         foreach (var (input, expected) in new (string Input, string Expected)[]
         {
             ("=1+1", "'=1+1"), ("+1", "'+1"), ("-1", "'-1"), ("@SUM(1)", "'@SUM(1)"),
@@ -63,6 +64,40 @@ internal static class CsvExportTests
         if (absent.Count != 1 || absent[0].Length != 9 || absent[0].Skip(6).Any(value => value != ""))
             throw new InvalidOperationException("Absent evidence stays empty and no-header suppresses only the header.");
         Console.WriteLine("PASS: parsed CLI and GUI evidence CSV agrees across 9 columns, quoting, multiline Unicode and absent evidence.");
+    }
+
+    // Options before the command used to be dropped without a word: "/demo /scan" scanned the
+    // real network, and "/export x.csv /scan" wrote no file and still exited 0.
+    private static void OptionsBeforeTheCommand()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "KillerScan-cli-order-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        try
+        {
+            string after = Path.Combine(root, "after.csv"), before = Path.Combine(root, "before.csv");
+            // The slash form: a bare verb is a command only as the first argument, and anything
+            // that is not a command starts the app's window, which a test must never do.
+            Cli("/scan /demo /csv /export \"" + after + "\"");
+            Cli("/demo /csv /export \"" + before + "\" /scan");
+            // Demo devices are fabricated afresh each run, so the two exports share their shape, not their rows.
+            var expected = Parse(File.ReadAllText(after));
+            var actual = File.Exists(before) ? Parse(File.ReadAllText(before)) : [];
+            if (actual.Count < 2 || !actual[0].SequenceEqual(expected[0]))
+                throw new InvalidOperationException("Options before the command are honored: the export is written with its header and devices.");
+        }
+        finally { Directory.Delete(root, true); }
+        Console.WriteLine("PASS: CLI options before the command are honored, not dropped.");
+
+        static void Cli(string args)
+        {
+            using var process = Process.Start(new ProcessStartInfo(typeof(CliRunner).Assembly.Location, args)
+            { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true })!;
+            var output = process.StandardOutput.ReadToEndAsync();
+            var error = process.StandardError.ReadToEndAsync();
+            if (!process.WaitForExit(30000)) { process.Kill(); throw new InvalidOperationException("CLI timed out: " + args); }
+            if (process.ExitCode != 0) throw new InvalidOperationException("CLI failed: " + args + " " + error.GetAwaiter().GetResult());
+            output.GetAwaiter().GetResult();
+        }
     }
 
     private static void CommandRoutes()
