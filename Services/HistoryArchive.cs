@@ -258,6 +258,7 @@ namespace KillerScan.Services
         private T Locked<T>(Func<T> operation)
         {
             using var lease = ProfileLock.Acquire("History", _path, TimeSpan.FromSeconds(2), "The scan history file is busy. Try again.");
+            JsonPreferenceFile<HistoryFile>.RestoreInterruptedPublish(_path);
             return operation();
         }
 

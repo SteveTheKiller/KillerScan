@@ -308,6 +308,16 @@ internal static class LocationTests
         Require(recovered.LoadError == null && recovered.Items.Single().Id == info.Id && File.Exists(catalog) && !File.Exists(backup),
             "A catalog left as its backup by a crashed save is restored, not migrated over.");
         Require(!Directory.Exists(Path.Combine(root, "locations", ".deleted")), "Restoring sets nothing aside.");
+
+        // A window that already has the list open saves next. It must not read the missing file
+        // as an empty list and publish only its own change over every other Location.
+        Require(recovered.Create("Second site", out _), "A second Location is created.");
+        File.Move(catalog, backup);
+        Require(recovered.Create("Third site", out _), "A save after an interrupted one succeeds.");
+        var after = new LocationCatalog(root);
+        after.Load("Unassigned");
+        Require(after.LoadError == null && after.Items.Count == 3 && !File.Exists(backup),
+            "A save that finds only the backup of an interrupted one puts it back first, so no Location is lost (" + after.Items.Count + " listed).");
     }
 
     // The check that runs on every window activation reads without migrating, and a catalog in

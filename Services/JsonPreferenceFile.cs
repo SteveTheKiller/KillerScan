@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -91,6 +92,7 @@ namespace KillerScan.Services
             try
             {
                 using var lease = ProfileLock.Acquire("Preferences", _path, TimeSpan.FromSeconds(2), "The preferences file is busy. Try again.");
+                RestoreInterruptedPublish(_path);
                 var latest = Read();
                 foreach (var mutation in _pending) mutation(latest);
                 Publish(_path, Encoding.UTF8.GetBytes(JsonSerializer.Serialize(latest, new JsonSerializerOptions { WriteIndented = true })), _write);
@@ -114,6 +116,23 @@ namespace KillerScan.Services
             }
             catch (FileNotFoundException) { return _create(); }
             catch (DirectoryNotFoundException) { return _create(); }
+        }
+
+        /// <summary>
+        /// Publish replaces a file through File.Replace, which renames it to a ".tmp.original"
+        /// backup before moving the new file in. A writer that dies between the two renames
+        /// leaves only that backup, and a save that then read the missing file as empty would
+        /// publish its one change over everything else. Called under the file's save lease, when
+        /// nobody can be mid-write: the newest backup is the last committed file and goes back.
+        /// </summary>
+        internal static void RestoreInterruptedPublish(string path)
+        {
+            if (File.Exists(path)) return;
+            string? folder = Path.GetDirectoryName(path);
+            if (folder == null || !Directory.Exists(folder)) return;
+            string? newest = Directory.EnumerateFiles(folder, Path.GetFileName(path) + ".*.tmp.original")
+                .OrderByDescending(File.GetLastWriteTimeUtc).FirstOrDefault();
+            if (newest != null) File.Move(newest, path);
         }
 
         internal static void Publish(string path, byte[] bytes, Action<Stream, byte[]>? write = null)

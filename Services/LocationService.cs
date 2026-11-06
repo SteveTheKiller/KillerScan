@@ -279,6 +279,10 @@ namespace KillerScan.Services
         public static bool StillExists(string id)
         {
             if (!Loaded || DemoData.Enabled || _catalog == null || !_catalog.Published) return true;
+            // Absent for a moment while another window replaces it, or until the next save puts
+            // back a crashed save's backup: either way nothing was deleted, and this runs on every
+            // window activation, so it does not wait.
+            if (!File.Exists(Path.Combine(Root, "locations.json"))) return true;
             // A read, never Load: Load migrates when it finds no catalog, and this runs on every
             // window activation, while another window may be in the middle of replacing it.
             var items = LocationCatalog.ReadExisting(Root, out string? error);
