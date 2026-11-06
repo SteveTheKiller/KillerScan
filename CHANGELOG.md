@@ -8,6 +8,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 Scans give devices that miss their first chance another one, so fewer turn up only after a rescan.
 
+### Security
+
+- The terminal's `scan` and `probe` commands show a device's name, page title, banner and evidence without the control characters in them, so a device on the network can no longer clear the terminal, write its title or clipboard, or forge rows.
+
 ### Fixed
 
 - Scans give a device that misses its first chance another one. An ARP request that fails at once is asked again, the neighbor cache is read once more after the ARP sweep, and a silent address reached through a router or VPN gets a second, longer ping.

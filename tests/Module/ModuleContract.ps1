@@ -53,6 +53,17 @@ try {
     $evidence = @(scan 192.0.2.0/30)
     Require ($evidence[0].Recognition.Confidence -eq 'High' -and $evidence[0].Access.Count -eq 1 -and $evidence[0].Access[0].Login -eq 'Requested') 'Devices carry their access endpoints.'
     Require ($evidence[1].Access.Count -eq 0 -and $null -eq $evidence[1].Recognition) 'A device without evidence has an empty Access list and no Recognition.'
+
+    # Device text comes from the network. A page title, banner or name carrying ESC, OSC, C1 or
+    # line breaks must not reach the console as control sequences (clear screen, title or
+    # clipboard writes, bracketed paste on, spoofed rows).
+    $env:KS_EXE = New-FakeExe 'hostile' '[{"IpAddress":"192.0.2.9","Hostname":"a\u001b[2Jb","HttpTitle":"t\u001b]52;c;QUFB\u0007z","SshBanner":"SSH-2.0\u009b31m\r\nfake 192.0.2.1","OpenPorts":[22],"Recognition":{"Type":"Linux","Confidence":"Low","Signals":[{"Source":"Http","Detail":"x\u001b[?2004hy","Weight":5}]},"Access":[{"Protocol":"https","Port":443,"AuthScheme":"Basic\u001b[8m"}]}]' '' 0
+    $hostile = @(scan 192.0.2.0/30)[0]
+    $controls = '[\x00-\x08\x0A-\x1F\x7F-\x9F]'
+    Require ($hostile.Hostname -notmatch $controls -and $hostile.Http -notmatch $controls -and $hostile.Ssh -notmatch $controls) 'Device text fields carry no control characters.'
+    Require ($hostile.Recognition.Signals[0].Detail -notmatch $controls -and $hostile.Access[0].AuthScheme -notmatch $controls) 'Nested evidence text carries no control characters.'
+    Require (($hostile | Format-List * | Out-String) -notmatch "\x1b") 'The rendered device has no escape sequences.'
+    Require ($hostile.Hostname -eq ('a' + [char]0xFFFD + '[2Jb') -and $hostile.Ports.Count -eq 1 -and $hostile.Ports[0] -eq 22) 'Each control character becomes U+FFFD and the rest of the value is kept.'
     $env:KS_EXE = $realExe
 
     $usage = Get-Failure { probe 'not-an-address' }

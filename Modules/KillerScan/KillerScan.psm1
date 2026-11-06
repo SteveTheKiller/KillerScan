@@ -94,8 +94,24 @@ function Invoke-KsJson {
     return @($parsed)
 }
 
+# Device text comes from the network: names, page titles, banners, certificate subjects, the
+# evidence built from them. Control characters in it (ESC, CSI, OSC, C1, line breaks) would act
+# on the console instead of printing, so each becomes U+FFFD before anything shows it. Tabs stay.
+function Remove-KsControl {
+    param($Value)
+    if ($Value -is [string]) { return [regex]::Replace($Value, '[\x00-\x08\x0A-\x1F\x7F-\x9F]', [string][char]0xFFFD) }
+    if ($Value -is [System.Management.Automation.PSCustomObject]) {
+        foreach ($property in $Value.PSObject.Properties) { $property.Value = Remove-KsControl $property.Value }
+        return $Value
+    }
+    if ($Value -is [System.Collections.IList]) { return , @(foreach ($item in $Value) { Remove-KsControl $item }) }
+    return $Value
+}
+
 function ConvertTo-KsDevice {
     param($Device)
+
+    $Device = Remove-KsControl $Device
 
     # Flattened and renamed for the console: short property names, ports as an int
     # array you can test with -contains, and the fingerprint fields kept but out of
