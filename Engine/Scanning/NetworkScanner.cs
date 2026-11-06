@@ -27,6 +27,14 @@ namespace KillerScan.Engine
         /// the neighbor cache.</summary>
         internal static int ArpSweepLimit = 1024;
 
+        /// <summary>The sweep starts this many ARP requests at a time, then waits
+        /// <see cref="ArpStartInterval"/> before the next batch. The pool above stays wide so dead
+        /// addresses can hold their calls, but no instant carries a burst the customer's switches
+        /// would drop as a broadcast storm: 254 addresses start over about a second, and the
+        /// quick-failure retry waits a batch interval too.</summary>
+        internal static int ArpStartBatch = 64;
+        internal static TimeSpan ArpStartInterval = TimeSpan.FromMilliseconds(250);
+
         /// <summary>A SendARP that fails faster than this never waited out Windows' retransmits
         /// (a dead address takes about 4 seconds), so the sweep asks that address once more.</summary>
         internal static TimeSpan ArpQuickFailure = TimeSpan.FromSeconds(1.5);
@@ -80,7 +88,7 @@ namespace KillerScan.Engine
         /// storms, so on a /24 with 160 live hosts the 200-wide first wave loses answers: one
         /// customer's scan found 56 devices from a cleared cache. Measured here, the 200-wide
         /// wave also missed a host that a 16-wide pass found. 64 keeps the stack and the switch
-        /// under their limits and costs an empty /24 about five seconds.</summary>
+        /// under their limits and costs an empty /24 about six seconds with TCP liveness on.</summary>
         internal const int PacedPassWidth = 64;
 
         // Common ports to probe for device type detection
@@ -353,37 +361,51 @@ namespace KillerScan.Engine
             // retransmit (1 second), so those hosts, and a routed host whose first ping was lost
             // while its next hop resolved, answer here.
             var silentNow = addresses.Where(a => !discoveredHosts.ContainsKey(a.ToString())).ToList();
-            if ((options.Icmp || options.TcpLiveness) && silentNow.Count > 0 && silentNow.Count <= SecondPassLimit)
-            {
-                var paced = new SemaphoreSlim(PacedPassWidth);
-                await Task.WhenAll(silentNow.Select(async addr =>
-                {
-                    await paced.WaitAsync(ct);
-                    try
-                    {
-                        if (await AliveAsync(addr, SecondPingTimeoutMs))
-                            discoveredHosts.TryAdd(addr.ToString(), (addr, ""));
-                    }
-                    catch (OperationCanceledException) { throw; }
-                    catch { }
-                    finally { paced.Release(); }
-                }));
-                ct.ThrowIfCancellationRequested();
-                silentNow = silentNow.Where(a => !discoveredHosts.ContainsKey(a.ToString())).ToList();
-            }
             // Which silent addresses Windows reaches directly, and so can be swept with ARP. Only
             // asked when ARP is on: one route lookup per address, off the caller's (UI) thread.
             var onLink = options.Arp
                 ? await Task.Run(() => new HashSet<string>(silentNow.Where(a =>
                     { ct.ThrowIfCancellationRequested(); return IsOnLink(a); }).Select(a => a.ToString())), ct)
                 : new HashSet<string>();
+            if ((options.Icmp || options.TcpLiveness) && silentNow.Count > 0)
+            {
+                // The pass has a budget. A routed address has nothing else, since no sweep reaches
+                // it, so routed addresses spend the budget first and on-link ones take what is left.
+                var secondPass = silentNow.Where(a => !onLink.Contains(a.ToString()))
+                    .Concat(silentNow.Where(a => onLink.Contains(a.ToString())))
+                    .Take(SecondPassLimit).ToList();
+                var paced = new SemaphoreSlim(PacedPassWidth);
+                int pacedDone = 0;
+                await Task.WhenAll(secondPass.Select(async addr =>
+                {
+                    await paced.WaitAsync(ct);
+                    try
+                    {
+                        // Pings cannot be canceled; a canceled scan stops waiting for them instead.
+                        if (await AwaitWithCancellation(AliveAsync(addr, SecondPingTimeoutMs), ct))
+                            discoveredHosts.TryAdd(addr.ToString(), (addr, ""));
+                    }
+                    catch (OperationCanceledException) { throw; }
+                    catch { }
+                    finally
+                    {
+                        paced.Release();
+                        int done = Interlocked.Increment(ref pacedDone);
+                        ProgressChanged?.Invoke(25 + (int)(done * 3.0 / secondPass.Count));
+                    }
+                }));
+                ct.ThrowIfCancellationRequested();
+                silentNow = silentNow.Where(a => !discoveredHosts.ContainsKey(a.ToString())).ToList();
+            }
 
             // ARP sweep: phones, printers and locked-down devices often drop ping, expose none of the
             // liveness ports and age out of the neighbor cache before the second read. Ask every
             // remaining on-link address directly, the way an ARP scanner does. Dead addresses block
             // SendARP for a few seconds, so the sweep has its own wider pool of dedicated threads and
-            // reports progress (25 to 30) as each address answers or times out. A range with more
-            // silent addresses than ArpSweepLimit is left to the checks above.
+            // reports progress (28 to 30) as each address answers or times out. Requests start in
+            // batches of ArpStartBatch with a pause between, so the whole range never goes out as
+            // one broadcast burst for a switch to drop. A range with more silent addresses than
+            // ArpSweepLimit is left to the checks above.
             var sweptOnly = new HashSet<string>();
             if (options.Arp)
             {
@@ -392,18 +414,27 @@ namespace KillerScan.Engine
                 {
                     int swept = 0;
                     var answered = new System.Collections.Concurrent.ConcurrentBag<string>();
-                    var arpTasks = silent.Select(async addr =>
+                    var arpTasks = new List<Task>(silent.Count);
+                    for (int start = 0; start < silent.Count; start += ArpStartBatch)
                     {
-                        var (mac, took) = await ResolveMacTimedAsync(addr, ArpSweepSlots, ct, dedicated: true);
-                        // A dead address holds SendARP for seconds while Windows retransmits. One
-                        // that fails at once never got those retransmits, so it is asked once more.
-                        if (string.IsNullOrEmpty(mac) && took < ArpQuickFailure)
-                            mac = await ResolveMacAsync(addr, ArpSweepSlots, ct, dedicated: true);
-                        if (!string.IsNullOrEmpty(mac) && discoveredHosts.TryAdd(addr.ToString(), (addr, mac)))
-                            answered.Add(addr.ToString());
-                        int done = Interlocked.Increment(ref swept);
-                        ProgressChanged?.Invoke(25 + (int)(done * 5.0 / silent.Count));
-                    });
+                        if (start > 0) await Task.Delay(ArpStartInterval, ct);
+                        arpTasks.AddRange(silent.Skip(start).Take(ArpStartBatch).Select(async addr =>
+                        {
+                            var (mac, took) = await ResolveMacTimedAsync(addr, ArpSweepSlots, ct, dedicated: true);
+                            // A dead address holds SendARP for seconds while Windows retransmits. One
+                            // that fails at once never got those retransmits, so it is asked once
+                            // more, after a batch interval so the retry lands outside the burst.
+                            if (string.IsNullOrEmpty(mac) && took < ArpQuickFailure)
+                            {
+                                await Task.Delay(ArpStartInterval, ct);
+                                mac = await ResolveMacAsync(addr, ArpSweepSlots, ct, dedicated: true);
+                            }
+                            if (!string.IsNullOrEmpty(mac) && discoveredHosts.TryAdd(addr.ToString(), (addr, mac)))
+                                answered.Add(addr.ToString());
+                            int done = Interlocked.Increment(ref swept);
+                            ProgressChanged?.Invoke(28 + (int)(done * 2.0 / silent.Count));
+                        }));
+                    }
                     await Task.WhenAll(arpTasks);
                     ct.ThrowIfCancellationRequested();
                     sweptOnly.UnionWith(answered);

@@ -10,7 +10,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 
-- Scans of a busy network find every device that answers. The first wave pings 200 addresses at once, and on a subnet with well over a hundred live hosts Windows' neighbor cache fills and the switch's storm protection trips, so answers from devices that reply in under a millisecond never arrived and the same iDRACs, phones, switches and virtual machines were missing from every scan. Every address still silent after that wave is now asked again at a steady 64 at a time before the ARP sweep.
+- Scans of a busy network find the devices that a burst of requests used to lose. The first wave pings 200 addresses at once and the ARP sweep asked every remaining address at once, and on a subnet with well over a hundred live hosts the switch's storm protection drops part of each burst, so devices that reply in under a millisecond were missing from every scan: the same iDRACs, phones, switches and virtual machines each time, and 56 of about 160 from a cleared cache. Every address still silent after the first wave is now asked again at a steady 64 at a time, the ARP sweep starts its requests in batches of 64 a quarter second apart with its retry outside the burst, and the progress bar moves through both.
+- A scan target mixing a large local range with a range behind a router gives the routed addresses their second ping first, so a local /22 no longer uses up the retry budget that a routed /24 has no other way to get.
+- Pressing Stop while the second liveness pass runs ends the scan at once instead of waiting out the pings in flight.
 
 ## [1.9.2] - 2026-11-05
 

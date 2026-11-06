@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net;
 using KillerScan.Engine;
 
@@ -31,6 +32,10 @@ internal static class ArpSweepTests
             await QuickArpFailuresAreAskedAgain();
             await SilentRoutedAddressesGetASecondLivenessPass();
             await HostsLostInTheFirstBurstAreFoundByThePacedPass();
+            await RoutedAddressesKeepTheirSecondPassUnderTheBudget();
+            await TheSweepLaunchesInPacedBatches();
+            await ThePacedPassReportsProgress();
+            await CancelDuringThePacedPassReturnsPromptly();
             await TapMacIsBlankedOnHostsThatAnswerPing();
             await GatewayMacIsBlankedOnOtherHosts();
             await BroadcastIsNotADevice();
@@ -179,7 +184,8 @@ internal static class ArpSweepTests
     private static async Task SilentRoutedAddressesGetASecondLivenessPass()
     {
         // Across a router the ARP sweep cannot help, so a routed address that missed its first
-        // ping gets a second one with a longer wait. On-link addresses already get the sweep.
+        // ping gets a second one with a longer wait. On-link addresses get that paced second
+        // ping too, and then the sweep.
         var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
         int longest = 0;
         ScanSource.PingOverride = (address, timeout) =>
@@ -211,7 +217,7 @@ internal static class ArpSweepTests
         // of 200 pings at once loses whichever answers arrive while the stack is full. This
         // network drops every request issued while more than 64 are in flight. The first wave
         // loses most hosts; the paced pass, which never exceeds that, must find every one.
-        int inFlight = 0, peakPaced = 0, firstWaveDone = 0;
+        int inFlight = 0, peakPaced = 0, firstWaveFound = 0;
         var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
         ScanSource.PingOverride = async (address, timeout) =>
         {
@@ -222,23 +228,124 @@ internal static class ArpSweepTests
                 if (n >= 2) InterlockedMax(ref peakPaced, now);
                 await Task.Delay(30);
                 bool live = int.Parse(address.ToString().Split('.')[3]) % 3 == 0;
-                return (live && now <= 64, 64);
+                bool answered = live && now <= 64;
+                if (answered && n == 1) Interlocked.Increment(ref firstWaveFound);
+                return (answered, 64);
             }
-            finally
-            {
-                Interlocked.Decrement(ref inFlight);
-                if (n == 1) Interlocked.Increment(ref firstWaveDone);
-            }
+            finally { Interlocked.Decrement(ref inFlight); }
         };
         try
         {
             NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "");
             var found = await Quick("192.0.2.1-254", new ScanOptions().Without("tcp-liveness"));
             var expected = Enumerable.Range(1, 254).Where(n => n % 3 == 0).Select(n => "192.0.2." + n).ToList();
+            Require(firstWaveFound < expected.Count, "The premise holds: the wide first wave lost hosts on this network.");
             var missing = expected.Where(ip => found.All(d => d.IpAddress != ip)).ToList();
             Require(missing.Count == 0, $"Every host the first burst lost is found by the paced pass; missing {missing.Count}: {string.Join(", ", missing.Take(8))}");
             Require(peakPaced > 0 && peakPaced <= NetworkScanner.PacedPassWidth,
                 $"The paced pass never has more than {NetworkScanner.PacedPassWidth} pings in flight (saw {peakPaced}).");
+        }
+        finally { ScanSource.PingOverride = null; }
+    }
+
+    private static async Task RoutedAddressesKeepTheirSecondPassUnderTheBudget()
+    {
+        // The second pass has a budget (SecondPassLimit). A routed address has nothing else: no
+        // sweep reaches it. So routed addresses spend the budget first, and on-link ones take
+        // what is left, instead of a local range crowding a routed one out of its only retry.
+        int originalLimit = NetworkScanner.SecondPassLimit;
+        NetworkScanner.SecondPassLimit = 4;
+        var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
+        ScanSource.PingOverride = (address, _) =>
+        {
+            int n = pings.AddOrUpdate(address.ToString(), 1, (_, count) => count + 1);
+            return Task.FromResult((address.ToString() == "192.0.2.2" && n == 2, 64));
+        };
+        try
+        {
+            // .1-.3 sit behind a router; .4-.12 are on-link. Twelve silent addresses, budget of four.
+            NetworkPlatform.Current = new ArpPlatform(ip => int.Parse(ip.Split('.')[3]) <= 3 ? "192.0.2.254" : "", _ => "");
+            var found = await Quick("192.0.2.1-12", new ScanOptions().Without("tcp-liveness"));
+            Require(found.Count == 1 && found[0].IpAddress == "192.0.2.2", "A routed host that answers only its second ping is found when the range is over budget.");
+            Require(pings["192.0.2.1"] == 2 && pings["192.0.2.3"] == 2, "Every routed address gets its second ping first.");
+            Require(pings.Count(p => p.Value == 2) == 4, "On-link addresses take only the budget the routed ones leave.");
+        }
+        finally
+        {
+            ScanSource.PingOverride = null;
+            NetworkScanner.SecondPassLimit = originalLimit;
+        }
+    }
+
+    private static async Task TheSweepLaunchesInPacedBatches()
+    {
+        // The customer's switches drop a burst of 250 ARP requests sent at once. The sweep keeps
+        // its wide pool, because dead addresses hold SendARP for seconds, but starts requests in
+        // small batches with a pause between them. This network answers only when few requests
+        // are in flight; every address holds its call for a while, like a real dead address.
+        int originalBatch = NetworkScanner.ArpStartBatch;
+        var originalInterval = NetworkScanner.ArpStartInterval;
+        NetworkScanner.ArpStartBatch = 4;
+        NetworkScanner.ArpStartInterval = TimeSpan.FromMilliseconds(150);
+        try
+        {
+            ArpPlatform platform = null!;
+            platform = new ArpPlatform(_ => "", ip =>
+            {
+                bool calm = platform.Active <= 4;
+                Thread.Sleep(100);
+                return calm && int.Parse(ip.Split('.')[3]) % 2 == 0 ? "00:04:F2:00:00:" + int.Parse(ip.Split('.')[3]).ToString("X2") : "";
+            });
+            NetworkPlatform.Current = platform;
+            var found = await Quick("192.0.2.1-16", Silent);
+            Require(platform.PeakActive <= 4, $"No more than one batch of ARP requests is in flight at once (saw {platform.PeakActive}).");
+            Require(found.Count == 8, $"Every host that answers a calm ARP request is found ({found.Count} of 8).");
+        }
+        finally
+        {
+            NetworkScanner.ArpStartBatch = originalBatch;
+            NetworkScanner.ArpStartInterval = originalInterval;
+        }
+    }
+
+    private static async Task ThePacedPassReportsProgress()
+    {
+        // The paced pass can hold the scan for seconds; the bar must move while it does.
+        ScanSource.PingOverride = async (_, _) => { await Task.Delay(20); return (false, 0); };
+        try
+        {
+            NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "");
+            var scanner = new NetworkScanner(new IsolatedDiscovery());
+            var seen = new System.Collections.Concurrent.ConcurrentBag<int>();
+            scanner.ProgressChanged += p => seen.Add(p);
+            await Quick("192.0.2.1-200", new ScanOptions().Without("tcp-liveness,arp"), scanner);
+            Require(seen.Any(p => p is > 25 and < 30), "Progress moves between 25 and 30 while the paced pass runs: " + string.Join(",", seen.Distinct().OrderBy(p => p)));
+        }
+        finally { ScanSource.PingOverride = null; }
+    }
+
+    private static async Task CancelDuringThePacedPassReturnsPromptly()
+    {
+        // A ping cannot be canceled, but the scan must not wait out every in-flight one.
+        int calls = 0;
+        using var cancel = new CancellationTokenSource();
+        var clock = new Stopwatch();
+        ScanSource.PingOverride = async (_, _) =>
+        {
+            if (Interlocked.Increment(ref calls) == 300) { clock.Start(); cancel.Cancel(); }
+            await Task.Delay(3000);
+            return (false, 0);
+        };
+        try
+        {
+            NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "");
+            try
+            {
+                await new NetworkScanner(new IsolatedDiscovery()).ScanSubnetAsync("192.0.2.1-254", cancel.Token, new ScanOptions().Without("tcp-liveness"), fullScan: false);
+                Require(false, "A canceled scan throws.");
+            }
+            catch (OperationCanceledException) { }
+            Require(clock.ElapsedMilliseconds < 2000, $"Cancel during the paced pass returns without waiting out the pings ({clock.ElapsedMilliseconds} ms).");
         }
         finally { ScanSource.PingOverride = null; }
     }
