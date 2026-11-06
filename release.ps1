@@ -293,7 +293,7 @@ foreach ($project in $audit.projects) {
 }
 Write-Host 'Dependency audit completed with no known vulnerable packages.'
 
-# Tests are not run here. Run tests\Test-ReleaseReady.ps1 first: it runs every suite once,
+# Tests are not run here. Run .\test.ps1 first: it runs every suite once,
 # and a GREEN result means this script only has to build, sign and publish.
 Step "Packing KillerScan.Engine for NuGet"
 $enginePack = Join-Path $env:TEMP "KillerScan.Engine-$Version-pack"

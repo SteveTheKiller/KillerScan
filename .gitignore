@@ -27,3 +27,6 @@ choco/*.nupkg
 # Heavy source art - stored locally only, not shipped and not part of the project.
 # Anchored with a leading slash so it only ignores KillerScan/brand at the repo root.
 /brand/
+
+# Local release readiness script; run .\test.ps1 before release.ps1.
+/test.ps1
