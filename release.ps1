@@ -293,23 +293,8 @@ foreach ($project in $audit.projects) {
 }
 Write-Host 'Dependency audit completed with no known vulnerable packages.'
 
-Step "Testing the native speed-test engine and endpoint"
-if (-not (Get-Command node -ErrorAction SilentlyContinue)) { Fail 'Node.js 22 or newer is required to test the speed-test endpoint' }
-dotnet build tests\SpeedTest.Tests\SpeedTest.Tests.csproj -c Release -v:minimal
-if ($LASTEXITCODE -ne 0) { Fail 'Speed-test test build failed' }
-& .\tests\SpeedTest.Tests\bin\Release\net48\SpeedTest.Tests.exe --worker --internet
-if ($LASTEXITCODE -ne 0) { Fail 'Speed-test regression tests failed' }
-node --test server/speedtest/worker.test.mjs
-if ($LASTEXITCODE -ne 0) { Fail 'Speed-test endpoint tests failed' }
-
-Step "Testing KillerScan.Engine on both targets"
-dotnet build tests\KillerScan.Engine.Tests\KillerScan.Engine.Tests.csproj -c Release -v:minimal
-if ($LASTEXITCODE -ne 0) { Fail 'Engine test build failed' }
-foreach ($tfm in 'net48', 'net10.0') {
-    dotnet run --project tests\KillerScan.Engine.Tests\KillerScan.Engine.Tests.csproj -c Release -f $tfm --no-build
-    if ($LASTEXITCODE -ne 0) { Fail "Engine regression tests failed on $tfm" }
-}
-
+# Tests are not run here. Run tests\Test-ReleaseReady.ps1 first: it runs every suite once,
+# and a GREEN result means this script only has to build, sign and publish.
 Step "Packing KillerScan.Engine for NuGet"
 $enginePack = Join-Path $env:TEMP "KillerScan.Engine-$Version-pack"
 if (Test-Path $enginePack) { Remove-Item $enginePack -Recurse -Force }

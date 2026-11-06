@@ -5,7 +5,7 @@ $ErrorActionPreference = 'Stop'
 $repo = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $source = Get-Content -LiteralPath (Join-Path $repo 'release.ps1') -Raw
 $start = $source.IndexOf('Step "Scanning for vulnerable packages"')
-$end = $source.IndexOf('Step "Testing the native speed-test engine and endpoint"', $start)
+$end = $source.IndexOf('Step "Packing KillerScan.Engine for NuGet"', $start)
 if ($start -lt 0 -or $end -le $start) { throw 'The dependency gate boundaries are missing.' }
 $gate = [scriptblock]::Create($source.Substring($start, $end - $start))
 $folder = Join-Path ([IO.Path]::GetFullPath($ScratchRoot)) ('dependency-audit-' + [guid]::NewGuid().ToString('N'))
