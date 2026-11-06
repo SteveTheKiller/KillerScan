@@ -8,6 +8,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 1.9.3 finds the devices a busy network lost to the first burst of the scan.
 
+### Changed
+- Refreshed the bundled MAC vendor database to 58,697 assignments.
+
 ### Fixed
 
 - Scans of a busy network find the devices that a burst of requests used to lose. The first wave pings 200 addresses at once and the ARP sweep asked every remaining address at once, and on a subnet with well over a hundred live hosts the switch's storm protection drops part of each burst, so devices that reply in under a millisecond were missing from every scan: the same iDRACs, phones, switches and virtual machines each time, and 56 of about 160 from a cleared cache. Every address still silent after the first wave is now asked again at a steady 64 at a time, the ARP sweep starts its requests in batches of 64 a quarter second apart with its retry outside the burst, and the progress bar moves through both.
