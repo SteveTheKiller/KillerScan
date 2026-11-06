@@ -14,6 +14,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The terminal's `scan` and `probe` commands show a device's name, page title, banner and evidence without the control characters in them, so a device on the network can no longer clear the terminal, write its title or clipboard, or forge rows.
 - Pasting several lines into the terminal asks first again once the prompt returns, even after an SSH session or other program turned on bracketed paste and left it on.
 
+### Changed
+- Refreshed the bundled MAC vendor database to 58,697 assignments.
+
 ### Fixed
 
 - A KillerScan window or command-line scan that checks the Locations list while another window is saving it no longer replaces Unassigned's history, names and approvals with a copy from the day of the upgrade, and a save interrupted partway no longer leaves the list unreadable or lets the next save drop the other Locations.
