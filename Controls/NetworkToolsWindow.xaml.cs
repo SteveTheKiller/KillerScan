@@ -227,6 +227,7 @@ namespace KillerScan.Controls
             var target = TargetFor(sender);
             if (target == null) return;
             target.Sample = new ConnectionSample(target.Address.ToString());
+            CancelCardRun(target.Card);
             target.Card.Reset(L("Str_Watch_Waiting"));
         }
 
@@ -286,6 +287,9 @@ namespace KillerScan.Controls
         /// <summary>True while a check asks the shell for a target's ports (RunChecksAsync).</summary>
         private bool _portsOnly;
 
+        /// <summary>Tests only: replaces the traceroute, the slowest check, so a run can be caught in flight.</summary>
+        internal static Func<IPAddress, Action<ConnectionChecks.Hop>, CancellationToken, Task>? TraceOverride { get; set; }
+
         private void CardDiagnose_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as FrameworkElement)?.DataContext is not WatchCard card) return;
@@ -315,7 +319,25 @@ namespace KillerScan.Controls
             catch (OperationCanceledException) { }
         }
 
-        private async Task RunChecksAsync(WatchCard card, CancellationToken token)
+        // Each card's checks in flight. A new run on a card (Check again, a new sweep) or a Reset
+        // cancels the one before, so two runs never write rows to the same card.
+        private readonly Dictionary<WatchCard, CancellationTokenSource> _cardRuns = new();
+
+        private void CancelCardRun(WatchCard card)
+        {
+            if (_cardRuns.TryGetValue(card, out var running)) running.Cancel();
+        }
+
+        private async Task RunChecksAsync(WatchCard card, CancellationToken sweep)
+        {
+            CancelCardRun(card);
+            using var run = CancellationTokenSource.CreateLinkedTokenSource(sweep);
+            _cardRuns[card] = run;
+            try { await RunCardChecksAsync(card, run.Token); }
+            finally { if (_cardRuns.TryGetValue(card, out var current) && current == run) _cardRuns.Remove(card); }
+        }
+
+        private async Task RunCardChecksAsync(WatchCard card, CancellationToken token)
         {
             if (!IPAddress.TryParse(card.Address, out var address)) return;
             // Ask the shell for this target's scan record before probing, so the checks cover
@@ -414,13 +436,19 @@ namespace KillerScan.Controls
             {
                 // TraceAsync reports from a pool thread, so hop rows go back through the
                 // dispatcher before they touch the bound collection.
-                await ConnectionChecks.TraceAsync(address, 30, hop => Dispatcher.Invoke(() =>
+                Action<ConnectionChecks.Hop> report = hop => Dispatcher.Invoke(() =>
+                {
+                    // A hop that arrives after this run was replaced or reset belongs to nobody.
+                    if (token.IsCancellationRequested) return;
                     card.Checks.Add(new CheckRow
                     {
                         Check = string.Format(L("Str_Trace_Hop"), hop.Ttl),
                         Result = hop.Address == null ? L("Str_Trace_Timeout")
                             : hop.Address + (hop.Latency.HasValue ? "  " + hop.Latency + " ms" : string.Empty)
-                    })), token);
+                    });
+                });
+                if (TraceOverride is { } fake) await fake(address, report, token);
+                else await ConnectionChecks.TraceAsync(address, 30, report, token);
             }
 
             await Task.WhenAll(DnsAsync(), IcmpAsync(), PortsAsync(), TraceAsync());

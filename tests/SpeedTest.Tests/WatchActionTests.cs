@@ -55,12 +55,59 @@ internal static class WatchActionTests
             PumpUntil(() => !freshStop.IsEnabled, TimeSpan.FromSeconds(1));
         }
         CheckStopThenCheckAgain();
+        CheckAgainWhileRunning();
         CheckLanguageChangeAfterStop();
         CheckCheckedAtTime();
         CheckExportText();
         CheckShellCommands();
         Console.WriteLine("PASS: active Keep Alive and Diagnose requests add targets without resetting existing counters.");
     }
+    // Check again (F3) or Reset on a card whose checks are still running used to leave the first
+    // run going: its traceroute kept adding hop rows and a second "Checked at" row to the card,
+    // and the exports carried both runs interleaved.
+    private static void CheckAgainWhileRunning()
+    {
+        var hop = new KillerScan.Engine.ConnectionChecks.Hop(1, System.Net.IPAddress.Parse("192.0.2.254"), 1, false);
+        NetworkToolsWindow.TraceOverride = async (_, report, token) =>
+        {
+            report(hop);
+            await System.Threading.Tasks.Task.Delay(400, token);
+            report(hop);
+        };
+        // Demo mode answers checks at once and runs no trace, so this needs the real checks.
+        bool demo = DemoData.Enabled;
+        DemoData.Enabled = false;
+        try
+        {
+            using var watch = new NetworkToolsWindow("", 1);
+            var stop = (Button)watch.FindName("StopButton");
+            var cards = (ListBox)watch.FindName("Cards");
+            var click = typeof(NetworkToolsWindow).GetMethod("CardDiagnose_Click", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            watch.ShowDetails("192.0.2.9", new[] { 8080 });
+            var card = cards.Items.OfType<WatchCard>().Single(c => c.Address == "192.0.2.9");
+            bool IsCheckedAt(CheckRow row) => System.Text.RegularExpressions.Regex.IsMatch(row.Result ?? "", @"^\d\d:\d\d:\d\d$");
+            PumpUntil(() => card.Checks.Any(IsCheckedAt), TimeSpan.FromSeconds(15));
+            click.Invoke(watch, new object[] { new FrameworkElement { DataContext = card }, new RoutedEventArgs() });
+            Pump(TimeSpan.FromMilliseconds(100));
+            click.Invoke(watch, new object[] { new FrameworkElement { DataContext = card }, new RoutedEventArgs() });
+            PumpUntil(() => card.Checks.Any(IsCheckedAt), TimeSpan.FromSeconds(15));
+            Pump(TimeSpan.FromMilliseconds(800));
+            int checkedAt = card.Checks.Count(IsCheckedAt);
+            int hops = card.Checks.Count(row => (row.Result ?? "").StartsWith("192.0.2.254"));
+            Require(checkedAt == 1 && hops == 2, $"Check again while a run is going replaces it: one Checked at row ({checkedAt}) and one run's hops ({hops}).");
+
+            var reset = typeof(NetworkToolsWindow).GetMethod("CardReset_Click", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            click.Invoke(watch, new object[] { new FrameworkElement { DataContext = card }, new RoutedEventArgs() });
+            Pump(TimeSpan.FromMilliseconds(100));
+            reset.Invoke(watch, new object[] { new FrameworkElement { DataContext = card }, new RoutedEventArgs() });
+            Pump(TimeSpan.FromMilliseconds(800));
+            Require(card.Checks.Count == 0, "Reset during a run stops it, so nothing of the old run lands on the reset card (" + card.Checks.Count + " rows).");
+            stop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            PumpUntil(() => !stop.IsEnabled, TimeSpan.FromSeconds(1));
+        }
+        finally { NetworkToolsWindow.TraceOverride = null; DemoData.Enabled = demo; }
+    }
+
     private static void CheckStopThenCheckAgain()
     {
         using var watch = new NetworkToolsWindow("", 1);
