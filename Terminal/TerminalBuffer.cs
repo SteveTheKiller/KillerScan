@@ -769,7 +769,14 @@ namespace KillerScan.Terminal
             switch (cmd)
             {
                 case 133:
-                    if (data == "B;" + PromptToken) PromptReady?.Invoke();
+                    if (data == "B;" + PromptToken)
+                    {
+                        // The local prompt never asks for bracketed paste, so a mode a program
+                        // left on (an SSH host, a banner) ends here and multi-line pastes are
+                        // confirmed again.
+                        BracketedPaste = false;
+                        PromptReady?.Invoke();
+                    }
                     else if (data == "KillerScan;SpeedTest;" + PromptToken) SpeedTestRequested?.Invoke();
                     break;
                 case 0: case 2:

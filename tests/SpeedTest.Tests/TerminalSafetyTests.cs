@@ -49,6 +49,7 @@ internal static class TerminalSafetyTests
             CheckSideEffects(table);
         }
         ForgedShellMarks();
+        BracketedPasteEndsAtThePrompt();
         var presentation = new TerminalScanPresentation(_ => "Column", () => 512);
         string embedded = presentation.Result(devices);
         string visible = Regex.Replace(embedded, "\u001b\\[(?:0|3[0-7]|1;37|2K)m?", "");
@@ -93,6 +94,23 @@ internal static class TerminalSafetyTests
         Feed("\u001b]133;KillerScan;SpeedTest;" + buffer.PromptToken + "\a\u001b]133;B;" + buffer.PromptToken + "\a");
         Require(prompts == 1 && speedTests == 1, "The session's own marks still work.");
         Console.WriteLine("PASS: forged shell marks cannot make the prompt ready or start a speed test.");
+    }
+
+    /// <summary>Paste skips its multi-line confirmation while bracketed paste is on, and any output
+    /// can turn it on (an SSH host, a banner). The local prompt never asks for it, so the mode a
+    /// program left behind ends when the session's own prompt mark arrives; a forged mark does not.</summary>
+    private static void BracketedPasteEndsAtThePrompt()
+    {
+        var buffer = new TerminalBuffer(80, 5);
+        var parser = new VtParser(buffer);
+        void Feed(string text) { byte[] bytes = Encoding.UTF8.GetBytes(text); parser.Feed(bytes, bytes.Length); }
+        Feed("\u001b[?2004h");
+        Require(buffer.BracketedPaste, "A program can turn bracketed paste on.");
+        Feed("\u001b]133;B;" + new TerminalBuffer(80, 5).PromptToken + "\a");
+        Require(buffer.BracketedPaste, "A forged prompt mark does not change the mode.");
+        Feed("\u001b]133;B;" + buffer.PromptToken + "\a");
+        Require(!buffer.BracketedPaste, "The session's own prompt ends bracketed paste, so multi-line pastes are confirmed again.");
+        Console.WriteLine("PASS: bracketed paste set by a program ends when the local prompt returns.");
     }
 
     private static void Require(bool condition, string message) { if (!condition) throw new InvalidOperationException(message); }

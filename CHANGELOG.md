@@ -11,6 +11,7 @@ Scans give devices that miss their first chance another one, so fewer turn up on
 ### Security
 
 - The terminal's `scan` and `probe` commands show a device's name, page title, banner and evidence without the control characters in them, so a device on the network can no longer clear the terminal, write its title or clipboard, or forge rows.
+- Pasting several lines into the terminal asks first again once the prompt returns, even after an SSH session or other program turned on bracketed paste and left it on.
 
 ### Fixed
 
