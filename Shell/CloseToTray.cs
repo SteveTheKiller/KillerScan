@@ -129,7 +129,8 @@ namespace KillerFamily.Shell
             window.Closed += WindowClosed;
             // The user's next click or key after Exit ends the exit. A prompt the user turned down
             // leaves the window open, and the next close hides to the tray again. A close that is
-            // still running (a fade's second pass) arrives without input and still closes.
+            // still running (a fade's second pass) arrives without input and still closes, and
+            // input during that fade is ignored (InputEndsExitRequest).
             window.PreviewMouseDown += EndExitRequest;
             window.PreviewKeyDown += EndExitRequest;
             Application.Current.SessionEnding += SessionEnding;
@@ -156,7 +157,15 @@ namespace KillerFamily.Shell
             _window.Close();
         }
 
-        private void EndExitRequest(object sender, RoutedEventArgs e) => _exitRequested = false;
+        private void EndExitRequest(object sender, RoutedEventArgs e)
+        {
+            if (InputEndsExitRequest(_window.Opacity)) _exitRequested = false;
+        }
+
+        /// <summary>Whether a click or key ends a pending Exit. Not while the close fade runs: the
+        /// window is already on its way out, and ending the exit there would turn the fade's second
+        /// close into a hide at opacity 0.</summary>
+        internal static bool InputEndsExitRequest(double windowOpacity) => windowOpacity >= 1;
 
         private void SessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
@@ -192,7 +201,13 @@ namespace KillerFamily.Shell
         internal void ShowWindow()
         {
             if (_disposed) return;
-            if (!_window.IsVisible) _window.Show();
+            if (!_window.IsVisible)
+            {
+                // A window hidden partway through a close fade must come back visible.
+                _window.BeginAnimation(UIElement.OpacityProperty, null);
+                _window.Opacity = 1;
+                _window.Show();
+            }
             if (_window.WindowState == WindowState.Minimized) _window.WindowState = WindowState.Normal;
             _window.Activate();
             _window.Topmost = true;
