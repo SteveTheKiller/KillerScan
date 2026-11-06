@@ -4,6 +4,16 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.4] - Unreleased
+
+1.9.4 keeps a fresh scan when you make a Location for it and puts the Windows 98 tabs back.
+
+### Fixed
+
+- New Location from the sidebar, or Ctrl+Alt+S, right after a scan now takes the unsaved results into the Location it makes, the way Save's own New Location does. Switching there emptied the table and the scan had to be run again.
+- The view tabs on the 98SE theme draw as Windows 98 tabs again, above or below the page: white top-left and black bottom-right bevels with cut corners, the active tab opening into the page and the inactive tabs sitting a step lower. They had no edges at all.
+- With the tabs below the page, the scroll shadow at the page's foot no longer draws a dark line across the top of the active tab.
+
 ## [1.9.3] - 2026-11-06
 
 1.9.3 finds the devices a busy network lost to the first burst of the scan.

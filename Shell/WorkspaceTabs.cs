@@ -146,6 +146,27 @@ namespace KillerScan.Shell
             shade.RenderTransform = bottom ? FlipVertical : Transform.Identity;
             int index = _viewTabStrip.Children.IndexOf(tab);
             int last = _viewTabStrip.Children.Count - 1;
+            // 98SE: Win98's own tab control. Every tab wears the strip's face with the bevel
+            // edges TabSurfaceBorder draws pixel by pixel (white top-left, black bottom-right,
+            // cut corners; ViewTab draws the top strip's, the kit the bottom strip's), no accent ring, no divider, black text. The active tab runs the full
+            // row and opens into the page, covering the page line where the two join; an inactive
+            // tab stops 2px short on both sides, so it sits lower than the active one as Win98's
+            // do and the page line runs on under it.
+            bool retro = Services.ThemeManager.Current == Services.Theme.SE98;
+            ((ViewTab)tab).RetroTopEdges = retro && !bottom;
+            tab.RetroBottomEdges = retro && bottom;
+            grain.Opacity = 0;
+            if (retro)
+            {
+                tab.CornerRadius = new CornerRadius(0);
+                tab.BorderThickness = new Thickness(0);
+                tab.BorderBrush = null;
+                tab.SetResourceReference(Border.BackgroundProperty, "BackgroundBrush");
+                tab.SetResourceReference(TextElement.ForegroundProperty, "TextBrush");
+                tab.Margin = active ? new Thickness(0) : new Thickness(0, 2, 0, 2);
+                return;
+            }
+            tab.Margin = new Thickness(0);
             if (active)
             {
                 tab.CornerRadius = new CornerRadius(TabRadius, TabRadius, 0, 0);
@@ -366,6 +387,12 @@ namespace KillerScan.Shell
                 new Size(0, 0), new Size(0, 0),
                 new Size(Math.Max(0, radius.BottomRight - stroke.Right / 2), radius.BottomRight),
                 new Size(Math.Max(0, radius.BottomLeft - stroke.Left / 2), radius.BottomLeft));
+            // The strip rides 2px up under the pane (ApplyPaneCorners), so the overlay's foot would
+            // land on the active tab's face and draw the gradient's darkest rows there as a line
+            // across the tab, above the tab's own layer. The face is cut out of the overlay; the
+            // tab's layer paints that part of the gradient in place.
+            Geometry faceCut = new RectangleGeometry(new Rect(tab.X, tab.Top - top, tab.Width, ScrollShadowReach));
+            clip = new CombinedGeometry(GeometryCombineMode.Exclude, clip, faceCut);
             clip.Freeze();
             double span = bottom - top;
             // Unchanged geometry keeps the brushes it already has instead of building new ones each pass.
@@ -428,6 +455,45 @@ namespace KillerScan.Shell
             _activate = activate;
             _isActive = isActive;
             FocusVisualStyle = AccessibleControls.FocusStyleFor(this);
+        }
+
+        /// <summary>
+        /// 98SE with the tabs above the page: Win98's own tab, drawn here because the kit's
+        /// TabSurfaceBorder only knows the bottom strip's edges. Light from the top-left, so a
+        /// white left edge and top edge, #808080 then black down the right, and both top corners
+        /// cut on the diagonal. No foot edge: the active tab opens into the page below it, and an
+        /// inactive tab stops short of the page line (StyleViewTab sets its margin).
+        /// </summary>
+        public static readonly DependencyProperty RetroTopEdgesProperty = DependencyProperty.Register(
+            nameof(RetroTopEdges), typeof(bool), typeof(ViewTab),
+            new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
+        public bool RetroTopEdges
+        {
+            get => (bool)GetValue(RetroTopEdgesProperty);
+            set => SetValue(RetroTopEdgesProperty, value);
+        }
+
+        protected override void OnRender(DrawingContext dc)
+        {
+            base.OnRender(dc);
+            if (!RetroTopEdges) return;
+            int w = (int)Math.Round(RenderSize.Width), h = (int)Math.Round(RenderSize.Height);
+            if (w < 6 || h < 4) return;
+            Brush light = (TryFindResource("BevelLightBrush") as Brush) ?? Brushes.White;
+            Brush shadow = (TryFindResource("BevelDarkBrush") as Brush) ?? Brushes.Gray;
+            Brush dark = (TryFindResource("BevelOuterDarkBrush") as Brush) ?? Brushes.Black;
+            Brush strip = (TryFindResource("BackgroundBrush") as Brush) ?? Brushes.Silver;
+            void Px(Brush b, int x, int y, int cw = 1, int ch = 1) => dc.DrawRectangle(b, null, new Rect(x, y, cw, ch));
+
+            // Cut corners show the strip behind the tab.
+            Px(strip, 0, 0, 2, 1); Px(strip, 0, 1);
+            Px(strip, w - 2, 0, 2, 1); Px(strip, w - 1, 1);
+            Px(light, 0, 2, 1, h - 2);            // left highlight
+            Px(light, 1, 1);                      // its diagonal into the top
+            Px(light, 2, 0, w - 4, 1);            // top highlight
+            Px(shadow, w - 2, 2, 1, h - 2);       // right, inner
+            Px(dark, w - 1, 2, 1, h - 2);         // right, outer
+            Px(shadow, w - 2, 1);                 // the shadow's diagonal
         }
 
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new ViewTabPeer(this);

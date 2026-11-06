@@ -676,12 +676,16 @@ namespace KillerScan.Controls
         internal bool OpenLocation(LocationInfo info) => SetLocation(LocationService.Get(info));
 
         /// <summary>New Location from the sidebar or Ctrl+Alt+S, with the same gates as the menu
-        /// item: not while scanning (it could not be entered), in demo mode or read-only.</summary>
+        /// item: not while scanning (it could not be entered), in demo mode or read-only. An
+        /// unsaved scan on screen goes into the new Location with it, as Save's own New Location
+        /// does: a new Location made right after a scan is where that scan was meant to live,
+        /// and switching there empty threw the results away.</summary>
         internal void NewLocation()
         {
             if (IsScanning) { StatusText.Text = Loc("Str_Loc_Busy"); return; }
             if (DemoMode || !LocationService.Editable) return;
-            CreateLocation();
+            if (IsUnsaved && _active.Devices.Count > 0) CreateLocationAndSave();
+            else CreateLocation();
         }
 
         /// <summary>The largest .ksloc file Import reads. Tests lower it.</summary>
@@ -954,21 +958,35 @@ namespace KillerScan.Controls
 
         private void CreateLocation() => CreateLocation(switchTo: true);
 
+        /// <summary>Answers the New Location dialog (name, icon, notes), or null for Cancel. Tests set it.</summary>
+        internal Func<(string Name, string Icon, string Notes)?>? AskNewLocation { get; set; }
+
         /// <summary>Asks for a new Location's name, icon and notes and creates it; returns it.
         /// switchTo moves the tab there (clearing the table), which Save's own path must not do.</summary>
         private LocationInfo? CreateLocation(bool switchTo)
         {
-            // No subtitle: the current Location is not what a new one is named after.
-            var dialog = new InputDialog(Loc("Str_Loc_NewTitle"), string.Empty, Loc("Str_Rename_Label"), string.Empty,
-                Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
-            dialog.UseIcons(LocationIcons.All, LocationIcons.Default);
-            dialog.UseNotes(Loc("Str_Loc_NotesLabel"), string.Empty);
-            dialog.ShowDialog();
-            if (!dialog.Confirmed || string.IsNullOrWhiteSpace(dialog.Value)) return null;
-            if (LocationService.Create(dialog.Value.Trim(), out var created) && created != null)
+            string name, icon, notes;
+            if (AskNewLocation != null)
             {
-                LocationService.SetIcon(created, dialog.SelectedIcon);
-                if (dialog.Notes.Trim().Length > 0) LocationService.SetNotes(created, dialog.Notes);
+                if (AskNewLocation() is not { } answer) return null;
+                (name, icon, notes) = answer;
+            }
+            else
+            {
+                // No subtitle: the current Location is not what a new one is named after.
+                var dialog = new InputDialog(Loc("Str_Loc_NewTitle"), string.Empty, Loc("Str_Rename_Label"), string.Empty,
+                    Loc("Str_Rename_Save"), Loc("Str_Btn_Cancel")) { Owner = Window.GetWindow(this) };
+                dialog.UseIcons(LocationIcons.All, LocationIcons.Default);
+                dialog.UseNotes(Loc("Str_Loc_NotesLabel"), string.Empty);
+                dialog.ShowDialog();
+                if (!dialog.Confirmed) return null;
+                (name, icon, notes) = (dialog.Value, dialog.SelectedIcon, dialog.Notes);
+            }
+            if (string.IsNullOrWhiteSpace(name)) return null;
+            if (LocationService.Create(name.Trim(), out var created) && created != null)
+            {
+                LocationService.SetIcon(created, icon);
+                if (notes.Trim().Length > 0) LocationService.SetNotes(created, notes);
                 if (switchTo) SetLocation(LocationService.Get(created));
                 return created;
             }

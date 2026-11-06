@@ -100,6 +100,7 @@ internal static class LocationWorkspaceTests
             ResultsFollowLocation(a, b, scanner);
             SaveResultsIsDurable(Path.Combine(root, "move"));
             SaveResultsEdges(Path.Combine(root, "edges"));
+            NewLocationKeepsResults(Path.Combine(root, "newloc"));
             RetryRepeatsTheChange(Path.Combine(root, "retry", "history.json"));
             ImportedNullsReachHistorySafely(Path.Combine(root, "nulls"));
             GatewayFollowsTheScan(Path.Combine(root, "gateway"));
@@ -615,6 +616,41 @@ internal static class LocationWorkspaceTests
             Require(!LocationTransfer.Import(catalog, damaged, out _, out string? why) && why != null && why.Length > 0, "A damaged file is refused with a reason.");
             Require(catalog.Items.Count == locations && Files().SequenceEqual(before), "A refused import changes nothing that was there.");
         }
+    }
+
+    // The sidebar's New Location (and Ctrl+Alt+S) right after a scan: the unsaved results go into
+    // the new Location instead of being cleared by the switch. A saved scan still switches empty,
+    // because it is in its own Location's history.
+    private static void NewLocationKeepsResults(string root)
+    {
+        Directory.CreateDirectory(root);
+        File.WriteAllText(Path.Combine(root, "devices.json"), "{}");
+        LocationService.Root = root;
+        LocationService.Load("Unassigned");
+        var unassigned = LocationService.Get(LocationService.Find(LocationCatalog.UnassignedId)!);
+        var scanner = new SiteScanner();
+        using var workspace = new ScanWorkspace("192.168.1.10", false, scanner);
+        workspace.ConfirmDiscard = _ => true;
+        workspace.AskNewLocation = () => ("Fresh site", LocationIcons.Default, string.Empty);
+        workspace.SetLocation(unassigned);
+        workspace.Scan();
+        PumpUntil(() => !workspace.IsScanning && unassigned.History.Entries.Count == 1);
+        Require(workspace.Session.Devices.Count == 1, "The scan found its device.");
+        workspace.NewLocation();
+        var fresh = LocationService.Items.Single(item => item.Name == "Fresh site");
+        Require(workspace.Location.Info?.Id == fresh.Id, "New Location moves the tab to the Location it made.");
+        Require(workspace.Session.Devices.Count == 1, "The unsaved scan's results stay on screen in the new Location.");
+        Require(Reread(Path.Combine(root, "locations", fresh.Id, "history.json")).Entries.Count == 1
+            && unassigned.History.Entries.Count == 0, "The run moved from Unassigned into the new Location.");
+
+        // From a saved Location the scan is already kept, so a new Location starts empty.
+        workspace.AskNewLocation = () => ("Second site", LocationIcons.Default, string.Empty);
+        workspace.NewLocation();
+        var second = LocationService.Items.Single(item => item.Name == "Second site");
+        Require(workspace.Location.Info?.Id == second.Id && workspace.Session.Devices.Count == 0,
+            "A new Location made from a saved scan opens empty; the scan stays in its own Location.");
+        workspace.AskNewLocation = null;
+        Console.WriteLine("PASS: New Location keeps an unsaved scan's results.");
     }
 
     // What a save has to get right beyond the writes themselves: results that are in no run yet, a
