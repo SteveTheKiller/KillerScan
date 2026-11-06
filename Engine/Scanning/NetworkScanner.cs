@@ -31,6 +31,43 @@ namespace KillerScan.Engine
         /// (a dead address takes about 4 seconds), so the sweep asks that address once more.</summary>
         internal static TimeSpan ArpQuickFailure = TimeSpan.FromSeconds(1.5);
 
+        /// <summary>Tests only: this PC's adapter MACs and IPv4 addresses, in place of the real adapters.</summary>
+        internal static Func<(HashSet<string> Macs, HashSet<string> Addresses)>? LocalIdentityOverride { get; set; }
+
+        // This PC's own adapter MACs and addresses, read once per run on first use (off the UI
+        // thread). SendARP for the subnet broadcast succeeds with this PC's own MAC, so an
+        // answer carrying one of our MACs is only believed for one of our own addresses.
+        private static Lazy<(HashSet<string> Macs, HashSet<string> Addresses)> _localIdentity = new(ReadLocalIdentity);
+
+        private static (HashSet<string> Macs, HashSet<string> Addresses) ReadLocalIdentity()
+        {
+            if (LocalIdentityOverride is { } fake) return fake();
+            var macs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var addresses = new HashSet<string>(StringComparer.Ordinal);
+            try
+            {
+                foreach (var adapter in NetworkInterface.GetAllNetworkInterfaces())
+                {
+                    byte[] bytes = adapter.GetPhysicalAddress().GetAddressBytes();
+                    if (bytes.Length == 6) macs.Add(string.Join(":", bytes.Select(b => b.ToString("X2"))));
+                    try
+                    {
+                        foreach (var unicast in adapter.GetIPProperties().UnicastAddresses)
+                            if (unicast.Address.AddressFamily == AddressFamily.InterNetwork) addresses.Add(unicast.Address.ToString());
+                    }
+                    catch (NetworkInformationException) { }
+                }
+            }
+            catch (NetworkInformationException) { }
+            return (macs, addresses);
+        }
+
+        private static bool IsOwnMacElsewhere(IPAddress address, string mac)
+        {
+            var local = _localIdentity.Value;
+            return local.Macs.Contains(mac) && !local.Addresses.Contains(address.ToString());
+        }
+
         /// <summary>The first liveness ping is short so a quiet range moves fast; the second, for
         /// addresses the ARP sweep cannot ask, outlasts one ARP retransmit (1 second).</summary>
         private const int FirstPingTimeoutMs = 500, SecondPingTimeoutMs = 1200;
@@ -131,6 +168,8 @@ namespace KillerScan.Engine
                             " A bound scan only reaches its own network and what Windows routes through it.");
             }
             ScanSource.Current = Binding;
+            // Adapters come and go between runs (a VPN, a dock), so each run reads them afresh.
+            _localIdentity = new(ReadLocalIdentity);
         }
 
         /// <summary>
@@ -572,6 +611,7 @@ namespace KillerScan.Engine
                     var clock = Stopwatch.StartNew();
                     // Off-link, SendARP answers with the next hop's MAC, which belongs to the router.
                     string mac = IsOnLink(address) ? GetMacAddress(address) : string.Empty;
+                    if (mac.Length > 0 && IsOwnMacElsewhere(address, mac)) mac = string.Empty;
                     return (mac, clock.Elapsed);
                 }
                 finally { slots.Release(); }

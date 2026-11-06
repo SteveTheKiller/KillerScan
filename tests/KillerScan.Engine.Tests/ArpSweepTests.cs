@@ -32,6 +32,7 @@ internal static class ArpSweepTests
             await SilentRoutedAddressesGetASecondLivenessPass();
             await TapMacIsBlankedOnHostsThatAnswerPing();
             await GatewayMacIsBlankedOnOtherHosts();
+            await BroadcastIsNotADevice();
         }
         finally
         {
@@ -234,6 +235,28 @@ internal static class ArpSweepTests
                 "Only the gateway keeps the gateway's MAC.");
         }
         finally { ScanSource.PingOverride = null; }
+    }
+
+    private static async Task BroadcastIsNotADevice()
+    {
+        // Measured on Windows 11: SendARP for the subnet broadcast succeeds and answers with this
+        // PC's own adapter MAC. A typed range ending in .255 then listed a phantom device wearing
+        // the scanner's own vendor. This PC's own address keeps its MAC; no other address may.
+        NetworkScanner.LocalIdentityOverride = () => (new HashSet<string> { "00:04:F2:AA:AA:AA" }, new HashSet<string> { "192.0.2.10" });
+        try
+        {
+            NetworkPlatform.Current = new ArpPlatform(_ => "", ip => ip switch
+            {
+                "192.0.2.10" or "192.0.2.255" => "00:04:F2:AA:AA:AA",
+                "192.0.2.77" => "00:04:F2:12:34:56",
+                _ => "",
+            });
+            var found = await Quick("192.0.2.1-255", Silent);
+            Require(found.Select(d => d.IpAddress).OrderBy(ip => ip).SequenceEqual(new[] { "192.0.2.10", "192.0.2.77" }),
+                "The broadcast address answered with this PC's own MAC is not a device: " + string.Join(", ", found.Select(d => d.IpAddress)));
+            Require(found.Single(d => d.IpAddress == "192.0.2.10").MacAddress == "00:04:F2:AA:AA:AA", "This PC keeps its own MAC.");
+        }
+        finally { NetworkScanner.LocalIdentityOverride = null; }
     }
 
     // No ping and no TCP: the ARP sweep and the neighbor cache are the only evidence.
