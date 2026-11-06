@@ -285,6 +285,10 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_Uninstall_NoAdmin">Za odstranitev ni bilo mogoče zahtevati skrbniških pravic:
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">KillerScan je odstranjen.</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan je še vedno odprt. Zaprite vsa okna KillerScan, nato izberite Poskusi znova.</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">Poskusi znova</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">Namestitev KillerScan za vse uporabnike je odprta v drugem oknu ali seji, zato ni bila odstranjena. Zaprite jo in znova zaženite KillerScan.</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">Namestitve KillerScan za vse uporabnike ni bilo mogoče odstraniti (napaka {0}).</sys:String>
     <sys:String x:Key="Str_Err_Export">Napaka pri izvozu: {0}</sys:String>
     <sys:String x:Key="Str_Err_Scan">Napaka pri pregledu: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">Datoteka CSV</sys:String>

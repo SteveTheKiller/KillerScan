@@ -311,6 +311,10 @@
     <sys:String x:Key="Str_Uninstall_NoAdmin">卸载无法请求管理员权限：
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">KillerScan 已卸载。</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan 仍处于打开状态。请关闭所有 KillerScan 窗口，然后选择“重试”。</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">重试</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">所有用户的 KillerScan 副本在另一个窗口或会话中处于打开状态，因此未被删除。请关闭它，然后重新启动 KillerScan。</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">无法删除所有用户的 KillerScan 副本（错误 {0}）。</sys:String>
     <sys:String x:Key="Str_Err_Export">导出错误：{0}</sys:String>
     <sys:String x:Key="Str_Err_Scan">扫描错误：{0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">CSV 文件</sys:String>

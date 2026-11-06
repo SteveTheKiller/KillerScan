@@ -223,7 +223,13 @@ namespace KillerScan
                 {
                     using var p = Process.Start(new ProcessStartInfo(current, "/remove-machine-conflict")
                     { UseShellExecute = true, Verb = "runas" });
-                    p?.WaitForExit();
+                    if (p == null) return;
+                    p.WaitForExit();
+                    // The elevated copy's reason went to a console nobody sees; say what happened here.
+                    string? failed = Services.UninstallCompletion.ConflictRemovalMessage(p.ExitCode, key => L(key, key == "Str_Conflict_Busy"
+                        ? "The all-users copy of KillerScan is open in another window or session, so it was not removed. Close it and start KillerScan again."
+                        : "The all-users copy of KillerScan could not be removed (error {0})."));
+                    if (failed != null) Controls.ConfirmDialog.ShowNotice(failed);
                 }
                 catch { /* declining UAC leaves both copies in place */ }
             }
@@ -506,11 +512,19 @@ namespace KillerScan
 
         private static int ConfirmUninstall()
         {
-            var confirm = new Controls.ConfirmDialog(
-                L("Str_Uninstall_Confirm", "Uninstall KillerScan from this computer?"), string.Empty,
-                L("Str_Uninstall_Title", "Uninstall"), L("Str_Btn_Cancel", "Cancel"));
-            confirm.ShowDialog();
-            return confirm.Confirmed ? 0 : KillerFamily.Deployment.InstallerExitCodes.Cancelled;
+            using var self = Process.GetCurrentProcess();
+            return Services.UninstallCompletion.ConfirmInteractive(self.MainModule!.FileName,
+                Services.UninstallCompletion.OtherRunningCopies,
+                () => Ask(L("Str_Uninstall_Confirm", "Uninstall KillerScan from this computer?"), L("Str_Uninstall_Title", "Uninstall")),
+                () => Ask(L("Str_Uninstall_CloseFirst", "KillerScan is still open. Close every KillerScan window, then choose Try again."),
+                    L("Str_Btn_TryAgain", "Try again")));
+
+            static bool Ask(string question, string confirmText)
+            {
+                var confirm = new Controls.ConfirmDialog(question, string.Empty, confirmText, L("Str_Btn_Cancel", "Cancel"));
+                confirm.ShowDialog();
+                return confirm.Confirmed;
+            }
         }
 
         private static int Uninstall(bool silent)

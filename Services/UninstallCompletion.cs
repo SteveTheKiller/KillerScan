@@ -105,6 +105,44 @@ namespace KillerScan.Services
             return result;
         }
 
+        /// <summary>
+        /// The interactive uninstall's questions, asked by the confirmation step before anything
+        /// is removed. Removal refuses an installation that is still running (RemoveOwned), and
+        /// from Settings that refusal happens in a hidden helper the user never sees, so an open
+        /// copy is named here while they can still close it. Returns 0 to go on, Cancelled when
+        /// the user declines, and Busy when a copy is still open and they cancel instead.
+        /// </summary>
+        internal static int ConfirmInteractive(string image, Func<string, int> otherRunningCopies, Func<bool> askUninstall, Func<bool> askToCloseThenRetry)
+        {
+            if (!askUninstall()) return KillerFamily.Deployment.InstallerExitCodes.Cancelled;
+            while (otherRunningCopies(image) > 0)
+                if (!askToCloseThenRetry()) return KillerFamily.Deployment.InstallerExitCodes.Busy;
+            return 0;
+        }
+
+        /// <summary>How many processes other than this one run <paramref name="image"/>, by the rule RemoveOwned uses.</summary>
+        internal static int OtherRunningCopies(string image)
+        {
+            int count = 0;
+            int self;
+            using (var current = Process.GetCurrentProcess()) self = current.Id;
+            foreach (var process in Process.GetProcessesByName("KillerScan"))
+                using (process)
+                    if (process.Id != self && RunsImage(() => process.MainModule?.FileName, image)) count++;
+            return count;
+        }
+
+        /// <summary>
+        /// What to tell the user after the elevated removal of a conflicting all-users copy exits:
+        /// nothing on success, that it is still open when it was busy, and the code otherwise.
+        /// </summary>
+        internal static string? ConflictRemovalMessage(int exitCode, Func<string, string> text) => exitCode switch
+        {
+            0 => null,
+            KillerFamily.Deployment.InstallerExitCodes.Busy => text("Str_Conflict_Busy"),
+            _ => string.Format(System.Globalization.CultureInfo.CurrentCulture, text("Str_Conflict_Failed"), exitCode),
+        };
+
         internal static string Command(bool machine, bool silent)
         {
             var start = StartInfo(machine, silent);

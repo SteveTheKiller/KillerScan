@@ -289,6 +289,10 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_Uninstall_NoAdmin">Trình gỡ cài đặt không thể yêu cầu quyền quản trị:
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">Đã gỡ cài đặt KillerScan.</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan vẫn đang mở. Hãy đóng mọi cửa sổ KillerScan, rồi chọn Thử lại.</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">Thử lại</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">Bản KillerScan dành cho tất cả người dùng đang mở trong một cửa sổ hoặc phiên khác nên chưa được xóa. Hãy đóng nó và khởi động lại KillerScan.</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">Không thể xóa bản KillerScan dành cho tất cả người dùng (lỗi {0}).</sys:String>
     <sys:String x:Key="Str_Err_Export">Lỗi xuất: {0}</sys:String>
     <sys:String x:Key="Str_Err_Scan">Lỗi quét: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">Tệp CSV</sys:String>

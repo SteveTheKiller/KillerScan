@@ -338,6 +338,10 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Uninstall_NoAdmin">La disinstallazione non ha potuto richiedere i privilegi di amministratore:
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">KillerScan è stato disinstallato.</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan è ancora aperto. Chiudi tutte le finestre di KillerScan, poi scegli Riprova.</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">Riprova</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">La copia di KillerScan per tutti gli utenti è aperta in un'altra finestra o sessione, quindi non è stata rimossa. Chiudila e avvia di nuovo KillerScan.</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">Non è stato possibile rimuovere la copia di KillerScan per tutti gli utenti (errore {0}).</sys:String>
     <sys:String x:Key="Str_Err_Export">Errore di esportazione: {0}</sys:String>
     <sys:String x:Key="Str_Err_Scan">Errore di scansione: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">File CSV</sys:String>

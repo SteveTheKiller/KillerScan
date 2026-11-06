@@ -326,6 +326,10 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_Uninstall_NoAdmin">Uninstall could not request administrator access:
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">KillerScan has been uninstalled.</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan is still open. Close every KillerScan window, then choose Try again.</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">Try again</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">The all-users copy of KillerScan is open in another window or session, so it was not removed. Close it and start KillerScan again.</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">The all-users copy of KillerScan could not be removed (error {0}).</sys:String>
 
     <!-- Errors and file dialogs. The text before the | in a save filter is what Windows shows
          in its type dropdown; the *.ext pattern after it is not interface text. -->

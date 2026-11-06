@@ -327,6 +327,10 @@
     <sys:String x:Key="Str_Uninstall_NoAdmin">Не удалось запросить права администратора для удаления:
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">KillerScan был удален.</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan все еще открыт. Закройте все окна KillerScan, затем выберите Повторить.</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">Повторить</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">Копия KillerScan для всех пользователей открыта в другом окне или сеансе, поэтому она не была удалена. Закройте ее и снова запустите KillerScan.</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">Не удалось удалить копию KillerScan для всех пользователей (ошибка {0}).</sys:String>
 
     <!-- Errors and file dialogs -->
     <sys:String x:Key="Str_Err_Export">Ошибка экспорта: {0}</sys:String>

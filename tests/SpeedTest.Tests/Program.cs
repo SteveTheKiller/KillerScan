@@ -138,6 +138,8 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--picker-recovery" })) { PickerRecoveryTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--appdata-isolation" })) { AppDataIsolationTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--prompt-upgrade" })) { PromptUpgradeTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--uninstall-prompt" })) { UninstallPromptTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--scan-enter-key" })) { ScanEnterKeyTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--rail-order" })) { await RailOrderTests.Run(); Console.WriteLine("PASS: rail order regression suite (1 selected)."); return 0; }
             Require(args.All(value => value == "--worker" || value == "--internet" || value == "--speed-loopback"),
                 "Usage: SpeedTest.Tests.exe [--speed-loopback] [--worker] [--internet]");

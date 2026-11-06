@@ -328,6 +328,10 @@
     <sys:String x:Key="Str_Uninstall_NoAdmin">Жою әкімші құқығын сұрай алмады:
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">KillerScan жойылды.</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan әлі ашық. KillerScan терезелерінің барлығын жауып, содан кейін Қайталау түймесін басыңыз.</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">Қайталау</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">KillerScan бағдарламасының барлық пайдаланушыларға арналған көшірмесі басқа терезеде немесе сеанста ашық, сондықтан жойылмады. Оны жауып, KillerScan бағдарламасын қайта іске қосыңыз.</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">KillerScan бағдарламасының барлық пайдаланушыларға арналған көшірмесін жою мүмкін болмады (қате {0}).</sys:String>
 
     <!-- Errors and file dialogs. The text before the | in a save filter is what Windows shows
          in its type dropdown; the *.ext pattern after it is not interface text. -->

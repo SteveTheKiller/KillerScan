@@ -25,11 +25,22 @@ namespace KillerScan.Controls
             SetView("topology");
             SetTopologyOrder((TopologyOrder)order);
         }
+        /// <summary>
+        /// Whether the focused element answers Enter itself: a button (Scan, the Location banner,
+        /// the rail, a view tab), a combo box, a list or menu row, a text box. Enter there must
+        /// press or commit it, not open the selected device. Grid cells and topology nodes do not
+        /// own Enter, so the browser shortcut still works from them.
+        /// </summary>
+        internal static bool FocusOwnsEnter(IInputElement? focused) =>
+            focused is System.Windows.Controls.Primitives.ButtonBase or ComboBox or ComboBoxItem
+                or ListBoxItem or MenuItem or System.Windows.Controls.Primitives.TextBoxBase;
+
         public void HandleKey(KeyEventArgs e)
         {
             if (e.Handled) return;
             var modifiers = Keyboard.Modifiers;
             Key key = e.Key == Key.System ? e.SystemKey : e.Key;
+            if (key == Key.Enter && FocusOwnsEnter(Keyboard.FocusedElement)) return;
             bool ctrl = modifiers.HasFlag(ModifierKeys.Control);
             bool shift = modifiers.HasFlag(ModifierKeys.Shift);
             bool alt = modifiers.HasFlag(ModifierKeys.Alt);

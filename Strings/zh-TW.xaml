@@ -311,6 +311,10 @@
     <sys:String x:Key="Str_Uninstall_NoAdmin">解除安裝無法要求系統管理員權限：
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">KillerScan 已解除安裝。</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan 仍在開啟中。請關閉所有 KillerScan 視窗，然後選擇「重試」。</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">重試</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">所有使用者的 KillerScan 複本在另一個視窗或工作階段中開啟，因此未被移除。請關閉它，然後重新啟動 KillerScan。</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">無法移除所有使用者的 KillerScan 複本（錯誤 {0}）。</sys:String>
     <sys:String x:Key="Str_Err_Export">匯出錯誤：{0}</sys:String>
     <sys:String x:Key="Str_Err_Scan">掃描錯誤：{0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">CSV 檔案</sys:String>

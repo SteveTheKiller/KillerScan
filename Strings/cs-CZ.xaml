@@ -309,6 +309,10 @@ Vaše nastavení nebude odstraněno.</sys:String>
     <sys:String x:Key="Str_Uninstall_NoAdmin">Odinstalace nemohla vyžádat oprávnění správce:
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">KillerScan byl odinstalován.</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan je stále otevřený. Zavřete všechna okna KillerScan a potom vyberte Zkusit znovu.</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">Zkusit znovu</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">Kopie KillerScan pro všechny uživatele je otevřená v jiném okně nebo relaci, proto nebyla odebrána. Zavřete ji a spusťte KillerScan znovu.</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">Kopii KillerScan pro všechny uživatele se nepodařilo odebrat (chyba {0}).</sys:String>
     <sys:String x:Key="Str_Err_Export">Chyba exportu: {0}</sys:String>
     <sys:String x:Key="Str_Err_Scan">Chyba skenování: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">Soubor CSV</sys:String>

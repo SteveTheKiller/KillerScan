@@ -328,6 +328,10 @@
     <sys:String x:Key="Str_Uninstall_NoAdmin">Не вдалося запросити доступ адміністратора для видалення:
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">KillerScan видалено.</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan досі відкрито. Закрийте всі вікна KillerScan, потім виберіть Повторити.</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">Повторити</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">Копію KillerScan для всіх користувачів відкрито в іншому вікні або сеансі, тому її не видалено. Закрийте її та знову запустіть KillerScan.</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">Не вдалося видалити копію KillerScan для всіх користувачів (помилка {0}).</sys:String>
 
     <!-- Errors and file dialogs. The text before the | in a save filter is what Windows shows
          in its type dropdown; the *.ext pattern after it is not interface text. -->

@@ -338,6 +338,10 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_Uninstall_NoAdmin">Az eltávolítás nem tudott rendszergazdai jogosultságot kérni:
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">A KillerScan eltávolítva.</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">A KillerScan még meg van nyitva. Zárja be a KillerScan összes ablakát, majd válassza az Újrapróbálkozás gombot.</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">Újrapróbálkozás</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">A KillerScan minden felhasználós példánya meg van nyitva egy másik ablakban vagy munkamenetben, ezért nem lett eltávolítva. Zárja be, majd indítsa újra a KillerScant.</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">A KillerScan minden felhasználós példányát nem sikerült eltávolítani (hiba: {0}).</sys:String>
     <sys:String x:Key="Str_Err_Export">Exportálási hiba: {0}</sys:String>
     <sys:String x:Key="Str_Err_Scan">Vizsgálati hiba: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">CSV-fájl</sys:String>

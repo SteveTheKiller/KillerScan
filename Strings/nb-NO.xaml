@@ -328,6 +328,10 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_Uninstall_NoAdmin">Avinstalleringen kunne ikke be om administratortilgang:
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">KillerScan er avinstallert.</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan er fortsatt åpen. Lukk alle KillerScan-vinduer, og velg deretter Prøv igjen.</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">Prøv igjen</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">Kopien av KillerScan for alle brukere er åpen i et annet vindu eller en annen økt, så den ble ikke fjernet. Lukk den og start KillerScan på nytt.</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">Kopien av KillerScan for alle brukere kunne ikke fjernes (feil {0}).</sys:String>
 
     <!-- Errors and file dialogs. The text before the | in a save filter is what Windows shows
          in its type dropdown; the *.ext pattern after it is not interface text. -->

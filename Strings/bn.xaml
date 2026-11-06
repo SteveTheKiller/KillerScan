@@ -311,6 +311,10 @@
     <sys:String x:Key="Str_Uninstall_NoAdmin">আনইনস্টল প্রশাসক অনুমতি চাইতে পারেনি:
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">KillerScan আনইনস্টল করা হয়েছে।</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan এখনও খোলা আছে। KillerScan-এর সব উইন্ডো বন্ধ করুন, তারপর আবার চেষ্টা করুন বেছে নিন।</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">আবার চেষ্টা করুন</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">সব-ব্যবহারকারীর KillerScan কপিটি অন্য একটি উইন্ডো বা সেশনে খোলা আছে, তাই সরানো হয়নি। সেটি বন্ধ করে KillerScan আবার চালু করুন।</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">সব-ব্যবহারকারীর KillerScan কপিটি সরানো যায়নি (ত্রুটি {0})।</sys:String>
     <sys:String x:Key="Str_Err_Export">এক্সপোর্ট ত্রুটি: {0}</sys:String>
     <sys:String x:Key="Str_Err_Scan">স্ক্যান ত্রুটি: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">CSV ফাইল</sys:String>

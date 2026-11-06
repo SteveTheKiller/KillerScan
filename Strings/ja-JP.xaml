@@ -322,6 +322,10 @@
     <sys:String x:Key="Str_Uninstall_NoAdmin">アンインストールで管理者権限を要求できませんでした:
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">KillerScan はアンインストールされました。</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan がまだ開いています。KillerScan のウィンドウをすべて閉じてから、「再試行」を選択してください。</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">再試行</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">全ユーザー向けの KillerScan のコピーが別のウィンドウまたはセッションで開かれているため、削除されませんでした。閉じてから KillerScan をもう一度起動してください。</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">全ユーザー向けの KillerScan のコピーを削除できませんでした (エラー {0})。</sys:String>
     <sys:String x:Key="Str_Err_Export">エクスポート エラー: {0}</sys:String>
     <sys:String x:Key="Str_Err_Scan">スキャン エラー: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">CSV ファイル</sys:String>

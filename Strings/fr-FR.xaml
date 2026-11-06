@@ -311,6 +311,10 @@ Vos paramètres ne seront pas supprimés.</sys:String>
     <sys:String x:Key="Str_Uninstall_NoAdmin">La désinstallation n'a pas pu demander les droits d'administrateur :
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">KillerScan a été désinstallé.</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan est toujours ouvert. Fermez toutes les fenêtres de KillerScan, puis choisissez Réessayer.</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">Réessayer</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">La copie de KillerScan pour tous les utilisateurs est ouverte dans une autre fenêtre ou session, elle n'a donc pas été supprimée. Fermez-la et relancez KillerScan.</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">La copie de KillerScan pour tous les utilisateurs n'a pas pu être supprimée (erreur {0}).</sys:String>
     <sys:String x:Key="Str_Err_Export">Erreur d'exportation : {0}</sys:String>
     <sys:String x:Key="Str_Err_Scan">Erreur d'analyse : {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">Fichier CSV</sys:String>

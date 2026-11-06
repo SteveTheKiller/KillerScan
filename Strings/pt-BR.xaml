@@ -328,6 +328,10 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_Uninstall_NoAdmin">A desinstalação não conseguiu solicitar acesso de administrador:
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">O KillerScan foi desinstalado.</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">O KillerScan ainda está aberto. Feche todas as janelas do KillerScan e escolha Tentar novamente.</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">Tentar novamente</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">A cópia do KillerScan para todos os usuários está aberta em outra janela ou sessão, por isso não foi removida. Feche-a e inicie o KillerScan novamente.</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">Não foi possível remover a cópia do KillerScan para todos os usuários (erro {0}).</sys:String>
 
     <!-- Errors and file dialogs. The text before the | in a save filter is what Windows shows
          in its type dropdown; the *.ext pattern after it is not interface text. -->

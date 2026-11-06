@@ -19,6 +19,9 @@ Scans give devices that miss their first chance another one, so fewer turn up on
 - Scans give a device that misses its first chance another one. An ARP request that fails at once is asked again, the neighbor cache is read once more after the ARP sweep, and a silent address reached through a router or VPN gets a second, longer ping.
 - A KillerScan window or command-line scan that checks the Locations list while another window is saving it no longer replaces Unassigned's history, names and approvals with a copy from the day of the upgrade, and a save interrupted partway no longer leaves the list unreadable.
 - A scan of a range that includes the network's broadcast address, such as 192.168.1.1-255, no longer lists that address as a device carrying this PC's own MAC address and vendor.
+- Uninstalling from Windows Settings while KillerScan is open asks you to close it and try again, instead of failing without a word and leaving KillerScan installed.
+- When KillerScan finds itself installed twice and cannot remove the all-users copy, it says why instead of asking again at every start.
+- Enter on a focused button, such as Scan or a view tab, presses that button instead of opening the selected device in the browser.
 
 ## [1.9.1] - 2026-11-05
 

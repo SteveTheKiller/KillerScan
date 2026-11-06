@@ -311,6 +311,10 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_Uninstall_NoAdmin">Kaldırma işlemi yönetici izni isteyemedi:
 {0}</sys:String>
     <sys:String x:Key="Str_Uninstall_Done">KillerScan kaldırıldı.</sys:String>
+    <sys:String x:Key="Str_Uninstall_CloseFirst">KillerScan hâlâ açık. Tüm KillerScan pencerelerini kapatın, ardından Yeniden dene seçeneğini seçin.</sys:String>
+    <sys:String x:Key="Str_Btn_TryAgain">Yeniden dene</sys:String>
+    <sys:String x:Key="Str_Conflict_Busy">KillerScan'in tüm kullanıcılar için olan kopyası başka bir pencerede veya oturumda açık olduğundan kaldırılmadı. Kopyayı kapatın ve KillerScan'i yeniden başlatın.</sys:String>
+    <sys:String x:Key="Str_Conflict_Failed">KillerScan'in tüm kullanıcılar için olan kopyası kaldırılamadı (hata {0}).</sys:String>
     <sys:String x:Key="Str_Err_Export">Dışa aktarma hatası: {0}</sys:String>
     <sys:String x:Key="Str_Err_Scan">Tarama hatası: {0}</sys:String>
     <sys:String x:Key="Str_Filter_Csv">CSV dosyası</sys:String>

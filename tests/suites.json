@@ -21,7 +21,7 @@
       "--history-ui", "--history-settings-ui", "--history-table-ui", "--menu-icons-ui",
       "--topology", "--topology-stream", "--topology-keyboard", "--device-table", "--report-language", "--csv-export", "--export-publication", "--history-load", "--run-evidence", "--locations",
       "--locations-sidebar", "--sidebar-placement", "--keyboard-focus", "--contrast-transitions", "--picker-selection", "--location-workspace", "--recognition-ui", "--access-ui", "--report-sort", "--command-line-path",
-      "--executable-deployment", "--report-logo", "--outline-hover-ui", "--radio-center-ui", "--shrink-to-fit", "--rail-order", "--cli-progress", "--module-path", "--about-signature", "--about-update-failure", "--picker-recovery", "--appdata-isolation", "--prompt-upgrade"
+      "--executable-deployment", "--report-logo", "--outline-hover-ui", "--radio-center-ui", "--shrink-to-fit", "--rail-order", "--cli-progress", "--module-path", "--about-signature", "--about-update-failure", "--picker-recovery", "--appdata-isolation", "--prompt-upgrade", "--uninstall-prompt", "--scan-enter-key"
     ],
     "excluded": {
       "--internet": "Contacts the public speed-test endpoint.",
