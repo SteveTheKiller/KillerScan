@@ -12,6 +12,7 @@ Scans give devices that miss their first chance another one, so fewer turn up on
 
 - The terminal's `scan` and `probe` commands show a device's name, page title, banner and evidence without the control characters in them, so a device on the network can no longer clear the terminal, write its title or clipboard, or forge rows.
 - Pasting several lines into the terminal asks first again once the prompt returns, even after an SSH session or other program turned on bracketed paste and left it on.
+- The terminal prompt no longer runs a git filter that a repository defines in its own settings when you open a folder inside it, and a prompt you never edited is replaced by the current one, so this fix and the earlier hook guard reach every install.
 
 ### Fixed
 

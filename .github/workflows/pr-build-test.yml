@@ -101,6 +101,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Module contract failed on PowerShell 7. See module-pwsh.log.' }
           powershell -NoProfile -ExecutionPolicy Bypass -File tests/Module/ModuleContract.ps1 -Exe $exe 2>&1 | Tee-Object ci-results/module-desktop.log
           if ($LASTEXITCODE -ne 0) { throw 'Module contract failed on Windows PowerShell 5.1. See module-desktop.log.' }
+          pwsh -NoProfile -File tests/Module/PromptGitSafety.ps1 2>&1 | Tee-Object ci-results/prompt-git-pwsh.log
+          if ($LASTEXITCODE -ne 0) { throw 'The prompt ran repository code on PowerShell 7. See prompt-git-pwsh.log.' }
+          powershell -NoProfile -ExecutionPolicy Bypass -File tests/Module/PromptGitSafety.ps1 2>&1 | Tee-Object ci-results/prompt-git-desktop.log
+          if ($LASTEXITCODE -ne 0) { throw 'The prompt ran repository code on Windows PowerShell 5.1. See prompt-git-desktop.log.' }
       - name: Retain failure diagnostics and test results
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
