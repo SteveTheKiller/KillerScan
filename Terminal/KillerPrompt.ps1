@@ -163,10 +163,14 @@ function script:KFGit {
         # fsmonitor hook, no hooks, and no index lock that would make this prompt write to it.
         # A clean or process filter in the repository's own config runs whenever status re-hashes
         # a file whose timestamps changed, which an extracted archive guarantees, so a repository
-        # that defines one gets no status at all. Reading the config runs nothing.
-        $filters = @(git config --local --name-only --get-regexp '^filter\.' 2>$null)
-        if ($filters.Count -gt 0) { return $null }
-        $lines = @(git -c core.fsmonitor=false -c core.hooksPath=NUL --no-optional-locks status --porcelain=v1 --branch --untracked-files=normal 2>$null)
+        # that brings one gets no status at all. That covers .git/config, per-worktree config and
+        # any file either one includes; a filter the user set up globally (git-lfs) is their own.
+        # Submodules are never entered, because each has a config of its own. Reading config
+        # runs nothing.
+        $own = @(git config --list --show-scope --includes --name-only 2>$null | Where-Object {
+            $_ -match '^(local|worktree)\s+(filter|include|includeif)\.' })
+        if ($own.Count -gt 0) { return $null }
+        $lines = @(git -c core.fsmonitor=false -c core.hooksPath=NUL --no-optional-locks status --porcelain=v1 --branch --untracked-files=normal --ignore-submodules=all 2>$null)
     } catch { return $null }
     if (-not $lines -or $lines.Count -eq 0) { return $null }
 

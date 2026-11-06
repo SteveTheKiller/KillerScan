@@ -33,7 +33,9 @@ namespace KillerScan.Controls
         /// </summary>
         internal static bool FocusOwnsEnter(IInputElement? focused) =>
             focused is System.Windows.Controls.Primitives.ButtonBase or ComboBox or ComboBoxItem
-                or ListBoxItem or MenuItem or System.Windows.Controls.Primitives.TextBoxBase;
+                or ListBoxItem or MenuItem or System.Windows.Controls.Primitives.TextBoxBase
+                // The view tabs are focusable tab surfaces with their own Enter handler.
+                or TabSurfaceBorder;
 
         public void HandleKey(KeyEventArgs e)
         {

@@ -33,6 +33,9 @@ internal static class ScanEnterKeyTests
         foreach (var control in new System.Windows.IInputElement[] { new Button(), new ToggleButton(), new CheckBox(), new RadioButton(),
             new ComboBox(), new ListBoxItem(), new MenuItem(), new TextBox() })
             Require(ScanWorkspace.FocusOwnsEnter(control), control.GetType().Name + " keeps Enter for itself.");
+        // The Devices, Services and Topology view tabs are focusable tab surfaces, not buttons,
+        // with their own Enter handler.
+        Require(ScanWorkspace.FocusOwnsEnter(new TabSurfaceBorder { Focusable = true }), "A view tab keeps Enter for itself.");
         Require(!ScanWorkspace.FocusOwnsEnter(new DataGridCell()), "A device grid cell leaves Enter to the browser shortcut.");
         Require(!ScanWorkspace.FocusOwnsEnter(new Border()), "A topology node leaves Enter to the browser shortcut.");
         Require(!ScanWorkspace.FocusOwnsEnter(null), "With nothing focused, Enter is the browser shortcut.");

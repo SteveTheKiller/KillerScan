@@ -60,6 +60,23 @@ try {
     Invoke-PromptGit $repo | Out-Null
     Require (-not (Test-Path -LiteralPath $marker)) "The prompt does not run a repository's own clean filter."
 
+    # The same filter, hidden where a plain look at .git/config does not see it: in a file the
+    # repository's config includes, and in per-worktree config. git status reads both.
+    git -C $repo config --unset filter.probe.clean
+    $included = Join-Path $repo '.git\extra.config'
+    Set-Content -LiteralPath $included -Encoding Ascii -Value @('[filter "probe"]', ("`tclean = `"" + ($probe -replace '\\', '/') + "`""))
+    git -C $repo config include.path extra.config
+    (Get-Item -LiteralPath (Join-Path $repo 'notes.txt')).LastWriteTime = (Get-Date).AddMinutes(15)
+    Invoke-PromptGit $repo | Out-Null
+    Require (-not (Test-Path -LiteralPath $marker)) "The prompt does not run a clean filter from an included config file."
+
+    git -C $repo config --unset include.path
+    git -C $repo config extensions.worktreeConfig true
+    git -C $repo config --worktree filter.probe.clean ('"' + ($probe -replace '\\', '/') + '"')
+    (Get-Item -LiteralPath (Join-Path $repo 'notes.txt')).LastWriteTime = (Get-Date).AddMinutes(20)
+    Invoke-PromptGit $repo | Out-Null
+    Require (-not (Test-Path -LiteralPath $marker)) "The prompt does not run a clean filter from worktree config."
+
     Write-Output "PASS: $passed prompt git safety checks on PowerShell $($PSVersionTable.PSVersion)."
 }
 finally {

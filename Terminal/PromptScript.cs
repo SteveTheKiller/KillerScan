@@ -35,14 +35,14 @@ namespace KillerScan.Shell
         /// <summary>
         /// Every prompt KillerScan has shipped, as <see cref="PromptHash"/> values. A user copy
         /// that matches one was never edited, so it is not a customization to protect: it takes
-        /// the current version, and a prompt fix (the 1.8 hooks guard, the 1.9.2 filter guard)
+        /// the current version, and a prompt fix (the 1.9.0 hooks guard, the 1.9.2 filter guard)
         /// reaches it. Add the new hash whenever KillerPrompt.ps1 changes; a test checks it.
         /// </summary>
         internal static readonly System.Collections.Generic.HashSet<string> ShippedPromptHashes = new(StringComparer.OrdinalIgnoreCase)
         {
             "f0612148e5b73f04a86015fb8644d38da7134d72bff942ccdb9edfb4f442fa35", // 1.7.0
-            "0588587c957fa6e13670fb3399646d08ca4cef83099ea8cb91bc73953adab04c", // 1.8.0: fsmonitor and hooks off
-            "eef923e71e501ff7fd2656c8d5a2e20be21d391d0b0c29b8437d0916c11746a3", // 1.9.2: no status in repos with filter drivers
+            "0588587c957fa6e13670fb3399646d08ca4cef83099ea8cb91bc73953adab04c", // 1.9.0: fsmonitor and hooks off
+            "ee1bf09388e15728befd2a94655520b612c038973a43cf02de9c0bc37889613c", // 1.9.2: no status in repos that bring filters or includes
         };
 
         private static bool IsUneditedOlderPrompt(string current, string shipped)
