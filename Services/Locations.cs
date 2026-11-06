@@ -154,10 +154,15 @@ namespace KillerScan.Services
         {
             LoadError = null;
             _store = CreateStore();
-            if (File.Exists(_path))
+            if (WaitForCatalog() || RestoreInterruptedReplace())
             {
                 _store.Load();
                 LoadError = _store.Error;
+                return;
+            }
+            if (BeingReplaced)
+            {
+                LoadError = CatalogBusy;
                 return;
             }
             try { MigrateOnce(unassignedName); }
@@ -175,13 +180,68 @@ namespace KillerScan.Services
         {
             using var lease = ProfileLock.Acquire("Migrate", _path, TimeSpan.FromSeconds(30),
                 "Another KillerScan window is still moving your data into Locations. Restart KillerScan to try again.");
-            if (File.Exists(_path))
+            if (WaitForCatalog() || RestoreInterruptedReplace())
             {
                 _store.Load();
                 LoadError = _store.Error;
                 return;
             }
+            if (BeingReplaced)
+            {
+                LoadError = CatalogBusy;
+                return;
+            }
             Migrate(unassignedName);
+        }
+
+        /// <summary>
+        /// A save that died between File.Replace's two renames leaves only the backup. Writers hold
+        /// the catalog's save lease for the whole replace, so when that lease is free and the
+        /// catalog is still missing, nobody is mid-write: the newest backup is the last published
+        /// catalog and goes back into place. False when a writer holds the lease or there is no backup.
+        /// </summary>
+        private bool RestoreInterruptedReplace()
+        {
+            if (!BeingReplaced) return false;
+            try
+            {
+                using var lease = ProfileLock.Acquire("Preferences", _path, TimeSpan.FromMilliseconds(500), CatalogBusy);
+                if (File.Exists(_path)) return true;
+                string? newest = CatalogReplaceBackups(_root).OrderByDescending(File.GetLastWriteTimeUtc).FirstOrDefault();
+                if (newest == null) return false;
+                File.Move(newest, _path);
+                return true;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { return false; }
+        }
+
+        private const string CatalogBusy = "Another KillerScan window is saving the Locations list. Try again in a moment.";
+
+        // Saving the catalog goes through File.Replace, which renames locations.json to a
+        // ".tmp.original" backup before moving the new file in. Between the two renames the
+        // catalog is absent and only that backup proves it was ever published. A first start
+        // never has one, because the first catalog is moved into place without a backup.
+        private bool BeingReplaced => CatalogReplaceBackups(_root).Any();
+
+        private static IEnumerable<string> CatalogReplaceBackups(string root)
+        {
+            try { return Directory.Exists(root) ? Directory.EnumerateFiles(root, "locations.json.*.tmp.original").ToList() : []; }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { return []; }
+        }
+
+        /// <summary>
+        /// True when locations.json is on disk, waiting up to two seconds for another window that
+        /// is replacing it to finish. False at once when nothing is being replaced.
+        /// </summary>
+        private bool WaitForCatalog()
+        {
+            var clock = System.Diagnostics.Stopwatch.StartNew();
+            while (true)
+            {
+                if (File.Exists(_path)) return true;
+                if (!BeingReplaced || clock.ElapsedMilliseconds > 2000) return false;
+                System.Threading.Thread.Sleep(50);
+            }
         }
 
         // Copy into a staging folder, verify every byte, move it into place, then publish the
@@ -221,8 +281,8 @@ namespace KillerScan.Services
             })) throw new IOException(_store.Error ?? "The Locations catalog could not be saved.");
         }
 
-        /// <summary>True once migration has published the catalog, even if it cannot be read now.</summary>
-        internal bool Published => File.Exists(_path);
+        /// <summary>True once migration has published the catalog, even if it cannot be read now or another window is replacing it.</summary>
+        internal bool Published => File.Exists(_path) || BeingReplaced;
 
         /// <summary>
         /// The Locations on disk, read without changing anything. <see cref="Load"/> moves the
@@ -234,6 +294,11 @@ namespace KillerScan.Services
             var catalog = new LocationCatalog(root);
             error = null;
             if (!catalog.Published) return [];
+            if (!catalog.WaitForCatalog())
+            {
+                error = CatalogBusy;
+                return [];
+            }
             // Another window replacing the catalog can make one read fail; a moment later it reads.
             for (int attempt = 0; ; attempt++)
             {

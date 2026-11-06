@@ -11,6 +11,7 @@ Scans give devices that miss their first chance another one, so fewer turn up on
 ### Fixed
 
 - Scans give a device that misses its first chance another one. An ARP request that fails at once is asked again, the neighbor cache is read once more after the ARP sweep, and a silent address reached through a router or VPN gets a second, longer ping.
+- A KillerScan window or command-line scan that checks the Locations list while another window is saving it no longer replaces Unassigned's history, names and approvals with a copy from the day of the upgrade, and a save interrupted partway no longer leaves the list unreadable.
 
 ## [1.9.1] - 2026-11-05
 
@@ -22,6 +23,7 @@ Scans find devices that only answer ARP, Chocolatey can uninstall KillerScan aga
 - Updates check the publisher's certificate for revocation and hold every signature to the full release publisher name. A revocation server that cannot be reached does not block a validly signed update, and the check never holds up the About card.
 
 ### Changed
+
 - Refreshed the bundled MAC vendor database to 58,697 assignments.
 
 ### Fixed

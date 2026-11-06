@@ -23,6 +23,8 @@ internal static class LocationTests
             UnreadableAfterMigration(Path.Combine(root, "stale"));
             ConcurrentMigration(Path.Combine(root, "concurrent"));
             LeftoverUnassigned(Path.Combine(root, "leftover"));
+            CatalogBeingReplaced(Path.Combine(root, "replacing"));
+            StillExistsWhileReplaced(Path.Combine(root, "replacing-check"));
             FailedCatalogChange(Path.Combine(root, "busy"));
             FailedImportMove(Path.Combine(root, "move"));
             DeletedDuringScan(Path.Combine(root, "deleted"));
@@ -248,6 +250,87 @@ internal static class LocationTests
         finally { LocationTransfer.MoveDirectory = move; }
         Require(LocationTransfer.Import(catalog, file, out var imported, out _) && imported!.Customer == "Acme" && imported.Notes == "n",
             "An import saves its customer and notes with the entry.");
+    }
+
+    // Another window saving locations.json replaces it through File.Replace, which leaves the
+    // catalog absent for a moment with only its backup beside it. That is a published catalog in
+    // the middle of a write, never a first start: nothing migrates again, and the live Unassigned
+    // folder is not set aside for a copy of the original files from upgrade day.
+    private static void CatalogBeingReplaced(string root)
+    {
+        SeedLegacy(root);
+        var first = new LocationCatalog(root);
+        first.Load("Unassigned");
+        var info = first.Items.Single();
+        Require(first.Open(info).Devices.SetName(Device("192.168.1.10"), "Renamed since upgrade"), "A change is saved into Unassigned.");
+        string catalog = Path.Combine(root, "locations.json");
+        string backup = catalog + "." + Guid.NewGuid().ToString("N") + ".tmp.original";
+        File.Move(catalog, backup);
+        try
+        {
+            // The writer holds the catalog's save lease for the whole replace. The lease is
+            // re-entrant on one thread, so the writer runs on its own, like another window.
+            using var held = new System.Threading.ManualResetEventSlim();
+            using var release = new System.Threading.ManualResetEventSlim();
+            var writer = new System.Threading.Thread(() =>
+            {
+                using (ProfileLock.Acquire("Preferences", catalog, TimeSpan.FromSeconds(2), "busy")) { held.Set(); release.Wait(10000); }
+            });
+            writer.Start();
+            try
+            {
+                Require(held.Wait(5000), "The writer holds the save lease.");
+                var other = new LocationCatalog(root);
+                other.Load("Unassigned");
+                Require(other.LoadError != null, "A catalog that stays mid-replace is reported, not treated as a first start.");
+                Require(!Directory.Exists(Path.Combine(root, "locations", ".deleted")), "A catalog being replaced is never migrated again.");
+            }
+            finally { release.Set(); writer.Join(5000); }
+        }
+        finally { if (!File.Exists(catalog)) File.Move(backup, catalog); }
+        Require(first.Open(info).Devices.GetName(Device("192.168.1.10")) == "Renamed since upgrade",
+            "Unassigned keeps what was saved after the upgrade.");
+
+        // The writer finishes a moment later: the reader waits for it and loads the catalog.
+        File.Move(catalog, backup);
+        var restore = System.Threading.Tasks.Task.Run(async () => { await System.Threading.Tasks.Task.Delay(150); File.Move(backup, catalog); });
+        var waiting = new LocationCatalog(root);
+        waiting.Load("Unassigned");
+        restore.Wait();
+        Require(waiting.LoadError == null && waiting.Items.Single().Id == info.Id, "A catalog that reappears during the wait loads normally.");
+        Require(!Directory.Exists(Path.Combine(root, "locations", ".deleted")), "Nothing is set aside while waiting.");
+
+        // A writer that died between the two renames leaves only the backup, and nobody holds the
+        // lease. The backup is the last published catalog: it is put back and loaded.
+        File.Move(catalog, backup);
+        var recovered = new LocationCatalog(root);
+        recovered.Load("Unassigned");
+        Require(recovered.LoadError == null && recovered.Items.Single().Id == info.Id && File.Exists(catalog) && !File.Exists(backup),
+            "A catalog left as its backup by a crashed save is restored, not migrated over.");
+        Require(!Directory.Exists(Path.Combine(root, "locations", ".deleted")), "Restoring sets nothing aside.");
+    }
+
+    // The check that runs on every window activation reads without migrating, and a catalog in
+    // the middle of being replaced proves nothing was deleted.
+    private static void StillExistsWhileReplaced(string root)
+    {
+        string previous = LocationService.Root;
+        string catalog = Path.Combine(root, "locations.json");
+        string backup = catalog + "." + Guid.NewGuid().ToString("N") + ".tmp.original";
+        try
+        {
+            LocationService.Root = root;
+            LocationService.Load("Unassigned");
+            Require(LocationService.Create("Site", out var site), "A Location is created.");
+            File.Move(catalog, backup);
+            Require(LocationService.StillExists(site!.Id), "A Location is still there while another window replaces the catalog.");
+            Require(!File.Exists(catalog), "Checking does not write a new catalog over the one being replaced.");
+        }
+        finally
+        {
+            if (!File.Exists(catalog) && File.Exists(backup)) File.Move(backup, catalog);
+            LocationService.Root = previous;
+        }
     }
 
     // A terminal scan checks its Location is still there before recording into it.

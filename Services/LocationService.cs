@@ -279,9 +279,10 @@ namespace KillerScan.Services
         public static bool StillExists(string id)
         {
             if (!Loaded || DemoData.Enabled || _catalog == null || !_catalog.Published) return true;
-            var fresh = new LocationCatalog(Root);
-            fresh.Load(string.Empty);
-            return fresh.LoadError != null || fresh.Items.Any(item => item.Id == id);
+            // A read, never Load: Load migrates when it finds no catalog, and this runs on every
+            // window activation, while another window may be in the middle of replacing it.
+            var items = LocationCatalog.ReadExisting(Root, out string? error);
+            return error != null || items.Any(item => item.Id == id);
         }
 
         /// <summary>The current catalog entry for an ID, after renames and reloads.</summary>
