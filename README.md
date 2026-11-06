@@ -43,7 +43,7 @@ winget install --id SteveTheKiller.KillerScan --exact
 choco install killerscan
 ```
 
-Or download [KillerScan.exe](https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe) and run it. It offers to install for you, for all users, or not at all. The GPL source for this release is [the release's source zip](https://github.com/SteveTheKiller/KillerScan/releases/download/v1.9.1/KillerScan-1.9.1-src.zip). For managed removal and exit codes, see [deployment](docs/deployment.md).
+Or download [KillerScan.exe](https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe) and run it. It offers to install for you, for all users, or not at all. The GPL source for this release is [the release's source zip](https://github.com/SteveTheKiller/KillerScan/releases/download/v1.9.2/KillerScan-1.9.2-src.zip). For managed removal and exit codes, see [deployment](docs/deployment.md).
 
 ## Build from source
 
