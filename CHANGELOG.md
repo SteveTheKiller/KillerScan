@@ -4,27 +4,28 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.9.2] - Unreleased
+## [1.9.2] - 2026-11-05
 
-Scans give devices that miss their first chance another one, so fewer turn up only after a rescan.
+1.9.2 stops a second window from rolling Locations back, keeps repository settings and device text from running anything in the terminal, finds more devices on the first scan, and makes uninstalling while KillerScan is open say what to do.
 
 ### Security
 
+- The terminal prompt no longer runs a git filter that a repository defines in its own settings when you open a folder inside it, and a prompt you never edited is replaced by the current one, so this fix and the earlier hook guard reach every install.
 - The terminal's `scan` and `probe` commands show a device's name, page title, banner and evidence without the control characters in them, so a device on the network can no longer clear the terminal, write its title or clipboard, or forge rows.
 - Pasting several lines into the terminal asks first again once the prompt returns, even after an SSH session or other program turned on bracketed paste and left it on.
-- The terminal prompt no longer runs a git filter that a repository defines in its own settings when you open a folder inside it, and a prompt you never edited is replaced by the current one, so this fix and the earlier hook guard reach every install.
 
 ### Fixed
 
-- Scans give a device that misses its first chance another one. An ARP request that fails at once is asked again, the neighbor cache is read once more after the ARP sweep, and a silent address reached through a router or VPN gets a second, longer ping.
 - A KillerScan window or command-line scan that checks the Locations list while another window is saving it no longer replaces Unassigned's history, names and approvals with a copy from the day of the upgrade, and a save interrupted partway no longer leaves the list unreadable or lets the next save drop the other Locations.
-- A scan of a range that includes the network's broadcast address, such as 192.168.1.1-255, no longer lists that address as a device carrying this PC's own MAC address and vendor.
+- Scans give a device that misses its first chance another one. An ARP request that fails at once is asked again, the neighbor cache is read once more after the ARP sweep, and a silent address reached through a router or VPN gets a second, longer ping.
 - Uninstalling from Windows Settings while KillerScan is open asks you to close it and try again, instead of failing without a word and leaving KillerScan installed.
-- When KillerScan finds itself installed twice and cannot remove the all-users copy, it now says why the removal failed.
-- Enter on a focused button, such as Scan or a view tab, presses that button instead of opening the selected device in the browser.
+- A scan of a range that includes the network's broadcast address, such as 192.168.1.1-255, no longer lists that address as a device carrying this PC's own MAC address and vendor.
 - Command-line options placed before the command, such as `/demo /scan` or `/export devices.csv /scan`, are honored instead of dropped, so the scan no longer runs on the real network or finishes without writing the file.
-- The window menu from a right-click on the title bar or Alt+Space opens at the pointer instead of about 20 pixels below and to the right of it.
+- Enter on a focused button, such as Scan or a view tab, presses that button instead of opening the selected device in the browser.
+- When KillerScan finds itself installed twice and cannot remove the all-users copy, it now says why the removal failed.
 - Keep Alive: Check again or Reset on a card whose checks are still running replaces that run instead of letting it keep adding traceroute hops and a second Checked at row to the card and its exports.
+- The window menu from a right-click on the title bar or Alt+Space opens at the pointer instead of about 20 pixels below and to the right of it.
+- Clicking or pressing a key while KillerScan fades out after Exit no longer leaves it hidden in the tray, and a window hidden partway through that fade comes back visible.
 
 ## [1.9.1] - 2026-11-05
 
