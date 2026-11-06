@@ -4,6 +4,14 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.3] - Unreleased
+
+1.9.3 finds the devices a busy network lost to the first burst of the scan.
+
+### Fixed
+
+- Scans of a busy network find every device that answers. The first wave pings 200 addresses at once, and on a subnet with well over a hundred live hosts Windows' neighbor cache fills and the switch's storm protection trips, so answers from devices that reply in under a millisecond never arrived and the same iDRACs, phones, switches and virtual machines were missing from every scan. Every address still silent after that wave is now asked again at a steady 64 at a time before the ARP sweep.
+
 ## [1.9.2] - 2026-11-05
 
 1.9.2 stops a second window from rolling Locations back, keeps repository settings and device text from running anything in the terminal, finds more devices on the first scan, and makes uninstalling while KillerScan is open say what to do.

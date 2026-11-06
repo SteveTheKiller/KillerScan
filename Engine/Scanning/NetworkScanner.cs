@@ -75,6 +75,14 @@ namespace KillerScan.Engine
         /// <summary>The most silent addresses the second liveness pass asks again.</summary>
         internal static int SecondPassLimit = 1024;
 
+        /// <summary>How many pings the second liveness pass keeps in flight. Client Windows caps
+        /// the neighbor cache at 256 entries per interface and switches rate-limit broadcast
+        /// storms, so on a /24 with 160 live hosts the 200-wide first wave loses answers: one
+        /// customer's scan found 56 devices from a cleared cache. Measured here, the 200-wide
+        /// wave also missed a host that a 16-wide pass found. 64 keeps the stack and the switch
+        /// under their limits and costs an empty /24 about five seconds.</summary>
+        internal const int PacedPassWidth = 64;
+
         // Common ports to probe for device type detection
         private static readonly int[] ProbePorts = [
             22,    // SSH
@@ -337,22 +345,20 @@ namespace KillerScan.Engine
                     discoveredHosts.TryAdd(entry.Key, (IPAddress.Parse(entry.Key), entry.Value));
             }
 
-            // Second liveness pass for silent addresses the ARP sweep below cannot ask: routed ones,
-            // or every one when ARP is off. It waits out at least one ARP retransmit (1 second), so a
-            // host whose first ping was lost while its next hop resolved still answers.
+            // Second, paced liveness pass for every address still silent. The first wave is wide for
+            // speed, and on a busy LAN that is exactly what loses hosts: with every address needing
+            // a fresh ARP resolution at once, Windows' neighbor cache fills and the switch's storm
+            // control trips, so answers from hosts that reply in under a millisecond never arrive.
+            // This pass keeps PacedPassWidth pings in flight and waits out at least one ARP
+            // retransmit (1 second), so those hosts, and a routed host whose first ping was lost
+            // while its next hop resolved, answer here.
             var silentNow = addresses.Where(a => !discoveredHosts.ContainsKey(a.ToString())).ToList();
-            // Which silent addresses Windows reaches directly, and so can be swept with ARP. Only
-            // asked when ARP is on: one route lookup per address, off the caller's (UI) thread.
-            var onLink = options.Arp
-                ? await Task.Run(() => new HashSet<string>(silentNow.Where(a =>
-                    { ct.ThrowIfCancellationRequested(); return IsOnLink(a); }).Select(a => a.ToString())), ct)
-                : new HashSet<string>();
-            var unswept = silentNow.Where(a => !onLink.Contains(a.ToString())).ToList();
-            if ((options.Icmp || options.TcpLiveness) && unswept.Count > 0 && unswept.Count <= SecondPassLimit)
+            if ((options.Icmp || options.TcpLiveness) && silentNow.Count > 0 && silentNow.Count <= SecondPassLimit)
             {
-                await Task.WhenAll(unswept.Select(async addr =>
+                var paced = new SemaphoreSlim(PacedPassWidth);
+                await Task.WhenAll(silentNow.Select(async addr =>
                 {
-                    await semaphore.WaitAsync(ct);
+                    await paced.WaitAsync(ct);
                     try
                     {
                         if (await AliveAsync(addr, SecondPingTimeoutMs))
@@ -360,10 +366,17 @@ namespace KillerScan.Engine
                     }
                     catch (OperationCanceledException) { throw; }
                     catch { }
-                    finally { semaphore.Release(); }
+                    finally { paced.Release(); }
                 }));
                 ct.ThrowIfCancellationRequested();
+                silentNow = silentNow.Where(a => !discoveredHosts.ContainsKey(a.ToString())).ToList();
             }
+            // Which silent addresses Windows reaches directly, and so can be swept with ARP. Only
+            // asked when ARP is on: one route lookup per address, off the caller's (UI) thread.
+            var onLink = options.Arp
+                ? await Task.Run(() => new HashSet<string>(silentNow.Where(a =>
+                    { ct.ThrowIfCancellationRequested(); return IsOnLink(a); }).Select(a => a.ToString())), ct)
+                : new HashSet<string>();
 
             // ARP sweep: phones, printers and locked-down devices often drop ping, expose none of the
             // liveness ports and age out of the neighbor cache before the second read. Ask every
