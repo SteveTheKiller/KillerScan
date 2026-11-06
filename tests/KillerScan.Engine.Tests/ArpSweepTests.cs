@@ -31,7 +31,7 @@ internal static class ArpSweepTests
             await CacheReadAfterTheSweepFindsLateAnswers();
             await QuickArpFailuresAreAskedAgain();
             await SilentRoutedAddressesGetASecondLivenessPass();
-            await HostsLostInTheFirstBurstAreFoundByThePacedPass();
+            await NoPassEverBurstsPastThePacedWidth();
             await RoutedAddressesKeepTheirSecondPassUnderTheBudget();
             await TheSweepLaunchesInPacedBatches();
             await ThePacedPassReportsProgress();
@@ -209,28 +209,32 @@ internal static class ArpSweepTests
         finally { ScanSource.PingOverride = null; }
     }
 
-    private static async Task HostsLostInTheFirstBurstAreFoundByThePacedPass()
+    private static async Task NoPassEverBurstsPastThePacedWidth()
     {
         // A customer's /24 with about 160 live hosts lost the same 17 devices on every scan, all
-        // of which answered a lone ping in under a millisecond. Client Windows caps the neighbor
-        // cache at 256 entries per interface, and switches rate-limit broadcast storms, so a wave
-        // of 200 pings at once loses whichever answers arrive while the stack is full. This
-        // network drops every request issued while more than 64 are in flight. The first wave
-        // loses most hosts; the paced pass, which never exceeds that, must find every one.
-        int inFlight = 0, peakPaced = 0, firstWaveFound = 0;
+        // of which answered a lone ping in under a millisecond: the 200-wide first wave was 200
+        // ARP requests in one burst, and the switch's storm control dropped a slice of them. A
+        // paced second pass got most of them back, but the phones and small switches whose first
+        // ARP was dropped stayed missing, because Windows had filed them as failed neighbors
+        // after the burst. So the first wave itself is paced. This network drops every request
+        // issued while more than 64 are in flight, and a host whose request was dropped never
+        // answers again (the failed-neighbor state): every host has to be found first time.
+        int inFlight = 0, peak = 0;
+        var dropped = new System.Collections.Concurrent.ConcurrentDictionary<string, bool>();
         var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
         ScanSource.PingOverride = async (address, timeout) =>
         {
-            int n = pings.AddOrUpdate(address.ToString(), 1, (_, count) => count + 1);
+            string ip = address.ToString();
+            pings.AddOrUpdate(ip, 1, (_, count) => count + 1);
             int now = Interlocked.Increment(ref inFlight);
             try
             {
-                if (n >= 2) InterlockedMax(ref peakPaced, now);
+                InterlockedMax(ref peak, now);
                 await Task.Delay(30);
-                bool live = int.Parse(address.ToString().Split('.')[3]) % 3 == 0;
-                bool answered = live && now <= 64;
-                if (answered && n == 1) Interlocked.Increment(ref firstWaveFound);
-                return (answered, 64);
+                if (now > 64) dropped[ip] = true;
+                bool live = int.Parse(ip.Split('.')[3]) % 3 == 0;
+                Require(timeout >= 1000, $"Every liveness ping outlasts one ARP retransmit (got {timeout} ms).");
+                return (live && !dropped.ContainsKey(ip), 64);
             }
             finally { Interlocked.Decrement(ref inFlight); }
         };
@@ -239,11 +243,11 @@ internal static class ArpSweepTests
             NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "");
             var found = await Quick("192.0.2.1-254", new ScanOptions().Without("tcp-liveness"));
             var expected = Enumerable.Range(1, 254).Where(n => n % 3 == 0).Select(n => "192.0.2." + n).ToList();
-            Require(firstWaveFound < expected.Count, "The premise holds: the wide first wave lost hosts on this network.");
+            Require(peak > 0 && peak <= NetworkScanner.PacedPassWidth,
+                $"No liveness pass has more than {NetworkScanner.PacedPassWidth} pings in flight (saw {peak}).");
             var missing = expected.Where(ip => found.All(d => d.IpAddress != ip)).ToList();
-            Require(missing.Count == 0, $"Every host the first burst lost is found by the paced pass; missing {missing.Count}: {string.Join(", ", missing.Take(8))}");
-            Require(peakPaced > 0 && peakPaced <= NetworkScanner.PacedPassWidth,
-                $"The paced pass never has more than {NetworkScanner.PacedPassWidth} pings in flight (saw {peakPaced}).");
+            Require(missing.Count == 0, $"Every live host is found by the first wave; missing {missing.Count}: {string.Join(", ", missing.Take(8))}");
+            Require(expected.All(ip => pings[ip] == 1), "A host found in the first wave is not pinged again.");
         }
         finally { ScanSource.PingOverride = null; }
     }

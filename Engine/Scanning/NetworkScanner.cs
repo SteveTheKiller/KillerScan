@@ -76,19 +76,24 @@ namespace KillerScan.Engine
             return local.Macs.Contains(mac) && !local.Addresses.Contains(address.ToString());
         }
 
-        /// <summary>The first liveness ping is short so a quiet range moves fast; the second, for
-        /// addresses the ARP sweep cannot ask, outlasts one ARP retransmit (1 second).</summary>
-        private const int FirstPingTimeoutMs = 500, SecondPingTimeoutMs = 1200;
+        /// <summary>Both liveness pings outlast one ARP retransmit (Windows retries a lost ARP
+        /// after 1 second). The first wave used to wait 500 ms so a quiet range moved fast, but a
+        /// ping whose ARP request the switch dropped could then never succeed in the first wave
+        /// at all, and Windows filed the address as a failed neighbor, which made the later
+        /// passes fail too. A quiet /24 now takes about six seconds instead of one.</summary>
+        private const int FirstPingTimeoutMs = 1500, SecondPingTimeoutMs = 1200;
 
         /// <summary>The most silent addresses the second liveness pass asks again.</summary>
         internal static int SecondPassLimit = 1024;
 
-        /// <summary>How many pings the second liveness pass keeps in flight. Client Windows caps
-        /// the neighbor cache at 256 entries per interface and switches rate-limit broadcast
-        /// storms, so on a /24 with 160 live hosts the 200-wide first wave loses answers: one
-        /// customer's scan found 56 devices from a cleared cache. Measured here, the 200-wide
-        /// wave also missed a host that a 16-wide pass found. 64 keeps the stack and the switch
-        /// under their limits and costs an empty /24 about six seconds with TCP liveness on.</summary>
+        /// <summary>How many pings each liveness pass keeps in flight. Switches rate-limit
+        /// broadcast storms, so a 200-wide first wave on a cold cache was 200 ARP requests in one
+        /// burst, and on a /24 with 160 live hosts it lost answers: one customer's scan found 56
+        /// devices from a cleared cache, and even with a paced second pass the phones and small
+        /// switches whose first ARP was dropped stayed missing, because Windows had filed them
+        /// as failed neighbors. Measured here, the 200-wide wave also missed a host that a
+        /// 16-wide pass found. 64 keeps the switch under its limit; see FirstPingTimeoutMs for
+        /// what it costs a quiet range.</summary>
         internal const int PacedPassWidth = 64;
 
         // Common ports to probe for device type detection
@@ -314,7 +319,9 @@ namespace KillerScan.Engine
             // Liveness wave: ping, then TCP on a few ports for hosts that drop ICMP (Windows Firewall
             // default). ARP cannot reach a host across a router or VPN, so for those this is the
             // only evidence, and it is what closes the "20 found vs 200 real" gap over a VPN.
-            var semaphore = new SemaphoreSlim(200);
+            // Paced at PacedPassWidth: this wave is what fills the neighbor cache, and a wider burst
+            // is what the switch drops.
+            var semaphore = new SemaphoreSlim(PacedPassWidth);
             async Task<bool> AliveAsync(IPAddress addr, int pingTimeoutMs)
             {
                 if (options.Icmp && (await ScanSource.PingAsync(addr, pingTimeoutMs)).Success) return true;
