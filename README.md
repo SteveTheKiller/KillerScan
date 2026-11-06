@@ -43,14 +43,14 @@ winget install --id SteveTheKiller.KillerScan --exact
 choco install killerscan
 ```
 
-Or download [KillerScan.exe](https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe) and run it. It offers to install for you, for all users, or not at all. The GPL source for this release is [KillerScan-1.8.3-src.zip](https://github.com/SteveTheKiller/KillerScan/releases/download/v1.9.1/KillerScan-1.9.1-src.zip). For managed removal and exit codes, see [deployment](docs/deployment.md).
+Or download [KillerScan.exe](https://github.com/SteveTheKiller/KillerScan/releases/latest/download/KillerScan.exe) and run it. It offers to install for you, for all users, or not at all. The GPL source for this release is [the release's source zip](https://github.com/SteveTheKiller/KillerScan/releases/download/v1.9.1/KillerScan-1.9.1-src.zip). For managed removal and exit codes, see [deployment](docs/deployment.md).
 
 ## Build from source
 
 ```powershell
 git clone https://github.com/SteveTheKiller/KillerScan.git
 cd KillerScan
-dotnet publish -c Release
+dotnet publish KillerScan.csproj -c Release
 ```
 
 Needs the .NET 10 SDK or later. Output lands in `bin/Release/net48/publish/`. Speed-test internals and tests are in [docs/speed-test.md](docs/speed-test.md).
