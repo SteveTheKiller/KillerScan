@@ -678,6 +678,10 @@ namespace KillerScan.Features.Cli
                     }
                 }
                 devices = operation.GetAwaiter().GetResult();
+                // What each discovery phase found, so a report of a wrong count says which pass
+                // lost the hosts. Stderr, so it never lands in an exported or piped result.
+                if (!quiet && !probe && scanner.DiscoverySummary.Length > 0)
+                    err.WriteLine("Discovery: " + scanner.DiscoverySummary + ".");
             }
             catch (OperationCanceledException)
             {

@@ -36,6 +36,7 @@ internal static class ArpSweepTests
             await TheSweepLaunchesInPacedBatches();
             await ThePacedPassReportsProgress();
             await CancelDuringThePacedPassReturnsPromptly();
+            await ABusyNetworkIsProbedUntilAPassAddsNothing();
             await TapMacIsBlankedOnHostsThatAnswerPing();
             await GatewayMacIsBlankedOnOtherHosts();
             await BroadcastIsNotADevice();
@@ -184,15 +185,17 @@ internal static class ArpSweepTests
     private static async Task SilentRoutedAddressesGetASecondLivenessPass()
     {
         // Across a router the ARP sweep cannot help, so a routed address that missed its first
-        // ping gets a second one with a longer wait. An on-link address gets the sweep instead,
-        // which asks it directly with its own retry.
+        // ping gets a second one with a longer wait. On-link addresses get that paced second
+        // ping too, and then the sweep.
+        // Counted per pass by the wait each pass uses: the extra rounds that follow a pass that
+        // found a host ping again with their own longer wait.
         var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
         int longest = 0;
         ScanSource.PingOverride = (address, timeout) =>
         {
             int n = pings.AddOrUpdate(address.ToString(), 1, (_, count) => count + 1);
-            if (n == 2) InterlockedMax(ref longest, timeout);
-            return Task.FromResult((address.ToString() == "192.0.2.77" && n == 2, 64));
+            if (timeout == NetworkScanner.SecondPingTimeoutMs) InterlockedMax(ref longest, timeout);
+            return Task.FromResult((address.ToString() == "192.0.2.77" && timeout == NetworkScanner.SecondPingTimeoutMs, 64));
         };
         try
         {
@@ -204,7 +207,7 @@ internal static class ArpSweepTests
             pings.Clear();
             NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "");
             await Quick("192.0.2.74-79", new ScanOptions().Without("tcp-liveness"));
-            Require(pings.Values.All(count => count == 1), "On-link addresses are left to the ARP sweep instead of a second ping.");
+            Require(pings.Values.All(count => count >= 2), "On-link addresses get the paced second ping before the ARP sweep.");
         }
         finally { ScanSource.PingOverride = null; }
     }
@@ -251,8 +254,7 @@ internal static class ArpSweepTests
             var missing = expected.Where(ip => found.All(d => d.IpAddress != ip)).ToList();
             Require(missing.Count == 0, $"Every live host is found by the first wave; missing {missing.Count}: {string.Join(", ", missing.Take(8))}");
             Require(expected.All(ip => pings[ip] == 1), "A host found in the first wave is not pinged again.");
-            // On-link addresses that stayed silent belong to the ARP sweep, not to a second ping.
-            Require(pings.Values.All(count => count == 1), "A silent on-link address is left to the ARP sweep instead of being pinged twice.");
+            Require(pings.Values.All(count => count <= 2), "A quiet network gets no extra round: the second pass added nothing.");
         }
         finally { ScanSource.PingOverride = null; }
     }
@@ -264,11 +266,14 @@ internal static class ArpSweepTests
         // what is left, instead of a local range crowding a routed one out of its only retry.
         int originalLimit = NetworkScanner.SecondPassLimit;
         NetworkScanner.SecondPassLimit = 4;
+        // Only the second pass's pings count here (by its wait); the extra rounds after it have
+        // their own budget and wait.
         var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
-        ScanSource.PingOverride = (address, _) =>
+        ScanSource.PingOverride = (address, timeout) =>
         {
-            int n = pings.AddOrUpdate(address.ToString(), 1, (_, count) => count + 1);
-            return Task.FromResult((address.ToString() == "192.0.2.2" && n == 2, 64));
+            bool second = timeout == NetworkScanner.SecondPingTimeoutMs;
+            int n = pings.AddOrUpdate(address.ToString(), second ? 2 : 1, (_, count) => second ? 2 : count);
+            return Task.FromResult((address.ToString() == "192.0.2.2" && second, 64));
         };
         try
         {
@@ -276,14 +281,8 @@ internal static class ArpSweepTests
             NetworkPlatform.Current = new ArpPlatform(ip => int.Parse(ip.Split('.')[3]) <= 3 ? "192.0.2.254" : "", _ => "");
             var found = await Quick("192.0.2.1-12", new ScanOptions().Without("tcp-liveness"));
             Require(found.Count == 1 && found[0].IpAddress == "192.0.2.2", "A routed host that answers only its second ping is found when the range is over budget.");
-            Require(pings["192.0.2.1"] == 2 && pings["192.0.2.3"] == 2, "Every routed address gets its second ping.");
-            Require(pings.Count(p => p.Value == 2) == 3, "On-link addresses are left to the ARP sweep, not pinged twice.");
-            // With ARP off there is no sweep, so every silent address is in the second pass and
-            // the budget is spent routed-first.
-            pings.Clear();
-            await Quick("192.0.2.1-12", new ScanOptions().Without("tcp-liveness,arp"));
-            Require(pings["192.0.2.1"] == 2 && pings["192.0.2.3"] == 2 && pings.Count(p => p.Value == 2) == 4,
-                "Without ARP the second pass takes every silent address, routed ones first, within the budget.");
+            Require(pings["192.0.2.1"] == 2 && pings["192.0.2.3"] == 2, "Every routed address gets its second ping first.");
+            Require(pings.Count(p => p.Value == 2) == 4, "On-link addresses take only the budget the routed ones leave.");
         }
         finally
         {
@@ -335,6 +334,49 @@ internal static class ArpSweepTests
             scanner.ProgressChanged += p => seen.Add(p);
             await Quick("192.0.2.1-200", new ScanOptions().Without("tcp-liveness,arp"), scanner);
             Require(seen.Any(p => p is > 25 and < 30), "Progress moves between 25 and 30 while the paced pass runs: " + string.Join(",", seen.Distinct().OrderBy(p => p)));
+        }
+        finally { ScanSource.PingOverride = null; }
+    }
+
+    private static async Task ABusyNetworkIsProbedUntilAPassAddsNothing()
+    {
+        // A customer's network: 1.9.3 found 141 one day and 83 the next with the same exe, and
+        // 1.9.4 found 97 from the command line and 119 from the window. Phones and small
+        // switches throttle after a probe and answer when asked again a little later, so a fixed
+        // number of passes finds whatever happened to answer that day. Discovery now keeps going:
+        // while a pass still adds hosts the network is still hiding some, so the silent addresses
+        // are asked again, narrower and slower, until a pass adds nothing. Here .20 answers its
+        // second ping, .10 its third and .30 its fourth; the rest of the live hosts answer first
+        // time, and the dead addresses never do.
+        int inFlight = 0, peakLate = 0;
+        var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
+        ScanSource.PingOverride = async (address, timeout) =>
+        {
+            string ip = address.ToString();
+            int n = pings.AddOrUpdate(ip, 1, (_, count) => count + 1);
+            int now = Interlocked.Increment(ref inFlight);
+            try
+            {
+                if (n >= 3) InterlockedMax(ref peakLate, now);
+                await Task.Delay(20);
+                int last = int.Parse(ip.Split('.')[3]);
+                int answersOn = last switch { 20 => 2, 10 => 3, 30 => 4, _ => last % 3 == 0 ? 1 : int.MaxValue };
+                return (n >= answersOn, 64);
+            }
+            finally { Interlocked.Decrement(ref inFlight); }
+        };
+        try
+        {
+            NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "");
+            var scanner = new NetworkScanner(new IsolatedDiscovery());
+            var found = await Quick("192.0.2.1-120", new ScanOptions().Without("tcp-liveness,arp"), scanner);
+            foreach (string ip in new[] { "192.0.2.20", "192.0.2.10", "192.0.2.30" })
+                Require(found.Any(d => d.IpAddress == ip), $"A host that answers a later probe is found ({ip}, pinged {(pings.TryGetValue(ip, out int times) ? times : 0)} times).");
+            Require(pings.Values.Max() == 5, $"After the pass that found .30 one more pass runs, adds nothing, and discovery stops (max {pings.Values.Max()} pings).");
+            Require(peakLate > 0 && peakLate <= NetworkScanner.ConvergeWidth,
+                $"The extra rounds keep at most {NetworkScanner.ConvergeWidth} pings in flight (saw {peakLate}).");
+            Require(scanner.DiscoverySummary == "first wave 39, second pass +1, ARP sweep +0, extra rounds +2 in 3",
+                "The scanner reports what each phase found: " + scanner.DiscoverySummary);
         }
         finally { ScanSource.PingOverride = null; }
     }

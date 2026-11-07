@@ -82,10 +82,21 @@ namespace KillerScan.Engine
         /// at all, and Windows filed the address as a failed neighbor, which made the later
         /// passes fail too. With TCP liveness on (the default) a quiet /24 now spends about seven
         /// seconds in this wave instead of two.</summary>
-        private const int FirstPingTimeoutMs = 1500, SecondPingTimeoutMs = 1200;
+        internal const int FirstPingTimeoutMs = 1500, SecondPingTimeoutMs = 1200;
 
         /// <summary>The most silent addresses the second liveness pass asks again.</summary>
         internal static int SecondPassLimit = 1024;
+
+        /// <summary>The extra rounds after the sweep: how many pings each keeps in flight, how
+        /// long each waits, and how many rounds at most. Narrow and slow on purpose, since they
+        /// only run on a network that has already shown it hides hosts from a wider pass.</summary>
+        internal const int ConvergeWidth = 16;
+        internal const int ConvergePingTimeoutMs = 2000;
+        internal const int MaxConvergeRounds = 3;
+
+        /// <summary>What each discovery phase of the last scan found, for the CLI and bug reports:
+        /// "first wave 97, second pass +12, ARP sweep +3, extra rounds +9 in 2".</summary>
+        public string DiscoverySummary { get; private set; } = string.Empty;
 
         /// <summary>How many pings each liveness pass keeps in flight. Switches rate-limit
         /// broadcast storms, so a 200-wide first wave on a cold cache was 200 ARP requests in one
@@ -350,6 +361,7 @@ namespace KillerScan.Engine
 
             await Task.WhenAll(scanTasks);
             ct.ThrowIfCancellationRequested();
+            int foundByFirstWave = discoveredHosts.Count;
 
             // Second ARP cache read: the ping wave stimulates ARP responses from devices
             // that are too slow (or don't reply to ICMP at all). Reading the cache again
@@ -362,12 +374,10 @@ namespace KillerScan.Engine
                     discoveredHosts.TryAdd(entry.Key, (IPAddress.Parse(entry.Key), entry.Value));
             }
 
-            // Second liveness pass for the silent addresses the ARP sweep below cannot reach: routed
-            // ones (no sweep crosses a router), and every one when ARP is off. A routed host whose
-            // first ping was lost while its next hop resolved answers here. On-link addresses get
-            // the sweep instead, which asks each one directly with its own retry; pinging them
-            // again as well cost a quiet /24 another six seconds for nothing, now that the first
-            // wave is paced and a dropped request no longer loses the host.
+            // Second, paced liveness pass for every address still silent, with a longer wait: a
+            // routed host whose first ping was lost while its next hop resolved, and an on-link
+            // device that throttled after the first probe, answer here. What this pass and the
+            // sweep add is also the evidence that decides whether the extra rounds below run.
             var silentNow = addresses.Where(a => !discoveredHosts.ContainsKey(a.ToString())).ToList();
             // Which silent addresses Windows reaches directly, and so can be swept with ARP. Only
             // asked when ARP is on: one route lookup per address, off the caller's (UI) thread.
@@ -377,8 +387,10 @@ namespace KillerScan.Engine
                 : new HashSet<string>();
             if ((options.Icmp || options.TcpLiveness) && silentNow.Count > 0)
             {
-                // The pass has a budget (SecondPassLimit) for the ranges that are all routed.
+                // The pass has a budget. A routed address has nothing else, since no sweep reaches
+                // it, so routed addresses spend the budget first and on-link ones take what is left.
                 var secondPass = silentNow.Where(a => !onLink.Contains(a.ToString()))
+                    .Concat(silentNow.Where(a => onLink.Contains(a.ToString())))
                     .Take(SecondPassLimit).ToList();
                 var paced = new SemaphoreSlim(PacedPassWidth);
                 int pacedDone = 0;
@@ -403,6 +415,7 @@ namespace KillerScan.Engine
                 ct.ThrowIfCancellationRequested();
                 silentNow = silentNow.Where(a => !discoveredHosts.ContainsKey(a.ToString())).ToList();
             }
+            int foundBySecondPass = discoveredHosts.Count - foundByFirstWave;
 
             // ARP sweep: phones, printers and locked-down devices often drop ping, expose none of the
             // liveness ports and age out of the neighbor cache before the second read. Ask every
@@ -455,6 +468,48 @@ namespace KillerScan.Engine
                     if (addressSet.Contains(entry.Key))
                         discoveredHosts.TryAdd(entry.Key, (IPAddress.Parse(entry.Key), entry.Value));
             }
+            int foundBySweep = discoveredHosts.Count - foundByFirstWave - foundBySecondPass;
+
+            // Extra rounds, until a pass adds nothing. A pass that still finds hosts says the network
+            // is still hiding some: one customer's /24 gave 141, 83, 97 and 119 devices on
+            // consecutive runs of the same passes, because its phones and small switches throttle
+            // after a probe and answer when asked again a little later. So while the last pass added
+            // a host, every silent address is asked again, ConvergeWidth at a time with a
+            // ConvergePingTimeoutMs wait, up to MaxConvergeRounds times. A network whose second
+            // pass and sweep added nothing, which is every quiet one, pays for no round at all.
+            int foundByRounds = 0, rounds = 0;
+            bool lastPassAdded = foundBySecondPass + foundBySweep > 0;
+            while (lastPassAdded && rounds < MaxConvergeRounds && (options.Icmp || options.TcpLiveness))
+            {
+                var still = addresses.Where(a => !discoveredHosts.ContainsKey(a.ToString())).Take(SecondPassLimit).ToList();
+                if (still.Count == 0) break;
+                rounds++;
+                int countBefore = discoveredHosts.Count;
+                var narrow = new SemaphoreSlim(ConvergeWidth);
+                await Task.WhenAll(still.Select(async addr =>
+                {
+                    await narrow.WaitAsync(ct);
+                    try
+                    {
+                        if (await AwaitWithCancellation(AliveAsync(addr, ConvergePingTimeoutMs), ct))
+                            discoveredHosts.TryAdd(addr.ToString(), (addr, ""));
+                    }
+                    catch (OperationCanceledException) { throw; }
+                    catch { }
+                    finally { narrow.Release(); }
+                }));
+                ct.ThrowIfCancellationRequested();
+                if (options.NeighborCache)
+                {
+                    foreach (var entry in await Task.Run(GetArpCache, ct))
+                        if (addressSet.Contains(entry.Key))
+                            discoveredHosts.TryAdd(entry.Key, (IPAddress.Parse(entry.Key), entry.Value));
+                }
+                int added = discoveredHosts.Count - countBefore;
+                foundByRounds += added;
+                lastPassAdded = added > 0;
+            }
+            DiscoverySummary = $"first wave {foundByFirstWave}, second pass +{foundBySecondPass}, ARP sweep +{foundBySweep}, extra rounds +{foundByRounds} in {rounds}";
 
             // Resolve MAC addresses via ARP for discovered hosts (fast, they're alive)
             StatusChanged?.Invoke(new ScanStatus(ScanStage.ResolvingMacs, discoveredHosts.Count));
