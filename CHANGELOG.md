@@ -8,6 +8,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 1.9.4 keeps a fresh scan when you make a Location for it and puts the Windows 98 tabs back.
 
+### Changed
+- Refreshed the bundled MAC vendor database to 58,697 assignments.
+
 ### Fixed
 
 - The first wave of the scan now goes 64 addresses at a time and waits 1.5 seconds for each answer, instead of 200 at once for half a second. On a cold cache the old wave was 200 ARP requests in one burst, which a switch's storm control trims, and an address whose request was dropped could never answer inside half a second; Windows then filed it as a failed neighbor, so the later passes missed it too. That is how a customer's Polycom and Digium phones and Netgear GS108 switches stayed off the list while answering a lone ping in under a millisecond. The second liveness pass now covers only the addresses the ARP sweep cannot reach, so the slower first wave is not paid for twice; a quiet /24 spends about seven seconds on the first wave instead of two, and about the same overall as 1.9.3.
