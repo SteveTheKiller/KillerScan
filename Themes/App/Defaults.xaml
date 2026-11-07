@@ -26,6 +26,8 @@
     <Thickness x:Key="ScanTitleBarPadding">5,4,0,0</Thickness>
     <!-- The title-bar scan bar: the bar's content row starts at the padding's top, so a -4 top margin recentres it on the whole bar (2px up). -->
     <Thickness x:Key="ScanTitleToolbarMargin">16,-4,0,0</Thickness>
+    <!-- The scan bar's inset after the wordmark; 98SE puts the bar in its own row and has none. -->
+    <Thickness x:Key="ScanToolbarInset">8,0,0,0</Thickness>
     <Thickness x:Key="ScanCaptionButtonsMargin">0</Thickness>
     <Thickness x:Key="ScanAboutContentMargin">8,10,8,18</Thickness>
     <Thickness x:Key="ShortcutsScrollBleed">0,0,-24,-12</Thickness>

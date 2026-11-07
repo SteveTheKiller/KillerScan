@@ -120,9 +120,12 @@ namespace KillerScan.Shell
             {
                 _scanWorkspace = new ScanWorkspace(target, DemoMode);
                 var scanToolbar = _scanWorkspace.DetachToolbar();
-                scanToolbar.Margin = new Thickness(8, 0, 0, 0);
                 _viewToolbarTargets["scan"] = (FrameworkElement)_scanWorkspace.FindName("SubnetInput");
                 RegisterViewToolbar("scan", scanToolbar);
+                // After RegisterViewToolbar, whose FitToTitleBar writes a local margin: the inset
+                // after the wordmark is the theme's, and 98SE, where the bar sits in its own row
+                // under the caption, has none, so the Location button starts at the page's edge.
+                scanToolbar.SetResourceReference(FrameworkElement.MarginProperty, "ScanToolbarInset");
                 // The filter lives in the title bar's right end, like KillerShell's search.
                 foreach (string name in new[] { "FilterToggleButton", "FilterBox" })
                 {

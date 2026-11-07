@@ -6,6 +6,7 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <Thickness x:Key="ScanTitleBarPadding">2,0,0,0</Thickness>
     <Thickness x:Key="ScanTitleToolbarMargin">0,2,42,2</Thickness>
+    <Thickness x:Key="ScanToolbarInset">0</Thickness>
     <Thickness x:Key="ScanCaptionButtonsMargin">0,2,2,0</Thickness>
     <DrawingBrush x:Key="ScanContentPaneBrush" Viewport="0,0,2,2"
                   ViewportUnits="Absolute" TileMode="Tile" Stretch="None">
