@@ -184,8 +184,8 @@ internal static class ArpSweepTests
     private static async Task SilentRoutedAddressesGetASecondLivenessPass()
     {
         // Across a router the ARP sweep cannot help, so a routed address that missed its first
-        // ping gets a second one with a longer wait. On-link addresses get that paced second
-        // ping too, and then the sweep.
+        // ping gets a second one with a longer wait. An on-link address gets the sweep instead,
+        // which asks it directly with its own retry.
         var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
         int longest = 0;
         ScanSource.PingOverride = (address, timeout) =>
@@ -204,7 +204,7 @@ internal static class ArpSweepTests
             pings.Clear();
             NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "");
             await Quick("192.0.2.74-79", new ScanOptions().Without("tcp-liveness"));
-            Require(pings.Values.All(count => count == 2), "On-link addresses get the paced second ping before the ARP sweep.");
+            Require(pings.Values.All(count => count == 1), "On-link addresses are left to the ARP sweep instead of a second ping.");
         }
         finally { ScanSource.PingOverride = null; }
     }
@@ -219,7 +219,7 @@ internal static class ArpSweepTests
         // after the burst. So the first wave itself is paced. This network drops every request
         // issued while more than 64 are in flight, and a host whose request was dropped never
         // answers again (the failed-neighbor state): every host has to be found first time.
-        int inFlight = 0, peak = 0;
+        int inFlight = 0, peak = 0, shortestTimeout = int.MaxValue;
         var dropped = new System.Collections.Concurrent.ConcurrentDictionary<string, bool>();
         var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
         ScanSource.PingOverride = async (address, timeout) =>
@@ -233,7 +233,9 @@ internal static class ArpSweepTests
                 await Task.Delay(30);
                 if (now > 64) dropped[ip] = true;
                 bool live = int.Parse(ip.Split('.')[3]) % 3 == 0;
-                Require(timeout >= 1000, $"Every liveness ping outlasts one ARP retransmit (got {timeout} ms).");
+                // Recorded, not asserted here: the scanner swallows a fake's exception and the
+                // failure would surface later under another message.
+                InterlockedMin(ref shortestTimeout, timeout);
                 return (live && !dropped.ContainsKey(ip), 64);
             }
             finally { Interlocked.Decrement(ref inFlight); }
@@ -245,9 +247,12 @@ internal static class ArpSweepTests
             var expected = Enumerable.Range(1, 254).Where(n => n % 3 == 0).Select(n => "192.0.2." + n).ToList();
             Require(peak > 0 && peak <= NetworkScanner.PacedPassWidth,
                 $"No liveness pass has more than {NetworkScanner.PacedPassWidth} pings in flight (saw {peak}).");
+            Require(shortestTimeout >= 1000, $"Every liveness ping outlasts one ARP retransmit (shortest was {shortestTimeout} ms).");
             var missing = expected.Where(ip => found.All(d => d.IpAddress != ip)).ToList();
             Require(missing.Count == 0, $"Every live host is found by the first wave; missing {missing.Count}: {string.Join(", ", missing.Take(8))}");
             Require(expected.All(ip => pings[ip] == 1), "A host found in the first wave is not pinged again.");
+            // On-link addresses that stayed silent belong to the ARP sweep, not to a second ping.
+            Require(pings.Values.All(count => count == 1), "A silent on-link address is left to the ARP sweep instead of being pinged twice.");
         }
         finally { ScanSource.PingOverride = null; }
     }
@@ -271,8 +276,14 @@ internal static class ArpSweepTests
             NetworkPlatform.Current = new ArpPlatform(ip => int.Parse(ip.Split('.')[3]) <= 3 ? "192.0.2.254" : "", _ => "");
             var found = await Quick("192.0.2.1-12", new ScanOptions().Without("tcp-liveness"));
             Require(found.Count == 1 && found[0].IpAddress == "192.0.2.2", "A routed host that answers only its second ping is found when the range is over budget.");
-            Require(pings["192.0.2.1"] == 2 && pings["192.0.2.3"] == 2, "Every routed address gets its second ping first.");
-            Require(pings.Count(p => p.Value == 2) == 4, "On-link addresses take only the budget the routed ones leave.");
+            Require(pings["192.0.2.1"] == 2 && pings["192.0.2.3"] == 2, "Every routed address gets its second ping.");
+            Require(pings.Count(p => p.Value == 2) == 3, "On-link addresses are left to the ARP sweep, not pinged twice.");
+            // With ARP off there is no sweep, so every silent address is in the second pass and
+            // the budget is spent routed-first.
+            pings.Clear();
+            await Quick("192.0.2.1-12", new ScanOptions().Without("tcp-liveness,arp"));
+            Require(pings["192.0.2.1"] == 2 && pings["192.0.2.3"] == 2 && pings.Count(p => p.Value == 2) == 4,
+                "Without ARP the second pass takes every silent address, routed ones first, within the budget.");
         }
         finally
         {
@@ -330,13 +341,15 @@ internal static class ArpSweepTests
 
     private static async Task CancelDuringThePacedPassReturnsPromptly()
     {
-        // A ping cannot be canceled, but the scan must not wait out every in-flight one.
+        // A ping cannot be canceled, but the scan must not wait out every in-flight one. The
+        // 100th call lands in the first wave's second round of 64, with the rest of that round
+        // and the next still to come.
         int calls = 0;
         using var cancel = new CancellationTokenSource();
         var clock = new Stopwatch();
         ScanSource.PingOverride = async (_, _) =>
         {
-            if (Interlocked.Increment(ref calls) == 300) { clock.Start(); cancel.Cancel(); }
+            if (Interlocked.Increment(ref calls) == 100) { clock.Start(); cancel.Cancel(); }
             await Task.Delay(3000);
             return (false, 0);
         };
@@ -413,6 +426,12 @@ internal static class ArpSweepTests
 
     // No ping and no TCP: the ARP sweep and the neighbor cache are the only evidence.
     private static readonly ScanOptions Silent = new ScanOptions().Without("icmp,tcp-liveness");
+
+    private static void InterlockedMin(ref int target, int value)
+    {
+        int seen;
+        while ((seen = target) > value && Interlocked.CompareExchange(ref target, value, seen) != seen) { }
+    }
 
     private static void InterlockedMax(ref int target, int value)
     {

@@ -80,7 +80,8 @@ namespace KillerScan.Engine
         /// after 1 second). The first wave used to wait 500 ms so a quiet range moved fast, but a
         /// ping whose ARP request the switch dropped could then never succeed in the first wave
         /// at all, and Windows filed the address as a failed neighbor, which made the later
-        /// passes fail too. A quiet /24 now takes about six seconds instead of one.</summary>
+        /// passes fail too. With TCP liveness on (the default) a quiet /24 now spends about seven
+        /// seconds in this wave instead of two.</summary>
         private const int FirstPingTimeoutMs = 1500, SecondPingTimeoutMs = 1200;
 
         /// <summary>The most silent addresses the second liveness pass asks again.</summary>
@@ -333,7 +334,8 @@ namespace KillerScan.Engine
                 await semaphore.WaitAsync(ct);
                 try
                 {
-                    if (await AliveAsync(addr, FirstPingTimeoutMs))
+                    // Pings cannot be canceled; a canceled scan stops waiting for them instead.
+                    if (await AwaitWithCancellation(AliveAsync(addr, FirstPingTimeoutMs), ct))
                         discoveredHosts.TryAdd(addr.ToString(), (addr, ""));
                 }
                 catch (OperationCanceledException) { throw; }
@@ -360,13 +362,12 @@ namespace KillerScan.Engine
                     discoveredHosts.TryAdd(entry.Key, (IPAddress.Parse(entry.Key), entry.Value));
             }
 
-            // Second, paced liveness pass for every address still silent. The first wave is wide for
-            // speed, and on a busy LAN that is exactly what loses hosts: with every address needing
-            // a fresh ARP resolution at once, Windows' neighbor cache fills and the switch's storm
-            // control trips, so answers from hosts that reply in under a millisecond never arrive.
-            // This pass keeps PacedPassWidth pings in flight and waits out at least one ARP
-            // retransmit (1 second), so those hosts, and a routed host whose first ping was lost
-            // while its next hop resolved, answer here.
+            // Second liveness pass for the silent addresses the ARP sweep below cannot reach: routed
+            // ones (no sweep crosses a router), and every one when ARP is off. A routed host whose
+            // first ping was lost while its next hop resolved answers here. On-link addresses get
+            // the sweep instead, which asks each one directly with its own retry; pinging them
+            // again as well cost a quiet /24 another six seconds for nothing, now that the first
+            // wave is paced and a dropped request no longer loses the host.
             var silentNow = addresses.Where(a => !discoveredHosts.ContainsKey(a.ToString())).ToList();
             // Which silent addresses Windows reaches directly, and so can be swept with ARP. Only
             // asked when ARP is on: one route lookup per address, off the caller's (UI) thread.
@@ -376,10 +377,8 @@ namespace KillerScan.Engine
                 : new HashSet<string>();
             if ((options.Icmp || options.TcpLiveness) && silentNow.Count > 0)
             {
-                // The pass has a budget. A routed address has nothing else, since no sweep reaches
-                // it, so routed addresses spend the budget first and on-link ones take what is left.
+                // The pass has a budget (SecondPassLimit) for the ranges that are all routed.
                 var secondPass = silentNow.Where(a => !onLink.Contains(a.ToString()))
-                    .Concat(silentNow.Where(a => onLink.Contains(a.ToString())))
                     .Take(SecondPassLimit).ToList();
                 var paced = new SemaphoreSlim(PacedPassWidth);
                 int pacedDone = 0;

@@ -387,7 +387,9 @@ namespace KillerScan.Shell
             var margin = new Thickness(0, top - origin.Y, 0, 0);
             if (_tabScrollShadow.Margin != margin) _tabScrollShadow.Margin = margin;
             if (_tabScrollShadow.Height != ScrollShadowReach) _tabScrollShadow.Height = ScrollShadowReach;
-            if (_tabScrollShadow.Clip?.Bounds != clip.Bounds) _tabScrollShadow.Clip = clip;
+            // Always: the clip's bounds are the same whichever tab the hole is cut under, so a
+            // bounds check kept the first tab's hole after a view switch.
+            _tabScrollShadow.Clip = clip;
             // The overlay covers only the first part of the one gradient, so its stops are scaled
             // to end where the pane does; the tab's layer picks up from there.
             _tabScrollShadow.Background = ShadowSlice(0, ScrollShadowReach, span);

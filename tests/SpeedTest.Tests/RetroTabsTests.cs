@@ -109,6 +109,19 @@ internal static class RetroTabsTests
             At(50, 29, clear, "the strip below an inactive tab");
             At(100, 0, Light, "the selected tab's white left edge reaching the page");
         }
+
+        // Leaving 98SE: nothing the retro styling set survives on a tab or in the band.
+        RetroTabs.ApplyBand(band, strip, retro: false, bottom);
+        for (int i = 0; i < 3; i++) RetroTabs.StyleTab(tabs[i], retro: false, active: i == 1, bottom);
+        for (int i = 0; i < 3; i++)
+        {
+            Require(!tabs[i].RetroTopEdges && !tabs[i].RetroBottomEdges, "Another theme draws no Win98 edges.");
+            Require(tabs[i].Margin == new Thickness(0) && Panel.GetZIndex(tabs[i]) == 0, "Another theme's tabs keep their cells, none in front.");
+        }
+        Require(strip.Margin == new Thickness(0), "Another theme's strip has no 98SE inset.");
+        foreach (var child in band.Children)
+            if (child is Border line && line.Tag is string)
+                Require(line.Visibility == Visibility.Collapsed, "Another theme shows no page join line.");
     }
 
     private static void Require(bool condition, string message)

@@ -71,43 +71,6 @@ namespace KillerScan.Shell
         ///   - A Win98 caption is 18px, not 32. The row height and WindowChrome.CaptionHeight have
         ///     to move together or the draggable strip stops matching the bar you can see.
         /// </summary>
-        /// <summary>
-        /// The theme draws the pane as Win32's sunken edge (MainWindow.xaml, the four PaneBevel
-        /// layers). With the view tabs joined to it, the pane is a Win98 tab control's PAGE, which
-        /// is raised: white top and left, black right and foot with #808080 inside them. So on
-        /// 98SE the same four layers are turned around here: the white layer takes the top and
-        /// left, the black one the right and foot on the outside, the #808080 one the right and
-        /// foot inside, and the #dfdfdf one draws nothing. The strip covers the page's edge on
-        /// its own side with its join line (RetroTabs). Any other theme keeps its own values.
-        /// </summary>
-        private void RaisePageBevel(bool flat)
-        {
-            if (FindName("PaneBevelDark") is not System.Windows.Controls.Border dark
-                || FindName("PaneBevelLight") is not System.Windows.Controls.Border light
-                || FindName("PaneBevelDark2") is not System.Windows.Controls.Border dark2
-                || FindName("PaneBevelLight2") is not System.Windows.Controls.Border light2) return;
-            if (flat)
-            {
-                light.Margin = new Thickness(0);
-                light.BorderThickness = new Thickness(1, 1, 0, 0);
-                dark2.Margin = new Thickness(0);
-                dark2.BorderThickness = new Thickness(0, 0, 1, 1);
-                dark.Margin = new Thickness(1);
-                dark.BorderThickness = new Thickness(0, 0, 1, 1);
-                light2.Margin = new Thickness(1);
-                light2.BorderThickness = new Thickness(0);
-                return;
-            }
-            light.ClearValue(FrameworkElement.MarginProperty);
-            light.SetResourceReference(System.Windows.Controls.Border.BorderThicknessProperty, "PaneBevelDarkThickness");
-            dark.ClearValue(FrameworkElement.MarginProperty);
-            dark.SetResourceReference(System.Windows.Controls.Border.BorderThicknessProperty, "PaneBevelLightThickness");
-            dark2.SetResourceReference(FrameworkElement.MarginProperty, "PaneBevelInnerMargin");
-            dark2.SetResourceReference(System.Windows.Controls.Border.BorderThicknessProperty, "PaneBevel2LightThickness");
-            light2.SetResourceReference(FrameworkElement.MarginProperty, "PaneBevelInnerMargin");
-            light2.SetResourceReference(System.Windows.Controls.Border.BorderThicknessProperty, "PaneBevel2DarkThickness");
-        }
-
         private void ApplyFlatChrome()
         {
             bool flat = ThemeManager.Current == Theme.SE98;
@@ -169,6 +132,43 @@ namespace KillerScan.Shell
                 Grid.SetColumnSpan(control, 2);
                 control.HorizontalAlignment = classic && first ? HorizontalAlignment.Right : HorizontalAlignment.Stretch;
             }
+        }
+
+        /// <summary>
+        /// The theme draws the pane as Win32's sunken edge (MainWindow.xaml, the four PaneBevel
+        /// layers). With the view tabs joined to it, the pane is a Win98 tab control's PAGE, which
+        /// is raised: white top and left, black right and foot with #808080 inside them. So on
+        /// 98SE the same four layers are turned around here: the white layer takes the top and
+        /// left, the black one the right and foot on the outside, the #808080 one the right and
+        /// foot inside, and the #dfdfdf one draws nothing. The strip covers the page's edge on
+        /// its own side with its join line (RetroTabs). Any other theme keeps its own values.
+        /// </summary>
+        private void RaisePageBevel(bool flat)
+        {
+            if (FindName("PaneBevelDark") is not System.Windows.Controls.Border dark
+                || FindName("PaneBevelLight") is not System.Windows.Controls.Border light
+                || FindName("PaneBevelDark2") is not System.Windows.Controls.Border dark2
+                || FindName("PaneBevelLight2") is not System.Windows.Controls.Border light2) return;
+            if (flat)
+            {
+                light.Margin = new Thickness(0);
+                light.BorderThickness = new Thickness(1, 1, 0, 0);
+                dark2.Margin = new Thickness(0);
+                dark2.BorderThickness = new Thickness(0, 0, 1, 1);
+                dark.Margin = new Thickness(1);
+                dark.BorderThickness = new Thickness(0, 0, 1, 1);
+                light2.Margin = new Thickness(1);
+                light2.BorderThickness = new Thickness(0);
+                return;
+            }
+            light.ClearValue(FrameworkElement.MarginProperty);
+            light.SetResourceReference(System.Windows.Controls.Border.BorderThicknessProperty, "PaneBevelDarkThickness");
+            dark.ClearValue(FrameworkElement.MarginProperty);
+            dark.SetResourceReference(System.Windows.Controls.Border.BorderThicknessProperty, "PaneBevelLightThickness");
+            dark2.SetResourceReference(FrameworkElement.MarginProperty, "PaneBevelInnerMargin");
+            dark2.SetResourceReference(System.Windows.Controls.Border.BorderThicknessProperty, "PaneBevel2LightThickness");
+            light2.SetResourceReference(FrameworkElement.MarginProperty, "PaneBevelInnerMargin");
+            light2.SetResourceReference(System.Windows.Controls.Border.BorderThicknessProperty, "PaneBevel2DarkThickness");
         }
 
         private void UpdateCaptionGlyphs()
