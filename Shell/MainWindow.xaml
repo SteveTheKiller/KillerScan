@@ -665,18 +665,21 @@
              one border, because Win32's EDGE_SUNKEN is two tones on each side: #808080 then
              #000000 down the top and left, #ffffff then the face gray up the bottom and right. A
              single two-pixel gray has the right width and the wrong depth. Every thickness here is
-             zero on the flat themes, so those draw nothing at all. Ported from KillerNotes. -->
-        <Border Grid.Row="1" Panel.ZIndex="11" IsHitTestVisible="False"
+             zero on the flat themes, so those draw nothing at all. Ported from KillerNotes.
+             Named because 98SE turns them into a RAISED page (Theme.cs ApplyFlatChrome): the
+             view tabs are joined to this pane, and a Win98 tab control's page is a raised box,
+             white top and left, #808080 then black down the right and along the foot. -->
+        <Border x:Name="PaneBevelDark" Grid.Row="1" Panel.ZIndex="11" IsHitTestVisible="False"
                 BorderBrush="{DynamicResource PaneBevelDarkBrush}"
                 BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
-        <Border Grid.Row="1" Panel.ZIndex="11" IsHitTestVisible="False"
+        <Border x:Name="PaneBevelLight" Grid.Row="1" Panel.ZIndex="11" IsHitTestVisible="False"
                 BorderBrush="{DynamicResource PaneBevelLightBrush}"
                 BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
-        <Border Grid.Row="1" Panel.ZIndex="11" IsHitTestVisible="False"
+        <Border x:Name="PaneBevelDark2" Grid.Row="1" Panel.ZIndex="11" IsHitTestVisible="False"
                 Margin="{DynamicResource PaneBevelInnerMargin}"
                 BorderBrush="{DynamicResource PaneBevelDark2Brush}"
                 BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
-        <Border Grid.Row="1" Panel.ZIndex="11" IsHitTestVisible="False"
+        <Border x:Name="PaneBevelLight2" Grid.Row="1" Panel.ZIndex="11" IsHitTestVisible="False"
                 Margin="{DynamicResource PaneBevelInnerMargin}"
                 BorderBrush="{DynamicResource PaneBevelLight2Brush}"
                 BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
