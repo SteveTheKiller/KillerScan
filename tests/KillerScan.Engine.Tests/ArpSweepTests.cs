@@ -37,6 +37,8 @@ internal static class ArpSweepTests
             await ThePacedPassReportsProgress();
             await CancelDuringThePacedPassReturnsPromptly();
             await ABusyNetworkIsProbedUntilAPassAddsNothing();
+            await TheExtraRoundsReportProgress();
+            await TheExtraRoundsStopAtTheirTimeBudget();
             await TapMacIsBlankedOnHostsThatAnswerPing();
             await GatewayMacIsBlankedOnOtherHosts();
             await BroadcastIsNotADevice();
@@ -379,6 +381,56 @@ internal static class ArpSweepTests
                 "The scanner reports what each phase found: " + scanner.DiscoverySummary);
         }
         finally { ScanSource.PingOverride = null; }
+    }
+
+    // .5 answers only its second ping, so the second pass adds a host and the extra rounds run.
+    private static Func<IPAddress, int, Task<(bool, int)>> LateHostPing(System.Collections.Concurrent.ConcurrentDictionary<string, int> pings, int delayMs) =>
+        async (address, _) =>
+        {
+            string ip = address.ToString();
+            int n = pings.AddOrUpdate(ip, 1, (_, c) => c + 1);
+            await Task.Delay(delayMs);
+            return (ip == "192.0.2.5" && n >= 2, 64);
+        };
+
+    private static async Task TheExtraRoundsReportProgress()
+    {
+        // The rounds wait out a full timeout on every dead address, which on a flat /22 is minutes.
+        // The bar has to move through 30 to 40 while they do, not sit at 30.
+        var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
+        ScanSource.PingOverride = LateHostPing(pings, 5);
+        try
+        {
+            NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "");
+            var scanner = new NetworkScanner(new IsolatedDiscovery());
+            var seen = new System.Collections.Concurrent.ConcurrentBag<int>();
+            scanner.ProgressChanged += p => { if (p > 30 && p < 40) seen.Add(p); };
+            await Quick("192.0.2.1-60", new ScanOptions().Without("tcp-liveness,arp"), scanner);
+            Require(scanner.DiscoverySummary.Contains("extra rounds +0 in 1"), "The extra rounds ran: " + scanner.DiscoverySummary);
+            Require(seen.Distinct().Count() >= 3, $"Progress moves between 30 and 40 during the extra rounds (saw {seen.Distinct().Count()} values).");
+        }
+        finally { ScanSource.PingOverride = null; }
+    }
+
+    private static async Task TheExtraRoundsStopAtTheirTimeBudget()
+    {
+        // A slow network must not turn three rounds into minutes: once the budget is spent the
+        // rounds stop asking, and the summary says so.
+        var original = NetworkScanner.ConvergeBudget;
+        NetworkScanner.ConvergeBudget = TimeSpan.FromMilliseconds(300);
+        var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
+        ScanSource.PingOverride = LateHostPing(pings, 100);
+        try
+        {
+            NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "");
+            var scanner = new NetworkScanner(new IsolatedDiscovery());
+            var clock = Stopwatch.StartNew();
+            await Quick("192.0.2.1-200", new ScanOptions().Without("tcp-liveness,arp"), scanner);
+            int roundPings = pings.Values.Sum() - 2 * 200;
+            Require(roundPings > 0 && roundPings < 199, $"The extra rounds stop asking once their budget is spent ({roundPings} round pings).");
+            Require(scanner.DiscoverySummary.EndsWith("(time budget reached)"), "The summary says the budget ran out: " + scanner.DiscoverySummary);
+        }
+        finally { ScanSource.PingOverride = null; NetworkScanner.ConvergeBudget = original; }
     }
 
     private static async Task CancelDuringThePacedPassReturnsPromptly()

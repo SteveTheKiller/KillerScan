@@ -10,7 +10,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 
-- Discovery no longer stops after a fixed number of passes. One customer's /24 gave 141, 83, 97 and 119 devices on consecutive runs of the same scan, because its phones and small switches throttle after a probe and answer when asked again a little later. Now, while a pass still adds devices, every silent address is asked again, 16 at a time with a two second wait, until a pass adds nothing or three extra rounds have run. A quiet network, whose second pass and ARP sweep add nothing, pays for no extra round.
+- Discovery no longer stops after a fixed number of passes. One customer's /24 gave 141, 83, 97 and 119 devices on consecutive runs of the same scan, and the devices it missed answered when asked again later. Now, while a pass still adds devices, every silent address is asked again, 16 at a time with a two second wait, until a pass adds nothing, three extra rounds have run, or 30 seconds have gone by. The progress bar moves through the extra rounds, and the `Discovery:` line says when the time limit cut them short. A quiet network, whose second pass and ARP sweep add nothing, pays for no extra round.
 - The second liveness pass covers on-link addresses again, not only routed ones; it is also the evidence that starts the extra rounds.
 - The command line prints what each discovery phase found, on stderr, so a report of a wrong count says which pass lost the devices: `Discovery: first wave 97, second pass +12, ARP sweep +3, extra rounds +9 in 2.`
 

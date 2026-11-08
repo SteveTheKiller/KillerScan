@@ -94,6 +94,10 @@ namespace KillerScan.Engine
         internal const int ConvergePingTimeoutMs = 2000;
         internal const int MaxConvergeRounds = 3;
 
+        /// <summary>The most time all extra rounds together may take. A dead address costs the full
+        /// ping wait, so on a flat /22 three rounds would otherwise add minutes to every scan.</summary>
+        internal static TimeSpan ConvergeBudget = TimeSpan.FromSeconds(30);
+
         /// <summary>What each discovery phase of the last scan found, for the CLI and bug reports:
         /// "first wave 97, second pass +12, ARP sweep +3, extra rounds +9 in 2".</summary>
         public string DiscoverySummary { get; private set; } = string.Empty;
@@ -472,31 +476,39 @@ namespace KillerScan.Engine
 
             // Extra rounds, until a pass adds nothing. A pass that still finds hosts says the network
             // is still hiding some: one customer's /24 gave 141, 83, 97 and 119 devices on
-            // consecutive runs of the same passes, because its phones and small switches throttle
-            // after a probe and answer when asked again a little later. So while the last pass added
-            // a host, every silent address is asked again, ConvergeWidth at a time with a
-            // ConvergePingTimeoutMs wait, up to MaxConvergeRounds times. A network whose second
-            // pass and sweep added nothing, which is every quiet one, pays for no round at all.
+            // consecutive runs, and the hosts it missed answered when asked again later. So while
+            // the last pass added a host, every silent address is asked again, ConvergeWidth at a
+            // time with a ConvergePingTimeoutMs wait, up to MaxConvergeRounds times and within
+            // ConvergeBudget in total. Progress moves through 30 to 40 as the rounds go. A network
+            // whose second pass and sweep added nothing, which is every quiet one, pays for none.
             int foundByRounds = 0, rounds = 0;
-            bool lastPassAdded = foundBySecondPass + foundBySweep > 0;
-            while (lastPassAdded && rounds < MaxConvergeRounds && (options.Icmp || options.TcpLiveness))
+            bool lastPassAdded = foundBySecondPass + foundBySweep > 0, outOfTime = false;
+            var roundClock = Stopwatch.StartNew();
+            while (lastPassAdded && !outOfTime && rounds < MaxConvergeRounds && (options.Icmp || options.TcpLiveness))
             {
                 var still = addresses.Where(a => !discoveredHosts.ContainsKey(a.ToString())).Take(SecondPassLimit).ToList();
                 if (still.Count == 0) break;
                 rounds++;
-                int countBefore = discoveredHosts.Count;
+                int countBefore = discoveredHosts.Count, asked = 0;
+                int roundBase = 30 + (rounds - 1) * 10 / MaxConvergeRounds;
                 var narrow = new SemaphoreSlim(ConvergeWidth);
                 await Task.WhenAll(still.Select(async addr =>
                 {
                     await narrow.WaitAsync(ct);
                     try
                     {
+                        if (roundClock.Elapsed >= ConvergeBudget) { outOfTime = true; return; }
                         if (await AwaitWithCancellation(AliveAsync(addr, ConvergePingTimeoutMs), ct))
                             discoveredHosts.TryAdd(addr.ToString(), (addr, ""));
                     }
                     catch (OperationCanceledException) { throw; }
                     catch { }
-                    finally { narrow.Release(); }
+                    finally
+                    {
+                        narrow.Release();
+                        int done = Interlocked.Increment(ref asked);
+                        ProgressChanged?.Invoke(roundBase + (int)(done * (10.0 / MaxConvergeRounds) / still.Count));
+                    }
                 }));
                 ct.ThrowIfCancellationRequested();
                 if (options.NeighborCache)
@@ -509,7 +521,8 @@ namespace KillerScan.Engine
                 foundByRounds += added;
                 lastPassAdded = added > 0;
             }
-            DiscoverySummary = $"first wave {foundByFirstWave}, second pass +{foundBySecondPass}, ARP sweep +{foundBySweep}, extra rounds +{foundByRounds} in {rounds}";
+            DiscoverySummary = $"first wave {foundByFirstWave}, second pass +{foundBySecondPass}, ARP sweep +{foundBySweep}, extra rounds +{foundByRounds} in {rounds}"
+                + (outOfTime ? " (time budget reached)" : "");
 
             // Resolve MAC addresses via ARP for discovered hosts (fast, they're alive)
             StatusChanged?.Invoke(new ScanStatus(ScanStage.ResolvingMacs, discoveredHosts.Count));
