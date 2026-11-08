@@ -13,6 +13,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Discovery no longer stops after a fixed number of passes. One customer's /24 gave 141, 83, 97 and 119 devices on consecutive runs of the same scan, and the devices it missed answered when asked again later. Now, while a pass still adds devices, every silent address is asked again, 16 at a time with a two second wait, until a pass adds nothing, three extra rounds have run, or 30 seconds have gone by. The progress bar moves through the extra rounds, and the `Discovery:` line says when the time limit cut them short. A quiet network, whose second pass and ARP sweep add nothing, pays for no extra round.
 - The second liveness pass covers on-link addresses again, not only routed ones; it is also the evidence that starts the extra rounds.
 - The command line prints what each discovery phase found, on stderr, so a report of a wrong count says which pass lost the devices: `Discovery: first wave 97, second pass +12, ARP sweep +3, extra rounds +9 in 2.`
+- A command-line scan that stalls before it starts no longer hangs forever. If a startup step takes longer than a minute, the run ends with exit code 3 and a message on stderr that names the step.
+
+### Added
+
+- The command line prints a second line after `Discovery:`, on stderr: the neighbor cache size before and after discovery, Windows' per-interface neighbor cache limit, and how long each pass took. For example: `Discovery detail: neighbor cache 35 entries before, 34 after, limit 256 per interface; first wave 6.4 s, second pass 4.0 s, ARP sweep 5.1 s, extra rounds 0.0 s.`
 
 ## [1.9.4] - 2026-11-06
 

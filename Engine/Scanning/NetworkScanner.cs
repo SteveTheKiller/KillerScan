@@ -102,6 +102,16 @@ namespace KillerScan.Engine
         /// "first wave 97, second pass +12, ARP sweep +3, extra rounds +9 in 2".</summary>
         public string DiscoverySummary { get; private set; } = string.Empty;
 
+        /// <summary>The evidence behind DiscoverySummary: the neighbor cache size before and after
+        /// discovery, Windows' per-interface cache limit, and how long each pass took. A switch that
+        /// drops bursts and a cache that evicts entries past its limit lose hosts the same way, and
+        /// these numbers are what tell them apart.</summary>
+        public string DiscoveryDetail { get; private set; } = string.Empty;
+
+        /// <summary>Reads Windows' neighbor cache limit, or null when it cannot be read. Replaced in tests.</summary>
+        internal static Func<int?> NeighborCacheLimitReader = () =>
+            NetworkPlatform.Current is WindowsNetworkPlatform ? WindowsNetworkPlatform.ReadNeighborCacheLimit() : null;
+
         /// <summary>How many pings each liveness pass keeps in flight. Switches rate-limit
         /// broadcast storms, so a 200-wide first wave on a cold cache was 200 ARP requests in one
         /// burst, and on a /24 with 160 live hosts it lost answers: one customer's scan found 56
@@ -316,8 +326,20 @@ namespace KillerScan.Engine
 
             // Grab existing ARP cache first (catches IoT devices). It starts arp.exe, so it runs on the
             // pool: this is still the synchronous start of the scan, on the caller's UI thread.
+            int cacheAfter = 0;
+            async Task<IReadOnlyDictionary<string, string>> ReadCacheAsync()
+            {
+                var read = await Task.Run(GetArpCache, ct);
+                cacheAfter = read.Count;
+                return read;
+            }
+            var limitTask = Task.Run(() => { try { return NeighborCacheLimitReader(); } catch { return (int?)null; } });
+            var passClock = Stopwatch.StartNew();
+            var passTimes = new List<double>(4);
+            void Lap() { passTimes.Add(passClock.Elapsed.TotalSeconds); passClock.Restart(); }
             IReadOnlyDictionary<string, string> arpCache = options.NeighborCache
-                ? await Task.Run(GetArpCache, ct) : new Dictionary<string, string>();
+                ? await ReadCacheAsync() : new Dictionary<string, string>();
+            int cacheBefore = arpCache.Count;
             var addressSet = new HashSet<string>(addresses.Select(a => a.ToString()));
             foreach (var entry in arpCache)
             {
@@ -366,12 +388,13 @@ namespace KillerScan.Engine
             await Task.WhenAll(scanTasks);
             ct.ThrowIfCancellationRequested();
             int foundByFirstWave = discoveredHosts.Count;
+            Lap();
 
             // Second ARP cache read: the ping wave stimulates ARP responses from devices
             // that are too slow (or don't reply to ICMP at all). Reading the cache again
             // catches them without requiring a second full scan.
             IReadOnlyDictionary<string, string> arpCache2 = options.NeighborCache
-                ? await Task.Run(GetArpCache, ct) : new Dictionary<string, string>();
+                ? await ReadCacheAsync() : new Dictionary<string, string>();
             foreach (var entry in arpCache2)
             {
                 if (addressSet.Contains(entry.Key))
@@ -420,6 +443,7 @@ namespace KillerScan.Engine
                 silentNow = silentNow.Where(a => !discoveredHosts.ContainsKey(a.ToString())).ToList();
             }
             int foundBySecondPass = discoveredHosts.Count - foundByFirstWave;
+            Lap();
 
             // ARP sweep: phones, printers and locked-down devices often drop ping, expose none of the
             // liveness ports and age out of the neighbor cache before the second read. Ask every
@@ -468,11 +492,12 @@ namespace KillerScan.Engine
             // records a moment later, and reading the cache sends nothing.
             if (options.NeighborCache)
             {
-                foreach (var entry in await Task.Run(GetArpCache, ct))
+                foreach (var entry in await ReadCacheAsync())
                     if (addressSet.Contains(entry.Key))
                         discoveredHosts.TryAdd(entry.Key, (IPAddress.Parse(entry.Key), entry.Value));
             }
             int foundBySweep = discoveredHosts.Count - foundByFirstWave - foundBySecondPass;
+            Lap();
 
             // Extra rounds, until a pass adds nothing. A pass that still finds hosts says the network
             // is still hiding some: one customer's /24 gave 141, 83, 97 and 119 devices on
@@ -513,7 +538,7 @@ namespace KillerScan.Engine
                 ct.ThrowIfCancellationRequested();
                 if (options.NeighborCache)
                 {
-                    foreach (var entry in await Task.Run(GetArpCache, ct))
+                    foreach (var entry in await ReadCacheAsync())
                         if (addressSet.Contains(entry.Key))
                             discoveredHosts.TryAdd(entry.Key, (IPAddress.Parse(entry.Key), entry.Value));
                 }
@@ -523,6 +548,15 @@ namespace KillerScan.Engine
             }
             DiscoverySummary = $"first wave {foundByFirstWave}, second pass +{foundBySecondPass}, ARP sweep +{foundBySweep}, extra rounds +{foundByRounds} in {rounds}"
                 + (outOfTime ? " (time budget reached)" : "");
+            Lap();
+            int? cacheLimit = await limitTask;
+            string cache = options.NeighborCache
+                ? $"neighbor cache {cacheBefore} entries before, {cacheAfter} after, "
+                    + (cacheLimit is int limit ? $"limit {limit} per interface" : "limit unknown")
+                : "neighbor cache not read";
+            DiscoveryDetail = cache + string.Format(System.Globalization.CultureInfo.InvariantCulture,
+                "; first wave {0:0.0} s, second pass {1:0.0} s, ARP sweep {2:0.0} s, extra rounds {3:0.0} s",
+                passTimes[0], passTimes[1], passTimes[2], passTimes[3]);
 
             // Resolve MAC addresses via ARP for discovered hosts (fast, they're alive)
             StatusChanged?.Invoke(new ScanStatus(ScanStage.ResolvingMacs, discoveredHosts.Count));

@@ -39,6 +39,7 @@ internal static class ArpSweepTests
             await ABusyNetworkIsProbedUntilAPassAddsNothing();
             await TheExtraRoundsReportProgress();
             await TheExtraRoundsStopAtTheirTimeBudget();
+            await TheDiscoveryDetailReportsTheCacheAndTimings();
             await TapMacIsBlankedOnHostsThatAnswerPing();
             await GatewayMacIsBlankedOnOtherHosts();
             await BroadcastIsNotADevice();
@@ -377,8 +378,8 @@ internal static class ArpSweepTests
             Require(pings.Values.Max() == 5, $"After the pass that found .30 one more pass runs, adds nothing, and discovery stops (max {pings.Values.Max()} pings).");
             Require(peakLate > 0 && peakLate <= NetworkScanner.ConvergeWidth,
                 $"The extra rounds keep at most {NetworkScanner.ConvergeWidth} pings in flight (saw {peakLate}).");
-            Require(scanner.DiscoverySummary == "first wave 39, second pass +1, ARP sweep +0, extra rounds +2 in 3",
-                "The scanner reports what each phase found: " + scanner.DiscoverySummary);
+            foreach (string part in new[] { "first wave 39", "second pass +1", "ARP sweep +0", "extra rounds +2 in 3" })
+                Require(scanner.DiscoverySummary.Contains(part), $"The scanner reports what each phase found ({part}): " + scanner.DiscoverySummary);
         }
         finally { ScanSource.PingOverride = null; }
     }
@@ -431,6 +432,34 @@ internal static class ArpSweepTests
             Require(scanner.DiscoverySummary.EndsWith("(time budget reached)"), "The summary says the budget ran out: " + scanner.DiscoverySummary);
         }
         finally { ScanSource.PingOverride = null; NetworkScanner.ConvergeBudget = original; }
+    }
+
+    private static async Task TheDiscoveryDetailReportsTheCacheAndTimings()
+    {
+        // The two theories for a lost host, a switch dropping a burst and Windows evicting
+        // neighbor entries past its per-interface limit, look the same in the found counts. The
+        // detail line carries what separates them: the cache size before and after, the limit,
+        // and how long each pass took.
+        var original = NetworkScanner.NeighborCacheLimitReader;
+        try
+        {
+            NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "", read => Enumerable.Range(1, read == 1 ? 3 : 5)
+                .ToDictionary(i => "198.51.100." + i, i => $"00:11:22:33:44:{i:X2}"));
+            NetworkScanner.NeighborCacheLimitReader = () => 256;
+            var scanner = new NetworkScanner(new IsolatedDiscovery());
+            await Quick("192.0.2.1-10", new ScanOptions().Without("tcp-liveness"), scanner);
+            Require(System.Text.RegularExpressions.Regex.IsMatch(scanner.DiscoveryDetail,
+                @"^neighbor cache 3 entries before, 5 after, limit 256 per interface; first wave \d+\.\d s, second pass \d+\.\d s, ARP sweep \d+\.\d s, extra rounds \d+\.\d s$"),
+                "The detail line reports the cache, its limit and each pass's time: " + scanner.DiscoveryDetail);
+
+            NetworkScanner.NeighborCacheLimitReader = () => null;
+            await Quick("192.0.2.1-10", new ScanOptions().Without("tcp-liveness"), scanner);
+            Require(scanner.DiscoveryDetail.Contains("limit unknown"), "An unreadable limit is reported as unknown: " + scanner.DiscoveryDetail);
+            Require(WindowsNetworkPlatform.ParseNeighborCacheLimit("Default Hop Limit                   : 128 hops\r\nNeighbor Cache Limit                : 256 entries per interface\r\n") == 256
+                && WindowsNetworkPlatform.ParseNeighborCacheLimit("Limite du cache : 256") == null,
+                "The limit is read from netsh's English output and is unknown otherwise.");
+        }
+        finally { NetworkScanner.NeighborCacheLimitReader = original; }
     }
 
     private static async Task CancelDuringThePacedPassReturnsPromptly()

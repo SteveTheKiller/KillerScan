@@ -61,6 +61,42 @@ namespace KillerScan.Engine
             };
         }
 
+        /// <summary>
+        /// Windows' neighbor cache limit per interface, from netsh, or null when it cannot be read.
+        /// Client Windows defaults to 256 and Server to 1024. netsh's labels are localized, so a
+        /// non-English Windows reports null rather than a guess.
+        /// </summary>
+        internal static int? ReadNeighborCacheLimit()
+        {
+            try
+            {
+                string system = Environment.GetFolderPath(Environment.SpecialFolder.System);
+                using var proc = Process.Start(new ProcessStartInfo(Path.Combine(system, "netsh.exe"), "interface ipv4 show global")
+                {
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WorkingDirectory = system
+                });
+                if (proc == null) return null;
+                var output = proc.StandardOutput.ReadToEndAsync().ObserveFault();
+                if (!proc.WaitForExit(3000))
+                {
+                    try { proc.Kill(); } catch { }
+                    return null;
+                }
+                return ParseNeighborCacheLimit(output.GetAwaiter().GetResult());
+            }
+            catch { return null; }
+        }
+
+        internal static int? ParseNeighborCacheLimit(string netshOutput)
+        {
+            var match = System.Text.RegularExpressions.Regex.Match(netshOutput, @"Neighbor Cache Limit\s*:\s*(\d+)",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            return match.Success && int.TryParse(match.Groups[1].Value, out int limit) ? limit : null;
+        }
+
         private static IReadOnlyDictionary<string, string> RunArp(string arguments)
         {
             try

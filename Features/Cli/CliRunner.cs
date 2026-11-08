@@ -539,6 +539,11 @@ namespace KillerScan.Features.Cli
         private static bool Only(Dictionary<string, string> options, params string[] allowed) =>
             options.Keys.All(key => allowed.Any(name => Eq(key, name)));
 
+        /// <summary>How long one startup step of a command-line scan may take before the run
+        /// gives up and names it. Generous: the slowest normal step, a Locations load from a
+        /// network share, takes a few seconds.</summary>
+        internal static readonly TimeSpan StartupStallLimit = TimeSpan.FromSeconds(60);
+
         private static int RunDevices(List<string> positionals, Dictionary<string, string> options,
                                       TextWriter @out, TextWriter err, bool probe)
         {
@@ -562,6 +567,22 @@ namespace KillerScan.Features.Cli
             bool demo = Has(options, "/demo", "--demo");
             if (demo && probe) return Usage(err, "/demo works with /scan only.");
             DemoScan? demoScan = demo ? DemoData.Generate(new Random()) : null;
+
+            // One scan in fifty once sat for minutes before printing anything, with no CPU and no
+            // sockets. Until the scan reports its first status, each step must finish within
+            // StartupStallLimit, or the run ends with a message naming the step instead of hanging
+            // the RMM job that started it.
+            using var watchdog = new StallWatchdog(StartupStallLimit, step =>
+            {
+                try
+                {
+                    err.WriteLine(PaintErr($"KillerScan stalled for {StartupStallLimit.TotalSeconds:0} seconds while {step}. Run it again, and if it stalls again, send this line.", AnsiBad));
+                    err.Flush();
+                }
+                catch { }
+                Environment.Exit(3);
+            });
+            watchdog.Step("detecting the local network");
 
             string targetText = string.Join(",", positionals);
             ScanTargetResult? parsed = null;
@@ -613,6 +634,7 @@ namespace KillerScan.Features.Cli
             if (locationText != null)
             {
                 if (demo) return Usage(err, "/location does not work with /demo.");
+                watchdog.Step("loading Locations");
                 if (!LocationService.Loaded) LocationService.Load("Unassigned");
                 if (LocationService.LoadError is { } locationError)
                     return Usage(err, "Locations are unavailable - " + Flatten(locationError), 1);
@@ -621,6 +643,7 @@ namespace KillerScan.Features.Cli
                 location = LocationService.Get(info);
             }
 
+            watchdog.Step("loading the vendor list");
             OuiLookup.Load();
             using var cts = new CancellationTokenSource();
             if (timeout > 0) cts.CancelAfter(TimeSpan.FromSeconds(timeout));
@@ -634,6 +657,7 @@ namespace KillerScan.Features.Cli
                 Binding = binding
             };
             AttachProgress(scanner, err, terminalProgress, progress && !quiet);
+            scanner.StatusChanged += _ => watchdog.Disarm();
             string target = probe ? positionals[0] : demo ? demoScan!.Subnet : parsed!.Summary;
             string suffix = probe ? "..." : $" ({(demo ? 254 : parsed!.Addresses.Count):N0} addresses)...";
             string verb = probe ? "deep-probing " : "scanning ";
@@ -655,6 +679,7 @@ namespace KillerScan.Features.Cli
             {
                 // A short beat so the spinner is visible (and screenshottable), then the
                 // fabricated device list - nothing on the wire.
+                watchdog.Disarm();
                 if (spinner != null) Thread.Sleep(1500);
                 spinner?.Dispose(); spinner = null;
                 try { Console.CancelKeyPress -= OnCancel; } catch { }
@@ -663,9 +688,11 @@ namespace KillerScan.Features.Cli
             else
             try
             {
+                watchdog.Step(probe ? "starting the probe" : "flushing the DNS cache and starting the scan");
                 Task<List<NetworkDevice>> operation = probe
                     ? ProbeAsListAsync(scanner, probeIp!.ToString(), scanOptions, cts.Token)
                     : scanner.ScanSubnetAsync(targetText, cts.Token, scanOptions, fullScan: !quick);
+                watchdog.Disarm();
                 if (timeout > 0)
                 {
                     var deadline = Task.Delay(TimeSpan.FromSeconds(timeout));
@@ -681,7 +708,11 @@ namespace KillerScan.Features.Cli
                 // What each discovery phase found, so a report of a wrong count says which pass
                 // lost the hosts. Stderr, so it never lands in an exported or piped result.
                 if (!quiet && !probe && scanner.DiscoverySummary.Length > 0)
+                {
                     err.WriteLine("Discovery: " + scanner.DiscoverySummary + ".");
+                    if (scanner.DiscoveryDetail.Length > 0)
+                        err.WriteLine("Discovery detail: " + scanner.DiscoveryDetail + ".");
+                }
             }
             catch (OperationCanceledException)
             {

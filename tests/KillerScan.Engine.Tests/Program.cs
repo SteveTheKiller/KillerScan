@@ -40,6 +40,7 @@ internal static class Program
             await Run("Status text is English, numeric and free of double hyphens", StatusText);
             await Run("Quick scan reports stages, devices and host hooks through a fake platform", QuickScan);
             await Run("On-link hosts that answer only ARP are discovered; off-link addresses are not", ArpSweepTests.Run);
+            await Run("A scan that stalls before it starts says which step it stalled in", StallWatchdogTests.Run);
             await Run("A canceled token stops the scan", Canceled);
             await Run("Full scan preserves HTTP results, manual classification and saved names", EngineBehaviorTests.FullScan);
             await Run("HTTP fingerprint extracts the controlled title and Server header", EngineBehaviorTests.HttpFingerprintResults);
