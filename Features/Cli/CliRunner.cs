@@ -141,7 +141,7 @@ namespace KillerScan.Features.Cli
             "/vendor-filter", "--vendor-filter", "/ports", "--ports", "/limit", "--limit",
             "/timeout", "--timeout", "/theme", "--theme", "/count", "--count",
             "/interval", "--interval", "/max-hops", "--max-hops", "/location", "--location", "/skip", "--skip",
-            "/adapter", "--adapter"
+            "/adapter", "--adapter", "/log", "--log"
         ];
 
         /// <summary>
@@ -306,6 +306,18 @@ namespace KillerScan.Features.Cli
             try
             {
                 var (positionals, options, parseError) = ParseArgs(args, command);
+                LogWriter? log = null;
+                // Read straight from args too, so a usage error still lands in the log.
+                int logAt = Array.FindLastIndex(args, a => Eq(a, "/log") || Eq(a, "--log"));
+                string? logPath = Value(options, "/log", "--log")
+                    ?? (logAt >= 0 && logAt + 1 < args.Length ? args[logAt + 1] : null);
+                options.Remove("/log"); options.Remove("--log");
+                if (logPath != null)
+                {
+                    try { log = new LogWriter(err, logPath); err = log; }
+                    catch (Exception ex) { parseError ??= "cannot write the log " + logPath + ": " + Flatten(ex.Message); }
+                }
+                using var logScope = log;
                 if (parseError != null) { err.WriteLine(PaintErr("Error: " + parseError, AnsiBad)); exitCode = 2; }
                 else if (Eq(command, "/network") || Eq(command, "--network"))
                     exitCode = RunNetwork(positionals, options, @out, err);
@@ -955,7 +967,9 @@ namespace KillerScan.Features.Cli
             "  /export <path>         write output; extension selects format unless overridden",
             "  /no-header             omit table and CSV headings",
             "  /theme <name>          HTML theme (dark, light, black, 98se, or a grunge theme)",
-            "  /quiet                 suppress stdout and status; normally paired with /export", "", "TARGET EXAMPLES",
+            "  /quiet                 suppress stdout and status; normally paired with /export",
+            "  /log <path>            also write status, progress and errors to a file; use it from",
+            "                        PowerShell, which never hands a GUI app its 2> redirect", "", "TARGET EXAMPLES",
             "  192.168.1.0/24   192.168.1.7   192.168.1.10-50",
             "  killerscan uiscan 192.168.1.10-50",
             "  killerscan scan 10.0.0.0/24,10.0.1.0/24 /json /ports 22,443 /sort vendor",
@@ -1061,6 +1075,61 @@ namespace KillerScan.Features.Cli
                 if (Interlocked.CompareExchange(ref last, p, seen) == seen) return true;
             }
         }
+        /// <summary>
+        /// The status stream for /log: everything still reaches the console, and a plain copy
+        /// goes to the file. PowerShell starts a GUI-subsystem exe without waiting and without
+        /// passing its 2> redirect, so a file the app writes itself is the only capture that
+        /// works there. Colors are stripped and spinner frames, which redraw with a carriage
+        /// return, are left out of the file.
+        /// </summary>
+        internal sealed class LogWriter : TextWriter
+        {
+            private static readonly System.Text.RegularExpressions.Regex Ansi =
+                new("\u001b\\[[0-9;?]*[A-Za-z]", System.Text.RegularExpressions.RegexOptions.Compiled);
+            private readonly TextWriter _console;
+            private readonly StreamWriter _file;
+            private readonly object _gate = new();
+
+            public LogWriter(TextWriter console, string path)
+            {
+                _console = console;
+                _file = new StreamWriter(Path.GetFullPath(path), append: false, new UTF8Encoding(false)) { AutoFlush = true };
+            }
+
+            public override Encoding Encoding => _file.Encoding;
+
+            public override void Write(char value) => Write(value.ToString());
+
+            public override void Write(string? value)
+            {
+                if (value is null) return;
+                lock (_gate)
+                {
+                    _console.Write(value);
+                    if (value.IndexOf('\r') < 0) _file.Write(Ansi.Replace(value, ""));
+                }
+            }
+
+            public override void WriteLine(string? value)
+            {
+                lock (_gate)
+                {
+                    _console.WriteLine(value);
+                    if (value is null || value.IndexOf('\r') < 0) _file.WriteLine(Ansi.Replace(value ?? "", ""));
+                }
+            }
+
+            public override void WriteLine() => WriteLine("");
+
+            public override void Flush() { lock (_gate) { _console.Flush(); _file.Flush(); } }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing) lock (_gate) _file.Dispose();
+                base.Dispose(disposing);
+            }
+        }
+
         private static (TextWriter, TextWriter) OpenConsole()
         {
             try

@@ -18,12 +18,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Added
 
 - The command line prints a second line after `Discovery:`, on stderr: the neighbor cache size before and after discovery, Windows' per-interface neighbor cache limit, and how long each pass took. For example: `Discovery detail: neighbor cache 35 entries before, 34 after, limit 256 per interface; first wave 6.4 s, second pass 4.0 s, ARP sweep 5.1 s, extra rounds 0.0 s.`
+- `/log <path>` writes the command line's status, progress and error lines to a file as well as the console. PowerShell starts KillerScan without waiting and never passes it a `2>` redirect, so `/log` is the way to capture those lines there. For example: `.\KillerScan.exe /scan /quick /log discovery.txt`
 
 ## [1.9.4] - 2026-11-06
 
 1.9.4 keeps a fresh scan when you make a Location for it and puts the Windows 98 tabs back.
 
 ### Changed
+
 - Refreshed the bundled MAC vendor database to 58,697 assignments.
 
 ### Fixed
@@ -38,6 +40,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 1.9.3 finds the devices a busy network lost to the first burst of the scan.
 
 ### Changed
+
 - Refreshed the bundled MAC vendor database to 58,697 assignments.
 
 ### Fixed
@@ -57,6 +60,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Pasting several lines into the terminal asks first again once the prompt returns, even after an SSH session or other program turned on bracketed paste and left it on.
 
 ### Changed
+
 - Refreshed the bundled MAC vendor database to 58,697 assignments.
 
 ### Fixed
