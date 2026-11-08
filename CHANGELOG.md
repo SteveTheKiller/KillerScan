@@ -6,13 +6,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.9.5] - Unreleased
 
-1.9.5 keeps asking a busy network until it stops finding devices.
+1.9.5 improves discovery recovery and reports where devices were found or filtered.
 
 ### Fixed
 
-- Discovery no longer stops after a fixed number of passes. One customer's /24 gave 141, 83, 97 and 119 devices on consecutive runs of the same scan, and the devices it missed answered when asked again later. Now, while a pass still adds devices, every silent address is asked again, 16 at a time with a two second wait, until a pass adds nothing, three extra rounds have run, or 30 seconds have gone by. The progress bar moves through the extra rounds, and the `Discovery:` line says when the time limit cut them short. A quiet network, whose second pass and ARP sweep add nothing, pays for no extra round.
-- The second liveness pass covers on-link addresses again, not only routed ones; it is also the evidence that starts the extra rounds.
-- The command line prints what each discovery phase found, on stderr, so a report of a wrong count says which pass lost the devices: `Discovery: first wave 97, second pass +12, ARP sweep +3, extra rounds +9 in 2.`
+- Silent targets get a recovery round even when earlier passes found nothing. Later rounds continue while adding devices, up to three rounds and a 30-second budget, with progress and cancellation throughout. The second pass also covers on-link addresses.
+- mDNS and SSDP responses can discover devices independently of ping and ARP. Shared-MAC filtering retains hosts confirmed by multicast or a recovery probe, while discarding their borrowed MAC addresses.
+- The command line reports discovery counts, multicast additions, ARP confirmations, filtered proxy answers, and recovery budget exhaustion on stderr.
 - A command-line scan that stalls before it starts no longer hangs forever. If a startup step takes longer than a minute, the run ends with exit code 3 and a message on stderr that names the step.
 
 ### Added

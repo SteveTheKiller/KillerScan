@@ -16,6 +16,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--http-redirects" })) { await HttpRedirectTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--mac-cancellation" })) { await MacCancellationTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--arp-sweep" })) { await ArpSweepTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--discovery-recovery" })) { await DiscoveryRecoveryTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--snmp" })) { await SnmpTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--upload-accounting" })) { await UploadAccountingTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--scan-options" })) { await ScanOptionsTests.Run(); return 0; }
@@ -40,6 +41,7 @@ internal static class Program
             await Run("Status text is English, numeric and free of double hyphens", StatusText);
             await Run("Quick scan reports stages, devices and host hooks through a fake platform", QuickScan);
             await Run("On-link hosts that answer only ARP are discovered; off-link addresses are not", ArpSweepTests.Run);
+            await Run("Discovery recovery retains late responders", DiscoveryRecoveryTests.Run);
             await Run("A scan that stalls before it starts says which step it stalled in", StallWatchdogTests.Run);
             await Run("A canceled token stops the scan", Canceled);
             await Run("Full scan preserves HTTP results, manual classification and saved names", EngineBehaviorTests.FullScan);

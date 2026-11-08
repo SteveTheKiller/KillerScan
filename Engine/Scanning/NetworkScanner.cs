@@ -76,20 +76,16 @@ namespace KillerScan.Engine
             return local.Macs.Contains(mac) && !local.Addresses.Contains(address.ToString());
         }
 
-        /// <summary>Both liveness pings outlast one ARP retransmit (Windows retries a lost ARP
-        /// after 1 second). The first wave used to wait 500 ms so a quiet range moved fast, but a
-        /// ping whose ARP request the switch dropped could then never succeed in the first wave
-        /// at all, and Windows filed the address as a failed neighbor, which made the later
-        /// passes fail too. With TCP liveness on (the default) a quiet /24 now spends about seven
-        /// seconds in this wave instead of two.</summary>
+        /// <summary>Echo deadlines for the initial liveness passes. Recovery uses a separate,
+        /// longer deadline. A timeout does not establish why a target did not answer.</summary>
         internal const int FirstPingTimeoutMs = 1500, SecondPingTimeoutMs = 1200;
 
         /// <summary>The most silent addresses the second liveness pass asks again.</summary>
         internal static int SecondPassLimit = 1024;
 
         /// <summary>The extra rounds after the sweep: how many pings each keeps in flight, how
-        /// long each waits, and how many rounds at most. Narrow and slow on purpose, since they
-        /// only run on a network that has already shown it hides hosts from a wider pass.</summary>
+        /// long each waits, and how many rounds at most. Every unresolved target gets a first
+        /// recovery round; later rounds continue when new hosts are found.</summary>
         internal const int ConvergeWidth = 16;
         internal const int ConvergePingTimeoutMs = 2000;
         internal const int MaxConvergeRounds = 3;
@@ -102,24 +98,19 @@ namespace KillerScan.Engine
         /// "first wave 97, second pass +12, ARP sweep +3, extra rounds +9 in 2".</summary>
         public string DiscoverySummary { get; private set; } = string.Empty;
 
-        /// <summary>The evidence behind DiscoverySummary: the neighbor cache size before and after
-        /// discovery, Windows' per-interface cache limit, and how long each pass took. A switch that
-        /// drops bursts and a cache that evicts entries past its limit lose hosts the same way, and
-        /// these numbers are what tell them apart.</summary>
+        /// <summary>Discovery timings and neighbor cache measurements for diagnostic reports.
+        /// These observations alone do not establish why a target was missed.</summary>
         public string DiscoveryDetail { get; private set; } = string.Empty;
 
         /// <summary>Reads Windows' neighbor cache limit, or null when it cannot be read. Replaced in tests.</summary>
         internal static Func<int?> NeighborCacheLimitReader = () =>
+#if NET
+            OperatingSystem.IsWindows() &&
+#endif
             NetworkPlatform.Current is WindowsNetworkPlatform ? WindowsNetworkPlatform.ReadNeighborCacheLimit() : null;
 
-        /// <summary>How many pings each liveness pass keeps in flight. Switches rate-limit
-        /// broadcast storms, so a 200-wide first wave on a cold cache was 200 ARP requests in one
-        /// burst, and on a /24 with 160 live hosts it lost answers: one customer's scan found 56
-        /// devices from a cleared cache, and even with a paced second pass the phones and small
-        /// switches whose first ARP was dropped stayed missing, because Windows had filed them
-        /// as failed neighbors. Measured here, the 200-wide wave also missed a host that a
-        /// 16-wide pass found. 64 keeps the switch under its limit; see FirstPingTimeoutMs for
-        /// what it costs a quiet range.</summary>
+        /// <summary>The maximum concurrent hosts in either initial liveness pass.
+        /// This bounds pending work, not packets per second or a switch's storm threshold.</summary>
         internal const int PacedPassWidth = 64;
 
         // Common ports to probe for device type detection
@@ -499,22 +490,28 @@ namespace KillerScan.Engine
             int foundBySweep = discoveredHosts.Count - foundByFirstWave - foundBySecondPass;
             Lap();
 
-            // Extra rounds, until a pass adds nothing. A pass that still finds hosts says the network
-            // is still hiding some: one customer's /24 gave 141, 83, 97 and 119 devices on
-            // consecutive runs, and the hosts it missed answered when asked again later. So while
-            // the last pass added a host, every silent address is asked again, ConvergeWidth at a
-            // time with a ConvergePingTimeoutMs wait, up to MaxConvergeRounds times and within
-            // ConvergeBudget in total. Progress moves through 30 to 40 as the rounds go. A network
-            // whose second pass and sweep added nothing, which is every quiet one, pays for none.
+            // Every silent target gets a recovery round, even when both earlier passes found
+            // nothing. A missing host must not depend on another host unlocking its retry.
+            // Further rounds continue while they add hosts, within the shared time budget.
+            var sharedArpHosts = new HashSet<string>(discoveredHosts
+                .Where(host => host.Value.Mac.Length > 0)
+                .GroupBy(host => host.Value.Mac)
+                .Where(group => group.Count() > MaxIpsPerMac)
+                .SelectMany(group => group.Select(host => host.Key)));
+            var confirmedArpHosts = new System.Collections.Concurrent.ConcurrentDictionary<string, byte>();
             int foundByRounds = 0, rounds = 0;
-            bool lastPassAdded = foundBySecondPass + foundBySweep > 0, outOfTime = false;
+            bool lastPassAdded = true, outOfTime = false;
             var roundClock = Stopwatch.StartNew();
             while (lastPassAdded && !outOfTime && rounds < MaxConvergeRounds && (options.Icmp || options.TcpLiveness))
             {
-                var still = addresses.Where(a => !discoveredHosts.ContainsKey(a.ToString())).Take(SecondPassLimit).ToList();
+                // An ARP candidate that will fail the shared-MAC filter still needs an
+                // independent liveness attempt; treating it as finished would skip recovery.
+                var still = addresses.Where(a => !discoveredHosts.ContainsKey(a.ToString()) ||
+                    (sweptOnly.Contains(a.ToString()) && sharedArpHosts.Contains(a.ToString()) &&
+                        !confirmedArpHosts.ContainsKey(a.ToString()))).Take(SecondPassLimit).ToList();
                 if (still.Count == 0) break;
                 rounds++;
-                int countBefore = discoveredHosts.Count, asked = 0;
+                int countBefore = discoveredHosts.Count, confirmationsBefore = confirmedArpHosts.Count, asked = 0;
                 int roundBase = 30 + (rounds - 1) * 10 / MaxConvergeRounds;
                 var narrow = new SemaphoreSlim(ConvergeWidth);
                 await Task.WhenAll(still.Select(async addr =>
@@ -524,7 +521,10 @@ namespace KillerScan.Engine
                     {
                         if (roundClock.Elapsed >= ConvergeBudget) { outOfTime = true; return; }
                         if (await AwaitWithCancellation(AliveAsync(addr, ConvergePingTimeoutMs), ct))
+                        {
                             discoveredHosts.TryAdd(addr.ToString(), (addr, ""));
+                            if (sweptOnly.Contains(addr.ToString())) confirmedArpHosts.TryAdd(addr.ToString(), 0);
+                        }
                     }
                     catch (OperationCanceledException) { throw; }
                     catch { }
@@ -544,10 +544,21 @@ namespace KillerScan.Engine
                 }
                 int added = discoveredHosts.Count - countBefore;
                 foundByRounds += added;
-                lastPassAdded = added > 0;
+                lastPassAdded = added > 0 || confirmedArpHosts.Count > confirmationsBefore;
             }
-            DiscoverySummary = $"first wave {foundByFirstWave}, second pass +{foundBySecondPass}, ARP sweep +{foundBySweep}, extra rounds +{foundByRounds} in {rounds}"
-                + (outOfTime ? " (time budget reached)" : "");
+            // A multicast reply is discovery evidence, not just a name for an already-found
+            // host. Merge it before MAC resolution and before freezing the probe list.
+            try { _mdns = await AwaitWithCancellation(mdnsTask, ct); }
+            catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+            catch { }
+            try { _ssdp = await AwaitWithCancellation(ssdpTask, ct); }
+            catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+            catch { }
+            var multicastHosts = new HashSet<string>(_mdns.Keys.Concat(_ssdp.Keys).Where(addressSet.Contains));
+            int foundByMulticast = 0;
+            foreach (string ip in multicastHosts)
+                if (discoveredHosts.TryAdd(ip, (IPAddress.Parse(ip), ""))) foundByMulticast++;
+
             Lap();
             int? cacheLimit = await limitTask;
             string cache = options.NeighborCache
@@ -583,6 +594,7 @@ namespace KillerScan.Engine
                 .GroupBy(h => h.Mac)
                 .Where(g => g.Count() > MaxIpsPerMac)
                 .Select(g => g.Key));
+            int filteredArpHosts = 0;
             if (bogusMacs.Count > 0)
             {
                 foreach (var ip in discoveredHosts.Keys.ToList())
@@ -591,12 +603,18 @@ namespace KillerScan.Engine
                     // The gateway is the one host that really owns that MAC: off-link hosts
                     // resolve to it, so it keeps its own and the rest lose the borrowed copy.
                     if (string.IsNullOrEmpty(hMac) || !bogusMacs.Contains(hMac) || ip == GatewayIp) continue;
-                    // A host the ARP sweep added had no other evidence than that shared answer
-                    // (a proxy-ARP router or a TAP adapter answering for every address): not a device.
-                    if (sweptOnly.Contains(ip)) discoveredHosts.TryRemove(ip, out _);
+                    // Suppress an ARP-only proxy answer, but retain a host that independently
+                    // answered a recovery probe or multicast discovery. Discard its borrowed MAC.
+                    if (sweptOnly.Contains(ip) && !multicastHosts.Contains(ip) && !confirmedArpHosts.ContainsKey(ip))
+                    {
+                        if (discoveredHosts.TryRemove(ip, out _)) filteredArpHosts++;
+                    }
                     else discoveredHosts[ip] = (hAddr, "");
                 }
             }
+
+            DiscoverySummary = $"first wave {foundByFirstWave}, second pass +{foundBySecondPass}, ARP sweep +{foundBySweep}, extra rounds +{foundByRounds} in {rounds}, multicast +{foundByMulticast}, ARP confirmed {confirmedArpHosts.Count}, filtered -{filteredArpHosts}"
+                + (outOfTime ? " (time budget reached)" : "");
 
             // Phase 2: Probe discovered hosts for details (parallel, throttled)
             var sortedHosts = discoveredHosts.Values
@@ -610,10 +628,6 @@ namespace KillerScan.Engine
                 .ToList();
             completed = 0;
             total = sortedHosts.Count;
-
-            // Collect the mDNS/SSDP results before probing (best-effort; empty maps on failure).
-            try { _mdns = await mdnsTask; } catch { }
-            try { _ssdp = await ssdpTask; } catch { }
 
             if (fullScan)
             {

@@ -217,14 +217,8 @@ internal static class ArpSweepTests
 
     private static async Task NoPassEverBurstsPastThePacedWidth()
     {
-        // A customer's /24 with about 160 live hosts lost the same 17 devices on every scan, all
-        // of which answered a lone ping in under a millisecond: the 200-wide first wave was 200
-        // ARP requests in one burst, and the switch's storm control dropped a slice of them. A
-        // paced second pass got most of them back, but the phones and small switches whose first
-        // ARP was dropped stayed missing, because Windows had filed them as failed neighbors
-        // after the burst. So the first wave itself is paced. This network drops every request
-        // issued while more than 64 are in flight, and a host whose request was dropped never
-        // answers again (the failed-neighbor state): every host has to be found first time.
+        // Synthetic overload boundary: a target stops answering if probed with more than
+        // 64 requests in flight. This verifies concurrency, not a real switch's packet rate.
         int inFlight = 0, peak = 0, shortestTimeout = int.MaxValue;
         var dropped = new System.Collections.Concurrent.ConcurrentDictionary<string, bool>();
         var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
@@ -257,7 +251,8 @@ internal static class ArpSweepTests
             var missing = expected.Where(ip => found.All(d => d.IpAddress != ip)).ToList();
             Require(missing.Count == 0, $"Every live host is found by the first wave; missing {missing.Count}: {string.Join(", ", missing.Take(8))}");
             Require(expected.All(ip => pings[ip] == 1), "A host found in the first wave is not pinged again.");
-            Require(pings.Values.All(count => count <= 2), "A quiet network gets no extra round: the second pass added nothing.");
+            Require(pings.Where(pair => !expected.Contains(pair.Key)).All(pair => pair.Value == 3),
+                "Silent hosts get one recovery round, then stop when that round adds nothing.");
         }
         finally { ScanSource.PingOverride = null; }
     }
@@ -455,9 +450,14 @@ internal static class ArpSweepTests
             NetworkScanner.NeighborCacheLimitReader = () => null;
             await Quick("192.0.2.1-10", new ScanOptions().Without("tcp-liveness"), scanner);
             Require(scanner.DiscoveryDetail.Contains("limit unknown"), "An unreadable limit is reported as unknown: " + scanner.DiscoveryDetail);
-            Require(WindowsNetworkPlatform.ParseNeighborCacheLimit("Default Hop Limit                   : 128 hops\r\nNeighbor Cache Limit                : 256 entries per interface\r\n") == 256
-                && WindowsNetworkPlatform.ParseNeighborCacheLimit("Limite du cache : 256") == null,
-                "The limit is read from netsh's English output and is unknown otherwise.");
+#if NET
+            if (OperatingSystem.IsWindows())
+#endif
+            {
+                Require(WindowsNetworkPlatform.ParseNeighborCacheLimit("Default Hop Limit                   : 128 hops\r\nNeighbor Cache Limit                : 256 entries per interface\r\n") == 256
+                    && WindowsNetworkPlatform.ParseNeighborCacheLimit("Limite du cache : 256") == null,
+                    "The limit is read from netsh's English output and is unknown otherwise.");
+            }
         }
         finally { NetworkScanner.NeighborCacheLimitReader = original; }
     }
