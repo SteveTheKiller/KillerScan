@@ -253,8 +253,8 @@ internal static class ArpSweepTests
             var missing = expected.Where(ip => found.All(d => d.IpAddress != ip)).ToList();
             Require(missing.Count == 0, $"Every live host is found by the first wave; missing {missing.Count}: {string.Join(", ", missing.Take(8))}");
             Require(expected.All(ip => pings[ip] == 1), "A host found in the first wave is not pinged again.");
-            Require(pings.Where(pair => !expected.Contains(pair.Key)).All(pair => pair.Value == 3),
-                "Silent hosts get one recovery round, then stop when that round adds nothing.");
+            Require(pings.Where(pair => !expected.Contains(pair.Key)).All(pair => pair.Value == 2),
+                "On a link that answers the first wave, silent hosts get the second pass and no extra rounds.");
         }
         finally { ScanSource.PingOverride = null; }
     }

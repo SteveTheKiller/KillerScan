@@ -519,7 +519,11 @@ namespace KillerScan.Engine
             int roundCap = lossyLink ? LossyMaxConvergeRounds : MaxConvergeRounds;
             TimeSpan budget = lossyLink ? LossyConvergeBudget : ConvergeBudget;
             var roundClock = Stopwatch.StartNew();
-            while (lastPassAdded && !outOfTime && rounds < roundCap && (options.Icmp || options.TcpLiveness))
+            // A healthy link answers the first wave; when neither the second pass nor the ARP sweep
+            // recovered anything, extra rounds only add dead time before the list fills. A scan that
+            // has heard nothing at all still gets them, for a lone phone that answers late.
+            bool needRounds = recovered > 0 || foundByFirstWave == 0;
+            while (needRounds && lastPassAdded && !outOfTime && rounds < roundCap && (options.Icmp || options.TcpLiveness))
             {
                 // An ARP candidate that will fail the shared-MAC filter still needs an
                 // independent liveness attempt; treating it as finished would skip recovery.
