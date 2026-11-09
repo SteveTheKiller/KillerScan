@@ -388,7 +388,13 @@ namespace KillerScan.Engine
                 {
                     string ip = addr.ToString();
                     string mac = discoveredHosts.TryGetValue(ip, out var known) ? known.Mac : string.Empty;
-                    if (options.Arp && string.IsNullOrEmpty(mac)) mac = await ResolveMacAsync(addr, ct);
+                    if (options.Arp && string.IsNullOrEmpty(mac))
+                    {
+                        mac = await ResolveMacAsync(addr, ct);
+                        // Shared with the MAC pass and the shared-MAC filter, so neither asks again
+                        // nor judges this host without it.
+                        if (mac.Length > 0) discoveredHosts[ip] = (addr, mac);
+                    }
                     var device = await ProbeHostAsync(addr, mac, ct, options);
                     ct.ThrowIfCancellationRequested();
                     ReportDeviceFound(device);
@@ -551,9 +557,10 @@ namespace KillerScan.Engine
             int foundBySweep = discoveredHosts.Count - foundByFirstWave - foundBySecondPass;
             Lap();
 
-            // Every silent target gets a recovery round, even when both earlier passes found
-            // nothing. A missing host must not depend on another host unlocking its retry.
-            // Further rounds continue while they add hosts, within the shared time budget.
+            // Extra recovery rounds run when the second pass or ARP sweep had to recover hosts, or
+            // when nothing has answered at all; every silent target has already had the second
+            // pass. Rounds continue while they add hosts, within the time budget, which is checked
+            // as each ask starts, so asks already in flight may run one ping deadline past it.
             var sharedArpHosts = new HashSet<string>(discoveredHosts
                 .Where(host => host.Value.Mac.Length > 0)
                 .GroupBy(host => host.Value.Mac)
@@ -713,12 +720,17 @@ namespace KillerScan.Engine
                     if (earlyProbes.TryGetValue(entry.Addr.ToString(), out var early))
                     {
                         var probed = await AwaitWithCancellation(early, ct);
-                        // The shared-MAC filter above can blank a MAC this probe already used.
-                        if (string.IsNullOrEmpty(entry.Mac) && !string.IsNullOrEmpty(probed.MacAddress))
+                        // This probe ran before the shared-MAC filter: drop a MAC the filter ruled
+                        // borrowed, or take one only the later resolution found. Finish again so
+                        // the completion hook (a Location's device record) sees the correction.
+                        string ip = entry.Addr.ToString();
+                        bool borrowed = probed.MacAddress.Length > 0 && bogusMacs.Contains(probed.MacAddress) && ip != GatewayIp;
+                        bool learned = probed.MacAddress.Length == 0 && entry.Mac.Length > 0;
+                        if (borrowed || learned)
                         {
-                            probed.MacAddress = string.Empty;
-                            probed.Vendor = string.Empty;
-                            Assess(probed);
+                            probed.MacAddress = borrowed ? string.Empty : entry.Mac;
+                            probed.Vendor = borrowed ? string.Empty : ResolveVendor(entry.Mac);
+                            Finish(probed);
                             ReportDeviceFound(probed);
                         }
                         int doneEarly = Interlocked.Increment(ref completed);

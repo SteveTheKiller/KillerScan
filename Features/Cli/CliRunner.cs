@@ -303,21 +303,27 @@ namespace KillerScan.Features.Cli
             if (IsHelp(command)) { @out.WriteLine(HelpText()); return true; }
             if (IsVersion(command)) { @out.WriteLine(AppInfo.Version); return true; }
 
+            // Disposed after the catch below, so an error that escapes a command still reaches the log.
+            LogWriter? log = null;
             try
             {
                 var (positionals, options, parseError) = ParseArgs(args, command);
-                LogWriter? log = null;
                 // Read straight from args too, so a usage error still lands in the log.
                 int logAt = Array.FindLastIndex(args, a => Eq(a, "/log") || Eq(a, "--log"));
                 string? logPath = Value(options, "/log", "--log")
                     ?? (logAt >= 0 && logAt + 1 < args.Length ? args[logAt + 1] : null);
                 options.Remove("/log"); options.Remove("--log");
+                // "/log /json" names no file: the next option is not a path.
+                if (logPath != null && (logPath.StartsWith("/", StringComparison.Ordinal) || logPath.StartsWith("--", StringComparison.Ordinal)))
+                {
+                    parseError ??= "/log needs a file path.";
+                    logPath = null;
+                }
                 if (logPath != null)
                 {
                     try { log = new LogWriter(err, logPath); err = log; }
                     catch (Exception ex) { parseError ??= "cannot write the log " + logPath + ": " + Flatten(ex.Message); }
                 }
-                using var logScope = log;
                 if (parseError != null) { err.WriteLine(PaintErr("Error: " + parseError, AnsiBad)); exitCode = 2; }
                 else if (Eq(command, "/network") || Eq(command, "--network"))
                     exitCode = RunNetwork(positionals, options, @out, err);
@@ -340,6 +346,7 @@ namespace KillerScan.Features.Cli
                         probe: Eq(command, "/probe") || Eq(command, "--probe"));
             }
             catch (Exception ex) { err.WriteLine(PaintErr("Error: " + Flatten(ex.Message), AnsiBad)); exitCode = 1; }
+            finally { log?.Dispose(); }
             return true;
         }
 
@@ -1102,6 +1109,10 @@ namespace KillerScan.Features.Cli
             internal TextWriter Console => _console;
 
             public override void Write(char value) => Write(value.ToString());
+
+            // A buffer arrives whole, so the spinner and ANSI filters see the complete text
+            // instead of the base class's one-character-at-a-time fallback.
+            public override void Write(char[] buffer, int index, int count) => Write(new string(buffer, index, count));
 
             public override void Write(string? value)
             {

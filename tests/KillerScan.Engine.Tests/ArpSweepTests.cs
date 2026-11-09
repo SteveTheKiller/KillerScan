@@ -41,6 +41,7 @@ internal static class ArpSweepTests
             await TheExtraRoundsStopAtTheirTimeBudget();
             await ALossyLinkKeepsRecoveringPastTheNormalBudget();
             await ALossyLinkAsksArpInEveryRound();
+            await AnEarlyProbeKeepsTheMacItResolved();
             await TheDiscoveryDetailReportsTheCacheAndTimings();
             await TapMacIsBlankedOnHostsThatAnswerPing();
             await GatewayMacIsBlankedOnOtherHosts();
@@ -630,6 +631,26 @@ internal static class ArpSweepTests
     {
         int seen;
         while (value > (seen = Volatile.Read(ref target)) && Interlocked.CompareExchange(ref target, value, seen) != seen) { }
+    }
+
+    private static async Task AnEarlyProbeKeepsTheMacItResolved()
+    {
+        // A host probed the moment it answers resolves its MAC then. On a lossy link a second
+        // ARP for the same host can go unanswered; that must not strip the MAC it already has.
+        ScanSource.PingOverride = (address, _) => Task.FromResult((address.ToString().EndsWith(".7") || address.ToString().EndsWith(".8"), 64));
+        var asked = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
+        try
+        {
+            NetworkPlatform.Current = new ArpPlatform(_ => "", ip =>
+                asked.AddOrUpdate(ip, 1, (_, n) => n + 1) == 1 && (ip.EndsWith(".7") || ip.EndsWith(".8"))
+                    ? "00-11-22-33-44-0" + ip.Substring(ip.Length - 1) : "");
+            var scanner = new NetworkScanner(new IsolatedDiscovery());
+            var options = new ScanOptions().Without(string.Join(",", ScanOptions.Features)).WithFeature("icmp", true).WithFeature("arp", true);
+            var found = await scanner.ScanSubnetAsync("192.0.2.1-10", CancellationToken.None, options, fullScan: true);
+            Require(found.Count == 2 && found.All(d => d.MacAddress.Length > 0),
+                "Early-probed hosts keep the MAC they resolved: " + string.Join(", ", found.Select(d => d.IpAddress + "=" + d.MacAddress)));
+        }
+        finally { ScanSource.PingOverride = null; }
     }
 
     private sealed class ArpPlatform(Func<string, string> nextHop, Func<string, string> answer,
