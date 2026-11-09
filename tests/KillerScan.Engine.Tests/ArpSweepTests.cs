@@ -40,6 +40,7 @@ internal static class ArpSweepTests
             await TheExtraRoundsReportProgress();
             await TheExtraRoundsStopAtTheirTimeBudget();
             await ALossyLinkKeepsRecoveringPastTheNormalBudget();
+            await ALossyLinkAsksArpInEveryRound();
             await TheDiscoveryDetailReportsTheCacheAndTimings();
             await TapMacIsBlankedOnHostsThatAnswerPing();
             await GatewayMacIsBlankedOnOtherHosts();
@@ -456,6 +457,40 @@ internal static class ArpSweepTests
             Require(DiscoveredCount(scanner) == 40, "Every host that answers eventually is found: " + scanner.DiscoverySummary);
         }
         finally { ScanSource.PingOverride = null; NetworkScanner.ConvergeBudget = original; }
+    }
+
+    private static async Task ALossyLinkAsksArpInEveryRound()
+    {
+        // On Phil's Realtek each extra round recovered only about three hosts by ping alone,
+        // while an ARP scanner found all of them. On a lossy link every round also asks ARP for
+        // each silent on-link address, so a host gets two independent chances per round.
+        // Here .31-.40 never answer ping, and answer ARP only once the extra rounds have begun
+        // (the first third ping anywhere), which the sweep never reaches.
+        var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
+        int roundsBegan = 0;
+        ScanSource.PingOverride = async (address, _) =>
+        {
+            int last = address.GetAddressBytes()[3];
+            int n = pings.AddOrUpdate(address.ToString(), 1, (_, c) => c + 1);
+            if (n >= 3) Volatile.Write(ref roundsBegan, 1);
+            await Task.Delay(5);
+            return (last <= 20 || (last <= 30 && n >= 2), 64);
+        };
+        var arps = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
+        try
+        {
+            NetworkPlatform.Current = new ArpPlatform(_ => "", ip =>
+            {
+                int last = int.Parse(ip.Split('.')[3]);
+                arps.AddOrUpdate(ip, 1, (_, c) => c + 1);
+                return last > 30 && last <= 40 && Volatile.Read(ref roundsBegan) == 1 ? $"00:11:22:33:44:{last:X2}" : "";
+            });
+            var scanner = new NetworkScanner(new IsolatedDiscovery());
+            await Quick("192.0.2.1-60", new ScanOptions().Without("tcp-liveness"), scanner);
+            Require(scanner.DiscoverySummary.Contains("lossy link"), "The link counts as lossy: " + scanner.DiscoverySummary);
+            Require(DiscoveredCount(scanner) == 40, "Hosts that only answer a later ARP request are found: " + scanner.DiscoverySummary + "; ARP asks for .35: " + (arps.TryGetValue("192.0.2.35", out int a35) ? a35 : 0) + ", pings for .35: " + (pings.TryGetValue("192.0.2.35", out int p35) ? p35 : 0));
+        }
+        finally { ScanSource.PingOverride = null; }
     }
 
     private static int DiscoveredCount(NetworkScanner scanner)

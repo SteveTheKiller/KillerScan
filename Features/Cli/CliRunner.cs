@@ -790,7 +790,7 @@ namespace KillerScan.Features.Cli
                 err.WriteLine($"{devices.Count} matching device{(devices.Count == 1 ? "" : "s")}.");
                 err.WriteLine(PaintErr("KillerScan complete.", AnsiGood));
                 // Interactive consoles only.
-                if (_errAnsi) err.WriteLine(PaintErr("Press ENTER to exit", AnsiDim));
+                if (_errAnsi) (err is LogWriter log ? log.Console : err).WriteLine(PaintErr("Press ENTER to exit", AnsiDim));
             }
             return devices.Count == 0 && failEmpty ? 3 : 0;
         }
@@ -1097,6 +1097,9 @@ namespace KillerScan.Features.Cli
             }
 
             public override Encoding Encoding => _file.Encoding;
+
+            /// <summary>The console alone, for prompts that mean nothing in a log file.</summary>
+            internal TextWriter Console => _console;
 
             public override void Write(char value) => Write(value.ToString());
 

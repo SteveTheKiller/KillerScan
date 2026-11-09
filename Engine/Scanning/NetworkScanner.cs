@@ -101,6 +101,10 @@ namespace KillerScan.Engine
         /// still add hosts, up to these limits. A healthy network never reaches them.</summary>
         internal const int LossyMaxConvergeRounds = 8;
         internal const int LossyMinRecovered = 3;
+
+        /// <summary>Pings in flight per extra round on a lossy link. Field data showed the loss is
+        /// spread over every reply rather than in bursts, so a narrower round only costs time.</summary>
+        internal const int LossyConvergeWidth = 32;
         internal static TimeSpan LossyConvergeBudget = TimeSpan.FromSeconds(120);
 
         /// <summary>What each discovery phase of the last scan found, for the CLI and bug reports:
@@ -526,18 +530,28 @@ namespace KillerScan.Engine
                 rounds++;
                 int countBefore = discoveredHosts.Count, confirmationsBefore = confirmedArpHosts.Count, asked = 0;
                 int roundBase = 30 + (rounds - 1) * 10 / roundCap;
-                var narrow = new SemaphoreSlim(ConvergeWidth);
+                var narrow = new SemaphoreSlim(lossyLink ? LossyConvergeWidth : ConvergeWidth);
+                // On a lossy link each silent on-link address is also asked by ARP, so a host gets
+                // two independent chances per round instead of one.
+                bool arpToo = lossyLink && options.Arp;
+                var arpAnswered = new System.Collections.Concurrent.ConcurrentBag<string>();
                 await Task.WhenAll(still.Select(async addr =>
                 {
                     await narrow.WaitAsync(ct);
                     try
                     {
                         if (roundClock.Elapsed >= budget) { outOfTime = true; return; }
+                        string ip = addr.ToString();
+                        Task<string> arp = arpToo && onLink.Contains(ip) && !discoveredHosts.ContainsKey(ip)
+                            ? ResolveMacAsync(addr, ArpSweepSlots, ct, dedicated: true) : Task.FromResult("");
                         if (await AwaitWithCancellation(AliveAsync(addr, ConvergePingTimeoutMs), ct))
                         {
-                            discoveredHosts.TryAdd(addr.ToString(), (addr, ""));
-                            if (sweptOnly.Contains(addr.ToString())) confirmedArpHosts.TryAdd(addr.ToString(), 0);
+                            discoveredHosts.TryAdd(ip, (addr, ""));
+                            if (sweptOnly.Contains(ip)) confirmedArpHosts.TryAdd(ip, 0);
                         }
+                        string mac = await arp;
+                        if (!string.IsNullOrEmpty(mac) && discoveredHosts.TryAdd(ip, (addr, mac)))
+                            arpAnswered.Add(ip);
                     }
                     catch (OperationCanceledException) { throw; }
                     catch { }
@@ -549,6 +563,7 @@ namespace KillerScan.Engine
                     }
                 }));
                 ct.ThrowIfCancellationRequested();
+                sweptOnly.UnionWith(arpAnswered);
                 if (options.NeighborCache)
                 {
                     foreach (var entry in await ReadCacheAsync())
