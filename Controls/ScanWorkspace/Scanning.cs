@@ -26,12 +26,35 @@ namespace KillerScan.Controls
                 session.Progress = progress;
                 ScanProgress.Value = progress;
             });
+            // A host is listed the moment it answers, as a bare address; the probed device
+            // replaces that row in place when it arrives.
+            session.Scanner.HostAnswered += ip => Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (_disposed || session.Cts == null || session.Devices.Any(d => d.IpAddress == ip)) return;
+                var row = new NetworkDevice { IpAddress = ip };
+                session.Pending.Add(row);
+                session.Devices.Add(row);
+                RefreshDeviceCount();
+            }));
             session.Scanner.DeviceFound += device => Dispatcher.Invoke(() =>
             {
                 if (_disposed) return;
-                session.Devices.Add(device);
+                int at = -1;
+                for (int i = 0; i < session.Devices.Count; i++)
+                    if (session.Pending.Contains(session.Devices[i]) && session.Devices[i].IpAddress == device.IpAddress) { at = i; break; }
+                if (at >= 0) { session.Pending.Remove(session.Devices[at]); session.Devices[at] = device; }
+                else session.Devices.Add(device);
                 RefreshDeviceCount();
             });
+        }
+
+        /// <summary>Drops the bare rows whose probe never reported, so a finished or stopped scan
+        /// lists only devices the scanner returned.</summary>
+        private void DropPendingRows(ScanSession session)
+        {
+            foreach (var row in session.Pending) session.Devices.Remove(row);
+            session.Pending.Clear();
+            RefreshDeviceCount();
         }
 
         private async void ScanBtn_Click(object sender, RoutedEventArgs e)
@@ -63,6 +86,7 @@ namespace KillerScan.Controls
             _active.Completion = ScanCompletion.Partial;
             _active.Refresh = null;
             _active.Devices.Clear();
+            _active.Pending.Clear();
             _topologyPositions.Clear();
             var cts = new CancellationTokenSource();
             _active.Cts = cts;
@@ -87,6 +111,8 @@ namespace KillerScan.Controls
             try
             {
                 await _active.Scanner.ScanSubnetAsync(_active.SubnetText, cts.Token, options, fullScan: true);
+                // Before anything records the run, so a bare row never reaches history.
+                if (!_disposed) DropPendingRows(_active);
                 completed = !cts.IsCancellationRequested && !_disposed;
                 if (completed)
                 {
@@ -113,6 +139,7 @@ namespace KillerScan.Controls
             {
                 _active.Cts = null;
                 cts.Dispose();
+                if (!_disposed) DropPendingRows(_active);
                 bool deep = completed && runDeep && _active.Devices.Count > 0 && !_disposed;
                 _scanCompleted = completed;
                 // A Location deleted elsewhere while this scan ran is left now, however it ended;

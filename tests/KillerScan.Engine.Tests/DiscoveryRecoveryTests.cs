@@ -9,6 +9,7 @@ internal static class DiscoveryRecoveryTests
         try
         {
             NetworkPlatform.Current = new EmptyPlatform();
+            await AnAnsweringHostIsAnnouncedBeforeProbing();
             await AHostCanRecoverWithoutAnotherLateResponder();
             await MulticastRespondersAreDiscovered();
             await MulticastEvidenceSurvivesSharedMac();
@@ -23,6 +24,23 @@ internal static class DiscoveryRecoveryTests
     }
 
     private static ScanOptions None() => new ScanOptions().Without(string.Join(",", ScanOptions.Features));
+
+    private static async Task AnAnsweringHostIsAnnouncedBeforeProbing()
+    {
+        // The window lists a host the moment it answers; it must not wait for discovery to end.
+        ScanSource.PingOverride = (address, _) => Task.FromResult((address.ToString().EndsWith(".5") || address.ToString().EndsWith(".9"), 64));
+        var scanner = new NetworkScanner(new IsolatedDiscovery());
+        var announced = new System.Collections.Concurrent.ConcurrentQueue<string>();
+        bool probingStarted = false; int announcedBeforeProbing = 0;
+        scanner.HostAnswered += ip => { announced.Enqueue(ip); if (!probingStarted) Interlocked.Increment(ref announcedBeforeProbing); };
+        scanner.StatusChanged += status => { if (status.Stage != ScanStage.Discovering) probingStarted = true; };
+        var devices = await scanner.ScanSubnetAsync("192.0.2.1-12", CancellationToken.None,
+            None().WithFeature("icmp", true), fullScan: false);
+        Require(announced.OrderBy(ip => ip).SequenceEqual(new[] { "192.0.2.5", "192.0.2.9" }),
+            "Each answering host is announced once: " + string.Join(", ", announced));
+        Require(announcedBeforeProbing == 2, $"Both hosts are announced during discovery ({announcedBeforeProbing}).");
+        Require(devices.Count == 2, "The announced hosts are the devices returned; got " + devices.Count);
+    }
 
     private static async Task AHostCanRecoverWithoutAnotherLateResponder()
     {

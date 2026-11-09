@@ -8,6 +8,9 @@ namespace KillerScan.Models
     internal sealed class ScanSession(string subnet, NetworkScanner? scanner = null)
     {
         public ObservableCollection<NetworkDevice> Devices { get; } = [];
+
+        /// <summary>Bare rows listed when a host answered, still waiting for the probed device.</summary>
+        public HashSet<NetworkDevice> Pending { get; } = [];
         public NetworkScanner Scanner { get; } = scanner ?? new();
         public CancellationTokenSource? Cts { get; set; }
 

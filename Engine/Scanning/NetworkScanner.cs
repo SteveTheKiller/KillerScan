@@ -183,6 +183,10 @@ namespace KillerScan.Engine
         public event Action<ScanStatus>? StatusChanged;
         public event Action<int>? ProgressChanged;
         public event Action<NetworkDevice>? DeviceFound;
+
+        /// <summary>Raised the moment an address answers a liveness ping, before any probing, so a
+        /// window can list it right away. <see cref="DeviceFound"/> later carries the full device.</summary>
+        public event Action<string>? HostAnswered;
         protected void ReportDeviceFound(NetworkDevice device) => DeviceFound?.Invoke(device);
 
         /// <summary>
@@ -327,6 +331,9 @@ namespace KillerScan.Engine
             // Phase 1: Fast ping sweep + ARP cache
             StatusChanged?.Invoke(new ScanStatus(ScanStage.Discovering, addresses.Count, label));
             var discoveredHosts = new System.Collections.Concurrent.ConcurrentDictionary<string, (IPAddress Addr, string Mac)>();
+            // Only a ping answer is announced early: a cached or ARP-only entry can still be filtered.
+            var announced = new System.Collections.Concurrent.ConcurrentDictionary<string, byte>();
+            void Announce(string ip) { if (announced.TryAdd(ip, 0)) HostAnswered?.Invoke(ip); }
 
             // Grab existing ARP cache first (catches IoT devices). It starts arp.exe, so it runs on the
             // pool: this is still the synchronous start of the scan, on the caller's UI thread.
@@ -377,7 +384,7 @@ namespace KillerScan.Engine
                 {
                     // Pings cannot be canceled; a canceled scan stops waiting for them instead.
                     if (await AwaitWithCancellation(AliveAsync(addr, FirstPingTimeoutMs), ct))
-                        discoveredHosts.TryAdd(addr.ToString(), (addr, ""));
+                        { discoveredHosts.TryAdd(addr.ToString(), (addr, "")); Announce(addr.ToString()); }
                 }
                 catch (OperationCanceledException) { throw; }
                 catch { }
@@ -432,7 +439,7 @@ namespace KillerScan.Engine
                     {
                         // Pings cannot be canceled; a canceled scan stops waiting for them instead.
                         if (await AwaitWithCancellation(AliveAsync(addr, SecondPingTimeoutMs), ct))
-                            discoveredHosts.TryAdd(addr.ToString(), (addr, ""));
+                            { discoveredHosts.TryAdd(addr.ToString(), (addr, "")); Announce(addr.ToString()); }
                     }
                     catch (OperationCanceledException) { throw; }
                     catch { }
@@ -550,7 +557,7 @@ namespace KillerScan.Engine
                             ? ResolveMacAsync(addr, ArpSweepSlots, ct, dedicated: true) : Task.FromResult("");
                         if (await AwaitWithCancellation(AliveAsync(addr, ConvergePingTimeoutMs), ct))
                         {
-                            discoveredHosts.TryAdd(ip, (addr, ""));
+                            discoveredHosts.TryAdd(ip, (addr, "")); Announce(ip);
                             if (sweptOnly.Contains(ip)) confirmedArpHosts.TryAdd(ip, 0);
                         }
                         string mac = await arp;
