@@ -121,6 +121,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--location-workspace" })) { HistoryUiTests.Isolated = LocationWorkspaceTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--access-ui" })) { HistoryUiTests.Isolated = AccessUiTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--retro-tabs" })) { RetroTabsTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--focus-ring-styles" })) { KeyboardFocusRingStyleTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--theme-dump" })) { HistoryUiTests.Isolated = ThemeDumpTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--recognition-ui" })) { HistoryUiTests.Isolated = RecognitionUiTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--report-sort" })) { await ReportSortTests.Run(); return 0; }
