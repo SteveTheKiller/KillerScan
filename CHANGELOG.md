@@ -25,7 +25,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Added
 
 - The command line prints a second line after `Discovery:`, on stderr: the neighbor cache size before and after discovery, Windows' per-interface neighbor cache limit, and how long each pass took. For example: `Discovery detail: neighbor cache 35 entries before, 34 after, limit 256 per interface; first wave 6.4 s, second pass 4.0 s, ARP sweep 5.1 s, extra rounds 0.0 s.`
-- `/log <path>` writes the command line's status, progress and error lines to a file as well as the console. PowerShell starts KillerScan without waiting and never passes it a `2>` redirect, so `/log` is the way to capture those lines there. For example: `.\KillerScan.exe /scan /quick /log discovery.txt`. The interactive `Press ENTER to exit` prompt stays on the console and out of the file.
+- `/log <path>` writes the command line's status, progress and error lines to a file as well as the console. PowerShell starts KillerScan without waiting and never passes it a `2>` redirect, so `/log` is the way to capture those lines there. For example: `.\KillerScan.exe /scan /quick /log discovery.txt`. The interactive `Press ENTER to exit` prompt stays on the console and out of the file, and `/log` followed by another option instead of a path is refused with a usage error.
 
 ## [1.9.4] - 2026-11-06
 
