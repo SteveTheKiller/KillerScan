@@ -18,6 +18,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - A command-line scan that stalls before it starts no longer hangs forever. If a startup step takes longer than a minute, the run ends with exit code 3 and a message on stderr that names the step.
 
 ### Changed
+- Refreshed the bundled MAC vendor database to 58,752 assignments.
 
 - Single-line text fields are as tall as the dropdowns beside them, so form rows line up instead of the text boxes standing oversized.
 
