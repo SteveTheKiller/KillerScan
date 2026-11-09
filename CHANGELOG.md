@@ -10,7 +10,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 
-- Silent targets get a recovery round even when earlier passes found nothing. Later rounds continue while adding devices, up to three rounds and a 30-second budget, with progress and cancellation throughout. The second pass also covers on-link addresses.
+- Scans fill the device list as soon as hosts answer again. Each host appears the moment it answers a ping and is probed right away, instead of waiting for every discovery pass to finish, so the first device shows up within about 3 seconds and a home network is fully listed in about 11. The recovery passes keep looking for late hosts in the background.
+- Silent targets get a recovery round when the second pass or ARP sweep had to recover hosts, or when nothing has answered at all. Later rounds continue while adding devices, up to three rounds and a 30-second budget, with progress and cancellation throughout. The second pass also covers on-link addresses.
 - mDNS and SSDP responses can discover devices independently of ping and ARP. Shared-MAC filtering retains hosts confirmed by multicast or a recovery probe, while discarding their borrowed MAC addresses.
 - The command line reports discovery counts, multicast additions, ARP confirmations, filtered proxy answers, and recovery budget exhaustion on stderr.
 - A network adapter that drops replies no longer leaves hosts behind. When the second pass and ARP sweep recover more than a tenth of what the first wave found, the extra rounds keep going while they still find hosts, up to eight rounds and two minutes, and the discovery summary says `lossy link, longer recovery`. On such a link each round also sends an ARP request to every silent address on the local network alongside the ping, so a host gets two chances per round, and keeps 32 pings in flight instead of 16. Healthy networks keep the three-round, 30-second limit.

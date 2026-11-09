@@ -244,17 +244,25 @@ namespace KillerScan.Engine
 
         private void Finish(NetworkDevice device)
         {
+            Assess(device);
+            (Completed ?? DeviceCompleted)?.Invoke(device);
+        }
+
+        private void Assess(NetworkDevice device)
+        {
             // A scan bound to another adapter is on another network: the default adapter's gateway
             // is not its router, so no device there is made Router by that address.
             bool foreign = Binding != null && IPAddress.TryParse(GatewayIp, out var gateway) && !Binding.Contains(gateway);
             device.Recognition = AssessDevice(device, ManualTypes ?? ManualTypeLookup, foreign ? string.Empty : GatewayIp, foreign ? string.Empty : DnsIp);
             device.DeviceType = device.Recognition.Type;
-            (Completed ?? DeviceCompleted)?.Invoke(device);
         }
 
         // Network-wide service discovery results (collected once per scan, keyed by IP).
         private Dictionary<string, MulticastDiscovery.MdnsInfo> _mdns = [];
         private Dictionary<string, string> _ssdp = [];
+        // Completes once this scan's multicast replies are in _mdns and _ssdp. A probe that starts
+        // during discovery waits on it before it reads them.
+        private Task _multicastReady = Task.CompletedTask;
 
         /// <summary>
         /// Parse a CIDR subnet string into a list of IP addresses.
@@ -331,9 +339,6 @@ namespace KillerScan.Engine
             // Phase 1: Fast ping sweep + ARP cache
             StatusChanged?.Invoke(new ScanStatus(ScanStage.Discovering, addresses.Count, label));
             var discoveredHosts = new System.Collections.Concurrent.ConcurrentDictionary<string, (IPAddress Addr, string Mac)>();
-            // Only a ping answer is announced early: a cached or ARP-only entry can still be filtered.
-            var announced = new System.Collections.Concurrent.ConcurrentDictionary<string, byte>();
-            void Announce(string ip) { if (announced.TryAdd(ip, 0)) HostAnswered?.Invoke(ip); }
 
             // Grab existing ARP cache first (catches IoT devices). It starts arp.exe, so it runs on the
             // pool: this is still the synchronous start of the scan, on the caller's UI thread.
@@ -364,6 +369,42 @@ namespace KillerScan.Engine
                 : Task.FromResult(new Dictionary<string, MulticastDiscovery.MdnsInfo>());
             var ssdpTask = options.Ssdp ? _discovery.CollectSsdpAsync(ct)
                 : Task.FromResult(new Dictionary<string, string>());
+            _multicastReady = Task.Run(async () =>
+            {
+                try { _mdns = await mdnsTask; } catch { }
+                try { _ssdp = await ssdpTask; } catch { }
+            });
+
+            // A host that answers a ping is announced and, on a full scan, probed right away rather
+            // than after discovery: the list fills while the recovery passes are still running.
+            // Only a ping answer counts; a cached or ARP-only entry can still be filtered below.
+            var announced = new System.Collections.Concurrent.ConcurrentDictionary<string, byte>();
+            var earlyProbes = new System.Collections.Concurrent.ConcurrentDictionary<string, Task<NetworkDevice>>();
+            var probeSemaphore = new SemaphoreSlim(20);
+            async Task<NetworkDevice> ProbeNowAsync(IPAddress addr)
+            {
+                await probeSemaphore.WaitAsync(ct);
+                try
+                {
+                    string ip = addr.ToString();
+                    string mac = discoveredHosts.TryGetValue(ip, out var known) ? known.Mac : string.Empty;
+                    if (options.Arp && string.IsNullOrEmpty(mac)) mac = await ResolveMacAsync(addr, ct);
+                    var device = await ProbeHostAsync(addr, mac, ct, options);
+                    ct.ThrowIfCancellationRequested();
+                    ReportDeviceFound(device);
+                    return device;
+                }
+                finally { probeSemaphore.Release(); }
+            }
+            void Announce(string ip)
+            {
+                if (!announced.TryAdd(ip, 0)) return;
+                HostAnswered?.Invoke(ip);
+                if (!fullScan) return;
+                var probe = ProbeNowAsync(IPAddress.Parse(ip));
+                _ = probe.ObserveFault();
+                earlyProbes[ip] = probe;
+            }
 
             // Liveness wave: ping, then TCP on a few ports for hosts that drop ICMP (Windows Firewall
             // default). ARP cannot reach a host across a router or VPN, so for those this is the
@@ -587,12 +628,7 @@ namespace KillerScan.Engine
             }
             // A multicast reply is discovery evidence, not just a name for an already-found
             // host. Merge it before MAC resolution and before freezing the probe list.
-            try { _mdns = await AwaitWithCancellation(mdnsTask, ct); }
-            catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
-            catch { }
-            try { _ssdp = await AwaitWithCancellation(ssdpTask, ct); }
-            catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
-            catch { }
+            await AwaitWithCancellation(_multicastReady, ct);
             var multicastHosts = new HashSet<string>(_mdns.Keys.Concat(_ssdp.Keys).Where(addressSet.Contains));
             int foundByMulticast = 0;
             foreach (string ip in multicastHosts)
@@ -672,9 +708,23 @@ namespace KillerScan.Engine
             if (fullScan)
             {
                 StatusChanged?.Invoke(new ScanStatus(ScanStage.Probing, total));
-                var probeSemaphore = new SemaphoreSlim(20);
                 var probeTasks = sortedHosts.Select(async entry =>
                 {
+                    if (earlyProbes.TryGetValue(entry.Addr.ToString(), out var early))
+                    {
+                        var probed = await AwaitWithCancellation(early, ct);
+                        // The shared-MAC filter above can blank a MAC this probe already used.
+                        if (string.IsNullOrEmpty(entry.Mac) && !string.IsNullOrEmpty(probed.MacAddress))
+                        {
+                            probed.MacAddress = string.Empty;
+                            probed.Vendor = string.Empty;
+                            Assess(probed);
+                            ReportDeviceFound(probed);
+                        }
+                        int doneEarly = Interlocked.Increment(ref completed);
+                        ProgressChanged?.Invoke(40 + (int)(doneEarly * 60.0 / total));
+                        return probed;
+                    }
                     await probeSemaphore.WaitAsync(ct);
                     try
                     {
@@ -924,6 +974,8 @@ namespace KillerScan.Engine
                 device.Vendor = ResolveVendor(device.MacAddress);
 
             // Attach network-wide discovery results + name fallback (reverse DNS -> mDNS .local name).
+            // A probe started during discovery waits here for the multicast replies.
+            await AwaitWithCancellation(_multicastReady, token);
             if (options.Mdns && _mdns.TryGetValue(device.IpAddress, out var md))
             {
                 device.MdnsServices = DeviceText.Services(md.Services);

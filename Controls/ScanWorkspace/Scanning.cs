@@ -40,8 +40,9 @@ namespace KillerScan.Controls
             {
                 if (_disposed) return;
                 int at = -1;
+                // Replaces the bare row, or a device re-reported after its MAC was cleared.
                 for (int i = 0; i < session.Devices.Count; i++)
-                    if (session.Pending.Contains(session.Devices[i]) && session.Devices[i].IpAddress == device.IpAddress) { at = i; break; }
+                    if (session.Devices[i].IpAddress == device.IpAddress) { at = i; break; }
                 if (at >= 0) { session.Pending.Remove(session.Devices[at]); session.Devices[at] = device; }
                 else session.Devices.Add(device);
                 RefreshDeviceCount();
