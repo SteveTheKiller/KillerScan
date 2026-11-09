@@ -16,7 +16,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The command line reports discovery counts, multicast additions, ARP confirmations, filtered proxy answers, and recovery budget exhaustion on stderr.
 - A network adapter that drops replies no longer leaves hosts behind. When the second pass and ARP sweep recover more than a tenth of what the first wave found, the extra rounds keep going while they still find hosts, up to eight rounds and two minutes, and the discovery summary says `lossy link, longer recovery`. On such a link each round also sends an ARP request to every silent address on the local network alongside the ping, so a host gets two chances per round, and keeps 32 pings in flight instead of 16. Healthy networks keep the three-round, 30-second limit.
 - A command-line scan that stalls before it starts no longer hangs forever. If a startup step takes longer than a minute, the run ends with exit code 3 and a message on stderr that names the step.
-- The sidebar rail buttons and the file picker's folder tree keep their keyboard focus ring after a theme change. It used to disappear from them, so a keyboard user could no longer see which of them had focus.
 
 ### Changed
 
