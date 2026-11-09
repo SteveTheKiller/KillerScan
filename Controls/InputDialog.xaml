@@ -108,7 +108,7 @@
                                  CaretBrush="{DynamicResource PrimaryBrush}"
                                  BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1"
                                  FontFamily="{DynamicResource UiFont}" FontSize="13"
-                                 Padding="6,3" KeyDown="ValueBox_KeyDown"/>
+                                 Padding="6,0" KeyDown="ValueBox_KeyDown"/>
                         <!-- Optional icon choice right after the field (a Location's icon): the
                              button shows the current icon and opens a flyout of the choices. -->
                         <Button x:Name="IconButton" Grid.Column="1" Visibility="Collapsed" Margin="8,0,0,0"

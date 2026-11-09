@@ -100,13 +100,13 @@
                     <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <RadioButton x:Name="TimeMode" Grid.Row="0" GroupName="Retention" Style="{StaticResource ThemeRadio}"
                                  Content="{DynamicResource Str_History_KeepFor}" Checked="Mode_Changed" Margin="0,0,8,6" VerticalAlignment="Center"/>
-                        <TextBox x:Name="DaysBox" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextBox}" Width="70" Padding="9,3" Margin="0,0,8,6"
+                        <TextBox x:Name="DaysBox" Grid.Row="0" Grid.Column="1" Style="{StaticResource DarkTextBox}" Width="70" Padding="9,0" Margin="0,0,8,6"
                                  FontSize="12" Text="30" AutomationProperties.Name="{DynamicResource Str_History_Days}"/>
                         <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource Str_History_Days}" Foreground="{DynamicResource MutedTextBrush}"
                                    VerticalAlignment="Center" Margin="0,0,0,6"/>
                     <RadioButton x:Name="CountMode" Grid.Row="1" GroupName="Retention" Style="{StaticResource ThemeRadio}"
                                  Content="{DynamicResource Str_History_KeepLatest}" Checked="Mode_Changed" Margin="0,0,8,6" VerticalAlignment="Center"/>
-                        <TextBox x:Name="CountBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource DarkTextBox}" Width="70" Padding="9,3" Margin="0,0,8,6"
+                        <TextBox x:Name="CountBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource DarkTextBox}" Width="70" Padding="9,0" Margin="0,0,8,6"
                                  FontSize="12" Text="100" AutomationProperties.Name="{DynamicResource Str_History_Scans}"/>
                         <TextBlock Grid.Row="1" Grid.Column="2" Text="{DynamicResource Str_History_Scans}" Foreground="{DynamicResource MutedTextBrush}"
                                    VerticalAlignment="Center" Margin="0,0,0,6"/>

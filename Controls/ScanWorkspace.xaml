@@ -123,7 +123,7 @@
         <TextBlock x:Name="LocationLabel" MaxWidth="140" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
     </StackPanel>
 </Button>
-<TextBox x:Name="SubnetInput" AutomationProperties.Name="{DynamicResource Str_Lbl_Subnet}" Style="{StaticResource DarkTextBox}" Padding="5,3,9,3" FontSize="12" Width="220" MaxWidth="220" VerticalAlignment="Center" Margin="0,2,8,2"/>
+<TextBox x:Name="SubnetInput" AutomationProperties.Name="{DynamicResource Str_Lbl_Subnet}" Style="{StaticResource DarkTextBox}" Padding="5,0,9,0" FontSize="12" Width="220" MaxWidth="220" VerticalAlignment="Center" Margin="0,2,8,2"/>
 <!-- The app's main action, so its largest button: the family's filled accent PrimaryButton with
      the label in the wordmark's Lacquer, like KillerNotes' + New. -->
 <Button x:Name="ScanBtn" Content="{DynamicResource Str_Btn_Scan}" Style="{StaticResource PrimaryButton}" Click="ScanBtn_Click"
