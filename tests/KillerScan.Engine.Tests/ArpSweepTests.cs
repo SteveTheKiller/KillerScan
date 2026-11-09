@@ -39,6 +39,7 @@ internal static class ArpSweepTests
             await ABusyNetworkIsProbedUntilAPassAddsNothing();
             await TheExtraRoundsReportProgress();
             await TheExtraRoundsStopAtTheirTimeBudget();
+            await ALossyLinkKeepsRecoveringPastTheNormalBudget();
             await TheDiscoveryDetailReportsTheCacheAndTimings();
             await TapMacIsBlankedOnHostsThatAnswerPing();
             await GatewayMacIsBlankedOnOtherHosts();
@@ -427,6 +428,40 @@ internal static class ArpSweepTests
             Require(scanner.DiscoverySummary.EndsWith("(time budget reached)"), "The summary says the budget ran out: " + scanner.DiscoverySummary);
         }
         finally { ScanSource.PingOverride = null; NetworkScanner.ConvergeBudget = original; }
+    }
+
+    private static async Task ALossyLinkKeepsRecoveringPastTheNormalBudget()
+    {
+        // Phil's Realtek: the first wave caught 86 of 152 hosts and every later pass kept finding
+        // more until the 30-second budget cut it off. When the passes after the first wave recover
+        // over a tenth of it, the link is dropping replies, and the rounds must keep going while
+        // they still find hosts instead of stopping at the healthy-network limits.
+        var original = NetworkScanner.ConvergeBudget;
+        NetworkScanner.ConvergeBudget = TimeSpan.FromMilliseconds(400);
+        var pings = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();
+        ScanSource.PingOverride = async (address, _) =>
+        {
+            int last = address.GetAddressBytes()[3];
+            int n = pings.AddOrUpdate(address.ToString(), 1, (_, c) => c + 1);
+            await Task.Delay(5);
+            // .1-.20 answer at once; .21-.40 need between 2 and 7 asks; .41-.60 are dead.
+            return (last <= 20 || (last <= 40 && n >= 2 + last % 6), 64);
+        };
+        try
+        {
+            NetworkPlatform.Current = new ArpPlatform(_ => "", _ => "");
+            var scanner = new NetworkScanner(new IsolatedDiscovery());
+            await Quick("192.0.2.1-60", new ScanOptions().Without("tcp-liveness,arp"), scanner);
+            Require(scanner.DiscoverySummary.Contains("lossy link"), "The summary names the lossy link: " + scanner.DiscoverySummary);
+            Require(DiscoveredCount(scanner) == 40, "Every host that answers eventually is found: " + scanner.DiscoverySummary);
+        }
+        finally { ScanSource.PingOverride = null; NetworkScanner.ConvergeBudget = original; }
+    }
+
+    private static int DiscoveredCount(NetworkScanner scanner)
+    {
+        var m = System.Text.RegularExpressions.Regex.Matches(scanner.DiscoverySummary, @"(?:first wave |\+)(\d+)");
+        return m.Cast<System.Text.RegularExpressions.Match>().Sum(x => int.Parse(x.Groups[1].Value));
     }
 
     private static async Task TheDiscoveryDetailReportsTheCacheAndTimings()

@@ -13,6 +13,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Silent targets get a recovery round even when earlier passes found nothing. Later rounds continue while adding devices, up to three rounds and a 30-second budget, with progress and cancellation throughout. The second pass also covers on-link addresses.
 - mDNS and SSDP responses can discover devices independently of ping and ARP. Shared-MAC filtering retains hosts confirmed by multicast or a recovery probe, while discarding their borrowed MAC addresses.
 - The command line reports discovery counts, multicast additions, ARP confirmations, filtered proxy answers, and recovery budget exhaustion on stderr.
+- A network adapter that drops replies no longer leaves hosts behind. When the second pass and ARP sweep recover more than a tenth of what the first wave found, the extra rounds keep going while they still find hosts, up to eight rounds and two minutes, and the discovery summary says `lossy link, longer recovery`. Healthy networks keep the three-round, 30-second limit.
 - A command-line scan that stalls before it starts no longer hangs forever. If a startup step takes longer than a minute, the run ends with exit code 3 and a message on stderr that names the step.
 
 ### Added

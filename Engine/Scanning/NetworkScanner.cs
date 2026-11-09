@@ -94,6 +94,15 @@ namespace KillerScan.Engine
         /// ping wait, so on a flat /22 three rounds would otherwise add minutes to every scan.</summary>
         internal static TimeSpan ConvergeBudget = TimeSpan.FromSeconds(30);
 
+        /// <summary>The limits for a link that drops replies. Some NICs, a Realtek 2.5GbE in the
+        /// field, lose a third of the first wave's answers and keep surfacing hosts on every later
+        /// pass. When the second pass and ARP sweep recover more than a tenth of the first wave
+        /// (and at least <see cref="LossyMinRecovered"/> hosts), the rounds keep going while they
+        /// still add hosts, up to these limits. A healthy network never reaches them.</summary>
+        internal const int LossyMaxConvergeRounds = 8;
+        internal const int LossyMinRecovered = 3;
+        internal static TimeSpan LossyConvergeBudget = TimeSpan.FromSeconds(120);
+
         /// <summary>What each discovery phase of the last scan found, for the CLI and bug reports:
         /// "first wave 97, second pass +12, ARP sweep +3, extra rounds +9 in 2".</summary>
         public string DiscoverySummary { get; private set; } = string.Empty;
@@ -501,8 +510,12 @@ namespace KillerScan.Engine
             var confirmedArpHosts = new System.Collections.Concurrent.ConcurrentDictionary<string, byte>();
             int foundByRounds = 0, rounds = 0;
             bool lastPassAdded = true, outOfTime = false;
+            int recovered = foundBySecondPass + foundBySweep;
+            bool lossyLink = recovered >= LossyMinRecovered && recovered * 10 > foundByFirstWave;
+            int roundCap = lossyLink ? LossyMaxConvergeRounds : MaxConvergeRounds;
+            TimeSpan budget = lossyLink ? LossyConvergeBudget : ConvergeBudget;
             var roundClock = Stopwatch.StartNew();
-            while (lastPassAdded && !outOfTime && rounds < MaxConvergeRounds && (options.Icmp || options.TcpLiveness))
+            while (lastPassAdded && !outOfTime && rounds < roundCap && (options.Icmp || options.TcpLiveness))
             {
                 // An ARP candidate that will fail the shared-MAC filter still needs an
                 // independent liveness attempt; treating it as finished would skip recovery.
@@ -512,14 +525,14 @@ namespace KillerScan.Engine
                 if (still.Count == 0) break;
                 rounds++;
                 int countBefore = discoveredHosts.Count, confirmationsBefore = confirmedArpHosts.Count, asked = 0;
-                int roundBase = 30 + (rounds - 1) * 10 / MaxConvergeRounds;
+                int roundBase = 30 + (rounds - 1) * 10 / roundCap;
                 var narrow = new SemaphoreSlim(ConvergeWidth);
                 await Task.WhenAll(still.Select(async addr =>
                 {
                     await narrow.WaitAsync(ct);
                     try
                     {
-                        if (roundClock.Elapsed >= ConvergeBudget) { outOfTime = true; return; }
+                        if (roundClock.Elapsed >= budget) { outOfTime = true; return; }
                         if (await AwaitWithCancellation(AliveAsync(addr, ConvergePingTimeoutMs), ct))
                         {
                             discoveredHosts.TryAdd(addr.ToString(), (addr, ""));
@@ -532,7 +545,7 @@ namespace KillerScan.Engine
                     {
                         narrow.Release();
                         int done = Interlocked.Increment(ref asked);
-                        ProgressChanged?.Invoke(roundBase + (int)(done * (10.0 / MaxConvergeRounds) / still.Count));
+                        ProgressChanged?.Invoke(roundBase + (int)(done * (10.0 / roundCap) / still.Count));
                     }
                 }));
                 ct.ThrowIfCancellationRequested();
@@ -614,6 +627,7 @@ namespace KillerScan.Engine
             }
 
             DiscoverySummary = $"first wave {foundByFirstWave}, second pass +{foundBySecondPass}, ARP sweep +{foundBySweep}, extra rounds +{foundByRounds} in {rounds}, multicast +{foundByMulticast}, ARP confirmed {confirmedArpHosts.Count}, filtered -{filteredArpHosts}"
+                + (lossyLink ? " (lossy link, longer recovery)" : "")
                 + (outOfTime ? " (time budget reached)" : "");
 
             // Phase 2: Probe discovered hosts for details (parallel, throttled)
