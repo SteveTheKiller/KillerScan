@@ -122,6 +122,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--access-ui" })) { HistoryUiTests.Isolated = AccessUiTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--retro-tabs" })) { RetroTabsTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--focus-ring-styles" })) { KeyboardFocusRingStyleTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--outline-caption" })) { await OutlineButtonCaptionTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--theme-dump" })) { HistoryUiTests.Isolated = ThemeDumpTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--recognition-ui" })) { HistoryUiTests.Isolated = RecognitionUiTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--report-sort" })) { await ReportSortTests.Run(); return 0; }
@@ -165,6 +166,7 @@ internal static class Program
                 { ReleaseIdentityTests.Run(); return Task.CompletedTask; });
                 await Run("HTML report logo returns after a theme without one", ReportLogoTests.Run);
                 await Run("Outline button hover text stays readable in every accent", OutlineHoverThemeTests.RunIsolated);
+                await Run("Outline button captions are not rasterized", OutlineButtonCaptionTests.RunIsolated);
                 await Run("Radio and checkbox indicators sit on the middle of their labels", RadioCenterUiTests.RunIsolated);
                 await Run("Sidebar text shrinks a little before it is trimmed", ShrinkToFitTests.Run);
                 await Run("Theme, language and shortcuts hold the rail edge; other rail buttons keep a saved order", RailOrderTests.Run);
