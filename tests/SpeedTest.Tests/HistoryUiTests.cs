@@ -249,16 +249,19 @@ internal static partial class HistoryUiTests
         Require(((string)Call(history, "BuildCsv")!).Contains("\"missing, \"\"quoted\"\"\nline\""), "CSV quotes embedded commas, quotes and newlines.");
         var menu = grid.ContextMenu;
         menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
-        Require(menu.Items.OfType<MenuItem>().Where(item => item.Tag is string action && new[] { "ip", "mac", "host", "details" }.Contains(action)).All(item => item.IsEnabled), "Saved row copy actions are available.");
-        Require(menu.Items.OfType<MenuItem>().All(item => !string.IsNullOrWhiteSpace(item.InputGestureText)), "Every history menu action shows its shortcut.");
-        Require(menu.Items.OfType<MenuItem>().All(item => !new[] { "Ping", "Ssh", "Rdp", "Rescan", "Trust" }.Contains(item.Tag as string)), "Historical menus contain no live commands.");
+        var copies = CardMenuTestHelpers.Actions(menu).Where(pair => new[] { "ip", "mac", "host", "details" }.Contains(pair.Key)).ToList();
+        Require(copies.Count == 4 && copies.All(pair => pair.Value.IsEnabled), "Saved row copy actions are available.");
+        Require(menu.Items.OfType<MenuItem>().Where(item => !CardMenuTestHelpers.IsCardSlot(item)).All(item => !string.IsNullOrWhiteSpace(item.InputGestureText))
+            && CardMenuTestHelpers.CardButtons(menu).All(button => !string.IsNullOrEmpty(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(button))),
+            "Every history menu action shows its shortcut.");
+        Require(CardMenuTestHelpers.Actions(menu).Keys.All(action => !new[] { "Ping", "Ssh", "Rdp", "Rescan", "Trust" }.Contains(action)), "Historical menus contain no live commands.");
         Save(RenderWindow(1200, 780), Path.Combine(output, "History-Black-sidebar-closed.png"));
         SaveMenu(menu, app, Path.Combine(output, "History-menu.png"));
         history.ContextMenu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
-        Require(history.ContextMenu.Items.OfType<MenuItem>().Where(item => item.Tag is string action && new[] { "ip", "mac", "host", "details" }.Contains(action)).All(item => !item.IsEnabled), "Pane background cannot copy a previously selected row.");
+        Require(!CardMenuTestHelpers.Actions(history.ContextMenu).Keys.Any(action => new[] { "ip", "mac", "host", "details" }.Contains(action)), "Pane background cannot copy a previously selected row.");
         typeof(HistoryWorkspace).GetMethod("SelectContextRow", Static)!.Invoke(null, new object?[] { grid, null });
         menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
-        Require(grid.SelectedItem == null && menu.Items.OfType<MenuItem>().Where(item => Equals(item.Tag, "ip")).All(item => !item.IsEnabled), "Grid background clears the selected historical target.");
+        Require(grid.SelectedItem == null && !CardMenuTestHelpers.Actions(menu)["ip"].IsEnabled, "Grid background clears the selected historical target.");
         var rowContainer = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(0);
         typeof(HistoryWorkspace).GetMethod("SelectContextRow", Static)!.Invoke(null, new object[] { grid, rowContainer });
         Require(ReferenceEquals(grid.SelectedItem, rowContainer.Item), "Right-click selects its own row.");
@@ -302,7 +305,9 @@ internal static partial class HistoryUiTests
             SaveMenu(menu, app, Path.Combine(output, "History-menu-" + locale + ".png"));
             Require(Identity().Contains("192.0.2.0/24") && Identity().Contains(time.ToString("g")) && Identity().Contains(time.AddHours(1).ToString("g")) && !comparison.Text.StartsWith("Str_"), locale + ": target and both dates remain identified.");
             Require(Equals(grid.Columns[0].Header, app.FindResource("Str_History_Change")) && Equals(all.Columns[0].Header, app.FindResource("Str_Col_Ip")), locale + ": both grid headings change language.");
-            Require(menu.Items.OfType<MenuItem>().All(item => item.Header is string text && text.Length > 0 && !text.StartsWith("Str_")), locale + ": menu labels resolve.");
+            Require(menu.Items.OfType<MenuItem>().Where(item => !CardMenuTestHelpers.IsCardSlot(item)).All(item => item.Header is string text && text.Length > 0 && !text.StartsWith("Str_"))
+                && CardMenuTestHelpers.CardButtons(menu).All(button => button.Content is string text && text.Length > 0 && !text.StartsWith("Str_")),
+                locale + ": menu labels and card chips resolve.");
             foreach (var view in new[] { ("changes", "Str_History_ViewChanges", "HistoryChangesViewButton", "Changes"),
                 ("all", "Str_History_ViewAll", "HistoryAllViewButton", "All Devices") })
             {
@@ -825,7 +830,9 @@ internal static partial class HistoryUiTests
             Require(port == 3389 ? raised?.ServicePort == 3389 : raised == null, "RDP shortcuts require the selected RDP service.");
         }
         var menu = grid.ContextMenu;
-        Require(menu.Items.OfType<MenuItem>().Where(item => item.Tag is string action && new[] { "CopyEndpoint", "CopyService", "CopyPort" }.Contains(action)).All(item => item.InputGestureText.Length > 0), "Service copy actions have menu hints.");
+        var copies = CardMenuTestHelpers.Actions(menu).Where(pair => new[] { "CopyEndpoint", "CopyService", "CopyPort" }.Contains(pair.Key)).ToList();
+        Require(copies.Count == 3 && copies.All(pair => !string.IsNullOrEmpty(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(pair.Value))),
+            "Service copy actions have menu hints.");
     }
 
     private static BitmapSource Render(FrameworkElement element, int width, int height)

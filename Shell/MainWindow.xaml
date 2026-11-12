@@ -474,19 +474,53 @@
                     <ListBox.Resources>
                         <!-- On the row container, not inside the template, so the Menu key and Shift+F10
                              open it for the focused row. -->
-                        <ContextMenu x:Key="LocationRowMenu" x:Shared="False">
-                                        <MenuItem Header="{DynamicResource Str_Loc_Open}" InputGestureText="Enter" Click="LocationOpen_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE707;"/></MenuItem.Icon>
+                        <!-- The Location card: the row's name and detail over a strip of its four verbs.
+                             The card inherits the row's LocationRow as its DataContext, so the header
+                             binds to it and LocationCard_ButtonClick reads it back from the button. -->
+                        <ContextMenu x:Key="LocationRowMenu" x:Shared="False" Style="{StaticResource CardMenu}"
+                                     ButtonBase.Click="LocationCard_ButtonClick">
+                                        <MenuItem Style="{StaticResource CardSlot}" AutomationProperties.Name="{Binding Name}">
+                                            <MenuItem.Header>
+                                                <StackPanel Margin="4,2,4,6">
+                                                    <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                                               Foreground="{DynamicResource TextBrush}"/>
+                                                    <TextBlock Text="{Binding Detail}" FontSize="11" Margin="0,1,0,0" TextTrimming="CharacterEllipsis"
+                                                               Foreground="{DynamicResource DimTextBrush}">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Detail}" Value="">
+                                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </StackPanel>
+                                            </MenuItem.Header>
                                         </MenuItem>
-                                        <MenuItem Header="{DynamicResource Str_Loc_Edit}" InputGestureText="F2" Click="LocationRename_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE70F;"/></MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Header="{DynamicResource Str_Loc_Export}" Click="LocationExport_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE896;"/></MenuItem.Icon>
-                                        </MenuItem>
-                                        <Separator/>
-                                        <MenuItem Header="{DynamicResource Str_Loc_Delete}" InputGestureText="Delete" Click="LocationDelete_Click">
-                                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE74D;"/></MenuItem.Icon>
+                                        <MenuItem Style="{StaticResource CardSlot}" Padding="0" AutomationProperties.Name="{DynamicResource Str_Card_Actions}">
+                                            <MenuItem.Header>
+                                                <Border BorderBrush="{DynamicResource MenuBorderBrush}" BorderThickness="0,1,0,0" Padding="2,4,2,0">
+                                                    <UniformGrid Rows="1">
+                                                        <Button Style="{StaticResource CardQuickButton}" CommandParameter="Open" Content="&#xE707;"
+                                                                Tag="{DynamicResource Str_Card_Open}" AutomationProperties.Name="{DynamicResource Str_Loc_Open}" AutomationProperties.AcceleratorKey="Enter">
+                                                            <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Loc_Open}"/><Run Text="  (Enter)"/></TextBlock></Button.ToolTip>
+                                                        </Button>
+                                                        <Button Style="{StaticResource CardQuickButton}" CommandParameter="Edit" Content="&#xE70F;"
+                                                                Tag="{DynamicResource Str_Card_Edit}" AutomationProperties.Name="{DynamicResource Str_Loc_Edit}" AutomationProperties.AcceleratorKey="F2">
+                                                            <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Loc_Edit}"/><Run Text="  (F2)"/></TextBlock></Button.ToolTip>
+                                                        </Button>
+                                                        <Button Style="{StaticResource CardQuickButton}" CommandParameter="Export" Content="&#xE896;"
+                                                                Tag="{DynamicResource Str_Card_Export}" AutomationProperties.Name="{DynamicResource Str_Loc_Export}"
+                                                                ToolTip="{DynamicResource Str_Loc_Export}"/>
+                                                        <Button Style="{StaticResource CardQuickButton}" CommandParameter="Delete" Content="&#xE74D;"
+                                                                Tag="{DynamicResource Str_Loc_DeleteButton}" AutomationProperties.Name="{DynamicResource Str_Loc_Delete}" AutomationProperties.AcceleratorKey="Delete">
+                                                            <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Loc_Delete}"/><Run Text="  (Delete)"/></TextBlock></Button.ToolTip>
+                                                        </Button>
+                                                    </UniformGrid>
+                                                </Border>
+                                            </MenuItem.Header>
                                         </MenuItem>
                                     </ContextMenu>
                     </ListBox.Resources>

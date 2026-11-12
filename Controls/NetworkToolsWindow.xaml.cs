@@ -214,6 +214,22 @@ namespace KillerScan.Controls
             sender is FrameworkElement element && element.DataContext is WatchCard card
                 ? _targets.FirstOrDefault(t => t.Card == card) : null;
 
+        /// <summary>A button on a target's card: close the card, then run the verb on the target
+        /// the button belongs to (it inherits the card's WatchCard).</summary>
+        private void WatchCard_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is not System.Windows.Controls.Primitives.ButtonBase { CommandParameter: string action } button) return;
+            e.Handled = true;
+            KillerFamily.Controls.CardBuilder.Close(button);
+            switch (action)
+            {
+                case "Copy": CardCopy_Click(button, e); break;
+                case "Check": CardDiagnose_Click(button, e); break;
+                case "Reset": CardReset_Click(button, e); break;
+                case "Remove": CardRemove_Click(button, e); break;
+            }
+        }
+
         private void CardCopy_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as FrameworkElement)?.DataContext is not WatchCard card) return;

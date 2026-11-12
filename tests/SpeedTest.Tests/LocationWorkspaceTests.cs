@@ -599,7 +599,7 @@ internal static class LocationWorkspaceTests
             foreach (string action in new[] { "ip", "mac", "host" }) Require(Copy(action).Length == 0, "A copy of null text is empty: " + action);
             Require(Copy("details").Split('\t').Length == 6, "Copy details still has every column.");
             grid.ContextMenu.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.ContextMenu.OpenedEvent, grid.ContextMenu));
-            Require(grid.ContextMenu.Items.OfType<System.Windows.Controls.MenuItem>().Any(item => (string)item.Tag == "ip" && !item.IsEnabled),
+            Require(!CardMenuTestHelpers.Actions(grid.ContextMenu)["ip"].IsEnabled,
                 "The menu opens, with nothing to copy disabled.");
             string csv = (string)typeof(HistoryWorkspace).GetMethod("BuildCsv", Hidden)!.Invoke(history, null)!;
             Require(csv.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length == 3, "CSV export has a header and both devices.");

@@ -13,29 +13,36 @@ namespace KillerScan.Terminal
     /// </summary>
     internal sealed partial class TerminalControl
     {
-        private MenuItem? _copyItem;
-
+        /// <summary>
+        /// The terminal card: the five clipboard and screen verbs as quick buttons, with Font as
+        /// the one list row. Rebuilt as it opens, so the captions follow the current language and
+        /// Copy is settled from whether anything is selected.
+        /// </summary>
         private void BuildContextMenu()
         {
-            var menu = new ContextMenu();
+            ContextMenu = KillerFamily.Controls.CardBuilder.Menu();
+            ContextMenuOpening += (_, _) => FillContextMenu();
+        }
 
-            _copyItem = Entry("Str_Term_Copy", "Ctrl+Shift+C", 0xE8C8, () => { CopySelection(); ClearSelection(); });
-            menu.Items.Add(_copyItem);
-            menu.Items.Add(Entry("Str_Term_Paste", "Ctrl+Shift+V", 0xE77F, Paste));
-            menu.Items.Add(new Separator());
-            menu.Items.Add(Entry("Str_Term_SelectAll", "Ctrl+Shift+A", 0xE8B3, SelectAll));
-            menu.Items.Add(Entry("Str_Term_CopyAll", "Ctrl+Shift+Y", 0xE8C8, CopyAll));
-            menu.Items.Add(new Separator());
-            menu.Items.Add(Entry("Str_Term_Clear", "Ctrl+Shift+L", 0xE894, ClearScreen));
-            menu.Items.Add(Entry("Str_Term_Font", null, 0xE8D2, ChooseFont));
-
-            // Copy is only meaningful with a selection, and Paste only with text on the clipboard,
-            // so both are settled as the menu opens rather than left permanently enabled.
-            menu.Opened += (_, _) =>
+        /// <summary>Fills the card for the pointer and for the Menu key, which opens it directly.</summary>
+        private void FillContextMenu()
+        {
+            var menu = ContextMenu;
             {
-                _copyItem?.IsEnabled = _hasSelection;
-            };
-            ContextMenu = menu;
+                string L(string key) => TryFindResource(key) as string ?? key;
+                menu.Items.Clear();
+                menu.Items.Add(KillerFamily.Controls.CardBuilder.Header(L("Str_Workspace_Terminal")));
+                menu.Items.Add(KillerFamily.Controls.CardBuilder.QuickStrip(L("Str_Card_Actions"), new[]
+                {
+                    new KillerFamily.Controls.CardAction("", L("Str_Ctx_Copy"), L("Str_Term_Copy"), "Ctrl+Shift+C",
+                        () => { CopySelection(); ClearSelection(); }, _hasSelection),
+                    new KillerFamily.Controls.CardAction("", L("Str_Ctx_Paste"), L("Str_Term_Paste"), "Ctrl+Shift+V", Paste),
+                    new KillerFamily.Controls.CardAction("", L("Str_Ctx_SelectAll"), L("Str_Term_SelectAll"), "Ctrl+Shift+A", SelectAll),
+                    new KillerFamily.Controls.CardAction("", L("Str_Card_CopyAll"), L("Str_Term_CopyAll"), "Ctrl+Shift+Y", CopyAll),
+                    new KillerFamily.Controls.CardAction("", L("Str_Card_Clear"), L("Str_Term_Clear"), "Ctrl+Shift+L", ClearScreen),
+                }));
+                menu.Items.Add(Entry("Str_Term_Font", null, 0xE8D2, ChooseFont));
+            }
         }
 
         private static MenuItem Entry(string key, string? gesture, int glyph, Action action)

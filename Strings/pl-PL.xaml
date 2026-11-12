@@ -230,6 +230,23 @@
     <sys:String x:Key="Str_Ctx_Copy">Kopiuj</sys:String>
     <sys:String x:Key="Str_Ctx_Paste">Wklej</sys:String>
     <sys:String x:Key="Str_Ctx_SelectAll">Zaznacz wszystko</sys:String>
+    <sys:String x:Key="Str_Card_Actions">Akcje</sys:String>
+    <sys:String x:Key="Str_Card_Browser">Przeglądarka</sys:String>
+    <sys:String x:Key="Str_Card_Diagnose">Diagnostyka</sys:String>
+    <sys:String x:Key="Str_Card_Devices">Urządzenia: {0}</sys:String>
+    <sys:String x:Key="Str_Card_Services">Usługi: {0}</sys:String>
+    <sys:String x:Key="Str_Card_Endpoint">Punkt końcowy</sys:String>
+    <sys:String x:Key="Str_Card_Port">Port</sys:String>
+    <sys:String x:Key="Str_Card_Open">Otwórz</sys:String>
+    <sys:String x:Key="Str_Card_Edit">Edytuj</sys:String>
+    <sys:String x:Key="Str_Card_Export">Eksportuj</sys:String>
+    <sys:String x:Key="Str_Card_Details">Szczegóły</sys:String>
+    <sys:String x:Key="Str_Card_Rename">Zmień nazwę</sys:String>
+    <sys:String x:Key="Str_Card_Check">Sprawdź</sys:String>
+    <sys:String x:Key="Str_Card_Reset">Wyzeruj</sys:String>
+    <sys:String x:Key="Str_Card_Remove">Usuń</sys:String>
+    <sys:String x:Key="Str_Card_CopyAll">Kopiuj wszystko</sys:String>
+    <sys:String x:Key="Str_Card_Clear">Wyczyść</sys:String>
     <sys:String x:Key="Str_Sc_About">Otwórz okno O programie</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Rozmiar aplikacji zmienia też kółko myszy nad logotypem.</sys:String>
 

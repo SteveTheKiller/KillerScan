@@ -245,6 +245,23 @@
     <sys:String x:Key="Str_Ctx_Copy">复制</sys:String>
     <sys:String x:Key="Str_Ctx_Paste">粘贴</sys:String>
     <sys:String x:Key="Str_Ctx_SelectAll">全选</sys:String>
+    <sys:String x:Key="Str_Card_Actions">操作</sys:String>
+    <sys:String x:Key="Str_Card_Browser">浏览器</sys:String>
+    <sys:String x:Key="Str_Card_Diagnose">诊断</sys:String>
+    <sys:String x:Key="Str_Card_Devices">{0} 台设备</sys:String>
+    <sys:String x:Key="Str_Card_Services">{0} 项服务</sys:String>
+    <sys:String x:Key="Str_Card_Endpoint">端点</sys:String>
+    <sys:String x:Key="Str_Card_Port">端口</sys:String>
+    <sys:String x:Key="Str_Card_Open">打开</sys:String>
+    <sys:String x:Key="Str_Card_Edit">编辑</sys:String>
+    <sys:String x:Key="Str_Card_Export">导出</sys:String>
+    <sys:String x:Key="Str_Card_Details">详情</sys:String>
+    <sys:String x:Key="Str_Card_Rename">重命名</sys:String>
+    <sys:String x:Key="Str_Card_Check">检查</sys:String>
+    <sys:String x:Key="Str_Card_Reset">重置</sys:String>
+    <sys:String x:Key="Str_Card_Remove">移除</sys:String>
+    <sys:String x:Key="Str_Card_CopyAll">全部复制</sys:String>
+    <sys:String x:Key="Str_Card_Clear">清屏</sys:String>
     <sys:String x:Key="Str_Sc_About">打开关于窗口</sys:String>
     <sys:String x:Key="Str_Sc_Hint">在标志上滚动鼠标滚轮同样可以调整应用大小。</sys:String>
 

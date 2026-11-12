@@ -19,7 +19,8 @@ namespace KillerScan.Controls
                 item.Click += (_, _) => RaiseDeviceAction(action.Item1, false);
                 external.Items.Add(item);
             }
-            ResultsGrid.ContextMenu.Items.Add(external);
+            // With the other ways to connect (SSH as, Access), not after the type rows at the end.
+            ResultsGrid.ContextMenu.Items.Insert(ResultsGrid.ContextMenu.Items.IndexOf(AccessMenuItem) + 1, external);
         }
     }
 }

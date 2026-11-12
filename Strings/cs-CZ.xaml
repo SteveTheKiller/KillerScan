@@ -243,6 +243,23 @@
     <sys:String x:Key="Str_Ctx_Copy">Kopírovat</sys:String>
     <sys:String x:Key="Str_Ctx_Paste">Vložit</sys:String>
     <sys:String x:Key="Str_Ctx_SelectAll">Vybrat vše</sys:String>
+    <sys:String x:Key="Str_Card_Actions">Akce</sys:String>
+    <sys:String x:Key="Str_Card_Browser">Prohlížeč</sys:String>
+    <sys:String x:Key="Str_Card_Diagnose">Diagnostika</sys:String>
+    <sys:String x:Key="Str_Card_Devices">Zařízení: {0}</sys:String>
+    <sys:String x:Key="Str_Card_Services">Služby: {0}</sys:String>
+    <sys:String x:Key="Str_Card_Endpoint">Koncový bod</sys:String>
+    <sys:String x:Key="Str_Card_Port">Port</sys:String>
+    <sys:String x:Key="Str_Card_Open">Otevřít</sys:String>
+    <sys:String x:Key="Str_Card_Edit">Upravit</sys:String>
+    <sys:String x:Key="Str_Card_Export">Export</sys:String>
+    <sys:String x:Key="Str_Card_Details">Podrobnosti</sys:String>
+    <sys:String x:Key="Str_Card_Rename">Přejmenovat</sys:String>
+    <sys:String x:Key="Str_Card_Check">Ověřit</sys:String>
+    <sys:String x:Key="Str_Card_Reset">Vynulovat</sys:String>
+    <sys:String x:Key="Str_Card_Remove">Odebrat</sys:String>
+    <sys:String x:Key="Str_Card_CopyAll">Kopírovat vše</sys:String>
+    <sys:String x:Key="Str_Card_Clear">Vymazat</sys:String>
     <sys:String x:Key="Str_Sc_About">Otevřít okno O aplikaci</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Velikost aplikace lze měnit také kolečkem myši nad logem.</sys:String>
 

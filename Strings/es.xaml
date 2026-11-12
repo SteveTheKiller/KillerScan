@@ -245,6 +245,23 @@
     <sys:String x:Key="Str_Ctx_Copy">Copiar</sys:String>
     <sys:String x:Key="Str_Ctx_Paste">Pegar</sys:String>
     <sys:String x:Key="Str_Ctx_SelectAll">Seleccionar todo</sys:String>
+    <sys:String x:Key="Str_Card_Actions">Acciones</sys:String>
+    <sys:String x:Key="Str_Card_Browser">Navegador</sys:String>
+    <sys:String x:Key="Str_Card_Diagnose">Diagnosticar</sys:String>
+    <sys:String x:Key="Str_Card_Devices">{0} dispositivos</sys:String>
+    <sys:String x:Key="Str_Card_Services">{0} servicios</sys:String>
+    <sys:String x:Key="Str_Card_Endpoint">Extremo</sys:String>
+    <sys:String x:Key="Str_Card_Port">Puerto</sys:String>
+    <sys:String x:Key="Str_Card_Open">Abrir</sys:String>
+    <sys:String x:Key="Str_Card_Edit">Editar</sys:String>
+    <sys:String x:Key="Str_Card_Export">Exportar</sys:String>
+    <sys:String x:Key="Str_Card_Details">Detalles</sys:String>
+    <sys:String x:Key="Str_Card_Rename">Renombrar</sys:String>
+    <sys:String x:Key="Str_Card_Check">Comprobar</sys:String>
+    <sys:String x:Key="Str_Card_Reset">Reiniciar</sys:String>
+    <sys:String x:Key="Str_Card_Remove">Quitar</sys:String>
+    <sys:String x:Key="Str_Card_CopyAll">Copiar todo</sys:String>
+    <sys:String x:Key="Str_Card_Clear">Limpiar</sys:String>
     <sys:String x:Key="Str_Sc_About">Abrir la ventana Acerca de</sys:String>
     <sys:String x:Key="Str_Sc_Hint">El tamaño de la aplicación también responde a la rueda del ratón sobre el logotipo.</sys:String>
 

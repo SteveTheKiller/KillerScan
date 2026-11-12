@@ -56,16 +56,29 @@ namespace KillerScan.Controls
         {
             var row = ServicesGrid.CurrentItem as ServiceRow ?? ServicesGrid.SelectedItem as ServiceRow;
             bool selected = row != null && ServicesGrid.SelectedItems.Contains(row);
+            bool Allowed(string action) => action is "SelectAll" or "Export" ? ServicesGrid.Items.Count > 0
+                : selected && (action != "CopyHost" || ServicesGrid.SelectedItems.Cast<ServiceRow>().Any(service => !string.IsNullOrWhiteSpace(service.Hostname)));
+            bool Offered(string action) => selected && CanOpenService(row!, action);
             foreach (var item in ServicesGrid.ContextMenu.Items.OfType<MenuItem>())
             {
-                string action = item.Tag as string ?? "";
-                if (action is "Browser" or "Ssh" or "SshAs" or "Rdp")
-                    item.Visibility = selected && CanOpenService(row!, action) ? Visibility.Visible : Visibility.Collapsed;
-                item.IsEnabled = action is "SelectAll" or "Export" ? ServicesGrid.Items.Count > 0
-                    : selected && (action != "CopyHost" || ServicesGrid.SelectedItems.Cast<ServiceRow>().Any(service => !string.IsNullOrWhiteSpace(service.Hostname)));
+                if (item.Tag is not string action) continue;
+                if (action == "SshAs") item.Visibility = Offered(action) ? Visibility.Visible : Visibility.Collapsed;
+                item.IsEnabled = Allowed(action);
             }
-            ServiceConnectSeparator.Visibility = selected && new[] { "Browser", "Ssh", "Rdp" }.Any(action => CanOpenService(row!, action))
-                ? Visibility.Visible : Visibility.Collapsed;
+            // A way in the service does not offer collapses rather than dimming, and the strip goes
+            // with it when there is none; the copy chips only dim, because copying always applies.
+            var quick = CardButtons(ServiceCardQuick).ToList();
+            foreach (var button in quick)
+                button.Visibility = Offered((string)button.CommandParameter) ? Visibility.Visible : Visibility.Collapsed;
+            ServiceCardQuick.Visibility = quick.Any(button => button.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
+            foreach (var button in CardButtons(ServiceCardCopy))
+                button.IsEnabled = Allowed((string)button.CommandParameter);
+            ServiceConnectSeparator.Visibility = Offered("SshAs") ? Visibility.Visible : Visibility.Collapsed;
+            int count = ServicesGrid.SelectedItems.Count;
+            if (count > 1) SetCardHeader(ServiceCardHeader, string.Format(Loc("Str_Card_Services"), count), "");
+            else if (selected) SetCardHeader(ServiceCardHeader, row!.Service,
+                string.Join("  ·  ", new[] { ServiceEndpoint(row.IpAddress, row.Port), row.Hostname }.Where(part => !string.IsNullOrWhiteSpace(part))));
+            else SetCardHeader(ServiceCardHeader, Loc("Str_Services_Title"), "");
         }
 
         private string ServiceCopyText(string action) => string.Join(Environment.NewLine,
@@ -82,9 +95,24 @@ namespace KillerScan.Controls
 
         private void CopyServiceText(string action) => CopyDeviceText(ServiceCopyText(action));
 
+        /// <summary>A quick button or chip on the service card: close the card, then run its action
+        /// the way the matching menu row does.</summary>
+        private void ServiceCard_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is not System.Windows.Controls.Primitives.ButtonBase { CommandParameter: string action } button) return;
+            e.Handled = true;
+            KillerFamily.Controls.CardBuilder.Close(button);
+            RunServiceMenuAction(action, button, e);
+        }
+
         private void ServiceMenu_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not MenuItem { Tag: string action }) return;
+            RunServiceMenuAction(action, sender, e);
+        }
+
+        private void RunServiceMenuAction(string action, object sender, RoutedEventArgs e)
+        {
             if (action.StartsWith("Copy", StringComparison.Ordinal)) CopyServiceText(action);
             else if (action == "SelectAll") ServicesGrid.SelectAll();
             else if (action == "Export") ExportServicesCsv_Click(sender, e);

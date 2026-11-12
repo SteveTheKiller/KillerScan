@@ -820,6 +820,7 @@ namespace KillerScan.Terminal
         {
             if (!ctrl && !alt && (key == Key.Apps && !shift || key == Key.F10 && shift))
             {
+                FillContextMenu();
                 ContextMenu.PlacementTarget = this;
                 ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
                 ContextMenu.IsOpen = true;

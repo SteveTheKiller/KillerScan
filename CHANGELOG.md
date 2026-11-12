@@ -6,11 +6,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.9.6] - Unreleased
 
-1.9.6 updates the JSON library in the app and engine.
+1.9.6 turns the right-click menus into cards and updates the JSON library in the app and engine.
 
 ### Changed
 
 - Updated the app and engine JSON dependency to 10.0.15.
+- Right-click menus on devices, services, Locations, saved scans, History rows, Keep Alive targets and the terminal are now cards. Each one names what you clicked, puts the everyday actions in a row of buttons at the top, and gathers the copy options into one row, with the rest in a shorter list below. Every button's tooltip shows its keyboard shortcut.
+- With several devices or services selected, the card's title says how many.
+- On a service, the card only offers the ways in that the service supports, so a DNS port shows no browser, SSH or RDP button.
+- Buttons no longer cast a drop shadow, including the view toolbar's icons.
+- Menu shortcuts and submenu arrows line up at the right edge of each row.
 
 ## [1.9.5] - 2026-11-09
 

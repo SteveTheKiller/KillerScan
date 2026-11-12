@@ -22,20 +22,44 @@
                 </Border.Style>
                 <!-- A ContextMenu inherits DataContext from its placement target, so every
                      item here already carries this card and the handlers can read it back. -->
+                <!-- The target card: its address and state over its four verbs. The buttons inherit
+                     this card's WatchCard, and WatchCard_ButtonClick closes the menu and hands the
+                     button to the same handler the shortcut uses. -->
                 <Border.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="{DynamicResource Str_Watch_CopyAddress}" InputGestureText="Ctrl+C" Click="CardCopy_Click">
-                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                    <ContextMenu Style="{StaticResource CardMenu}" ButtonBase.Click="WatchCard_ButtonClick">
+                        <MenuItem Style="{StaticResource CardSlot}" AutomationProperties.Name="{Binding Address}">
+                            <MenuItem.Header>
+                                <StackPanel Margin="4,2,4,6">
+                                    <TextBlock Text="{Binding Address}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                                               Foreground="{DynamicResource TextBrush}"/>
+                                    <TextBlock Text="{Binding State}" FontSize="11" Margin="0,1,0,0" TextTrimming="CharacterEllipsis"
+                                               Foreground="{DynamicResource DimTextBrush}"/>
+                                </StackPanel>
+                            </MenuItem.Header>
                         </MenuItem>
-                        <MenuItem Header="{DynamicResource Str_Diag_Refresh}" InputGestureText="F3" Click="CardDiagnose_Click">
-                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE9D9;"/></MenuItem.Icon>
-                        </MenuItem>
-                        <Separator/>
-                        <MenuItem Header="{DynamicResource Str_Watch_ResetStats}" InputGestureText="Ctrl+R" Click="CardReset_Click">
-                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE72C;"/></MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Header="{DynamicResource Str_Watch_Remove}" InputGestureText="Delete" Click="CardRemove_Click">
-                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE74D;"/></MenuItem.Icon>
+                        <MenuItem Style="{StaticResource CardSlot}" Padding="0" AutomationProperties.Name="{DynamicResource Str_Card_Actions}">
+                            <MenuItem.Header>
+                                <Border BorderBrush="{DynamicResource MenuBorderBrush}" BorderThickness="0,1,0,0" Padding="2,4,2,0">
+                                    <UniformGrid Rows="1">
+                                        <Button Style="{StaticResource CardQuickButton}" CommandParameter="Copy" Content="&#xE8C8;"
+                                                Tag="{DynamicResource Str_Ctx_Copy}" AutomationProperties.Name="{DynamicResource Str_Watch_CopyAddress}" AutomationProperties.AcceleratorKey="Ctrl+C">
+                                            <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Watch_CopyAddress}"/><Run Text="  (Ctrl+C)"/></TextBlock></Button.ToolTip>
+                                        </Button>
+                                        <Button Style="{StaticResource CardQuickButton}" CommandParameter="Check" Content="&#xE9D9;"
+                                                Tag="{DynamicResource Str_Card_Check}" AutomationProperties.Name="{DynamicResource Str_Diag_Refresh}" AutomationProperties.AcceleratorKey="F3">
+                                            <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Diag_Refresh}"/><Run Text="  (F3)"/></TextBlock></Button.ToolTip>
+                                        </Button>
+                                        <Button Style="{StaticResource CardQuickButton}" CommandParameter="Reset" Content="&#xE72C;"
+                                                Tag="{DynamicResource Str_Card_Reset}" AutomationProperties.Name="{DynamicResource Str_Watch_ResetStats}" AutomationProperties.AcceleratorKey="Ctrl+R">
+                                            <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Watch_ResetStats}"/><Run Text="  (Ctrl+R)"/></TextBlock></Button.ToolTip>
+                                        </Button>
+                                        <Button Style="{StaticResource CardQuickButton}" CommandParameter="Remove" Content="&#xE74D;"
+                                                Tag="{DynamicResource Str_Card_Remove}" AutomationProperties.Name="{DynamicResource Str_Watch_Remove}" AutomationProperties.AcceleratorKey="Delete">
+                                            <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Watch_Remove}"/><Run Text="  (Delete)"/></TextBlock></Button.ToolTip>
+                                        </Button>
+                                    </UniformGrid>
+                                </Border>
+                            </MenuItem.Header>
                         </MenuItem>
                     </ContextMenu>
                 </Border.ContextMenu>

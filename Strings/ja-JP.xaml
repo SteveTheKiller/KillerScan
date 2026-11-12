@@ -256,6 +256,23 @@
     <sys:String x:Key="Str_Ctx_Copy">コピー</sys:String>
     <sys:String x:Key="Str_Ctx_Paste">貼り付け</sys:String>
     <sys:String x:Key="Str_Ctx_SelectAll">すべて選択</sys:String>
+    <sys:String x:Key="Str_Card_Actions">操作</sys:String>
+    <sys:String x:Key="Str_Card_Browser">ブラウザー</sys:String>
+    <sys:String x:Key="Str_Card_Diagnose">診断</sys:String>
+    <sys:String x:Key="Str_Card_Devices">{0} 台のデバイス</sys:String>
+    <sys:String x:Key="Str_Card_Services">{0} 件のサービス</sys:String>
+    <sys:String x:Key="Str_Card_Endpoint">エンドポイント</sys:String>
+    <sys:String x:Key="Str_Card_Port">ポート</sys:String>
+    <sys:String x:Key="Str_Card_Open">開く</sys:String>
+    <sys:String x:Key="Str_Card_Edit">編集</sys:String>
+    <sys:String x:Key="Str_Card_Export">エクスポート</sys:String>
+    <sys:String x:Key="Str_Card_Details">詳細</sys:String>
+    <sys:String x:Key="Str_Card_Rename">名前変更</sys:String>
+    <sys:String x:Key="Str_Card_Check">確認</sys:String>
+    <sys:String x:Key="Str_Card_Reset">リセット</sys:String>
+    <sys:String x:Key="Str_Card_Remove">削除</sys:String>
+    <sys:String x:Key="Str_Card_CopyAll">すべてコピー</sys:String>
+    <sys:String x:Key="Str_Card_Clear">クリア</sys:String>
     <sys:String x:Key="Str_Sc_About">バージョン情報ウィンドウを開く</sys:String>
     <sys:String x:Key="Str_Sc_Hint">アプリのサイズは、ロゴの上でマウスホイールを回しても変更できます。</sys:String>
 

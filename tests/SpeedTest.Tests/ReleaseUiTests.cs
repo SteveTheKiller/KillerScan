@@ -258,6 +258,7 @@ internal static class ReleaseUiTests
         workspace.SetView("services");
         Render(root, 1200, 780);
         CheckServiceMenu(workspace, root, output);
+        CheckDeviceCard(workspace);
         workspace.SetView("topology");
         Render(root, 1200, 780);
         string svg = (string)workspace.GetType().GetMethod("BuildTopologySvg", Instance)!.Invoke(workspace, null)!;
@@ -304,13 +305,68 @@ internal static class ReleaseUiTests
         Console.WriteLine("Offscreen release UI: " + output);
     }
 
+    // The device card: its header names the right-clicked device (or counts a selection), every
+    // quick button and chip shows its shortcut, nothing is live with no device selected, and a
+    // button runs the same action its old menu row did.
+    private static void CheckDeviceCard(KillerScan.Controls.ScanWorkspace workspace)
+    {
+        var type = workspace.GetType();
+        var grid = (DataGrid)workspace.FindName("ResultsGrid");
+        var menu = grid.ContextMenu;
+        var header = (MenuItem)workspace.FindName("DeviceCardHeader");
+        var prepare = type.GetMethod("PrepareDeviceContextMenu", Instance)!;
+        var load = type.GetMethod("LoadSnapshot", Instance)!;
+        var original = ((IEnumerable<KillerScan.Engine.NetworkDevice>)type.GetProperty("ScannedDevices", Instance)!.GetValue(workspace)!).ToArray();
+        string originalTarget = workspace.Targets;
+        var actionField = type.GetField("DeviceAction", Instance)!;
+        object? originalHandler = actionField.GetValue(workspace);
+        actionField.SetValue(workspace, null);
+        KillerScan.Controls.ScanDeviceActionEventArgs? raised = null;
+        workspace.DeviceAction += (_, e) => raised = e;
+        var named = new KillerScan.Engine.NetworkDevice { IpAddress = "192.0.2.50", Hostname = "card-test", MacAddress = "00:11:22:33:44:66" };
+        var other = new KillerScan.Engine.NetworkDevice { IpAddress = "192.0.2.51" };
+        try
+        {
+            load.Invoke(workspace, new object?[] { "192.0.2.0/24", new[] { named, other }, null });
+            var buttons = CardMenuTestHelpers.CardButtons(menu).ToList();
+            Require(buttons.Count == 9 && buttons.All(button => button.ToolTip != null
+                && !string.IsNullOrEmpty(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(button))),
+                "The device card has six quick buttons and three copy chips, each with its shortcut.");
+            Require(menu.Items.OfType<Separator>().All(separator => separator.ReadLocalValue(Control.BackgroundProperty) == DependencyProperty.UnsetValue),
+                "Device card dividers take the theme's separator, not a fixed color.");
+
+            grid.SelectedItems.Clear();
+            prepare.Invoke(workspace, null);
+            Require(buttons.All(button => !button.IsEnabled), "With no device selected, no card button is live.");
+
+            grid.SelectedItem = named; grid.CurrentItem = named;
+            prepare.Invoke(workspace, null);
+            Require(System.Windows.Automation.AutomationProperties.GetName(header) == "card-test" && buttons.All(button => button.IsEnabled),
+                "The card is titled with the device's name and its buttons are live.");
+            raised = null;
+            CardMenuTestHelpers.Click(CardMenuTestHelpers.Actions(menu)["Ping"]);
+            Require(raised?.Device == named && raised.Action == "Ping", "The Ping button runs Ping on the selected device.");
+
+            grid.SelectedItems.Add(other);
+            prepare.Invoke(workspace, null);
+            Require(System.Windows.Automation.AutomationProperties.GetName(header) == string.Format((string)Application.Current.FindResource("Str_Card_Devices"), 2),
+                "A multiple selection is counted in the card's title.");
+            Console.WriteLine("PASS: device card header, shortcuts, enabled state and actions.");
+        }
+        finally
+        {
+            actionField.SetValue(workspace, originalHandler);
+            load.Invoke(workspace, new object?[] { originalTarget, original, null });
+        }
+    }
+
     private static void CheckServiceMenu(KillerScan.Controls.ScanWorkspace workspace, FrameworkElement root, string output)
     {
         var type = workspace.GetType();
         var grid = (DataGrid)workspace.FindName("ServicesGrid");
         var devicesGrid = (DataGrid)workspace.FindName("ResultsGrid");
         Require(!ReferenceEquals(grid.ContextMenu, devicesGrid.ContextMenu), "Services have their own context menu.");
-        var actions = grid.ContextMenu.Items.OfType<MenuItem>().ToDictionary(item => (string)item.Tag);
+        var actions = CardMenuTestHelpers.Actions(grid.ContextMenu);
         Require(actions.Keys.OrderBy(value => value).SequenceEqual(new[] { "Browser", "CopyEndpoint", "CopyHost", "CopyIp", "CopyPort",
             "CopyService", "Export", "Rdp", "SelectAll", "Ssh", "SshAs" }.OrderBy(value => value)),
             "The service menu contains service actions and excludes device trust, renaming, MAC copying and type overrides.");
@@ -380,7 +436,7 @@ internal static class ReleaseUiTests
                 Select(Row(entry.Item1));
                 Require(actions[entry.Item2].Visibility == Visibility.Visible, "Matching connection action is visible.");
                 raised = null;
-                actions[entry.Item2].RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                CardMenuTestHelpers.Click(actions[entry.Item2]);
                 Require(raised != null && raised.Device == host && raised.Action == entry.Item2 && raised.ServicePort == entry.Item1,
                     "Connection actions carry the selected service's host and port.");
             }

@@ -107,19 +107,29 @@ namespace KillerScan.Shell
         // Any run can be deleted from the list: right-click Delete, or the Delete key.
         private void InitHistoryDelete()
         {
-            var delete = new MenuItem { InputGestureText = "Delete", Icon = MenuGlyph.Create(0xE74D) };
-            delete.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Loc_DeleteButton");
-            delete.Click += (_, _) => DeleteSelectedHistoryEntry();
-            var rename = new MenuItem { InputGestureText = "F2", Icon = MenuGlyph.Create(0xE8AC) };
-            rename.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_History_Rename");
-            rename.Click += (_, _) => RenameSelectedHistoryEntry();
-            HistoryList.ContextMenu = new ContextMenu { Items = { rename, delete } };
+            // The saved-scan card: the run's name over its date and target, and its two verbs.
+            // Rebuilt as it opens, so the header and the captions follow the selection and the
+            // current language.
+            HistoryList.ContextMenu = KillerFamily.Controls.CardBuilder.Menu();
             HistoryList.PreviewMouseRightButtonDown += (_, e) =>
             {
                 if (ItemsControl.ContainerFromElement(HistoryList, e.OriginalSource as DependencyObject) is ListBoxItem row)
                     row.IsSelected = true;
             };
-            HistoryList.ContextMenuOpening += (_, e) => { if (HistoryList.SelectedItem is not ScanHistoryEntry) e.Handled = true; };
+            HistoryList.ContextMenuOpening += (_, e) =>
+            {
+                if (HistoryList.SelectedItem is not ScanHistoryEntry entry) { e.Handled = true; return; }
+                var menu = HistoryList.ContextMenu;
+                menu.Items.Clear();
+                string when = entry.ScannedAt.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture);
+                menu.Items.Add(KillerFamily.Controls.CardBuilder.Header(entry.DisplayName,
+                    entry.DisplayName == entry.Target ? when : when + "  ·  " + entry.Target));
+                menu.Items.Add(KillerFamily.Controls.CardBuilder.QuickStrip(Loc("Str_Card_Actions"), new[]
+                {
+                    new KillerFamily.Controls.CardAction("", Loc("Str_Card_Rename"), Loc("Str_History_Rename"), "F2", RenameSelectedHistoryEntry),
+                    new KillerFamily.Controls.CardAction("", Loc("Str_Loc_DeleteButton"), Loc("Str_Loc_DeleteButton"), "Delete", DeleteSelectedHistoryEntry),
+                }));
+            };
             HistoryList.PreviewKeyDown += (_, e) =>
             {
                 if (System.Windows.Input.Keyboard.Modifiers != System.Windows.Input.ModifierKeys.None) return;

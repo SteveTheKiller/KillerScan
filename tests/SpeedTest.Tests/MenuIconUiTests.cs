@@ -33,6 +33,8 @@ internal static partial class HistoryUiTests
         var history = new HistoryWorkspace();
         menus.Add("History", ((DataGrid)history.FindName("HistoryChangesGrid")).ContextMenu);
         var terminal = (FrameworkElement)Activator.CreateInstance(assembly.GetType("KillerScan.Terminal.TerminalControl", true)!)!;
+        // The terminal card is filled as it opens; fill it the way the Menu key does.
+        Call(terminal, "FillContextMenu");
         menus.Add("Terminal", terminal.ContextMenu);
         var watch = (FrameworkElement)Activator.CreateInstance(assembly.GetType("KillerScan.Controls.NetworkToolsWindow", true)!,
             Instance, null, new object[] { "", 1.0 }, null)!;
@@ -111,7 +113,16 @@ internal static partial class HistoryUiTests
                 surface.Children.Add(row);
             }
             Render(surface, 440, Math.Max(60, rows.Length * 34));
-            foreach (var item in rows.OfType<MenuItem>())
+            // A card's header, quick strip and chip rows are CardSlots with no icon of their own;
+            // their quick buttons carry the glyphs, and each must exist in the icon font.
+            foreach (var button in CardMenuTestHelpers.CardButtons(rows)
+                .OfType<Button>().Where(button => ReferenceEquals(button.Style, app.TryFindResource("CardQuickButton"))))
+            {
+                string glyph = (string)button.Content;
+                int codepoint = char.ConvertToUtf32(glyph, 0);
+                Require(font.CharacterToGlyphMap.ContainsKey(codepoint), name + "/" + button.Tag + "/" + theme + " quick button glyph exists: U+" + codepoint.ToString("X4"));
+            }
+            foreach (var item in rows.OfType<MenuItem>().Where(item => !CardMenuTestHelpers.IsCardSlot(item)))
             {
                 string label = name + "/" + item.Header + "/" + theme;
                 Require(item.Icon is FrameworkElement, label + " has an icon.");

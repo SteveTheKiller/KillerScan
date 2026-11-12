@@ -269,6 +269,25 @@
     <sys:String x:Key="Str_Ctx_Copy">Copy</sys:String>
     <sys:String x:Key="Str_Ctx_Paste">Paste</sys:String>
     <sys:String x:Key="Str_Ctx_SelectAll">Select all</sys:String>
+    <!-- Card menu captions: the short word under a quick button or on a chip. The full action
+         name is the button's tooltip, so these stay one or two words to fit the card. -->
+    <sys:String x:Key="Str_Card_Actions">Actions</sys:String>
+    <sys:String x:Key="Str_Card_Browser">Browser</sys:String>
+    <sys:String x:Key="Str_Card_Diagnose">Diagnose</sys:String>
+    <sys:String x:Key="Str_Card_Devices">{0} devices</sys:String>
+    <sys:String x:Key="Str_Card_Services">{0} services</sys:String>
+    <sys:String x:Key="Str_Card_Endpoint">Endpoint</sys:String>
+    <sys:String x:Key="Str_Card_Port">Port</sys:String>
+    <sys:String x:Key="Str_Card_Open">Open</sys:String>
+    <sys:String x:Key="Str_Card_Edit">Edit</sys:String>
+    <sys:String x:Key="Str_Card_Export">Export</sys:String>
+    <sys:String x:Key="Str_Card_Details">Details</sys:String>
+    <sys:String x:Key="Str_Card_Rename">Rename</sys:String>
+    <sys:String x:Key="Str_Card_Check">Check</sys:String>
+    <sys:String x:Key="Str_Card_Reset">Reset</sys:String>
+    <sys:String x:Key="Str_Card_Remove">Remove</sys:String>
+    <sys:String x:Key="Str_Card_CopyAll">Copy all</sys:String>
+    <sys:String x:Key="Str_Card_Clear">Clear</sys:String>
     <sys:String x:Key="Str_Sc_About">Open the About window</sys:String>
     <sys:String x:Key="Str_Sc_Hint">The app size also follows the mouse wheel over the wordmark.</sys:String>
     <sys:String x:Key="Str_KS_HoldHint">Hold Ctrl / Shift / Alt to preview a layer</sys:String>

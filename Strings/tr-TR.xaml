@@ -245,6 +245,23 @@
     <sys:String x:Key="Str_Ctx_Copy">Kopyala</sys:String>
     <sys:String x:Key="Str_Ctx_Paste">Yapıştır</sys:String>
     <sys:String x:Key="Str_Ctx_SelectAll">Tümünü seç</sys:String>
+    <sys:String x:Key="Str_Card_Actions">Eylemler</sys:String>
+    <sys:String x:Key="Str_Card_Browser">Tarayıcı</sys:String>
+    <sys:String x:Key="Str_Card_Diagnose">Tanıla</sys:String>
+    <sys:String x:Key="Str_Card_Devices">{0} cihaz</sys:String>
+    <sys:String x:Key="Str_Card_Services">{0} hizmet</sys:String>
+    <sys:String x:Key="Str_Card_Endpoint">Uç nokta</sys:String>
+    <sys:String x:Key="Str_Card_Port">Bağlantı noktası</sys:String>
+    <sys:String x:Key="Str_Card_Open">Aç</sys:String>
+    <sys:String x:Key="Str_Card_Edit">Düzenle</sys:String>
+    <sys:String x:Key="Str_Card_Export">Dışa aktar</sys:String>
+    <sys:String x:Key="Str_Card_Details">Ayrıntılar</sys:String>
+    <sys:String x:Key="Str_Card_Rename">Yeniden adlandır</sys:String>
+    <sys:String x:Key="Str_Card_Check">Denetle</sys:String>
+    <sys:String x:Key="Str_Card_Reset">Sıfırla</sys:String>
+    <sys:String x:Key="Str_Card_Remove">Kaldır</sys:String>
+    <sys:String x:Key="Str_Card_CopyAll">Tümünü kopyala</sys:String>
+    <sys:String x:Key="Str_Card_Clear">Temizle</sys:String>
     <sys:String x:Key="Str_Sc_About">Hakkında penceresini aç</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Uygulama boyutu, logo üzerindeki fare tekerleğini de izler.</sys:String>
 

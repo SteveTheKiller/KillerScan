@@ -272,6 +272,23 @@
     <sys:String x:Key="Str_Ctx_Copy">Көшіру</sys:String>
     <sys:String x:Key="Str_Ctx_Paste">Қою</sys:String>
     <sys:String x:Key="Str_Ctx_SelectAll">Барлығын таңдау</sys:String>
+    <sys:String x:Key="Str_Card_Actions">Әрекеттер</sys:String>
+    <sys:String x:Key="Str_Card_Browser">Браузер</sys:String>
+    <sys:String x:Key="Str_Card_Diagnose">Диагностика</sys:String>
+    <sys:String x:Key="Str_Card_Devices">{0} құрылғы</sys:String>
+    <sys:String x:Key="Str_Card_Services">{0} қызмет</sys:String>
+    <sys:String x:Key="Str_Card_Endpoint">Соңғы нүкте</sys:String>
+    <sys:String x:Key="Str_Card_Port">Порт</sys:String>
+    <sys:String x:Key="Str_Card_Open">Ашу</sys:String>
+    <sys:String x:Key="Str_Card_Edit">Өңдеу</sys:String>
+    <sys:String x:Key="Str_Card_Export">Экспорт</sys:String>
+    <sys:String x:Key="Str_Card_Details">Мәліметтер</sys:String>
+    <sys:String x:Key="Str_Card_Rename">Атын өзгерту</sys:String>
+    <sys:String x:Key="Str_Card_Check">Тексеру</sys:String>
+    <sys:String x:Key="Str_Card_Reset">Нөлдеу</sys:String>
+    <sys:String x:Key="Str_Card_Remove">Алып тастау</sys:String>
+    <sys:String x:Key="Str_Card_CopyAll">Бәрін көшіру</sys:String>
+    <sys:String x:Key="Str_Card_Clear">Тазалау</sys:String>
     <sys:String x:Key="Str_Sc_About">Қолданба туралы терезесін ашу</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Қолданба өлшемі логотиптің үстінде тінтуір дөңгелегімен де өзгереді.</sys:String>
 

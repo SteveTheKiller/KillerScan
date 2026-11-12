@@ -272,6 +272,23 @@
     <sys:String x:Key="Str_Ctx_Copy">Másolás</sys:String>
     <sys:String x:Key="Str_Ctx_Paste">Beillesztés</sys:String>
     <sys:String x:Key="Str_Ctx_SelectAll">Összes kijelölése</sys:String>
+    <sys:String x:Key="Str_Card_Actions">Műveletek</sys:String>
+    <sys:String x:Key="Str_Card_Browser">Böngésző</sys:String>
+    <sys:String x:Key="Str_Card_Diagnose">Diagnosztika</sys:String>
+    <sys:String x:Key="Str_Card_Devices">{0} eszköz</sys:String>
+    <sys:String x:Key="Str_Card_Services">{0} szolgáltatás</sys:String>
+    <sys:String x:Key="Str_Card_Endpoint">Végpont</sys:String>
+    <sys:String x:Key="Str_Card_Port">Port</sys:String>
+    <sys:String x:Key="Str_Card_Open">Megnyitás</sys:String>
+    <sys:String x:Key="Str_Card_Edit">Szerkesztés</sys:String>
+    <sys:String x:Key="Str_Card_Export">Exportálás</sys:String>
+    <sys:String x:Key="Str_Card_Details">Részletek</sys:String>
+    <sys:String x:Key="Str_Card_Rename">Átnevezés</sys:String>
+    <sys:String x:Key="Str_Card_Check">Ellenőrzés</sys:String>
+    <sys:String x:Key="Str_Card_Reset">Nullázás</sys:String>
+    <sys:String x:Key="Str_Card_Remove">Eltávolítás</sys:String>
+    <sys:String x:Key="Str_Card_CopyAll">Összes másolása</sys:String>
+    <sys:String x:Key="Str_Card_Clear">Törlés</sys:String>
     <sys:String x:Key="Str_Sc_About">Nyissa meg a névjegy ablakát</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Az alkalmazás mérete is követi az egér görgőjét a szójel felett.</sys:String>
 

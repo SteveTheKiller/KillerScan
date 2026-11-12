@@ -78,10 +78,22 @@ namespace KillerScan.Shell
             if (NewScan().OpenLocation(row.Info)) RefreshLocationsList();
         }
 
-        private void LocationOpen_Click(object sender, RoutedEventArgs e) { if (LocationFor(sender) is { } row) OpenLocation(row); }
-        private void LocationRename_Click(object sender, RoutedEventArgs e) { if (LocationFor(sender) is { } row) _scanWorkspace?.RenameLocation(row.Info); }
-        private void LocationExport_Click(object sender, RoutedEventArgs e) { if (LocationFor(sender) is { } row) _scanWorkspace?.ExportLocation(row.Info); }
-        private void LocationDelete_Click(object sender, RoutedEventArgs e) { if (LocationFor(sender) is { } row) _scanWorkspace?.DeleteLocation(row.Info); }
+        /// <summary>A button on the Location card: close the card first, so the dialog Edit,
+        /// Export or Delete opens never sits under it, then act on the row it was opened for.</summary>
+        private void LocationCard_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is not System.Windows.Controls.Primitives.ButtonBase { CommandParameter: string action } button
+                || LocationFor(button) is not { } row) return;
+            e.Handled = true;
+            KillerFamily.Controls.CardBuilder.Close(button);
+            switch (action)
+            {
+                case "Open": OpenLocation(row); break;
+                case "Edit": _scanWorkspace?.RenameLocation(row.Info); break;
+                case "Export": _scanWorkspace?.ExportLocation(row.Info); break;
+                case "Delete": _scanWorkspace?.DeleteLocation(row.Info); break;
+            }
+        }
         private void NewLocation_Click(object sender, RoutedEventArgs e) => _scanWorkspace?.NewLocation();
         private void ImportLocation_Click(object sender, RoutedEventArgs e) => _scanWorkspace?.ImportLocationFromSidebar();
     }

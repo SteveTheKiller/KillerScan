@@ -419,42 +419,75 @@
                     </DataGrid.Resources>
 
                     <DataGrid.ContextMenu>
-                        <ContextMenu>
+                        <!-- The device card (the kit's card menu, KillerNotes 1.7.0 the reference). A header
+                             naming what was right-clicked, quick buttons for the everyday verbs, the copy
+                             variants as one row of chips, then a short list. The header is filled as the
+                             menu opens (Rescan.cs PrepareDeviceContextMenu); a button or chip carries its
+                             action in CommandParameter, and DeviceCard_ButtonClick closes the card and runs
+                             it through the same handlers the rows always used. -->
+                        <ContextMenu Style="{StaticResource CardMenu}" ButtonBase.Click="DeviceCard_ButtonClick">
+                            <MenuItem x:Name="DeviceCardHeader" Style="{StaticResource CardSlot}"/>
+                            <MenuItem x:Name="DeviceCardQuick" Style="{StaticResource CardSlot}" Padding="0"
+                                      AutomationProperties.Name="{DynamicResource Str_Card_Actions}">
+                                <MenuItem.Header>
+                                    <Border BorderBrush="{DynamicResource MenuBorderBrush}" BorderThickness="0,1" Padding="2,4">
+                                        <UniformGrid Rows="1">
+                                            <Button Style="{StaticResource CardQuickButton}" CommandParameter="Browser" Content="&#xE8A7;"
+                                                    Tag="{DynamicResource Str_Card_Browser}" AutomationProperties.Name="{DynamicResource Str_Ctx_OpenBrowser}" AutomationProperties.AcceleratorKey="Enter">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Ctx_OpenBrowser}"/><Run Text="  (Enter)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                            <Button Style="{StaticResource CardQuickButton}" CommandParameter="Ping" Content="&#xE704;"
+                                                    Tag="{DynamicResource Str_Ctx_Ping}" AutomationProperties.Name="{DynamicResource Str_Ctx_Ping}" AutomationProperties.AcceleratorKey="Ctrl+P">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Ctx_Ping}"/><Run Text="  (Ctrl+P)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                            <Button Style="{StaticResource CardQuickButton}" CommandParameter="Diagnose" Content="&#xE9D9;"
+                                                    Tag="{DynamicResource Str_Card_Diagnose}" AutomationProperties.Name="{DynamicResource Str_Sc_Diagnostics}" AutomationProperties.AcceleratorKey="F3">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Sc_Diagnostics}"/><Run Text="  (F3)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                            <Button Style="{StaticResource CardQuickButton}" CommandParameter="Watch" Content="&#xE7B3;"
+                                                    Tag="{DynamicResource Str_View_KeepAlive}" AutomationProperties.Name="{DynamicResource Str_View_KeepAlive}" AutomationProperties.AcceleratorKey="F9">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_View_KeepAlive}"/><Run Text="  (F9)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                            <!-- RDP and SSH are names, the same in every language. -->
+                                            <Button Style="{StaticResource CardQuickButton}" CommandParameter="Rdp" Content="&#xE7F4;"
+                                                    Tag="{DynamicResource Str_Ctx_Rdp}" AutomationProperties.Name="{DynamicResource Str_Ctx_Rdp}" AutomationProperties.AcceleratorKey="Ctrl+D">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Ctx_Rdp}"/><Run Text="  (Ctrl+D)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                            <Button Style="{StaticResource CardQuickButton}" CommandParameter="Ssh" Content="&#xE756;"
+                                                    Tag="{DynamicResource Str_Ctx_Ssh}" AutomationProperties.Name="{DynamicResource Str_Ctx_Ssh}" AutomationProperties.AcceleratorKey="Ctrl+S">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Ctx_Ssh}"/><Run Text="  (Ctrl+S)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                        </UniformGrid>
+                                    </Border>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <!-- The copy variants. IP and MAC are names, the same in every language. -->
+                            <MenuItem x:Name="DeviceCardCopy" Style="{StaticResource CardSlot}" Padding="24,6,4,4"
+                                      AutomationProperties.Name="{DynamicResource Str_Ctx_Copy}">
+                                <MenuItem.Header>
+                                    <DockPanel>
+                                        <TextBlock Style="{StaticResource CardLabel}" Text="{DynamicResource Str_Ctx_Copy}"/>
+                                        <WrapPanel VerticalAlignment="Center">
+                                            <Button Style="{StaticResource CardChip}" CommandParameter="CopyIp" Content="IP"
+                                                    AutomationProperties.Name="{DynamicResource Str_Ctx_CopyIp}" AutomationProperties.AcceleratorKey="Ctrl+C">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Ctx_CopyIp}"/><Run Text="  (Ctrl+C)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                            <Button Style="{StaticResource CardChip}" CommandParameter="CopyMac" Content="MAC"
+                                                    AutomationProperties.Name="{DynamicResource Str_Ctx_CopyMac}" AutomationProperties.AcceleratorKey="Ctrl+Shift+C">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Ctx_CopyMac}"/><Run Text="  (Ctrl+Shift+C)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                            <Button Style="{StaticResource CardChip}" CommandParameter="CopyHost" Content="{DynamicResource Str_Col_Host}"
+                                                    AutomationProperties.Name="{DynamicResource Str_Ctx_CopyHost}" AutomationProperties.AcceleratorKey="Ctrl+Alt+C">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Ctx_CopyHost}"/><Run Text="  (Ctrl+Alt+C)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                        </WrapPanel>
+                                    </DockPanel>
+                                </MenuItem.Header>
+                            </MenuItem>
+                            <Separator/>
                             <MenuItem x:Name="RescanMenuItem" Header="{DynamicResource Str_Ctx_RescanOne}" InputGestureText="Ctrl+R" Click="RescanSelected_Click">
                                 <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE72C;"/></MenuItem.Icon>
                             </MenuItem>
-                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
-
-                            <MenuItem Header="{DynamicResource Str_Ctx_CopyIp}" InputGestureText="Ctrl+C" Click="CopyIp_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_CopyMac}" InputGestureText="Ctrl+Shift+C" Click="CopyMac_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_CopyHost}" InputGestureText="Ctrl+Alt+C" Click="CopyHostname_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
-                            </MenuItem>
-                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
-                            <MenuItem Header="{DynamicResource Str_Sc_Diagnostics}" InputGestureText="F3" Click="Diagnose_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE9D9;"/></MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_View_KeepAlive}" InputGestureText="F9" Click="Watch_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE9D9;"/></MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_Ping}" InputGestureText="Ctrl+P" Click="PingDevice_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE704;"/></MenuItem.Icon>
-                            </MenuItem>
-
-                            <MenuItem Header="{DynamicResource Str_Ctx_OpenBrowser}" InputGestureText="Enter" Click="OpenBrowser_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8A7;"/></MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_Rdp}" InputGestureText="Ctrl+D" Click="RdpDevice_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE7F4;"/></MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_Ssh}" InputGestureText="Ctrl+S" Click="SshDevice_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
-                            </MenuItem>
-
                             <MenuItem Header="{DynamicResource Str_Ctx_SshAs}" InputGestureText="Ctrl+Shift+S" Click="SshAsDevice_Click">
                                 <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
                             </MenuItem>
@@ -465,7 +498,7 @@
                                     <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE946;"/></MenuItem.Icon>
                                 </MenuItem>
                             </MenuItem>
-                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
+                            <Separator/>
                             <MenuItem Header="{DynamicResource Str_Rename_Title}" InputGestureText="F2" Click="RenameDevice_Click">
                                 <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE70F;"/></MenuItem.Icon>
                             </MenuItem>
@@ -476,7 +509,7 @@
                                       Click="TrustDevice_Click">
                                 <MenuItem.Icon><Ellipse Width="10" Height="10"/></MenuItem.Icon>
                             </MenuItem>
-                            <Separator Style="{x:Null}" Background="#3a3a3a" Height="1" Margin="8,4"/>
+                            <Separator/>
                             <MenuItem Header="{DynamicResource Str_Ctx_SetType}" SubmenuOpened="SetTypeMenu_Opened">
                                 <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8EC;"/></MenuItem.Icon>
 
@@ -729,36 +762,69 @@
                           Template="{Binding Template, ElementName=ResultsGrid}"
                           CellStyle="{StaticResource DarkDataGridCell}">
                     <DataGrid.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="{DynamicResource Str_Services_CopyEndpoint}" InputGestureText="Ctrl+Shift+C" Tag="CopyEndpoint" Click="ServiceMenu_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                        <!-- The service card: the device card's layout for one open port. Quick buttons
+                             for the ways in that this service offers (the rest collapse as it opens,
+                             ServiceActions.cs), the copy variants as chips, then a short list. A button or
+                             chip carries its action in CommandParameter, the same action names the rows'
+                             Tags always used, and ServiceCard_ButtonClick runs it. -->
+                        <ContextMenu Style="{StaticResource CardMenu}" ButtonBase.Click="ServiceCard_ButtonClick">
+                            <MenuItem x:Name="ServiceCardHeader" Style="{StaticResource CardSlot}"/>
+                            <MenuItem x:Name="ServiceCardQuick" Style="{StaticResource CardSlot}" Padding="0"
+                                      AutomationProperties.Name="{DynamicResource Str_Card_Actions}">
+                                <MenuItem.Header>
+                                    <Border BorderBrush="{DynamicResource MenuBorderBrush}" BorderThickness="0,1" Padding="2,4">
+                                        <UniformGrid Rows="1">
+                                            <Button Style="{StaticResource CardQuickButton}" CommandParameter="Browser" Content="&#xE8A7;"
+                                                    Tag="{DynamicResource Str_Card_Browser}" AutomationProperties.Name="{DynamicResource Str_Ctx_OpenBrowser}" AutomationProperties.AcceleratorKey="Enter">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Ctx_OpenBrowser}"/><Run Text="  (Enter)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                            <Button Style="{StaticResource CardQuickButton}" CommandParameter="Ssh" Content="&#xE756;"
+                                                    Tag="{DynamicResource Str_Ctx_Ssh}" AutomationProperties.Name="{DynamicResource Str_Ctx_Ssh}" AutomationProperties.AcceleratorKey="Ctrl+S">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Ctx_Ssh}"/><Run Text="  (Ctrl+S)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                            <Button Style="{StaticResource CardQuickButton}" CommandParameter="Rdp" Content="&#xE7F4;"
+                                                    Tag="{DynamicResource Str_Ctx_Rdp}" AutomationProperties.Name="{DynamicResource Str_Ctx_Rdp}" AutomationProperties.AcceleratorKey="Ctrl+D">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Ctx_Rdp}"/><Run Text="  (Ctrl+D)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                        </UniformGrid>
+                                    </Border>
+                                </MenuItem.Header>
                             </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Services_CopyName}" InputGestureText="Ctrl+Shift+Y" Tag="CopyService" Click="ServiceMenu_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
+                            <MenuItem x:Name="ServiceCardCopy" Style="{StaticResource CardSlot}" Padding="24,6,4,4"
+                                      AutomationProperties.Name="{DynamicResource Str_Ctx_Copy}">
+                                <MenuItem.Header>
+                                    <DockPanel>
+                                        <TextBlock Style="{StaticResource CardLabel}" Text="{DynamicResource Str_Ctx_Copy}"/>
+                                        <WrapPanel VerticalAlignment="Center">
+                                            <Button Style="{StaticResource CardChip}" CommandParameter="CopyEndpoint" Content="{DynamicResource Str_Card_Endpoint}"
+                                                    AutomationProperties.Name="{DynamicResource Str_Services_CopyEndpoint}" AutomationProperties.AcceleratorKey="Ctrl+Shift+C">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Services_CopyEndpoint}"/><Run Text="  (Ctrl+Shift+C)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                            <Button Style="{StaticResource CardChip}" CommandParameter="CopyService" Content="{DynamicResource Str_Services_Service}"
+                                                    AutomationProperties.Name="{DynamicResource Str_Services_CopyName}" AutomationProperties.AcceleratorKey="Ctrl+Shift+Y">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Services_CopyName}"/><Run Text="  (Ctrl+Shift+Y)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                            <Button Style="{StaticResource CardChip}" CommandParameter="CopyPort" Content="{DynamicResource Str_Card_Port}"
+                                                    AutomationProperties.Name="{DynamicResource Str_Services_CopyPort}" AutomationProperties.AcceleratorKey="Ctrl+Alt+P">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Services_CopyPort}"/><Run Text="  (Ctrl+Alt+P)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                            <Button Style="{StaticResource CardChip}" CommandParameter="CopyIp" Content="IP"
+                                                    AutomationProperties.Name="{DynamicResource Str_Ctx_CopyIp}" AutomationProperties.AcceleratorKey="Ctrl+C">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Ctx_CopyIp}"/><Run Text="  (Ctrl+C)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                            <Button Style="{StaticResource CardChip}" CommandParameter="CopyHost" Content="{DynamicResource Str_Col_Host}"
+                                                    AutomationProperties.Name="{DynamicResource Str_Ctx_CopyHost}" AutomationProperties.AcceleratorKey="Ctrl+Alt+C">
+                                                <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Ctx_CopyHost}"/><Run Text="  (Ctrl+Alt+C)"/></TextBlock></Button.ToolTip>
+                                            </Button>
+                                        </WrapPanel>
+                                    </DockPanel>
+                                </MenuItem.Header>
                             </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Services_CopyPort}" InputGestureText="Ctrl+Alt+P" Tag="CopyPort" Click="ServiceMenu_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_CopyIp}" Tag="CopyIp" InputGestureText="Ctrl+C" Click="ServiceMenu_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_CopyHost}" Tag="CopyHost" InputGestureText="Ctrl+Alt+C" Click="ServiceMenu_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8C8;"/></MenuItem.Icon>
-                            </MenuItem>
-                            <Separator x:Name="ServiceConnectSeparator"/>
-                            <MenuItem Header="{DynamicResource Str_Ctx_OpenBrowser}" Tag="Browser" InputGestureText="Enter" Click="ServiceMenu_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8A7;"/></MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_Ssh}" Tag="Ssh" InputGestureText="Ctrl+S" Click="ServiceMenu_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
-                            </MenuItem>
+                            <Separator/>
                             <MenuItem Header="{DynamicResource Str_Ctx_SshAs}" Tag="SshAs" InputGestureText="Ctrl+Shift+S" Click="ServiceMenu_Click">
                                 <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE756;"/></MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="{DynamicResource Str_Ctx_Rdp}" Tag="Rdp" InputGestureText="Ctrl+D" Click="ServiceMenu_Click">
-                                <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE7F4;"/></MenuItem.Icon>
-                            </MenuItem>
-                            <Separator/>
+                            <Separator x:Name="ServiceConnectSeparator"/>
                             <MenuItem Header="{DynamicResource Str_Ctx_SelectAll}" Tag="SelectAll" InputGestureText="Ctrl+A" Click="ServiceMenu_Click">
                                 <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8B3;"/></MenuItem.Icon>
                             </MenuItem>

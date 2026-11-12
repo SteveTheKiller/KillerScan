@@ -314,6 +314,42 @@
                 </Setter>
             </Style>
 
+            <!-- A one-shot action chip on a card row (the device card's Copy row). KillerShell's
+                 CardChip: the same face as the kit's CardToggle chip, but a Button, so it runs and
+                 closes the card instead of holding a state. Fixed height and centered text so a
+                 row of them lines up with the CardLabel beside it. -->
+            <Style x:Key="CardChip" TargetType="Button">
+                <Setter Property="Foreground" Value="{DynamicResource MenuTextBrush}"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="Height" Value="24"/>
+                <Setter Property="Padding" Value="9,0"/>
+                <Setter Property="Margin" Value="0,2,6,2"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Bd" Background="Transparent" BorderBrush="{DynamicResource MenuBorderBrush}" BorderThickness="1"
+                                    CornerRadius="{DynamicResource SmallCornerRadius}" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="False"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource MenuHoverBrush}"/>
+                                    <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource DimTextBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource MenuHoverTextBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                    <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <!-- View toolbar button, KillerPDF's ToolbarButton key for key. The active view is
                  marked by the caller setting Background and Foreground to SelectionBg/SelectionFg,
                  not by a trigger here, so the highlight is the theme's selection pair rather than
@@ -330,12 +366,7 @@
                             <Border Background="{TemplateBinding Background}"
                                     CornerRadius="{DynamicResource ControlCornerRadius}"
                                     Padding="{TemplateBinding Padding}">
-                                <ContentPresenter x:Name="content" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <ContentPresenter.Effect>
-                                        <DropShadowEffect Color="Black" BlurRadius="4" ShadowDepth="2"
-                                                          Direction="270" Opacity="{DynamicResource IconShadowOpacity}"/>
-                                    </ContentPresenter.Effect>
-                                </ContentPresenter>
+                                <ContentPresenter x:Name="content" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <!-- The hover setter deliberately targets the button rather than the
@@ -344,13 +375,6 @@
                                      pointer is over it. -->
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Background" Value="{DynamicResource RowHoverBrush}"/>
-                                </Trigger>
-                                <!-- No shadow on the active view, in any theme. The selected button
-                                     already carries a solid fill and its own foreground; a black
-                                     shadow on top of that reads as a smudge rather than as depth,
-                                     worst on the light accents but wrong everywhere. -->
-                                <Trigger Property="Tag" Value="selected">
-                                    <Setter TargetName="content" Property="Effect" Value="{x:Null}"/>
                                 </Trigger>
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter Property="Opacity" Value="0.4"/>

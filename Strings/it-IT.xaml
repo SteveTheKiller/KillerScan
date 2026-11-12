@@ -272,6 +272,23 @@
     <sys:String x:Key="Str_Ctx_Copy">Copia</sys:String>
     <sys:String x:Key="Str_Ctx_Paste">Incolla</sys:String>
     <sys:String x:Key="Str_Ctx_SelectAll">Seleziona tutto</sys:String>
+    <sys:String x:Key="Str_Card_Actions">Azioni</sys:String>
+    <sys:String x:Key="Str_Card_Browser">Browser</sys:String>
+    <sys:String x:Key="Str_Card_Diagnose">Diagnosi</sys:String>
+    <sys:String x:Key="Str_Card_Devices">{0} dispositivi</sys:String>
+    <sys:String x:Key="Str_Card_Services">{0} servizi</sys:String>
+    <sys:String x:Key="Str_Card_Endpoint">Endpoint</sys:String>
+    <sys:String x:Key="Str_Card_Port">Porta</sys:String>
+    <sys:String x:Key="Str_Card_Open">Apri</sys:String>
+    <sys:String x:Key="Str_Card_Edit">Modifica</sys:String>
+    <sys:String x:Key="Str_Card_Export">Esporta</sys:String>
+    <sys:String x:Key="Str_Card_Details">Dettagli</sys:String>
+    <sys:String x:Key="Str_Card_Rename">Rinomina</sys:String>
+    <sys:String x:Key="Str_Card_Check">Verifica</sys:String>
+    <sys:String x:Key="Str_Card_Reset">Azzera</sys:String>
+    <sys:String x:Key="Str_Card_Remove">Rimuovi</sys:String>
+    <sys:String x:Key="Str_Card_CopyAll">Copia tutto</sys:String>
+    <sys:String x:Key="Str_Card_Clear">Pulisci</sys:String>
     <sys:String x:Key="Str_Sc_About">Apri la finestra Informazioni</sys:String>
     <sys:String x:Key="Str_Sc_Hint">La dimensione dell'app segue anche la rotellina del mouse sopra il logotipo.</sys:String>
 

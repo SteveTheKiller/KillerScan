@@ -35,9 +35,52 @@ namespace KillerScan.Controls
             grid.Focus();
         }
 
+        /// <summary>
+        /// On a table, the saved-device card: the device's name and address over its copy chips,
+        /// then the view and export rows. Nothing live is on it (no ping, rescan or connect): the
+        /// row is a record of a past scan. The pane background keeps the plain list, since there
+        /// is no device to copy from.
+        /// </summary>
         private ContextMenu BuildHistoryMenu(DataGrid? grid)
         {
-            var menu = new ContextMenu();
+            ContextMenu menu;
+            MenuItem? header = null;
+            var chips = new List<Button>();
+            if (grid != null)
+            {
+                menu = KillerFamily.Controls.CardBuilder.Menu();
+                header = KillerFamily.Controls.CardBuilder.Header(Loc("Str_History_Title"));
+                menu.Items.Add(header);
+                var wrap = new WrapPanel { VerticalAlignment = VerticalAlignment.Center };
+                void Chip(string? text, string? textKey, string nameKey, string gesture, string action)
+                {
+                    var chip = new Button { CommandParameter = action };
+                    chip.SetResourceReference(StyleProperty, "CardChip");
+                    if (text != null) chip.Content = text; else chip.SetResourceReference(ContentControl.ContentProperty, textKey!);
+                    chip.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, nameKey);
+                    System.Windows.Automation.AutomationProperties.SetAcceleratorKey(chip, gesture);
+                    var tip = new TextBlock();
+                    var name = new System.Windows.Documents.Run();
+                    name.SetResourceReference(System.Windows.Documents.Run.TextProperty, nameKey);
+                    tip.Inlines.Add(name);
+                    tip.Inlines.Add(new System.Windows.Documents.Run("  (" + gesture + ")"));
+                    chip.ToolTip = tip;
+                    chip.Click += (_, _) => { KillerFamily.Controls.CardBuilder.Close(chip); ExecuteAction(action); };
+                    chips.Add(chip);
+                    wrap.Children.Add(chip);
+                }
+                // IP and MAC are names, the same in every language.
+                Chip("IP", null, "Str_Ctx_CopyIp", "Ctrl+C", "ip");
+                Chip("MAC", null, "Str_Ctx_CopyMac", "Ctrl+Shift+C", "mac");
+                Chip(null, "Str_Col_Host", "Str_Ctx_CopyHost", "Ctrl+Alt+C", "host");
+                Chip(null, "Str_Card_Details", "Str_History_CopyDetails", "Ctrl+Shift+Y", "details");
+                var copy = KillerFamily.Controls.CardBuilder.Labeled(Loc("Str_Ctx_Copy"), wrap);
+                copy.Padding = new Thickness(24, 6, 4, 4);
+                ((TextBlock)((DockPanel)copy.Header).Children[0]).SetResourceReference(TextBlock.TextProperty, "Str_Ctx_Copy");
+                copy.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, "Str_Ctx_Copy");
+                menu.Items.Add(copy);
+            }
+            else menu = new ContextMenu();
             void Add(string key, string gesture, string action, int glyph)
             {
                 var item = new MenuItem { InputGestureText = gesture, Tag = action, Icon = MenuGlyph.Create(glyph) };
@@ -45,11 +88,7 @@ namespace KillerScan.Controls
                 item.Click += (_, _) => ExecuteAction(action);
                 menu.Items.Add(item);
             }
-            Add("Str_Ctx_CopyIp", "Ctrl+C", "ip", 0xE8C8);
-            Add("Str_Ctx_CopyMac", "Ctrl+Shift+C", "mac", 0xE8C8);
-            Add("Str_Ctx_CopyHost", "Ctrl+Alt+C", "host", 0xE8C8);
-            Add("Str_History_CopyDetails", "Ctrl+Shift+Y", "details", 0xE8C8);
-            menu.Items.Add(new Separator());
+            if (grid != null) menu.Items.Add(new Separator());
             Add("Str_Export_Csv", "Ctrl+E", "export", 0xE896);
             Add("Str_History_ViewChanges", "Ctrl+Shift+H", "changes", 0xE8FD);
             Add("Str_History_ViewAll", "Ctrl+Shift+H", "all", 0xE772);
@@ -58,9 +97,19 @@ namespace KillerScan.Controls
             Add("Str_View_Devices", "F6", "current", 0xE772);
             menu.Opened += (_, _) =>
             {
+                foreach (var chip in chips) chip.IsEnabled = CopyValue((string)chip.CommandParameter).Length > 0;
+                if (header != null)
+                {
+                    var device = SelectedHistoryDevice;
+                    string title = device == null ? Loc("Str_History_Title")
+                        : string.IsNullOrWhiteSpace(device.Hostname) ? device.IpAddress : device.Hostname;
+                    string meta = device == null ? "" : string.Join("  ·  ", new[] { device.IpAddress, device.MacAddress, device.Vendor }
+                        .Where(part => !string.IsNullOrWhiteSpace(part) && part != title));
+                    ScanWorkspace.SetCardHeader(header, title, meta);
+                }
                 foreach (var item in menu.Items.OfType<MenuItem>())
                 {
-                    string action = (string)item.Tag;
+                    if (item.Tag is not string action) continue;
                     item.IsEnabled = action switch
                     {
                         "ip" or "mac" or "host" or "details" => grid != null && CopyValue(action).Length > 0,

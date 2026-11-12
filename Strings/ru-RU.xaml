@@ -272,6 +272,23 @@
     <sys:String x:Key="Str_Ctx_Copy">Копировать</sys:String>
     <sys:String x:Key="Str_Ctx_Paste">Вставить</sys:String>
     <sys:String x:Key="Str_Ctx_SelectAll">Выделить все</sys:String>
+    <sys:String x:Key="Str_Card_Actions">Действия</sys:String>
+    <sys:String x:Key="Str_Card_Browser">Браузер</sys:String>
+    <sys:String x:Key="Str_Card_Diagnose">Диагностика</sys:String>
+    <sys:String x:Key="Str_Card_Devices">Устройств: {0}</sys:String>
+    <sys:String x:Key="Str_Card_Services">Служб: {0}</sys:String>
+    <sys:String x:Key="Str_Card_Endpoint">Адрес и порт</sys:String>
+    <sys:String x:Key="Str_Card_Port">Порт</sys:String>
+    <sys:String x:Key="Str_Card_Open">Открыть</sys:String>
+    <sys:String x:Key="Str_Card_Edit">Изменить</sys:String>
+    <sys:String x:Key="Str_Card_Export">Экспорт</sys:String>
+    <sys:String x:Key="Str_Card_Details">Сведения</sys:String>
+    <sys:String x:Key="Str_Card_Rename">Переименовать</sys:String>
+    <sys:String x:Key="Str_Card_Check">Проверить</sys:String>
+    <sys:String x:Key="Str_Card_Reset">Сбросить</sys:String>
+    <sys:String x:Key="Str_Card_Remove">Убрать</sys:String>
+    <sys:String x:Key="Str_Card_CopyAll">Копировать все</sys:String>
+    <sys:String x:Key="Str_Card_Clear">Очистить</sys:String>
     <sys:String x:Key="Str_Sc_About">Открыть окно «О программе»</sys:String>
     <sys:String x:Key="Str_Sc_Hint">Размер приложения также меняется колесом мыши над логотипом.</sys:String>
 
