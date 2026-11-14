@@ -141,6 +141,7 @@ namespace KillerScan.Features.Cli
             "/vendor-filter", "--vendor-filter", "/ports", "--ports", "/limit", "--limit",
             "/timeout", "--timeout", "/theme", "--theme", "/count", "--count",
             "/interval", "--interval", "/max-hops", "--max-hops", "/location", "--location", "/skip", "--skip",
+            "/max-seconds", "--max-seconds",
             "/adapter", "--adapter", "/log", "--log"
         ];
 
@@ -498,27 +499,34 @@ namespace KillerScan.Features.Cli
         private static int RunWatch(List<string> positionals, Dictionary<string, string> options,
                                     TextWriter @out, TextWriter err)
         {
-            if (positionals.Count == 0 || !Only(options, "/count", "--count", "/interval", "--interval", "/json", "--json"))
-                return Usage(err, "/watch needs one to 16 IPv4 addresses and accepts /count, /interval, and /json.");
+            if (positionals.Count == 0 || !Only(options, "/count", "--count", "/interval", "--interval", "/json", "--json", "/max-seconds", "--max-seconds"))
+                return Usage(err, "/watch needs one to 16 IPv4 addresses and accepts /count, /interval, /max-seconds and /json.");
             if (!ConnectionChecks.TryTargets(string.Join(",", positionals), out var targets))
                 return Usage(err, "/watch needs one to 16 IPv4 addresses.");
             int count = ParsePositive(options, "/count", "--count");
             int interval = ParsePositive(options, "/interval", "--interval");
+            int maximumSeconds = ParsePositive(options, "/max-seconds", "--max-seconds");
             if (count == -1 || count > 60) return Usage(err, "/count must be from 1 to 60.");
             if (interval == -1 || interval > 60) return Usage(err, "/interval must be from 1 to 60 seconds.");
+            if (maximumSeconds == -1 || maximumSeconds > 600) return Usage(err, "/max-seconds must be from 1 to 600 seconds.");
             if (count == 0) count = 4;
             if (interval == 0) interval = 1;
             var samples = new List<PingSample>();
+            using var deadline = new CancellationTokenSource();
+            if (maximumSeconds > 0) deadline.CancelAfter(TimeSpan.FromSeconds(maximumSeconds));
+            bool stoppedEarly = false;
             for (int sequence = 1; sequence <= count; sequence++)
             {
                 foreach (var target in targets)
                 {
+                    if (deadline.IsCancellationRequested) { stoppedEarly = true; break; }
                     long? latency = ConnectionChecks.PingAsync(target).GetAwaiter().GetResult();
                     samples.Add(new PingSample { Sequence = sequence, Address = target.ToString(), Success = latency.HasValue, LatencyMs = latency });
                 }
-                if (sequence < count) Thread.Sleep(TimeSpan.FromSeconds(interval));
+                if (stoppedEarly) break;
+                if (sequence < count && deadline.Token.WaitHandle.WaitOne(TimeSpan.FromSeconds(interval))) { stoppedEarly = true; break; }
             }
-            if (Has(options, "/json", "--json")) @out.WriteLine(JsonSerializer.Serialize(new { count, intervalSeconds = interval, samples }));
+            if (Has(options, "/json", "--json")) @out.WriteLine(JsonSerializer.Serialize(new { count, intervalSeconds = interval, stoppedEarly, samples }));
             else foreach (var sample in samples) @out.WriteLine($"{sample.Sequence,2}  {sample.Address,-15}  {(sample.Success ? sample.LatencyMs + " ms" : "no reply")}");
             return samples.Any(sample => sample.Success) ? 0 : 3;
         }
@@ -986,6 +994,7 @@ namespace KillerScan.Features.Cli
             "  killerscan trace 1.1.1.1 /max-hops 20 /json",
             "  killerscan diagnose 192.168.1.20 /ports 22,80,443 /json",
             "  killerscan watch 192.168.1.1 192.168.1.20 /count 6 /interval 2 /json",
+            "  /max-seconds <n> stops watch after 1 to 600 seconds and returns collected samples with stoppedEarly.",
             "  killerscan speedtest /json", "",
             $"Several targets may be separate or comma-delimited; overlaps are deduplicated and the ceiling is {ScanTargets.MaxAddresses:N0} addresses.",
             "Ctrl+C cancels. Exit codes: 0 success, 1 failure/cancel/timeout, 2 usage, 3 empty/not found.",
