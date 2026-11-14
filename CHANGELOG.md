@@ -16,6 +16,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - On a service, the card only offers the ways in that the service supports, so a DNS port shows no browser, SSH or RDP button.
 - Buttons no longer cast a drop shadow, including the view toolbar's icons.
 - Menu shortcuts and submenu arrows line up at the right edge of each row.
+- The copyright at the right end of the footer ends 8 px before the corner grip, the same gap in every Killer app.
 
 ## [1.9.5] - 2026-11-09
 

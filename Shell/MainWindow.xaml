@@ -837,9 +837,9 @@
                                FontSize="16" TextOptions.TextFormattingMode="Ideal" VerticalAlignment="Center" Margin="0,0,12,0"
                                Cursor="Hand" ToolTip="{DynamicResource Str_TT_About}"
                                MouseLeftButtonUp="VersionLabel_Click"/>
-                    <!-- 20px trailing margin keeps the copyright clear of the corner grip (family standard) -->
+                    <!-- 25px trailing margin ends the copyright 8px before the corner grip (family standard) -->
                     <TextBlock Opacity="0.75" FontSize="16" TextOptions.TextFormattingMode="Ideal" VerticalAlignment="Center"
-                               FontFamily="{DynamicResource BrandSansFont}" Margin="0,0,20,0">
+                               FontFamily="{DynamicResource BrandSansFont}" Margin="0,0,25,0">
                         <Run Text="&#x00A9; 2026 " Foreground="{DynamicResource TextFooter}"/>
                         <Hyperlink NavigateUri="https://thekiller.net"
                                    RequestNavigate="Hyperlink_RequestNavigate"
