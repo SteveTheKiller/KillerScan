@@ -805,7 +805,7 @@
                             BorderBrush="{DynamicResource FooterBevelLightBrush}"
                             BorderThickness="{DynamicResource FooterCellDarkThickness}"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
-                            Margin="{DynamicResource FooterCellPadding}">
+                            Margin="{DynamicResource FooterCornerPadding}">
                     <!-- Click anywhere on the address or the adapter to show or hide the detail.
                          Transparent background rather than none, so the whole strip is hit-testable
                          and not just the glyphs themselves. -->
