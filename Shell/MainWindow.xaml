@@ -705,15 +705,14 @@
 
         <!-- Devices pane - the lightest tier, lifted above the chrome with an outward drop shadow
              (kept tight to the bars; the shadow overlays them rather than adding gap) -->
-        <!-- Named so the shadow can be switched off. Windows 98 had no drop shadows anywhere, and
-             PaneShadow is a StaticResource effect that a palette cannot reach - so Theme.cs nulls
-             the Effect on 98SE and restores it otherwise. Same approach KillerShell takes. -->
+        <!-- PaneShadowEffect is built per palette in ThemeManager at that theme's opacity and is
+             null on a flat theme, so 98SE has no shadow here without any code. -->
         <kl:UnclippedGrid x:Name="WorkspaceHost" Grid.Row="1" Grid.Column="1"
               Margin="{DynamicResource DevicesPaneMargin}" Panel.ZIndex="10">
         <Border x:Name="DevicesPaneShadow" Grid.Row="1" IsHitTestVisible="False"
                 Background="{DynamicResource ScanContentPaneBrush}"
                 CornerRadius="{DynamicResource PanelCornerRadius}"
-                Effect="{StaticResource PaneShadow}"/>
+                Effect="{DynamicResource PaneShadowEffect}"/>
         <controls:PickerBorder x:Name="DevicesPane" Grid.Row="1" SnapsToDevicePixels="True" UseLayoutRounding="True"
                 Background="{DynamicResource ScanContentPaneBrush}"
                 BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1"

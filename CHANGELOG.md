@@ -13,6 +13,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - `killerscan watch /max-seconds` now stops on time even while a ping is still waiting for a reply, and a text-mode run that the limit cut short says so on stderr. The help lists `/max-seconds` with the other options.
 - The Delete button on a History scan's card has its own caption and tooltip in every language.
 - Disabled card buttons still show their tooltip and shortcut.
+- Chinese (Simplified) and Japanese text uses Microsoft YaHei UI and Yu Gothic UI, the faces Windows draws those languages in, instead of borrowing Traditional Chinese glyphs.
+- A tree's connecting line ends at the right row when an item is added below the one that was last.
 
 ### Changed
 
@@ -24,6 +26,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Buttons no longer cast a drop shadow, including the view toolbar's icons.
 - Menu shortcuts and submenu arrows line up at the right edge of each row.
 - The copyright at the right end of the footer ends 8 px before the corner grip, the same gap in every Killer app.
+- On 98SE, sliders and drop-down lists look like the Windows 98 originals: a sunken channel with a raised gray thumb, and a white field with a raised drop button.
+- Column headers show an accent edge when they have keyboard focus.
 
 ## [1.9.5] - 2026-11-09
 

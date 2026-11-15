@@ -75,8 +75,6 @@ namespace KillerScan.Shell
         {
             bool flat = ThemeManager.Current == Theme.SE98;
 
-            if (FindName("DevicesPaneShadow") is System.Windows.Controls.Border pane)
-                pane.Effect = flat ? null : TryFindResource("PaneShadow") as System.Windows.Media.Effects.Effect;
             RaisePageBevel(flat);
 
             // The About card's shadow layer. Collapsed rather than Effect-nulled: its inline
