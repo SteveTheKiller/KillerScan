@@ -41,8 +41,11 @@ internal static partial class HistoryUiTests
         menus.Add("KeepAlive", ((FrameworkElement)((DataTemplate)watch.FindResource("WatchCardTemplate")).LoadContent()).ContextMenu);
         var scan = (ScanWorkspace)Field(window, "_scanWorkspace")!;
         var topology = ((Button)scan.FindName("TopologyOrderButton")).ContextMenu;
-        if (topology.Items.Count == 1) Call(scan, "LoadTopologySettings");
-        Require(topology.Items.OfType<MenuItem>().Count() >= 10, "Topology includes its Loaded-built settings, zoom and export groups.");
+        // The XAML card is empty until Loaded fills it; the offscreen host never loads it.
+        if (topology.Items.Count == 0) Call(scan, "LoadTopologySettings");
+        Require(topology.Items.OfType<MenuItem>().Count(item => !CardMenuTestHelpers.IsCardSlot(item)) >= 3
+                && CardMenuTestHelpers.CardButtons(topology.Items.Cast<UIElement>().ToArray()).OfType<Button>().Count() >= 3,
+            "Topology includes its Loaded-built settings rows and the PNG, JPG and HTML export strip.");
         menus.Add("Topology", topology);
         menus.Add("Devices", ((DataGrid)scan.FindName("ResultsGrid")).ContextMenu);
         menus.Add("Services", ((DataGrid)scan.FindName("ServicesGrid")).ContextMenu);

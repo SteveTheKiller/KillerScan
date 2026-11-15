@@ -259,8 +259,15 @@
                             </ControlTemplate>
                         </Button.Template>
                         <Button.ContextMenu>
-                            <ContextMenu Placement="Bottom" HorizontalOffset="0" VerticalOffset="2"
+                            <ContextMenu Style="{StaticResource CardMenu}" Placement="Bottom" HorizontalOffset="0" VerticalOffset="2"
                                          PreviewMouseWheel="Menu_ForwardWheelToGrid">
+                                <!-- The export card: its title over the formats this view can write. -->
+                                <MenuItem Style="{StaticResource CardSlot}" AutomationProperties.Name="{DynamicResource Str_Card_Export}">
+                                    <MenuItem.Header>
+                                        <TextBlock Text="{DynamicResource Str_Card_Export}" FontSize="14" FontWeight="SemiBold"
+                                                   Margin="4,2,4,6" Foreground="{DynamicResource TextBrush}"/>
+                                    </MenuItem.Header>
+                                </MenuItem>
                                 <MenuItem x:Name="ExportCsvItem" Header="{DynamicResource Str_Export_Csv}"
                                           InputGestureText="Ctrl+E" Click="ExportCsv_Click">
                                     <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE9F9;"/></MenuItem.Icon>
@@ -462,7 +469,7 @@
                                 </MenuItem.Header>
                             </MenuItem>
                             <!-- The copy variants. IP and MAC are names, the same in every language. -->
-                            <MenuItem x:Name="DeviceCardCopy" Style="{StaticResource CardSlot}" Padding="24,6,4,4"
+                            <MenuItem x:Name="DeviceCardCopy" Style="{StaticResource CardSlot}" Padding="8,6,4,4"
                                       AutomationProperties.Name="{DynamicResource Str_Ctx_Copy}">
                                 <MenuItem.Header>
                                     <DockPanel>
@@ -790,7 +797,7 @@
                                     </Border>
                                 </MenuItem.Header>
                             </MenuItem>
-                            <MenuItem x:Name="ServiceCardCopy" Style="{StaticResource CardSlot}" Padding="24,6,4,4"
+                            <MenuItem x:Name="ServiceCardCopy" Style="{StaticResource CardSlot}" Padding="8,6,4,4"
                                       AutomationProperties.Name="{DynamicResource Str_Ctx_Copy}">
                                 <MenuItem.Header>
                                     <DockPanel>
@@ -860,27 +867,9 @@
                             Panel.ZIndex="5" Click="TopologyOrderButton_Click">
                         <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Topology_Settings}"/><Run Text=" (Shift+F10)"/></TextBlock></Button.ToolTip>
                         <Button.ContextMenu>
-                            <ContextMenu PreviewMouseWheel="Menu_ForwardWheelToGrid">
-                                <MenuItem Header="{DynamicResource Str_TT_TopologyOrder}">
-                                    <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8CB;"/></MenuItem.Icon>
-                                    <MenuItem x:Name="TopologyRoleItem" Header="{DynamicResource Str_Topology_Role}"
-                                              Tag="Role" InputGestureText="Ctrl+1" IsCheckable="True" Click="TopologyOrderItem_Click">
-                                        <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE902;"/></MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem x:Name="TopologyTypeItem" Header="{DynamicResource Str_Col_Type}"
-                                              Tag="Type" InputGestureText="Ctrl+2" IsCheckable="True" Click="TopologyOrderItem_Click">
-                                        <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8EC;"/></MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem x:Name="TopologyIpItem" Header="{DynamicResource Str_Col_Ip}"
-                                              Tag="Ip" InputGestureText="Ctrl+3" IsCheckable="True" Click="TopologyOrderItem_Click">
-                                        <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE774;"/></MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem x:Name="TopologyVendorItem" Header="{DynamicResource Str_Col_Vendor}"
-                                              Tag="Vendor" InputGestureText="Ctrl+4" IsCheckable="True" Click="TopologyOrderItem_Click">
-                                        <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE8EC;"/></MenuItem.Icon>
-                                    </MenuItem>
-                                </MenuItem>
-                            </ContextMenu>
+                            <!-- The topology card, built in code (TopologySettings.cs): its Order
+                                 segment and the layout groups, then the export strip. -->
+                            <ContextMenu Style="{StaticResource CardMenu}" PreviewMouseWheel="Menu_ForwardWheelToGrid"/>
                         </Button.ContextMenu>
                     </Button>
                 </Grid>

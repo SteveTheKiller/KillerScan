@@ -520,14 +520,19 @@ namespace KillerScan.Features.Cli
                 foreach (var target in targets)
                 {
                     if (deadline.IsCancellationRequested) { stoppedEarly = true; break; }
-                    long? latency = ConnectionChecks.PingAsync(target).GetAwaiter().GetResult();
+                    // A ping still waiting on its timeout when the cap runs out is dropped, so
+                    // /max-seconds is a hard limit rather than one ping's timeout late.
+                    var ping = ConnectionChecks.PingAsync(target);
+                    if (Task.WaitAny(ping, Task.Delay(Timeout.Infinite, deadline.Token)) != 0) { stoppedEarly = true; break; }
+                    long? latency = ping.GetAwaiter().GetResult();
                     samples.Add(new PingSample { Sequence = sequence, Address = target.ToString(), Success = latency.HasValue, LatencyMs = latency });
                 }
                 if (stoppedEarly) break;
                 if (sequence < count && deadline.Token.WaitHandle.WaitOne(TimeSpan.FromSeconds(interval))) { stoppedEarly = true; break; }
             }
             if (Has(options, "/json", "--json")) @out.WriteLine(JsonSerializer.Serialize(new { count, intervalSeconds = interval, stoppedEarly, samples }));
-            else foreach (var sample in samples) @out.WriteLine($"{sample.Sequence,2}  {sample.Address,-15}  {(sample.Success ? sample.LatencyMs + " ms" : "no reply")}");
+            else if (stoppedEarly) err.WriteLine($"Stopped at the /max-seconds limit after {samples.Count} sample(s).");
+            if (!Has(options, "/json", "--json")) foreach (var sample in samples) @out.WriteLine($"{sample.Sequence,2}  {sample.Address,-15}  {(sample.Success ? sample.LatencyMs + " ms" : "no reply")}");
             return samples.Any(sample => sample.Success) ? 0 : 3;
         }
 
@@ -981,6 +986,7 @@ namespace KillerScan.Features.Cli
             "  /table | /csv | /json | /html   shorthand for /format",
             "  /export <path>         write output; extension selects format unless overridden",
             "  /no-header             omit table and CSV headings",
+            "  /max-seconds <n>       stop watch after 1 to 600 seconds and keep the samples so far",
             "  /theme <name>          HTML theme (dark, light, black, 98se, or a grunge theme)",
             "  /quiet                 suppress stdout and status; normally paired with /export",
             "  /log <path>            also write status, progress and errors to a file; use it from",
@@ -994,7 +1000,6 @@ namespace KillerScan.Features.Cli
             "  killerscan trace 1.1.1.1 /max-hops 20 /json",
             "  killerscan diagnose 192.168.1.20 /ports 22,80,443 /json",
             "  killerscan watch 192.168.1.1 192.168.1.20 /count 6 /interval 2 /json",
-            "  /max-seconds <n> stops watch after 1 to 600 seconds and returns collected samples with stoppedEarly.",
             "  killerscan speedtest /json", "",
             $"Several targets may be separate or comma-delimited; overlaps are deduplicated and the ceiling is {ScanTargets.MaxAddresses:N0} addresses.",
             "Ctrl+C cancels. Exit codes: 0 success, 1 failure/cancel/timeout, 2 usage, 3 empty/not found.",

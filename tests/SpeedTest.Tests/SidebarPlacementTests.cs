@@ -18,14 +18,15 @@ internal static class SidebarPlacementTests
         Layout(window);
         var railMenu = CheckEmptyRailMenu(window);
         var toggle = (Button)window.FindName("SidebarToggleBtn");
-        var choices = railMenu.Items.OfType<MenuItem>().Where(i => i.IsCheckable).ToArray();
+        var choices = Segments(railMenu);
         Require(choices.Length == 2, "The sidebar offers only left and right placement.");
-        Require(choices[0].InputGestureText == "Alt+Shift+Left" && choices[1].InputGestureText == "Alt+Shift+Right",
+        Require(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(choices[0]) == "Alt+Shift+Left"
+            && System.Windows.Automation.AutomationProperties.GetAcceleratorKey(choices[1]) == "Alt+Shift+Right",
             "Sidebar choices advertise the established family keyboard shortcuts.");
-        Require(choices.All(item => item.Header is string text && !string.IsNullOrWhiteSpace(text)),
+        Require(choices.All(item => item.Content is string text && !string.IsNullOrWhiteSpace(text)),
             "Both sidebar placement choices have readable localized labels.");
-        Require(choices[0].IsChecked && !choices[1].IsChecked, "Left is the default side.");
-        choices[1].RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        Require(choices[0].IsChecked == true && choices[1].IsChecked != true, "Left is the default side.");
+        choices[1].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
         Layout(window);
         var rail = (FrameworkElement)window.FindName("RailButtons");
         var workspace = (FrameworkElement)window.FindName("WorkspaceHost");
@@ -41,7 +42,7 @@ internal static class SidebarPlacementTests
             "The expanded right sidebar's chevron points right toward collapse.");
         Require(((FrameworkElement)window.FindName("HistorySidebar")).HorizontalAlignment == HorizontalAlignment.Right,
             "The right panel wipes toward its outside edge while opening.");
-        choices[1].RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        choices[1].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
         Layout(window);
         var column = (ColumnDefinition)window.FindName("SidebarCol");
         double width = column.ActualWidth;
@@ -60,16 +61,16 @@ internal static class SidebarPlacementTests
             "Moving and resizing the sidebar preserves the Locations section.");
         double savedWidth = column.ActualWidth;
         grip.RaiseEvent(new DragCompletedEventArgs(0, 0, false) { RoutedEvent = Thumb.DragCompletedEvent });
-        choices[0].RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        choices[0].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
         Layout(window);
         Require(Math.Abs(column.ActualWidth - savedWidth) < 1
             && ((FrameworkElement)window.FindName("LocationsList")).Visibility == Visibility.Visible
             && rail.TranslatePoint(new Point(), host).X < workspace.TranslatePoint(new Point(), host).X,
             "Moving the expanded sidebar left preserves its width and section.");
         CheckEmptyRailMenu(window);
-        choices[1].RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        choices[1].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
         toggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-        choices[1].RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        choices[1].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
         ThemeManager.Apply(Theme.SE98);
         Layout(window);
         Require(Math.Abs(column.ActualWidth - 20) < 0.1,
@@ -81,10 +82,10 @@ internal static class SidebarPlacementTests
         foreach (bool bottom in new[] { false, true })
         {
             band.ContextMenu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
-            ((MenuItem)band.ContextMenu.Items[bottom ? 1 : 0]).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            Segments(band.ContextMenu)[bottom ? 1 : 0].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
             foreach (var choice in choices)
             {
-                choice.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                choice.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
                 Layout(window);
                 CheckEmptyRailMenu(window);
                 double tabY = band.TranslatePoint(new Point(), workspace).Y;
@@ -101,16 +102,30 @@ internal static class SidebarPlacementTests
         Layout(restored);
         var restoredToggle = (Button)restored.FindName("SidebarToggleBtn");
         var restoredMenu = CheckEmptyRailMenu(restored);
-        var restoredRight = restoredMenu.Items.OfType<MenuItem>().Single(item => item.Tag is SidebarSide.Right);
-        Require(restoredRight.IsChecked
+        var restoredRight = Segments(restoredMenu).Single(item => item.Tag is SidebarSide.Right);
+        Require(restoredRight.IsChecked == true
             && ((FrameworkElement)restored.FindName("HistorySidebar")).Visibility == Visibility.Collapsed,
             "A new window restores the chosen side and keeps the established closed startup state.");
         restoredToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-        restoredRight.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        restoredRight.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
         Layout(restored);
         Require(Math.Abs(((ColumnDefinition)restored.FindName("SidebarCol")).ActualWidth - (savedWidth - 4)) < 1,
             "A new window restores the saved panel width with the classic theme's thinner rail.");
         Console.WriteLine("PASS: sidebar placement, resizing, persistence, classic geometry and independent tabs (1 selected).");
+    }
+
+    /// <summary>The segments on a card's rows, in order (CardSegments: a slot over a track).</summary>
+    private static RadioButton[] Segments(ContextMenu menu)
+    {
+        var found = new System.Collections.Generic.List<RadioButton>();
+        void Walk(object? node)
+        {
+            if (node is RadioButton radio) found.Add(radio);
+            else if (node is Panel panel) foreach (var child in panel.Children) Walk(child);
+            else if (node is Decorator decorator) Walk(decorator.Child);
+        }
+        foreach (var item in menu.Items.OfType<MenuItem>()) Walk(item.Header);
+        return found.ToArray();
     }
 
     private static ContextMenu CheckEmptyRailMenu(MainWindow window)
@@ -134,10 +149,10 @@ internal static class SidebarPlacementTests
         Require(!opening.Handled, "The empty rail's context menu opening is not canceled.");
         menu!.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
         menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
-        Require(menu.Items.OfType<MenuItem>().Count(item => item.Tag is SidebarSide) == 2,
+        Require(Segments(menu).Count(item => item.Tag is SidebarSide) == 2,
             "The empty rail menu offers the same Left and Right placement choices.");
-        Require(menu.Items.Count == 3 && menu.Items.OfType<MenuItem>().Count(item => item.IsChecked) == 1
-            && menu.Items.OfType<MenuItem>().Single(item => item.IsChecked).Tag!.ToString() == App.GetSetting("SidebarSide"),
+        Require(menu.Items.Count == 2 && Segments(menu).Count(item => item.IsChecked == true) == 1
+            && Segments(menu).Single(item => item.IsChecked == true).Tag!.ToString() == App.GetSetting("SidebarSide"),
             "Repeated rail menu openings keep one current checked side without duplicating choices.");
         return menu;
     }

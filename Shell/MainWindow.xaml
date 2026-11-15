@@ -645,13 +645,39 @@
                     Content="&#xE81C;" FontSize="15"
                     Click="HistoryButton_Click" ContextMenuOpening="HistorySettingsMenu_Opening" Margin="0,0,0,10">
                 <Button.ContextMenu>
-                    <ContextMenu>
+                    <!-- The history card: its title, which Locations the list shows, and settings. -->
+                    <ContextMenu Style="{StaticResource CardMenu}">
+                        <MenuItem Style="{StaticResource CardSlot}" AutomationProperties.Name="{DynamicResource Str_History_Title}">
+                            <MenuItem.Header>
+                                <TextBlock Text="{DynamicResource Str_History_Title}" FontSize="14" FontWeight="SemiBold"
+                                           Margin="4,2,4,6" Foreground="{DynamicResource TextBrush}"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Style="{StaticResource CardSlot}" Padding="8,4,4,4" AutomationProperties.Name="{DynamicResource Str_History_Show}">
+                            <MenuItem.Header>
+                                <DockPanel>
+                                    <TextBlock Style="{StaticResource CardLabel}" Text="{DynamicResource Str_History_Show}" DockPanel.Dock="Left"/>
+                                    <Border HorizontalAlignment="Left" Padding="2" Background="{DynamicResource MenuHoverBrush}"
+                                            CornerRadius="{DynamicResource ControlCornerRadius}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <RadioButton x:Name="HistoryThisLocationSegment" GroupName="HistoryLocations" Style="{StaticResource CardSegment}"
+                                                         Content="{DynamicResource Str_History_ThisLocation}" ToolTip="{DynamicResource Str_History_ThisLocation}"
+                                                         AutomationProperties.Name="{DynamicResource Str_History_ThisLocation}"
+                                                         ToolTipService.ShowOnDisabled="True" Click="HistorySettingsMenu_LocationsClick"/>
+                                            <RadioButton x:Name="HistoryAllLocationsSegment" GroupName="HistoryLocations" Style="{StaticResource CardSegment}"
+                                                         Content="{DynamicResource Str_History_AllShort}" ToolTip="{DynamicResource Str_History_AllLocations}"
+                                                         AutomationProperties.Name="{DynamicResource Str_History_AllLocations}"
+                                                         ToolTipService.ShowOnDisabled="True" Click="HistorySettingsMenu_LocationsClick"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DockPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <Separator/>
                         <MenuItem Header="{DynamicResource Str_History_Settings}" InputGestureText="Ctrl+Alt+R"
                                   Click="HistorySettings_Click">
                             <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE81C;"/></MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem x:Name="HistoryAllLocationsItem" Header="{DynamicResource Str_History_AllLocations}"
-                                  IsCheckable="True" Click="HistorySettingsMenu_LocationsClick"/>
                     </ContextMenu>
                 </Button.ContextMenu>
                 <Button.ToolTip>

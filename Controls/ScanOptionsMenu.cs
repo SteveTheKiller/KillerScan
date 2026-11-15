@@ -59,65 +59,110 @@ namespace KillerScan.Controls
             return parent;
         }
 
+        private static string Loc(string key) => Application.Current?.TryFindResource(key) as string ?? key;
+
+        // Chip captions. Protocol names read the same in every language; the rest are keys.
+        private static readonly (string Feature, string? Text, string? TextKey)[] FindChips =
+        {
+            ("neighbor-cache", null, "Str_Options_ChipCache"), ("arp", "ARP", null), ("icmp", "ICMP", null),
+            ("tcp-liveness", "TCP", null), ("dns", "DNS", null), ("mdns", "mDNS", null), ("ssdp", "SSDP", null)
+        };
+        private static readonly (string Feature, string? Text, string? TextKey)[] PortChips =
+        {
+            ("ports", null, "Str_Options_ChipPorts"), ("http", "HTTP", null), ("tls", "TLS", null), ("ssh", "SSH", null)
+        };
+        private static readonly (string Feature, string? Text, string? TextKey)[] NameChips =
+        {
+            ("snmp", "SNMP", null), ("netbios", "NetBIOS", null)
+        };
+
+        /// <summary>
+        /// The scan settings card: the checks as chips grouped by what they do, a strip of
+        /// presets, and the adapter row. Chips stay open on click, since a person usually flips
+        /// several; the full description of each check is its tooltip.
+        /// </summary>
         private static ContextMenu Create(Button button, Func<ScanOptions> read, Action<ScanOptions> write, AdapterHooks? adapters)
         {
-            var menu = new ContextMenu
-            {
-                PlacementTarget = button,
-                Placement = PlacementMode.Bottom,
-                VerticalOffset = 4
-            };
-            var detail = new TextBlock { MaxWidth = 340, TextWrapping = TextWrapping.Wrap };
+            var menu = KillerFamily.Controls.CardBuilder.Menu();
+            menu.PlacementTarget = button;
+            menu.Placement = PlacementMode.Bottom;
+            menu.VerticalOffset = 4;
+            menu.Items.Add(KillerFamily.Controls.CardBuilder.Header(Loc("Str_Options_Title")));
+            var detail = new TextBlock { TextWrapping = TextWrapping.Wrap, FontSize = 11, Margin = new Thickness(4, 0, 4, 2) };
             detail.SetResourceReference(TextBlock.TextProperty, "Str_Options_Detail");
-            menu.Items.Add(new MenuItem { Header = detail, IsEnabled = false });
-            menu.Items.Add(new Separator());
+            detail.SetResourceReference(TextBlock.ForegroundProperty, "DimTextBrush");
+            menu.Items.Add(KillerFamily.Controls.CardBuilder.Labeled("", detail));
 
+            var chips = new List<ToggleButton>();
             // Off by default and outside Features: it widens deep-scan payloads rather than
             // disabling a check, so it is not part of the "all checks on" defaults.
-            var unknownPorts = new MenuItem { IsCheckable = true, StaysOpenOnClick = true };
+            ToggleButton? unknownPorts = null;
 
             void Refresh()
             {
                 var options = read();
-                foreach (var item in menu.Items.OfType<MenuItem>())
+                foreach (var chip in chips)
                 {
-                    if (item.Tag is not string feature) continue;
-                    item.IsChecked = options.IsEnabled(feature);
-                    item.IsEnabled = options.Ports || feature is not ("http" or "tls" or "ssh");
+                    if (chip.Tag is not string feature) continue;
+                    chip.IsChecked = options.IsEnabled(feature);
+                    chip.IsEnabled = button.IsEnabled && (options.Ports || feature is not ("http" or "tls" or "ssh"));
                 }
-                unknownPorts.IsChecked = options.ProbeUnknownPorts;
-                unknownPorts.IsEnabled = options.Ports && (options.Http || options.Tls);
+                if (unknownPorts != null)
+                {
+                    unknownPorts.IsChecked = options.ProbeUnknownPorts;
+                    unknownPorts.IsEnabled = button.IsEnabled && options.Ports && (options.Http || options.Tls);
+                }
             }
 
-            foreach (string feature in ScanOptions.Features)
+            ToggleButton Chip(string? text, string? textKey, string tipKey, Action<bool> apply, string? feature)
             {
-                var item = new MenuItem { Tag = feature, IsCheckable = true, StaysOpenOnClick = true };
-                item.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Options_" + feature);
-                item.Click += (_, _) =>
-                {
-                    if (button.IsEnabled) write(read().WithFeature(feature, item.IsChecked));
-                    Refresh();
-                };
-                menu.Items.Add(item);
+                var chip = new ToggleButton { Tag = feature, Margin = new Thickness(0, 2, 6, 2) };
+                chip.SetResourceReference(FrameworkElement.StyleProperty, "CardToggle");
+                if (text != null) chip.Content = text; else chip.SetResourceReference(ContentControl.ContentProperty, textKey!);
+                chip.SetResourceReference(FrameworkElement.ToolTipProperty, tipKey);
+                chip.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, tipKey);
+                ToolTipService.SetShowOnDisabled(chip, true);
+                chip.Click += (_, _) => { if (button.IsEnabled) apply(chip.IsChecked == true); Refresh(); };
+                chips.Add(chip);
+                return chip;
             }
-            menu.Items.Add(new Separator());
-            unknownPorts.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Options_ProbeUnknownPorts");
-            unknownPorts.Click += (_, _) =>
+
+            void Group(string labelKey, (string Feature, string? Text, string? TextKey)[] features, ToggleButton? extra = null)
             {
-                if (button.IsEnabled) write(read() with { ProbeUnknownPorts = unknownPorts.IsChecked });
-                Refresh();
-            };
-            menu.Items.Add(unknownPorts);
-            if (adapters != null) menu.Items.Add(AdapterMenu(button, adapters));
-            menu.Items.Add(new Separator());
-            var reset = new MenuItem { StaysOpenOnClick = true };
-            reset.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Options_Defaults");
-            reset.Click += (_, _) =>
+                var wrap = new WrapPanel();
+                foreach (var (feature, text, textKey) in features)
+                    wrap.Children.Add(Chip(text, textKey, "Str_Options_" + feature,
+                        on => write(read().WithFeature(feature, on)), feature));
+                if (extra != null) wrap.Children.Add(extra);
+                menu.Items.Add(KillerFamily.Controls.CardBuilder.Labeled(Loc(labelKey), wrap));
+            }
+
+            Group("Str_Options_GroupFind", FindChips);
+            Group("Str_Options_GroupPorts", PortChips);
+            Group("Str_Options_GroupNames", NameChips);
+            unknownPorts = Chip(null, "Str_Options_ChipUnknown", "Str_Options_ProbeUnknownPorts",
+                on => write(read() with { ProbeUnknownPorts = on }), null);
+            chips.Remove(unknownPorts);
+            Group("Str_Options_GroupDeep", Array.Empty<(string, string?, string?)>(), unknownPorts);
+
+            void Apply(ScanOptions options) { if (button.IsEnabled) write(options); }
+            var none = new ScanOptions().Without(string.Join(",", ScanOptions.Features));
+            menu.Items.Add(KillerFamily.Controls.CardBuilder.QuickStrip(Loc("Str_Card_Actions"), new[]
             {
-                if (button.IsEnabled) write(new ScanOptions());
-                Refresh();
-            };
-            menu.Items.Add(reset);
+                new KillerFamily.Controls.CardAction("", Loc("Str_Options_AllOn"), Loc("Str_Options_AllOnTip"), null,
+                    () => Apply(new ScanOptions { ProbeUnknownPorts = true }), button.IsEnabled),
+                new KillerFamily.Controls.CardAction("", Loc("Str_Options_Discovery"), Loc("Str_Options_DiscoveryTip"), null,
+                    () => Apply(none.WithFeature("neighbor-cache", true).WithFeature("arp", true).WithFeature("icmp", true)
+                        .WithFeature("tcp-liveness", true)), button.IsEnabled),
+                new KillerFamily.Controls.CardAction("", Loc("Str_Card_Reset"), Loc("Str_Options_Defaults"), null,
+                    () => Apply(new ScanOptions()), button.IsEnabled),
+            }));
+            if (adapters != null)
+            {
+                var adapter = AdapterMenu(button, adapters);
+                adapter.Icon = MenuGlyph.Create(0xE839);
+                menu.Items.Add(adapter);
+            }
             menu.Opened += (_, _) => Refresh();
             Refresh();
             return menu;

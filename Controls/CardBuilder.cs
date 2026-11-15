@@ -1,11 +1,14 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace KillerFamily.Controls
 {
@@ -72,12 +75,14 @@ namespace KillerFamily.Controls
                 var b = new Button { Content = a.Glyph, Tag = a.Caption, IsEnabled = a.Enabled, ToolTip = Tip(a.Tip, a.Gesture) };
                 b.SetResourceReference(FrameworkElement.StyleProperty, "CardQuickButton");
                 AutomationProperties.SetName(b, a.Tip);
+                ToolTipService.SetShowOnDisabled(b, true);
                 if (!string.IsNullOrEmpty(a.Gesture)) AutomationProperties.SetAcceleratorKey(b, a.Gesture);
                 var run = a.Run;
                 b.Click += (_, _) => { Close(b); run(); };
                 grid.Children.Add(b);
             }
-            var rule = new Border { BorderThickness = new Thickness(0, 1, 0, 1), Padding = new Thickness(2, 4, 2, 4), Child = grid };
+            // Inset 8 like the kit's separators, so the strip's rules start on the icon column.
+            var rule = new Border { Margin = new Thickness(8, 0, 8, 0), BorderThickness = new Thickness(0, 1, 0, 1), Padding = new Thickness(0, 4, 0, 4), Child = grid };
             rule.SetResourceReference(Border.BorderBrushProperty, "MenuBorderBrush");
             var slot = Slot(rule);
             slot.Padding = new Thickness(0);
@@ -94,6 +99,7 @@ namespace KillerFamily.Controls
                 var t = new ToggleButton { Content = c.Text, IsChecked = c.On, IsEnabled = c.Enabled, ToolTip = Tip(c.Tip, c.Gesture), Margin = new Thickness(0, 2, 6, 2) };
                 t.SetResourceReference(FrameworkElement.StyleProperty, "CardToggle");
                 AutomationProperties.SetName(t, c.Tip);
+                ToolTipService.SetShowOnDisabled(t, true);
                 if (!string.IsNullOrEmpty(c.Gesture)) AutomationProperties.SetAcceleratorKey(t, c.Gesture);
                 var run = c.Run;
                 t.Click += (_, _) => { Close(t); run(); };
@@ -113,6 +119,7 @@ namespace KillerFamily.Controls
                 var r = new RadioButton { Content = c.Text, GroupName = group, IsChecked = c.On, IsEnabled = c.Enabled, ToolTip = Tip(c.Tip, c.Gesture) };
                 r.SetResourceReference(FrameworkElement.StyleProperty, "CardSegment");
                 AutomationProperties.SetName(r, c.Tip);
+                ToolTipService.SetShowOnDisabled(r, true);
                 if (!string.IsNullOrEmpty(c.Gesture)) AutomationProperties.SetAcceleratorKey(r, c.Gesture);
                 var run = c.Run;
                 bool was = c.On;
@@ -135,7 +142,7 @@ namespace KillerFamily.Controls
             dock.Children.Add(l);
             dock.Children.Add(content);
             var slot = Slot(dock);
-            slot.Padding = new Thickness(24, 4, 4, 4);
+            slot.Padding = new Thickness(8, 4, 4, 4);   // the icon column (Controls.xaml CardLabel)
             AutomationProperties.SetName(slot, label);
             return slot;
         }
@@ -150,6 +157,52 @@ namespace KillerFamily.Controls
             return item;
         }
 
+        /// <summary>Opens a pointer card or a keyboard card at a position in its target.</summary>
+        public static void Open(ContextMenu menu, FrameworkElement target, bool keyboard, Rect keyboardPosition)
+        {
+            menu.PlacementTarget = target;
+            menu.Placement = keyboard ? PlacementMode.RelativePoint : PlacementMode.MousePoint;
+            if (keyboard)
+            {
+                menu.PlacementRectangle = keyboardPosition;
+                bool dismissed = false;
+                void Opened(object sender, RoutedEventArgs args)
+                {
+                    menu.Opened -= Opened;
+                    menu.Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(() =>
+                    {
+                        if (dismissed || !menu.IsOpen) return;
+                        var first = menu.Items.OfType<MenuItem>()
+                            .SelectMany(item => Elements(item.Header as DependencyObject))
+                            .OfType<Control>().FirstOrDefault(control => control.IsEnabled && control.IsVisible && control.Focusable);
+                        if (first != null) first.Focus();
+                        else menu.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
+                    }));
+                }
+                void Closed(object sender, RoutedEventArgs args)
+                {
+                    dismissed = true;
+                    menu.Opened -= Opened;
+                    menu.Closed -= Closed;
+                    // A card action may already have opened a dialog. Restore focus only when
+                    // it is still in the dismissed card, or no element has taken it.
+                    if (Keyboard.FocusedElement is not DependencyObject focused ||
+                        ReferenceEquals(focused, menu) || menu.IsAncestorOf(focused)) target.Focus();
+                }
+                menu.Opened += Opened;
+                menu.Closed += Closed;
+            }
+            menu.IsOpen = true;
+        }
+
+        private static IEnumerable<DependencyObject> Elements(DependencyObject? root)
+        {
+            if (root == null) yield break;
+            yield return root;
+            foreach (var child in LogicalTreeHelper.GetChildren(root).OfType<DependencyObject>())
+                foreach (var element in Elements(child)) yield return element;
+        }
+
         /// <summary>Closes the card that holds this element.</summary>
         public static void Close(DependencyObject from)
         {
@@ -159,9 +212,24 @@ namespace KillerFamily.Controls
 
         private static MenuItem Slot(object header)
         {
-            var slot = new MenuItem { Header = header };
+            var slot = new CardSlotItem { Header = header };
             slot.SetResourceReference(FrameworkElement.StyleProperty, "CardSlot");
             return slot;
+        }
+
+        // A header, quick strip or labeled row holds controls of its own, so it is a group to
+        // assistive technology and not one more menu item to arrow through.
+        private sealed class CardSlotItem : MenuItem
+        {
+            protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer() => new Peer(this);
+
+            private sealed class Peer : System.Windows.Automation.Peers.MenuItemAutomationPeer
+            {
+                public Peer(MenuItem owner) : base(owner) { }
+                protected override System.Windows.Automation.Peers.AutomationControlType GetAutomationControlTypeCore() =>
+                    System.Windows.Automation.Peers.AutomationControlType.Group;
+                protected override string GetClassNameCore() => "CardSlot";
+            }
         }
     }
 }

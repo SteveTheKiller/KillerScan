@@ -78,13 +78,6 @@ namespace KillerScan.Controls
             TopologyOrderButton.ContextMenu.IsOpen = true;
         }
 
-        private void TopologyOrderItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is not MenuItem { Tag: string value } ||
-                !Enum.TryParse(value, out TopologyOrder order)) return;
-            SetTopologyOrder(order);
-        }
-
         private void SetTopologyOrder(TopologyOrder order)
         {
             _topologyOrder = order;
@@ -96,10 +89,8 @@ namespace KillerScan.Controls
 
         private void UpdateTopologyOrderUi()
         {
-            TopologyRoleItem.IsChecked = _topologyOrder == TopologyOrder.Role;
-            TopologyTypeItem.IsChecked = _topologyOrder == TopologyOrder.Type;
-            TopologyIpItem.IsChecked = _topologyOrder == TopologyOrder.Ip;
-            TopologyVendorItem.IsChecked = _topologyOrder == TopologyOrder.Vendor;
+            foreach (var segment in _topologyOrderSegments)
+                segment.IsChecked = segment.Tag is TopologyOrder order && order == _topologyOrder;
             UpdateTopologySettingsUi();
         }
 

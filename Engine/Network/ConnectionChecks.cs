@@ -19,8 +19,12 @@ namespace KillerScan.Engine
             return addresses.Length is > 0 and <= 16;
         }
 
+        /// <summary>Test seam: replaces the real ping, as ScanSource.PingOverride does for scans.</summary>
+        internal static Func<IPAddress, Task<long?>>? PingOverride;
+
         public static async Task<long?> PingAsync(IPAddress address)
         {
+            if (PingOverride is { } fake) return await fake(address).ConfigureAwait(false);
             using var ping = new Ping();
             try
             {

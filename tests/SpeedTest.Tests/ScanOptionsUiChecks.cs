@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Windows;
@@ -24,17 +25,16 @@ internal static class ScanOptionsUiChecks
         Require(button!.Content is Panel content && content.Children.OfType<TextBlock>().Any(t => t.Text == "")
                 && button.ToolTip != null,
             "Scan settings shows its gear icon with a tooltip.");
-        button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-        var menu = button.ContextMenu;
-        // The offscreen host has no presentation source to raise the popup's opened event.
-        menu?.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
-        Require(menu != null && menu.IsOpen && ReferenceEquals(menu.PlacementTarget, button),
+        var menu = Open(button);
+        Require(menu.IsOpen && ReferenceEquals(menu.PlacementTarget, button),
             "Scan settings opens from its own button.");
-        var probes = menu!.Items.OfType<MenuItem>().Where(item => item.IsCheckable && item.Tag is string).ToList();
+        var probes = Chips(menu).Where(chip => chip.Tag is string).ToList();
         Require(probes.Count == 13, "All thirteen probe choices are available.");
-        Require(probes.All(item => item.IsChecked), "All probe choices start enabled.");
-        var unknownPorts = menu.Items.OfType<MenuItem>().Where(item => item.IsCheckable && item.Tag is null).ToList();
-        Require(unknownPorts.Count == 1 && !unknownPorts[0].IsChecked,
+        Require(probes.All(chip => chip.IsChecked == true), "All probe choices start enabled.");
+        Require(probes.All(chip => chip.ToolTip != null && ToolTipService.GetShowOnDisabled(chip)),
+            "Every probe chip explains itself, even while it is unavailable.");
+        var unknownPorts = Chips(menu).Where(chip => chip.Tag is null).ToList();
+        Require(unknownPorts.Count == 1 && unknownPorts[0].IsChecked != true,
             "Fingerprinting unknown ports is one separate choice that starts off.");
         menu.IsOpen = false;
 
@@ -45,33 +45,68 @@ internal static class ScanOptionsUiChecks
         var saved = JsonSerializer.Deserialize<ScanProfile>(JsonSerializer.Serialize(
             ScanProfiles.Items.Single(item => item.Name == profile.Name)))!;
         workspace.RunProfile(saved);
-        button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-        menu = button.ContextMenu;
-        menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
-        Require(!menu.Items.OfType<MenuItem>().Single(item => Equals(item.Tag, "http")).IsChecked,
+        menu = Open(button);
+        Require(Chips(menu).Single(chip => Equals(chip.Tag, "http")).IsChecked != true,
             "Running a saved profile restores its disabled HTTP check.");
-        var choices = menu.Items.OfType<MenuItem>().Where(item => item.IsCheckable && item.Tag is string)
-            .ToDictionary(item => (string)item.Tag);
-        var unknown = menu.Items.OfType<MenuItem>().Single(item => item.IsCheckable && item.Tag is null);
-        unknown.IsChecked = true;
-        unknown.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
-        Require(unknown.IsChecked && unknown.IsEnabled, "Fingerprinting unknown ports can be turned on.");
-        choices["ports"].IsChecked = false;
-        choices["ports"].RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        var choices = Chips(menu).Where(chip => chip.Tag is string).ToDictionary(chip => (string)chip.Tag);
+        var unknown = Chips(menu).Single(chip => chip.Tag is null);
+        Toggle(unknown, true);
+        Require(unknown.IsChecked == true && unknown.IsEnabled && menu.IsOpen,
+            "Fingerprinting unknown ports can be turned on, and the card stays open.");
+        Toggle(choices["ports"], false);
         Require(!choices["http"].IsEnabled && !choices["tls"].IsEnabled && !choices["ssh"].IsEnabled
             && choices["snmp"].IsEnabled && choices["netbios"].IsEnabled && !unknown.IsEnabled,
             "Disabling ports makes only port-dependent checks unavailable.");
-        menu.Items.OfType<MenuItem>().Last().RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
-        Require(choices.Values.All(item => item.IsChecked && item.IsEnabled) && !unknown.IsChecked && unknown.IsEnabled,
-            "Restore defaults immediately updates every visible check and turns unknown-port fingerprinting off.");
+        string reset = (string)Application.Current.FindResource("Str_Card_Reset");
+        var resetButton = Descendants(menu).OfType<Button>().Single(b => Equals(b.Tag, reset));
+        resetButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+        menu = Open(button);
+        Require(Chips(menu).Where(chip => chip.Tag is string).All(chip => chip.IsChecked == true && chip.IsEnabled)
+                && Chips(menu).Single(chip => chip.Tag is null) is { IsEnabled: true } off && off.IsChecked != true,
+            "Reset turns every check back on and turns unknown-port fingerprinting off.");
         menu.IsOpen = false;
         workspace.LoadProfile(JsonSerializer.Deserialize<ScanProfile>("{\"Target\":\"127.0.0.1\",\"Options\":null}")!);
-        button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-        menu = button.ContextMenu;
-        menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
-        Require(menu.Items.OfType<MenuItem>().Where(item => item.IsCheckable && item.Tag is string).All(item => item.IsChecked),
+        menu = Open(button);
+        Require(Chips(menu).Where(chip => chip.Tag is string).All(chip => chip.IsChecked == true),
             "A legacy or null-options profile retains enabled defaults.");
         menu.IsOpen = false;
+    }
+
+    private static ContextMenu Open(Button button)
+    {
+        button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+        var menu = button.ContextMenu;
+        Require(menu != null, "Scan settings has a card.");
+        // The offscreen host has no presentation source to raise the popup's opened event.
+        menu!.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
+        return menu;
+    }
+
+    // A real click flips IsChecked before the Click event, so do the same.
+    private static void Toggle(ToggleButton chip, bool on)
+    {
+        chip.IsChecked = on;
+        chip.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+    }
+
+    private static List<ToggleButton> Chips(ContextMenu menu) =>
+        Descendants(menu).OfType<ToggleButton>().Where(t => t is not RadioButton).ToList();
+
+    private static List<DependencyObject> Descendants(DependencyObject root)
+    {
+        var found = new List<DependencyObject>();
+        var pending = new Stack<DependencyObject>();
+        pending.Push(root);
+        while (pending.Count > 0)
+        {
+            var node = pending.Pop();
+            foreach (var child in LogicalTreeHelper.GetChildren(node).OfType<DependencyObject>())
+            {
+                found.Add(child);
+                pending.Push(child);
+            }
+        }
+        return found;
     }
 
     private static void Require(bool condition, string message)

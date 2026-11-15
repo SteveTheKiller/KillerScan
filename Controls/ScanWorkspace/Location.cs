@@ -257,7 +257,15 @@ namespace KillerScan.Controls
 
         private ContextMenu BuildLocationMenu()
         {
-            var menu = new ContextMenu { PlacementTarget = LocationButton, Placement = PlacementMode.Bottom, VerticalOffset = 4 };
+            // The Location card: where this tab is over the Locations to switch to, its saved
+            // scans, and the Location verbs on a strip.
+            var menu = KillerFamily.Controls.CardBuilder.Menu();
+            menu.PlacementTarget = LocationButton;
+            menu.Placement = PlacementMode.Bottom;
+            menu.VerticalOffset = 4;
+            var savedHere = SavedScansHere();
+            menu.Items.Add(KillerFamily.Controls.CardBuilder.Header(_location.Info?.ToString() ?? Loc("Str_Loc_Title"),
+                savedHere.Count > 0 ? string.Format(Loc("Str_Loc_SavedCount"), savedHere.Count) : null));
             // Unassigned is not a place, so it is never listed or switched to; scans run there
             // still keep their results in Scan history.
             foreach (var info in LocationService.Items.Where(item => item.Id != LocationCatalog.UnassignedId)
@@ -326,14 +334,15 @@ namespace KillerScan.Controls
             {
                 bool editable = LocationService.Editable && !DemoMode;
                 bool own = editable && _location.Info != null && !_location.IsShared;
-                menu.Items.Add(new Separator());
-                // Icons and shortcuts like every other family menu; only the actions that have a
-                // shortcut show one (Shell/Shortcuts.cs).
-                menu.Items.Add(MenuText("Str_Loc_New", CreateLocation, editable && !IsScanning, 0xE710, "Ctrl+Alt+S"));
-                menu.Items.Add(MenuText("Str_Loc_Edit", RenameLocation, own, 0xE70F, "F2"));
-                menu.Items.Add(new Separator());
-                menu.Items.Add(MenuText("Str_Loc_Export", ExportLocation, own, 0xEDE1));
-                menu.Items.Add(MenuText("Str_Loc_Import", ImportLocation, editable && !IsScanning, 0xE8B5));
+                // Shortcuts like every other family menu; only the actions that have a shortcut
+                // show one (Shell/Shortcuts.cs).
+                menu.Items.Add(KillerFamily.Controls.CardBuilder.QuickStrip(Loc("Str_Card_Actions"), new[]
+                {
+                    new KillerFamily.Controls.CardAction("", Loc("Str_Card_New"), Loc("Str_Loc_New"), "Ctrl+Alt+S", CreateLocation, editable && !IsScanning),
+                    new KillerFamily.Controls.CardAction("", Loc("Str_Card_Edit"), Loc("Str_Loc_Edit"), "F2", RenameLocation, own),
+                    new KillerFamily.Controls.CardAction("", Loc("Str_Card_Export"), Loc("Str_Loc_Export"), null, ExportLocation, own),
+                    new KillerFamily.Controls.CardAction("", Loc("Str_Card_Import"), Loc("Str_Loc_Import"), null, ImportLocation, editable && !IsScanning),
+                }));
                 menu.Items.Add(MenuText("Str_Loc_Manage", () => ManageLocationsRequested?.Invoke(this, EventArgs.Empty), true, 0xE707, "Ctrl+Shift+P"));
             }
             return menu;

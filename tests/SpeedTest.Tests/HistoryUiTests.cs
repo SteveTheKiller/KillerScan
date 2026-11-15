@@ -766,10 +766,10 @@ internal static partial class HistoryUiTests
         Require(ReferenceEquals(langButton.ContextMenu.PlacementTarget, root) && langButton.ContextMenu.CustomPopupPlacementCallback != null,
             "The language flyout uses the family placement against the unscaled root.");
         langButton.ContextMenu.IsOpen = false;
-        Require(menu.Items.OfType<MenuItem>().Count() == 2 &&
-            menu.Items.OfType<MenuItem>().Last() is { IsCheckable: true } all && Equals(all.Header, app.FindResource("Str_History_AllLocations")),
-            "The history icon also offers the all-Locations switch.");
-        var item = menu.Items.OfType<MenuItem>().First();
+        Require(window.FindName("HistoryAllLocationsSegment") is RadioButton all
+            && Equals(all.ToolTip, app.FindResource("Str_History_AllLocations")) && all.Style == app.FindResource("CardSegment"),
+            "The history icon also offers the all-Locations switch, as a card segment.");
+        var item = menu.Items.OfType<MenuItem>().Last();
         Require(Equals(item.Header, app.FindResource("Str_History_Settings")) && item.InputGestureText == "Ctrl+Alt+R",
             "The history icon offers localized settings with its visible shortcut.");
         Require(item.Icon is TextBlock clock && clock.Text == (string)icon.Content,

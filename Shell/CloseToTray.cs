@@ -298,7 +298,9 @@ namespace KillerFamily.Shell
 
         private void ShowMenu()
         {
-            var menu = new ContextMenu();
+            // The tray card: the app's name over its rows, each with an icon.
+            var menu = KillerFamily.Controls.CardBuilder.Menu(240);
+            menu.Items.Add(KillerFamily.Controls.CardBuilder.Header(_appName));
             AnchorToPointer(menu);
             foreach (var item in _items)
             {
@@ -307,9 +309,9 @@ namespace KillerFamily.Shell
                 menu.Items.Add(row);
             }
             if (_items.Count > 0) menu.Items.Add(new Separator());
-            var open = new MenuItem { Header = string.Format(_loc("Str_Tray_Open"), _appName), FontWeight = FontWeights.SemiBold };
+            var open = new MenuItem { Header = string.Format(_loc("Str_Tray_Open"), _appName), FontWeight = FontWeights.SemiBold, Icon = Glyph(0xE8A7) };
             open.Click += (_, _) => ShowWindow();
-            var exit = new MenuItem { Header = _loc("Str_Tray_Exit") };
+            var exit = new MenuItem { Header = _loc("Str_Tray_Exit"), Icon = Glyph(0xE7E8) };
             exit.Click += (_, _) => Exit();
             menu.Items.Add(open);
             menu.Items.Add(new Separator());
@@ -317,6 +319,14 @@ namespace KillerFamily.Shell
             // The hidden owner must be in front, or the menu does not close when clicking away.
             SetForegroundWindow(_source.Handle);
             menu.IsOpen = true;
+        }
+
+        // A row icon in the kit's MenuIcon style, so the file needs no app's glyph helper.
+        private static TextBlock Glyph(int codepoint)
+        {
+            var icon = new TextBlock { Text = char.ConvertFromUtf32(codepoint) };
+            icon.SetResourceReference(FrameworkElement.StyleProperty, "MenuIcon");
+            return icon;
         }
 
         /// <summary>

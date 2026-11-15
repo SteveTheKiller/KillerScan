@@ -65,7 +65,8 @@ internal static class ExportActionTests
             signals.Clear(); workspace.ExportContext = "history"; workspace.Export("csv");
             Require(signals.SequenceEqual(new[] { "history-csv" }), "History CSV retains the shell-owned export route.");
 
-            MenuItem[] Visible() => button.ContextMenu.Items.OfType<MenuItem>().Where(item => item.Visibility == Visibility.Visible).ToArray();
+            // Format rows only: the card's title slot is a visible item too.
+            MenuItem[] Visible() => button.ContextMenu.Items.OfType<MenuItem>().Where(item => item.Visibility == Visibility.Visible && item.Header is string).ToArray();
         }
         finally { Directory.Delete(directory, true); }
         Console.WriteLine("PASS: service export menu, tooltip and keyboard command share the filtered dataset.");

@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -63,7 +64,8 @@ namespace KillerScan.Controls
                     var name = new System.Windows.Documents.Run();
                     name.SetResourceReference(System.Windows.Documents.Run.TextProperty, nameKey);
                     tip.Inlines.Add(name);
-                    tip.Inlines.Add(new System.Windows.Documents.Run("  (" + gesture + ")"));
+                    // One space before the shortcut, the CardBuilder.Tip format every card uses.
+                    tip.Inlines.Add(new System.Windows.Documents.Run(" (" + gesture + ")"));
                     chip.ToolTip = tip;
                     chip.Click += (_, _) => { KillerFamily.Controls.CardBuilder.Close(chip); ExecuteAction(action); };
                     chips.Add(chip);
@@ -75,8 +77,12 @@ namespace KillerScan.Controls
                 Chip(null, "Str_Col_Host", "Str_Ctx_CopyHost", "Ctrl+Alt+C", "host");
                 Chip(null, "Str_Card_Details", "Str_History_CopyDetails", "Ctrl+Shift+Y", "details");
                 var copy = KillerFamily.Controls.CardBuilder.Labeled(Loc("Str_Ctx_Copy"), wrap);
-                copy.Padding = new Thickness(24, 6, 4, 4);
-                ((TextBlock)((DockPanel)copy.Header).Children[0]).SetResourceReference(TextBlock.TextProperty, "Str_Ctx_Copy");
+                copy.Padding = new Thickness(8, 6, 4, 4);
+                // Follow a language switch while the card is built: the label is the first
+                // TextBlock in the kit's row, looked up rather than cast so a kit layout
+                // change leaves a stale label instead of throwing.
+                if (copy.Header is Panel row && row.Children.OfType<TextBlock>().FirstOrDefault() is TextBlock label)
+                    label.SetResourceReference(TextBlock.TextProperty, "Str_Ctx_Copy");
                 copy.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, "Str_Ctx_Copy");
                 menu.Items.Add(copy);
             }
@@ -89,7 +95,7 @@ namespace KillerScan.Controls
                 menu.Items.Add(item);
             }
             if (grid != null) menu.Items.Add(new Separator());
-            Add("Str_Export_Csv", "Ctrl+E", "export", 0xE896);
+            Add("Str_Export_Csv", "Ctrl+E", "export", 0xE9F9);
             Add("Str_History_ViewChanges", "Ctrl+Shift+H", "changes", 0xE8FD);
             Add("Str_History_ViewAll", "Ctrl+Shift+H", "all", 0xE772);
             menu.Items.Add(new Separator());

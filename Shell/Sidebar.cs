@@ -93,22 +93,14 @@ namespace KillerScan.Shell
 
         private void InitSidebar()
         {
-            var menu = new ContextMenu { Placement = PlacementMode.MousePoint };
-            if (TryFindResource(typeof(ContextMenu)) is Style style) menu.Style = style;
-            var heading = new MenuItem { IsEnabled = false };
-            heading.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Sidebar");
-            menu.Items.Add(heading);
-            foreach (var side in new[] { SidebarSide.Left, SidebarSide.Right })
-            {
-                var item = new MenuItem
-                {
-                    IsCheckable = true, Tag = side, Icon = side.MenuIcon(),
-                    InputGestureText = side == SidebarSide.Right ? "Alt+Shift+Right" : "Alt+Shift+Left"
-                };
-                item.SetResourceReference(HeaderedItemsControl.HeaderProperty, side.StringKey());
-                item.Click += (_, _) => SelectSidebarSide(side == SidebarSide.Right);
-                menu.Items.Add(item);
-            }
+            // The sidebar card: its title over a Left / Right segment.
+            var menu = KillerFamily.Controls.CardBuilder.Menu(280);
+            menu.Placement = PlacementMode.MousePoint;
+            menu.Items.Add(CardSegments.Header("Str_Sidebar_Title"));
+            menu.Items.Add(CardSegments.Row("Str_Sidebar_Side", new[] { SidebarSide.Left, SidebarSide.Right }
+                .Select(side => new CardSegments.Choice(side, side.StringKey(),
+                    side == SidebarSide.Right ? "Alt+Shift+Right" : "Alt+Shift+Left",
+                    () => SelectSidebarSide(side == SidebarSide.Right))), out _sidebarSideSegments));
             SidebarToggleStrip.ContextMenu = menu;
             SidebarToggleBtn.ToolTipOpening += (_, _) =>
                 SidebarToggleBtn.ToolTip = KillerFamily.Layout.ShortcutHints.WithHint(Loc(_sidebarCollapsed ? "Str_TT_ExpandSidebar" : "Str_TT_CollapseSidebar"),
@@ -159,10 +151,12 @@ namespace KillerScan.Shell
 
         private void UpdateSidebarSideMenu()
         {
-            foreach (MenuItem item in SidebarToggleStrip.ContextMenu.Items)
-                if (item.Tag is SidebarSide side)
-                    item.IsChecked = side == (_sidebarRight ? SidebarSide.Right : SidebarSide.Left);
+            foreach (var segment in _sidebarSideSegments)
+                if (segment.Tag is SidebarSide side)
+                    segment.IsChecked = side == (_sidebarRight ? SidebarSide.Right : SidebarSide.Left);
         }
+
+        private List<RadioButton> _sidebarSideSegments = [];
 
         private void RefreshSidebarTheme()
         {

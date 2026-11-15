@@ -6,12 +6,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.9.6] - Unreleased
 
-1.9.6 turns the right-click menus into cards and updates the JSON library in the app and engine.
+1.9.6 turns the right-click and settings menus into cards and updates the JSON library in the app and engine.
+
+### Fixed
+
+- `killerscan watch /max-seconds` now stops on time even while a ping is still waiting for a reply, and a text-mode run that the limit cut short says so on stderr. The help lists `/max-seconds` with the other options.
+- The Delete button on a History scan's card has its own caption and tooltip in every language.
+- Disabled card buttons still show their tooltip and shortcut.
 
 ### Changed
 
 - Updated the app and engine JSON dependency to 10.0.15.
 - Right-click menus on devices, services, Locations, saved scans, History rows, Keep Alive targets and the terminal are now cards. Each one names what you clicked, puts the everyday actions in a row of buttons at the top, and gathers the copy options into one row, with the rest in a shorter list below. Every button's tooltip shows its keyboard shortcut.
+- Scan settings, Location, Export, Topology settings, the History, sidebar and tab-placement menus and the tray menu are cards too. Scan checks are chips grouped by what they find, with presets on a strip; Topology order, History's Locations, the sidebar side and tab placement are segmented switches; and Topology's PNG, JPG and HTML exports each have their own icon and shortcut.
 - With several devices or services selected, the card's title says how many.
 - On a service, the card only offers the ways in that the service supports, so a DNS port shows no browser, SSH or RDP button.
 - Buttons no longer cast a drop shadow, including the view toolbar's icons.

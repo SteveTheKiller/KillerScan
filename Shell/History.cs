@@ -13,8 +13,10 @@ namespace KillerScan.Shell
 
         private void HistorySettingsMenu_Opening(object sender, ContextMenuEventArgs e)
         {
-            HistoryAllLocationsItem.IsChecked = _historyAllLocations;
-            HistoryAllLocationsItem.IsEnabled = LocationService.Loaded && !DemoData.Enabled && LocationService.Items.Count > 0;
+            bool canShowAll = LocationService.Loaded && !DemoData.Enabled && LocationService.Items.Count > 0;
+            HistoryAllLocationsSegment.IsChecked = _historyAllLocations;
+            HistoryThisLocationSegment.IsChecked = !_historyAllLocations;
+            HistoryAllLocationsSegment.IsEnabled = canShowAll;
             FlyoutPlacement.Attach(HistoryButton.ContextMenu, HistoryButton);
         }
 
@@ -127,7 +129,7 @@ namespace KillerScan.Shell
                 menu.Items.Add(KillerFamily.Controls.CardBuilder.QuickStrip(Loc("Str_Card_Actions"), new[]
                 {
                     new KillerFamily.Controls.CardAction("", Loc("Str_Card_Rename"), Loc("Str_History_Rename"), "F2", RenameSelectedHistoryEntry),
-                    new KillerFamily.Controls.CardAction("", Loc("Str_Loc_DeleteButton"), Loc("Str_Loc_DeleteButton"), "Delete", DeleteSelectedHistoryEntry),
+                    new KillerFamily.Controls.CardAction("", Loc("Str_Card_Delete"), Loc("Str_History_DeleteScan"), "Delete", DeleteSelectedHistoryEntry),
                 }));
             };
             HistoryList.PreviewKeyDown += (_, e) =>
@@ -193,7 +195,10 @@ namespace KillerScan.Shell
 
         private void HistorySettingsMenu_LocationsClick(object sender, RoutedEventArgs e)
         {
-            _historyAllLocations = sender is MenuItem { IsChecked: true };
+            if (sender is DependencyObject segment) KillerFamily.Controls.CardBuilder.Close(segment);
+            bool all = ReferenceEquals(sender, HistoryAllLocationsSegment);
+            if (all == _historyAllLocations) return;
+            _historyAllLocations = all;
             App.SetSetting("HistoryAllLocations", _historyAllLocations ? "1" : "0");
             RefreshHistoryList();
             if (_workspaceView == "history") ShowHistoryEntry();

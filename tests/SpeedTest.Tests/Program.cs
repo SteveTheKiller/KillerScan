@@ -136,6 +136,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--radio-center-ui" })) { await RadioCenterUiTests.Run(); Console.WriteLine("PASS: radio alignment regression suite (1 selected)."); return 0; }
             if (args.SequenceEqual(new[] { "--shrink-to-fit" })) { await ShrinkToFitTests.Run(); Console.WriteLine("PASS: shrink-to-fit regression suite (1 selected)."); return 0; }
             if (args.SequenceEqual(new[] { "--cli-progress" })) { CliProgressTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--cli-watch-deadline" })) { CliWatchDeadlineTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--module-path" })) { ModulePathTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--about-signature" })) { AboutSignatureTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--about-update-failure" })) { AboutUpdateFailureTests.Run(); return 0; }

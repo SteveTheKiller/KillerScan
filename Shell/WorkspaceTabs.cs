@@ -178,17 +178,15 @@ namespace KillerScan.Shell
 
         private void BuildTabPlacementMenu(ContextMenu menu)
         {
+            // The tabs card: its title over a Top / Bottom segment, rebuilt as it opens.
             menu.Items.Clear();
-            void AddChoice(bool bottom)
-            {
-                var item = new MenuItem { IsCheckable = true, IsChecked = _tabsAtBottom == bottom,
-                    InputGestureText = bottom ? "Alt+Shift+Down" : "Alt+Shift+Up" };
-                item.SetResourceReference(HeaderedItemsControl.HeaderProperty, bottom ? "Str_Layout_TabsBottom" : "Str_Layout_TabsTop");
-                item.Click += (_, _) => SetTabPlacement(bottom);
-                menu.Items.Add(item);
-            }
-            AddChoice(false);
-            AddChoice(true);
+            menu.SetResourceReference(StyleProperty, "CardMenu");
+            menu.MinWidth = menu.MaxWidth = 280 + 44;
+            menu.Items.Add(CardSegments.Header("Str_Layout_TabsTitle"));
+            menu.Items.Add(CardSegments.Row("Str_Layout_TabsPlace", new[] { false, true }
+                .Select(bottom => new CardSegments.Choice(bottom, bottom ? "Str_Layout_Bottom" : "Str_Layout_Top",
+                    bottom ? "Alt+Shift+Down" : "Alt+Shift+Up", () => SetTabPlacement(bottom))), out var segments));
+            foreach (var segment in segments) segment.IsChecked = segment.Tag is bool bottom && bottom == _tabsAtBottom;
         }
 
         internal void SetTabPlacement(bool bottom)
