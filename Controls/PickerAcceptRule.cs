@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using System.IO;
 
 namespace KillerScan.Controls
@@ -16,14 +17,19 @@ namespace KillerScan.Controls
             if (listingBusy || accepting) return false;
             if (listingAvailable) return true;
             if (folderMode) return false;
-            string typed = (typedName ?? "").Trim();
+            string typed = (typedName ?? "").Trim().Trim('"');
             return typed.Length > 0 && typed.IndexOfAny(Path.GetInvalidPathChars()) < 0 && IsFullyQualified(typed);
         }
 
         // Path.IsPathFullyQualified does not exist on .NET Framework, which the apps target.
         private static bool IsFullyQualified(string path)
         {
-            if (path.StartsWith(@"\\") || path.StartsWith("//")) return true;
+            if (path.StartsWith(@"\\") || path.StartsWith("//"))
+            {
+                // \\server\share at least: a bare \\ or \\server names no place to resolve.
+                var parts = path.Substring(2).Split(new[] { '\\', '/' }, StringSplitOptions.None);
+                return parts.Length >= 2 && parts[0].Length > 0 && parts[1].Length > 0;
+            }
             return path.Length >= 3 && char.IsLetter(path[0]) && path[1] == ':' && (path[2] == '\\' || path[2] == '/');
         }
     }

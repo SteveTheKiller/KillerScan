@@ -67,12 +67,29 @@ namespace KillerScan.Controls
                 bool rounded = !RetroBottomEdges && (r.TopLeft > 0 || r.TopRight > 0) &&
                                r.BottomLeft <= 0 && r.BottomRight <= 0 && b.Top > 0;
                 double w = arranged.Width - b.Left - b.Right, h = arranged.Height - b.Top - b.Bottom;
-                child.Clip = rounded && w > 0 && h > 0
-                    ? TopRounded(new Rect(-p.Left, -p.Top, w, h), Math.Max(0, r.TopLeft - 1), Math.Max(0, r.TopRight - 1))
-                    : null;
+                if (!(rounded && w > 0 && h > 0))
+                {
+                    _clipKey = null;
+                    child.Clip = null;
+                }
+                else
+                {
+                    // The same inputs give the same shape, so keep it and the render pass it
+                    // would otherwise invalidate.
+                    var key = (new Rect(-p.Left, -p.Top, w, h), Math.Max(0, r.TopLeft - 1), Math.Max(0, r.TopRight - 1));
+                    if (_clipKey != key || child.Clip == null || !ReferenceEquals(child.Clip, _clipShape))
+                    {
+                        _clipKey = key;
+                        _clipShape = TopRounded(key.Item1, key.Item2, key.Item3);
+                        child.Clip = _clipShape;
+                    }
+                }
             }
             return arranged;
         }
+
+        private (Rect, double, double)? _clipKey;
+        private Geometry? _clipShape;
 
         private static Geometry TopRounded(Rect rect, double left, double right)
         {
@@ -212,6 +229,13 @@ namespace KillerScan.Controls
 
             // Composite brushes rather than animating shared theme resources. This also keeps
             // gradient brushes intact, and leaves the tab's border, grain and children alone.
+            // One graph per pair of brushes: an animation frame only moves the overlay's opacity.
+            if (border._blend is { } kept && ReferenceEquals(kept.Menu, menu) && ReferenceEquals(kept.Content, content))
+            {
+                kept.Overlay.Opacity = progress;
+                if (!ReferenceEquals(border.Background, kept.Brush)) border.Background = kept.Brush;
+                return;
+            }
             var area = new RectangleGeometry(new Rect(0, 0, 1, 1));
             var overlay = new DrawingGroup { Opacity = progress };
             overlay.Children.Add(new GeometryDrawing(content, null, area));
@@ -219,7 +243,20 @@ namespace KillerScan.Controls
             layers.Children.Add(new GeometryDrawing(menu, null, area));
             layers.Children.Add(overlay);
             // Freezing this drawing would recursively freeze its borrowed theme brushes.
-            border.Background = new DrawingBrush(layers);
+            var brush = new DrawingBrush(layers);
+            border._blend = new Blend(menu, content, overlay, brush);
+            border.Background = brush;
         }
+
+        private sealed class Blend
+        {
+            public readonly Brush Menu, Content;
+            public readonly DrawingGroup Overlay;
+            public readonly DrawingBrush Brush;
+            public Blend(Brush menu, Brush content, DrawingGroup overlay, DrawingBrush brush)
+            { Menu = menu; Content = content; Overlay = overlay; Brush = brush; }
+        }
+
+        private Blend? _blend;
     }
 }

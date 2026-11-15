@@ -954,8 +954,8 @@
                              the hover would never take - the same trap the About overlay documents. -->
                         <Button Content="{DynamicResource AboutCloseGlyph}" Click="ShortcutsClose_Click" AutomationProperties.Name="{DynamicResource Str_Sys_Close}"
                                 Style="{StaticResource OverlayCloseButton}" HorizontalAlignment="Right"
-                                VerticalAlignment="Top" Width="{DynamicResource AboutCloseWidth}"
-                                Height="{DynamicResource AboutCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"
+                                VerticalAlignment="Top" Width="{DynamicResource DialogCloseWidth}"
+                                Height="{DynamicResource DialogCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"
                                 Panel.ZIndex="7"/>
 
                         <Grid Margin="{DynamicResource ShortcutsContentMargin}">
@@ -1069,8 +1069,8 @@
                              Foreground is a Style setter (not a local value) so the hover trigger can win. -->
                         <Button Content="{DynamicResource AboutCloseGlyph}" Click="AboutClose_Click" AutomationProperties.Name="{DynamicResource Str_Sys_Close}"
                                 Style="{StaticResource OverlayCloseButton}" HorizontalAlignment="Right"
-                                VerticalAlignment="Top" Width="{DynamicResource AboutCloseWidth}"
-                                Height="{DynamicResource AboutCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"
+                                VerticalAlignment="Top" Width="{DynamicResource DialogCloseWidth}"
+                                Height="{DynamicResource DialogCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"
                                 Panel.ZIndex="7"/>
 
                         <StackPanel Margin="{DynamicResource ScanAboutContentMargin}">

@@ -449,10 +449,11 @@
                                     BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}" Margin="6"
                                     Effect="{DynamicResource ComboPopupShadow}">
                                 <Grid>
-                                    <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
                                     <ScrollViewer Margin="0,4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                                         <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
                                     </ScrollViewer>
+                                    <!-- Grain last, over the items, so a highlighted row keeps its texture. -->
+                                    <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
                                 </Grid>
                             </Border>
                         </Popup>
@@ -1793,7 +1794,7 @@
         <Setter Property="Margin" Value="{DynamicResource CaptionButtonMargin}"/>
         <Setter Property="Width" Value="{DynamicResource CaptionButtonWidth}"/>
         <Setter Property="Height" Value="{DynamicResource CaptionButtonHeight}"/>
-        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="FontSize" Value="{DynamicResource CaptionGlyphSize}"/>
         <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Template">
@@ -2552,7 +2553,7 @@
         </Setter>
     </Style>
 
-    <!-- Row container: hover + accent selection. -->
+    <!-- Row container: hover + the shared selection gradient. -->
     <Style x:Key="PickerRow" TargetType="ListBoxItem">
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
@@ -2568,8 +2569,8 @@
                             <Setter TargetName="bg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="bg" Property="Background" Value="{DynamicResource PrimaryFillBrush}"/>
-                            <Setter Property="Foreground" Value="{DynamicResource OnPrimaryBrush}"/>
+                            <Setter TargetName="bg" Property="Background" Value="{DynamicResource SelectionBg}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -2592,7 +2593,7 @@
                 <Setter Property="Foreground" Value="{DynamicResource DimTextBrush}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                <Setter Property="Foreground" Value="{DynamicResource OnPrimaryBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
             </DataTrigger>
         </Style.Triggers>
     </Style>
@@ -2609,7 +2610,7 @@
                 <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                <Setter Property="Foreground" Value="{DynamicResource OnPrimaryBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
             </DataTrigger>
         </Style.Triggers>
     </Style>
@@ -2622,7 +2623,7 @@
         <Setter Property="Foreground" Value="{DynamicResource DimTextBrush}"/>
         <Style.Triggers>
             <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                <Setter Property="Foreground" Value="{DynamicResource OnPrimaryBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
             </DataTrigger>
         </Style.Triggers>
     </Style>
@@ -3412,12 +3413,14 @@
         </Setter>
     </Style>
 
-    <ContextMenu x:Key="TextInputContextMenu" x:Shared="False">
-        <MenuItem Command="ApplicationCommands.Cut"   Header="{DynamicResource Str_Ctx_Cut}"/>
-        <MenuItem Command="ApplicationCommands.Copy"  Header="{DynamicResource Str_Ctx_Copy}"/>
-        <MenuItem Command="ApplicationCommands.Paste" Header="{DynamicResource Str_Ctx_Paste}"/>
+    <!-- A card like every other menu, with an icon on each row. No header: the menu acts on the
+         box the user just right-clicked, and a title would only repeat it. -->
+    <ContextMenu x:Key="TextInputContextMenu" x:Shared="False" Style="{StaticResource CardMenu}" MinWidth="244" MaxWidth="244">
+        <MenuItem Command="ApplicationCommands.Cut"   Header="{DynamicResource Str_Ctx_Cut}"   Icon="&#xE8C6;"/>
+        <MenuItem Command="ApplicationCommands.Copy"  Header="{DynamicResource Str_Ctx_Copy}"  Icon="&#xE8C8;"/>
+        <MenuItem Command="ApplicationCommands.Paste" Header="{DynamicResource Str_Ctx_Paste}" Icon="&#xE77F;"/>
         <Separator/>
-        <MenuItem Command="ApplicationCommands.SelectAll" Header="{DynamicResource Str_Ctx_SelectAll}"/>
+        <MenuItem Command="ApplicationCommands.SelectAll" Header="{DynamicResource Str_Ctx_SelectAll}" Icon="&#xE8B3;"/>
     </ContextMenu>
 
 </ResourceDictionary>

@@ -78,9 +78,9 @@
 
                         <Button Content="{DynamicResource AboutCloseGlyph}" Click="Cancel_Click" AutomationProperties.Name="{DynamicResource Str_Sys_Close}"
                                 Style="{StaticResource OverlayCloseButton}"
-                                HorizontalAlignment="Right" VerticalAlignment="Top"
-                                Width="{DynamicResource AboutCloseWidth}" Height="{DynamicResource AboutCloseHeight}"
-                                Margin="{DynamicResource AboutCloseMargin}"/>
+                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                Width="{DynamicResource DialogCloseWidth}" Height="{DynamicResource DialogCloseHeight}"
+                                Margin="{DynamicResource DialogCloseMargin}"/>
                     </Grid>
                 </Border>
 

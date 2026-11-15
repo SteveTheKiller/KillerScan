@@ -123,6 +123,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--retro-tabs" })) { RetroTabsTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--focus-ring-styles" })) { KeyboardFocusRingStyleTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--button-shadows" })) { ButtonShadowTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--caption-close-size" })) { CaptionCloseSizeTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--outline-caption" })) { await OutlineButtonCaptionTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--theme-dump" })) { HistoryUiTests.Isolated = ThemeDumpTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--recognition-ui" })) { HistoryUiTests.Isolated = RecognitionUiTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
@@ -153,6 +154,7 @@ internal static class Program
                 await Run("No test reaches the user's real data folder", () => { AppDataIsolationTests.Run(); return Task.CompletedTask; });
                 await Run("Menu dividers resolve declared palettes and preserve the fallback", MenuSeparatorThemeTests.Run);
                 await Run("No button style casts a shadow", () => { ButtonShadowTests.Run(); return Task.CompletedTask; });
+                await Run("Dialog caption closes take the band-derived size", () => { CaptionCloseSizeTests.Run(); return Task.CompletedTask; });
                 await Run("Startup content becomes visible when its animation stalls", StartupFadeTests.Run);
                 await Run("Topology radial geometry, zoom and rendered interactions", TopologyTests.RunIsolated);
                 await Run("History identity, saved-data menus and contextual shortcuts", HistoryUiTests.RunIsolated);

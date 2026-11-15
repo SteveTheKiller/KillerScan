@@ -247,12 +247,13 @@ namespace KillerFamily.Shell
         /// </summary>
         internal bool Notify(string title, string text)
         {
-            if (!_iconShown || _disposed) return false;
+            // A kept icon beside an open window is not the window in the tray.
+            if (!InTray || _disposed) return false;
             var d = Data(NIF_INFO);
             d.szInfoTitle = title.Length > 63 ? title[..63] : title;
             d.szInfo = text.Length > 255 ? text[..255] : text;
             d.dwInfoFlags = NIIF_INFO | NIIF_NOSOUND;
-            return Shell_NotifyIcon(NIM_MODIFY, ref d);
+            return _notifyIcon?.Invoke(NIM_MODIFY) ?? Shell_NotifyIcon(NIM_MODIFY, ref d);
         }
 
         /// <summary>True while the window is hidden and its tray icon is showing.</summary>

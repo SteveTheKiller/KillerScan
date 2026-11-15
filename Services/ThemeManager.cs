@@ -971,8 +971,11 @@ namespace KillerScan.Services
             // theme that draws a dialog caption, a compact 28x26 everywhere else, flush with the
             // caption buttons' right inset.
             bool pickerCaption = combined.Contains("UseDialogCaption") && combined["UseDialogCaption"] is bool fp && fp;
-            SetIfAbsent("DialogCloseWidth", pickerCaption ? combined["CaptionButtonWidth"] : 28.0);
-            SetIfAbsent("DialogCloseHeight", pickerCaption ? combined["CaptionButtonHeight"] : 26.0);
+            // Sized from the dialog band, not the main caption: Win98 made a caption button the
+            // caption minus 4 tall and 2 wider than that, so a 20px band gets an 18x16 X.
+            double bar = combined["DialogTitleBarHeight"] is double barH ? barH : 32.0;
+            SetIfAbsent("DialogCloseWidth", pickerCaption ? bar - 2 : 28.0);
+            SetIfAbsent("DialogCloseHeight", pickerCaption ? bar - 4 : 26.0);
             SetIfAbsent("DialogCaptionButtonsMargin", new Thickness(0, 0,
                 combined["CaptionButtonsMargin"] is Thickness pickerButtons ? pickerButtons.Right : 0, 0));
             SetIfAbsent("TitleLogoMargin", combined.Contains("UseDialogCaption") && combined["UseDialogCaption"] is bool fc && fc
@@ -1060,18 +1063,25 @@ namespace KillerScan.Services
 
                 // A 1px MDL2 stroke disappears against a gray button face at 16px.
                 combined["CaptionGlyphWeight"] = flat ? FontWeights.Bold : FontWeights.Normal;
+                // ...and at 10px the X fills a 98SE face edge to edge, which reads as off center.
+                combined["CaptionGlyphSize"] = flat ? 8.0 : 10.0;
 
                 // The About card only gets a caption band when the theme asks for one; 0 keeps
                 // every other theme's card at the exact layout it already had.
                 combined["AboutCaptionHeight"] = flat ? combined["DialogTitleBarHeight"] : 0.0;
 
                 // The About card's close X, the shared OverlayCloseButton style: on a flat
-                // theme a small Win98 caption button sitting inside the 20px band (16x14 with a
-                // 3px gap, next to the band's 2,2,2 inset), elsewhere the 28x26 corner slot the
-                // bare glyph always occupied (matching KillerNotes' card).
-                combined["AboutCloseWidth"]  = flat ? 16.0 : 28.0;
-                combined["AboutCloseHeight"] = flat ? 14.0 : 26.0;
-                combined["AboutCloseMargin"] = flat ? new Thickness(0, 5, 5, 0) : new Thickness(0, 6, 6, 0);
+                // theme a Win98 caption button sized from the 20px band (DialogCloseWidth/Height,
+                // 18x16) and centered in it: a 2px gap inside the band's 2,2,2 inset, so 4,4 from
+                // the card corner. Elsewhere the 28x26 corner slot the bare glyph always occupied
+                // (matching KillerNotes' card).
+                combined["AboutCloseWidth"]  = flat ? combined["DialogCloseWidth"] : 28.0;
+                combined["AboutCloseHeight"] = flat ? combined["DialogCloseHeight"] : 26.0;
+                combined["AboutCloseMargin"] = flat ? new Thickness(0, 4, 4, 0) : new Thickness(0, 6, 6, 0);
+                // A dialog close sits INSIDE its caption band and is centered there: on 98SE only
+                // the band's 2px right inset, elsewhere the same 6,6 corner slot as before (the
+                // 26px X centered in a 32px band with a 6px top lands exactly where Top put it).
+                combined["DialogCloseMargin"] = flat ? new Thickness(0, 0, 2, 0) : new Thickness(0, 6, 6, 0);
 
                 // ...and the rest of the OverlayCloseButton split (Controls.xaml): the ordinary
                 // themes keep the card X's ORIGINAL look - muted U+2715, red glyph on hover, no
