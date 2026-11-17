@@ -155,7 +155,7 @@ internal static class ReleaseUiTests
             CaptureSettings("SlSI-narrow", 800);
             window.GetType().GetMethod("ApplyAppScale", Instance)!.Invoke(window, new object[] { 1.5, false });
             CaptureSettings("SlSI-scale150");
-            Console.WriteLine("PASS: scan settings button, menu, profile JSON, defaults, dependencies, 13 themes and 20 locales.");
+            Console.WriteLine("PASS: scan settings button, menu, profile JSON, defaults, dependencies, 14 themes and 20 locales.");
             Console.WriteLine("Offscreen scan settings UI: " + output);
             return;
         }

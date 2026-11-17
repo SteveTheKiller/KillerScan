@@ -150,6 +150,7 @@
     <sys:String x:Key="Str_Theme_Sepulchre">Grabmal</sys:String>
     <sys:String x:Key="Str_Theme_Delirium">Delirium</sys:String>
     <sys:String x:Key="Str_Theme_Mourning">Trauer</sys:String>
+    <sys:String x:Key="Str_Theme_TrashPolka">Trash Polka</sys:String>
     <sys:String x:Key="Str_Theme_FilmGrain">Filmkorn</sys:String>
 
     <sys:String x:Key="Str_About_Version">VERSION</sys:String>

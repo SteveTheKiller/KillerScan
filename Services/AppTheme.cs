@@ -21,6 +21,8 @@ namespace KillerScan.Services
             ThemeManager.SetDefaults(Theme.Black, dark: Accent.Orange, light: Accent.Orange, black: Accent.Orange, se98: Accent.Blue);
             ThemeManager.AppTokens = AppTokens;
             ThemeManager.AppDerivedTokens = AppDerivedTokens;
+            // Trash Polka's background ink on every dialog, picker and flyout, not just the main window.
+            Controls.ThemeMotif.EnableForAllWindows();
             // Dialog captions (Controls/DialogChrome.cs): the file picker's title icon comes from here.
             Controls.DialogChrome.AppName = "KillerScan";
             Controls.DialogChrome.WordmarkSplit = 6;
@@ -53,6 +55,18 @@ namespace KillerScan.Services
         private static void AppDerivedTokens(ResourceDictionary d, Theme theme, Accent accent)
         {
             ThemeManager.Mirror(d, "ScanContentPaneBrush", "ListPaneBrush");
+
+            // The shade along the foot of the view tab strip follows the bar shadow unless a theme turns it off (Trash
+            // Polka: inactive tabs sit on the window background with no darkening).
+            ThemeManager.SetIfAbsent(d, "TabStripFadeOpacity", d.Contains("BarShadowOpacity") ? d["BarShadowOpacity"] : 0.38);
+
+            // Trash Polka inks every surface painting the menu brush (Controls/ThemeMotif.cs). Topology nodes and the
+            // Keep Alive log are data, not menus: their own copy of the color keeps them plain and readable.
+            if (theme == Theme.TrashPolka && d["MenuBackgroundBrush"] is SolidColorBrush menu)
+            {
+                ThemeManager.SetIfAbsent(d, "TopologyNodeBrush", Frozen(menu.Color));
+                ThemeManager.SetIfAbsent(d, "WatchLogBrush", Frozen(menu.Color));
+            }
 
             // Topology nodes take the menu surface unless a theme separates them from the pane.
             ThemeManager.Mirror(d, "TopologyNodeBrush", "MenuBackgroundBrush");

@@ -50,8 +50,11 @@
     <!-- Exact KillerNotes frame hierarchy: outer directional ring, a separate 3px gradient
          face, then the inner directional ring. Keeping the face in its own Border prevents the
          right and bottom from becoming alternating full-height stripes. -->
+    <!-- Trash Polka: the window background piece behind everything (Controls/ThemeMotif.cs). Marking the
+         window's root also keeps EnableForAllWindows from marking the main window's own surfaces. -->
     <Border x:Name="WindowFrame" BorderBrush="{DynamicResource WindowEdgeBrush}"
-            BorderThickness="{DynamicResource WindowEdgeThickness}" SnapsToDevicePixels="True">
+            BorderThickness="{DynamicResource WindowEdgeThickness}" SnapsToDevicePixels="True"
+            controls:ThemeMotif.Part="Chrome" controls:ThemeMotif.BaseBrush="BackgroundBrush">
         <Grid x:Name="FrameHost">
 
     <Grid x:Name="RootGrid" Opacity="0" Panel.ZIndex="9500" Margin="{DynamicResource WindowFramePadding}">
@@ -70,7 +73,8 @@
              there) and "Scan" is PrimaryBrush (navy by default there). Same answer KillerShell
              reached. Theme.cs drives the visibilities. -->
         <!-- ZIndex 1 so the wordmark's drips can hang into the top of the toolbar row below. -->
-        <Border Grid.Row="0" Background="{DynamicResource TitleBarBrush}" Panel.ZIndex="1">
+        <Border Grid.Row="0" Background="{DynamicResource TitleBarBrush}" Panel.ZIndex="1"
+                controls:ThemeMotif.Part="Chrome" controls:ThemeMotif.BaseBrush="TitleBarBrush">
             <Grid>
                 <!-- Film grain over the whole bar (behind content). Stopping it short of the bottom
                      edge left a bare one-pixel line under the title bar on every grained theme. -->
@@ -201,7 +205,8 @@
             </Grid.ColumnDefinitions>
 
         <!-- Chrome strip behind the pane, so the side margins carry the grain like the other bars -->
-        <Border Grid.Row="1" Grid.ColumnSpan="2" Background="{DynamicResource BackgroundBrush}">
+        <Border Grid.Row="1" Grid.ColumnSpan="2" Background="{DynamicResource BackgroundBrush}"
+                controls:ThemeMotif.Part="Chrome" controls:ThemeMotif.BaseBrush="BackgroundBrush">
             <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}">
                 <Border.Background><ImageBrush x:Name="GrainBrush" TileMode="Tile"
                     ViewportUnits="Absolute" Viewport="0,0,256,256" Stretch="None"/></Border.Background>
@@ -269,6 +274,7 @@
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Black"     Content="{DynamicResource Str_Theme_Black}"     Checked="ThemeRadio_Checked"/>
                             <!-- Tag is SE98, the enum member; the label reads "98SE". -->
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="SE98"      Content="{DynamicResource Str_Theme_SE98}"      Checked="ThemeRadio_Checked"/>
+                            <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="TrashPolka" Content="{DynamicResource Str_Theme_TrashPolka}" Checked="ThemeRadio_Checked"/>
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Blood"     Content="{DynamicResource Str_Theme_Blood}"     Checked="ThemeRadio_Checked"/>
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Greed"     Content="{DynamicResource Str_Theme_Greed}"     Checked="ThemeRadio_Checked"/>
                             <RadioButton Style="{StaticResource ThemeRadio}" GroupName="ThemeGroup" Tag="Cyanotic"  Content="{DynamicResource Str_Theme_Cyanotic}"  Checked="ThemeRadio_Checked"/>
@@ -715,6 +721,7 @@
                 Effect="{DynamicResource PaneShadowEffect}"/>
         <controls:PickerBorder x:Name="DevicesPane" Grid.Row="1" SnapsToDevicePixels="True" UseLayoutRounding="True"
                 Background="{DynamicResource ScanContentPaneBrush}"
+                controls:ThemeMotif.Part="Window" controls:ThemeMotif.BaseBrush="ScanContentPaneBrush"
                 BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1"
                 CornerRadius="{DynamicResource PanelCornerRadius}">
             <Grid x:Name="TerminalLayout" WindowChrome.IsHitTestVisibleInChrome="True">
@@ -751,7 +758,8 @@
         <!-- ZIndex -1 so the content pane's shadow lands on the footer rather than being painted
              over by it. The footer is pushed down rather than the content row raised, which would
              also put it above the overlays declared later. -->
-        <Border x:Name="FooterBar" Grid.Row="3" Panel.ZIndex="-1" Background="{DynamicResource FooterBackgroundBrush}">
+        <Border x:Name="FooterBar" Grid.Row="3" Panel.ZIndex="-1" Background="{DynamicResource FooterBackgroundBrush}"
+                controls:ThemeMotif.Part="Chrome" controls:ThemeMotif.BaseBrush="FooterBackgroundBrush">
           <Grid>
             <!-- FooterPadding: 16,0 on the flat themes (one continuous strip); 0 on 98SE, where
                  the strip breaks into sunken cells that run to the edges. -->

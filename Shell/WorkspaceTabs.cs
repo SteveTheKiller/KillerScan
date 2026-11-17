@@ -44,8 +44,8 @@ namespace KillerScan.Shell
             ends.Freeze();
             _viewTabBandShadow.Background = fall;
             _viewTabBandShadow.OpacityMask = ends;
-            // 0 on a flat theme, so 98SE's strip stays flat.
-            _viewTabBandShadow.SetResourceReference(UIElement.OpacityProperty, "BarShadowOpacity");
+            // 0 on a flat theme, so 98SE's strip stays flat, and 0 on Trash Polka, whose tabs sit on the inked window.
+            _viewTabBandShadow.SetResourceReference(UIElement.OpacityProperty, "TabStripFadeOpacity");
             _viewTabBand.Children.Add(_viewTabBandShadow);
             _viewTabBand.Children.Add(_viewTabStrip);
         }
