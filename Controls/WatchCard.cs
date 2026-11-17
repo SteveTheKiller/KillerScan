@@ -136,7 +136,7 @@ namespace KillerScan.Controls
 
         /// <summary>
         /// Repoints the semantic colors at the active theme. Red and green come from the
-        /// terminal palette because that already carries a tuned pair for all thirteen
+        /// terminal palette because that already carries a tuned pair for all fourteen
         /// themes, which the theme brushes do not.
         /// </summary>
         internal void RefreshTheme()
@@ -169,7 +169,7 @@ namespace KillerScan.Controls
 
         /// <summary>
         /// The up / down / waiting color for the current theme. The terminal palette carries a
-        /// tuned red and green for all thirteen flat themes, so it stays the source for those.
+        /// tuned red and green for all fourteen flat themes, so it stays the source for those.
         /// A theme that names its own brush wins: 98SE does, because the VGA green it would
         /// otherwise inherit is too light to read on that theme's white log surface.
         /// </summary>

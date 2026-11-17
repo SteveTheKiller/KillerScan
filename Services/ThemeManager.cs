@@ -320,7 +320,7 @@ namespace KillerScan.Services
             //
             // 98SE is the only FLAT theme: a hard 2px frame, raised bevels, a short Win98
             // caption. It carries 126 keys no other palette declares, and controls that bind
-            // them have to resolve on all thirteen themes - so every one gets a neutral default
+            // them have to resolve on all fourteen themes - so every one gets a neutral default
             // here and 98SE's own value simply wins, with no branch on the theme name anywhere.
             //
             // SetIfAbsent, never a plain assignment: the palette is read FIRST and must not be

@@ -887,7 +887,7 @@
                  nothing scanned or a scan stopped short, red while scanning, blue during a deep
                  pass, green when a scan finished. Outside the padded grid so it sits at the
                  window's own edge, and fixed colors rather than theme tokens, because a traffic
-                 light means the same thing in all thirteen themes. -->
+                 light means the same thing in all fourteen themes. -->
             <Border x:Name="ScanLight" Width="9" Height="9" CornerRadius="5" Panel.ZIndex="60"
                     HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0"
                     Background="#E0A317" BorderThickness="1" BorderBrush="#40000000"/>

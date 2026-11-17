@@ -16,7 +16,7 @@ Part of [killertools.net](https://killertools.net).
 - **Scan history** compares earlier scans of the same target on the same network, with matching scan settings. Known-device baselines flag unfamiliar devices; approving a device is a separate choice.
 - **Tools:** built-in PowerShell, ping and SSH terminals, device diagnostics, and a native speed test.
 - **Command line** for scripts, RMM and KillerMCP, with JSON output and distinct exit codes.
-- **Looks:** thirteen themes, 20 languages and app-wide sizing from 70% to 250%. Press F1 for every shortcut.
+- **Looks:** fourteen themes, 20 languages and app-wide sizing from 70% to 250%. Press F1 for every shortcut.
 
 The [help page](https://killerscan.net/help.html) covers every view, tool and shortcut.
 

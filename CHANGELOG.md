@@ -6,7 +6,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.9.6] - Unreleased
 
-1.9.6 turns the right-click and settings menus into cards and updates the JSON library in the app and engine.
+1.9.6 adds the Trash Polka theme, turns the right-click and settings menus into cards and updates the JSON library in the app and engine.
 
 ### Fixed
 
@@ -29,6 +29,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The copyright at the right end of the footer ends 8 px before the corner grip, the same gap in every Killer app.
 - On 98SE, sliders and drop-down lists look like the Windows 98 originals: a sunken channel with a raised gray thumb, and a white field with a raised drop button.
 - Column headers show an accent edge when they have keyboard focus.
+
+### Added
+
+- Trash Polka, a new theme under 98SE: black with a tattoo-style ink background in your accent color, from eight accents with Blood red as the default. Under a Windows high contrast theme the ink and the tab shade step aside for the system colors.
 
 ## [1.9.5] - 2026-11-09
 
