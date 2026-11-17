@@ -1,3 +1,5 @@
+using System;
+
 namespace KillerScan.Services
 {
     /// <summary>
