@@ -82,8 +82,36 @@ namespace KillerScan.Controls
             return group;
         }
 
-        private sealed class Ink(DrawingContext dc, Color accent, int seed)
+        /// <summary>
+        /// The same piece with every accent mark in its own frozen brush, so the whole drawing freezes and can be built
+        /// and rasterized off the UI thread (TrashPolkaRaster). The random sequence does not depend on the accent, so
+        /// every accent draws the same marks in the same places.
+        /// </summary>
+        internal static DrawingGroup DrawFrozen(Color accent, Size size, int seed)
         {
+            var group = new DrawingGroup();
+            using (var dc = group.Open())
+            {
+                var area = new Rect(0, 0, size.Width, size.Height);
+                dc.DrawRectangle(Brushes.Transparent, null, area);
+                dc.PushClip(new RectangleGeometry(area));
+                new Ink(dc, accent, seed, frozenAccent: true).Piece(area);
+                dc.Pop();
+            }
+            group.Freeze();
+            return group;
+        }
+
+        private sealed class Ink(DrawingContext dc, Color accent, int seed, bool frozenAccent = false)
+        {
+            private SolidColorBrush Accent(double alpha, bool dark)
+            {
+                if (!frozenAccent) return AccentBrush(alpha, dark);
+                var brush = new SolidColorBrush(Shade(accent, ((int)Math.Round(Clamp(alpha, 0, 1) * 20), dark)));
+                brush.Freeze();
+                return brush;
+            }
+
             private readonly Random _r = new(seed);
             private static readonly Color Black = Color.FromRgb(0x0b, 0x0b, 0x0b);
             private static readonly Color Bone = Color.FromRgb(0xE8, 0xE4, 0xDC);
@@ -92,7 +120,7 @@ namespace KillerScan.Controls
 
             private SolidColorBrush B(Color c, double a = 1)
             {
-                if (c == accent) return AccentBrush(a, dark: false);
+                if (c == accent) return Accent(a, dark: false);
                 var s = new SolidColorBrush(Color.FromArgb((byte)(a * 255), c.R, c.G, c.B));
                 s.Freeze();
                 return s;
@@ -568,7 +596,7 @@ namespace KillerScan.Controls
                     Point p2 = vertical ? new Point(r.X + o + R(-2, 2), r.Y + r.Height * a2) : new Point(r.X + r.Width * a2, r.Y + o + R(-2, 2));
                     bool dark = R(0, 1) < 0.15;
                     double alpha = R(0.35, 0.95);
-                    var brush = col == accent ? AccentBrush(alpha, dark)
+                    var brush = col == accent ? Accent(alpha, dark)
                         : B(dark ? Color.FromRgb((byte)(col.R * 0.55), (byte)(col.G * 0.55), (byte)(col.B * 0.55)) : col, alpha);
                     dc.DrawLine(new Pen(brush, R(0.8, 2)), p1, p2);
                 }
