@@ -20,10 +20,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Changed
 
 - Updated the app and engine JSON dependency to 10.0.15.
-- Right-click menus on devices, services, Locations, saved scans, History rows, Keep Alive targets and the terminal are now cards. Each one names what you clicked, puts the everyday actions in a row of buttons at the top, and gathers the copy options into one row, with the rest in a shorter list below. Every button's tooltip shows its keyboard shortcut.
-- Scan settings, Location, Export, Topology settings, the History, sidebar and tab-placement menus and the tray menu are cards too. Scan checks are chips grouped by what they find, with presets on a strip; Topology order, History's Locations, the sidebar side and tab placement are segmented switches; and Topology's PNG, JPG and HTML exports each have their own icon and shortcut.
+- Right-click menus on devices, services, Locations, saved scans, History rows and the terminal are now cards. Each one names what you clicked over a grid of tiles, one per action, with its keyboard shortcut on the tile and in its tooltip. Lists such as Access, Set Device Type and the zoom steps open beside their tile.
+- Scan settings, Location, Export, Topology settings, the History, sidebar and tab-placement menus and the tray menu are cards too. Scan checks are chips grouped by what they find, with the presets and the adapter list as tiles; Topology order, the sidebar side and tab placement are tiles with the current choice checked; History's This Location and All Locations are tiles with the one in use checked; and Topology's PNG, JPG and HTML exports each have their own tile and shortcut.
 - With several devices or services selected, the card's title says how many.
-- On a service, the card only offers the ways in that the service supports, so a DNS port shows no browser, SSH or RDP button.
+- On a service, the ways in that the service does not offer stay on the card dimmed, so a DNS port shows its browser, SSH and RDP tiles grayed out and every tile keeps its place.
 - Buttons no longer cast a drop shadow, including the view toolbar's icons.
 - Menu shortcuts and submenu arrows line up at the right edge of each row.
 - The copyright at the right end of the footer ends 8 px before the corner grip, the same gap in every Killer app.
@@ -38,6 +38,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 - Trash Polka, a new theme under 98SE: black with a tattoo-style ink background in your accent color, from eight accents with Blood red as the default. Under a Windows high contrast theme the ink and the tab shade step aside for the system colors. The ink is saved to disk and prepared in the background shortly after KillerScan starts, so switching to Trash Polka is quick, and its memory is released when you pick another theme.
 - The file picker has a New folder button (Ctrl+Shift+N). It checks the name first and says what is wrong with it before anything is created.
+- The device card can be customized: Customize hides tiles you never use and brings them back, and the layout is kept for next time.
 
 ## [1.9.5] - 2026-11-09
 

@@ -93,14 +93,10 @@ namespace KillerScan.Shell
 
         private void InitSidebar()
         {
-            // The sidebar card: its title over a Left / Right segment.
-            var menu = KillerFamily.Controls.CardBuilder.Menu(280);
+            // The sidebar card: its title over a Left and a Right tile, the side in use checked.
+            var menu = ScanCards.Menu();
             menu.Placement = PlacementMode.MousePoint;
-            menu.Items.Add(CardSegments.Header("Str_Sidebar_Title"));
-            menu.Items.Add(CardSegments.Row("Str_Sidebar_Side", new[] { SidebarSide.Left, SidebarSide.Right }
-                .Select(side => new CardSegments.Choice(side, side.StringKey(),
-                    side == SidebarSide.Right ? "Alt+Shift+Right" : "Alt+Shift+Left",
-                    () => SelectSidebarSide(side == SidebarSide.Right))), out _sidebarSideSegments));
+            _sidebarCard = menu;
             SidebarToggleStrip.ContextMenu = menu;
             SidebarToggleBtn.ToolTipOpening += (_, _) =>
                 SidebarToggleBtn.ToolTip = KillerFamily.Layout.ShortcutHints.WithHint(Loc(_sidebarCollapsed ? "Str_TT_ExpandSidebar" : "Str_TT_CollapseSidebar"),
@@ -151,12 +147,18 @@ namespace KillerScan.Shell
 
         private void UpdateSidebarSideMenu()
         {
-            foreach (var segment in _sidebarSideSegments)
-                if (segment.Tag is SidebarSide side)
-                    segment.IsChecked = side == (_sidebarRight ? SidebarSide.Right : SidebarSide.Left);
+            if (_sidebarCard == null) return;
+            var card = ScanCards.Prepare(_sidebarCard);
+            card.Items.Add(ScanCards.Header(card, Loc("Str_Sidebar_Title"), Loc("Str_Sidebar_Side")));
+            card.Items.Add(ScanCards.Grid(card, new[] { SidebarSide.Left, SidebarSide.Right }.Select(side =>
+                new KillerFamily.Controls.CardTile(side == SidebarSide.Right ? "" : "", Loc(side.StringKey()),
+                    side == SidebarSide.Right ? "Alt+Shift+Right" : "Alt+Shift+Left",
+                    () => SelectSidebarSide(side == SidebarSide.Right))
+                { Id = "Side" + side, Checked = side == (_sidebarRight ? SidebarSide.Right : SidebarSide.Left) }).ToList()));
         }
 
-        private List<RadioButton> _sidebarSideSegments = [];
+        private ContextMenu? _sidebarCard;
+
 
         private void RefreshSidebarTheme()
         {

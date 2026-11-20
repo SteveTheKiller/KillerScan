@@ -20,37 +20,31 @@ namespace KillerScan.Terminal
         /// </summary>
         private void BuildContextMenu()
         {
-            ContextMenu = KillerFamily.Controls.CardBuilder.Menu();
+            ContextMenu = KillerScan.Controls.ScanCards.Menu();
             ContextMenuOpening += (_, _) => FillContextMenu();
         }
 
         /// <summary>Fills the card for the pointer and for the Menu key, which opens it directly.</summary>
         private void FillContextMenu()
         {
-            var menu = ContextMenu;
-            {
-                string L(string key) => TryFindResource(key) as string ?? key;
-                menu.Items.Clear();
-                menu.Items.Add(KillerFamily.Controls.CardBuilder.Header(L("Str_Workspace_Terminal")));
-                menu.Items.Add(KillerFamily.Controls.CardBuilder.QuickStrip(L("Str_Card_Actions"), new[]
+            string L(string key) => TryFindResource(key) as string ?? key;
+            var card = KillerScan.Controls.ScanCards.Prepare(ContextMenu);
+            card.Items.Add(KillerScan.Controls.ScanCards.Header(card, L("Str_Workspace_Terminal")));
+            KillerFamily.Controls.CardTile Tile(string id, string glyph, string key, string? keys, Action run, bool enabled = true, string? shown = null) =>
+                new(glyph, L(key), keys, run, false, enabled) { Id = id, Shown = shown == null ? null : L(shown) };
+            card.Items.Add(KillerScan.Controls.ScanCards.Grid(card,
+                new[]
                 {
-                    new KillerFamily.Controls.CardAction("", L("Str_Ctx_Copy"), L("Str_Term_Copy"), "Ctrl+Shift+C",
-                        () => { CopySelection(); ClearSelection(); }, _hasSelection),
-                    new KillerFamily.Controls.CardAction("", L("Str_Ctx_Paste"), L("Str_Term_Paste"), "Ctrl+Shift+V", Paste),
-                    new KillerFamily.Controls.CardAction("", L("Str_Ctx_SelectAll"), L("Str_Term_SelectAll"), "Ctrl+Shift+A", SelectAll),
-                    new KillerFamily.Controls.CardAction("", L("Str_Card_CopyAll"), L("Str_Term_CopyAll"), "Ctrl+Shift+Y", CopyAll),
-                    new KillerFamily.Controls.CardAction("", L("Str_Card_Clear"), L("Str_Term_Clear"), "Ctrl+Shift+L", ClearScreen),
+                    Tile("Copy", "", "Str_Term_Copy", "Ctrl+Shift+C", () => { CopySelection(); ClearSelection(); }, _hasSelection, "Str_Ctx_Copy"),
+                    Tile("Paste", "", "Str_Term_Paste", "Ctrl+Shift+V", Paste, true, "Str_Ctx_Paste"),
+                    Tile("SelectAll", "", "Str_Term_SelectAll", "Ctrl+Shift+A", SelectAll, true, "Str_Ctx_SelectAll"),
+                },
+                new[]
+                {
+                    Tile("CopyAll", "", "Str_Term_CopyAll", "Ctrl+Shift+Y", CopyAll, true, "Str_Card_CopyAll"),
+                    Tile("Clear", "", "Str_Term_Clear", "Ctrl+Shift+L", ClearScreen, true, "Str_Card_Clear"),
+                    Tile("Font", "", "Str_Term_Font", null, ChooseFont),
                 }));
-                menu.Items.Add(Entry("Str_Term_Font", null, 0xE8D2, ChooseFont));
-            }
-        }
-
-        private static MenuItem Entry(string key, string? gesture, int glyph, Action action)
-        {
-            var item = new MenuItem { InputGestureText = gesture ?? string.Empty, Icon = MenuGlyph.Create(glyph) };
-            item.SetResourceReference(HeaderedItemsControl.HeaderProperty, key);
-            item.Click += (_, _) => action();
-            return item;
         }
 
         /// <summary>The whole session on the clipboard, scrollback included.</summary>

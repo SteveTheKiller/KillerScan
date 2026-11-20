@@ -25,38 +25,32 @@ namespace KillerScan.Controls
 
         // Automatic, then every connected adapter with its address. A remembered choice that is
         // not connected right now stays listed, checked and disabled, so it is not lost silently.
-        private static MenuItem AdapterMenu(Button button, AdapterHooks hooks)
+        // The rows are built as the card opens, for the Adapter tile's flyout.
+        private static List<object> AdapterRows(Button button, AdapterHooks hooks)
         {
-            var parent = new MenuItem();
-            parent.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Options_Adapter");
-            void Fill()
+            var rows = new List<object>();
+            string chosen = hooks.Read();
+            var automatic = new MenuItem { IsCheckable = true, IsChecked = chosen.Length == 0 };
+            automatic.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Options_AdapterAuto");
+            automatic.Click += (_, _) => { if (button.IsEnabled) hooks.Write(string.Empty); };
+            rows.Add(automatic);
+            var available = hooks.List();
+            foreach (var binding in available.GroupBy(b => b.InterfaceName).Select(g => g.First()))
             {
-                parent.Items.Clear();
-                string chosen = hooks.Read();
-                var automatic = new MenuItem { IsCheckable = true, IsChecked = chosen.Length == 0 };
-                automatic.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Options_AdapterAuto");
-                automatic.Click += (_, _) => { if (button.IsEnabled) hooks.Write(string.Empty); Fill(); };
-                parent.Items.Add(automatic);
-                var available = hooks.List();
-                foreach (var binding in available.GroupBy(b => b.InterfaceName).Select(g => g.First()))
+                var item = new DetailMenuItem
                 {
-                    var item = new DetailMenuItem
-                    {
-                        Header = binding.InterfaceName,
-                        InputGestureText = binding.LocalAddress + "/" + binding.PrefixLength,
-                        IsCheckable = true,
-                        IsChecked = string.Equals(binding.InterfaceName, chosen, StringComparison.OrdinalIgnoreCase)
-                    };
-                    string name = binding.InterfaceName;
-                    item.Click += (_, _) => { if (button.IsEnabled) hooks.Write(name); Fill(); };
-                    parent.Items.Add(item);
-                }
-                if (chosen.Length > 0 && !available.Any(b => string.Equals(b.InterfaceName, chosen, StringComparison.OrdinalIgnoreCase)))
-                    parent.Items.Add(new MenuItem { Header = chosen, IsCheckable = true, IsChecked = true, IsEnabled = false });
+                    Header = binding.InterfaceName,
+                    InputGestureText = binding.LocalAddress + "/" + binding.PrefixLength,
+                    IsCheckable = true,
+                    IsChecked = string.Equals(binding.InterfaceName, chosen, StringComparison.OrdinalIgnoreCase)
+                };
+                string name = binding.InterfaceName;
+                item.Click += (_, _) => { if (button.IsEnabled) hooks.Write(name); };
+                rows.Add(item);
             }
-            parent.SubmenuOpened += (_, _) => Fill();
-            Fill();
-            return parent;
+            if (chosen.Length > 0 && !available.Any(b => string.Equals(b.InterfaceName, chosen, StringComparison.OrdinalIgnoreCase)))
+                rows.Add(new MenuItem { Header = chosen, IsCheckable = true, IsChecked = true, IsEnabled = false });
+            return rows;
         }
 
         private static string Loc(string key) => Application.Current?.TryFindResource(key) as string ?? key;
@@ -83,11 +77,11 @@ namespace KillerScan.Controls
         /// </summary>
         private static ContextMenu Create(Button button, Func<ScanOptions> read, Action<ScanOptions> write, AdapterHooks? adapters)
         {
-            var menu = KillerFamily.Controls.CardBuilder.Menu();
+            var menu = ScanCards.Menu();
             menu.PlacementTarget = button;
             menu.Placement = PlacementMode.Bottom;
             menu.VerticalOffset = 4;
-            menu.Items.Add(KillerFamily.Controls.CardBuilder.Header(Loc("Str_Options_Title")));
+            menu.Items.Add(ScanCards.Header(menu, Loc("Str_Options_Title")));
             var detail = new TextBlock { TextWrapping = TextWrapping.Wrap, FontSize = 11, Margin = new Thickness(4, 0, 4, 2) };
             detail.SetResourceReference(TextBlock.TextProperty, "Str_Options_Detail");
             detail.SetResourceReference(TextBlock.ForegroundProperty, "DimTextBrush");
@@ -147,22 +141,22 @@ namespace KillerScan.Controls
 
             void Apply(ScanOptions options) { if (button.IsEnabled) write(options); }
             var none = new ScanOptions().Without(string.Join(",", ScanOptions.Features));
-            menu.Items.Add(KillerFamily.Controls.CardBuilder.QuickStrip(Loc("Str_Card_Actions"), new[]
+            // The presets and the adapter list as tiles under the chips.
+            var tiles = new List<KillerFamily.Controls.CardTile>
             {
-                new KillerFamily.Controls.CardAction("", Loc("Str_Options_AllOn"), Loc("Str_Options_AllOnTip"), null,
-                    () => Apply(new ScanOptions { ProbeUnknownPorts = true }), button.IsEnabled),
-                new KillerFamily.Controls.CardAction("", Loc("Str_Options_Discovery"), Loc("Str_Options_DiscoveryTip"), null,
+                new("", Loc("Str_Options_AllOnTip"), null, () => Apply(new ScanOptions { ProbeUnknownPorts = true }), false, button.IsEnabled)
+                    { Id = "AllOn", Shown = Loc("Str_Options_AllOn") },
+                new("", Loc("Str_Options_DiscoveryTip"), null,
                     () => Apply(none.WithFeature("neighbor-cache", true).WithFeature("arp", true).WithFeature("icmp", true)
-                        .WithFeature("tcp-liveness", true)), button.IsEnabled),
-                new KillerFamily.Controls.CardAction("", Loc("Str_Card_Reset"), Loc("Str_Options_Defaults"), null,
-                    () => Apply(new ScanOptions()), button.IsEnabled),
-            }));
+                        .WithFeature("tcp-liveness", true)), false, button.IsEnabled)
+                    { Id = "Discovery", Shown = Loc("Str_Options_Discovery") },
+                new("", Loc("Str_Options_Defaults"), null, () => Apply(new ScanOptions()), false, button.IsEnabled)
+                    { Id = "Defaults", Shown = Loc("Str_Card_Reset") },
+            };
             if (adapters != null)
-            {
-                var adapter = AdapterMenu(button, adapters);
-                adapter.Icon = MenuGlyph.Create(0xE839);
-                menu.Items.Add(adapter);
-            }
+                tiles.Add(ScanCards.Flyout("", Loc("Str_Options_Adapter"), null, AdapterRows(button, adapters))
+                    with { Id = "Adapter", Mirror = true });
+            menu.Items.Add(ScanCards.Grid(menu, tiles));
             menu.Opened += (_, _) => Refresh();
             Refresh();
             return menu;

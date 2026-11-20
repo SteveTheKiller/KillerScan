@@ -727,4 +727,12 @@
     <sys:String x:Key="Str_FD_FolderTooLong">名前が長すぎます。255 文字以内にしてください。</sys:String>
     <sys:String x:Key="Str_FD_FolderExists">同じ名前のフォルダーまたはファイルが既にあります。</sys:String>
     <sys:String x:Key="Str_FD_FolderFailed">フォルダーを作成できませんでした:</sys:String>
+    <sys:String x:Key="Str_Card_Quick">クイックアクション</sys:String>
+    <sys:String x:Key="Str_Card_Customize">このカードをカスタマイズ</sys:String>
+    <sys:String x:Key="Str_Card_EditDone">完了</sys:String>
+    <sys:String x:Key="Str_Card_EditReset">既定に戻す</sys:String>
+    <sys:String x:Key="Str_Card_EditResetShort">リセット</sys:String>
+    <sys:String x:Key="Str_Card_Hidden">非表示</sys:String>
+    <sys:String x:Key="Str_Card_HiddenHint">非表示にするにはタイルをここにドラッグ</sys:String>
+    <sys:String x:Key="Str_Card_AlwaysShown">常に表示</sys:String>
 </ResourceDictionary>

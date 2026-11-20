@@ -701,4 +701,12 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_FD_FolderTooLong">Ta nazwa jest zbyt długa. Użyj najwyżej 255 znaków.</sys:String>
     <sys:String x:Key="Str_FD_FolderExists">Folder lub plik o takiej nazwie już tu istnieje.</sys:String>
     <sys:String x:Key="Str_FD_FolderFailed">Nie udało się utworzyć folderu:</sys:String>
+    <sys:String x:Key="Str_Card_Quick">Szybkie akcje</sys:String>
+    <sys:String x:Key="Str_Card_Customize">Dostosuj tę kartę</sys:String>
+    <sys:String x:Key="Str_Card_EditDone">Gotowe</sys:String>
+    <sys:String x:Key="Str_Card_EditReset">Przywróć domyślne</sys:String>
+    <sys:String x:Key="Str_Card_EditResetShort">Resetuj</sys:String>
+    <sys:String x:Key="Str_Card_Hidden">Ukryte</sys:String>
+    <sys:String x:Key="Str_Card_HiddenHint">Przeciągnij tu kafelek, aby go ukryć</sys:String>
+    <sys:String x:Key="Str_Card_AlwaysShown">Zawsze widoczne</sys:String>
 </ResourceDictionary>

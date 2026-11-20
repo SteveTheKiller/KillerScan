@@ -742,4 +742,12 @@
     <sys:String x:Key="Str_FD_FolderTooLong">Это имя слишком длинное. Используйте не более 255 символов.</sys:String>
     <sys:String x:Key="Str_FD_FolderExists">Здесь уже есть папка или файл с таким именем.</sys:String>
     <sys:String x:Key="Str_FD_FolderFailed">Не удалось создать папку:</sys:String>
+    <sys:String x:Key="Str_Card_Quick">Быстрые действия</sys:String>
+    <sys:String x:Key="Str_Card_Customize">Настроить эту карточку</sys:String>
+    <sys:String x:Key="Str_Card_EditDone">Готово</sys:String>
+    <sys:String x:Key="Str_Card_EditReset">Сбросить по умолчанию</sys:String>
+    <sys:String x:Key="Str_Card_EditResetShort">Сбросить</sys:String>
+    <sys:String x:Key="Str_Card_Hidden">Скрытые</sys:String>
+    <sys:String x:Key="Str_Card_HiddenHint">Перетащите плитку сюда, чтобы скрыть её</sys:String>
+    <sys:String x:Key="Str_Card_AlwaysShown">Всегда видно</sys:String>
 </ResourceDictionary>

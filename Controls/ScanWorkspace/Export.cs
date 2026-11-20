@@ -1,3 +1,5 @@
+using KillerFamily.Controls;
+using System.Collections.Generic;
 using System;
 using System.IO;
 using System.Text;
@@ -89,6 +91,13 @@ namespace KillerScan.Controls
             }
         }
 
+        /// <summary>A right-click opens the same card a click does, filled for the view in front, never the empty template.</summary>
+        private void ExportButton_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            e.Handled = true;
+            ExportButton_Click(sender, new RoutedEventArgs());
+        }
+
         private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
             if (ExportButton.ContextMenu is null) return;
@@ -103,23 +112,37 @@ namespace KillerScan.Controls
             // which is what owns those controls.
             string context = CurrentExportContext();
 
-            static Visibility When(bool shown) => shown ? Visibility.Visible : Visibility.Collapsed;
-            ExportCsvItem.Visibility          = When(context == "devices");
-            ExportHtmlItem.Visibility         = When(context == "devices");
-            ExportServicesCsvItem.Visibility  = When(context == "services");
-            ExportTopologyPngItem.Visibility  = When(context == "topology");
-            ExportTopologyJpegItem.Visibility = When(context == "topology");
-            ExportTopologySvgItem.Visibility  = When(context == "topology");
-            ExportWatchCsvItem.Visibility     = When(context == "watch");
-            ExportWatchHtmlItem.Visibility    = When(context == "watch");
-            ExportWatchTxtItem.Visibility     = When(context == "watch");
-            ExportWatchPngItem.Visibility     = When(context == "watch");
-            ExportTerminalTextItem.Visibility = When(context == "terminal");
+            PrepareExportCard(context);
             // The button now sits on the rail down the left, so the flyout opens beside it rather
             // than below it, anchored to the button itself.
-            ExportButton.ContextMenu.PlacementTarget = ExportButton;
-            ExportButton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
-            ExportButton.ContextMenu.IsOpen = true;
+            ExportCard.PlacementTarget = ExportButton;
+            ExportCard.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
+            ExportCard.IsOpen = true;
+        }
+
+        /// <summary>The export card: its title over a tile for each format the view in front of you can write.</summary>
+        internal void PrepareExportCard(string context)
+        {
+            var card = ScanCards.Prepare(ExportCard);
+            card.Items.Add(ScanCards.Header(card, Loc("Str_Card_Export"), ""));
+            CardTile Tile(string id, string glyph, string key, string keys, RoutedEventHandler handler) =>
+                new(glyph, Loc(key), keys, () => handler(this, new RoutedEventArgs()), false, true) { Id = id };
+            List<CardTile> tiles = context switch
+            {
+                "devices" => [Tile("Csv", "", "Str_Export_Csv", "Ctrl+E", ExportCsv_Click),
+                              Tile("Html", "", "Str_Export_Html", "Ctrl+Shift+E", ExportHtml_Click)],
+                "services" => [Tile("ServicesCsv", "", "Str_Export_ServicesCsv", "Ctrl+E", ExportServicesCsv_Click)],
+                "topology" => [Tile("TopologyPng", "", "Str_Export_SnapPngAlpha", "Ctrl+Shift+G", ExportSnapshotPngAlpha_Click),
+                               Tile("TopologyJpeg", "", "Str_Export_SnapJpeg", "Ctrl+Shift+J", ExportSnapshotJpeg_Click),
+                               Tile("TopologySvg", "", "Str_Export_SnapSvg", "Ctrl+Alt+H", ExportSnapshotSvg_Click)],
+                "watch" => [Tile("WatchCsv", "", "Str_Export_Csv", "Ctrl+E", ExportWatchCsv_Click),
+                            Tile("WatchHtml", "", "Str_Export_Html", "Ctrl+Shift+E", ExportWatchHtml_Click),
+                            Tile("WatchTxt", "", "Str_Export_Txt", "Ctrl+Shift+X", ExportWatchTxt_Click),
+                            Tile("WatchPng", "", "Str_Export_WatchPng", "Ctrl+Shift+G", ExportWatchPng_Click)],
+                "terminal" => [Tile("TerminalText", "", "Str_Export_TerminalTxt", "Ctrl+Shift+X", ExportTerminalText_Click)],
+                _ => [],
+            };
+            card.Items.Add(ScanCards.Grid(card, tiles));
         }
 
         private void WriteDevicesCsv()

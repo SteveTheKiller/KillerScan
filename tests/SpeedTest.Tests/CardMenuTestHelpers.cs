@@ -30,12 +30,29 @@ internal static class CardMenuTestHelpers
                 var current = pending.Pop();
                 if (current is ButtonBase button) { yield return button; continue; }
                 if (current is DependencyObject d)
-                    foreach (var child in LogicalTreeHelper.GetChildren(d)) pending.Push(child);
+                    // Pushed in reverse so the walk yields buttons in document order.
+                    foreach (var child in LogicalTreeHelper.GetChildren(d).Cast<object>().Reverse()) pending.Push(child);
             }
         }
     }
 
-    /// <summary>The menu's actions by name: ordinary rows by Tag, card buttons by CommandParameter.</summary>
+    /// <summary>The tile with this Id on a tile card (ScanCards sets each tile button's Uid to its Id), or null.</summary>
+    internal static Button? Tile(ItemsControl menu, string id) =>
+        CardButtons(menu).OfType<Button>().FirstOrDefault(button => button.Uid == id);
+
+    /// <summary>Builds the device card from the current selection, as right-clicking the grid does, and returns the tile with this Id.</summary>
+    internal static Button DeviceTile(KillerScan.Controls.ScanWorkspace workspace, string id)
+    {
+        workspace.PrepareDeviceContextMenu();
+        return Tile((ContextMenu)workspace.FindName("DeviceCard"), id)
+            ?? throw new System.InvalidOperationException("The device card has no " + id + " tile.");
+    }
+
+    /// <summary>The Ids of the tiles on a tile card, in order.</summary>
+    internal static string[] TileIds(ItemsControl menu) =>
+        CardButtons(menu).OfType<Button>().Select(button => button.Uid).Where(id => id.Length > 0).ToArray();
+
+    /// <summary>The menu's actions by name: ordinary rows by Tag, card buttons by CommandParameter, tiles by Id.</summary>
     internal static Dictionary<string, FrameworkElement> Actions(ItemsControl menu)
     {
         var actions = new Dictionary<string, FrameworkElement>();
@@ -43,6 +60,8 @@ internal static class CardMenuTestHelpers
             actions[(string)item.Tag] = item;
         foreach (var button in CardButtons(menu).Where(button => button.CommandParameter is string))
             actions[(string)button.CommandParameter] = button;
+        foreach (var button in CardButtons(menu).Where(button => button.Uid.Length > 0))
+            actions[button.Uid] = button;
         return actions;
     }
 

@@ -61,8 +61,8 @@ internal static class RecognitionUiTests
             // "Why This Type?" reads only what was recorded.
             string? heading = null, detail = null;
             workspace.ShowRecognition = (h, d) => { heading = h; detail = d; };
-            var menu = (MenuItem)workspace.FindName("WhyTypeMenuItem");
-            Require(menu.InputGestureText == "Ctrl+I", "The menu item shows its shortcut.");
+            var tile = CardMenuTestHelpers.DeviceTile(workspace, "WhyType");
+            Require(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(tile) == "Ctrl+I", "The tile carries its shortcut.");
             workspace.WhyType_Click(workspace, new RoutedEventArgs());
             Require(heading == string.Format(Res("Str_Rec_Heading"), DeviceTypeConverter.Display("Printer"), Res("Str_Rec_Conf_High")),
                 "The window heading names the type and confidence: " + heading);

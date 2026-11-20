@@ -257,11 +257,15 @@ internal static class TopologyTests
         Require(settingsButton.ContextMenu.PlacementTarget == settingsButton && settingsButton.ContextMenu.PlacementRectangle.IsEmpty,
             "Opening topology settings from its button clears the previous canvas click position.");
         settingsButton.ContextMenu.IsOpen = false;
-        var zoomMenu = settingsButton.ContextMenu.Items.OfType<MenuItem>().Single(item => item.InputGestureText == "Ctrl+Wheel");
-        var normal = zoomMenu.Items.OfType<MenuItem>().Single(item => Equals(item.Tag, 1.0));
+        var zoomTile = CardMenuTestHelpers.Tile(settingsButton.ContextMenu, "Zoom")!;
+        Require(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(zoomTile) == "Ctrl+Wheel", "The Zoom tile shows its wheel shortcut.");
+        var normal = KillerScan.Controls.ScanCards.GetFlyoutRows(zoomTile)!.OfType<MenuItem>().Single(item => Equals(item.Tag, 1.0));
         normal.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
         Layout(root, 900, 580);
-        Require(Zoom(workspace) == 1 && normal.IsChecked, "Menu provides keyboard-accessible zoom recovery.");
+        workspace.PrepareTopologyCard();
+        var checkedZoom = KillerScan.Controls.ScanCards.GetFlyoutRows(CardMenuTestHelpers.Tile(settingsButton.ContextMenu, "Zoom")!)!
+            .OfType<MenuItem>().Single(item => Equals(item.Tag, 1.0));
+        Require(Zoom(workspace) == 1 && checkedZoom.IsChecked, "The card provides keyboard-accessible zoom recovery.");
         scroll.ScrollToHorizontalOffset(0);
         scroll.ScrollToVerticalOffset(0);
         int states = 0;

@@ -54,6 +54,7 @@ namespace KillerScan.Controls
                 if (_showTopology && SelectedDevice == null)
                 {
                     UpdateTopologyOrderUi();
+                    PrepareTopologyCard();
                     TopologyOrderButton.ContextMenu.PlacementTarget = TopologyCanvas;
                     TopologyOrderButton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
                     TopologyOrderButton.ContextMenu.IsOpen = true; e.Handled = true; return;

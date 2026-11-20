@@ -31,7 +31,10 @@ internal static partial class HistoryUiTests
         var app = Application.Current;
         var menus = new Dictionary<string, ContextMenu>();
         var history = new HistoryWorkspace();
-        menus.Add("History", ((DataGrid)history.FindName("HistoryChangesGrid")).ContextMenu);
+        var historyGrid = (DataGrid)history.FindName("HistoryChangesGrid");
+        // Tile cards are built as they open; build each the way its right-click does.
+        history.PrepareHistoryCard(historyGrid.ContextMenu, historyGrid);
+        menus.Add("History", historyGrid.ContextMenu);
         var terminal = (FrameworkElement)Activator.CreateInstance(assembly.GetType("KillerScan.Terminal.TerminalControl", true)!)!;
         // The terminal card is filled as it opens; fill it the way the Menu key does.
         Call(terminal, "FillContextMenu");
@@ -43,12 +46,15 @@ internal static partial class HistoryUiTests
         var topology = ((Button)scan.FindName("TopologyOrderButton")).ContextMenu;
         // The XAML card is empty until Loaded fills it; the offscreen host never loads it.
         if (topology.Items.Count == 0) Call(scan, "LoadTopologySettings");
-        Require(topology.Items.OfType<MenuItem>().Count(item => !CardMenuTestHelpers.IsCardSlot(item)) >= 3
-                && CardMenuTestHelpers.CardButtons(topology.Items.Cast<UIElement>().ToArray()).OfType<Button>().Count() >= 3,
-            "Topology includes its Loaded-built settings rows and the PNG, JPG and HTML export strip.");
+        Require(CardMenuTestHelpers.TileIds(topology).Length >= 14
+                && new[] { "Png", "Jpeg", "Svg" }.All(id => CardMenuTestHelpers.Tile(topology, id) != null),
+            "Topology includes its Loaded-built settings tiles and the PNG, JPG and HTML export tiles.");
         menus.Add("Topology", topology);
+        scan.PrepareDeviceContextMenu();
         menus.Add("Devices", ((DataGrid)scan.FindName("ResultsGrid")).ContextMenu);
+        scan.PrepareServiceCard();
         menus.Add("Services", ((DataGrid)scan.FindName("ServicesGrid")).ContextMenu);
+        scan.PrepareExportCard("devices");
         menus.Add("Export", ((Button)scan.FindName("ExportButton")).ContextMenu);
 
         // Load the actual Sort menu without navigating user directories; its styles are the family Controls.xaml.

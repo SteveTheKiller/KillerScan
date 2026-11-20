@@ -78,21 +78,28 @@ namespace KillerScan.Shell
             if (NewScan().OpenLocation(row.Info)) RefreshLocationsList();
         }
 
-        /// <summary>A button on the Location card: close the card first, so the dialog Edit,
-        /// Export or Delete opens never sits under it, then act on the row it was opened for.</summary>
-        private void LocationCard_ButtonClick(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// The Location card, built as it opens for the row it belongs to: the name and detail over Open,
+        /// Edit and Export, with Delete in the header. A tile closes the card before it acts, so the
+        /// dialog Edit, Export or Delete opens never sits under it.
+        /// </summary>
+        private void LocationRow_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            if (e.OriginalSource is not System.Windows.Controls.Primitives.ButtonBase { CommandParameter: string action } button
-                || LocationFor(button) is not { } row) return;
-            e.Handled = true;
-            KillerFamily.Controls.CardBuilder.Close(button);
-            switch (action)
+            if (sender is not FrameworkElement { ContextMenu: { } menu, DataContext: LocationRow row }) return;
+            PrepareLocationRowCard(menu, row);
+        }
+
+        internal void PrepareLocationRowCard(ContextMenu menu, LocationRow row)
+        {
+            var card = ScanCards.Prepare(menu);
+            card.Items.Add(ScanCards.Header(card, row.Name, row.Detail,
+                Loc("Str_Loc_Delete"), "Delete", () => _scanWorkspace?.DeleteLocation(row.Info)));
+            card.Items.Add(ScanCards.Grid(card, new[]
             {
-                case "Open": OpenLocation(row); break;
-                case "Edit": _scanWorkspace?.RenameLocation(row.Info); break;
-                case "Export": _scanWorkspace?.ExportLocation(row.Info); break;
-                case "Delete": _scanWorkspace?.DeleteLocation(row.Info); break;
-            }
+                new KillerFamily.Controls.CardTile("", Loc("Str_Loc_Open"), "Enter", () => OpenLocation(row)) { Id = "Open", Shown = Loc("Str_Card_Open") },
+                new KillerFamily.Controls.CardTile("", Loc("Str_Loc_Edit"), "F2", () => _scanWorkspace?.RenameLocation(row.Info)) { Id = "Edit", Shown = Loc("Str_Card_Edit") },
+                new KillerFamily.Controls.CardTile("", Loc("Str_Loc_Export"), null, () => _scanWorkspace?.ExportLocation(row.Info)) { Id = "Export", Shown = Loc("Str_Card_Export") },
+            }));
         }
         private void NewLocation_Click(object sender, RoutedEventArgs e) => _scanWorkspace?.NewLocation();
         private void ImportLocation_Click(object sender, RoutedEventArgs e) => _scanWorkspace?.ImportLocationFromSidebar();

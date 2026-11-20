@@ -258,13 +258,13 @@ namespace KillerScan.Controls
         private ContextMenu BuildLocationMenu()
         {
             // The Location card: where this tab is over the Locations to switch to, its saved
-            // scans, and the Location verbs on a strip.
-            var menu = KillerFamily.Controls.CardBuilder.Menu();
+            // scans, and the Location verbs as tiles.
+            var menu = ScanCards.Menu();
             menu.PlacementTarget = LocationButton;
             menu.Placement = PlacementMode.Bottom;
             menu.VerticalOffset = 4;
             var savedHere = SavedScansHere();
-            menu.Items.Add(KillerFamily.Controls.CardBuilder.Header(_location.Info?.ToString() ?? Loc("Str_Loc_Title"),
+            menu.Items.Add(ScanCards.Header(menu, _location.Info?.ToString() ?? Loc("Str_Loc_Title"),
                 savedHere.Count > 0 ? string.Format(Loc("Str_Loc_SavedCount"), savedHere.Count) : null));
             // Unassigned is not a place, so it is never listed or switched to; scans run there
             // still keep their results in Scan history.
@@ -303,48 +303,53 @@ namespace KillerScan.Controls
                 }
             }
 
+            // The verbs, as tiles: a tile with a list opens it beside itself.
+            var scanTiles = new List<KillerFamily.Controls.CardTile>();
             if (!DemoMode && LocationService.Editable)
             {
-                menu.Items.Add(new Separator());
-                menu.Items.Add(BuildSaveScanItem());
+                var save = BuildSaveScanItem();
+                scanTiles.Add(save.Items.Count > 0
+                    ? ScanCards.Flyout("", Loc("Str_Loc_SaveScan"), null, ScanCards.RowsOf(save), !IsScanning) with { Id = "SaveScan", Mirror = true }
+                    : new KillerFamily.Controls.CardTile("", Loc("Str_Loc_SaveScan"), null,
+                        () => save.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent)), false, !IsScanning) { Id = "SaveScan" });
                 if (scans.Count > 0 && !_location.IsShared)
                 {
-                    menu.Items.Add(ScanSubmenu("Str_History_Rename", 0xE8AC, scans, RenameSavedScan));
-                    menu.Items.Add(ScanSubmenu("Str_Loc_DeleteScan", 0xE74D, scans, DeleteSavedScan));
+                    scanTiles.Add(ScanCards.Flyout("", Loc("Str_History_Rename"), null,
+                        ScanCards.RowsOf(ScanSubmenu("Str_History_Rename", 0xE8AC, scans, RenameSavedScan)), !IsScanning) with { Id = "RenameScan", Mirror = true });
+                    scanTiles.Add(ScanCards.Flyout("", Loc("Str_Loc_DeleteScan"), null,
+                        ScanCards.RowsOf(ScanSubmenu("Str_Loc_DeleteScan", 0xE74D, scans, DeleteSavedScan)), !IsScanning) with { Id = "DeleteScan", Mirror = true });
                 }
             }
 
             if (_location.IsTemporary && (_location.History.Entries.Count > 0 || _active.Devices.Count > 0)
                 && LocationService.Items.Count > 0 && !DemoMode)
             {
-                menu.Items.Add(new Separator());
-                var saveTo = new MenuItem { IsEnabled = !IsScanning };
-                saveTo.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Loc_SaveResults");
+                var places = new List<object>();
                 foreach (var info in LocationService.Items.OrderBy(item => item.Name, StringComparer.CurrentCultureIgnoreCase))
                 {
                     var captured = info;
                     var item = new MenuItem { Header = info.ToString() };
                     item.Click += (_, _) => SaveResultsTo(LocationService.Get(captured));
-                    saveTo.Items.Add(item);
+                    places.Add(item);
                 }
-                menu.Items.Add(saveTo);
+                scanTiles.Add(ScanCards.Flyout("", Loc("Str_Loc_SaveResults"), null, places, !IsScanning) with { Id = "SaveResults", Mirror = true });
             }
 
+            var placeTiles = new List<KillerFamily.Controls.CardTile>();
             if (LocationService.Editable || DemoMode)
             {
                 bool editable = LocationService.Editable && !DemoMode;
                 bool own = editable && _location.Info != null && !_location.IsShared;
                 // Shortcuts like every other family menu; only the actions that have a shortcut
                 // show one (Shell/Shortcuts.cs).
-                menu.Items.Add(KillerFamily.Controls.CardBuilder.QuickStrip(Loc("Str_Card_Actions"), new[]
-                {
-                    new KillerFamily.Controls.CardAction("", Loc("Str_Card_New"), Loc("Str_Loc_New"), "Ctrl+Alt+S", CreateLocation, editable && !IsScanning),
-                    new KillerFamily.Controls.CardAction("", Loc("Str_Card_Edit"), Loc("Str_Loc_Edit"), "F2", RenameLocation, own),
-                    new KillerFamily.Controls.CardAction("", Loc("Str_Card_Export"), Loc("Str_Loc_Export"), null, ExportLocation, own),
-                    new KillerFamily.Controls.CardAction("", Loc("Str_Card_Import"), Loc("Str_Loc_Import"), null, ImportLocation, editable && !IsScanning),
-                }));
-                menu.Items.Add(MenuText("Str_Loc_Manage", () => ManageLocationsRequested?.Invoke(this, EventArgs.Empty), true, 0xE707, "Ctrl+Shift+P"));
+                placeTiles.Add(new("", Loc("Str_Loc_New"), "Ctrl+Alt+S", CreateLocation, false, editable && !IsScanning) { Id = "New", Shown = Loc("Str_Card_New") });
+                placeTiles.Add(new("", Loc("Str_Loc_Edit"), "F2", RenameLocation, false, own) { Id = "Edit", Shown = Loc("Str_Card_Edit") });
+                placeTiles.Add(new("", Loc("Str_Loc_Export"), null, ExportLocation, false, own) { Id = "Export", Shown = Loc("Str_Card_Export") });
+                placeTiles.Add(new("", Loc("Str_Loc_Import"), null, ImportLocation, false, editable && !IsScanning) { Id = "Import", Shown = Loc("Str_Card_Import") });
+                placeTiles.Add(new("", Loc("Str_Loc_Manage"), "Ctrl+Shift+P", () => ManageLocationsRequested?.Invoke(this, EventArgs.Empty)) { Id = "Manage" });
             }
+            if (scanTiles.Count > 0 || placeTiles.Count > 0)
+                menu.Items.Add(ScanCards.Grid(menu, scanTiles, placeTiles));
             return menu;
         }
 

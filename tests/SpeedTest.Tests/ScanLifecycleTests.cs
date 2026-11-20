@@ -115,8 +115,7 @@ internal static class ScanLifecycleTests
                 "A manual deep rescan keeps existing history snapshots immutable and does not add an automatic-profile entry.");
             var grid = (System.Windows.Controls.DataGrid)workspace.FindName("ResultsGrid");
             grid.SelectedItem = workspace.Session.Devices.Single();
-            ((System.Windows.Controls.MenuItem)workspace.FindName("RescanMenuItem")).RaiseEvent(
-                new System.Windows.RoutedEventArgs(System.Windows.Controls.MenuItem.ClickEvent));
+            CardMenuTestHelpers.Click(CardMenuTestHelpers.DeviceTile(workspace, "Rescan"));
             Require(ScanHistory.Entries.Count == 4 && ScanHistory.Entries.Last().Devices.Single().OpenPorts.SequenceEqual(new[] { 80 }),
                 "A selected manual rescan also leaves saved snapshots immutable.");
             var pending = new TaskCompletionSource<NetworkDevice>(TaskCreationOptions.RunContinuationsAsynchronously);

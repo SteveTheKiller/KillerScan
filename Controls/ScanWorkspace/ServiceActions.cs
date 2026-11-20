@@ -52,33 +52,51 @@ namespace KillerScan.Controls
             ServicesGrid.Focus();
         }
 
-        private void ServicesGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        private void ServicesGrid_ContextMenuOpening(object sender, ContextMenuEventArgs e) => PrepareServiceCard();
+
+        /// <summary>
+        /// Rebuilds the service card (Controls/ScanCards.cs) for the selected services: the ways in, the copy
+        /// variants, then Select all and Export. A way in that this service does not offer stays in its place,
+        /// dimmed, so the tiles never shift.
+        /// </summary>
+        internal void PrepareServiceCard()
         {
+            if (ServiceCard == null) return;
+            var card = ScanCards.Prepare(ServiceCard);
             var row = ServicesGrid.CurrentItem as ServiceRow ?? ServicesGrid.SelectedItem as ServiceRow;
             bool selected = row != null && ServicesGrid.SelectedItems.Contains(row);
             bool Allowed(string action) => action is "SelectAll" or "Export" ? ServicesGrid.Items.Count > 0
                 : selected && (action != "CopyHost" || ServicesGrid.SelectedItems.Cast<ServiceRow>().Any(service => !string.IsNullOrWhiteSpace(service.Hostname)));
             bool Offered(string action) => selected && CanOpenService(row!, action);
-            foreach (var item in ServicesGrid.ContextMenu.Items.OfType<MenuItem>())
-            {
-                if (item.Tag is not string action) continue;
-                if (action == "SshAs") item.Visibility = Offered(action) ? Visibility.Visible : Visibility.Collapsed;
-                item.IsEnabled = Allowed(action);
-            }
-            // A way in the service does not offer collapses rather than dimming, and the strip goes
-            // with it when there is none; the copy chips only dim, because copying always applies.
-            var quick = CardButtons(ServiceCardQuick).ToList();
-            foreach (var button in quick)
-                button.Visibility = Offered((string)button.CommandParameter) ? Visibility.Visible : Visibility.Collapsed;
-            ServiceCardQuick.Visibility = quick.Any(button => button.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
-            foreach (var button in CardButtons(ServiceCardCopy))
-                button.IsEnabled = Allowed((string)button.CommandParameter);
-            ServiceConnectSeparator.Visibility = Offered("SshAs") ? Visibility.Visible : Visibility.Collapsed;
             int count = ServicesGrid.SelectedItems.Count;
-            if (count > 1) SetCardHeader(ServiceCardHeader, string.Format(Loc("Str_Card_Services"), count), "");
-            else if (selected) SetCardHeader(ServiceCardHeader, row!.Service,
-                string.Join("  ·  ", new[] { ServiceEndpoint(row.IpAddress, row.Port), row.Hostname }.Where(part => !string.IsNullOrWhiteSpace(part))));
-            else SetCardHeader(ServiceCardHeader, Loc("Str_Services_Title"), "");
+            string title = count > 1 ? string.Format(Loc("Str_Card_Services"), count) : selected ? row!.Service : Loc("Str_Services_Title");
+            string meta = count == 1 && selected
+                ? string.Join("  ·  ", new[] { ServiceEndpoint(row!.IpAddress, row.Port), row.Hostname }.Where(part => !string.IsNullOrWhiteSpace(part)))
+                : "";
+            card.Items.Add(ScanCards.Header(card, title, meta));
+            KillerFamily.Controls.CardTile Tile(string id, string glyph, string caption, string? keys, bool enabled, string? shown = null, bool mirror = false) =>
+                new(glyph, caption, keys, () => RunServiceMenuAction(id, this, new RoutedEventArgs()), mirror, enabled) { Id = id, Shown = shown };
+            var open = new[]
+            {
+                Tile("Browser", "", Loc("Str_Ctx_OpenBrowser"), "Enter", Offered("Browser"), Loc("Str_Card_Browser")),
+                Tile("Ssh", "", Loc("Str_Ctx_Ssh"), "Ctrl+S", Offered("Ssh")),
+                Tile("Rdp", "", Loc("Str_Ctx_Rdp"), "Ctrl+D", Offered("Rdp")),
+                Tile("SshAs", "", Loc("Str_Ctx_SshAs"), "Ctrl+Shift+S", Offered("SshAs")),
+            };
+            var copy = new[]
+            {
+                Tile("CopyEndpoint", "", Loc("Str_Services_CopyEndpoint"), "Ctrl+Shift+C", Allowed("CopyEndpoint"), Loc("Str_Card_Endpoint")),
+                Tile("CopyService", "", Loc("Str_Services_CopyName"), "Ctrl+Shift+Y", Allowed("CopyService"), Loc("Str_Services_Service"), mirror: true),
+                Tile("CopyPort", "", Loc("Str_Services_CopyPort"), "Ctrl+Alt+P", Allowed("CopyPort"), Loc("Str_Card_Port")),
+                Tile("CopyIp", "", Loc("Str_Ctx_CopyIp"), "Ctrl+C", Allowed("CopyIp")),
+                Tile("CopyHost", "", Loc("Str_Ctx_CopyHost"), "Ctrl+Alt+C", Allowed("CopyHost")),
+            };
+            var list = new[]
+            {
+                Tile("SelectAll", "", Loc("Str_Ctx_SelectAll"), "Ctrl+A", Allowed("SelectAll")),
+                Tile("Export", "", Loc("Str_Export_ServicesCsv"), "Ctrl+E", Allowed("Export")),
+            };
+            card.Items.Add(ScanCards.Grid(card, open, copy, list));
         }
 
         private string ServiceCopyText(string action) => string.Join(Environment.NewLine,
@@ -94,22 +112,6 @@ namespace KillerScan.Controls
                 }).Where(text => !string.IsNullOrWhiteSpace(text)).Distinct(StringComparer.Ordinal));
 
         private void CopyServiceText(string action) => CopyDeviceText(ServiceCopyText(action));
-
-        /// <summary>A quick button or chip on the service card: close the card, then run its action
-        /// the way the matching menu row does.</summary>
-        private void ServiceCard_ButtonClick(object sender, RoutedEventArgs e)
-        {
-            if (e.OriginalSource is not System.Windows.Controls.Primitives.ButtonBase { CommandParameter: string action } button) return;
-            e.Handled = true;
-            KillerFamily.Controls.CardBuilder.Close(button);
-            RunServiceMenuAction(action, button, e);
-        }
-
-        private void ServiceMenu_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is not MenuItem { Tag: string action }) return;
-            RunServiceMenuAction(action, sender, e);
-        }
 
         private void RunServiceMenuAction(string action, object sender, RoutedEventArgs e)
         {

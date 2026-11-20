@@ -716,4 +716,12 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_FD_FolderTooLong">Ese nombre es demasiado largo. Usa 255 caracteres como máximo.</sys:String>
     <sys:String x:Key="Str_FD_FolderExists">Aquí ya hay una carpeta o un archivo con ese nombre.</sys:String>
     <sys:String x:Key="Str_FD_FolderFailed">No se pudo crear la carpeta:</sys:String>
+    <sys:String x:Key="Str_Card_Quick">Acciones rápidas</sys:String>
+    <sys:String x:Key="Str_Card_Customize">Personalizar esta tarjeta</sys:String>
+    <sys:String x:Key="Str_Card_EditDone">Listo</sys:String>
+    <sys:String x:Key="Str_Card_EditReset">Restablecer valores predeterminados</sys:String>
+    <sys:String x:Key="Str_Card_EditResetShort">Restablecer</sys:String>
+    <sys:String x:Key="Str_Card_Hidden">Ocultos</sys:String>
+    <sys:String x:Key="Str_Card_HiddenHint">Arrastra un mosaico aquí para ocultarlo</sys:String>
+    <sys:String x:Key="Str_Card_AlwaysShown">Siempre visible</sys:String>
 </ResourceDictionary>

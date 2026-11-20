@@ -62,7 +62,7 @@ namespace KillerScan.Shell
             // border where the two join.
             BuildTabBandShadow();
             Panel.SetZIndex(_viewTabBand, 12);
-            _viewTabBand.ContextMenu = new ContextMenu();
+            _viewTabBand.ContextMenu = ScanCards.Menu();
             _viewTabBand.ContextMenu.Opened += (_, _) => BuildTabPlacementMenu(_viewTabBand.ContextMenu);
             WorkspaceHost.Children.Add(_viewTabBand);
             BuildTabScrollShadow();
@@ -178,15 +178,13 @@ namespace KillerScan.Shell
 
         private void BuildTabPlacementMenu(ContextMenu menu)
         {
-            // The tabs card: its title over a Top / Bottom segment, rebuilt as it opens.
-            menu.Items.Clear();
-            menu.SetResourceReference(StyleProperty, "CardMenu");
-            menu.MinWidth = menu.MaxWidth = 280 + 44;
-            menu.Items.Add(CardSegments.Header("Str_Layout_TabsTitle"));
-            menu.Items.Add(CardSegments.Row("Str_Layout_TabsPlace", new[] { false, true }
-                .Select(bottom => new CardSegments.Choice(bottom, bottom ? "Str_Layout_Bottom" : "Str_Layout_Top",
-                    bottom ? "Alt+Shift+Down" : "Alt+Shift+Up", () => SetTabPlacement(bottom))), out var segments));
-            foreach (var segment in segments) segment.IsChecked = segment.Tag is bool bottom && bottom == _tabsAtBottom;
+            // The tabs card: its title over a Top and a Bottom tile, the place in use checked. Rebuilt as it opens.
+            var card = ScanCards.Prepare(menu);
+            card.Items.Add(ScanCards.Header(card, Loc("Str_Layout_TabsTitle"), Loc("Str_Layout_TabsPlace")));
+            card.Items.Add(ScanCards.Grid(card, new[] { false, true }.Select(bottom =>
+                new KillerFamily.Controls.CardTile(bottom ? "" : "", Loc(bottom ? "Str_Layout_Bottom" : "Str_Layout_Top"),
+                    bottom ? "Alt+Shift+Down" : "Alt+Shift+Up", () => SetTabPlacement(bottom))
+                { Id = bottom ? "TabsBottom" : "TabsTop", Checked = bottom == _tabsAtBottom }).ToList()));
         }
 
         internal void SetTabPlacement(bool bottom)

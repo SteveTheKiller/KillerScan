@@ -732,4 +732,12 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_FD_FolderTooLong">Il nome è troppo lungo. Usa al massimo 255 caratteri.</sys:String>
     <sys:String x:Key="Str_FD_FolderExists">Qui esiste già una cartella o un file con questo nome.</sys:String>
     <sys:String x:Key="Str_FD_FolderFailed">Non è stato possibile creare la cartella:</sys:String>
+    <sys:String x:Key="Str_Card_Quick">Azioni rapide</sys:String>
+    <sys:String x:Key="Str_Card_Customize">Personalizza questa scheda</sys:String>
+    <sys:String x:Key="Str_Card_EditDone">Fine</sys:String>
+    <sys:String x:Key="Str_Card_EditReset">Ripristina predefiniti</sys:String>
+    <sys:String x:Key="Str_Card_EditResetShort">Ripristina</sys:String>
+    <sys:String x:Key="Str_Card_Hidden">Nascosti</sys:String>
+    <sys:String x:Key="Str_Card_HiddenHint">Trascina qui un riquadro per nasconderlo</sys:String>
+    <sys:String x:Key="Str_Card_AlwaysShown">Sempre visibile</sys:String>
 </ResourceDictionary>

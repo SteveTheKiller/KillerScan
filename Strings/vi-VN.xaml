@@ -697,4 +697,12 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_FD_FolderTooLong">Tên này quá dài. Hãy dùng tối đa 255 ký tự.</sys:String>
     <sys:String x:Key="Str_FD_FolderExists">Ở đây đã có thư mục hoặc tệp với tên này.</sys:String>
     <sys:String x:Key="Str_FD_FolderFailed">Không thể tạo thư mục:</sys:String>
+    <sys:String x:Key="Str_Card_Quick">Thao tác nhanh</sys:String>
+    <sys:String x:Key="Str_Card_Customize">Tùy chỉnh thẻ này</sys:String>
+    <sys:String x:Key="Str_Card_EditDone">Xong</sys:String>
+    <sys:String x:Key="Str_Card_EditReset">Đặt lại mặc định</sys:String>
+    <sys:String x:Key="Str_Card_EditResetShort">Đặt lại</sys:String>
+    <sys:String x:Key="Str_Card_Hidden">Đã ẩn</sys:String>
+    <sys:String x:Key="Str_Card_HiddenHint">Kéo một ô vào đây để ẩn</sys:String>
+    <sys:String x:Key="Str_Card_AlwaysShown">Luôn hiển thị</sys:String>
 </ResourceDictionary>

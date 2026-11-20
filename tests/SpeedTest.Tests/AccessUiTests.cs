@@ -32,14 +32,12 @@ internal static class AccessUiTests
             using var workspace = new ScanWorkspace("192.0.2.0/24", false);
             workspace.LoadSnapshot("192.0.2.0/24", [panel, quiet]);
             var grid = (DataGrid)workspace.FindName("ResultsGrid");
-            var menu = (MenuItem)workspace.FindName("AccessMenuItem");
             string Res(string key) => (string)Application.Current.FindResource(key);
 
             List<MenuItem> Open(NetworkDevice device)
             {
                 grid.SelectedItem = device;
-                menu.RaiseEvent(new RoutedEventArgs(MenuItem.SubmenuOpenedEvent, menu));
-                return [.. menu.Items.OfType<MenuItem>()];
+                return workspace.AccessRows();
             }
 
             var items = Open(panel);

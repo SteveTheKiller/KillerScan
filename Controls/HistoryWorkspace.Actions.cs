@@ -21,10 +21,14 @@ namespace KillerScan.Controls
         {
             foreach (var grid in new[] { HistoryChangesGrid, HistoryAllGrid })
             {
-                grid.ContextMenu = BuildHistoryMenu(grid);
+                var card = ScanCards.Menu();
+                grid.ContextMenu = card;
+                grid.ContextMenuOpening += (_, e) => { PrepareHistoryCard(card, grid); };
                 grid.PreviewMouseRightButtonDown += (_, e) => SelectContextRow(grid, e.OriginalSource as DependencyObject);
             }
-            ContextMenu = BuildHistoryMenu(null);
+            var pane = ScanCards.Menu();
+            ContextMenu = pane;
+            ContextMenuOpening += (_, e) => { if (ReferenceEquals(e.Source, this) || e.Source is not DataGrid) PrepareHistoryCard(pane, null); };
         }
 
         private static void SelectContextRow(DataGrid grid, DependencyObject? source)
@@ -37,96 +41,44 @@ namespace KillerScan.Controls
         }
 
         /// <summary>
-        /// On a table, the saved-device card: the device's name and address over its copy chips,
-        /// then the view and export rows. Nothing live is on it (no ping, rescan or connect): the
-        /// row is a record of a past scan. The pane background keeps the plain list, since there
-        /// is no device to copy from.
+        /// On a table, the saved-device card: the device's name and address over its copy tiles, then the
+        /// view and export tiles. Nothing live is on it (no ping, rescan or connect): the row is a record of
+        /// a past scan. The pane background has no device to copy from, so its card leaves the copy tiles off.
+        /// Built as it opens, from the selection.
         /// </summary>
-        private ContextMenu BuildHistoryMenu(DataGrid? grid)
+        internal void PrepareHistoryCard(ContextMenu menu, DataGrid? grid)
         {
-            ContextMenu menu;
-            MenuItem? header = null;
-            var chips = new List<Button>();
+            var card = ScanCards.Prepare(menu);
+            var device = grid == null ? null : SelectedHistoryDevice;
+            string title = device == null ? Loc("Str_History_Title")
+                : string.IsNullOrWhiteSpace(device.Hostname) ? device.IpAddress : device.Hostname;
+            string meta = device == null ? "" : string.Join("  ·  ", new[] { device.IpAddress, device.MacAddress, device.Vendor }
+                .Where(part => !string.IsNullOrWhiteSpace(part) && part != title));
+            card.Items.Add(ScanCards.Header(card, title, meta));
+            // Each tile's Id is the action it runs, the same name HandleShortcut dispatches.
+            KillerFamily.Controls.CardTile Tile(string action, string glyph, string key, string keys, string _, bool enabled) =>
+                new(glyph, Loc(key), keys, () => ExecuteAction(action), false, enabled) { Id = action };
+            var groups = new List<List<KillerFamily.Controls.CardTile>>();
             if (grid != null)
-            {
-                menu = KillerFamily.Controls.CardBuilder.Menu();
-                header = KillerFamily.Controls.CardBuilder.Header(Loc("Str_History_Title"));
-                menu.Items.Add(header);
-                var wrap = new WrapPanel { VerticalAlignment = VerticalAlignment.Center };
-                void Chip(string? text, string? textKey, string nameKey, string gesture, string action)
-                {
-                    var chip = new Button { CommandParameter = action };
-                    chip.SetResourceReference(StyleProperty, "CardChip");
-                    if (text != null) chip.Content = text; else chip.SetResourceReference(ContentControl.ContentProperty, textKey!);
-                    chip.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, nameKey);
-                    System.Windows.Automation.AutomationProperties.SetAcceleratorKey(chip, gesture);
-                    var tip = new TextBlock();
-                    var name = new System.Windows.Documents.Run();
-                    name.SetResourceReference(System.Windows.Documents.Run.TextProperty, nameKey);
-                    tip.Inlines.Add(name);
-                    // One space before the shortcut, the CardBuilder.Tip format every card uses.
-                    tip.Inlines.Add(new System.Windows.Documents.Run(" (" + gesture + ")"));
-                    chip.ToolTip = tip;
-                    chip.Click += (_, _) => { KillerFamily.Controls.CardBuilder.Close(chip); ExecuteAction(action); };
-                    chips.Add(chip);
-                    wrap.Children.Add(chip);
-                }
-                // IP and MAC are names, the same in every language.
-                Chip("IP", null, "Str_Ctx_CopyIp", "Ctrl+C", "ip");
-                Chip("MAC", null, "Str_Ctx_CopyMac", "Ctrl+Shift+C", "mac");
-                Chip(null, "Str_Col_Host", "Str_Ctx_CopyHost", "Ctrl+Alt+C", "host");
-                Chip(null, "Str_Card_Details", "Str_History_CopyDetails", "Ctrl+Shift+Y", "details");
-                var copy = KillerFamily.Controls.CardBuilder.Labeled(Loc("Str_Ctx_Copy"), wrap);
-                copy.Padding = new Thickness(8, 6, 4, 4);
-                // Follow a language switch while the card is built: the label is the first
-                // TextBlock in the kit's row, looked up rather than cast so a kit layout
-                // change leaves a stale label instead of throwing.
-                if (copy.Header is Panel row && row.Children.OfType<TextBlock>().FirstOrDefault() is TextBlock label)
-                    label.SetResourceReference(TextBlock.TextProperty, "Str_Ctx_Copy");
-                copy.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, "Str_Ctx_Copy");
-                menu.Items.Add(copy);
-            }
-            else menu = new ContextMenu();
-            void Add(string key, string gesture, string action, int glyph)
-            {
-                var item = new MenuItem { InputGestureText = gesture, Tag = action, Icon = MenuGlyph.Create(glyph) };
-                item.SetResourceReference(MenuItem.HeaderProperty, key);
-                item.Click += (_, _) => ExecuteAction(action);
-                menu.Items.Add(item);
-            }
-            if (grid != null) menu.Items.Add(new Separator());
-            Add("Str_Export_Csv", "Ctrl+E", "export", 0xE9F9);
-            Add("Str_History_ViewChanges", "Ctrl+Shift+H", "changes", 0xE8FD);
-            Add("Str_History_ViewAll", "Ctrl+Shift+H", "all", 0xE772);
-            menu.Items.Add(new Separator());
-            Add("Str_History_Title", "Ctrl+H", "sidebar", 0xE81C);
-            Add("Str_View_Devices", "F6", "current", 0xE772);
-            menu.Opened += (_, _) =>
-            {
-                foreach (var chip in chips) chip.IsEnabled = CopyValue((string)chip.CommandParameter).Length > 0;
-                if (header != null)
-                {
-                    var device = SelectedHistoryDevice;
-                    string title = device == null ? Loc("Str_History_Title")
-                        : string.IsNullOrWhiteSpace(device.Hostname) ? device.IpAddress : device.Hostname;
-                    string meta = device == null ? "" : string.Join("  ·  ", new[] { device.IpAddress, device.MacAddress, device.Vendor }
-                        .Where(part => !string.IsNullOrWhiteSpace(part) && part != title));
-                    ScanWorkspace.SetCardHeader(header, title, meta);
-                }
-                foreach (var item in menu.Items.OfType<MenuItem>())
-                {
-                    if (item.Tag is not string action) continue;
-                    item.IsEnabled = action switch
-                    {
-                        "ip" or "mac" or "host" or "details" => grid != null && CopyValue(action).Length > 0,
-                        "export" => _entry != null && VisibleGrid.Items.Count > 0,
-                        "changes" => _entry != null && _showAll,
-                        "all" => _entry != null && !_showAll,
-                        _ => true
-                    };
-                }
-            };
-            return menu;
+                groups.Add(
+                [
+                    Tile("ip", "\uE8C8", "Str_Ctx_CopyIp", "Ctrl+C", "ip", CopyValue("ip").Length > 0),
+                    Tile("mac", "\uE8C8", "Str_Ctx_CopyMac", "Ctrl+Shift+C", "mac", CopyValue("mac").Length > 0),
+                    Tile("host", "\uE8C8", "Str_Ctx_CopyHost", "Ctrl+Alt+C", "host", CopyValue("host").Length > 0),
+                    Tile("details", "\uE8C8", "Str_History_CopyDetails", "Ctrl+Shift+Y", "details", CopyValue("details").Length > 0),
+                ]);
+            groups.Add(
+            [
+                Tile("export", "\uE9F9", "Str_Export_Csv", "Ctrl+E", "export", _entry != null && VisibleGrid.Items.Count > 0),
+                Tile("changes", "\uE8FD", "Str_History_ViewChanges", "Ctrl+Shift+H", "changes", _entry != null && _showAll),
+                Tile("all", "\uE772", "Str_History_ViewAll", "Ctrl+Shift+H", "all", _entry != null && !_showAll),
+            ]);
+            groups.Add(
+            [
+                Tile("sidebar", "\uE81C", "Str_History_Title", "Ctrl+H", "sidebar", true),
+                Tile("current", "\uE772", "Str_View_Devices", "F6", "current", true),
+            ]);
+            card.Items.Add(ScanCards.Grid(card, groups.ToArray()));
         }
 
         private HistoricalDevice? SelectedHistoryDevice => VisibleGrid.SelectedItem switch
@@ -190,12 +142,16 @@ namespace KillerScan.Controls
 
         private ContextMenu CreateExportMenu(FrameworkElement target)
         {
-            var item = new MenuItem { InputGestureText = "Ctrl+E", Icon = MenuGlyph.Create(0xE896), IsEnabled = _entry != null && VisibleGrid.Items.Count > 0 };
-            item.SetResourceReference(MenuItem.HeaderProperty, "Str_Export_Csv");
-            item.Click += (_, _) => ExportCsv();
-            var menu = new ContextMenu { PlacementTarget = target, Placement = PlacementMode.Right };
-            menu.Items.Add(item);
-            return menu;
+            var card = ScanCards.Menu();
+            card.PlacementTarget = target;
+            card.Placement = PlacementMode.Right;
+            card.Items.Add(ScanCards.Header(card, Loc("Str_Card_Export"), ""));
+            card.Items.Add(ScanCards.Grid(card, new[]
+            {
+                new KillerFamily.Controls.CardTile("\uE9F9", Loc("Str_Export_Csv"), "Ctrl+E", ExportCsv, false,
+                    _entry != null && VisibleGrid.Items.Count > 0) { Id = "Csv" },
+            }));
+            return card;
         }
 
         internal void ExportCsv()
@@ -228,6 +184,7 @@ namespace KillerScan.Controls
             if (key == Key.Apps && modifiers == ModifierKeys.None || key == Key.F10 && modifiers == ModifierKeys.Shift)
             {
                 var grid = VisibleGrid;
+                PrepareHistoryCard(grid.ContextMenu, grid);
                 var target = (grid.SelectedItem == null ? null : grid.ItemContainerGenerator.ContainerFromItem(grid.SelectedItem)) as UIElement ?? grid;
                 grid.ContextMenu.PlacementTarget = target;
                 grid.ContextMenu.Placement = PlacementMode.Bottom;

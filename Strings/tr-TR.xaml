@@ -716,4 +716,12 @@ Ayarlarınız silinmeyecek.</sys:String>
     <sys:String x:Key="Str_FD_FolderTooLong">Bu ad çok uzun. En fazla 255 karakter kullanın.</sys:String>
     <sys:String x:Key="Str_FD_FolderExists">Burada bu adda bir klasör veya dosya zaten var.</sys:String>
     <sys:String x:Key="Str_FD_FolderFailed">Klasör oluşturulamadı:</sys:String>
+    <sys:String x:Key="Str_Card_Quick">Hızlı eylemler</sys:String>
+    <sys:String x:Key="Str_Card_Customize">Bu kartı özelleştir</sys:String>
+    <sys:String x:Key="Str_Card_EditDone">Bitti</sys:String>
+    <sys:String x:Key="Str_Card_EditReset">Varsayılana sıfırla</sys:String>
+    <sys:String x:Key="Str_Card_EditResetShort">Sıfırla</sys:String>
+    <sys:String x:Key="Str_Card_Hidden">Gizli</sys:String>
+    <sys:String x:Key="Str_Card_HiddenHint">Gizlemek için bir kutucuğu buraya sürükleyin</sys:String>
+    <sys:String x:Key="Str_Card_AlwaysShown">Her zaman gösterilir</sys:String>
 </ResourceDictionary>

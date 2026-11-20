@@ -758,4 +758,12 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_FD_FolderTooLong">Dette navnet er for langt. Bruk maksimalt 255 tegn.</sys:String>
     <sys:String x:Key="Str_FD_FolderExists">Det finnes allerede en mappe eller fil med dette navnet her.</sys:String>
     <sys:String x:Key="Str_FD_FolderFailed">Mappen kunne ikke opprettes:</sys:String>
+    <sys:String x:Key="Str_Card_Quick">Hurtighandlinger</sys:String>
+    <sys:String x:Key="Str_Card_Customize">Tilpass dette kortet</sys:String>
+    <sys:String x:Key="Str_Card_EditDone">Ferdig</sys:String>
+    <sys:String x:Key="Str_Card_EditReset">Tilbakestill til standard</sys:String>
+    <sys:String x:Key="Str_Card_EditResetShort">Tilbakestill</sys:String>
+    <sys:String x:Key="Str_Card_Hidden">Skjult</sys:String>
+    <sys:String x:Key="Str_Card_HiddenHint">Dra en flis hit for å skjule den</sys:String>
+    <sys:String x:Key="Str_Card_AlwaysShown">Vises alltid</sys:String>
 </ResourceDictionary>

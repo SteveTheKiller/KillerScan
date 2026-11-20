@@ -184,8 +184,9 @@ internal static class ReleaseUiTests
                     Require(tools.TransformToAncestor(captionRoot).TransformBounds(new Rect(tools.RenderSize)).Top >= 18,
                         "The scan toolbar sits below the original Windows 98 caption instead of being clipped inside it.");
                     Require(Math.Abs(captionRoot.RowDefinitions[0].ActualHeight - 18) < 0.1 &&
-                        Math.Abs(captionBox.Top - 2) < 0.1 && Math.Abs(captionBox.Bottom - 16) < 0.1,
-                        "Windows 98 has an eighteen-pixel caption with fourteen-pixel buttons inset two pixels above and below.");
+                        Math.Abs(captionBox.Top) < 0.1 && Math.Abs(captionBox.Bottom - 18) < 0.1 && Math.Abs(captionBox.Width - 20) < 0.1,
+                        "Windows 98 has an eighteen-pixel caption whose 20 by 18 kit caption buttons fill it top to bottom: caption "
+                            + captionRoot.RowDefinitions[0].ActualHeight + ", button " + captionBox.Top + " to " + captionBox.Bottom + ", width " + captionBox.Width + ".");
                     Require(maximize.Content is FrameworkElement,
                         "98SE caption buttons use the established drawn classic glyphs, not modern font glyphs.");
                     Require(((UIElement)window.FindName("ClassicMinimizeGlyph")).Visibility == Visibility.Visible &&
@@ -225,7 +226,9 @@ internal static class ReleaseUiTests
                     Save(Render(root, 1200, 780), Path.Combine(output, theme + ".png"));
             }
         }
-        Require(states == 45, "All 45 default and explicit theme/accent states render.");
+        // Every theme once with its default accent, plus each accent on the four themes that offer the full set.
+        int expectedStates = Enum.GetNames(themeType).Length + 4 * Enum.GetNames(accentType).Length;
+        Require(states == expectedStates, "All " + expectedStates + " default and explicit theme/accent states render (" + states + " did).");
         Theme("Black", "Orange");
         foreach (string locale in Enum.GetNames(localeType))
         {
@@ -313,7 +316,6 @@ internal static class ReleaseUiTests
         var type = workspace.GetType();
         var grid = (DataGrid)workspace.FindName("ResultsGrid");
         var menu = grid.ContextMenu;
-        var header = (MenuItem)workspace.FindName("DeviceCardHeader");
         var prepare = type.GetMethod("PrepareDeviceContextMenu", Instance)!;
         var load = type.GetMethod("LoadSnapshot", Instance)!;
         var original = ((IEnumerable<KillerScan.Engine.NetworkDevice>)type.GetProperty("ScannedDevices", Instance)!.GetValue(workspace)!).ToArray();
@@ -328,28 +330,28 @@ internal static class ReleaseUiTests
         try
         {
             load.Invoke(workspace, new object?[] { "192.0.2.0/24", new[] { named, other }, null });
-            var buttons = CardMenuTestHelpers.CardButtons(menu).ToList();
-            Require(buttons.Count == 9 && buttons.All(button => button.ToolTip != null
-                && !string.IsNullOrEmpty(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(button))),
-                "The device card has six quick buttons and three copy chips, each with its shortcut.");
-            Require(menu.Items.OfType<Separator>().All(separator => separator.ReadLocalValue(Control.BackgroundProperty) == DependencyProperty.UnsetValue),
-                "Device card dividers take the theme's separator, not a fixed color.");
+            // The tiles a single device offers, each carrying its shortcut; the lists open from flyout tiles.
+            string[] keyed = ["Browser", "Ping", "Diagnose", "Watch", "Rdp", "Ssh", "SshAs", "CopyIp", "CopyMac", "CopyHost",
+                "Rename", "ClearName", "Trust", "ClearOverride", "WhyType"];
+            List<Button> Tiles() => CardMenuTestHelpers.CardButtons(menu).OfType<Button>().Where(b => b.Uid.Length > 0).ToList();
 
             grid.SelectedItems.Clear();
             prepare.Invoke(workspace, null);
-            Require(buttons.All(button => !button.IsEnabled), "With no device selected, no card button is live.");
+            Require(keyed.All(id => Tiles().Any(b => b.Uid == id && !string.IsNullOrEmpty(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(b)))),
+                "The device card has a tile with its shortcut for every device action.");
+            Require(Tiles().Where(b => keyed.Contains(b.Uid)).All(b => !b.IsEnabled), "With no device selected, no device tile is live.");
 
             grid.SelectedItem = named; grid.CurrentItem = named;
             prepare.Invoke(workspace, null);
-            Require(System.Windows.Automation.AutomationProperties.GetName(header) == "card-test" && buttons.All(button => button.IsEnabled),
-                "The card is titled with the device's name and its buttons are live.");
+            Require(HeaderText(menu) == "card-test" && Tiles().Where(b => keyed.Contains(b.Uid)).All(b => b.IsEnabled),
+                "The card is titled with the device's name and its tiles are live.");
             raised = null;
             CardMenuTestHelpers.Click(CardMenuTestHelpers.Actions(menu)["Ping"]);
             Require(raised?.Device == named && raised.Action == "Ping", "The Ping button runs Ping on the selected device.");
 
             grid.SelectedItems.Add(other);
             prepare.Invoke(workspace, null);
-            Require(System.Windows.Automation.AutomationProperties.GetName(header) == string.Format((string)Application.Current.FindResource("Str_Card_Devices"), 2),
+            Require(HeaderText(menu) == string.Format((string)Application.Current.FindResource("Str_Card_Devices"), 2),
                 "A multiple selection is counted in the card's title.");
             Console.WriteLine("PASS: device card header, shortcuts, enabled state and actions.");
         }
@@ -360,12 +362,28 @@ internal static class ReleaseUiTests
         }
     }
 
+    /// <summary>The title on a tile card's header (ScanCards.Header: the first TextBlock in the header slot).</summary>
+    private static string HeaderText(ContextMenu menu)
+    {
+        if (menu.Items.Count == 0 || menu.Items[0] is not MenuItem head || head.Header is not DependencyObject root) return "";
+        var pending = new Stack<object>(); pending.Push(root);
+        while (pending.Count > 0)
+        {
+            var current = pending.Pop();
+            if (current is TextBlock text) return text.Text;
+            if (current is DependencyObject d)
+                foreach (var child in LogicalTreeHelper.GetChildren(d).Cast<object>().Reverse()) pending.Push(child);
+        }
+        return "";
+    }
+
     private static void CheckServiceMenu(KillerScan.Controls.ScanWorkspace workspace, FrameworkElement root, string output)
     {
         var type = workspace.GetType();
         var grid = (DataGrid)workspace.FindName("ServicesGrid");
         var devicesGrid = (DataGrid)workspace.FindName("ResultsGrid");
         Require(!ReferenceEquals(grid.ContextMenu, devicesGrid.ContextMenu), "Services have their own context menu.");
+        workspace.PrepareServiceCard();
         var actions = CardMenuTestHelpers.Actions(grid.ContextMenu);
         Require(actions.Keys.OrderBy(value => value).SequenceEqual(new[] { "Browser", "CopyEndpoint", "CopyHost", "CopyIp", "CopyPort",
             "CopyService", "Export", "Rdp", "SelectAll", "Ssh", "SshAs" }.OrderBy(value => value)),
@@ -392,6 +410,8 @@ internal static class ReleaseUiTests
         var copy = type.GetMethod("ServiceCopyText", Instance)!;
         object Row(int port, string ip = "192.0.2.40") => grid.Items.Cast<object>().Single(row =>
             (int)row.GetType().GetProperty("Port")!.GetValue(row)! == port && (string)row.GetType().GetProperty("IpAddress")!.GetValue(row)! == ip);
+        // The card is rebuilt from the selection as it opens, so its tiles are looked up after each Select.
+        Dictionary<string, FrameworkElement> A() => CardMenuTestHelpers.Actions(grid.ContextMenu);
         void Select(object row)
         {
             grid.SelectedItems.Clear(); grid.SelectedItem = row; grid.CurrentItem = row;
@@ -420,8 +440,8 @@ internal static class ReleaseUiTests
             Require(grid.SelectedItems.Count == 1 && ReferenceEquals(grid.CurrentItem, Row(22)),
                 "Right-clicking a different service replaces the selection.");
             Select(Row(53));
-            Require(new[] { "Browser", "Ssh", "SshAs", "Rdp" }.All(action => actions[action].Visibility == Visibility.Collapsed),
-                "DNS services do not show web, SSH or RDP actions.");
+            Require(new[] { "Browser", "Ssh", "SshAs", "Rdp" }.All(action => !A()[action].IsEnabled),
+                "DNS services dim the web, SSH and RDP tiles.");
             Require((string)copy.Invoke(workspace, new object[] { "CopyEndpoint" })! == "192.0.2.40:53" &&
                 (string)copy.Invoke(workspace, new object[] { "CopyService" })! == "DNS" &&
                 (string)copy.Invoke(workspace, new object[] { "CopyPort" })! == "53", "Copy actions use the selected service endpoint.");
@@ -429,14 +449,14 @@ internal static class ReleaseUiTests
             Require(((string)copy.Invoke(workspace, new object[] { "CopyEndpoint" })!).Split(new[] { Environment.NewLine }, StringSplitOptions.None).Length == 2,
                 "Copy endpoint includes all selected services.");
             Select(Row(53, "192.0.2.41"));
-            Require(!actions["CopyHost"].IsEnabled && (string)copy.Invoke(workspace, new object[] { "CopyHost" })! == "",
+            Require(!A()["CopyHost"].IsEnabled && (string)copy.Invoke(workspace, new object[] { "CopyHost" })! == "",
                 "Copy hostname never substitutes a MAC address.");
             foreach (var entry in new[] { (80, "Browser"), (8443, "Browser"), (22, "Ssh"), (3389, "Rdp") })
             {
                 Select(Row(entry.Item1));
-                Require(actions[entry.Item2].Visibility == Visibility.Visible, "Matching connection action is visible.");
+                Require(A()[entry.Item2].IsEnabled, "Matching connection tile is live.");
                 raised = null;
-                CardMenuTestHelpers.Click(actions[entry.Item2]);
+                CardMenuTestHelpers.Click(A()[entry.Item2]);
                 Require(raised != null && raised.Device == host && raised.Action == entry.Item2 && raised.ServicePort == entry.Item1,
                     "Connection actions carry the selected service's host and port.");
             }
@@ -484,7 +504,9 @@ internal static class ReleaseUiTests
         var settings = ((Button)workspace.FindName("TopologyOrderButton")).ContextMenu;
         var reset = type.GetMethod("TopologyReset_Click", Instance)!;
         reset.Invoke(workspace, new object[] { workspace, new RoutedEventArgs() });
-        Require(settings.Items.Count == 11 && settings.Items.OfType<MenuItem>().Any(item => item.InputGestureText == "Ctrl+Wheel"),
+        Require(new[] { "OrderRole", "OrderType", "OrderIp", "OrderVendor", "Pattern", "Orientation", "NodeScale", "Font", "FontSize", "Zoom", "Links", "Reset", "Png", "Jpeg", "Svg" }
+                .All(id => CardMenuTestHelpers.Tile(settings, id) != null)
+            && System.Windows.Automation.AutomationProperties.GetAcceleratorKey(CardMenuTestHelpers.Tile(settings, "Zoom")!) == "Ctrl+Wheel",
             "Topology settings expose grouping, appearance, zoom, reset and export.");
         settings.Visibility = Visibility.Hidden;
         try
@@ -503,32 +525,40 @@ internal static class ReleaseUiTests
             System.Windows.Input.MouseButton.Right) { RoutedEvent = UIElement.MouseRightButtonDownEvent, Source = deviceNode };
         type.GetMethod("TopologyBackground_RightClick", Instance)!.Invoke(workspace, new object[] { canvas, deviceClick });
         Require(!settings.IsOpen && !deviceClick.Handled, "Background settings leave device right-clicks to the device menu.");
-        var grouping = (MenuItem)settings.Items[0];
-        foreach (MenuItem item in grouping.Items)
+        // The card is built as it opens, so each check rebuilds it and reads the tiles and flyout rows afresh.
+        var orderField = type.GetField("_topologyOrder", Instance)!;
+        foreach (string order in new[] { "Type", "Ip", "Vendor", "Role" })
         {
-            item.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent, item));
-            Require(item.IsChecked && grouping.Items.Cast<MenuItem>().Count(choice => choice.IsChecked) == 1,
+            workspace.PrepareTopologyCard();
+            CardMenuTestHelpers.Click(CardMenuTestHelpers.Tile(settings, "Order" + order)!);
+            Require(orderField.GetValue(workspace)!.ToString() == order,
                 "Topology grouping choices apply independently of appearance settings.");
         }
-        var optionItems = settings.Items.OfType<MenuItem>().SelectMany(group => group.Items.OfType<MenuItem>())
-            .Where(item => item.Tag is string tag && tag.Contains("=")).ToArray();
-        foreach (var item in optionItems)
+        MenuItem[] OptionRows()
         {
+            workspace.PrepareTopologyCard();
+            return new[] { "Pattern", "Orientation", "NodeScale", "Font", "FontSize" }
+                .SelectMany(id => KillerScan.Controls.ScanCards.GetFlyoutRows(CardMenuTestHelpers.Tile(settings, id)!)!.OfType<MenuItem>()).ToArray();
+        }
+        foreach (string tag in OptionRows().Select(item => (string)item.Tag).ToArray())
+        {
+            var item = OptionRows().Single(row => (string)row.Tag == tag);
             item.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent, item));
-            string[] parts = ((string)item.Tag).Split('=');
-            Require(options[parts[0]] == parts[1] && item.IsChecked, "Topology choice applies and stays checked: " + item.Tag);
-            Require(optionItems.Count(other => ((string)other.Tag).StartsWith(parts[0] + "=") && other.IsChecked) == 1,
+            string[] parts = tag.Split('=');
+            var rows = OptionRows();
+            Require(options[parts[0]] == parts[1] && rows.Single(row => (string)row.Tag == tag).IsChecked, "Topology choice applies and stays checked: " + tag);
+            Require(rows.Count(other => ((string)other.Tag).StartsWith(parts[0] + "=") && other.IsChecked) == 1,
                 "Each topology setting has one selected choice.");
         }
-        var links = settings.Items.OfType<MenuItem>().Single(item => Equals(item.Tag, "Links"));
+        void ToggleLinks() { workspace.PrepareTopologyCard(); CardMenuTestHelpers.Click(CardMenuTestHelpers.Tile(settings, "Links")!); }
         var positions = (Dictionary<string, Point>)type.GetField("_topologyPositions", Instance)!.GetValue(workspace)!;
         string ip = (string)deviceNode.Tag.GetType().GetProperty("IpAddress")!.GetValue(deviceNode.Tag)!;
         positions[ip] = new Point(100, 100);
-        optionItems.Single(item => Equals(item.Tag, "Font=Segoe UI")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        OptionRows().Single(item => Equals(item.Tag, "Font=Segoe UI")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
         Require(positions.ContainsKey(ip), "Changing font family preserves manually positioned devices.");
-        links.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent, links));
+        ToggleLinks();
         Require(canvas.Children.OfType<System.Windows.Shapes.Line>().All(line => line.Opacity == 0), "Connections can be hidden.");
-        links.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent, links));
+        ToggleLinks();
         Require(canvas.Children.OfType<System.Windows.Shapes.Line>().All(line => line.Opacity > 0), "Connections can be restored.");
         Require(positions.ContainsKey(ip), "Toggling connections preserves manually positioned devices.");
         reset.Invoke(workspace, new object[] { workspace, new RoutedEventArgs() });
@@ -574,6 +604,7 @@ internal static class ReleaseUiTests
         }
         locale("EnUS");
         var surface = new StackPanel { Background = (Brush)Application.Current.FindResource("MenuBackgroundBrush") };
+        workspace.PrepareTopologyCard();
         var entries = settings.Items.Cast<object>().ToArray();
         settings.Items.Clear();
         foreach (UIElement entry in entries) surface.Children.Add(entry);

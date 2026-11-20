@@ -732,4 +732,12 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_FD_FolderTooLong">Ez a név túl hosszú. Legfeljebb 255 karaktert használjon.</sys:String>
     <sys:String x:Key="Str_FD_FolderExists">Itt már van ilyen nevű mappa vagy fájl.</sys:String>
     <sys:String x:Key="Str_FD_FolderFailed">A mappát nem sikerült létrehozni:</sys:String>
+    <sys:String x:Key="Str_Card_Quick">Gyorsműveletek</sys:String>
+    <sys:String x:Key="Str_Card_Customize">Kártya testreszabása</sys:String>
+    <sys:String x:Key="Str_Card_EditDone">Kész</sys:String>
+    <sys:String x:Key="Str_Card_EditReset">Alapértelmezés visszaállítása</sys:String>
+    <sys:String x:Key="Str_Card_EditResetShort">Visszaállítás</sys:String>
+    <sys:String x:Key="Str_Card_Hidden">Rejtett</sys:String>
+    <sys:String x:Key="Str_Card_HiddenHint">Húzzon ide egy csempét az elrejtéséhez</sys:String>
+    <sys:String x:Key="Str_Card_AlwaysShown">Mindig látható</sys:String>
 </ResourceDictionary>

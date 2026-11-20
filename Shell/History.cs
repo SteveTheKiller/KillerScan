@@ -13,11 +13,29 @@ namespace KillerScan.Shell
 
         private void HistorySettingsMenu_Opening(object sender, ContextMenuEventArgs e)
         {
-            bool canShowAll = LocationService.Loaded && !DemoData.Enabled && LocationService.Items.Count > 0;
-            HistoryAllLocationsSegment.IsChecked = _historyAllLocations;
-            HistoryThisLocationSegment.IsChecked = !_historyAllLocations;
-            HistoryAllLocationsSegment.IsEnabled = canShowAll;
+            PrepareHistorySettingsCard();
             FlyoutPlacement.Attach(HistoryButton.ContextMenu, HistoryButton);
+        }
+
+        /// <summary>The history card: its title over This Location and All Locations, the one in use checked, and Settings.</summary>
+        internal void PrepareHistorySettingsCard()
+        {
+            bool canShowAll = LocationService.Loaded && !DemoData.Enabled && LocationService.Items.Count > 0;
+            var card = ScanCards.Prepare(HistoryButton.ContextMenu);
+            card.Items.Add(ScanCards.Header(card, Loc("Str_History_Title"), Loc("Str_History_Show")));
+            card.Items.Add(ScanCards.Grid(card,
+                new[]
+                {
+                    new KillerFamily.Controls.CardTile("", Loc("Str_History_ThisLocation"), null, () => SetHistoryAllLocations(false))
+                        { Id = "ThisLocation", Checked = !_historyAllLocations },
+                    new KillerFamily.Controls.CardTile("", Loc("Str_History_AllLocations"), null, () => SetHistoryAllLocations(true), false, canShowAll)
+                        { Id = "AllLocations", Shown = Loc("Str_History_AllShort"), Checked = _historyAllLocations },
+                },
+                new[]
+                {
+                    new KillerFamily.Controls.CardTile("", Loc("Str_History_Settings"), "Ctrl+Alt+R", () => HistorySettings_Click(this, new RoutedEventArgs()))
+                        { Id = "Settings" },
+                }));
         }
 
         private bool HandleHistorySettingsShortcut(Key key, ModifierKeys modifiers)
@@ -112,7 +130,7 @@ namespace KillerScan.Shell
             // The saved-scan card: the run's name over its date and target, and its two verbs.
             // Rebuilt as it opens, so the header and the captions follow the selection and the
             // current language.
-            HistoryList.ContextMenu = KillerFamily.Controls.CardBuilder.Menu();
+            HistoryList.ContextMenu = ScanCards.Menu();
             HistoryList.PreviewMouseRightButtonDown += (_, e) =>
             {
                 if (ItemsControl.ContainerFromElement(HistoryList, e.OriginalSource as DependencyObject) is ListBoxItem row)
@@ -121,16 +139,7 @@ namespace KillerScan.Shell
             HistoryList.ContextMenuOpening += (_, e) =>
             {
                 if (HistoryList.SelectedItem is not ScanHistoryEntry entry) { e.Handled = true; return; }
-                var menu = HistoryList.ContextMenu;
-                menu.Items.Clear();
-                string when = entry.ScannedAt.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture);
-                menu.Items.Add(KillerFamily.Controls.CardBuilder.Header(entry.DisplayName,
-                    entry.DisplayName == entry.Target ? when : when + "  ·  " + entry.Target));
-                menu.Items.Add(KillerFamily.Controls.CardBuilder.QuickStrip(Loc("Str_Card_Actions"), new[]
-                {
-                    new KillerFamily.Controls.CardAction("", Loc("Str_Card_Rename"), Loc("Str_History_Rename"), "F2", RenameSelectedHistoryEntry),
-                    new KillerFamily.Controls.CardAction("", Loc("Str_Card_Delete"), Loc("Str_History_DeleteScan"), "Delete", DeleteSelectedHistoryEntry),
-                }));
+                PrepareHistoryRunCard(entry);
             };
             HistoryList.PreviewKeyDown += (_, e) =>
             {
@@ -140,6 +149,19 @@ namespace KillerScan.Shell
                 else return;
                 e.Handled = true;
             };
+        }
+
+        /// <summary>The saved-scan card: the run's name over its date and target, Delete in the header and Rename as a tile.</summary>
+        internal void PrepareHistoryRunCard(ScanHistoryEntry entry)
+        {
+            var card = ScanCards.Prepare(HistoryList.ContextMenu);
+            string when = entry.ScannedAt.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture);
+            card.Items.Add(ScanCards.Header(card, entry.DisplayName, entry.DisplayName == entry.Target ? when : when + "  ·  " + entry.Target,
+                Loc("Str_History_DeleteScan"), "Delete", DeleteSelectedHistoryEntry));
+            card.Items.Add(ScanCards.Grid(card, new[]
+            {
+                new KillerFamily.Controls.CardTile("\uE8AC", Loc("Str_History_Rename"), "F2", RenameSelectedHistoryEntry) { Id = "Rename", Shown = Loc("Str_Card_Rename") },
+            }));
         }
 
         // A scan is named so one Location can keep several networks apart; an empty name
@@ -193,10 +215,8 @@ namespace KillerScan.Shell
             return [.. entries.OrderByDescending(entry => entry.ScannedAt)];
         }
 
-        private void HistorySettingsMenu_LocationsClick(object sender, RoutedEventArgs e)
+        private void SetHistoryAllLocations(bool all)
         {
-            if (sender is DependencyObject segment) KillerFamily.Controls.CardBuilder.Close(segment);
-            bool all = ReferenceEquals(sender, HistoryAllLocationsSegment);
             if (all == _historyAllLocations) return;
             _historyAllLocations = all;
             App.SetSetting("HistoryAllLocations", _historyAllLocations ? "1" : "0");

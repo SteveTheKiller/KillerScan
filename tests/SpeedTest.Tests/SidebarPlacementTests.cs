@@ -23,9 +23,9 @@ internal static class SidebarPlacementTests
         Require(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(choices[0]) == "Alt+Shift+Left"
             && System.Windows.Automation.AutomationProperties.GetAcceleratorKey(choices[1]) == "Alt+Shift+Right",
             "Sidebar choices advertise the established family keyboard shortcuts.");
-        Require(choices.All(item => item.Content is string text && !string.IsNullOrWhiteSpace(text)),
+        Require(choices.All(item => item.Tag is string text && !string.IsNullOrWhiteSpace(text)),
             "Both sidebar placement choices have readable localized labels.");
-        Require(choices[0].IsChecked == true && choices[1].IsChecked != true, "Left is the default side.");
+        Require(IsOn(choices[0]) && !IsOn(choices[1]), "Left is the default side.");
         choices[1].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
         Layout(window);
         var rail = (FrameworkElement)window.FindName("RailButtons");
@@ -102,8 +102,8 @@ internal static class SidebarPlacementTests
         Layout(restored);
         var restoredToggle = (Button)restored.FindName("SidebarToggleBtn");
         var restoredMenu = CheckEmptyRailMenu(restored);
-        var restoredRight = Segments(restoredMenu).Single(item => item.Tag is SidebarSide.Right);
-        Require(restoredRight.IsChecked == true
+        var restoredRight = Segments(restoredMenu).Single(item => item.Uid == "SideRight");
+        Require(IsOn(restoredRight)
             && ((FrameworkElement)restored.FindName("HistorySidebar")).Visibility == Visibility.Collapsed,
             "A new window restores the chosen side and keeps the established closed startup state.");
         restoredToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -114,19 +114,12 @@ internal static class SidebarPlacementTests
         Console.WriteLine("PASS: sidebar placement, resizing, persistence, classic geometry and independent tabs (1 selected).");
     }
 
-    /// <summary>The segments on a card's rows, in order (CardSegments: a slot over a track).</summary>
-    private static RadioButton[] Segments(ContextMenu menu)
-    {
-        var found = new System.Collections.Generic.List<RadioButton>();
-        void Walk(object? node)
-        {
-            if (node is RadioButton radio) found.Add(radio);
-            else if (node is Panel panel) foreach (var child in panel.Children) Walk(child);
-            else if (node is Decorator decorator) Walk(decorator.Child);
-        }
-        foreach (var item in menu.Items.OfType<MenuItem>()) Walk(item.Header);
-        return found.ToArray();
-    }
+    /// <summary>The choice tiles on a card, in order: Left and Right, or Top and Bottom (tile Ids from ScanCards).</summary>
+    private static Button[] Segments(ContextMenu menu) =>
+        CardMenuTestHelpers.CardButtons(menu).OfType<Button>().Where(button => button.Uid.Length > 0).ToArray();
+
+    /// <summary>A checked tile wears the selected-row fill (CardBuilder.ShowTileState).</summary>
+    private static bool IsOn(Button tile) => tile.ReadLocalValue(Control.BackgroundProperty) != DependencyProperty.UnsetValue;
 
     private static ContextMenu CheckEmptyRailMenu(MainWindow window)
     {
@@ -149,10 +142,10 @@ internal static class SidebarPlacementTests
         Require(!opening.Handled, "The empty rail's context menu opening is not canceled.");
         menu!.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
         menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
-        Require(Segments(menu).Count(item => item.Tag is SidebarSide) == 2,
+        Require(Segments(menu).Count(item => item.Uid.StartsWith("Side")) == 2,
             "The empty rail menu offers the same Left and Right placement choices.");
-        Require(menu.Items.Count == 2 && Segments(menu).Count(item => item.IsChecked == true) == 1
-            && Segments(menu).Single(item => item.IsChecked == true).Tag!.ToString() == App.GetSetting("SidebarSide"),
+        Require(menu.Items.Count == 2 && Segments(menu).Count(IsOn) == 1
+            && Segments(menu).Single(IsOn).Uid == "Side" + App.GetSetting("SidebarSide"),
             "Repeated rail menu openings keep one current checked side without duplicating choices.");
         return menu;
     }

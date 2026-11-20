@@ -49,93 +49,62 @@ namespace KillerScan.Controls
                 string? value = App.GetSetting("Topology" + name);
                 if (value != null && TopologyChoices[name].Contains(value)) _topologyOptions[name] = value;
             }
+            TopologyOrderButton.ContextMenuOpening += (_, _) => PrepareTopologyCard();
+            PrepareTopologyCard();
+        }
+
+        /// <summary>
+        /// The topology card: the four orders as checked tiles on Ctrl+1 to Ctrl+4, the layout choices as
+        /// flyout tiles, Links and Reset, then the three picture formats. Built as it opens, so the checks
+        /// follow the shortcuts and the captions follow the current language.
+        /// </summary>
+        internal void PrepareTopologyCard()
+        {
             var menu = TopologyOrderButton.ContextMenu;
-            menu.Items.Add(KillerFamily.Controls.CardBuilder.Header(Loc("Str_Topology_Settings")));
-            // Order as a segment: one of four, each on its Ctrl+digit. Built here rather than
-            // through CardBuilder.SegmentRow so the checked segment follows the shortcuts.
-            var track = new StackPanel { Orientation = Orientation.Horizontal };
-            string segmentGroup = "TopologyOrder" + Guid.NewGuid().ToString("N");
-            foreach (var (order, key, gesture) in new[]
+            if (menu == null) return;
+            var card = ScanCards.Prepare(menu);
+            card.Items.Add(ScanCards.Header(card, Loc("Str_Topology_Settings"), Loc("Str_Topology_Order")));
+            var order = new[]
             {
-                (TopologyOrder.Role, "Str_Topology_Role", "Ctrl+1"), (TopologyOrder.Type, "Str_Col_Type", "Ctrl+2"),
-                (TopologyOrder.Ip, "Str_Col_Ip", "Ctrl+3"), (TopologyOrder.Vendor, "Str_Col_Vendor", "Ctrl+4")
-            })
-            {
-                var segment = new System.Windows.Controls.RadioButton { GroupName = segmentGroup, Tag = order };
-                segment.SetResourceReference(StyleProperty, "CardSegment");
-                segment.SetResourceReference(ContentControl.ContentProperty, key);
-                segment.SetResourceReference(System.Windows.Automation.AutomationProperties.NameProperty, key);
-                System.Windows.Automation.AutomationProperties.SetAcceleratorKey(segment, gesture);
-                var tip = new TextBlock();
-                var name = new System.Windows.Documents.Run();
-                name.SetResourceReference(System.Windows.Documents.Run.TextProperty, key);
-                tip.Inlines.Add(name);
-                tip.Inlines.Add(new System.Windows.Documents.Run(" (" + gesture + ")"));
-                segment.ToolTip = tip;
-                segment.Click += (_, _) => { KillerFamily.Controls.CardBuilder.Close(segment); if (_topologyOrder != order) SetTopologyOrder(order); };
-                _topologyOrderSegments.Add(segment);
-                track.Children.Add(segment);
-            }
-            var trackBorder = new Border { HorizontalAlignment = HorizontalAlignment.Left, Padding = new Thickness(2), Child = track };
-            trackBorder.SetResourceReference(Border.BackgroundProperty, "MenuHoverBrush");
-            trackBorder.SetResourceReference(Border.CornerRadiusProperty, "ControlCornerRadius");
-            var orderRow = KillerFamily.Controls.CardBuilder.Labeled(Loc("Str_Topology_Order"), trackBorder);
-            menu.Items.Add(orderRow);
-            menu.Opened += (_, _) =>
-            {
-                // The labels follow a language switch; the row is built once.
-                if (orderRow.Header is Panel row && row.Children.OfType<TextBlock>().FirstOrDefault() is TextBlock label)
-                    label.Text = Loc("Str_Topology_Order");
-            };
+                (TopologyOrder.Role, "Str_Topology_Role", "Ctrl+1", "\uE902"), (TopologyOrder.Type, "Str_Col_Type", "Ctrl+2", "\uE8FD"),
+                (TopologyOrder.Ip, "Str_Col_Ip", "Ctrl+3", "\uE968"), (TopologyOrder.Vendor, "Str_Col_Vendor", "Ctrl+4", "\uE821"),
+            }.Select(o => new KillerFamily.Controls.CardTile(o.Item4, Loc(o.Item2), o.Item3,
+                () => { if (_topologyOrder != o.Item1) SetTopologyOrder(o.Item1); })
+                { Id = "Order" + o.Item1, Checked = _topologyOrder == o.Item1 }).ToList();
+
+            var layout = new List<KillerFamily.Controls.CardTile>();
             foreach (string name in TopologyChoices.Keys.Where(name => name != "Links"))
             {
                 int glyph = name switch { "Pattern" => 0xE968, "Orientation" => 0xE7AD, "NodeScale" => 0xE799, "FontSize" => 0xE8E9, _ => 0xE8D2 };
-                var group = new MenuItem { Icon = MenuGlyph.Create(glyph) };
-                group.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Topology_" + name);
+                var rows = new List<object>();
                 foreach (string value in TopologyChoices[name])
                 {
-                    var item = new MenuItem { Tag = name + "=" + value, IsCheckable = true, Icon = MenuGlyph.Create(glyph) };
+                    var item = new MenuItem { Tag = name + "=" + value, IsCheckable = true, Icon = MenuGlyph.Create(glyph),
+                        IsChecked = _topologyOptions.TryGetValue(name, out string? current) && current == value };
                     if (name is "Pattern" or "Orientation" || value == "Default")
                         item.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Topology_" + value);
                     else item.Header = name == "NodeScale" ? value + "%" : value;
                     item.Click += TopologySetting_Click;
-                    group.Items.Add(item);
+                    rows.Add(item);
                 }
-                menu.Items.Add(group);
+                layout.Add(ScanCards.Flyout(char.ConvertFromUtf32(glyph), Loc("Str_Topology_" + name), null, rows) with { Id = name, Mirror = true });
             }
-            AddTopologyZoomMenu(menu);
-            var links = new MenuItem { Tag = "Links", IsCheckable = true, Icon = MenuGlyph.Create(0xE71B) };
-            links.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Topology_Links");
-            links.Click += TopologySetting_Click;
-            menu.Items.Add(links);
-            var reset = new MenuItem { Icon = MenuGlyph.Create(0xE72C) };
-            reset.SetResourceReference(HeaderedItemsControl.HeaderProperty, "Str_Topology_Reset");
-            reset.Click += TopologyReset_Click;
-            menu.Items.Add(reset);
-            // The three picture formats on a strip, each with its own icon and its shortcut,
-            // the same three the export button offers in this view.
-            MenuItem Strip() => KillerFamily.Controls.CardBuilder.QuickStrip(Loc("Str_Card_Export"), new[]
-            {
-                new KillerFamily.Controls.CardAction("", "PNG", Loc("Str_Export_SnapPngAlpha"), "Ctrl+Shift+G",
-                    () => ExportSnapshotPngAlpha_Click(this, new RoutedEventArgs())),
-                new KillerFamily.Controls.CardAction("", "JPG", Loc("Str_Export_SnapJpeg"), "Ctrl+Shift+J",
-                    () => ExportSnapshotJpeg_Click(this, new RoutedEventArgs())),
-                new KillerFamily.Controls.CardAction("", "HTML", Loc("Str_Export_SnapSvg"), "Ctrl+Alt+H",
-                    () => ExportSnapshotSvg_Click(this, new RoutedEventArgs())),
-            });
-            var strip = Strip();
-            menu.Items.Add(strip);
-            // Rebuilt as the card opens, so its tooltips follow the current language.
-            menu.Opened += (_, _) =>
-            {
-                int at = menu.Items.IndexOf(strip);
-                if (at < 0) return;
-                strip = Strip();
-                menu.Items[at] = strip;
-            };
-        }
+            layout.Add(ScanCards.Flyout("\uE71E", _topologyZoom.ToString("P0"), "Ctrl+Wheel", TopologyZoomRows()) with { Id = "Zoom", Mirror = true });
+            layout.Add(new KillerFamily.Controls.CardTile("\uE71B", Loc("Str_Topology_Links"), null,
+                () => TopologySetting_Click(new MenuItem { Tag = "Links" }, new RoutedEventArgs()))
+                { Id = "Links", Checked = _topologyOptions["Links"] == "On" });
+            layout.Add(new KillerFamily.Controls.CardTile("\uE72C", Loc("Str_Topology_Reset"), null,
+                () => TopologyReset_Click(this, new RoutedEventArgs())) { Id = "Reset" });
 
-        private readonly List<System.Windows.Controls.RadioButton> _topologyOrderSegments = [];
+            // The three picture formats, the same three the export button offers in this view.
+            var export = new List<KillerFamily.Controls.CardTile>
+            {
+                new("\uE91B", Loc("Str_Export_SnapPngAlpha"), "Ctrl+Shift+G", () => ExportSnapshotPngAlpha_Click(this, new RoutedEventArgs())) { Id = "Png", Shown = "PNG" },
+                new("\uEB9F", Loc("Str_Export_SnapJpeg"), "Ctrl+Shift+J", () => ExportSnapshotJpeg_Click(this, new RoutedEventArgs())) { Id = "Jpeg", Shown = "JPG" },
+                new("\uE943", Loc("Str_Export_SnapSvg"), "Ctrl+Alt+H", () => ExportSnapshotSvg_Click(this, new RoutedEventArgs())) { Id = "Svg", Shown = "HTML" },
+            };
+            card.Items.Add(ScanCards.Grid(card, order, layout, export));
+        }
 
         private void TopologySetting_Click(object sender, RoutedEventArgs e)
         {
@@ -175,20 +144,10 @@ namespace KillerScan.Controls
             RefreshTopology();
         }
 
+        // The card is built as it opens; one open while a shortcut changes a setting is rebuilt in place.
         private void UpdateTopologySettingsUi()
         {
-            foreach (var group in TopologyOrderButton.ContextMenu.Items.OfType<MenuItem>())
-                foreach (var item in group.Items.OfType<MenuItem>().Concat([group]))
-                    if (item.Tag is string tag)
-                    {
-                        if (tag == "Links") item.IsChecked = _topologyOptions["Links"] == "On";
-                        else
-                        {
-                            string[] parts = tag.Split('=');
-                            if (parts.Length == 2 && _topologyOptions.TryGetValue(parts[0], out string value))
-                                item.IsChecked = value == parts[1];
-                        }
-                    }
+            if (TopologyOrderButton.ContextMenu is { IsOpen: true }) PrepareTopologyCard();
         }
 
         private void TopologyBackground_RightClick(object sender, MouseButtonEventArgs e)
@@ -203,6 +162,7 @@ namespace KillerScan.Controls
             UpdateTopologySelectionVisuals();
             TopologyCanvas.Focus();
             UpdateTopologyOrderUi();
+            PrepareTopologyCard();
             var menu = TopologyOrderButton.ContextMenu;
             menu.PlacementTarget = TopologyScrollViewer;
             menu.PlacementRectangle = new Rect(e.GetPosition(TopologyScrollViewer), new Size());

@@ -480,55 +480,9 @@
                     <ListBox.Resources>
                         <!-- On the row container, not inside the template, so the Menu key and Shift+F10
                              open it for the focused row. -->
-                        <!-- The Location card: the row's name and detail over a strip of its four verbs.
-                             The card inherits the row's LocationRow as its DataContext, so the header
-                             binds to it and LocationCard_ButtonClick reads it back from the button. -->
-                        <ContextMenu x:Key="LocationRowMenu" x:Shared="False" Style="{StaticResource CardMenu}"
-                                     ButtonBase.Click="LocationCard_ButtonClick">
-                                        <MenuItem Style="{StaticResource CardSlot}" AutomationProperties.Name="{Binding Name}">
-                                            <MenuItem.Header>
-                                                <StackPanel Margin="4,2,4,6">
-                                                    <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
-                                                               Foreground="{DynamicResource TextBrush}"/>
-                                                    <TextBlock Text="{Binding Detail}" FontSize="11" Margin="0,1,0,0" TextTrimming="CharacterEllipsis"
-                                                               Foreground="{DynamicResource DimTextBrush}">
-                                                        <TextBlock.Style>
-                                                            <Style TargetType="TextBlock">
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding Detail}" Value="">
-                                                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </TextBlock.Style>
-                                                    </TextBlock>
-                                                </StackPanel>
-                                            </MenuItem.Header>
-                                        </MenuItem>
-                                        <MenuItem Style="{StaticResource CardSlot}" Padding="0" AutomationProperties.Name="{DynamicResource Str_Card_Actions}">
-                                            <MenuItem.Header>
-                                                <Border BorderBrush="{DynamicResource MenuBorderBrush}" BorderThickness="0,1,0,0" Padding="2,4,2,0">
-                                                    <UniformGrid Rows="1">
-                                                        <Button Style="{StaticResource CardQuickButton}" CommandParameter="Open" Content="&#xE707;"
-                                                                Tag="{DynamicResource Str_Card_Open}" AutomationProperties.Name="{DynamicResource Str_Loc_Open}" AutomationProperties.AcceleratorKey="Enter">
-                                                            <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Loc_Open}"/><Run Text="  (Enter)"/></TextBlock></Button.ToolTip>
-                                                        </Button>
-                                                        <Button Style="{StaticResource CardQuickButton}" CommandParameter="Edit" Content="&#xE70F;"
-                                                                Tag="{DynamicResource Str_Card_Edit}" AutomationProperties.Name="{DynamicResource Str_Loc_Edit}" AutomationProperties.AcceleratorKey="F2">
-                                                            <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Loc_Edit}"/><Run Text="  (F2)"/></TextBlock></Button.ToolTip>
-                                                        </Button>
-                                                        <Button Style="{StaticResource CardQuickButton}" CommandParameter="Export" Content="&#xE896;"
-                                                                Tag="{DynamicResource Str_Card_Export}" AutomationProperties.Name="{DynamicResource Str_Loc_Export}"
-                                                                ToolTip="{DynamicResource Str_Loc_Export}"/>
-                                                        <Button Style="{StaticResource CardQuickButton}" CommandParameter="Delete" Content="&#xE74D;"
-                                                                Tag="{DynamicResource Str_Loc_DeleteButton}" AutomationProperties.Name="{DynamicResource Str_Loc_Delete}" AutomationProperties.AcceleratorKey="Delete">
-                                                            <Button.ToolTip><TextBlock><Run Text="{DynamicResource Str_Loc_Delete}"/><Run Text="  (Delete)"/></TextBlock></Button.ToolTip>
-                                                        </Button>
-                                                    </UniformGrid>
-                                                </Border>
-                                            </MenuItem.Header>
-                                        </MenuItem>
-                                    </ContextMenu>
+                        <!-- The Location card: the row's name and detail over its tiles, filled as it opens
+                             (LocationRow_ContextMenuOpening), Delete in the header. -->
+                        <ContextMenu x:Key="LocationRowMenu" x:Shared="False" Style="{StaticResource CardMenu}"/>
                     </ListBox.Resources>
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
@@ -536,6 +490,7 @@
                             <Setter Property="SnapsToDevicePixels" Value="True"/>
                             <Setter Property="AutomationProperties.Name" Value="{Binding}"/>
                             <Setter Property="ContextMenu" Value="{StaticResource LocationRowMenu}"/>
+                            <EventSetter Event="ContextMenuOpening" Handler="LocationRow_ContextMenuOpening"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListBoxItem">
@@ -651,40 +606,9 @@
                     Content="&#xE81C;" FontSize="15"
                     Click="HistoryButton_Click" ContextMenuOpening="HistorySettingsMenu_Opening" Margin="0,0,0,10">
                 <Button.ContextMenu>
-                    <!-- The history card: its title, which Locations the list shows, and settings. -->
-                    <ContextMenu Style="{StaticResource CardMenu}">
-                        <MenuItem Style="{StaticResource CardSlot}" AutomationProperties.Name="{DynamicResource Str_History_Title}">
-                            <MenuItem.Header>
-                                <TextBlock Text="{DynamicResource Str_History_Title}" FontSize="14" FontWeight="SemiBold"
-                                           Margin="4,2,4,6" Foreground="{DynamicResource TextBrush}"/>
-                            </MenuItem.Header>
-                        </MenuItem>
-                        <MenuItem Style="{StaticResource CardSlot}" Padding="8,4,4,4" AutomationProperties.Name="{DynamicResource Str_History_Show}">
-                            <MenuItem.Header>
-                                <DockPanel>
-                                    <TextBlock Style="{StaticResource CardLabel}" Text="{DynamicResource Str_History_Show}" DockPanel.Dock="Left"/>
-                                    <Border HorizontalAlignment="Left" Padding="2" Background="{DynamicResource MenuHoverBrush}"
-                                            CornerRadius="{DynamicResource ControlCornerRadius}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <RadioButton x:Name="HistoryThisLocationSegment" GroupName="HistoryLocations" Style="{StaticResource CardSegment}"
-                                                         Content="{DynamicResource Str_History_ThisLocation}" ToolTip="{DynamicResource Str_History_ThisLocation}"
-                                                         AutomationProperties.Name="{DynamicResource Str_History_ThisLocation}"
-                                                         ToolTipService.ShowOnDisabled="True" Click="HistorySettingsMenu_LocationsClick"/>
-                                            <RadioButton x:Name="HistoryAllLocationsSegment" GroupName="HistoryLocations" Style="{StaticResource CardSegment}"
-                                                         Content="{DynamicResource Str_History_AllShort}" ToolTip="{DynamicResource Str_History_AllLocations}"
-                                                         AutomationProperties.Name="{DynamicResource Str_History_AllLocations}"
-                                                         ToolTipService.ShowOnDisabled="True" Click="HistorySettingsMenu_LocationsClick"/>
-                                        </StackPanel>
-                                    </Border>
-                                </DockPanel>
-                            </MenuItem.Header>
-                        </MenuItem>
-                        <Separator/>
-                        <MenuItem Header="{DynamicResource Str_History_Settings}" InputGestureText="Ctrl+Alt+R"
-                                  Click="HistorySettings_Click">
-                            <MenuItem.Icon><a11y:Glyph Style="{StaticResource MenuIcon}" Text="&#xE81C;"/></MenuItem.Icon>
-                        </MenuItem>
-                    </ContextMenu>
+                    <!-- The history card: its title over which Locations the list shows and settings, as tiles
+                         filled as it opens (HistorySettingsMenu_Opening). -->
+                    <ContextMenu Style="{StaticResource CardMenu}"/>
                 </Button.ContextMenu>
                 <Button.ToolTip>
                     <TextBlock><Run Text="{DynamicResource Str_History_Title}"/><Run Text=" (Ctrl+H)"/></TextBlock>

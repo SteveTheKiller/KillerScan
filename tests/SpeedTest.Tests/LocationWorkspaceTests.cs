@@ -598,7 +598,7 @@ internal static class LocationWorkspaceTests
             grid.SelectedIndex = 0;
             foreach (string action in new[] { "ip", "mac", "host" }) Require(Copy(action).Length == 0, "A copy of null text is empty: " + action);
             Require(Copy("details").Split('\t').Length == 6, "Copy details still has every column.");
-            grid.ContextMenu.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.ContextMenu.OpenedEvent, grid.ContextMenu));
+            history.PrepareHistoryCard(grid.ContextMenu, grid);
             Require(!CardMenuTestHelpers.Actions(grid.ContextMenu)["ip"].IsEnabled,
                 "The menu opens, with nothing to copy disabled.");
             string csv = (string)typeof(HistoryWorkspace).GetMethod("BuildCsv", Hidden)!.Invoke(history, null)!;
@@ -716,7 +716,7 @@ internal static class LocationWorkspaceTests
         scanner.StopAfterFinding = false;
         var locationMenu = (System.Windows.Controls.ContextMenu)typeof(ScanWorkspace)
             .GetMethod("BuildLocationMenu", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(workspace, null)!;
-        Require(locationMenu.Items.OfType<System.Windows.Controls.MenuItem>().Any(item => Equals(item.Header, Application.Current.FindResource("Str_Loc_SaveResults"))),
+        Require(CardMenuTestHelpers.Tile(locationMenu, "SaveResults") != null,
             "Save results to Location is offered for results that are in no run yet.");
 
         // A finished Temporary run and stopped results on screen both move.
@@ -1032,9 +1032,8 @@ internal static class LocationWorkspaceTests
             // Scan settings offers Automatic and each connected adapter.
             var settings = (System.Windows.Controls.Button)workspace.FindName("ScanOptionsButton");
             settings.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
-            var adapterMenu = settings.ContextMenu.Items.OfType<System.Windows.Controls.MenuItem>()
-                .Single(item => Equals(item.Header, Application.Current.FindResource("Str_Options_Adapter")));
-            var choices = adapterMenu.Items.OfType<System.Windows.Controls.MenuItem>().ToList();
+            var adapterTile = CardMenuTestHelpers.Tile(settings.ContextMenu, "Adapter")!;
+            var choices = KillerScan.Controls.ScanCards.GetFlyoutRows(adapterTile)!.OfType<System.Windows.Controls.MenuItem>().ToList();
             Require(choices.Count == 2 && choices[0].IsChecked && Equals(choices[1].Header, "Ethernet"),
                 "Network adapter lists Automatic, checked, and the connected adapter.");
             choices[1].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.MenuItem.ClickEvent));

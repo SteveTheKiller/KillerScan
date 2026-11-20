@@ -76,8 +76,7 @@ internal static class LocationsSidebarTests
             var sites = picker.Items.OfType<MenuItem>().Where(item => item.IsCheckable).ToList();
             Require(sites.Count == 3 && sites.Count(item => item.IsChecked) == 1,
                 "The demo picker shows Locations and marks the current site, not just legacy saved scans.");
-            Require(picker.Items.OfType<MenuItem>().Any(item => Equals(item.Header,
-                Application.Current.FindResource("Str_Loc_Manage")) && item.IsEnabled),
+            Require(CardMenuTestHelpers.Tile(picker, "Manage") is { IsEnabled: true },
                 "The demo Location picker includes Manage Locations.");
             sites.Last().RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
             Require(((TextBlock)workspace.FindName("LocationLabel")).Text == sites.Last().Header.ToString(),

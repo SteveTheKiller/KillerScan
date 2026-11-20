@@ -70,6 +70,7 @@ namespace KillerScan.Controls
         private void TopologyOrderButton_Click(object sender, RoutedEventArgs e)
         {
             if (TopologyOrderButton.ContextMenu == null) return;
+            PrepareTopologyCard();
             UpdateTopologyOrderUi();
             TopologyOrderButton.ContextMenu.PlacementTarget = TopologyOrderButton;
             TopologyOrderButton.ContextMenu.ClearValue(ContextMenu.PlacementRectangleProperty);
@@ -89,8 +90,6 @@ namespace KillerScan.Controls
 
         private void UpdateTopologyOrderUi()
         {
-            foreach (var segment in _topologyOrderSegments)
-                segment.IsChecked = segment.Tag is TopologyOrder order && order == _topologyOrder;
             UpdateTopologySettingsUi();
         }
 

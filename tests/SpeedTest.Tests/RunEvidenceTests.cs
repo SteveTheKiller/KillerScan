@@ -115,7 +115,7 @@ internal static class RunEvidenceTests
                 new NetworkDevice { IpAddress = "192.0.2.2", OpenPorts = [22] }], scannedAt);
             var grid = (DataGrid)workspace.FindName("ResultsGrid");
             grid.SelectAll();
-            ((MenuItem)workspace.FindName("RescanMenuItem")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            CardMenuTestHelpers.Click(CardMenuTestHelpers.DeviceTile(workspace, "Rescan"));
             PumpUntil(() => !workspace.IsScanning && workspace.Session.Devices.Any(d => d.Hostname == "refreshed"));
             string status = workspace.Status;
             string expected = string.Format((string)Application.Current.FindResource("Str_St_RescanPartial"), 1, 2, 1);
@@ -176,7 +176,7 @@ internal static class RunEvidenceTests
                 if (selected)
                 {
                     ((DataGrid)workspace.FindName("ResultsGrid")).SelectAll();
-                    ((MenuItem)workspace.FindName("RescanMenuItem")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                    CardMenuTestHelpers.Click(CardMenuTestHelpers.DeviceTile(workspace, "Rescan"));
                 }
                 else workspace.DeepScan();
                 PumpUntil(() => !workspace.IsScanning);

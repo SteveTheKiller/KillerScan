@@ -758,4 +758,12 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_FD_FolderTooLong">Esse nome é muito longo. Use no máximo 255 caracteres.</sys:String>
     <sys:String x:Key="Str_FD_FolderExists">Já existe uma pasta ou um arquivo com esse nome aqui.</sys:String>
     <sys:String x:Key="Str_FD_FolderFailed">Não foi possível criar a pasta:</sys:String>
+    <sys:String x:Key="Str_Card_Quick">Ações rápidas</sys:String>
+    <sys:String x:Key="Str_Card_Customize">Personalizar este cartão</sys:String>
+    <sys:String x:Key="Str_Card_EditDone">Concluído</sys:String>
+    <sys:String x:Key="Str_Card_EditReset">Restaurar padrão</sys:String>
+    <sys:String x:Key="Str_Card_EditResetShort">Redefinir</sys:String>
+    <sys:String x:Key="Str_Card_Hidden">Ocultos</sys:String>
+    <sys:String x:Key="Str_Card_HiddenHint">Arraste um bloco para cá para ocultá-lo</sys:String>
+    <sys:String x:Key="Str_Card_AlwaysShown">Sempre exibido</sys:String>
 </ResourceDictionary>

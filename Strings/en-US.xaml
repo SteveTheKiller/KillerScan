@@ -760,4 +760,12 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_FD_FolderTooLong">That name is too long. Use 255 characters or fewer.</sys:String>
     <sys:String x:Key="Str_FD_FolderExists">There's already a folder or file with that name here.</sys:String>
     <sys:String x:Key="Str_FD_FolderFailed">The folder couldn't be created:</sys:String>
+    <sys:String x:Key="Str_Card_Quick">Quick actions</sys:String>
+    <sys:String x:Key="Str_Card_Customize">Customize this card</sys:String>
+    <sys:String x:Key="Str_Card_EditDone">Done</sys:String>
+    <sys:String x:Key="Str_Card_EditReset">Reset to default</sys:String>
+    <sys:String x:Key="Str_Card_EditResetShort">Reset</sys:String>
+    <sys:String x:Key="Str_Card_Hidden">Hidden</sys:String>
+    <sys:String x:Key="Str_Card_HiddenHint">Drag a tile here to hide it</sys:String>
+    <sys:String x:Key="Str_Card_AlwaysShown">Always shown</sys:String>
 </ResourceDictionary>

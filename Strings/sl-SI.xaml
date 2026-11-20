@@ -693,4 +693,12 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_FD_FolderTooLong">To ime je predolgo. Uporabite največ 255 znakov.</sys:String>
     <sys:String x:Key="Str_FD_FolderExists">Mapa ali datoteka s tem imenom tu že obstaja.</sys:String>
     <sys:String x:Key="Str_FD_FolderFailed">Mape ni bilo mogoče ustvariti:</sys:String>
+    <sys:String x:Key="Str_Card_Quick">Hitra dejanja</sys:String>
+    <sys:String x:Key="Str_Card_Customize">Prilagodi to kartico</sys:String>
+    <sys:String x:Key="Str_Card_EditDone">Končano</sys:String>
+    <sys:String x:Key="Str_Card_EditReset">Ponastavi na privzeto</sys:String>
+    <sys:String x:Key="Str_Card_EditResetShort">Ponastavi</sys:String>
+    <sys:String x:Key="Str_Card_Hidden">Skrito</sys:String>
+    <sys:String x:Key="Str_Card_HiddenHint">Povlecite ploščico sem, da jo skrijete</sys:String>
+    <sys:String x:Key="Str_Card_AlwaysShown">Vedno prikazano</sys:String>
 </ResourceDictionary>

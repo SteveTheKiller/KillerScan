@@ -717,4 +717,12 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_FD_FolderTooLong">Dieser Name ist zu lang. Verwenden Sie höchstens 255 Zeichen.</sys:String>
     <sys:String x:Key="Str_FD_FolderExists">Hier gibt es bereits einen Ordner oder eine Datei mit diesem Namen.</sys:String>
     <sys:String x:Key="Str_FD_FolderFailed">Der Ordner konnte nicht erstellt werden:</sys:String>
+    <sys:String x:Key="Str_Card_Quick">Schnellaktionen</sys:String>
+    <sys:String x:Key="Str_Card_Customize">Diese Karte anpassen</sys:String>
+    <sys:String x:Key="Str_Card_EditDone">Fertig</sys:String>
+    <sys:String x:Key="Str_Card_EditReset">Auf Standard zurücksetzen</sys:String>
+    <sys:String x:Key="Str_Card_EditResetShort">Zurücksetzen</sys:String>
+    <sys:String x:Key="Str_Card_Hidden">Ausgeblendet</sys:String>
+    <sys:String x:Key="Str_Card_HiddenHint">Kachel hierher ziehen, um sie auszublenden</sys:String>
+    <sys:String x:Key="Str_Card_AlwaysShown">Immer sichtbar</sys:String>
 </ResourceDictionary>

@@ -125,41 +125,6 @@ namespace KillerScan.Controls
             show(RecognitionText.Heading(d), RecognitionText.Detail(d));
         }
 
-        /// <summary>
-        /// Lists the selected device's endpoints from what the scan recorded. Opening the menu
-        /// sends nothing; clicking an endpoint opens it with the existing browser, SSH or Remote
-        /// Desktop action, or copies the address when no app handles the protocol.
-        /// </summary>
-        private void AccessMenu_Opened(object sender, RoutedEventArgs e)
-        {
-            if (!ReferenceEquals(e.OriginalSource, AccessMenuItem)) return;
-            AccessMenuItem.Items.Clear();
-            var d = GetSelectedDevice();
-            var endpoints = d == null ? [] : DeviceAccess.ForDevice(d);
-            if (d == null || endpoints.Count == 0)
-            {
-                AccessMenuItem.Items.Add(new MenuItem { Header = Loc("Str_Access_None"), IsEnabled = false, Icon = MenuGlyph.Create(0xE946) });
-                return;
-            }
-            foreach (var endpoint in endpoints)
-            {
-                string? action = AccessAction(endpoint);
-                var item = new MenuItem { Header = AccessWording.Item(endpoint), ToolTip = AccessWording.Tooltip(endpoint, action != null), Icon = MenuGlyph.Create(AccessGlyph(endpoint)) };
-                item.Click += (_, _) => OpenAccess(d, endpoint);
-                AccessMenuItem.Items.Add(item);
-            }
-            var copy = new MenuItem { Header = Loc("Str_Access_CopyMenu"), Icon = MenuGlyph.Create(0xE8C8) };
-            foreach (var endpoint in endpoints)
-            {
-                string? address = DeviceAccess.Address(d.IpAddress, endpoint);
-                if (address == null) continue;
-                var item = new MenuItem { Header = address, Icon = MenuGlyph.Create(0xE8C8) };
-                item.Click += (_, _) => CopyDeviceText(address);
-                copy.Items.Add(item);
-            }
-            AccessMenuItem.Items.Add(copy);
-        }
-
         // The same glyphs the device menu uses for Open in Browser, SSH and Remote Desktop.
         private static int AccessGlyph(AccessEndpoint endpoint) => endpoint.Protocol switch
         {
@@ -220,8 +185,6 @@ namespace KillerScan.Controls
         {
             var d = GetSelectedDevice(); if (d == null) return;
             PersistenceFeedback.Check(_location.Devices.SetTrusted(d, !_location.Devices.IsTrusted(d)), _location.Devices.Retry, () => _location.Devices.SaveError);
-            ((System.Windows.Shapes.Ellipse)TrustDeviceMenuItem.Icon).Fill = (System.Windows.Media.Brush)_trustMark.Convert(
-                d, typeof(System.Windows.Media.Brush), null!, System.Globalization.CultureInfo.CurrentCulture);
             // Trust is not a property of the device, so nothing notifies the row that its gutter
             // marker has changed color. Re-reading the items is what re-runs the converter; the
             // selection is restored afterwards because refreshing the view drops it.

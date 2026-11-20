@@ -289,7 +289,9 @@ namespace KillerScan.Controls
         // The ink as runs of non-transparent pixels, each run inside one row.
         private static Layers Pack(byte[] ink, byte[] coverage, int w, int h, double dpi)
         {
-            var pixels = System.Runtime.InteropServices.MemoryMarshal.Cast<byte, uint>(ink);
+            // net48 has no MemoryMarshal: one packed copy of the pixels, read the same little-endian way.
+            var pixels = new uint[w * h];
+            Buffer.BlockCopy(ink, 0, pixels, 0, w * h * 4);
             int runCount = 0, valueCount = 0;
             for (int y = 0; y < h; y++)
             {
@@ -344,21 +346,23 @@ namespace KillerScan.Controls
         {
             int w = layers.Width;
             var row = new byte[w * 4];
-            var rowPixels = System.Runtime.InteropServices.MemoryMarshal.Cast<byte, uint>(row.AsSpan());
+            // net48 has no span casts: the row is filled as packed pixels, then copied to bytes once.
+            var rowPixels = new uint[w];
             var runs = layers.Runs;
             var values = layers.InkValues;
             int r = 0, v = 0;
             for (int y = 0; y < layers.Height; y++)
             {
-                rowPixels.Clear();
+                Array.Clear(rowPixels, 0, w);
                 int rowStart = y * w, rowEnd = rowStart + w;
                 while (r < runs.Length && runs[r] < rowEnd)
                 {
                     int start = runs[r] - rowStart, count = runs[r + 1];
-                    values.AsSpan(v, count).CopyTo(rowPixels.Slice(start, count));
+                    Array.Copy(values, v, rowPixels, start, count);
                     v += count;
                     r += 2;
                 }
+                Buffer.BlockCopy(rowPixels, 0, row, 0, w * 4);
                 for (int x = 0, j = 0, i = rowStart; x < w; x++, j += 4, i++)
                 {
                     int m = layers.Coverage[i];

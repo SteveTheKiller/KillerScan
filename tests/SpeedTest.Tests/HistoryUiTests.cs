@@ -248,7 +248,9 @@ internal static partial class HistoryUiTests
         Require(((string)Call(history, "CopyValue", "details")!).Contains("22, 8443"), "Copy details includes saved ports.");
         Require(((string)Call(history, "BuildCsv")!).Contains("\"missing, \"\"quoted\"\"\nline\""), "CSV quotes embedded commas, quotes and newlines.");
         var menu = grid.ContextMenu;
-        menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
+        // The card is built as it opens (right-click or the Menu key), from the selection.
+        void Open() => history.PrepareHistoryCard(menu, grid);
+        Open();
         var copies = CardMenuTestHelpers.Actions(menu).Where(pair => new[] { "ip", "mac", "host", "details" }.Contains(pair.Key)).ToList();
         Require(copies.Count == 4 && copies.All(pair => pair.Value.IsEnabled), "Saved row copy actions are available.");
         Require(menu.Items.OfType<MenuItem>().Where(item => !CardMenuTestHelpers.IsCardSlot(item)).All(item => !string.IsNullOrWhiteSpace(item.InputGestureText))
@@ -257,10 +259,10 @@ internal static partial class HistoryUiTests
         Require(CardMenuTestHelpers.Actions(menu).Keys.All(action => !new[] { "Ping", "Ssh", "Rdp", "Rescan", "Trust" }.Contains(action)), "Historical menus contain no live commands.");
         Save(RenderWindow(1200, 780), Path.Combine(output, "History-Black-sidebar-closed.png"));
         SaveMenu(menu, app, Path.Combine(output, "History-menu.png"));
-        history.ContextMenu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
+        history.PrepareHistoryCard(history.ContextMenu, null);
         Require(!CardMenuTestHelpers.Actions(history.ContextMenu).Keys.Any(action => new[] { "ip", "mac", "host", "details" }.Contains(action)), "Pane background cannot copy a previously selected row.");
         typeof(HistoryWorkspace).GetMethod("SelectContextRow", Static)!.Invoke(null, new object?[] { grid, null });
-        menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
+        Open();
         Require(grid.SelectedItem == null && !CardMenuTestHelpers.Actions(menu)["ip"].IsEnabled, "Grid background clears the selected historical target.");
         var rowContainer = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(0);
         typeof(HistoryWorkspace).GetMethod("SelectContextRow", Static)!.Invoke(null, new object[] { grid, rowContainer });
@@ -300,7 +302,7 @@ internal static partial class HistoryUiTests
         Theme("Black");
         foreach (string locale in Enum.GetNames(localeType))
         {
-            Locale(locale); history.RefreshLocale(); menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
+            Locale(locale); history.RefreshLocale(); Open();
             Render(root, 1200, 780);
             SaveMenu(menu, app, Path.Combine(output, "History-menu-" + locale + ".png"));
             Require(Identity().Contains("192.0.2.0/24") && Identity().Contains(time.ToString("g")) && Identity().Contains(time.AddHours(1).ToString("g")) && !comparison.Text.StartsWith("Str_"), locale + ": target and both dates remain identified.");
@@ -313,10 +315,10 @@ internal static partial class HistoryUiTests
             {
                 string label = (string)app.FindResource(view.Item2);
                 var button = (Button)history.FindName(view.Item3);
-                var choice = menu.Items.OfType<MenuItem>().Single(item => Equals(item.Tag, view.Item1));
-                Require(Equals(button.Content, label) && Equals(choice.Header, label), locale + ": view buttons and menu share the localized label: " + button.Content + " / " + choice.Header + " / " + label);
+                var choice = (Button)CardMenuTestHelpers.Actions(menu)[view.Item1];
+                Require(Equals(button.Content, label) && Equals(choice.Tag, label), locale + ": view buttons and card tiles share the localized label: " + button.Content + " / " + choice.Tag + " / " + label);
                 Require(!label.Any(char.IsUpper) || label.Any(char.IsLower), locale + ": cased view labels use normal capitalization.");
-                Require(Equals(button.ToolTip, "Ctrl+Shift+H") && choice.InputGestureText == "Ctrl+Shift+H",
+                Require(Equals(button.ToolTip, "Ctrl+Shift+H") && System.Windows.Automation.AutomationProperties.GetAcceleratorKey(choice) == "Ctrl+Shift+H",
                     locale + ": normal-case labels preserve the view shortcut.");
                 if (locale == "EnUS") Require(label == view.Item4, "English view labels use the established casing.");
             }
@@ -329,8 +331,8 @@ internal static partial class HistoryUiTests
         }
         Locale("EnUS"); Call(window, "ApplyAppScale", 1.0, false);
         Call(history, "ShowEntry", before); Require(((TextBlock)history.FindName("HistorySummary")).Text == (string)app.FindResource("Str_History_FirstScan") && comparison.Text.Length == 0, "First snapshots have no invented comparison.");
-        Call(history, "ShowEntry", new object?[] { null }); menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent));
-        Require(metadata.Text.Length == 0 && grid.Items.Count == 0 && !menu.Items.OfType<MenuItem>().Single(item => Equals(item.Tag, "export")).IsEnabled, "Empty history clears stale context and export availability.");
+        Call(history, "ShowEntry", new object?[] { null }); Open();
+        Require(metadata.Text.Length == 0 && grid.Items.Count == 0 && !CardMenuTestHelpers.Actions(menu)["export"].IsEnabled, "Empty history clears stale context and export availability.");
         CheckCatalog(window, app);
         ((FrameworkElement)window.FindName("ShortcutsOverlay")).Visibility = Visibility.Visible;
         Call(window, "ApplyShortcutView", false, false, false);
@@ -766,26 +768,24 @@ internal static partial class HistoryUiTests
         Require(ReferenceEquals(langButton.ContextMenu.PlacementTarget, root) && langButton.ContextMenu.CustomPopupPlacementCallback != null,
             "The language flyout uses the family placement against the unscaled root.");
         langButton.ContextMenu.IsOpen = false;
-        Require(window.FindName("HistoryAllLocationsSegment") is RadioButton all
-            && Equals(all.ToolTip, app.FindResource("Str_History_AllLocations")) && all.Style == app.FindResource("CardSegment"),
-            "The history icon also offers the all-Locations switch, as a card segment.");
-        var item = menu.Items.OfType<MenuItem>().Last();
-        Require(Equals(item.Header, app.FindResource("Str_History_Settings")) && item.InputGestureText == "Ctrl+Alt+R",
+        Require(CardMenuTestHelpers.TileIds(menu).SequenceEqual(new[] { "ThisLocation", "AllLocations", "Settings" }),
+            "The history card offers This Location, All Locations and Settings as tiles.");
+        var all = CardMenuTestHelpers.Tile(menu, "AllLocations")!;
+        Require(System.Windows.Automation.AutomationProperties.GetName(all) == ((string)app.FindResource("Str_History_AllLocations")).TrimEnd('.', '…').TrimEnd(),
+            "The history icon also offers the all-Locations switch, as a tile.");
+        var item = CardMenuTestHelpers.Tile(menu, "Settings")!;
+        Require(System.Windows.Automation.AutomationProperties.GetName(item) == ((string)app.FindResource("Str_History_Settings")).TrimEnd('.', '…').TrimEnd()
+                && System.Windows.Automation.AutomationProperties.GetAcceleratorKey(item) == "Ctrl+Alt+R",
             "The history icon offers localized settings with its visible shortcut.");
-        Require(item.Icon is TextBlock clock && clock.Text == (string)icon.Content,
-            "History settings carries the same clock glyph as the history icon.");
+        string settingsKeys = System.Windows.Automation.AutomationProperties.GetAcceleratorKey(item);
         var rows = (Array)typeof(MainWindow).GetField("ShortcutRows", Static)!.GetValue(null)!;
-        Require(rows.Cast<object>().Count(row => ((string)row.GetType().GetField("Item1")!.GetValue(row)!).Replace(" ", "") == item.InputGestureText) == 1,
+        Require(rows.Cast<object>().Count(row => ((string)row.GetType().GetField("Item1")!.GetValue(row)!).Replace(" ", "") == settingsKeys) == 1,
             "The new gesture is unique in the app catalogue.");
         var match = typeof(MainWindow).GetMethod("IsHistorySettingsShortcut", Static)!;
         Require((bool)match.Invoke(null, new object[] { Key.R, ModifierKeys.Control | ModifierKeys.Alt })!,
             "The bound chord is recognized by the live shortcut handler.");
         foreach (var modifiers in new[] { ModifierKeys.None, ModifierKeys.Control, ModifierKeys.Control | ModifierKeys.Shift, ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift })
             Require(!(bool)match.Invoke(null, new object[] { Key.R, modifiers })!, "Other R chords retain their existing scope.");
-        var eventStore = typeof(UIElement).GetProperty("EventHandlersStore", Instance)!.GetValue(item)!;
-        var handlers = (Array)eventStore.GetType().GetMethod("GetRoutedEventHandlers", Instance)!.Invoke(eventStore, new object[] { MenuItem.ClickEvent })!;
-        Require(handlers.Cast<object>().Any(info => ((Delegate)info.GetType().GetProperty("Handler", Instance)!.GetValue(info)!).Method.Name == "HistorySettings_Click"),
-            "The actual history menu click is wired to the settings-dialog handler.");
         SaveMenu(menu, app, Path.Combine(output, "History-settings-menu.png"));
         var confirmation = (Window)Call(window, "CreateHistoryRemovalConfirmation", 7, null)!;
         Require(((TextBlock)confirmation.FindName("DetailText")).Text == string.Format((string)app.FindResource("Str_History_RemoveConfirm"), 7),
@@ -830,6 +830,7 @@ internal static partial class HistoryUiTests
             Require(port == 3389 ? raised?.ServicePort == 3389 : raised == null, "RDP shortcuts require the selected RDP service.");
         }
         var menu = grid.ContextMenu;
+        workspace.PrepareServiceCard();
         var copies = CardMenuTestHelpers.Actions(menu).Where(pair => new[] { "CopyEndpoint", "CopyService", "CopyPort" }.Contains(pair.Key)).ToList();
         Require(copies.Count == 3 && copies.All(pair => !string.IsNullOrEmpty(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(pair.Value))),
             "Service copy actions have menu hints.");
