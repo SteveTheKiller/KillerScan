@@ -692,4 +692,13 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_History_Show">Pokaż</sys:String>
     <sys:String x:Key="Str_History_ThisLocation">Ta Lokalizacja</sys:String>
     <sys:String x:Key="Str_History_AllShort">Wszystkie Lokalizacje</sys:String>
+    <sys:String x:Key="Str_TT_NewFolder">Nowy folder (Ctrl+Shift+N)</sys:String>
+    <sys:String x:Key="Str_FD_NewFolder">Nowy folder</sys:String>
+    <sys:String x:Key="Str_FD_FolderEmpty">Wpisz nazwę folderu.</sys:String>
+    <sys:String x:Key="Str_FD_FolderInvalid">Nazwa folderu nie może zawierać żadnego z następujących znaków: \ / : * ? " &lt; &gt; |</sys:String>
+    <sys:String x:Key="Str_FD_FolderReserved">Ta nazwa jest zarezerwowana przez system Windows. Wybierz inną.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTrailing">Nazwa folderu nie może kończyć się kropką ani spacją.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTooLong">Ta nazwa jest zbyt długa. Użyj najwyżej 255 znaków.</sys:String>
+    <sys:String x:Key="Str_FD_FolderExists">Folder lub plik o takiej nazwie już tu istnieje.</sys:String>
+    <sys:String x:Key="Str_FD_FolderFailed">Nie udało się utworzyć folderu:</sys:String>
 </ResourceDictionary>

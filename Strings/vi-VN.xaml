@@ -688,4 +688,13 @@ Cài đặt của bạn sẽ không bị xóa.</sys:String>
     <sys:String x:Key="Str_History_Show">Hiện</sys:String>
     <sys:String x:Key="Str_History_ThisLocation">Địa điểm này</sys:String>
     <sys:String x:Key="Str_History_AllShort">Tất cả địa điểm</sys:String>
+    <sys:String x:Key="Str_TT_NewFolder">Thư mục mới (Ctrl+Shift+N)</sys:String>
+    <sys:String x:Key="Str_FD_NewFolder">Thư mục mới</sys:String>
+    <sys:String x:Key="Str_FD_FolderEmpty">Hãy nhập tên cho thư mục.</sys:String>
+    <sys:String x:Key="Str_FD_FolderInvalid">Tên thư mục không được chứa bất kỳ ký tự nào sau đây: \ / : * ? " &lt; &gt; |</sys:String>
+    <sys:String x:Key="Str_FD_FolderReserved">Windows đã dành riêng tên này. Hãy chọn tên khác.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTrailing">Tên thư mục không được kết thúc bằng dấu chấm hoặc dấu cách.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTooLong">Tên này quá dài. Hãy dùng tối đa 255 ký tự.</sys:String>
+    <sys:String x:Key="Str_FD_FolderExists">Ở đây đã có thư mục hoặc tệp với tên này.</sys:String>
+    <sys:String x:Key="Str_FD_FolderFailed">Không thể tạo thư mục:</sys:String>
 </ResourceDictionary>

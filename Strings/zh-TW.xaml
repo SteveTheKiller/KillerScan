@@ -707,4 +707,13 @@
     <sys:String x:Key="Str_History_Show">顯示</sys:String>
     <sys:String x:Key="Str_History_ThisLocation">此站點</sys:String>
     <sys:String x:Key="Str_History_AllShort">所有站點</sys:String>
+    <sys:String x:Key="Str_TT_NewFolder">新增資料夾 (Ctrl+Shift+N)</sys:String>
+    <sys:String x:Key="Str_FD_NewFolder">新增資料夾</sys:String>
+    <sys:String x:Key="Str_FD_FolderEmpty">請輸入資料夾名稱。</sys:String>
+    <sys:String x:Key="Str_FD_FolderInvalid">資料夾名稱不能包含下列任何字元：\ / : * ? " &lt; &gt; |</sys:String>
+    <sys:String x:Key="Str_FD_FolderReserved">該名稱是 Windows 保留名稱。請選擇其他名稱。</sys:String>
+    <sys:String x:Key="Str_FD_FolderTrailing">資料夾名稱不能以句點或空格結尾。</sys:String>
+    <sys:String x:Key="Str_FD_FolderTooLong">該名稱太長。請使用不超過 255 個字元的名稱。</sys:String>
+    <sys:String x:Key="Str_FD_FolderExists">此處已有同名的資料夾或檔案。</sys:String>
+    <sys:String x:Key="Str_FD_FolderFailed">無法建立資料夾：</sys:String>
 </ResourceDictionary>

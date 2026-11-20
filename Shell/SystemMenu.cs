@@ -211,7 +211,7 @@ namespace KillerScan.Shell
                     VerticalAlignment = VerticalAlignment.Center,
                 };
                 ico.SetResourceReference(TextBlock.ForegroundProperty,
-                                         danger ? "DangerRed" : "MutedTextBrush");
+                                         danger ? "MenuDangerBrush" : "MutedTextBrush");
                 mi.Icon = ico;
 
                 if (accessKeys)

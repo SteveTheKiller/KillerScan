@@ -684,4 +684,13 @@ Tvoje nastavitve bodo ohranjene.</sys:String>
     <sys:String x:Key="Str_History_Show">Prikaži</sys:String>
     <sys:String x:Key="Str_History_ThisLocation">Ta Lokacija</sys:String>
     <sys:String x:Key="Str_History_AllShort">Vse Lokacije</sys:String>
+    <sys:String x:Key="Str_TT_NewFolder">Nova mapa (Ctrl+Shift+N)</sys:String>
+    <sys:String x:Key="Str_FD_NewFolder">Nova mapa</sys:String>
+    <sys:String x:Key="Str_FD_FolderEmpty">Vnesite ime mape.</sys:String>
+    <sys:String x:Key="Str_FD_FolderInvalid">Ime mape ne sme vsebovati nobenega od teh znakov: \ / : * ? " &lt; &gt; |</sys:String>
+    <sys:String x:Key="Str_FD_FolderReserved">To ime je v sistemu Windows rezervirano. Izberite drugo.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTrailing">Ime mape se ne sme končati s piko ali presledkom.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTooLong">To ime je predolgo. Uporabite največ 255 znakov.</sys:String>
+    <sys:String x:Key="Str_FD_FolderExists">Mapa ali datoteka s tem imenom tu že obstaja.</sys:String>
+    <sys:String x:Key="Str_FD_FolderFailed">Mape ni bilo mogoče ustvariti:</sys:String>
 </ResourceDictionary>

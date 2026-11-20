@@ -56,6 +56,13 @@ namespace KillerScan
             Controls.AltDrag.Register();   // Alt+drag moves any window (Controls/AltDrag.cs)
             Services.AppTheme.Configure();
             base.OnStartup(e);
+            // The motif cache builder: a windowless child the main window starts at idle priority
+            // (Controls/ThemeMotif.cs). It runs first, so the child never opens a window or a prompt.
+            if (Controls.ThemeMotif.TryRunCacheBuilder(e.Args, Services.AppInfo.DisplayName) is int builderExit)
+            {
+                Shutdown(builderExit);
+                return;
+            }
             if (e.Args.Length > 0 && string.Equals(e.Args[0], "/apply-verified-update", StringComparison.OrdinalIgnoreCase))
             {
                 Shutdown(Services.TrustedUpdate.Apply(e.Args));
@@ -161,6 +168,9 @@ namespace KillerScan
             ShutdownMode = ShutdownMode.OnLastWindowClose;
             MainWindow = new Shell.MainWindow(uiScanTarget, startUiScan);
             MainWindow.Show();
+            // Fills the motif disk cache in the background so a first switch to Trash Polka decodes
+            // instead of rendering.
+            Controls.ThemeMotif.PrewarmWhenIdle(MainWindow);
         }
 
         // ============================================================

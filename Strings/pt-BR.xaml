@@ -749,4 +749,13 @@ Suas configurações não serão removidas.</sys:String>
     <sys:String x:Key="Str_History_Show">Mostrar</sys:String>
     <sys:String x:Key="Str_History_ThisLocation">Este Local</sys:String>
     <sys:String x:Key="Str_History_AllShort">Todos os Locais</sys:String>
+    <sys:String x:Key="Str_TT_NewFolder">Nova pasta (Ctrl+Shift+N)</sys:String>
+    <sys:String x:Key="Str_FD_NewFolder">Nova pasta</sys:String>
+    <sys:String x:Key="Str_FD_FolderEmpty">Digite um nome para a pasta.</sys:String>
+    <sys:String x:Key="Str_FD_FolderInvalid">O nome de uma pasta não pode conter nenhum destes caracteres: \ / : * ? " &lt; &gt; |</sys:String>
+    <sys:String x:Key="Str_FD_FolderReserved">O Windows reserva esse nome. Escolha outro.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTrailing">O nome de uma pasta não pode terminar com ponto ou espaço.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTooLong">Esse nome é muito longo. Use no máximo 255 caracteres.</sys:String>
+    <sys:String x:Key="Str_FD_FolderExists">Já existe uma pasta ou um arquivo com esse nome aqui.</sys:String>
+    <sys:String x:Key="Str_FD_FolderFailed">Não foi possível criar a pasta:</sys:String>
 </ResourceDictionary>

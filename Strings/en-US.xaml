@@ -751,4 +751,13 @@ Your settings will not be removed.</sys:String>
     <sys:String x:Key="Str_History_Show">Show</sys:String>
     <sys:String x:Key="Str_History_ThisLocation">This Location</sys:String>
     <sys:String x:Key="Str_History_AllShort">All Locations</sys:String>
+    <sys:String x:Key="Str_TT_NewFolder">New folder (Ctrl+Shift+N)</sys:String>
+    <sys:String x:Key="Str_FD_NewFolder">New folder</sys:String>
+    <sys:String x:Key="Str_FD_FolderEmpty">Type a name for the folder.</sys:String>
+    <sys:String x:Key="Str_FD_FolderInvalid">A folder name can't contain any of these characters: \ / : * ? " &lt; &gt; |</sys:String>
+    <sys:String x:Key="Str_FD_FolderReserved">Windows reserves that name. Choose another one.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTrailing">A folder name can't end with a period or a space.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTooLong">That name is too long. Use 255 characters or fewer.</sys:String>
+    <sys:String x:Key="Str_FD_FolderExists">There's already a folder or file with that name here.</sys:String>
+    <sys:String x:Key="Str_FD_FolderFailed">The folder couldn't be created:</sys:String>
 </ResourceDictionary>

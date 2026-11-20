@@ -723,4 +723,13 @@ A beállítások nem törlődnek.</sys:String>
     <sys:String x:Key="Str_History_Show">Mutat</sys:String>
     <sys:String x:Key="Str_History_ThisLocation">Ez a Helyszín</sys:String>
     <sys:String x:Key="Str_History_AllShort">Összes Helyszín</sys:String>
+    <sys:String x:Key="Str_TT_NewFolder">Új mappa (Ctrl+Shift+N)</sys:String>
+    <sys:String x:Key="Str_FD_NewFolder">Új mappa</sys:String>
+    <sys:String x:Key="Str_FD_FolderEmpty">Adjon nevet a mappának.</sys:String>
+    <sys:String x:Key="Str_FD_FolderInvalid">A mappa neve nem tartalmazhatja a következő karakterek egyikét sem: \ / : * ? " &lt; &gt; |</sys:String>
+    <sys:String x:Key="Str_FD_FolderReserved">Ezt a nevet a Windows fenntartja. Válasszon másikat.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTrailing">A mappa neve nem végződhet ponttal vagy szóközzel.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTooLong">Ez a név túl hosszú. Legfeljebb 255 karaktert használjon.</sys:String>
+    <sys:String x:Key="Str_FD_FolderExists">Itt már van ilyen nevű mappa vagy fájl.</sys:String>
+    <sys:String x:Key="Str_FD_FolderFailed">A mappát nem sikerült létrehozni:</sys:String>
 </ResourceDictionary>

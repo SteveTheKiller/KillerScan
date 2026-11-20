@@ -6,7 +6,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [1.9.6] - Unreleased
 
-1.9.6 adds the Trash Polka theme, turns the right-click and settings menus into cards and updates the JSON library in the app and engine.
+1.9.6 adds the Trash Polka theme and a New folder button in the file picker, turns the right-click and settings menus into cards and updates the JSON library in the app and engine.
 
 ### Fixed
 
@@ -29,10 +29,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The copyright at the right end of the footer ends 8 px before the corner grip, the same gap in every Killer app.
 - On 98SE, sliders and drop-down lists look like the Windows 98 originals: a sunken channel with a raised gray thumb, and a white field with a raised drop button.
 - Column headers show an accent edge when they have keyboard focus.
+- Menu text uses the full text color in Dark, Black, Light and Trash Polka, and the Close entry in the window menu stays a readable red on Light and 98SE.
+- Menus, cards and pickers keep an even 8 px edge, and card buttons show their keyboard shortcut on a second line.
+- The title bar's file name and the monospaced text use the fallback faces for the chosen language, so Chinese, Japanese and other scripts draw in a proper face.
+- On 98SE, the caption Close button draws the Windows 98 pixel X, and a checked card button shows white text.
 
 ### Added
 
-- Trash Polka, a new theme under 98SE: black with a tattoo-style ink background in your accent color, from eight accents with Blood red as the default. Under a Windows high contrast theme the ink and the tab shade step aside for the system colors.
+- Trash Polka, a new theme under 98SE: black with a tattoo-style ink background in your accent color, from eight accents with Blood red as the default. Under a Windows high contrast theme the ink and the tab shade step aside for the system colors. The ink is saved to disk and prepared in the background shortly after KillerScan starts, so switching to Trash Polka is quick, and its memory is released when you pick another theme.
+- The file picker has a New folder button (Ctrl+Shift+N). It checks the name first and says what is wrong with it before anything is created.
 
 ## [1.9.5] - 2026-11-09
 

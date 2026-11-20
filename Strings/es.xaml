@@ -707,4 +707,13 @@ Su configuración no se eliminará.</sys:String>
     <sys:String x:Key="Str_History_Show">Mostrar</sys:String>
     <sys:String x:Key="Str_History_ThisLocation">Esta Ubicación</sys:String>
     <sys:String x:Key="Str_History_AllShort">Todas las Ubicaciones</sys:String>
+    <sys:String x:Key="Str_TT_NewFolder">Nueva carpeta (Ctrl+Mayús+N)</sys:String>
+    <sys:String x:Key="Str_FD_NewFolder">Nueva carpeta</sys:String>
+    <sys:String x:Key="Str_FD_FolderEmpty">Escribe un nombre para la carpeta.</sys:String>
+    <sys:String x:Key="Str_FD_FolderInvalid">El nombre de una carpeta no puede contener ninguno de estos caracteres: \ / : * ? " &lt; &gt; |</sys:String>
+    <sys:String x:Key="Str_FD_FolderReserved">Windows reserva ese nombre. Elige otro.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTrailing">El nombre de una carpeta no puede terminar en un punto ni en un espacio.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTooLong">Ese nombre es demasiado largo. Usa 255 caracteres como máximo.</sys:String>
+    <sys:String x:Key="Str_FD_FolderExists">Aquí ya hay una carpeta o un archivo con ese nombre.</sys:String>
+    <sys:String x:Key="Str_FD_FolderFailed">No se pudo crear la carpeta:</sys:String>
 </ResourceDictionary>

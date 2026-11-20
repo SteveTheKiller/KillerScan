@@ -6,7 +6,10 @@
     <!-- Trash Polka: Dark's neutral grays and rounded corners, with the tattoo motif painted by
          Controls/ThemeMotif.cs (ThemeMotif = true). The base bakes the default Blood (Red) accent;
          Themes/Accents/TrashPolka holds the other seven. -->
-    <SolidColorBrush x:Key="TextFieldBrush" Color="#101010" po:Freeze="True"/>
+    <!-- Text fields are ink black (Steve, 2026-11-17). The closed dropdown face stays the
+         #101010 it mirrored from the field before, so only the text boxes change. -->
+    <SolidColorBrush x:Key="TextFieldBrush" Color="#000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ComboFieldBrush" Color="#101010" po:Freeze="True"/>
     <sys:Double x:Key="GrainOpacity">0.24</sys:Double>
     <sys:Double x:Key="IconShadowOpacity">0.9</sys:Double>
 
@@ -35,10 +38,10 @@
     <SolidColorBrush x:Key="OkBrush"             Color="#3fb950" po:Freeze="True"/>
     <SolidColorBrush x:Key="PaneBorderBrush"     Color="#555555" po:Freeze="True"/>
 
-    <SolidColorBrush x:Key="TextBrush"           Color="#e0e0e0" po:Freeze="True"/>
-    <SolidColorBrush x:Key="MutedTextBrush"      Color="#a3a3a3" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TextBrush"           Color="#f2f2f2" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MutedTextBrush"      Color="#bdbdbd" po:Freeze="True"/>
     <SolidColorBrush x:Key="ChromeTextBrush"     Color="#b6b6b6" po:Freeze="True"/>
-    <SolidColorBrush x:Key="DimTextBrush"        Color="#858585" po:Freeze="True"/>
+    <SolidColorBrush x:Key="DimTextBrush"        Color="#9e9e9e" po:Freeze="True"/>
 
     <SolidColorBrush x:Key="RowAltBrush"         Color="#18FFFFFF" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowHoverBrush"       Color="#404040" po:Freeze="True"/>
@@ -51,7 +54,7 @@
     <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#121212" po:Freeze="True"/>
     <SolidColorBrush x:Key="TerminalBackgroundBrush" Color="#3a3a3a" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuBorderBrush"     Color="#404040" po:Freeze="True"/>
-    <SolidColorBrush x:Key="MenuTextBrush"       Color="#a3a3a3" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuTextBrush"       Color="#f2f2f2" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuHoverBrush"      Color="#404040" po:Freeze="True"/>
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#4A1218" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbBrush"    Color="#88D7263D" po:Freeze="True"/>
@@ -99,6 +102,9 @@
     <SolidColorBrush x:Key="SelectionAccent"     Color="#D7263D" po:Freeze="True"/>
     <sys:Double x:Key="PaneShadowOpacity">0.6</sys:Double>
     <SolidColorBrush x:Key="SurfaceHoverBrush"   Color="#FF404040" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ButtonFaceBrush"      Color="#00000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ButtonHoverFaceBrush" Color="#FF5A5A5A" po:Freeze="True"/>
+    <SolidColorBrush x:Key="WellFillBrush"        Color="#FF000000" po:Freeze="True"/>
     <sys:Double x:Key="TitleBarHeight">32</sys:Double>
     <sys:Double x:Key="BarShadowOpacity">0.38</sys:Double>
     <SolidColorBrush x:Key="DialogTitleBarBrush" Color="Transparent" po:Freeze="True"/>

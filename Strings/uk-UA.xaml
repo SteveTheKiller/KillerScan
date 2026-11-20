@@ -749,4 +749,13 @@
     <sys:String x:Key="Str_History_Show">Показати</sys:String>
     <sys:String x:Key="Str_History_ThisLocation">Ця локація</sys:String>
     <sys:String x:Key="Str_History_AllShort">Усі локації</sys:String>
+    <sys:String x:Key="Str_TT_NewFolder">Нова папка (Ctrl+Shift+N)</sys:String>
+    <sys:String x:Key="Str_FD_NewFolder">Нова папка</sys:String>
+    <sys:String x:Key="Str_FD_FolderEmpty">Введіть назву папки.</sys:String>
+    <sys:String x:Key="Str_FD_FolderInvalid">Назва папки не може містити жодного з таких символів: \ / : * ? " &lt; &gt; |</sys:String>
+    <sys:String x:Key="Str_FD_FolderReserved">Цю назву зарезервовано в Windows. Виберіть іншу.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTrailing">Назва папки не може закінчуватися крапкою або пробілом.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTooLong">Ця назва задовга. Використовуйте не більше 255 символів.</sys:String>
+    <sys:String x:Key="Str_FD_FolderExists">Тут уже є папка або файл із такою назвою.</sys:String>
+    <sys:String x:Key="Str_FD_FolderFailed">Не вдалося створити папку:</sys:String>
 </ResourceDictionary>

@@ -708,4 +708,13 @@ Ihre Einstellungen bleiben erhalten.</sys:String>
     <sys:String x:Key="Str_History_Show">Zeigen</sys:String>
     <sys:String x:Key="Str_History_ThisLocation">Dieser Standort</sys:String>
     <sys:String x:Key="Str_History_AllShort">Alle Standorte</sys:String>
+    <sys:String x:Key="Str_TT_NewFolder">Neuer Ordner (Strg+Umschalt+N)</sys:String>
+    <sys:String x:Key="Str_FD_NewFolder">Neuer Ordner</sys:String>
+    <sys:String x:Key="Str_FD_FolderEmpty">Geben Sie einen Namen für den Ordner ein.</sys:String>
+    <sys:String x:Key="Str_FD_FolderInvalid">Ein Ordnername darf keines der folgenden Zeichen enthalten: \ / : * ? " &lt; &gt; |</sys:String>
+    <sys:String x:Key="Str_FD_FolderReserved">Dieser Name ist unter Windows reserviert. Wählen Sie einen anderen.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTrailing">Ein Ordnername darf nicht mit einem Punkt oder einem Leerzeichen enden.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTooLong">Dieser Name ist zu lang. Verwenden Sie höchstens 255 Zeichen.</sys:String>
+    <sys:String x:Key="Str_FD_FolderExists">Hier gibt es bereits einen Ordner oder eine Datei mit diesem Namen.</sys:String>
+    <sys:String x:Key="Str_FD_FolderFailed">Der Ordner konnte nicht erstellt werden:</sys:String>
 </ResourceDictionary>

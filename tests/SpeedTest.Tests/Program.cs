@@ -77,6 +77,7 @@ internal static class Program
                 await Reject(Mode.NoAck, SpeedTestFailureKind.TransferFailed);
                 Console.WriteLine("PASS: empty download and unacknowledged upload rejection."); return 0;
             }
+            if (args.SequenceEqual(new[] { "--kit-shims" })) { Net48KitShimTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--terminal-memory" })) { TerminalMemoryTests.Run(); return 0; }
             if (args.Length == 2 && args[0] == "--terminal-memory-child") { TerminalMemoryTests.Child(args[1]); return 0; }
             if (args.SequenceEqual(new[] { "--terminal-unicode" })) { TerminalUnicodeTests.Run(); return 0; }

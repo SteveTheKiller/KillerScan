@@ -733,4 +733,13 @@
     <sys:String x:Key="Str_History_Show">Показать</sys:String>
     <sys:String x:Key="Str_History_ThisLocation">Этот Объект</sys:String>
     <sys:String x:Key="Str_History_AllShort">Все Объекты</sys:String>
+    <sys:String x:Key="Str_TT_NewFolder">Новая папка (Ctrl+Shift+N)</sys:String>
+    <sys:String x:Key="Str_FD_NewFolder">Новая папка</sys:String>
+    <sys:String x:Key="Str_FD_FolderEmpty">Введите имя папки.</sys:String>
+    <sys:String x:Key="Str_FD_FolderInvalid">Имя папки не может содержать ни один из следующих символов: \ / : * ? " &lt; &gt; |</sys:String>
+    <sys:String x:Key="Str_FD_FolderReserved">Это имя зарезервировано в Windows. Выберите другое.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTrailing">Имя папки не может заканчиваться точкой или пробелом.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTooLong">Это имя слишком длинное. Используйте не более 255 символов.</sys:String>
+    <sys:String x:Key="Str_FD_FolderExists">Здесь уже есть папка или файл с таким именем.</sys:String>
+    <sys:String x:Key="Str_FD_FolderFailed">Не удалось создать папку:</sys:String>
 </ResourceDictionary>

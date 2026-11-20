@@ -718,4 +718,13 @@
     <sys:String x:Key="Str_History_Show">表示</sys:String>
     <sys:String x:Key="Str_History_ThisLocation">このロケーション</sys:String>
     <sys:String x:Key="Str_History_AllShort">すべてのロケーション</sys:String>
+    <sys:String x:Key="Str_TT_NewFolder">新しいフォルダー (Ctrl+Shift+N)</sys:String>
+    <sys:String x:Key="Str_FD_NewFolder">新しいフォルダー</sys:String>
+    <sys:String x:Key="Str_FD_FolderEmpty">フォルダーの名前を入力してください。</sys:String>
+    <sys:String x:Key="Str_FD_FolderInvalid">フォルダー名には次の文字を使用できません: \ / : * ? " &lt; &gt; |</sys:String>
+    <sys:String x:Key="Str_FD_FolderReserved">この名前は Windows で予約されています。別の名前を指定してください。</sys:String>
+    <sys:String x:Key="Str_FD_FolderTrailing">フォルダー名の末尾にピリオドまたはスペースは使用できません。</sys:String>
+    <sys:String x:Key="Str_FD_FolderTooLong">名前が長すぎます。255 文字以内にしてください。</sys:String>
+    <sys:String x:Key="Str_FD_FolderExists">同じ名前のフォルダーまたはファイルが既にあります。</sys:String>
+    <sys:String x:Key="Str_FD_FolderFailed">フォルダーを作成できませんでした:</sys:String>
 </ResourceDictionary>

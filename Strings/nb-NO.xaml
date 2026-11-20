@@ -749,4 +749,13 @@ Innstillingene dine fjernes ikke.</sys:String>
     <sys:String x:Key="Str_History_Show">Vis</sys:String>
     <sys:String x:Key="Str_History_ThisLocation">Denne Lokasjonen</sys:String>
     <sys:String x:Key="Str_History_AllShort">Alle Lokasjoner</sys:String>
+    <sys:String x:Key="Str_TT_NewFolder">Ny mappe (Ctrl+Skift+N)</sys:String>
+    <sys:String x:Key="Str_FD_NewFolder">Ny mappe</sys:String>
+    <sys:String x:Key="Str_FD_FolderEmpty">Skriv inn et navn på mappen.</sys:String>
+    <sys:String x:Key="Str_FD_FolderInvalid">Et mappenavn kan ikke inneholde noen av disse tegnene: \ / : * ? " &lt; &gt; |</sys:String>
+    <sys:String x:Key="Str_FD_FolderReserved">Windows reserverer dette navnet. Velg et annet.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTrailing">Et mappenavn kan ikke slutte med punktum eller mellomrom.</sys:String>
+    <sys:String x:Key="Str_FD_FolderTooLong">Dette navnet er for langt. Bruk maksimalt 255 tegn.</sys:String>
+    <sys:String x:Key="Str_FD_FolderExists">Det finnes allerede en mappe eller fil med dette navnet her.</sys:String>
+    <sys:String x:Key="Str_FD_FolderFailed">Mappen kunne ikke opprettes:</sys:String>
 </ResourceDictionary>

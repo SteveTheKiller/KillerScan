@@ -707,4 +707,13 @@
     <sys:String x:Key="Str_History_Show">显示</sys:String>
     <sys:String x:Key="Str_History_ThisLocation">此站点</sys:String>
     <sys:String x:Key="Str_History_AllShort">所有站点</sys:String>
+    <sys:String x:Key="Str_TT_NewFolder">新建文件夹 (Ctrl+Shift+N)</sys:String>
+    <sys:String x:Key="Str_FD_NewFolder">新建文件夹</sys:String>
+    <sys:String x:Key="Str_FD_FolderEmpty">请输入文件夹名称。</sys:String>
+    <sys:String x:Key="Str_FD_FolderInvalid">文件夹名称不能包含以下任何字符：\ / : * ? " &lt; &gt; |</sys:String>
+    <sys:String x:Key="Str_FD_FolderReserved">该名称是 Windows 保留名称。请选择其他名称。</sys:String>
+    <sys:String x:Key="Str_FD_FolderTrailing">文件夹名称不能以句点或空格结尾。</sys:String>
+    <sys:String x:Key="Str_FD_FolderTooLong">该名称太长。请使用不超过 255 个字符的名称。</sys:String>
+    <sys:String x:Key="Str_FD_FolderExists">此处已存在同名的文件夹或文件。</sys:String>
+    <sys:String x:Key="Str_FD_FolderFailed">无法创建文件夹：</sys:String>
 </ResourceDictionary>

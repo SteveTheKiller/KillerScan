@@ -927,7 +927,8 @@
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
         <Setter Property="FontFamily" Value="{DynamicResource MenuFontFamily}"/>
         <Setter Property="FontSize" Value="{DynamicResource MenuFontSize}"/>
-        <Setter Property="Padding" Value="0,4"/>
+        <!-- 7 plus the 1px border: a row's hover sits 8px from every edge of the menu (family rule). -->
+        <Setter Property="Padding" Value="7"/>
         <Setter Property="HasDropShadow" Value="False"/>
         <!-- Compensates the shadow halo so a menu lands where it did when that halo was 5 (this
              template) or 6 (FlyoutCard). Those two differ by a pixel, so the rail flyouts sit
@@ -978,12 +979,12 @@
                                      popup align as real columns (see the MenuItem template's SharedSizeGroup
                                      names) instead of each row sizing its shortcut text independently. -->
                                 <!-- A menu taller than the screen scrolls instead of cutting off its last items (KillerShot menu-overflow). -->
+                                <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}"
+                                        CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}"/>
                                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" CanContentScroll="False">
                                     <StackPanel IsItemsHost="True" Margin="{TemplateBinding Padding}" KeyboardNavigation.DirectionalNavigation="Cycle"
                                                 Grid.IsSharedSizeScope="True"/>
                                 </ScrollViewer>
-                                <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}"
-                                        CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}"/>
                             </Grid>
                         </Border>
                         <Border IsHitTestVisible="False" Margin="{DynamicResource MenuBevelInnerMargin}" BorderBrush="{DynamicResource MenuBevelLightBrush}" BorderThickness="{DynamicResource MenuBevelLightThickness}"/>
@@ -1308,14 +1309,13 @@
                          ordinary theme, so nothing changes there. -->
                     <Border x:Name="bd" Background="Transparent"
                             CornerRadius="3"
-                            Margin="-8,0,2,0" Padding="10,4,10,4">
+                            Margin="-8,0,2,0" Padding="4,4,10,4">
                         <!-- DockPanel (not a horizontal StackPanel) so the content fills the row
                              width, letting a right-aligned column (e.g. language codes) reach the
                              right edge. -->
                         <DockPanel LastChildFill="True" Background="Transparent">
                             <!-- Centered on the label's capitals for whatever font the theme uses (Controls/CapCenterMargin.cs). A fixed nudge only fits one face. -->
-                            <Grid Width="16" Height="16" VerticalAlignment="Center" DockPanel.Dock="Left">
-                                <Grid.Margin><MultiBinding Converter="{x:Static kl:CapCenterMargin.Instance}" ConverterParameter="0,0,8,0"><Binding RelativeSource="{RelativeSource TemplatedParent}" Path="FontFamily"/><Binding RelativeSource="{RelativeSource TemplatedParent}" Path="FontSize"/></MultiBinding></Grid.Margin>
+                            <Grid Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center" DockPanel.Dock="Left">
                                 <Ellipse Width="14" Height="14" Fill="{DynamicResource RadioWellBrush}"/>
                                 <Ellipse x:Name="ring" Width="14" Height="14"
                                          Stroke="{DynamicResource DimTextBrush}" StrokeThickness="1.5"
@@ -1323,7 +1323,7 @@
                                 <Ellipse x:Name="dot" Width="6" Height="6"
                                          Fill="{DynamicResource PrimaryBrush}" Visibility="Collapsed"/>
                             </Grid>
-                            <ContentPresenter VerticalAlignment="Center"/>
+                            <ContentPresenter VerticalAlignment="Center"><ContentPresenter.Margin><MultiBinding Converter="{x:Static kl:CapCenterMargin.Lift}" ConverterParameter="0"><Binding RelativeSource="{RelativeSource TemplatedParent}" Path="FontFamily"/><Binding RelativeSource="{RelativeSource TemplatedParent}" Path="FontSize"/></MultiBinding></ContentPresenter.Margin></ContentPresenter>
                         </DockPanel>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -1370,11 +1370,10 @@
                 <ControlTemplate TargetType="CheckBox">
                     <Border x:Name="bd" Background="Transparent"
                             CornerRadius="3"
-                            Margin="-8,0,2,0" Padding="10,4,10,4">
+                            Margin="-8,0,2,0" Padding="4,4,10,4">
                         <DockPanel LastChildFill="True" Background="Transparent">
                             <!-- Centered on the label's capitals for whatever font the theme uses (Controls/CapCenterMargin.cs). A fixed nudge only fits one face. -->
-                            <Grid Width="16" Height="16" VerticalAlignment="Center" DockPanel.Dock="Left">
-                                <Grid.Margin><MultiBinding Converter="{x:Static kl:CapCenterMargin.Instance}" ConverterParameter="0,0,8,0"><Binding RelativeSource="{RelativeSource TemplatedParent}" Path="FontFamily"/><Binding RelativeSource="{RelativeSource TemplatedParent}" Path="FontSize"/></MultiBinding></Grid.Margin>
+                            <Grid Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center" DockPanel.Dock="Left">
                                 <Border CornerRadius="{DynamicResource ControlCornerRadius}" Width="14" Height="14" Background="{DynamicResource RadioWellBrush}"/>
                                 <Border CornerRadius="{DynamicResource ControlCornerRadius}" x:Name="ring" Width="14" Height="14"
                                          BorderBrush="{DynamicResource DimTextBrush}" BorderThickness="1"
@@ -1383,7 +1382,7 @@
 <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="10" x:Name="dot"
                                          Foreground="{DynamicResource PrimaryBrush}" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Grid>
-                            <ContentPresenter VerticalAlignment="Center"/>
+                            <ContentPresenter VerticalAlignment="Center"><ContentPresenter.Margin><MultiBinding Converter="{x:Static kl:CapCenterMargin.Lift}" ConverterParameter="0"><Binding RelativeSource="{RelativeSource TemplatedParent}" Path="FontFamily"/><Binding RelativeSource="{RelativeSource TemplatedParent}" Path="FontSize"/></MultiBinding></ContentPresenter.Margin></ContentPresenter>
                         </DockPanel>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -1483,7 +1482,8 @@
     <Style x:Key="CardMenu" TargetType="ContextMenu" BasedOn="{StaticResource {x:Type ContextMenu}}">
         <Setter Property="MinWidth" Value="280"/>
         <Setter Property="MaxWidth" Value="404"/>
-        <Setter Property="Padding" Value="6"/>
+        <!-- 7 plus the 1px border: a tile's hover sits 8px from every edge of the card (family rule). -->
+        <Setter Property="Padding" Value="7"/>
         <Setter Property="KeyboardNavigation.TabNavigation" Value="Cycle"/>
     </Style>
 
@@ -1536,7 +1536,13 @@
                                        HorizontalAlignment="Center" Foreground="{DynamicResource PrimaryBrush}"/>
                             <TextBlock x:Name="Caption" Text="{TemplateBinding Tag}" FontSize="11" Margin="0,5,0,0"
                                        HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"
-                                       TextTrimming="CharacterEllipsis" MaxHeight="30"/>
+                                       TextTrimming="CharacterEllipsis" MaxHeight="30" MaxWidth="80"/>
+                            <!-- The shortcut on its own line, in brackets. AcceleratorKey carries it, so a screen reader
+                                 announces the same keys, and Show Shortcuts in Menus hides the line. A long chord splits
+                                 onto two lines (TileKeysConverter) instead of widening the tile. -->
+                            <TextBlock x:Name="Shortcut" FontSize="10" Margin="0,2,0,0" HorizontalAlignment="Center"
+                                       TextAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource DimTextBrush}"
+                                       Text="{Binding (AutomationProperties.AcceleratorKey), RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static input:TileKeysConverter.Instance}}"/>
                         </StackPanel>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -1544,7 +1550,14 @@
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource MenuHoverBrush}"/>
                             <Setter TargetName="Glyph" Property="Foreground" Value="{DynamicResource MenuHoverTextBrush}"/>
                             <Setter TargetName="Caption" Property="Foreground" Value="{DynamicResource MenuHoverTextBrush}"/>
+                            <Setter TargetName="Shortcut" Property="Foreground" Value="{DynamicResource MenuHoverTextBrush}"/>
                         </Trigger>
+                        <Trigger Property="AutomationProperties.AcceleratorKey" Value="">
+                            <Setter TargetName="Shortcut" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                        <DataTrigger Binding="{Binding Source={x:Static kl:ShortcutHints.Current}, Path=Enabled}" Value="False">
+                            <Setter TargetName="Shortcut" Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
                             <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
                         </Trigger>
@@ -1842,8 +1855,16 @@
                              itself on a flat theme, where the window is square too. -->
                         <Border x:Name="Bd" Background="{DynamicResource CaptionButtonBrush}"
                                 CornerRadius="{DynamicResource CaptionCloseCornerRadius}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              Visibility="{DynamicResource CaptionFontGlyphVisibility}"/>
                         </Border>
+                        <!-- Win98's close X is pixel art, square 2px steps, not a smoothed diagonal. This is
+                             its 8x7 glyph grown to 10x9 for the 20x18 button, drawn aliased so every pixel is hard. -->
+                        <Path Width="10" Height="9" HorizontalAlignment="Center" VerticalAlignment="Center"
+                              Margin="0,0,0,1" Fill="{TemplateBinding Foreground}" IsHitTestVisible="False"
+                              SnapsToDevicePixels="True" RenderOptions.EdgeMode="Aliased"
+                              Visibility="{DynamicResource CaptionDrawnGlyphVisibility}"
+                              Data="M0,0h2v1h-2z M8,0h2v1h-2z M1,1h2v1h-2z M7,1h2v1h-2z M2,2h2v1h-2z M6,2h2v1h-2z M3,3h4v1h-4z M4,4h2v1h-2z M3,5h4v1h-4z M2,6h2v1h-2z M6,6h2v1h-2z M1,7h2v1h-2z M7,7h2v1h-2z M0,8h2v1h-2z M8,8h2v1h-2z"/>
                         <Border x:Name="bevelLight" IsHitTestVisible="False"
                                 BorderBrush="{DynamicResource BevelLightBrush}" BorderThickness="{DynamicResource BevelLightThickness}"/>
                         <Border x:Name="bevelDark" IsHitTestVisible="False" Margin="{DynamicResource BevelInnerMargin}"
@@ -1938,7 +1959,14 @@
                         <TextBlock kl:GlyphInk.Center="True" Text="{TemplateBinding Content}"
                                    FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"
                                    FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}"
-                                   TextOptions.TextFormattingMode="Ideal" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                   TextOptions.TextFormattingMode="Ideal" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Visibility="{DynamicResource CaptionFontGlyphVisibility}"/>
+                        <!-- The same pixel X as ChromeCloseButton on a flat theme. -->
+                        <Path Width="10" Height="9" HorizontalAlignment="Center" VerticalAlignment="Center"
+                              Margin="0,0,0,1" Fill="{TemplateBinding Foreground}" IsHitTestVisible="False"
+                              SnapsToDevicePixels="True" RenderOptions.EdgeMode="Aliased"
+                              Visibility="{DynamicResource CaptionDrawnGlyphVisibility}"
+                              Data="M0,0h2v1h-2z M8,0h2v1h-2z M1,1h2v1h-2z M7,1h2v1h-2z M2,2h2v1h-2z M6,2h2v1h-2z M3,3h4v1h-4z M4,4h2v1h-2z M3,5h4v1h-4z M2,6h2v1h-2z M6,6h2v1h-2z M1,7h2v1h-2z M7,7h2v1h-2z M0,8h2v1h-2z M8,8h2v1h-2z"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -3355,8 +3383,10 @@
                         <Popup x:Name="PART_Popup" AllowsTransparency="True"
                                IsOpen="{TemplateBinding IsDropDownOpen}" Focusable="False"
                                PopupAnimation="Fade" Placement="Bottom">
-                            <Border x:Name="PopupBd" Background="{DynamicResource PaneBrush}"
-                                    BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+                            <!-- ComboPopupBrush (the menu surface), not PaneBrush: ThemeMotif paints ComboPopupBrush with the
+                                 popup piece, so an open list under Trash Polka carries the art like a menu does. -->
+                            <Border x:Name="PopupBd" Background="{DynamicResource ComboPopupBrush}"
+                                    BorderBrush="{DynamicResource MenuBorderBrush}" BorderThickness="1"
                                     CornerRadius="{DynamicResource SmallCornerRadius}" Padding="2" Margin="0,2,6,6"
                                     MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
                                     MaxHeight="220"
@@ -3422,5 +3452,61 @@
         <Separator/>
         <MenuItem Command="ApplicationCommands.SelectAll" Header="{DynamicResource Str_Ctx_SelectAll}" Icon="&#xE8B3;"/>
     </ContextMenu>
+
+    <!-- THE dialog card chrome, defined ONCE. Every XAML dialog other than ConfirmDialog wraps its
+         content in a ContentControl with this style, with a DialogTitleBar in its first row,
+         instead of carrying its own copy of the shadow, border, bevel and grain stack. Inline
+         copies in each dialog are how the dialogs drifted apart between apps.
+         - The shadow sits on its OWN childless sibling, never on the border that holds the
+           content. A DropShadowEffect rasterises everything inside it, and the text loses
+           ClearType.
+         - PaneShadowEffect is the family pane shadow at the theme's opacity, and null on a flat
+           theme, so a dialog carries the same shadow as the main window.
+         - Halo, radius and edge come from the theme, so 98SE collapses to a flat square window
+           wearing the stacked bevel pairs and every other theme gets the rounded card.
+         - Grain sits UNDER the content, as in the main window. A list pane carries its own grain
+           overlay above its rows; a card-wide overlay would texture the edit fields.
+         - DialogContentMargin is 0 on the card themes and keeps the caption band and body inside
+           the 98SE frame.
+         - Focusable and IsTabStop are false so the wrapper never takes focus from the inputs. -->
+    <Style x:Key="DialogCard" TargetType="ContentControl">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Grid>
+                        <Border Background="{DynamicResource BackgroundBrush}"
+                                BorderBrush="{DynamicResource BackgroundBrush}"
+                                BorderThickness="{DynamicResource WindowEdgeThickness}"
+                                CornerRadius="{DynamicResource PanelCornerRadius}"
+                                Margin="{DynamicResource DialogHaloMargin}"
+                                IsHitTestVisible="False"
+                                Effect="{DynamicResource PaneShadowEffect}"/>
+                        <kui:PickerBorder Background="{DynamicResource BackgroundBrush}"
+                                BorderBrush="{DynamicResource WindowEdgeBrush}"
+                                BorderThickness="{DynamicResource WindowEdgeThickness}"
+                                CornerRadius="{DynamicResource PanelCornerRadius}"
+                                Margin="{DynamicResource DialogHaloMargin}">
+                            <Grid>
+                                <Border Panel.ZIndex="9000" IsHitTestVisible="False"
+                                        BorderBrush="{DynamicResource BevelLightBrush}" BorderThickness="{DynamicResource BevelLightThickness}"/>
+                                <Border Panel.ZIndex="9000" IsHitTestVisible="False"
+                                        BorderBrush="{DynamicResource BevelDarkBrush}" BorderThickness="{DynamicResource BevelDarkThickness}"/>
+                                <Border Panel.ZIndex="9001" IsHitTestVisible="False"
+                                        BorderBrush="{DynamicResource FrameOuterLightBrush}" BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
+                                <Border Panel.ZIndex="9001" IsHitTestVisible="False"
+                                        BorderBrush="{DynamicResource FrameOuterDarkBrush}" BorderThickness="{DynamicResource FrameOuterDarkThickness}"/>
+                                <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}"
+                                        Opacity="{DynamicResource GrainOpacity}"
+                                        Background="{DynamicResource GrainTileBrush}"/>
+                                <ContentPresenter Margin="{DynamicResource DialogContentMargin}"/>
+                            </Grid>
+                        </kui:PickerBorder>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>
