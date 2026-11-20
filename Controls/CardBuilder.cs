@@ -297,12 +297,12 @@ namespace KillerFamily.Controls
                 if (saved is not null && saved.StartsWith(Version, StringComparison.Ordinal))
                 {
                     var parts = saved[Version.Length..].Split('/');
-                    shown.AddRange(parts[0].Split('|', StringSplitOptions.RemoveEmptyEntries).Where(byKey.ContainsKey).Distinct());
-                    if (parts.Length > 1) stashed.UnionWith(parts[1].Split('|', StringSplitOptions.RemoveEmptyEntries));
+                    shown.AddRange(parts[0].Split(['|'], StringSplitOptions.RemoveEmptyEntries).Where(byKey.ContainsKey).Distinct());
+                    if (parts.Length > 1) stashed.UnionWith(parts[1].Split(['|'], StringSplitOptions.RemoveEmptyEntries));
                 }
                 else if (saved is not null && saved.StartsWith("v1:", StringComparison.Ordinal))
                 {
-                    stashed.UnionWith(saved[3..].Split('|', StringSplitOptions.RemoveEmptyEntries));
+                    stashed.UnionWith(saved[3..].Split(['|'], StringSplitOptions.RemoveEmptyEntries));
                     shown.AddRange(all.Select(t => t.Key).Where(k => !stashed.Contains(k)));
                 }
                 else return [.. defaultOrder];
@@ -457,7 +457,7 @@ namespace KillerFamily.Controls
             {
                 var at = new Dictionary<string, (bool, Point)>();
                 if (!editing) return at;
-                foreach (var (el, t) in owners)
+                foreach (var (el, t) in owners.Select(o => (o.Key, o.Value)))
                 {
                     bool inDrawer = drawerTiles.IsAncestorOf(el);
                     if (inDrawer && !drawer.IsOpen) continue;
@@ -473,7 +473,7 @@ namespace KillerFamily.Controls
                 root.UpdateLayout();
                 if (drawer.IsOpen) drawerClip.UpdateLayout();
                 var ease = new System.Windows.Media.Animation.CubicEase { EasingMode = System.Windows.Media.Animation.EasingMode.EaseOut };
-                foreach (var (el, t) in owners)
+                foreach (var (el, t) in owners.Select(o => (o.Key, o.Value)))
                 {
                     bool inDrawer = drawerTiles.IsAncestorOf(el);
                     if (!before.TryGetValue(t.Key, out var was) || was.InDrawer != inDrawer) continue;
@@ -651,7 +651,8 @@ namespace KillerFamily.Controls
             void Scrub(MouseEventArgs e)
             {
                 if (Bar() is not { } bar) return;
-                double f = Math.Clamp(e.GetPosition(bar).Y / Math.Max(1, bar.ActualHeight), 0, 1);
+                double f = e.GetPosition(bar).Y / Math.Max(1, bar.ActualHeight);
+                f = f < 0 ? 0 : f > 1 ? 1 : f;
                 scroller.ScrollToVerticalOffset(f * scroller.ScrollableHeight);
             }
             bool OverDrawer(MouseEventArgs e)
@@ -767,7 +768,7 @@ namespace KillerFamily.Controls
                 if (pressed is null || !Inside(gridHost, screen) || gridHost.Child is not Border { Child: Panel grid }) return view;
                 var p = grid.PointFromScreen(screen);
                 string? target = null;
-                foreach (var (el, t) in owners)
+                foreach (var (el, t) in owners.Select(o => (o.Key, o.Value)))
                     if (el is FrameworkElement fe && grid.Children.Contains(fe) && new Rect((Point)VisualTreeHelper.GetOffset(fe), fe.RenderSize).Contains(p)) { target = t.Key; break; }
                 var next = view.ToList();
                 int from = next.IndexOf(pressed.Key);

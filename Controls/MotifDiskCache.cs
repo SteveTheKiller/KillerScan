@@ -83,7 +83,7 @@ namespace KillerScan.Controls
                     file.Flush(flushToDisk: true);
                 }
                 // Another instance may have landed the same key first: its file holds the same pixels, so keep it.
-                try { File.Move(temp, path, overwrite: false); temp = null; }
+                try { File.Move(temp, path); temp = null; }
                 catch (IOException) when (File.Exists(path)) { }
             }
             catch (Exception) { }

@@ -100,7 +100,8 @@ namespace KillerScan.Controls
             internal bool Done;
         }
 
-        private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<TrashPolkaRaster.Layers, TintedPiece> RasterPieces = new();
+        // Replaced rather than cleared on release: ConditionalWeakTable.Clear is not public on net48.
+        private static System.Runtime.CompilerServices.ConditionalWeakTable<TrashPolkaRaster.Layers, TintedPiece> RasterPieces = new();
         private static readonly List<ComposeJob> Jobs = [];
 
         private static bool _releaseHooked;
@@ -124,7 +125,7 @@ namespace KillerScan.Controls
         internal static void ReleaseAll()
         {
             Pieces.Clear();
-            RasterPieces.Clear();
+            RasterPieces = new();
             TrashPolkaRaster.ReleaseAll();
             Releases++;
         }
@@ -449,7 +450,7 @@ namespace KillerScan.Controls
         /// </summary>
         internal static void PrewarmWhenIdle(Window window)
         {
-            if (_prewarmQueued || MotifDiskCache.Root is not { } root || Environment.ProcessPath is not { } exe) return;
+            if (_prewarmQueued || MotifDiskCache.Root is not { } root || CurrentExe() is not { } exe) return;
             _prewarmQueued = true;
             window.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ApplicationIdle, async () =>
             {
@@ -467,17 +468,45 @@ namespace KillerScan.Controls
                         UseShellExecute = false, CreateNoWindow = true,
                         WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden,
                     };
-                    foreach (var arg in new[] { CacheBuilderArgument, root,
+                    start.Arguments = string.Join(" ", new[] { CacheBuilderArgument, root,
                         size.Width.ToString(System.Globalization.CultureInfo.InvariantCulture),
                         size.Height.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                        dpi.ToString("R", System.Globalization.CultureInfo.InvariantCulture) })
-                        start.ArgumentList.Add(arg);
-                    using var child = System.Diagnostics.Process.Start(start);
-                    if (child is null) return;
+                        dpi.ToString("R", System.Globalization.CultureInfo.InvariantCulture) }.Select(QuoteArgument));
+                    using var child = new System.Diagnostics.Process { StartInfo = start, EnableRaisingEvents = true };
+                    var exited = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    child.Exited += (_, _) => exited.TrySetResult(true);
+                    if (!child.Start()) return;
                     try { child.PriorityClass = System.Diagnostics.ProcessPriorityClass.Idle; } catch (Exception) { }
-                    await child.WaitForExitAsync();
+                    if (child.HasExited) exited.TrySetResult(true);
+                    await exited.Task;
                 });
             });
+        }
+
+        /// <summary>The running exe's full path, or null when it cannot be read.</summary>
+        private static string? CurrentExe()
+        {
+            try { using var self = System.Diagnostics.Process.GetCurrentProcess(); return self.MainModule?.FileName; }
+            catch (Exception) { return null; }
+        }
+
+        /// <summary>One argument quoted for a Windows command line by the CommandLineToArgvW rules: a backslash run
+        /// is doubled before a quote or the closing quote, and an argument with no space, tab, newline or quote is left
+        /// bare, so the child reads back exactly what was passed.</summary>
+        internal static string QuoteArgument(string arg)
+        {
+            if (arg.Length > 0 && arg.IndexOfAny([' ', '\t', '\n', '\v', '"']) < 0) return arg;
+            var sb = new System.Text.StringBuilder("\"");
+            int slashes = 0;
+            foreach (char c in arg)
+            {
+                if (c == '\\') { slashes++; continue; }
+                sb.Append('\\', c == '"' ? slashes * 2 + 1 : slashes);
+                slashes = 0;
+                sb.Append(c);
+            }
+            sb.Append('\\', slashes * 2).Append('"');
+            return sb.ToString();
         }
 
         private static readonly int[] PrewarmSeeds = [TrashPolkaInk.WindowSeed, TrashPolkaInk.SplitSeed, TrashPolkaInk.BackgroundSeed];

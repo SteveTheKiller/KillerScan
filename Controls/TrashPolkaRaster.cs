@@ -131,7 +131,7 @@ namespace KillerScan.Controls
         /// </summary>
         internal static Task Prewarm(IReadOnlyList<LayerKey> keys)
         {
-            var done = new TaskCompletionSource();
+            var done = new TaskCompletionSource<bool>();
             var wanted = keys.Where(k => !Builds.ContainsKey(k)).ToList();
             EnsureBuilder();
             Queue.Add(() =>
@@ -156,7 +156,7 @@ namespace KillerScan.Controls
                         GC.WaitForPendingFinalizers();
                     }
                 }
-                finally { Thread.CurrentThread.Priority = priority; done.SetResult(); }
+                finally { Thread.CurrentThread.Priority = priority; done.SetResult(true); }
             });
             return done.Task;
         }
@@ -228,8 +228,8 @@ namespace KillerScan.Controls
         /// </summary>
         internal const string CacheVersion = "trashpolka-1";
 
-        private static string CacheKey(int seed, int w, int h, double scale, double dpi) => string.Create(
-            System.Globalization.CultureInfo.InvariantCulture, $"s{seed}_{w}x{h}_x{scale:0.####}_d{dpi:0.####}");
+        private static string CacheKey(int seed, int w, int h, double scale, double dpi) => FormattableString.Invariant(
+            $"s{seed}_{w}x{h}_x{scale:0.####}_d{dpi:0.####}");
 
         private static Layers Build(int seed, Size size, double scale, double dpi, out Action? save, bool probeCache = true)
         {
