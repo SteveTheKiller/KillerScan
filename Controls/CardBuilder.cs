@@ -559,6 +559,7 @@ namespace KillerFamily.Controls
             {
                 EndDrag();
                 editing = on;
+                card.SetValue(IsEditingProperty, on);
                 card.StaysOpen = true;
                 lingering = !on;
                 // The pencil opens editing; while editing it steps aside and the drawer's X is the one way out.
@@ -1008,6 +1009,12 @@ namespace KillerFamily.Controls
         /// edit mode on or off.</summary>
         internal sealed record EditDriver(Func<Point, bool> Press, Action<Point> Drag, Action<Point> Release, Func<List<string>> Order, Action<bool> Editing);
         internal static readonly DependencyProperty EditDriverProperty = DependencyProperty.RegisterAttached("EditDriver", typeof(EditDriver), typeof(CardBuilder));
+
+        /// <summary>True while a customizable card is in pencil edit mode, false as soon as Done or the X ends it, even
+        /// though the card stays open until the next click. Apps check this to hold card shortcuts while tiles are
+        /// being moved; the card's StaysOpen is not a substitute, since it stays true after editing ends.</summary>
+        public static readonly DependencyProperty IsEditingProperty = DependencyProperty.RegisterAttached("IsEditing", typeof(bool), typeof(CardBuilder), new PropertyMetadata(false));
+        public static bool IsEditing(DependencyObject card) => (bool)card.GetValue(IsEditingProperty);
 
         // The open hand over a tile that can be picked up and the closed hand while one is held: the family's own grab
         // cursors (Resources/open_hand.cur and closed_hand.cur, the art DragCursors loads), so a card tile is grabbed
