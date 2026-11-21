@@ -84,9 +84,9 @@ function Invoke-KsText {
 }
 
 function Invoke-KsJson {
-    param([string[]]$Arguments)
+    param([string[]]$Arguments, [int[]]$Answer = @(0))
 
-    $text = Invoke-KsText $Arguments
+    $text = Invoke-KsText $Arguments -Answer $Answer
     if ([string]::IsNullOrWhiteSpace($text)) { return @() }
 
     try { $parsed = $text | ConvertFrom-Json } catch { throw $text }
@@ -385,4 +385,128 @@ function scanhistory {
     }
 }
 
-Export-ModuleMember -Function scan, probe, vendor, netinfo, locations, scanhistory
+<#
+.SYNOPSIS
+    Ping one host with KillerScan and return the replies and loss as one object.
+.DESCRIPTION
+    Named pinghost so the Windows ping command keeps its name. A host that never
+    answers is a result with Received 0, not an error.
+.EXAMPLE
+    pinghost 192.168.8.1 -Count 10
+#>
+function pinghost {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$Target,
+
+        # 1 to 20 checks. KillerScan sends 4 when this is left out.
+        [ValidateRange(1, 20)]
+        [int]$Count
+    )
+
+    $arguments = @('/ping', $Target)
+    if ($Count) { $arguments += @('/count', $Count) }
+    $arguments += '/json'
+    Invoke-KsJson $arguments -Answer 0, 3 | ForEach-Object { Remove-KsControl $_ }
+}
+
+<#
+.SYNOPSIS
+    Trace the network path to one host and return its hops.
+.EXAMPLE
+    (trace 1.1.1.1).hops | Format-Table
+#>
+function trace {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$Target,
+
+        # 1 to 64 hops. KillerScan stops at 30 when this is left out.
+        [ValidateRange(1, 64)]
+        [int]$MaxHops
+    )
+
+    $arguments = @('/trace', $Target)
+    if ($MaxHops) { $arguments += @('/max-hops', $MaxHops) }
+    $arguments += '/json'
+    Invoke-KsJson $arguments -Answer 0, 3 | ForEach-Object { Remove-KsControl $_ }
+}
+
+<#
+.SYNOPSIS
+    Check one host's reverse DNS, ping, route and TCP ports.
+.EXAMPLE
+    diagnose 192.168.8.20 -Ports 22, 80, 443
+#>
+function diagnose {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0, Mandatory = $true)]
+        [string]$Target,
+
+        # The TCP ports to try. KillerScan tries 22, 80, 443, 445 and 3389 when this is left out.
+        [ValidateRange(1, 65535)]
+        [int[]]$Ports
+    )
+
+    $arguments = @('/diagnose', $Target)
+    if ($Ports) { $arguments += @('/ports', ($Ports -join ',')) }
+    $arguments += '/json'
+    Invoke-KsJson $arguments -Answer 0, 3 | ForEach-Object { Remove-KsControl $_ }
+}
+
+<#
+.SYNOPSIS
+    Sample availability and latency for up to 16 hosts over several rounds.
+.EXAMPLE
+    watch 192.168.8.1, 192.168.8.20 -Count 6 -Interval 2
+.EXAMPLE
+    (watch 192.168.8.1 -Count 60 -MaxSeconds 30).samples | Group-Object Success
+#>
+function watch {
+    [CmdletBinding()]
+    param(
+        # One to 16 IPv4 addresses.
+        [Parameter(Position = 0, Mandatory = $true, ValueFromRemainingArguments = $true)]
+        [string[]]$Target,
+
+        # 1 to 60 rounds. KillerScan runs 4 when this is left out.
+        [ValidateRange(1, 60)]
+        [int]$Count,
+
+        # 1 to 60 seconds between rounds. KillerScan waits 1 when this is left out.
+        [ValidateRange(1, 60)]
+        [int]$Interval,
+
+        # Stop after 1 to 600 seconds and keep the samples so far.
+        [ValidateRange(1, 600)]
+        [int]$MaxSeconds
+    )
+
+    $arguments = @('/watch') + @($Target)
+    if ($Count)      { $arguments += @('/count', $Count) }
+    if ($Interval)   { $arguments += @('/interval', $Interval) }
+    if ($MaxSeconds) { $arguments += @('/max-seconds', $MaxSeconds) }
+    $arguments += '/json'
+    Invoke-KsJson $arguments -Answer 0, 3 | ForEach-Object { Remove-KsControl $_ }
+}
+
+<#
+.SYNOPSIS
+    Run the KillerSpeed test and return download, upload and latency.
+.DESCRIPTION
+    Contacts speed.killerscan.net and moves real test data, so it uses your connection
+    for the length of the test.
+.EXAMPLE
+    speedtest | Select-Object downloadMbps, uploadMbps
+#>
+function speedtest {
+    [CmdletBinding()]
+    param()
+
+    Invoke-KsJson @('/speedtest', '/json') | ForEach-Object { Remove-KsControl $_ }
+}
+
+Export-ModuleMember -Function scan, probe, vendor, netinfo, locations, scanhistory, pinghost, trace, diagnose, watch, speedtest

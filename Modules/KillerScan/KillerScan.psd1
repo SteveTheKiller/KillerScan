@@ -15,7 +15,12 @@
         'vendor',
         'netinfo',
         'locations',
-        'scanhistory'
+        'scanhistory',
+        'pinghost',
+        'trace',
+        'diagnose',
+        'watch',
+        'speedtest'
     )
     CmdletsToExport   = @()
     VariablesToExport = @()
