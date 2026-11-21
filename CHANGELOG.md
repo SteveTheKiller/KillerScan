@@ -45,7 +45,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Added
 
-- Trash Polka, a new theme under 98SE: black with a tattoo-style ink background in your accent color, from eight accents with Blood red as the default. Under a Windows high contrast theme the ink and the tab shade step aside for the system colors. The ink is saved to disk and prepared in the background shortly after KillerScan starts, so switching to Trash Polka is quick, and its memory is released when you pick another theme.
+- Trash Polka, a new theme under 98SE: black with a tattoo-style ink background in your accent color, from eight accents with Blood red as the default. Under a Windows high contrast theme the ink and the tab shade step aside for the system colors. The ink is saved to disk and prepared in the background shortly after KillerScan starts, so switching to Trash Polka is quick, and its memory is released when you pick another theme. HTML reports saved under it open in its black and blood red, and every report offers it in the theme switcher.
 - The file picker has a New folder button (Ctrl+Shift+N). It checks the name first and says what is wrong with it before anything is created.
 - The device card can be customized: Customize hides tiles you never use and brings them back, and the layout is kept for next time.
 - The service, History row and terminal cards can be customized the same way. A few rarely used tiles start in the Hidden drawer, such as SSH as, Copy details and Font.

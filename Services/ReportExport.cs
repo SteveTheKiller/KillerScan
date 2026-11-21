@@ -108,7 +108,9 @@ namespace KillerScan.Services
             DateTimeOffset scannedAt, ScanCompletion completion, KillerScan.Models.ScanRefresh? refresh = null,
             string location = "", string adapter = "")
         {
+            // A theme without a report palette would open unstyled, so it opens in Dark.
             string current = string.IsNullOrEmpty(themeKey) ? "dark" : themeKey.ToLowerInvariant();
+            if (!ReportThemes.Any(t => t.Key == current)) current = "dark";
             var list = devices.OrderBy(d => d.IpSortKey).ToList();
             var sb = new StringBuilder();
 
@@ -256,6 +258,7 @@ namespace KillerScan.Services
                 $"['sepulchre','{Ljs("Str_Theme_Sepulchre", "Sepulchre")}','#454039']",
                 $"['delirium','{Ljs("Str_Theme_Delirium", "Delirium")}','#3e3c50']",
                 $"['mourning','{Ljs("Str_Theme_Mourning", "Mourning")}','#554c5d']",
+                $"['trashpolka','{Ljs("Str_Theme_TrashPolka", "Trash Polka")}','#d7263d']",
             ]) + "];");
             sb.AppendLine("var sw=document.getElementById('themesw');");
             sb.AppendLine("var CUSTOM_ACCENT={dark:1,light:1,black:1};");
@@ -321,6 +324,8 @@ namespace KillerScan.Services
             new("delirium", "linear-gradient(90deg,#641d25 0%,#2f2853 100%)", "#3e3c50", "#343344", "#dd8500", "#f4f4f0", "#d7d7cf", "#5c527d", "#312958"),
             new("mourning", "#3b3642", "#34373e", "#554c5d", "#ff6f91", "#f4f4f0", "#d7d7cf", "#756b79", "#a75167"),
             new("se98",     "#c0c0c0", "#c0c0c0", "#ffffff", "#000080", "#000000", "#404040", "#808080", "#c0c0c0"),
+            // Trash Polka: Dark's surfaces on a black ground, with its blood-red ink as the accent.
+            new("trashpolka","#000000", "#333333", "#3a3a3a", "#d7263d", "#f2f2f2", "#bdbdbd", "#2e2e2e", "#404040"),
         ];
 
         private static readonly string[] TypeSlugs =

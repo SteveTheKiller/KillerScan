@@ -56,6 +56,19 @@ internal static class ReportLogoTests
         }
         finally { File.Delete(path); }
 
+        // A report saved under any app theme opens styled in that theme, and the switcher offers it.
+        foreach (Theme theme in Enum.GetValues(typeof(Theme)))
+        {
+            string key = theme.ToString().ToLowerInvariant();
+            string themed = ReportExport.BuildHtml([new NetworkDevice { IpAddress = "192.0.2.10" }], "192.0.2.0/24", key);
+            if (!themed.Contains("html.theme-" + key + "{--bg:") || !themed.Contains("['" + key + "','"))
+                throw new InvalidOperationException("The report has a palette and a swatch for the " + theme + " theme.");
+        }
+        // A theme the report does not know opens in Dark rather than unstyled.
+        string unknown = ReportExport.BuildHtml([], "192.0.2.0/24", "nosuchtheme");
+        if (!unknown.Contains("class='theme-dark'") || !unknown.Contains("setTheme(saved||'dark')"))
+            throw new InvalidOperationException("A report in an unknown theme falls back to Dark.");
+
         if (!ReportLogoColors.Variants.TryGetValue("light-yellow", out var yellow) || yellow[4] == "none"
             || ReportLogoColors.Variants.Where(v => v.Key != "light-yellow").Any(v => v.Value[4] != "none"))
             throw new InvalidOperationException("Only light-yellow carries the outline layer.");
