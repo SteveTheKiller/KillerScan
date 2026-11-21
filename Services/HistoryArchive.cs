@@ -41,6 +41,24 @@ namespace KillerScan.Services
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { LoadError ??= ex.Message; }
         }
 
+        /// <summary>
+        /// Reads the archive as <see cref="Load"/> shows it, with expired runs left out, but never writes:
+        /// the command line lists and exports history without changing the file.
+        /// </summary>
+        internal void Read(DateTimeOffset now)
+        {
+            try
+            {
+                Locked(() =>
+                {
+                    ReadCurrent();
+                    if (_readable && Policy.Mode == HistoryRetentionMode.Time) Entries = Policy.Retained(Entries, now);
+                    return true;
+                });
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { LoadError ??= ex.Message; }
+        }
+
         private void ReadCurrent()
         {
             _readable = true;

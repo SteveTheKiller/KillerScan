@@ -242,6 +242,15 @@ namespace KillerScan.Services
             _entries = _archive.Entries;
         }
 
+        /// <summary>Loads the history to read it, without the retention save <see cref="Load"/> can make.</summary>
+        internal void LoadReadOnly()
+        {
+            if (MemoryOnly) { _entries = []; return; }
+            _archive = new(_path);
+            _archive.Read(DateTimeOffset.Now);
+            _entries = _archive.Entries;
+        }
+
         /// <summary>Memory-only stores: seeds history without going near a real file.</summary>
         internal void SeedDemo(IEnumerable<ScanHistoryEntry> entries)
         {

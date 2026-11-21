@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -251,7 +252,7 @@ namespace KillerScan.Features.Cli
 
         private static readonly string[] FlagOptions =
         [
-            "/terminal-progress",
+            "/terminal-progress", "/compare", "--compare",
             "/quick", "--quick", "/full", "--full", "/quiet", "--quiet",
             "/progress", "--progress", "/descending", "--descending", "/desc", "--desc",
             "/no-header", "--no-header", "/fail-empty", "--fail-empty", "/demo", "--demo",
@@ -280,11 +281,11 @@ namespace KillerScan.Features.Cli
             exitCode = 0;
             if (args is null || args.Length == 0) return false;
             args = KillerFamily.CommandLine.CommandLineEntry.GetArguments(args,
-                ["scan", "probe", "network", "locations", "vendor", "ping", "trace", "diagnose", "watch", "speedtest", "version"], "--") ?? args;
+                ["scan", "probe", "network", "locations", "history", "vendor", "ping", "trace", "diagnose", "watch", "speedtest", "version"], "--") ?? args;
             string? command = args.FirstOrDefault(a => IsHelp(a) || IsVersion(a) ||
                 Eq(a, "/scan") || Eq(a, "--scan") || Eq(a, "/probe") || Eq(a, "--probe") ||
                 Eq(a, "/network") || Eq(a, "--network") || Eq(a, "/locations") || Eq(a, "--locations") ||
-                Eq(a, "/vendor") || Eq(a, "--vendor") ||
+                Eq(a, "/vendor") || Eq(a, "--vendor") || Eq(a, "/history") || Eq(a, "--history") ||
                 Eq(a, "/ping") || Eq(a, "--ping") || Eq(a, "/trace") || Eq(a, "--trace") ||
                 Eq(a, "/diagnose") || Eq(a, "--diagnose") || Eq(a, "/watch") || Eq(a, "--watch") ||
                 Eq(a, "/speedtest") || Eq(a, "--speedtest"));
@@ -332,6 +333,8 @@ namespace KillerScan.Features.Cli
                     exitCode = RunLocations(positionals, options, @out, err);
                 else if (Eq(command, "/vendor") || Eq(command, "--vendor"))
                     exitCode = RunVendor(positionals, options, @out, err);
+                else if (Eq(command, "/history") || Eq(command, "--history"))
+                    exitCode = RunHistory(positionals, options, @out, err);
                 else if (Eq(command, "/ping") || Eq(command, "--ping"))
                     exitCode = RunPing(positionals, options, @out, err);
                 else if (Eq(command, "/trace") || Eq(command, "--trace"))
@@ -419,6 +422,195 @@ namespace KillerScan.Features.Cli
             }
             else @out.WriteLine(vendor.Length == 0 ? "Unknown" : TerminalText.Escape(vendor));
             return vendor.Length == 0 ? 3 : 0;
+        }
+
+        /// <summary>A saved run and the Location it came from, for the history command.</summary>
+        private sealed record HistoryRun(ScanHistoryEntry Entry, string Location, HistoryStore Store);
+
+        /// <summary>
+        /// Lists the saved runs, newest first, or shows one by its number in that list or its scannedAt, in any
+        /// scan output format or as a comparison with its baseline. Every Location is read unless /location names
+        /// one. Nothing is written: retention the app would apply on load is applied here in memory only.
+        /// </summary>
+        internal static int RunHistory(List<string> positionals, Dictionary<string, string> options,
+                                       TextWriter @out, TextWriter err)
+        {
+            if (Has(options, "/demo", "--demo")) return Usage(err, "history does not work with /demo.");
+            if (positionals.Count > 1 || !Only(options, "/location", "--location", "/compare", "--compare", "/json", "--json",
+                    "/csv", "--csv", "/html", "--html", "/table", "--table", "/format", "--format", "/export", "--export",
+                    "/output", "--output", "/theme", "--theme", "/no-header", "--no-header", "/quiet", "--quiet"))
+                return Usage(err, "/history takes at most one run, /location and /json, or with a run /compare and the scan output options.");
+            bool compare = Has(options, "/compare", "--compare");
+            if (positionals.Count == 0 && (compare || options.Keys.Any(name => !Eq(name, "/json") && !Eq(name, "--json") && !Eq(name, "/location") && !Eq(name, "--location"))))
+                return Usage(err, "/compare and the export options need a run: killerscan history <run>.");
+
+            var items = LocationCatalog.ReadExisting(LocationService.Root, out string? catalogError);
+            if (catalogError != null) return Usage(err, "Locations are unavailable - " + Flatten(catalogError), 1);
+            var catalog = new LocationCatalog(LocationService.Root);
+            var sources = new List<(string Name, string Path)>();
+            if (Value(options, "/location", "--location") is { } locationText)
+            {
+                var info = ResolveLocation(locationText, items, out string? resolveError);
+                if (info == null) return Usage(err, resolveError!);
+                sources.Add((info.Name, Path.Combine(catalog.DirectoryFor(info), "history.json")));
+            }
+            else if (items.Count > 0) sources.AddRange(items.Select(info => (info.Name, Path.Combine(catalog.DirectoryFor(info), "history.json"))));
+            // Before the first start moves it into Unassigned, the history is the app-wide file.
+            else sources.Add(("", Path.Combine(LocationService.Root, "history.json")));
+
+            var runs = new List<HistoryRun>();
+            foreach (var (name, path) in sources)
+            {
+                var store = new HistoryStore(path);
+                store.LoadReadOnly();
+                if (store.LoadError is { } loadError)
+                    return Usage(err, "the history " + (name.Length > 0 ? "of \"" + name + "\" " : "") + "could not be read - " + Flatten(loadError), 1);
+                runs.AddRange(store.Entries.Select(entry => new HistoryRun(entry, name, store)));
+            }
+            runs = [.. runs.OrderByDescending(run => run.Entry.ScannedAt)];
+            static string When(DateTimeOffset at) => at.ToString("o", CultureInfo.InvariantCulture);
+
+            if (positionals.Count == 0)
+            {
+                if (Has(options, "/json", "--json"))
+                {
+                    @out.WriteLine(JsonSerializer.Serialize(runs.Select((run, index) => new
+                    {
+                        number = index + 1, scannedAt = When(run.Entry.ScannedAt), location = run.Location, target = run.Entry.Target,
+                        name = run.Entry.Name, devices = run.Entry.Devices.Count, completion = run.Entry.Completion.ToString(), adapter = run.Entry.Adapter
+                    })));
+                    return 0;
+                }
+                if (runs.Count == 0) { @out.WriteLine("No saved scans yet."); return 0; }
+                var rows = runs.Select((run, index) => new[]
+                {
+                    (index + 1).ToString(CultureInfo.InvariantCulture),
+                    run.Entry.ScannedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture),
+                    TerminalText.Escape(run.Location), TerminalText.Escape(run.Entry.DisplayName),
+                    run.Entry.Devices.Count.ToString(CultureInfo.InvariantCulture), run.Entry.Completion.ToString()
+                }).ToList();
+                string[] headers = ["#", "SCANNED", "LOCATION", "SCAN", "DEVICES", "STATUS"];
+                var width = headers.Select((header, c) => Math.Max(header.Length, rows.Max(row => row[c].Length))).ToArray();
+                string Line(string[] cells) => string.Join("  ", cells.Select((cell, c) => c == cells.Length - 1 ? cell : cell.PadRight(width[c]))).TrimEnd();
+                @out.WriteLine(Line(headers));
+                @out.WriteLine(Line([.. width.Select(w => new string('-', w))]));
+                foreach (var row in rows) @out.WriteLine(Line(row));
+                return 0;
+            }
+
+            // A run is its number in the list or the scannedAt from /json, which stays put when a new scan lands.
+            string wanted = positionals[0];
+            HistoryRun? found;
+            bool byNumber = int.TryParse(wanted, NumberStyles.None, CultureInfo.InvariantCulture, out int number);
+            if (byNumber)
+                found = number >= 1 && number <= runs.Count ? runs[number - 1] : null;
+            else if (DateTimeOffset.TryParseExact(wanted, "o", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var at))
+            {
+                var matches = runs.Where(run => run.Entry.ScannedAt == at).ToList();
+                if (matches.Select(run => run.Location).Distinct().Count() > 1)
+                    return Usage(err, "runs in more than one Location were saved at " + wanted + ". Add /location to pick one.");
+                found = matches.FirstOrDefault();
+            }
+            else return Usage(err, "a run is its number from killerscan history or its scannedAt from history /json.");
+            if (found == null) return Usage(err, "no saved scan is " + (byNumber ? "number " + wanted : "from " + wanted) + ".", 3);
+            var entry = found.Entry;
+            static object Saved(HistoricalDevice device) => new
+            {
+                ipAddress = device.IpAddress, hostname = device.Hostname, macAddress = device.MacAddress,
+                vendor = device.Vendor, deviceType = device.DeviceType, openPorts = device.OpenPorts
+            };
+
+            if (compare)
+            {
+                if (!Only(options, "/location", "--location", "/compare", "--compare", "/json", "--json"))
+                    return Usage(err, "/compare accepts /location and /json.");
+                var comparison = found.Store.Compare(entry);
+                // Without a baseline every device would come back as added, which a script would read as change.
+                var baseline = comparison.Previous;
+                IReadOnlyList<HistoricalDevice> added = baseline == null ? Array.Empty<HistoricalDevice>() : comparison.Added;
+                var before = baseline?.Devices.GroupBy(device => device.Identity, StringComparer.OrdinalIgnoreCase)
+                    .ToDictionary(group => group.Key, group => group.Last(), StringComparer.OrdinalIgnoreCase)
+                    ?? new Dictionary<string, HistoricalDevice>(StringComparer.OrdinalIgnoreCase);
+                if (Has(options, "/json", "--json"))
+                {
+                    @out.WriteLine(JsonSerializer.Serialize(new
+                    {
+                        scannedAt = When(entry.ScannedAt), location = found.Location, target = entry.Target, completion = entry.Completion.ToString(),
+                        baseline = baseline == null ? null : new { scannedAt = When(baseline.ScannedAt), target = baseline.Target },
+                        added = added.Select(Saved), removed = comparison.Removed.Select(Saved),
+                        changed = comparison.Changed.Select(device => new
+                        {
+                            ipAddress = device.IpAddress, hostname = device.Hostname, macAddress = device.MacAddress,
+                            vendor = device.Vendor, deviceType = device.DeviceType, openPorts = device.OpenPorts,
+                            before = before.TryGetValue(device.Identity, out var old) ? Saved(old) : null
+                        })
+                    }));
+                    return 0;
+                }
+                string Stamp(ScanHistoryEntry run) => run.ScannedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+                if (baseline == null)
+                {
+                    @out.WriteLine($"{Stamp(entry)} {TerminalText.Escape(entry.DisplayName)} has no earlier complete run of the same targets and checks to compare with.");
+                    return 0;
+                }
+                @out.WriteLine($"{Stamp(entry)} {TerminalText.Escape(entry.DisplayName)} against {Stamp(baseline)} {TerminalText.Escape(baseline.DisplayName)}");
+                if (entry.Completion != ScanCompletion.Complete) @out.WriteLine("This run did not finish, so nothing is counted as removed.");
+                string Describe(HistoricalDevice device) => TerminalText.Escape(string.Join("  ", new[] { device.IpAddress, device.MacAddress, device.Hostname }
+                    .Where(part => !string.IsNullOrEmpty(part))));
+                string Ports(HistoricalDevice device) => device.OpenPorts.Count == 0 ? "none" : string.Join(",", device.OpenPorts);
+                foreach (var device in added) @out.WriteLine("ADDED    " + Describe(device));
+                foreach (var device in comparison.Removed) @out.WriteLine("REMOVED  " + Describe(device));
+                foreach (var device in comparison.Changed)
+                    @out.WriteLine("CHANGED  " + Describe(device) + (before.TryGetValue(device.Identity, out var old)
+                        ? "  ports " + Ports(old) + " -> " + Ports(device) : ""));
+                if (added.Count + comparison.Removed.Count + comparison.Changed.Count == 0) @out.WriteLine("No changes.");
+                return 0;
+            }
+
+            bool quiet = Has(options, "/quiet", "--quiet"), noHeader = Has(options, "/no-header", "--no-header");
+            string? exportPath = Value(options, "/export", "--export", "/output", "--output");
+            if (exportPath != null && exportPath.Length == 0) return Usage(err, "/export needs a file path.");
+            var (format, formatFromExtension) = ResolveFormat(options, Value(options, "/format", "--format"), exportPath);
+            if (format.Length == 0) return Usage(err, "format must be table, csv, json, or html, with only one format selected.");
+            string theme = Value(options, "/theme", "--theme") ?? "dark";
+            if (!HtmlThemes.Contains(theme, StringComparer.OrdinalIgnoreCase))
+                return Usage(err, "/theme must name one of: " + string.Join(", ", HtmlThemes) + ".");
+            var devices = entry.Devices.Select(saved => new NetworkDevice
+            {
+                IpAddress = saved.IpAddress, Hostname = saved.Hostname, MacAddress = saved.MacAddress,
+                Vendor = saved.Vendor, DeviceType = saved.DeviceType, OpenPorts = [.. saved.OpenPorts]
+            }).OrderBy(device => device.IpSortKey).ToList();
+            string body = format switch
+            {
+                "json" => JsonSerializer.Serialize(new
+                {
+                    scannedAt = When(entry.ScannedAt), location = found.Location, target = entry.Target, name = entry.Name,
+                    completion = entry.Completion.ToString(), adapter = entry.Adapter,
+                    devices = entry.Devices.Select(Saved)
+                }, new JsonSerializerOptions { WriteIndented = true }),
+                // The report is dated when the run happened, the way History's own HTML export is.
+                "html" => ReportExport.BuildSnapshotHtml(devices, entry.Target, theme.Equals("98se", StringComparison.OrdinalIgnoreCase) ? "se98" : theme.ToLowerInvariant(),
+                    entry.ScannedAt, entry.Completion, location: found.Location, adapter: entry.Adapter),
+                _ => Render(format, devices, entry.Target, theme, noHeader)
+            };
+            if (!quiet)
+            {
+                bool showTable = _outAnsi && (format == "table" || formatFromExtension);
+                @out.WriteLine(showTable ? Table(devices, !noHeader, ansi: true) : _outAnsi ? ConsoleSafe(body) : body);
+            }
+            if (exportPath != null)
+            {
+                try
+                {
+                    string full = Path.GetFullPath(exportPath);
+                    string? dir = Path.GetDirectoryName(full);
+                    if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
+                    ExportFile.WriteText(full, body, new UTF8Encoding(false));
+                    if (!quiet) err.WriteLine(PaintErr("Wrote " + full, AnsiGood));
+                }
+                catch (Exception ex) { err.WriteLine(PaintErr("Error: could not write the export - " + Flatten(ex.Message), AnsiBad)); return 1; }
+            }
+            return 0;
         }
 
         private sealed class PingSample
@@ -970,6 +1162,7 @@ namespace KillerScan.Features.Cli
             "  killerscan probe <IPv4>          deep-probe one host, including ports 1-1024",
             "  killerscan network               show the detected interface, subnet, gateway, and DNS",
             "  killerscan locations             list saved Locations and their IDs; changes nothing",
+            "  killerscan history [run]         list saved scans, or show, export or compare one; changes nothing",
             "  killerscan vendor <MAC>          look up a MAC address in the offline OUI database",
             "  killerscan ping <target>         send a bounded set of ICMP checks",
             "  killerscan trace <target>        trace the network path to an IPv4 target",
@@ -995,7 +1188,11 @@ namespace KillerScan.Features.Cli
             "                        probe: changes neither history nor the Known list",
             "                        without /location, nothing saved is read or written",
             "  /skip <check,...>      turn checks off: " + string.Join(", ", ScanOptions.Features),
-            "  /adapter <name|ip>     send every probe from one adapter; only its own network is reachable", "", "OUTPUT OPTIONS",
+            "  /adapter <name|ip>     send every probe from one adapter; only its own network is reachable", "", "HISTORY OPTIONS",
+            "  [run]                  its number in the list (1 is newest) or its scannedAt from /json",
+            "  /location <name|id>    only that Location's runs; without it, every Location",
+            "  /compare               what changed since the run's baseline, the last complete run like it",
+            "                        a run also takes /format, /export, /theme and /no-header", "", "OUTPUT OPTIONS",
             "  /format <kind>         table, csv, json, or html",
             "  /table | /csv | /json | /html   shorthand for /format",
             "  /export <path>         write output; extension selects format unless overridden",
@@ -1015,7 +1212,9 @@ namespace KillerScan.Features.Cli
             "  killerscan diagnose 192.168.1.20 /ports 22,80,443 /json",
             "  killerscan watch 192.168.1.1 192.168.1.20 /count 6 /interval 2 /json",
             "  killerscan speedtest /json",
-            "  killerscan network /json   killerscan vendor 00:11:22:33:44:55 /json", "",
+            "  killerscan network /json   killerscan vendor 00:11:22:33:44:55 /json",
+            "  killerscan history /location Office /json",
+            "  killerscan history 1 /compare   killerscan history 2 /export run.html /theme trashpolka", "",
             $"Several targets may be separate or comma-delimited; overlaps are deduplicated and the ceiling is {ScanTargets.MaxAddresses:N0} addresses.",
             "Ctrl+C cancels. Exit codes: 0 success, 1 failure/cancel/timeout, 2 usage, 3 empty/not found.",
             "Because this is a GUI-subsystem EXE, cmd scripts should use `start /wait`; PowerShell",
