@@ -174,6 +174,18 @@ internal static partial class HistoryUiTests
         var title = (TextBlock)history.FindName("HistoryIdentity");
         var sidebarTitle = (TextBlock)window.FindName("SidebarHeading");
 
+        // History keeps the scan bar, so a scan can start from it; the entry's dates sit in the row under it.
+        var scanButton = (Button)Field(window, "_scanWorkspace")!.GetType()
+            .GetMethod("FindName")!.Invoke(Field(window, "_scanWorkspace"), ["ScanBtn"])!;
+        var bars = (System.Collections.Generic.Dictionary<string, FrameworkElement>)Field(window, "_viewToolbars")!;
+        // The window is not shown yet here, so the visibility chain is checked rather than IsVisible.
+        Require((string)Field(window, "_workspaceView")! == "history" && bars["scan"].Visibility == Visibility.Visible
+            && ((FrameworkElement)Field(window, "_toolbarSurface")!).Visibility == Visibility.Visible
+            && scanButton.Visibility == Visibility.Visible,
+            "The Scan button stays visible while a History entry is shown.");
+        Require(Window.GetWindow(title) == window && ReferenceEquals(title.Parent is FrameworkElement p ? p.Parent : null, history.FindName("HistoryDetails")),
+            "The History dates sit in the row under the scan bar, before the device count.");
+
         // A status the footer trims can still be read in full, and a screen reader hears it.
         var footer = (TextBlock)window.FindName("StatusText");
         Require(System.Windows.Automation.AutomationProperties.GetLiveSetting(footer) == System.Windows.Automation.AutomationLiveSetting.Polite,
@@ -255,7 +267,9 @@ internal static partial class HistoryUiTests
         var copies = CardMenuTestHelpers.Actions(menu).Where(pair => new[] { "ip", "mac", "host" }.Contains(pair.Key)).ToList();
         Require(copies.Count == 3 &&copies.All(pair => pair.Value.IsEnabled), "Saved row copy actions are available.");
         Require(menu.Items.OfType<MenuItem>().Where(item => !CardMenuTestHelpers.IsCardSlot(item)).All(item => !string.IsNullOrWhiteSpace(item.InputGestureText))
-            && CardMenuTestHelpers.CardButtons(menu).All(button => !string.IsNullOrEmpty(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(button))),
+            // Action tiles only: the card's own Customize, Done and Reset buttons have no shortcut.
+            && CardMenuTestHelpers.Actions(menu).Values.OfType<System.Windows.Controls.Primitives.ButtonBase>()
+                .All(button => !string.IsNullOrEmpty(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(button))),
             "Every history menu action shows its shortcut.");
         Require(CardMenuTestHelpers.Actions(menu).Keys.All(action => !new[] { "Ping", "Ssh", "Rdp", "Rescan", "Trust" }.Contains(action)), "Historical menus contain no live commands.");
         Save(RenderWindow(1200, 780), Path.Combine(output, "History-Black-sidebar-closed.png"));
@@ -309,7 +323,8 @@ internal static partial class HistoryUiTests
             Require(Identity().Contains("192.0.2.0/24") && Identity().Contains(time.ToString("g")) && Identity().Contains(time.AddHours(1).ToString("g")) && !comparison.Text.StartsWith("Str_"), locale + ": target and both dates remain identified.");
             Require(Equals(grid.Columns[0].Header, app.FindResource("Str_History_Change")) && Equals(all.Columns[0].Header, app.FindResource("Str_Col_Ip")), locale + ": both grid headings change language.");
             Require(menu.Items.OfType<MenuItem>().Where(item => !CardMenuTestHelpers.IsCardSlot(item)).All(item => item.Header is string text && text.Length > 0 && !text.StartsWith("Str_"))
-                && CardMenuTestHelpers.CardButtons(menu).All(button => button.Content is string text && text.Length > 0 && !text.StartsWith("Str_")),
+                && CardMenuTestHelpers.Actions(menu).Values.OfType<System.Windows.Controls.Primitives.ButtonBase>()
+                    .All(button => button.Content is string text && text.Length > 0 && !text.StartsWith("Str_")),
                 locale + ": menu labels and card chips resolve.");
             foreach (var view in new[] { ("changes", "Str_History_ViewChanges", "HistoryChangesViewButton", "Changes"),
                 ("all", "Str_History_ViewAll", "HistoryAllViewButton", "All Devices") })
@@ -510,7 +525,10 @@ internal static partial class HistoryUiTests
                 var inset = grid.TranslatePoint(new Point(), surface);
                 Require(Math.Abs(inset.X - standardInset.X) < 0.5 && Math.Abs(inset.Y - standardInset.Y) < 0.5 &&
                     Math.Abs(Bounds(grid).Left - standardBounds.Left) < 0.5 && Math.Abs(grid.ActualWidth - standardBounds.Width) < 0.5,
-                    context + ": table starts at the same frame edge and fills the standard Devices width.");
+                    context + ": table starts at the same frame edge and fills the standard Devices width (inset " + inset +
+                    " vs " + standardInset + ", left " + Bounds(grid).Left + " vs " + standardBounds.Left + ", width " +
+                    grid.ActualWidth + " vs " + standardBounds.Width + "; frame " + Bounds(frame) + ", surface " + Bounds(surface) +
+                    ", summary " + Bounds(summary) + ", identity " + Bounds(identity) + ", toggle " + Bounds(toggle) + ", history " + Bounds(history) + ").");
                 Require(ReferenceEquals(grid.Template, standard.Template) && ReferenceEquals(grid.RowStyle, standard.RowStyle) &&
                     ReferenceEquals(grid.CellStyle, standard.CellStyle) && grid.ColumnHeaderHeight == standard.ColumnHeaderHeight &&
                     grid.RowHeight == standard.RowHeight && grid.BorderThickness == standard.BorderThickness &&
@@ -532,7 +550,8 @@ internal static partial class HistoryUiTests
                     context + ": history uses the same rounded table frame and clipping as Devices (radius " + sameRadius +
                     ", clip " + sameClip + ", frame child " + framed + ", host " + hosted + ": " + history.Parent?.GetType().Name + ").");
                 Require(supplemental.Visibility == Visibility.Visible && Bounds(summary).Bottom <= Bounds(frame).Top &&
-                    Bounds(toggle).Bottom <= Bounds(frame).Top && Bounds(identity).Bottom <= Bounds(summary).Top &&
+                    Bounds(toggle).Bottom <= Bounds(frame).Top && Bounds(identity).Bottom <= Bounds(frame).Top &&
+                    (Bounds(identity).Right <= Bounds(summary).Left + 1 || Bounds(identity).Bottom <= Bounds(summary).Top + 1) &&
                     Bounds(summary).Right <= Bounds(toggle).Left && !frame.IsAncestorOf(summary) && !frame.IsAncestorOf(toggle),
                     context + ": identity, counts and view switch are above the table without an enclosing panel.");
             }

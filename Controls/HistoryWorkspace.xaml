@@ -41,23 +41,25 @@
                 CornerRadius="{DynamicResource PaneGrainCornerRadius}" Panel.ZIndex="-1"/>
         <Grid>
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-            <Grid x:Name="HistoryToolbar" Margin="8,0,8,0" VerticalAlignment="Center">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                <!-- Primary heading: Lacquer (HeadingFont) at its regular weight, since it has no bold cut. -->
-                <TextBlock x:Name="HistoryIdentity" Foreground="{DynamicResource TextBrush}" FontSize="20"
-                           FontFamily="{DynamicResource HeadingFont}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,16,0">
-                    <Run x:Name="HistoryTarget"/><Run x:Name="HistoryDateSeparator"/><Run x:Name="HistoryPreviousTimestamp" Foreground="{DynamicResource PrimaryBrush}"/><Run x:Name="HistoryComparisonSeparator"/><Run x:Name="HistoryCurrentTimestamp" Foreground="{DynamicResource PrimaryBrush}"/>
-                    <TextBlock.ToolTip><StackPanel>
-                        <TextBlock x:Name="HistoryEntryContext" TextWrapping="Wrap"/>
-                        <TextBlock x:Name="HistoryComparisonContext" TextWrapping="Wrap"/>
-                    </StackPanel></TextBlock.ToolTip>
-                </TextBlock>
-            </Grid>
-                <!-- Detached into the shell above the shared Devices table frame. -->
+                <!-- Detached into the shell above the shared Devices table frame. The title bar keeps
+                     the scan bar in History; this row under it carries the entry's dates, then its
+                     device count. -->
                 <Grid x:Name="HistoryDetails" Margin="8,4,8,8">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                    <TextBlock x:Name="HistorySummary" Foreground="{DynamicResource MutedTextBrush}" FontSize="12"
-                               TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                    <!-- Dates, then the device count on the same line; a narrow window moves the count under the dates. -->
+                    <WrapPanel VerticalAlignment="Center" Margin="0,0,12,0">
+                        <!-- Lacquer (HeadingFont) at its regular weight, since it has no bold cut. -->
+                        <TextBlock x:Name="HistoryIdentity" Foreground="{DynamicResource TextBrush}" FontSize="20"
+                                   FontFamily="{DynamicResource HeadingFont}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,16,0">
+                            <Run x:Name="HistoryTarget"/><Run x:Name="HistoryDateSeparator"/><Run x:Name="HistoryPreviousTimestamp" Foreground="{DynamicResource PrimaryBrush}"/><Run x:Name="HistoryComparisonSeparator"/><Run x:Name="HistoryCurrentTimestamp" Foreground="{DynamicResource PrimaryBrush}"/>
+                            <TextBlock.ToolTip><StackPanel>
+                                <TextBlock x:Name="HistoryEntryContext" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="HistoryComparisonContext" TextWrapping="Wrap"/>
+                            </StackPanel></TextBlock.ToolTip>
+                        </TextBlock>
+                        <TextBlock x:Name="HistorySummary" Foreground="{DynamicResource MutedTextBrush}" FontSize="12"
+                                   TextWrapping="Wrap" VerticalAlignment="Center"/>
+                    </WrapPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <Button x:Name="HistoryChangesViewButton" Style="{StaticResource HistoryViewButton}"
                                 Content="{DynamicResource Str_History_ViewChanges}"

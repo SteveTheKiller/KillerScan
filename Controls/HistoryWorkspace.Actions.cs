@@ -15,6 +15,7 @@ namespace KillerScan.Controls
     {
         internal event Action? CurrentScanRequested;
         internal event Action? SidebarRequested;
+        internal event Action? ScanRequested;
         private DataGrid VisibleGrid => _showAll ? HistoryAllGrid : HistoryChangesGrid;
 
         private void ConfigureActions()
@@ -70,6 +71,7 @@ namespace KillerScan.Controls
             groups.Add(
             [
                 Tile("export", "\uE9F9", "Str_Export_Csv", "Ctrl+E", "export", _entry != null && VisibleGrid.Items.Count > 0),
+                Tile("export-html", "\uE943", "Str_Export_Html", "Ctrl+Shift+E", "export-html", _entry != null && VisibleGrid.Items.Count > 0),
                 Tile("changes", "\uE8FD", "Str_History_ViewChanges", "Ctrl+Shift+H", "changes", _entry != null && _showAll),
                 Tile("all", "\uE772", "Str_History_ViewAll", "Ctrl+Shift+H", "all", _entry != null && !_showAll),
             ]);
@@ -113,6 +115,8 @@ namespace KillerScan.Controls
             if (action == "current") { CurrentScanRequested?.Invoke(); return; }
             if (action == "sidebar") { SidebarRequested?.Invoke(); return; }
             if (action == "export") { ExportCsv(); return; }
+            if (action == "export-html") { ExportHtml(); return; }
+            if (action == "scan") { ScanRequested?.Invoke(); return; }
             string value = CopyValue(action);
             if (value.Length == 0) return;
             for (int attempt = 0; attempt < 5; attempt++)
@@ -154,8 +158,43 @@ namespace KillerScan.Controls
             {
                 new KillerFamily.Controls.CardTile("\uE9F9", Loc("Str_Export_Csv"), "Ctrl+E", ExportCsv, false,
                     _entry != null && VisibleGrid.Items.Count > 0) { Id = "Csv" },
+                new KillerFamily.Controls.CardTile("\uE943", Loc("Str_Export_Html"), "Ctrl+Shift+E", ExportHtml, false,
+                    _entry != null && VisibleGrid.Items.Count > 0) { Id = "Html" },
             }));
             return card;
+        }
+
+        /// <summary>The rows in view as scan devices, for the same HTML report a live scan writes.</summary>
+        internal List<NetworkDevice> VisibleDevices()
+        {
+            var devices = new List<NetworkDevice>();
+            foreach (object row in VisibleGrid.Items)
+            {
+                var saved = row is HistoryChangeRow change ? change.Device : ((HistoryDeviceRow)row).Device;
+                devices.Add(new NetworkDevice
+                {
+                    IpAddress = saved.IpAddress, Hostname = saved.Hostname, MacAddress = saved.MacAddress,
+                    Vendor = saved.Vendor, DeviceType = saved.DeviceType, OpenPorts = [.. saved.OpenPorts]
+                });
+            }
+            return devices;
+        }
+
+        internal void ExportHtml()
+        {
+            if (_entry == null || VisibleGrid.Items.Count == 0) return;
+            var dialog = new FileDialog(FileDialogMode.Save) { Filter = Loc("Str_Filter_Html") + "|*.html",
+                DefaultExt = ".html", AddExtension = true, FileName = "KillerScan_History_" + _entry.ScannedAt.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture) + ".html" };
+            if (dialog.ShowDialog(Window.GetWindow(this)) != true) return;
+            try
+            {
+                string html = ReportExport.BuildSnapshotHtml(VisibleDevices(), _entry.Target,
+                    ThemeManager.Current.ToString().ToLowerInvariant(), _entry.ScannedAt, _entry.Completion,
+                    location: _entry.LocationName, adapter: _entry.Adapter);
+                ExportFile.WriteText(dialog.FileName, html, Encoding.UTF8);
+            }
+            catch (Exception ex) when (ex is not OutOfMemoryException)
+            { HistorySummary.Text = string.Format(Loc("Str_Err_Export"), ex.Message); }
         }
 
         internal void ExportCsv()
@@ -179,6 +218,9 @@ namespace KillerScan.Controls
                 (Key.C, ModifierKeys.Control | ModifierKeys.Alt) => "host",
                 (Key.Y, ModifierKeys.Control | ModifierKeys.Shift) => "details",
                 (Key.E, ModifierKeys.Control) => "export",
+                (Key.E, ModifierKeys.Control | ModifierKeys.Shift) => "export-html",
+                // Scan is on the title bar in History too, so its key works here as well.
+                (Key.F5, ModifierKeys.None) => "scan",
                 (Key.H, ModifierKeys.Control | ModifierKeys.Shift) => _showAll ? "changes" : "all",
                 (Key.F6, ModifierKeys.None) => "current",
                 (Key.H, ModifierKeys.Control) => "sidebar",

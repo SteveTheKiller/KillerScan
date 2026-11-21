@@ -46,12 +46,6 @@ namespace KillerScan.Controls
 
         private void HistoryChangesView_Click(object sender, RoutedEventArgs e) => SetView(false);
 
-        internal FrameworkElement DetachToolbar()
-        {
-            ((Panel)HistoryToolbar.Parent).Children.Remove(HistoryToolbar);
-            return HistoryToolbar;
-        }
-
         internal FrameworkElement DetachSummary()
         {
             ((Panel)HistoryDetails.Parent).Children.Remove(HistoryDetails);

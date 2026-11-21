@@ -86,13 +86,15 @@ namespace KillerScan.Shell
 
         private void UpdateViewToolbar()
         {
-            // Only scan-backed views share scan controls. Other views use their own toolbar.
-            string key = ActiveScan != null ? "scan" : _workspaceView;
+            // Scan-backed views and History share the scan bar, so a scan can start from either.
+            // Other views use their own toolbar.
+            string key = ActiveScan != null || _workspaceView == "history" ? "scan" : _workspaceView;
             foreach (var pair in _viewToolbars)
                 pair.Value.Visibility = pair.Key == key ? Visibility.Visible : Visibility.Collapsed;
             // A view with no bar of its own (the terminal) gets the row back.
             _toolbarSurface.Visibility = _viewToolbars.ContainsKey(key) ? Visibility.Visible : Visibility.Collapsed;
-            TitleTools.Visibility = key == "scan" ? Visibility.Visible : Visibility.Collapsed;
+            // The filter acts on the live table, so it stays with the scan views.
+            TitleTools.Visibility = ActiveScan != null ? Visibility.Visible : Visibility.Collapsed;
             // The bars are different widths, so what fits beside them changes with the view.
             FitToolbarViews();
         }
@@ -122,6 +124,11 @@ namespace KillerScan.Shell
                 var scanToolbar = _scanWorkspace.DetachToolbar();
                 _viewToolbarTargets["scan"] = (FrameworkElement)_scanWorkspace.FindName("SubnetInput");
                 RegisterViewToolbar("scan", scanToolbar);
+                // Scan pressed from History starts the scan and brings the live devices forward.
+                ((System.Windows.Controls.Button)_scanWorkspace.FindName("ScanBtn")).Click += (_, _) =>
+                {
+                    if (_workspaceView == "history") ShowScanView("devices");
+                };
                 // After RegisterViewToolbar, whose FitToTitleBar writes a local margin: the inset
                 // after the wordmark is the theme's, and 98SE, where the bar sits in its own row
                 // under the caption, has none, so the Location button starts at the page's edge.

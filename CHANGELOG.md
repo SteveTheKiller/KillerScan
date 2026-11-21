@@ -17,6 +17,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Chinese (Simplified) and Japanese text uses Microsoft YaHei UI and Yu Gothic UI, the faces Windows draws those languages in, instead of borrowing Traditional Chinese glyphs.
 - A tree's connecting line ends at the right row when an item is added below the one that was last.
 - A device whose reverse DNS name has no forward record now shows that name when the device's own mDNS or NetBIOS name matches it, so a printer shows as `XC-C12789` instead of `XCc12789` (#17).
+- History keeps the scan bar, so Scan or F5 starts a new scan while a saved run is open. The row under it shows the run's dates, then its device count.
+- History exports to HTML again, from the Export card (Ctrl+Shift+E) and from a row's card, next to CSV.
 
 ### Changed
 
