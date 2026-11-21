@@ -351,12 +351,21 @@ namespace KillerScan.Features.Cli
             return true;
         }
 
-        private static int RunNetwork(List<string> positionals, Dictionary<string, string> options,
+        internal static int RunNetwork(List<string> positionals, Dictionary<string, string> options,
                                       TextWriter @out, TextWriter err)
         {
-            if (positionals.Count > 0 || options.Count > 0) return Usage(err, "/network takes no options or targets.");
+            if (positionals.Count > 0 || !Only(options, "/json", "--json")) return Usage(err, "/network takes no targets and accepts /json.");
             var net = LocalNetwork.Detect();
             if (net is null) return Usage(err, "no active IPv4 network was found.", 1);
+            if (Has(options, "/json", "--json"))
+            {
+                @out.WriteLine(JsonSerializer.Serialize(new
+                {
+                    @interface = net.InterfaceLabel, adapter = net.AdapterName, localIp = net.LocalIp, subnet = net.Subnet,
+                    gateway = net.Gateway, dns = net.Dns, wireless = net.Wireless, linkSpeed = net.LinkSpeed
+                }));
+                return 0;
+            }
             @out.WriteLine("INTERFACE  " + TerminalText.Escape(net.InterfaceLabel));
             @out.WriteLine("LOCAL IP   " + net.LocalIp);
             @out.WriteLine("SUBNET     " + net.Subnet);
@@ -395,15 +404,20 @@ namespace KillerScan.Features.Cli
             return 0;
         }
 
-        private static int RunVendor(List<string> positionals, Dictionary<string, string> options,
+        internal static int RunVendor(List<string> positionals, Dictionary<string, string> options,
                                      TextWriter @out, TextWriter err)
         {
-            if (options.Count > 0 || positionals.Count != 1) return Usage(err, "/vendor needs exactly one MAC address.");
+            if (!Only(options, "/json", "--json") || positionals.Count != 1) return Usage(err, "/vendor needs exactly one MAC address and accepts /json.");
             string normalized = new([.. positionals[0].Where(Uri.IsHexDigit)]);
             if (normalized.Length != 12) return Usage(err, "the MAC address must contain 12 hex digits.");
             OuiLookup.Load();
             string vendor = OuiLookup.GetVendor(positionals[0]);
-            @out.WriteLine(vendor.Length == 0 ? "Unknown" : TerminalText.Escape(vendor));
+            if (Has(options, "/json", "--json"))
+            {
+                string mac = string.Join(":", Enumerable.Range(0, 6).Select(i => normalized.Substring(i * 2, 2).ToUpperInvariant()));
+                @out.WriteLine(JsonSerializer.Serialize(new { mac, vendor, known = vendor.Length > 0 }));
+            }
+            else @out.WriteLine(vendor.Length == 0 ? "Unknown" : TerminalText.Escape(vendor));
             return vendor.Length == 0 ? 3 : 0;
         }
 
@@ -1000,7 +1014,8 @@ namespace KillerScan.Features.Cli
             "  killerscan trace 1.1.1.1 /max-hops 20 /json",
             "  killerscan diagnose 192.168.1.20 /ports 22,80,443 /json",
             "  killerscan watch 192.168.1.1 192.168.1.20 /count 6 /interval 2 /json",
-            "  killerscan speedtest /json", "",
+            "  killerscan speedtest /json",
+            "  killerscan network /json   killerscan vendor 00:11:22:33:44:55 /json", "",
             $"Several targets may be separate or comma-delimited; overlaps are deduplicated and the ceiling is {ScanTargets.MaxAddresses:N0} addresses.",
             "Ctrl+C cancels. Exit codes: 0 success, 1 failure/cancel/timeout, 2 usage, 3 empty/not found.",
             "Because this is a GUI-subsystem EXE, cmd scripts should use `start /wait`; PowerShell",

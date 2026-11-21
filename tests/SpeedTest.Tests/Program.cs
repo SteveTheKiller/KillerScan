@@ -139,6 +139,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--shrink-to-fit" })) { await ShrinkToFitTests.Run(); Console.WriteLine("PASS: shrink-to-fit regression suite (1 selected)."); return 0; }
             if (args.SequenceEqual(new[] { "--cli-progress" })) { CliProgressTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--cli-watch-deadline" })) { CliWatchDeadlineTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--cli-json" })) { CliJsonTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--module-path" })) { ModulePathTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--about-signature" })) { AboutSignatureTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--about-update-failure" })) { AboutUpdateFailureTests.Run(); return 0; }
@@ -161,6 +162,8 @@ internal static class Program
                 await Run("History identity, saved-data menus and contextual shortcuts", HistoryUiTests.RunIsolated);
                 await Run("CSV exports keep spreadsheet formulas inert", CsvExportTests.Run);
                 await Run("HTML report columns sort from the keyboard and expose aria-sort", ReportSortTests.Run);
+                await Run("network and vendor /json match their text output", () => { CliJsonTests.Run(); return Task.CompletedTask; });
+                await Run("watch /max-seconds is a hard cap", () => { CliWatchDeadlineTests.Run(); return Task.CompletedTask; });
                 await Run("PATH registration adds and removes only the install folder", CommandLinePathTests.Run);
                 await Run("Device actions start Windows tools by full path", () => { SystemToolsTests.Run(); return Task.CompletedTask; });
                 await Run("Executable deployment verifies staging and preserves recovery files", ExecutableDeploymentTests.Run);
