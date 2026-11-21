@@ -740,4 +740,5 @@ Le tue impostazioni non verranno rimosse.</sys:String>
     <sys:String x:Key="Str_Card_Hidden">Nascosti</sys:String>
     <sys:String x:Key="Str_Card_HiddenHint">Trascina qui un riquadro per nasconderlo</sys:String>
     <sys:String x:Key="Str_Card_AlwaysShown">Sempre visibile</sys:String>
+    <sys:String x:Key="Str_Card_Moved">{0}, posizione {1} di {2}</sys:String>
 </ResourceDictionary>

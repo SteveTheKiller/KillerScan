@@ -766,4 +766,5 @@
     <sys:String x:Key="Str_Card_Hidden">Жасырын</sys:String>
     <sys:String x:Key="Str_Card_HiddenHint">Жасыру үшін тақтаны осында сүйреңіз</sys:String>
     <sys:String x:Key="Str_Card_AlwaysShown">Әрқашан көрсетіледі</sys:String>
+    <sys:String x:Key="Str_Card_Moved">{0}, {2} ішінен {1}-орын</sys:String>
 </ResourceDictionary>

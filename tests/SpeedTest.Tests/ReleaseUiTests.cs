@@ -386,8 +386,8 @@ internal static class ReleaseUiTests
         workspace.PrepareServiceCard();
         var actions = CardMenuTestHelpers.Actions(grid.ContextMenu);
         Require(actions.Keys.OrderBy(value => value).SequenceEqual(new[] { "Browser", "CopyEndpoint", "CopyHost", "CopyIp", "CopyPort",
-            "CopyService", "Export", "Rdp", "SelectAll", "Ssh", "SshAs" }.OrderBy(value => value)),
-            "The service menu contains service actions and excludes device trust, renaming, MAC copying and type overrides.");
+            "Export", "Rdp", "SelectAll", "Ssh" }.OrderBy(value => value)),
+            "The service card shows its default tiles (SSH as and Copy service name start in the drawer) and no device trust, renaming, MAC copying or type overrides.");
         var original = ((IEnumerable<KillerScan.Engine.NetworkDevice>)type.GetProperty("ScannedDevices", Instance)!.GetValue(workspace)!).ToArray();
         string originalTarget = workspace.Targets;
         var actionField = type.GetField("DeviceAction", Instance)!;
@@ -440,7 +440,7 @@ internal static class ReleaseUiTests
             Require(grid.SelectedItems.Count == 1 && ReferenceEquals(grid.CurrentItem, Row(22)),
                 "Right-clicking a different service replaces the selection.");
             Select(Row(53));
-            Require(new[] { "Browser", "Ssh", "SshAs", "Rdp" }.All(action => !A()[action].IsEnabled),
+            Require(new[] { "Browser", "Ssh", "Rdp" }.All(action => !A()[action].IsEnabled),
                 "DNS services dim the web, SSH and RDP tiles.");
             Require((string)copy.Invoke(workspace, new object[] { "CopyEndpoint" })! == "192.0.2.40:53" &&
                 (string)copy.Invoke(workspace, new object[] { "CopyService" })! == "DNS" &&

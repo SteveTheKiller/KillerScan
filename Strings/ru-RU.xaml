@@ -750,4 +750,5 @@
     <sys:String x:Key="Str_Card_Hidden">Скрытые</sys:String>
     <sys:String x:Key="Str_Card_HiddenHint">Перетащите плитку сюда, чтобы скрыть её</sys:String>
     <sys:String x:Key="Str_Card_AlwaysShown">Всегда видно</sys:String>
+    <sys:String x:Key="Str_Card_Moved">{0}, позиция {1} из {2}</sys:String>
 </ResourceDictionary>

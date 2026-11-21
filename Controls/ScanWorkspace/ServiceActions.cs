@@ -96,7 +96,8 @@ namespace KillerScan.Controls
                 Tile("SelectAll", "", Loc("Str_Ctx_SelectAll"), "Ctrl+A", Allowed("SelectAll")),
                 Tile("Export", "", Loc("Str_Export_ServicesCsv"), "Ctrl+E", Allowed("Export")),
             };
-            card.Items.Add(ScanCards.Grid(card, open, copy, list));
+            // Customizable: SSH as and Copy service name start in the drawer, so the default card is three full rows.
+            card.Items.Add(ScanCards.Editable(card, "Service", ["Browser", "SelectAll"], ["SshAs", "CopyService"], open, copy, list));
         }
 
         private string ServiceCopyText(string action) => string.Join(Environment.NewLine,

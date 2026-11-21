@@ -709,4 +709,5 @@ Twoje ustawienia nie zostaną usunięte.</sys:String>
     <sys:String x:Key="Str_Card_Hidden">Ukryte</sys:String>
     <sys:String x:Key="Str_Card_HiddenHint">Przeciągnij tu kafelek, aby go ukryć</sys:String>
     <sys:String x:Key="Str_Card_AlwaysShown">Zawsze widoczne</sys:String>
+    <sys:String x:Key="Str_Card_Moved">{0}, pozycja {1} z {2}</sys:String>
 </ResourceDictionary>

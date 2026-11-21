@@ -78,7 +78,11 @@ namespace KillerScan.Controls
                 Tile("sidebar", "\uE81C", "Str_History_Title", "Ctrl+H", "sidebar", true),
                 Tile("current", "\uE772", "Str_View_Devices", "F6", "current", true),
             ]);
-            card.Items.Add(ScanCards.Grid(card, groups.ToArray()));
+            // A row's card is customizable: Copy details, History and Devices start in the drawer. The pane
+            // background's smaller card, without the copy tiles, stays fixed so the two layouts never mix.
+            card.Items.Add(grid != null
+                ? ScanCards.Editable(card, "HistoryRow", ["ip"], ["details", "sidebar", "current"], groups.ToArray())
+                : ScanCards.Grid(card, groups.ToArray()));
         }
 
         private HistoricalDevice? SelectedHistoryDevice => VisibleGrid.SelectedItem switch

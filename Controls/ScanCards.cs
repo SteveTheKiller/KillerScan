@@ -141,6 +141,7 @@ internal static class ScanCards
             EditTip = Loc("Str_Card_Customize"), DoneTip = Loc("Str_Card_EditDone"), ResetTip = Loc("Str_Card_EditReset"),
             ResetLabel = Loc("Str_Card_EditResetShort"), HiddenLabel = Loc("Str_Card_Hidden"),
             HiddenHint = Loc("Str_Card_HiddenHint"), LockedTip = Loc("Str_Card_AlwaysShown"),
+            MovedText = Loc("Str_Card_Moved"),
         };
         return Build(card, edit, groups);
     }

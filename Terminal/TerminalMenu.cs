@@ -32,7 +32,8 @@ namespace KillerScan.Terminal
             card.Items.Add(KillerScan.Controls.ScanCards.Header(card, L("Str_Workspace_Terminal")));
             KillerFamily.Controls.CardTile Tile(string id, string glyph, string key, string? keys, Action run, bool enabled = true, string? shown = null) =>
                 new(glyph, L(key), keys, run, false, enabled) { Id = id, Shown = shown == null ? null : L(shown) };
-            card.Items.Add(KillerScan.Controls.ScanCards.Grid(card,
+            // Customizable: Copy and Paste always show; Select all, Copy all and Font start in the drawer.
+            card.Items.Add(KillerScan.Controls.ScanCards.Editable(card, "Terminal", ["Copy", "Paste"], ["SelectAll", "CopyAll", "Font"],
                 new[]
                 {
                     Tile("Copy", "", "Str_Term_Copy", "Ctrl+Shift+C", () => { CopySelection(); ClearSelection(); }, _hasSelection, "Str_Ctx_Copy"),

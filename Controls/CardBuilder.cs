@@ -99,6 +99,8 @@ namespace KillerFamily.Controls
         public string HiddenLabel { get; init; } = "Hidden";
         public string HiddenHint { get; init; } = "Drag a tile here to hide it";
         public string LockedTip { get; init; } = "Always shown";
+        /// <summary>What a screen reader hears after Alt+arrow moves a tile: {0} the tile, {1} its place, {2} how many.</summary>
+        public string MovedText { get; init; } = "{0}, position {1} of {2}";
     }
 
     /// <summary>
@@ -864,10 +866,50 @@ namespace KillerFamily.Controls
                     e.Handled = true;
                 }), true);
             }
-            // Keyboard: Enter or Space on a card tile moves it to the drawer while editing.
+            // Keyboard, while editing: Enter or Space moves the focused tile between the card and the drawer; Alt+Left
+            // and Alt+Right move a card tile one slot, Alt+Up and Alt+Down one row, saved like a drag. Focus stays on the
+            // moved tile and a screen reader hears its new place.
+            var announcer = new TextBlock { Height = 0, Width = 0, Opacity = 0, IsHitTestVisible = false, Focusable = false };
+            AutomationProperties.SetLiveSetting(announcer, AutomationLiveSetting.Polite);
+            root.Children.Add(announcer);
+            void Announce(string text)
+            {
+                announcer.Text = text;
+                AutomationProperties.SetName(announcer, text);
+                (System.Windows.Automation.Peers.UIElementAutomationPeer.FromElement(announcer)
+                    ?? System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(announcer))
+                    ?.RaiseAutomationEvent(System.Windows.Automation.Peers.AutomationEvents.LiveRegionChanged);
+            }
+            bool Shift(CardTile t, int by)
+            {
+                int from = order.IndexOf(t.Key);
+                if (from < 0 || edit.Locked(t)) return false;
+                int to = Math.Max(0, Math.Min(order.Count - 1, from + by));
+                if (to == from) return true;
+                order.RemoveAt(from);
+                order.Insert(to, t.Key);
+                Persist();
+                Rebuild();
+                // The rebuilt tile takes focus, keyboard and the card's own focus scope both, so the next Alt+arrow
+                // moves it again.
+                if (owners.FirstOrDefault(o => o.Value.Key == t.Key && gridHost.IsAncestorOf(o.Key)).Key is { } moved
+                    && (moved as Button ?? Descendants(moved).OfType<Button>().FirstOrDefault()) is { } face)
+                {
+                    FocusManager.SetFocusedElement(FocusManager.GetFocusScope(face), face);
+                    face.Focus();
+                }
+                Announce(string.Format(CultureInfo.CurrentCulture, edit.MovedText, t.Shown ?? t.Caption.TrimEnd('.', '…').TrimEnd(), to + 1, order.Count));
+                return true;
+            }
             root.PreviewKeyDown += (_, e) =>
             {
-                if (!editing || e.Key is not (Key.Enter or Key.Space) || Owner(Keyboard.FocusedElement as DependencyObject) is not { } t) return;
+                if (!editing || Owner(e.OriginalSource as DependencyObject ?? Keyboard.FocusedElement as DependencyObject) is not { } t) return;
+                // Alt+arrow arrives as a system key, the arrow in SystemKey.
+                var key = e.Key == Key.System ? e.SystemKey : e.Key;
+                bool alt = e.Key == Key.System || (Keyboard.Modifiers & ModifierKeys.Alt) != 0;
+                int by = !alt ? 0 : key switch { Key.Left => -1, Key.Right => 1, Key.Up => -columns, Key.Down => columns, _ => 0 };
+                if (by != 0) { if (Shift(t, by)) e.Handled = true; return; }
+                if (e.Key is not (Key.Enter or Key.Space)) return;
                 Move(t, !Hidden(t.Key));
                 e.Handled = true;
             };

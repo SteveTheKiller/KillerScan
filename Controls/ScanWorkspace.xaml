@@ -231,6 +231,9 @@
                             <ControlTemplate TargetType="Button">
                                 <Grid>
                                     <Border x:Name="bg" Background="{TemplateBinding Background}" CornerRadius="{DynamicResource ControlCornerRadius}"/>
+                                    <!-- Grain over the hover fill, under the glyph, as on menu rows and card tiles. -->
+                                    <Border x:Name="ExportGrain" IsHitTestVisible="False" Visibility="Collapsed" CornerRadius="{DynamicResource ControlCornerRadius}"
+                                            Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
                                     <Border x:Name="raisedLight" IsHitTestVisible="False"
                                             BorderBrush="{DynamicResource FrameOuterLightBrush}"
                                             BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
@@ -244,6 +247,7 @@
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter TargetName="bg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                        <Setter TargetName="ExportGrain" Property="Visibility" Value="Visible"/>
                                         <Setter TargetName="ico" Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
                                     </Trigger>
                                     <Trigger Property="IsEnabled" Value="False">
@@ -382,6 +386,12 @@
                                                 Background="{TemplateBinding Background}"
                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                 BorderThickness="{TemplateBinding BorderThickness}"
+                                                SnapsToDevicePixels="True"/>
+                                        <!-- Grain over the hover fill, inside the header line, under the label. -->
+                                        <Border x:Name="HeaderGrain" IsHitTestVisible="False" Visibility="Collapsed" Margin="{TemplateBinding BorderThickness}"
+                                                Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+                                        <Border BorderBrush="Transparent"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
                                                 Padding="{TemplateBinding Padding}"
                                                 SnapsToDevicePixels="True">
                                             <Grid>
@@ -425,10 +435,13 @@
                                             </Trigger>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter TargetName="hdrBg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                                <Setter TargetName="HeaderGrain" Property="Visibility" Value="Visible"/>
                                                 <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
                                             </Trigger>
+                                            <!-- RowSelectedBrush is see-through on several themes; no grain over it, so it never doubles. -->
                                             <Trigger Property="IsPressed" Value="True">
                                                 <Setter TargetName="hdrBg" Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
+                                                <Setter TargetName="HeaderGrain" Property="Visibility" Value="Collapsed"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>

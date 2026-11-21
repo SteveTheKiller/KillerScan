@@ -251,8 +251,9 @@ internal static partial class HistoryUiTests
         // The card is built as it opens (right-click or the Menu key), from the selection.
         void Open() => history.PrepareHistoryCard(menu, grid);
         Open();
-        var copies = CardMenuTestHelpers.Actions(menu).Where(pair => new[] { "ip", "mac", "host", "details" }.Contains(pair.Key)).ToList();
-        Require(copies.Count == 4 && copies.All(pair => pair.Value.IsEnabled), "Saved row copy actions are available.");
+        // Copy details starts in the card's drawer.
+        var copies = CardMenuTestHelpers.Actions(menu).Where(pair => new[] { "ip", "mac", "host" }.Contains(pair.Key)).ToList();
+        Require(copies.Count == 3 &&copies.All(pair => pair.Value.IsEnabled), "Saved row copy actions are available.");
         Require(menu.Items.OfType<MenuItem>().Where(item => !CardMenuTestHelpers.IsCardSlot(item)).All(item => !string.IsNullOrWhiteSpace(item.InputGestureText))
             && CardMenuTestHelpers.CardButtons(menu).All(button => !string.IsNullOrEmpty(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(button))),
             "Every history menu action shows its shortcut.");
@@ -831,8 +832,8 @@ internal static partial class HistoryUiTests
         }
         var menu = grid.ContextMenu;
         workspace.PrepareServiceCard();
-        var copies = CardMenuTestHelpers.Actions(menu).Where(pair => new[] { "CopyEndpoint", "CopyService", "CopyPort" }.Contains(pair.Key)).ToList();
-        Require(copies.Count == 3 && copies.All(pair => !string.IsNullOrEmpty(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(pair.Value))),
+        var copies = CardMenuTestHelpers.Actions(menu).Where(pair => new[] { "CopyEndpoint", "CopyPort" }.Contains(pair.Key)).ToList();
+        Require(copies.Count == 2 && copies.All(pair => !string.IsNullOrEmpty(System.Windows.Automation.AutomationProperties.GetAcceleratorKey(pair.Value))),
             "Service copy actions have menu hints.");
     }
 

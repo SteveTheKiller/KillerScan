@@ -151,7 +151,21 @@ namespace KillerScan.Controls
             return null;
         }
 
-        /// <summary>The longest the crossfade waits on one piece's compose, in milliseconds.</summary>
+        /// <summary>Waits on the composes until all finish or <paramref name="budgetMs"/> runs out for the lot, and says
+        /// which finished. One deadline covers every job, so hung composes never add their bounds together.</summary>
+        internal static bool[] WaitWithin(Task[] work, int budgetMs)
+        {
+            var finished = new bool[work.Length];
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+            for (int i = 0; i < work.Length; i++)
+            {
+                int left = Math.Max(0, budgetMs - (int)timer.ElapsedMilliseconds);
+                try { finished[i] = work[i].Wait(left); } catch (AggregateException) { finished[i] = true; }
+            }
+            return finished;
+        }
+
+        /// <summary>The longest the crossfade waits on the pieces' composes, all together, in milliseconds.</summary>
         internal const int ComposeWaitMs = 1000;
 
         // Swaps a finished piece in, unless a newer accent has replaced the job; the previous tint is dropped with it.
@@ -186,13 +200,12 @@ namespace KillerScan.Controls
             if (Jobs.Count == 0) return;
             var timer = System.Diagnostics.Stopwatch.StartNew();
             bool landed = false;
-            foreach (var job in Jobs.ToArray())
-            {
-                // A compose that hangs never freezes the window: past the bound the snapshot takes the old ink
-                // and the job lands on its own when it finishes.
-                try { if (!job.Work.Work.Wait(ComposeWaitMs)) continue; } catch (AggregateException) { }
-                landed |= Land(job);
-            }
+            var jobs = Jobs.ToArray();
+            // A compose that hangs never freezes the window: past the bound the snapshot takes the old ink and the job
+            // lands on its own when it finishes.
+            var finished = WaitWithin(Array.ConvertAll(jobs, j => j.Work.Work), ComposeWaitMs);
+            for (int i = 0; i < jobs.Length; i++)
+                if (finished[i]) landed |= Land(jobs[i]);
             ComposeMs += timer.Elapsed.TotalMilliseconds;
             if (landed) Retune();
         }

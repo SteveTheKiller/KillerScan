@@ -392,16 +392,21 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListBoxItem">
-                                        <Border x:Name="bg" Background="Transparent" Margin="0,0,0,2"
-                                                CornerRadius="{DynamicResource ControlCornerRadius}">
+                                        <Grid Margin="0,0,0,2">
+                                            <Border x:Name="bg" Background="Transparent" CornerRadius="{DynamicResource ControlCornerRadius}"/>
+                                            <!-- Grain over the hover fill, under the row, as on menu rows and card tiles. -->
+                                            <Border x:Name="RowGrain" IsHitTestVisible="False" Visibility="Collapsed" CornerRadius="{DynamicResource ControlCornerRadius}"
+                                                    Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
                                             <ContentPresenter Margin="{TemplateBinding Padding}"/>
-                                        </Border>
+                                        </Grid>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter TargetName="bg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                                <Setter TargetName="RowGrain" Property="Visibility" Value="Visible"/>
                                             </Trigger>
                                             <Trigger Property="IsSelected" Value="True">
                                                 <Setter TargetName="bg" Property="Background" Value="{DynamicResource SelectionBg}"/>
+                                                <Setter TargetName="RowGrain" Property="Visibility" Value="Collapsed"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
@@ -494,16 +499,21 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListBoxItem">
-                                        <Border x:Name="bg" Background="Transparent" Margin="0,0,0,2"
-                                                CornerRadius="{DynamicResource ControlCornerRadius}">
+                                        <Grid Margin="0,0,0,2">
+                                            <Border x:Name="bg" Background="Transparent" CornerRadius="{DynamicResource ControlCornerRadius}"/>
+                                            <!-- Grain over the hover fill, under the row, as on menu rows and card tiles. -->
+                                            <Border x:Name="RowGrain" IsHitTestVisible="False" Visibility="Collapsed" CornerRadius="{DynamicResource ControlCornerRadius}"
+                                                    Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
                                             <ContentPresenter Margin="{TemplateBinding Padding}"/>
-                                        </Border>
+                                        </Grid>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter TargetName="bg" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                                                <Setter TargetName="RowGrain" Property="Visibility" Value="Visible"/>
                                             </Trigger>
                                             <Trigger Property="IsSelected" Value="True">
                                                 <Setter TargetName="bg" Property="Background" Value="{DynamicResource SelectionBg}"/>
+                                                <Setter TargetName="RowGrain" Property="Visibility" Value="Collapsed"/>
                                                 <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>

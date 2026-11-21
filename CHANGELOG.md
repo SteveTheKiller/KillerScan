@@ -33,12 +33,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Menus, cards and pickers keep an even 8 px edge, and card buttons show their keyboard shortcut on a second line.
 - The title bar's file name and the monospaced text use the fallback faces for the chosen language, so Chinese, Japanese and other scripts draw in a proper face.
 - On 98SE, the caption Close button draws the Windows 98 pixel X, and a checked card button shows white text.
+- Toolbar buttons, tabs, card chips, column headers and the History and Locations rows draw the film grain over their hover fill, the way menu rows and card tiles do.
+- On Trash Polka, check boxes and radio buttons are solid black inside.
 
 ### Added
 
 - Trash Polka, a new theme under 98SE: black with a tattoo-style ink background in your accent color, from eight accents with Blood red as the default. Under a Windows high contrast theme the ink and the tab shade step aside for the system colors. The ink is saved to disk and prepared in the background shortly after KillerScan starts, so switching to Trash Polka is quick, and its memory is released when you pick another theme.
 - The file picker has a New folder button (Ctrl+Shift+N). It checks the name first and says what is wrong with it before anything is created.
 - The device card can be customized: Customize hides tiles you never use and brings them back, and the layout is kept for next time.
+- The service, History row and terminal cards can be customized the same way. A few rarely used tiles start in the Hidden drawer, such as SSH as, Copy details and Font.
+- While customizing a card, Alt+arrow keys move the focused tile, and a screen reader hears its new place.
 
 ## [1.9.5] - 2026-11-09
 

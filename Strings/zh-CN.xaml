@@ -724,4 +724,5 @@
     <sys:String x:Key="Str_Card_Hidden">已隐藏</sys:String>
     <sys:String x:Key="Str_Card_HiddenHint">将磁贴拖到此处即可隐藏</sys:String>
     <sys:String x:Key="Str_Card_AlwaysShown">始终显示</sys:String>
+    <sys:String x:Key="Str_Card_Moved">{0}，第 {1} 个，共 {2} 个</sys:String>
 </ResourceDictionary>

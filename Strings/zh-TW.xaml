@@ -724,4 +724,5 @@
     <sys:String x:Key="Str_Card_Hidden">已隱藏</sys:String>
     <sys:String x:Key="Str_Card_HiddenHint">將圖格拖曳到此處即可隱藏</sys:String>
     <sys:String x:Key="Str_Card_AlwaysShown">一律顯示</sys:String>
+    <sys:String x:Key="Str_Card_Moved">{0}，第 {1} 個，共 {2} 個</sys:String>
 </ResourceDictionary>
