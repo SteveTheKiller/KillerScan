@@ -35,21 +35,24 @@ namespace KillerScan.Services
 
         /// <summary>Killer Sans UI (Killer Sans scaled to Segoe UI proportions) with the Segoe fallback stack.</summary>
         private static readonly string AssemblyName = typeof(ThemeManager).Assembly.GetName().Name!;
+        // Fonts are embedded in this assembly, so their base names it rather than the entry exe; a host
+        // such as the test runner would otherwise miss Lacquer and Killer Sans and draw a system face.
+        private static readonly Uri FontBase = new($"pack://application:,,,/{AssemblyName};component/");
         /// <summary>The interface language the font stacks are built for, a culture name such as "zh-CN".</summary>
         internal static string UiLanguage { get; private set; } = "en-US";
         internal static FontFamily KillerSansUiStack { get; private set; } = UiStack(UiLanguage);
-        internal static readonly FontFamily KillerSansFont = new(new Uri("pack://application:,,,/"), "./Fonts/#Killer Sans");
+        internal static readonly FontFamily KillerSansFont = new(FontBase, "./Fonts/#Killer Sans");
         internal static FontFamily LacquerHeadingStack { get; private set; } = HeadingStack(UiLanguage);
         // The title bar's file name: Killer Sans over the language's fallbacks, so a CJK name is not left to the
         // system default face.
         internal static FontFamily KillerSansTitleStack { get; private set; } = TitleStack(UiLanguage);
 
         private static FontFamily UiStack(string language) =>
-            new(new Uri($"pack://application:,,,/{AssemblyName};component/"), UiFontStack.For(language));
+            new(FontBase, UiFontStack.For(language));
         private static FontFamily TitleStack(string language) =>
-            new(new Uri("pack://application:,,,/"), UiFontStack.Title(language));
+            new(FontBase, UiFontStack.Title(language));
         private static FontFamily HeadingStack(string language) =>
-            new(new Uri("pack://application:,,,/"), UiFontStack.Heading(language));
+            new(FontBase, UiFontStack.Heading(language));
 
         /// <summary>
         /// Builds the font stacks for an interface language and republishes the theme when they
@@ -1014,7 +1017,7 @@ namespace KillerScan.Services
             // the wordmark, falling back to Killer Sans UI for scripts Lacquer does not cover. 98SE keeps
             // Killer Sans. Secondary headings, the footer and the interface stay Killer Sans.
             SetIfAbsent("HeadingFont", combined.Contains("UseDialogCaption") && combined["UseDialogCaption"] is bool fh && fh
-                ? new FontFamily(new Uri("pack://application:,,,/"), "./Fonts/#Killer Sans") : LacquerHeadingStack);
+                ? KillerSansFont : LacquerHeadingStack);
             // KillerSearch is a product name, so it keeps Lacquer even on 98SE. The search box's own
             // section labels follow HeadingFont, except where 98SE sets them to its interface face.
             SetIfAbsent("SearchTitleFont", LacquerHeadingStack);
