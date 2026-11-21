@@ -10,6 +10,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Fixed
 
+- Theme and language menu labels line up with their radio buttons and check boxes again, instead of sitting a pixel high.
+- The theme and language menus keep 8px between their rows and the card edge on every side, and the language menu's divider has the same gap on each side.
 - The Mourning theme highlights selections in its original peach with dark text again, instead of pink.
 - `killerscan watch /max-seconds` now stops on time even while a ping is still waiting for a reply, and a text-mode run that the limit cut short says so on stderr. The help lists `/max-seconds` with the other options.
 - The Delete button on a History scan's card has its own caption and tooltip in every language.

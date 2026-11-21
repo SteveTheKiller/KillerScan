@@ -782,6 +782,7 @@ internal static partial class HistoryUiTests
         var themeMenu = (ContextMenu)typeof(MainWindow).GetField("_themeContextMenu", Instance)!.GetValue(window)!;
         Require(ReferenceEquals(themeMenu.PlacementTarget, root) && themeMenu.Placement == System.Windows.Controls.Primitives.PlacementMode.Custom
             && themeMenu.CustomPopupPlacementCallback != null, "The theme flyout uses the family placement against the unscaled root.");
+        CheckThemeMenuInset(window, themeMenu, Path.Combine(output, "Theme-menu.png"));
         themeMenu.IsOpen = false;
         var langButton = (Button)window.FindName("LangButton");
         Call(window, "LangButton_Click", langButton, new RoutedEventArgs());
@@ -819,6 +820,33 @@ internal static partial class HistoryUiTests
         var accepted = (Window)Call(window, "CreateHistoryRemovalConfirmation", 7, null)!;
         ((Button)accepted.FindName("OkButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         Require((bool)Property(accepted, "Confirmed")!, "The actual Delete scans button explicitly confirms.");
+    }
+
+    // Family rule: the hover rows, the accent pills, the first row and Film Grain sit 8px from
+    // the theme card's outer edge on every side. Measured from the live open menu's layout.
+    private static void CheckThemeMenuInset(MainWindow window, ContextMenu menu, string path)
+    {
+        // A hidden test window's popup may not lay out, so the menu is measured as its own root.
+        menu.ApplyTemplate();
+        menu.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        menu.Arrange(new Rect(menu.DesiredSize)); menu.UpdateLayout();
+        var card = (FrameworkElement)menu.Template.FindName("MenuRoot", menu);
+        Rect Bounds(FrameworkElement e) => e.TransformToAncestor(card).TransformBounds(new Rect(0, 0, e.ActualWidth, e.ActualHeight));
+        FrameworkElement Hover(Control c) => (FrameworkElement)c.Template.FindName("bd", c);
+        var radios = ((Panel)window.FindName("ThemeRadios")).Children.OfType<RadioButton>().ToArray();
+        var first = Bounds(Hover(radios[0]));
+        var grain = Bounds(Hover((CheckBox)window.FindName("FilmGrainCheck")));
+        var pill = Bounds((FrameworkElement)window.FindName("AccentStripDot0"));
+        var lastPill = Bounds((FrameworkElement)window.FindName("AccentStripDot7"));
+        double w = card.ActualWidth, h = card.ActualHeight;
+        string report = $"row L{first.Left} T{first.Top}, pill T{pill.Top} R{w - pill.Right}, grain L{grain.Left} R{w - grain.Right} B{h - grain.Bottom}, card {w}x{h}";
+        Require(Math.Abs(first.Left - 8) < 0.5 && Math.Abs(first.Top - 8) < 0.5 && Math.Abs(grain.Left - 8) < 0.5
+                && Math.Abs(h - grain.Bottom - 8) < 0.5 && Math.Abs(w - grain.Right - 8) < 0.5,
+            "The theme rows sit 8px from the card's left, top, right and bottom edges: " + report + ".");
+        Require(pill.Width > 0 && Math.Abs(pill.Top - 8) < 0.5 && Math.Abs(w - pill.Right - 8) < 0.5 && Math.Abs(w - lastPill.Right - 8) < 0.5,
+            "The accent pills sit 8px from the card's top and right edges: " + report + ".");
+        card.Opacity = 1;   // the template fades in from 0
+        Save(Render(menu, (int)Math.Ceiling(menu.ActualWidth), (int)Math.Ceiling(menu.ActualHeight)), path);
     }
 
     private static object? Property(object value, string name) => value.GetType().GetProperty(name, Instance)!.GetValue(value);

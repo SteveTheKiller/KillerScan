@@ -228,9 +228,11 @@ namespace KillerScan.Shell
             {
                 if (content.Parent is Panel parent) parent.Children.Remove(content);
                 oldPopup.IsOpen = false;
-                // Hover rows sit 4px in from both menu edges: 12 left less the row's -8, and
-                // 2 right plus the row's own 2.
-                content.Margin = new Thickness(12, 10, 2, 10);
+                // The card's padding is zeroed below and the content carries the inset, so the
+                // hover rows, the accent pills, the first row and Film Grain all sit 8px from the
+                // card's outer edge: 1px border plus 15 less the row's -8 on the left, 5 plus the
+                // pills' 2 on the right, 7 top and bottom. Same numbers as the kit's ThemePicker.
+                content.Margin = new Thickness(15, 7, 5, 7);
 
                 var itemStyle = new Style(typeof(MenuItem));
                 var itemTemplate = new ControlTemplate(typeof(MenuItem));
@@ -240,7 +242,7 @@ namespace KillerScan.Shell
                 itemTemplate.VisualTree = presenter;
                 itemStyle.Setters.Add(new Setter(Control.TemplateProperty, itemTemplate));
 
-                _themeContextMenu = new ContextMenu { ItemContainerStyle = itemStyle };
+                _themeContextMenu = new ContextMenu { ItemContainerStyle = itemStyle, Padding = new Thickness(0) };
                 _themeContextMenu.Items.Add(content);
                 _themeContextMenu.PreviewMouseWheel += Menu_ForwardWheelToGrid;
             }
@@ -283,7 +285,9 @@ namespace KillerScan.Shell
 
         private Theme _stripFamily = Theme.Dark;
         private bool _stripOpen;
-        private const double AccentStripWidth = 39;
+        // 7 gap from the divider, the 26px pill, its 2px right margin: no slack, so the pill's
+        // right edge lands 8px inside the card (the content's 5 plus the 1px border).
+        private const double AccentStripWidth = 35;
         private const double AccentStripSlideMs = 180;
         private Border[] StripDots =>
             [AccentStripDot0, AccentStripDot1, AccentStripDot2, AccentStripDot3, AccentStripDot4, AccentStripDot5, AccentStripDot6, AccentStripDot7];
@@ -470,24 +474,17 @@ namespace KillerScan.Shell
         private void BuildLanguageMenu(ContextMenu menu)
         {
             menu.Items.Clear();
+            menu.Padding = new Thickness(0);   // the columns' margin is the whole 8px edge, as in the theme menu
 
-            var itemStyle = new Style(typeof(MenuItem));
-            var itemTemplate = new ControlTemplate(typeof(MenuItem));
-            var presenter = new FrameworkElementFactory(typeof(ContentPresenter));
-            presenter.SetValue(ContentPresenter.ContentSourceProperty, "Header");
-            presenter.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
-            itemTemplate.VisualTree = presenter;
-            itemStyle.Setters.Add(new Setter(Control.TemplateProperty, itemTemplate));
-            menu.ItemContainerStyle = itemStyle;
-
-            var columns = new StackPanel { Orientation = Orientation.Horizontal,
-                                           Margin = new Thickness(12, 10, 14, 10) };
+            // KillerUI's language menu: each hover row sits 8px from the card's outer edge, and the
+            // divider sits 8px from the hover boxes on both sides.
+            var columns = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(15, 7, 5, 7) };
             var left = new StackPanel { Width = 200 };
             var right = new StackPanel { Width = 200 };
             var divider = new Border
             {
                 Width = 1,
-                Margin = new Thickness(6, 8, 7, 8),
+                Margin = new Thickness(6, 8, 16, 8),
                 Opacity = 0.18,
                 IsHitTestVisible = false,
                 OpacityMask = new LinearGradientBrush
@@ -516,12 +513,8 @@ namespace KillerScan.Shell
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
-                var nameBlock = new TextBlock
-                {
-                    Text = name,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    FontFamily = new FontFamily("Segoe UI, Microsoft JhengHei UI, Nirmala UI"),
-                };
+                // The row's own font (UiFont already falls back for other scripts), so the ring centers on the capitals.
+                var nameBlock = new TextBlock { Text = name, VerticalAlignment = VerticalAlignment.Center };
                 var codeBlock = new TextBlock
                 {
                     Text = code,
@@ -546,7 +539,18 @@ namespace KillerScan.Shell
                 radio.Checked += Lang_Checked;
                 (index++ < half ? left : right).Children.Add(radio);
             }
-            menu.Items.Add(columns);
+            // The rows' 8px gap is for between rows; under the last one it would double the bottom edge.
+            foreach (var column in new[] { left, right })
+                if (column.Children.Count > 0 && column.Children[column.Children.Count - 1] is FrameworkElement last)
+                    last.Margin = new Thickness(last.Margin.Left, last.Margin.Top, last.Margin.Right, 0);
+
+            // PanelMenuItem is the gutter-free container for custom menu panels, as in KillerUI.
+            menu.Items.Add(new MenuItem
+            {
+                Header = columns,
+                StaysOpenOnClick = true,
+                Style = (Style)FindResource("PanelMenuItem"),
+            });
         }
 
         private void Lang_Checked(object sender, RoutedEventArgs e)
