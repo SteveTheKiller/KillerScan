@@ -249,11 +249,12 @@ function vendor {
     )
 
     process {
-        # /vendor accepts no options at all, so it is called bare and its single line
-        # of output is the answer. "Unknown" comes back as $null rather than a word
-        # you would have to test for.
-        $name = Invoke-KsText @('/vendor', $Mac) -Answer 0, 3
-        if ($name -eq 'Unknown') { $null } else { $name }
+        # Asked for as JSON so the answer never depends on the wording of the text output.
+        # Exit 3 is an unknown maker, which comes back as $null rather than a word you
+        # would have to test for.
+        $text = Invoke-KsText @('/vendor', $Mac, '/json') -Answer 0, 3
+        $found = $text | ConvertFrom-Json
+        if ($found.known) { Remove-KsControl $found.vendor } else { $null }
     }
 }
 
@@ -269,23 +270,20 @@ function netinfo {
     [CmdletBinding()]
     param()
 
-    # /network takes no options, so its labelled lines are parsed into an object here
-    # rather than asked for as JSON. A field the app could not read comes back as $null
-    # instead of the dash it prints.
-    $map = @{}
-    foreach ($line in (Invoke-KsText @('/network')) -split "`r?`n") {
-        if ($line -match '^(INTERFACE|LOCAL IP|SUBNET|GATEWAY|DNS)\s+(.+)$') {
-            $value = $Matches[2].Trim()
-            $map[$Matches[1]] = if ($value -eq '-') { $null } else { $value }
-        }
-    }
+    # A field the app could not read comes back as $null rather than an empty string.
+    $net = @(Invoke-KsJson @('/network', '/json'))[0]
+    function Get-KsValue($Value) { if ([string]::IsNullOrEmpty($Value)) { $null } else { Remove-KsControl $Value } }
 
     [pscustomobject]@{
-        Interface = $map['INTERFACE']
-        Address   = $map['LOCAL IP']
-        Subnet    = $map['SUBNET']
-        Gateway   = $map['GATEWAY']
-        Dns       = $map['DNS']
+        Interface = Get-KsValue $net.interface
+        Adapter   = Get-KsValue $net.adapter
+        Address   = Get-KsValue $net.localIp
+        Subnet    = Get-KsValue $net.subnet
+        Gateway   = Get-KsValue $net.gateway
+        Dns       = Get-KsValue $net.dns
+        Wireless  = [bool]$net.wireless
+        # Bits per second, as Windows reports it. $null when Windows reported none.
+        LinkSpeed = if ($net.linkSpeed -gt 0) { [long]$net.linkSpeed } else { $null }
     }
 }
 
@@ -312,4 +310,79 @@ function locations {
     }
 }
 
-Export-ModuleMember -Function scan, probe, vendor, netinfo, locations
+<#
+.SYNOPSIS
+    Saved scans from History, newest first. Reads the history files and changes nothing.
+.DESCRIPTION
+    With no -Run, lists the saved runs. With -Run, returns that run's devices, or with
+    -Compare, what changed since the run before it. -Run takes the Number or the
+    ScannedAt a listing gave; ScannedAt stays the same when newer scans are saved.
+.EXAMPLE
+    scanhistory
+.EXAMPLE
+    scanhistory -Run 1 | Where-Object Ports -contains 3389
+.EXAMPLE
+    scanhistory -Location 'Acme Dental' -Run 1 -Compare
+#>
+function scanhistory {
+    [CmdletBinding()]
+    param(
+        # A number from the listing (1 is the newest) or a run's ScannedAt.
+        [Parameter(Position = 0)]
+        [object]$Run,
+
+        # Keep to one saved Location, by name or ID.
+        [string]$Location,
+
+        # What changed since the run before this one: Added, Removed and Changed devices.
+        [switch]$Compare
+    )
+
+    if ($Compare -and -not $Run) { throw '-Compare needs -Run.' }
+    # The app matches a ScannedAt by the moment it names, so a date goes back in its round-trip
+    # form. PowerShell 7 reads the listing's dates as DateTime, and its own text form would not parse.
+    if ($Run -is [DateTimeOffset] -or $Run -is [DateTime]) {
+        $Run = ([DateTimeOffset]$Run).ToString('o', [System.Globalization.CultureInfo]::InvariantCulture)
+    }
+    $arguments = @('/history')
+    if ($Run)      { $arguments += [string]$Run }
+    if ($Location) { $arguments += @('/location', $Location) }
+    if ($Compare)  { $arguments += '/compare' }
+    $arguments += '/json'
+
+    if (-not $Run) {
+        foreach ($item in (Invoke-KsJson $arguments)) {
+            $item = Remove-KsControl $item
+            [pscustomobject]@{
+                Number     = $item.number
+                # A DateTimeOffset on both editions: Windows PowerShell leaves the JSON text a
+                # string, PowerShell 7 turns it into a local DateTime.
+                ScannedAt  = if ($item.scannedAt -is [DateTime]) { [DateTimeOffset]$item.scannedAt }
+                             else { [DateTimeOffset]::Parse($item.scannedAt, [System.Globalization.CultureInfo]::InvariantCulture) }
+                Location   = $item.location
+                Target     = $item.target
+                Name       = $item.name
+                Devices    = $item.devices
+                Completion = $item.completion
+                Adapter    = $item.adapter
+            }
+        }
+        return
+    }
+
+    $found = @(Invoke-KsJson $arguments)[0]
+    if (-not $Compare) {
+        foreach ($device in @($found.devices)) { if ($null -ne $device) { ConvertTo-KsDevice $device } }
+        return
+    }
+    [pscustomobject]@{
+        Baseline = if ($null -eq $found.baseline) { $null }
+                   elseif ($found.baseline.scannedAt -is [DateTime]) { [DateTimeOffset]$found.baseline.scannedAt }
+                   else { [DateTimeOffset]::Parse($found.baseline.scannedAt, [System.Globalization.CultureInfo]::InvariantCulture) }
+        Added    = @(foreach ($device in @($found.added)) { if ($null -ne $device) { ConvertTo-KsDevice $device } })
+        Removed  = @(foreach ($device in @($found.removed)) { if ($null -ne $device) { ConvertTo-KsDevice $device } })
+        Changed  = @(foreach ($device in @($found.changed)) { if ($null -ne $device) { ConvertTo-KsDevice $device } })
+    }
+}
+
+Export-ModuleMember -Function scan, probe, vendor, netinfo, locations, scanhistory
