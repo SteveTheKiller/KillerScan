@@ -145,6 +145,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--about-signature" })) { AboutSignatureTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--about-update-failure" })) { AboutUpdateFailureTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--picker-recovery" })) { PickerRecoveryTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--new-folder" })) { NewFolderTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--appdata-isolation" })) { AppDataIsolationTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--prompt-upgrade" })) { PromptUpgradeTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--uninstall-prompt" })) { UninstallPromptTests.Run(); return 0; }
