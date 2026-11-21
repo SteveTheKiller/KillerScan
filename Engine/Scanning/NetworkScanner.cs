@@ -763,12 +763,13 @@ namespace KillerScan.Engine
                     await quickSemaphore.WaitAsync(ct);
                     try
                     {
+                        var quickLookup = options.ReverseDns
+                            ? await AwaitWithCancellation(ResolveHostnameAsync(entry.Addr), ct) : HostnameLookup.None;
                         var device = new NetworkDevice
                         {
                             IpAddress = entry.Addr.ToString(),
                             MacAddress = entry.Mac,
-                            Hostname = options.ReverseDns
-                                ? await AwaitWithCancellation(ResolveVerifiedHostnameAsync(entry.Addr), ct) : string.Empty
+                            Hostname = quickLookup.Verified
                         };
 
                         if (!string.IsNullOrEmpty(entry.Mac))
@@ -780,6 +781,7 @@ namespace KillerScan.Engine
                             device.MdnsServices = DeviceText.Services(quickMd.Services);
                             if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(quickMd.Name))
                                 device.Hostname = quickMd.Name;
+                            PreferCorroboratedPtr(device, quickLookup, quickMd.Name);
                         }
                         if (options.Ssdp && _ssdp.TryGetValue(device.IpAddress, out var quickSrv))
                             device.SsdpServer = quickSrv;
@@ -824,7 +826,19 @@ namespace KillerScan.Engine
         /// <summary>Replaces the reverse-then-forward lookup in tests.</summary>
         internal static Func<IPAddress, Task<string>>? HostnameResolverOverride { get; set; }
 
-        private static async Task<string> ResolveVerifiedHostnameAsync(IPAddress addr)
+        /// <summary>
+        /// A reverse lookup's outcome: <see cref="Verified"/> is a PTR name whose forward lookup
+        /// returns the address; <see cref="Ptr"/> is the PTR name either way.
+        /// </summary>
+        private readonly struct HostnameLookup
+        {
+            public static readonly HostnameLookup None = new(string.Empty, string.Empty);
+            public HostnameLookup(string verified, string ptr) { Verified = verified; Ptr = ptr; }
+            public string Verified { get; }
+            public string Ptr { get; }
+        }
+
+        private static async Task<HostnameLookup> ResolveHostnameAsync(IPAddress addr)
         {
             var deadline = Task.Delay(HostnameBudget);
             var slot = HostnameSlots.WaitAsync();
@@ -832,31 +846,68 @@ namespace KillerScan.Engine
             {
                 // Release a slot this abandoned wait may still be granted later.
                 _ = slot.ContinueWith(_ => HostnameSlots.Release(), TaskScheduler.Default);
-                return string.Empty;
+                return HostnameLookup.None;
             }
             var lookup = LookupHostnameAsync(addr);
             _ = lookup.ContinueWith(_ => HostnameSlots.Release(), TaskScheduler.Default);
-            return await Task.WhenAny(lookup, deadline) == lookup ? await lookup : string.Empty;
+            return await Task.WhenAny(lookup, deadline) == lookup ? await lookup : HostnameLookup.None;
         }
 
-        private static async Task<string> LookupHostnameAsync(IPAddress addr)
+        private static async Task<HostnameLookup> LookupHostnameAsync(IPAddress addr)
         {
+            string hostname = string.Empty;
             try
             {
-                if (HostnameResolverOverride is { } resolve) return await resolve(addr) ?? string.Empty;
+                if (HostnameResolverOverride is { } resolve)
+                {
+                    string named = await resolve(addr) ?? string.Empty;
+                    return new HostnameLookup(named, named);
+                }
                 var reverse = await Dns.GetHostEntryAsync(addr);
-                string hostname = reverse.HostName?.Trim() ?? string.Empty;
+                hostname = reverse.HostName?.Trim() ?? string.Empty;
                 if (hostname.Length == 0 || string.Equals(
                         hostname, addr.ToString(), StringComparison.OrdinalIgnoreCase))
-                    return string.Empty;
+                    return HostnameLookup.None;
 
                 var forward = await Dns.GetHostAddressesAsync(hostname);
-                return forward.Any(candidate => candidate.Equals(addr)) ? hostname : string.Empty;
+                return new HostnameLookup(forward.Any(candidate => candidate.Equals(addr)) ? hostname : string.Empty, hostname);
             }
             catch
             {
-                return string.Empty;
+                // A PTR whose forward lookup fails outright (no A record) is still a candidate.
+                return new HostnameLookup(string.Empty, hostname);
             }
+        }
+
+        /// <summary>
+        /// True when an unconfirmed PTR name agrees with a name the device gave about itself
+        /// (mDNS or NetBIOS), comparing the first label by letters and digits only. Printers often
+        /// carry a DHCP-registered PTR with no A record, so the forward check alone drops their real
+        /// name; a stale PTR from address reuse names another machine and still fails here.
+        /// </summary>
+        internal static bool PtrMatchesDeviceName(string? ptr, string? mdnsName, string? netbiosName)
+        {
+            string key = NameKey(ptr);
+            if (key.Length == 0) return false;
+            return key == NameKey(mdnsName) || key == NameKey(netbiosName);
+        }
+
+        private static string NameKey(string? name)
+        {
+            if (string.IsNullOrEmpty(name)) return string.Empty;
+            int dot = name!.IndexOf('.');
+            string label = dot >= 0 ? name.Substring(0, dot) : name;
+            var key = new StringBuilder(label.Length);
+            foreach (char c in label)
+                if (char.IsLetterOrDigit(c)) key.Append(char.ToLowerInvariant(c));
+            return key.ToString();
+        }
+
+        /// <summary>Swaps in the PTR name when forward DNS did not confirm it but the device's own name does.</summary>
+        private static void PreferCorroboratedPtr(NetworkDevice device, HostnameLookup lookup, string? mdnsName)
+        {
+            if (lookup.Verified.Length == 0 && PtrMatchesDeviceName(lookup.Ptr, mdnsName, device.NetbiosName))
+                device.Hostname = lookup.Ptr;
         }
 
         private static Task<string> ResolveMacAsync(IPAddress address, CancellationToken ct) =>
@@ -942,9 +993,11 @@ namespace KillerScan.Engine
             };
 
             // Resolve hostname + capture TTL (OS family hint) in parallel with port scan.
+            var lookup = HostnameLookup.None;
             var dnsTask = options.ReverseDns ? Task.Run(async () =>
             {
-                device.Hostname = await ResolveVerifiedHostnameAsync(addr);
+                lookup = await ResolveHostnameAsync(addr);
+                device.Hostname = lookup.Verified;
             }) : Task.CompletedTask;
 
             var ttlTask = options.Icmp ? Task.Run(async () =>
@@ -988,9 +1041,11 @@ namespace KillerScan.Engine
             // Attach network-wide discovery results + name fallback (reverse DNS -> mDNS .local name).
             // A probe started during discovery waits here for the multicast replies.
             await AwaitWithCancellation(_multicastReady, token);
+            string? mdnsName = null;
             if (options.Mdns && _mdns.TryGetValue(device.IpAddress, out var md))
             {
                 device.MdnsServices = DeviceText.Services(md.Services);
+                mdnsName = md.Name;
                 if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(md.Name))
                     device.Hostname = md.Name;
             }
@@ -1014,6 +1069,7 @@ namespace KillerScan.Engine
             // Last-resort name: NetBIOS computer name when reverse DNS and mDNS both came up empty.
             if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(device.NetbiosName))
                 device.Hostname = device.NetbiosName;
+            PreferCorroboratedPtr(device, lookup, mdnsName);
 
             // Classify device type using weighted scoring over all signals.
             Finish(device);
@@ -1057,9 +1113,11 @@ namespace KillerScan.Engine
             };
 
             // Hostname + TTL alongside the port sweep.
+            var lookup = HostnameLookup.None;
             var dnsTask = options.ReverseDns ? Task.Run(async () =>
             {
-                device.Hostname = await ResolveVerifiedHostnameAsync(addr);
+                lookup = await ResolveHostnameAsync(addr);
+                device.Hostname = lookup.Verified;
             }, ct) : Task.CompletedTask;
             var ttlTask = options.Icmp ? Task.Run(async () =>
             {
@@ -1095,8 +1153,10 @@ namespace KillerScan.Engine
                 device.Vendor = ResolveVendor(device.MacAddress);
 
             // Reuse the last full scan's network-wide multicast results for naming.
+            string? mdnsName = null;
             if (options.Mdns && _mdns.TryGetValue(ip, out var md))
             {
+                mdnsName = md.Name;
                 device.MdnsServices = DeviceText.Services(md.Services);
                 if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(md.Name))
                     device.Hostname = md.Name;
@@ -1123,6 +1183,7 @@ namespace KillerScan.Engine
 
             if (string.IsNullOrEmpty(device.Hostname) && !string.IsNullOrEmpty(device.NetbiosName))
                 device.Hostname = device.NetbiosName;
+            PreferCorroboratedPtr(device, lookup, mdnsName);
 
             Finish(device);
             return device;

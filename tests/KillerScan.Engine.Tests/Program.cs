@@ -25,6 +25,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--mdns" })) { await MdnsTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--api-contract" })) { await ApiContractTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--dns-budget" })) { await DnsBudgetTests.Run(); return 0; }
+            if (args.SequenceEqual(new[] { "--hostname-ptr" })) { await HostnameCorroborationTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--binding" })) { await BindingTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--recognition" })) { await RecognitionTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--access" })) { await AccessTests.Run(); return 0; }

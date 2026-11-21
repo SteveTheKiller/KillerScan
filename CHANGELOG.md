@@ -16,6 +16,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - Disabled card buttons still show their tooltip and shortcut.
 - Chinese (Simplified) and Japanese text uses Microsoft YaHei UI and Yu Gothic UI, the faces Windows draws those languages in, instead of borrowing Traditional Chinese glyphs.
 - A tree's connecting line ends at the right row when an item is added below the one that was last.
+- A device whose reverse DNS name has no forward record now shows that name when the device's own mDNS or NetBIOS name matches it, so a printer shows as `XC-C12789` instead of `XCc12789` (#17).
 
 ### Changed
 
