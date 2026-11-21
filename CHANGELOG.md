@@ -14,7 +14,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The theme and language menus keep 8px between their rows and the card edge on every side, and the language menu's divider has the same gap on each side.
 - Menus, cards and drop-down lists opened inside the Devices, Services and Topology views are rounded on all four corners again. One corner used to come out square because it copied the view's tab-side corners.
 - The Mourning theme highlights selections in its original peach with dark text again, instead of pink.
-- `killerscan watch /max-seconds` now stops on time even while a ping is still waiting for a reply, and a text-mode run that the limit cut short says so on stderr. The help lists `/max-seconds` with the other options.
 - The Delete button on a History scan's card has its own caption and tooltip in every language.
 - Disabled card buttons still show their tooltip and shortcut.
 - Chinese (Simplified) and Japanese text uses Microsoft YaHei UI and Yu Gothic UI, the faces Windows draws those languages in, instead of borrowing Traditional Chinese glyphs.
