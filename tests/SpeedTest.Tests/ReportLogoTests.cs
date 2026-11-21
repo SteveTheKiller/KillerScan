@@ -64,6 +64,38 @@ internal static class ReportLogoTests
             if (!themed.Contains("html.theme-" + key + "{--bg:") || !themed.Contains("['" + key + "','"))
                 throw new InvalidOperationException("The report has a palette and a swatch for the " + theme + " theme.");
         }
+        // Trash Polka carries the app's window ink: the ink and the accent mask as embedded PNGs, scoped to the theme and
+        // left out of print and high contrast, and no other theme gets it.
+        var wallpaper = ReportWallpaper.Get() ?? throw new InvalidOperationException("The Trash Polka report ink builds.");
+        if (!html.Contains("html.theme-trashpolka body::before{background:url(" + wallpaper.InkUri + ")")
+            || !html.Contains("--tpmask:url(" + wallpaper.CoverageUri + ")")
+            || html.IndexOf(wallpaper.CoverageUri, StringComparison.Ordinal) != html.LastIndexOf(wallpaper.CoverageUri, StringComparison.Ordinal)
+            || !html.Contains("@media print,(forced-colors:active){html.theme-trashpolka body::before"))
+            throw new InvalidOperationException("Every report carries the Trash Polka ink under that theme only.");
+        if (System.Text.RegularExpressions.Regex.IsMatch(html, @"html\.theme-(?!trashpolka)\w+ body::(before|after)"))
+            throw new InvalidOperationException("Only Trash Polka draws the ink behind the report.");
+        static byte[] Decode(string uri) => Convert.FromBase64String(uri.Substring(uri.IndexOf(',') + 1));
+        using (var inkPng = new MemoryStream(Decode(wallpaper.InkUri)))
+        using (var maskPng = new MemoryStream(Decode(wallpaper.CoverageUri)))
+        {
+            var ink = System.Windows.Media.Imaging.BitmapDecoder.Create(inkPng, System.Windows.Media.Imaging.BitmapCreateOptions.None, System.Windows.Media.Imaging.BitmapCacheOption.OnLoad).Frames[0];
+            var mask = System.Windows.Media.Imaging.BitmapDecoder.Create(maskPng, System.Windows.Media.Imaging.BitmapCreateOptions.None, System.Windows.Media.Imaging.BitmapCacheOption.OnLoad).Frames[0];
+            if (ink.PixelWidth != ReportWallpaper.Width || mask.PixelHeight != ReportWallpaper.Height)
+                throw new InvalidOperationException("The report ink is " + ReportWallpaper.Width + "x" + ReportWallpaper.Height + ".");
+            int Covered(System.Windows.Media.Imaging.BitmapSource frame)
+            {
+                var px = new byte[frame.PixelWidth * frame.PixelHeight * 4];
+                new System.Windows.Media.Imaging.FormatConvertedBitmap(frame, System.Windows.Media.PixelFormats.Bgra32, null, 0).CopyPixels(px, frame.PixelWidth * 4, 0);
+                int n = 0;
+                for (int i = 3; i < px.Length; i += 4) if (px[i] > 0) n++;
+                return n;
+            }
+            int inkPixels = Covered(ink), accentPixels = Covered(mask), total = ink.PixelWidth * ink.PixelHeight;
+            if (inkPixels < total / 50 || accentPixels < total / 50)
+                throw new InvalidOperationException($"The report ink carries both layers: {inkPixels} ink and {accentPixels} accent pixels of {total}.");
+        }
+        Console.WriteLine($"report html {html.Length / 1024} KB, ink {wallpaper.InkUri.Length / 1024} KB, accent {wallpaper.CoverageUri.Length / 1024} KB");
+
         // A theme the report does not know opens in Dark rather than unstyled.
         string unknown = ReportExport.BuildHtml([], "192.0.2.0/24", "nosuchtheme");
         if (!unknown.Contains("class='theme-dark'") || !unknown.Contains("setTheme(saved||'dark')"))

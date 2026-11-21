@@ -200,11 +200,17 @@ namespace KillerScan.Controls
             };
             try
             {
-                string html = ReportExport.BuildSnapshotHtml(
-                    ActiveDevices, _active.ScannedSubnet, ThemeManager.Current.ToString().ToLowerInvariant(),
-                    _active.ScannedAt, _active.Completion, _active.Refresh,
-                    _location.IsTemporary ? string.Empty : LocationName, _active.Adapter);
+                // The report shows the devices as they were when Export was picked, but it is built after the dialog:
+                // the first report in a session also renders the Trash Polka ink, about a second.
+                var devices = ActiveDevices.ToList();
+                var session = _active;
+                string subnet = session.ScannedSubnet, theme = ThemeManager.Current.ToString().ToLowerInvariant();
+                var scannedAt = session.ScannedAt;
+                var completion = session.Completion;
+                var refresh = session.Refresh;
+                string location = _location.IsTemporary ? string.Empty : LocationName, adapter = session.Adapter;
                 if (ShowExportDialog(dlg) != true) return;
+                string html = ReportExport.BuildSnapshotHtml(devices, subnet, theme, scannedAt, completion, refresh, location, adapter);
                 ExportFile.WriteText(dlg.FileName, html, Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }

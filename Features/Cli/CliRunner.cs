@@ -261,7 +261,7 @@ namespace KillerScan.Features.Cli
         private static readonly string[] HtmlThemes =
         [
             "dark", "light", "black", "98se", "blood", "greed", "cyanotic", "ectoplasm",
-            "decay", "malaise", "sepulchre", "delirium", "mourning"
+            "decay", "malaise", "sepulchre", "delirium", "mourning", "trashpolka"
         ];
 
         /// <summary>
@@ -987,7 +987,7 @@ namespace KillerScan.Features.Cli
             "  /export <path>         write output; extension selects format unless overridden",
             "  /no-header             omit table and CSV headings",
             "  /max-seconds <n>       stop watch after 1 to 600 seconds and keep the samples so far",
-            "  /theme <name>          HTML theme (dark, light, black, 98se, or a grunge theme)",
+            "  /theme <name>          HTML theme (dark, light, black, 98se, trashpolka, or a grunge theme)",
             "  /quiet                 suppress stdout and status; normally paired with /export",
             "  /log <path>            also write status, progress and errors to a file; use it from",
             "                        PowerShell, which never hands a GUI app its 2> redirect", "", "TARGET EXAMPLES",

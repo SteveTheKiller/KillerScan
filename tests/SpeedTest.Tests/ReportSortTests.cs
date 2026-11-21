@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using KillerScan.Engine;
@@ -35,8 +36,11 @@ internal static class ReportSortTests
         int count = 0;
         try
         {
-            foreach (string theme in new[] { "98se", "dark", "light", "black", "blood", "greed", "cyanotic", "ectoplasm",
-                "decay", "malaise", "sepulchre", "delirium", "mourning", "98SE" })
+            // Every app theme, so a new one cannot be left out of /theme (Trash Polka was).
+            var themes = Enum.GetValues(typeof(KillerScan.Services.Theme)).Cast<KillerScan.Services.Theme>()
+                .Select(t => t == KillerScan.Services.Theme.SE98 ? "98se" : t.ToString().ToLowerInvariant())
+                .Concat(new[] { "98SE" });
+            foreach (string theme in themes)
             {
                 string path = Path.Combine(root, "report.html");
                 using var process = Process.Start(new ProcessStartInfo(typeof(CliRunner).Assembly.Location,

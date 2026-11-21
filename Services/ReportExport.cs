@@ -42,6 +42,9 @@ namespace KillerScan.Services
         /// <summary>Resource lookup that survives having no Application - the CLI builds reports
         /// with no WPF resources loaded, and gets the English fallback. Also used for the JS string
         /// literals below, so those are escaped for a single-quoted JavaScript string.</summary>
+        private static string TrashPolkaInkOpacity()
+            => KillerScan.Controls.TrashPolkaInk.BackgroundOpacity.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
+
         private static string L(string key, string fallback) =>
             System.Windows.Application.Current?.TryFindResource(key) as string ?? fallback;
 
@@ -173,6 +176,19 @@ namespace KillerScan.Services
             sb.AppendLine(".footer{color:var(--muted);font-size:11px;margin-top:18px;opacity:.85}");
             sb.AppendLine(".footer a{color:var(--accent);text-decoration:none}.footer a:hover{text-decoration:underline}");
             sb.AppendLine("@media(max-width:640px){body{padding:12px}.wordmark{font-size:22px}th,td{padding:8px 10px;font-size:12px}}");
+            // Trash Polka's window ink behind the page, the same piece and opacity as the app's window background. The
+            // accent marks are a mask filled with --accent, laid over the rest of the ink. Every report carries it, so
+            // switching a report to Trash Polka shows it too; printing and Windows high contrast leave it out.
+            if (ReportWallpaper.Get() is { } wallpaper)
+            {
+                string opacity = TrashPolkaInkOpacity();
+                sb.Append("html.theme-trashpolka body::before,html.theme-trashpolka body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:")
+                  .Append(opacity).AppendLine("}");
+                sb.Append("html.theme-trashpolka body::before{background:url(").Append(wallpaper.InkUri).AppendLine(") center/cover no-repeat}");
+                sb.Append("html.theme-trashpolka body::after{--tpmask:url(").Append(wallpaper.CoverageUri)
+                  .AppendLine(");background:var(--accent);-webkit-mask:var(--tpmask) center/cover no-repeat;mask:var(--tpmask) center/cover no-repeat}");
+                sb.AppendLine("@media print,(forced-colors:active){html.theme-trashpolka body::before,html.theme-trashpolka body::after{display:none}}");
+            }
             sb.AppendLine("</style></head><body><div class='wrap'>");
 
             // Header: the embedded logo in the theme's colors, or the Consolas wordmark (Killer in text color,
