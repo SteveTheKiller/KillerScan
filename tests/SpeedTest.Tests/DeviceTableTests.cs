@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -8,15 +9,19 @@ using KillerScan.Controls;
 using KillerScan.Engine;
 
 // A MAC address is always shown whole in the device table: the column is never narrower than
-// a full address in the cell's own font.
+// a full address in the cell's own font. The device card opened from the table stays rounded.
 internal static class DeviceTableTests
 {
     internal static void Run()
     {
         using var workspace = new ScanWorkspace("192.0.2.0/24", false);
+        // The main window's pane squares its tab side by overriding PanelCornerRadius for its
+        // subtree (WorkspaceTabs.ApplyPaneCorners), so the table sits under the same override here.
+        var pane = new Border { Child = workspace };
+        pane.Resources["PanelCornerRadius"] = new CornerRadius(0, 3, 6, 6);
         var window = new Window
         {
-            Content = workspace, Width = 1200, Height = 780, Left = -20000, Top = -20000,
+            Content = pane, Width = 1200, Height = 780, Left = -20000, Top = -20000,
             ShowInTaskbar = false, ShowActivated = false, WindowStyle = WindowStyle.None
         };
         window.Show();
@@ -46,9 +51,45 @@ internal static class DeviceTableTests
             Pump();
             Require(column.ActualWidth + 0.5 >= column.MinWidth && column.MinWidth > 110,
                 "The MAC column cannot be dragged or restored narrower than a full address.");
+            Console.WriteLine("PASS: device table MAC addresses are never cut off.");
+
+            DeviceCardCorners(workspace, grid, device);
         }
         finally { window.Close(); }
-        Console.WriteLine("PASS: device table MAC addresses are never cut off.");
+    }
+
+    // The card reads resources through the grid it opens from, but it floats free of the pane,
+    // so its face keeps the theme's radius on all four corners.
+    private static void DeviceCardCorners(ScanWorkspace workspace, DataGrid grid, NetworkDevice device)
+    {
+        grid.SelectedItem = device; grid.CurrentItem = device;
+        workspace.PrepareDeviceContextMenu();
+        var menu = grid.ContextMenu;
+        menu.PlacementTarget = grid;
+        menu.StaysOpen = true;   // the test window is never activated, which would close the card at once
+        menu.IsOpen = true;
+        Pump();
+        try
+        {
+            Require(menu.IsOpen && VisualTreeHelper.GetChildrenCount(menu) > 0, "The device card opens.");
+            var face = Descendants(menu).OfType<Border>().FirstOrDefault(b => b.BorderThickness.Left > 0 && ReferenceEquals(b.BorderBrush, menu.BorderBrush))
+                ?? throw new InvalidOperationException("The device card's face is in its template.");
+            var theme = (CornerRadius)Application.Current.FindResource("PanelCornerRadius");
+            Require(face.CornerRadius == new CornerRadius(theme.TopLeft),
+                $"The device card is rounded on all four corners: {face.CornerRadius} against the theme's {theme}.");
+        }
+        finally { menu.IsOpen = false; menu.StaysOpen = false; }
+        Console.WriteLine("PASS: the device card keeps its rounded corners inside the squared pane.");
+    }
+
+    private static IEnumerable<DependencyObject> Descendants(DependencyObject root)
+    {
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+        {
+            var child = VisualTreeHelper.GetChild(root, i);
+            yield return child;
+            foreach (var below in Descendants(child)) yield return below;
+        }
     }
 
     private static void Pump()

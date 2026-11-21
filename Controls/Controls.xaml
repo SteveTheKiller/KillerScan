@@ -452,14 +452,14 @@
                                  a Win98 dropdown list is a white well with the navy highlight. -->
                             <Border MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}"
                                     Background="{DynamicResource ComboPopupBrush}" BorderBrush="{DynamicResource MenuBorderBrush}"
-                                    BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}" Margin="6"
+                                    BorderThickness="1" CornerRadius="{DynamicResource MenuCornerRadius}" Margin="6"
                                     Effect="{DynamicResource ComboPopupShadow}">
                                 <Grid>
                                     <ScrollViewer Margin="0,4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                                         <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
                                     </ScrollViewer>
                                     <!-- Grain last, over the items, so a highlighted row keeps its texture. -->
-                                    <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+                                    <Border IsHitTestVisible="False" CornerRadius="{DynamicResource MenuCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
                                 </Grid>
                             </Border>
                         </Popup>
@@ -594,14 +594,14 @@
                         </DataTemplate>
                     </ControlTemplate.Resources>
                     <Border x:Name="PART_Root" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{DynamicResource PanelCornerRadius}" Margin="6" Padding="8,6">
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{DynamicResource MenuCornerRadius}" Margin="6" Padding="8,6">
                         <Border.Effect><DropShadowEffect Color="Black" BlurRadius="22" ShadowDepth="4" Direction="270" Opacity="{DynamicResource FlyoutShadowOpacity}"/></Border.Effect>
                         <Grid>
                             <!-- Margin cancels PART_Root's Padding above. The grain is a child of
                                  the padded content, so without it the texture stops 8px short of
                                  the card's edges and a flat ring frames the month grid - the
                                  same defect the details dialogs had. -->
-                            <Border IsHitTestVisible="False" Margin="-8,-6" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+                            <Border IsHitTestVisible="False" Margin="-8,-6" CornerRadius="{DynamicResource MenuCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
                             <StackPanel>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -965,7 +965,7 @@
                          hold the card in place against the wider halo. -->
                     <Grid x:Name="MenuRoot" Opacity="0" Margin="22,18,22,26">
                         <!-- Shadow-only layer behind, so the menu text stays crisp. -->
-                        <Border Background="{TemplateBinding Background}" CornerRadius="{DynamicResource PanelCornerRadius}" IsHitTestVisible="False">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="{DynamicResource MenuCornerRadius}" IsHitTestVisible="False">
                             <!-- A flat theme sets the opacity to 0; the layer then leaves the tree
                                  instead of running a blur that draws nothing. -->
                             <Border.Style>
@@ -984,7 +984,7 @@
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{DynamicResource PanelCornerRadius}">
+                                CornerRadius="{DynamicResource MenuCornerRadius}">
                             <Grid>
                                 <!-- Film grain on the menu surface, matching the settings panel. -->
                                 <!-- IsSharedSizeScope so every MenuItem's Header/Gesture columns in THIS
@@ -992,7 +992,7 @@
                                      names) instead of each row sizing its shortcut text independently. -->
                                 <!-- A menu taller than the screen scrolls instead of cutting off its last items (KillerShot menu-overflow). -->
                                 <Border IsHitTestVisible="False" Opacity="{DynamicResource GrainOpacity}"
-                                        CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}"/>
+                                        CornerRadius="{DynamicResource MenuCornerRadius}" Background="{DynamicResource GrainTileBrush}"/>
                                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" CanContentScroll="False">
                                     <StackPanel IsItemsHost="True" Margin="{TemplateBinding Padding}" KeyboardNavigation.DirectionalNavigation="Cycle"
                                                 Grid.IsSharedSizeScope="True"/>

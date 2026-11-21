@@ -245,7 +245,9 @@ internal static class ReleaseUiTests
         window.GetType().GetMethod("ApplyAppScale", Instance)!.Invoke(window, new object[] { 1.0, false });
         var menu = new ContextMenu();
         window.GetType().GetMethod("BuildLanguageMenu", Instance)!.Invoke(window, new object[] { menu });
-        var columnsPanel = (StackPanel)menu.Items[0];
+        // The columns ride in a PanelMenuItem, the gutter-free container for custom menu panels.
+        var columnsItem = (MenuItem)menu.Items[0];
+        var columnsPanel = (StackPanel)columnsItem.Header;
         var leftColumn = (StackPanel)columnsPanel.Children[0];
         var rightColumn = (StackPanel)columnsPanel.Children[2];
         var languages = leftColumn.Children.Cast<RadioButton>().Concat(rightColumn.Children.Cast<RadioButton>()).ToArray();
@@ -253,6 +255,7 @@ internal static class ReleaseUiTests
         foreach (string locale in new[] { "UkUA", "NbNO", "PtBR", "SlSI" })
             Require(languages.Any(radio => Equals(radio.Tag, locale)), locale + ": language is selectable in the menu.");
         Require(languages.Count(radio => radio.IsChecked == true) == 1, "Language menu marks exactly one current locale.");
+        columnsItem.Header = null;
         menu.Items.Clear();
         var menuSurface = new Border { Child = columnsPanel, Background = (Brush)app.FindResource("MenuBackgroundBrush") };
         Save(Render(menuSurface, 450, 420), Path.Combine(output, "LanguageMenu.png"));

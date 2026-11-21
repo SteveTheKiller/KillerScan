@@ -499,7 +499,7 @@ namespace KillerFamily.Controls
                 card.UpdateLayout();
                 var face = Descendants(card).OfType<Border>().FirstOrDefault(b => ReferenceEquals(b.BorderBrush, card.BorderBrush) && b.BorderThickness.Left > 0);
                 Rect r = face is not null && card.IsAncestorOf(face) ? face.TransformToAncestor(card).TransformBounds(new Rect(face.RenderSize)) : new Rect(card.RenderSize);
-                var radius = card.TryFindResource("PanelCornerRadius") is CornerRadius cr ? cr : new CornerRadius(0);
+                var radius = card.TryFindResource("MenuCornerRadius") is CornerRadius cr ? cr : new CornerRadius(0);
                 drawerFace.CornerRadius = new CornerRadius(0, radius.TopRight, radius.BottomRight, 0);
                 // A flat theme (98SE) has no accent edge on its menus: the drawer takes the menu's border and bevels.
                 bool flat = card.TryFindResource("UseDialogCaption") is true;
