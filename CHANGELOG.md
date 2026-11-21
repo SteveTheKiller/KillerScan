@@ -20,6 +20,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Changed
 
+- KillerScan.Engine is now licensed under the Mozilla Public License 2.0. The app stays GPLv3.
 - Updated the app and engine JSON dependency to 10.0.15.
 - Right-click menus on devices, services, Locations, saved scans, History rows and the terminal are now cards. Each one names what you clicked over a grid of tiles, one per action, with its keyboard shortcut on the tile and in its tooltip. Lists such as Access, Set Device Type and the zoom steps open beside their tile.
 - Scan settings, Location, Export, Topology settings, the History, sidebar and tab-placement menus and the tray menu are cards too. Scan checks are chips grouped by what they find, with the presets and the adapter list as tiles; Topology order, the sidebar side and tab placement are tiles with the current choice checked; History's This Location and All Locations are tiles with the one in use checked; and Topology's PNG, JPG and HTML exports each have their own tile and shortcut.

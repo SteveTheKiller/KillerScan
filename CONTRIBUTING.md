@@ -55,7 +55,7 @@ Include:
 
 Avoid automatic issue-closing keywords in PR descriptions and commits. Bug reports stay open for reporter confirmation when practical.
 
-Be prepared to revise an approved contribution after review. Contributions must be compatible with the repository's existing license; these guidelines do not change that license.
+Be prepared to revise an approved contribution after review. The KillerScan app is licensed under [GPLv3](LICENSE), and the engine under `Engine/` is licensed under the [Mozilla Public License 2.0](Engine/LICENSE). Contributions to the app are released under GPLv3 and contributions to the engine under MPL 2.0, and each must be compatible with its license.
 
 ## Project-specific guidance
 

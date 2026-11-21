@@ -83,3 +83,7 @@ Warmup bytes are separate from measured bytes. Neither direction's payload count
 
 - `samples/KillerScan.Engine.Example` scans a target and prints JSON: `dotnet run --project samples/KillerScan.Engine.Example -- 192.168.1.0/24 --quick`
 - `tests/KillerScan.Engine.Tests` runs the engine checks against both targets.
+
+## License
+
+KillerScan.Engine is licensed under the Mozilla Public License 2.0. See the engine [LICENSE](LICENSE). The KillerScan desktop app remains GPLv3 under the repository [LICENSE](https://github.com/SteveTheKiller/KillerScan/blob/main/LICENSE).
