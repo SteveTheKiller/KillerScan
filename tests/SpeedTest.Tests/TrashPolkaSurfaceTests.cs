@@ -135,6 +135,10 @@ internal static class TrashPolkaSurfaceTests
         if (tab is null) return;
         var tabBounds = tab.TransformToAncestor(root).TransformBounds(new Rect(tab.RenderSize));
         bool top = tabBounds.Bottom < bounds.Top + bounds.Height / 2;
+        // Keep Alive cards are dark bars of their own over the page, so the join is only measured where the page runs.
+        Cards = !name.StartsWith("watch") ? [] : Descendants(root).OfType<Border>()
+            .Where(b => b.IsVisible && b.Width == 264 && ThemeMotif.GetPart(b) == MotifPart.Popup)
+            .Select(b => b.TransformToAncestor(root).TransformBounds(new Rect(b.RenderSize))).ToList();
         if (top)
         {
             CheckTopJoin(on, off, tab, tabBounds, name);
@@ -160,6 +164,7 @@ internal static class TrashPolkaSurfaceTests
     }
 
     private static readonly Dictionary<string, double> InkMeans = [];
+    private static List<Rect> Cards = [];
 
     // A tab above a table joins its column header, which is matte, so a matte tab there is right; any tab that carries
     // ink has to run it into the page under it.
@@ -190,6 +195,7 @@ internal static class TrashPolkaSurfaceTests
         for (int k = 10; k <= 34; k += 2, n++)
             baseline += ColumnStep(a, b, on.PixelWidth, seam + into * k, seam + into * (k + 4), left, right);
         baseline /= n;
+        if (double.IsNaN(join) || double.IsNaN(baseline)) { Console.WriteLine($"{name}: the tab sits over a Keep Alive card, no page at the join."); return; }
         Console.WriteLine($"{name}: ink step across the join {join:F2}, inside the page {baseline:F2}.");
         if (join > baseline * 1.8 + 2) Failures.Add($"{name}: the ink breaks at the join between tab and page ({join:F2} against {baseline:F2} inside the page).");
     }
@@ -214,30 +220,48 @@ internal static class TrashPolkaSurfaceTests
         for (int x = Math.Max(0, left); x < Math.Min(width, right); x++)
         {
             if (Math.Abs(Plain(x, y1) - Plain(x, y2)) > 6) continue;
+            if (Cards.Any(c => x >= c.Left - 1 && x <= c.Right + 1 && Math.Max(y1, y2) >= c.Top - 1 && Math.Min(y1, y2) <= c.Bottom + 1)) continue;
             sum += Math.Abs(Ink(x, y1) - Ink(x, y2));
             count++;
         }
         return count == 0 ? double.NaN : sum / count;
     }
 
-    // The Keep Alive cards carry the page's own ink at the page's strength, so the image runs through them instead of
-    // leaving gray slabs on the page: inside a card the ink matches the Topology page's at the same spot.
+    // The Keep Alive cards are dark bars over the page, like KillerPDF's annotation bars: the menu face carrying the popup
+    // piece. Inside a card the typical pixel is well darker than the Topology page's at the same spot, and the face is
+    // inked, not a flat fill.
     private static void CheckWatchCards(Window window, FrameworkElement root, Action showWatch, Action showTopology)
     {
         Invoke(window, "SetTabPlacement", false);
         showWatch();
         Pump(900);
-        var card = Descendants(root).OfType<Border>().FirstOrDefault(b => b.IsVisible && b.Width == 264 && ThemeMotif.GetPart(b) == MotifPart.Window);
+        var card = Descendants(root).OfType<Border>().FirstOrDefault(b => b.IsVisible && b.Width == 264 && ThemeMotif.GetPart(b) == MotifPart.Popup);
         if (card is null) { Failures.Add("watch cards: no Keep Alive card on screen."); return; }
         var area = Inset(card.TransformToAncestor(root).TransformBounds(new Rect(card.RenderSize)), 10);
-        var (watchOn, watchOff) = RenderBoth(root, "watch-cards");
-        double inCard = Difference(watchOn, watchOff, area).Mean;
+        var (watchOn, _) = RenderBoth(root, "watch-cards");
+        double inCard = MedianLuma(watchOn, area);
+        bool inked = card.Background is DrawingBrush;
         showTopology();
         Pump(900);
-        var (pageOn, pageOff) = RenderBoth(root, "watch-cards-page");
-        double page = Difference(pageOn, pageOff, area).Mean;
-        Console.WriteLine($"watch cards: card ink {inCard:F2} against the page's {page:F2} at the same spot.");
-        if (inCard < page * 0.75) Failures.Add($"watch cards: the cards are gray slabs, ink {inCard:F2} against the page's {page:F2}.");
+        var (pageOn, _) = RenderBoth(root, "watch-cards-page");
+        double page = MedianLuma(pageOn, area);
+        Console.WriteLine($"watch cards: card median luma {inCard:F1} against the page's {page:F1} at the same spot, inked {inked}.");
+        if (inCard > page * 0.6) Failures.Add($"watch cards: the cards are not darker than the page ({inCard:F1} against {page:F1}).");
+        if (!inked) Failures.Add("watch cards: the card face is a flat fill without the ink.");
+    }
+
+    private static double MedianLuma(BitmapSource image, Rect area)
+    {
+        var p = Pixels(image);
+        var values = new List<double>();
+        for (int y = Math.Max(0, (int)area.Top); y < Math.Min(image.PixelHeight, (int)area.Bottom); y++)
+            for (int x = Math.Max(0, (int)area.Left); x < Math.Min(image.PixelWidth, (int)area.Right); x++)
+            {
+                int i = (y * image.PixelWidth + x) * 4;
+                values.Add(0.0722 * p[i] + 0.7152 * p[i + 1] + 0.2126 * p[i + 2]);
+            }
+        values.Sort();
+        return values.Count == 0 ? double.NaN : values[values.Count / 2];
     }
 
     // A selected Devices row: every cell's text against the row behind it, read off the render, at 4.5:1 or better.
