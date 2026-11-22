@@ -72,11 +72,11 @@ internal static class SiteShots
 
         Shot("01-trash-polka-devices", Theme.TrashPolka, Accent.Red, true, () => { Devices(); Pump(300); SelectRow(4); },
             width: 1180, height: 760);
-        Shot("02-trash-polka-topology", Theme.TrashPolka, Accent.Purple, false, () => Invoke(window, "ShowScanView", "topology"),
+        Shot("02-cyanotic-topology", Theme.Cyanotic, Accent.Purple, false, () => Invoke(window, "ShowScanView", "topology"),
             width: 1000, height: 700, scale: 0.9, sidebarRight: true);
         Shot("03-trash-polka-keep-alive", Theme.TrashPolka, Accent.Orange, true, () => Invoke(window, "Watch_Click", window, new RoutedEventArgs()), 6000,
             width: 1120, height: 680);
-        Shot("04-trash-polka-services", Theme.TrashPolka, Accent.Teal, false, () => Invoke(window, "ServicesButton_Click", window, new RoutedEventArgs()),
+        Shot("04-black-services", Theme.Black, Accent.Teal, false, () => Invoke(window, "ServicesButton_Click", window, new RoutedEventArgs()),
             width: 960, height: 640, scale: 1.1);
         Shot("05-dark-terminal", Theme.Dark, Accent.Green, true, () => Invoke(window, "NewTerminalView"), 1500,
             width: 800, height: 500, scale: 1.1, sidebarRight: true);
@@ -84,14 +84,17 @@ internal static class SiteShots
             width: 1060, height: 660, scale: 0.9);
         Shot("07-98se-devices", Theme.SE98, Accent.Blue, true, () => { Devices(); Pump(300); SelectRow(2); },
             width: 980, height: 640);
-        Shot("08-trash-polka-history", Theme.TrashPolka, Accent.Yellow, true, () =>
+        Shot("08-blood-history", Theme.Blood, Accent.Yellow, true, () =>
         {
             var list = (ListBox)window.FindName("HistoryList");
             if (list.Items.Count == 0) Invoke(window, "RefreshHistoryList");
             Pump(200);
             if (list.Items.Count > 0) { list.SelectedIndex = 0; Invoke(window, "ShowHistoryEntry"); }
+            Pump(300);
+            // All Devices fills the table; the Changes view of a demo run is only a row or two.
+            if (Descendants(root).OfType<HistoryWorkspace>().FirstOrDefault() is { } history) Invoke(history, "SetView", true);
         }, width: 1040, height: 680, sidebarRight: true);
-        Shot("09-trash-polka-shortcuts", Theme.TrashPolka, Accent.Magenta, false, () => { Devices(); Pump(300); Invoke(window, "ShowShortcuts"); },
+        Shot("09-ectoplasm-shortcuts", Theme.Ectoplasm, Accent.Magenta, false, () => { Devices(); Pump(300); Invoke(window, "ShowShortcuts"); },
             width: 1240, height: 800);
         ((FrameworkElement)window.FindName("ShortcutsOverlay")).Visibility = Visibility.Collapsed;
         // The HTML report of the same demo scan, opening in Trash Polka; a headless browser captures it afterwards.

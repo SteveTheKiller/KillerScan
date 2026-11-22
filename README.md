@@ -22,12 +22,12 @@ The [help page](https://killerscan.net/help.html) covers every view, tool and sh
 
 ## Screenshots
 
-KillerScan 1.9 preview.
+KillerScan 1.9.6.
 
 <table>
 <tr>
-<td width="50%"><img src="scan-landing/screenshots/devices-1.9.png" alt="KillerScan device discovery with addresses, vendors, device types and open ports"><br><sub>Device discovery puts addresses, hostnames, MAC addresses, vendors, device types and open ports in one table.</sub></td>
-<td width="50%"><img src="scan-landing/screenshots/keep-alive-1.9.png" alt="KillerScan Keep Alive monitoring four hosts with latency graphs, packet loss and diagnostic checks"><br><sub>Keep Alive shows latency, packet loss, diagnostic checks and recent connection changes for each host.</sub></td>
+<td width="50%"><img src="scan-landing/screenshots/1.9.6-01-trash-polka-devices.png" alt="KillerScan device discovery in the Trash Polka theme with addresses, vendors, device types and open ports"><br><sub>Device discovery in the new Trash Polka theme puts addresses, hostnames, MAC addresses, vendors, device types and open ports in one table.</sub></td>
+<td width="50%"><img src="scan-landing/screenshots/1.9.6-03-cyanotic-topology.png" alt="KillerScan network topology in the Cyanotic theme, with the gateway, local network and every device by role"><br><sub>Topology draws the gateway, the local network and every device by role, here in the Cyanotic theme.</sub></td>
 </tr>
 </table>
 
