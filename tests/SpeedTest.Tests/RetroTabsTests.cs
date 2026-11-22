@@ -11,7 +11,7 @@ using KillerScan.Shell;
 /// <summary>
 /// The 98SE view tabs, rendered without a window: a band with three tabs, the middle one
 /// selected, above and below the page. Checks the pixels Windows 98 puts where: the selected
-/// tab's page face overhanging its neighbours and running into the page, the others a step
+/// tab's page face overhanging its neighbours and stopping on the page line, the others a step
 /// shorter in the darker face, and the page line across the strip broken by the selected tab.
 /// </summary>
 internal static class RetroTabsTests
@@ -88,26 +88,25 @@ internal static class RetroTabsTests
             At(50, 2, Light, "an inactive tab's top highlight, a step below the selected tab's");
             At(50, 1, clear, "the strip above an inactive tab");
             At(150, 0, Light, "the selected tab's top highlight on the band's first row");
-            At(150, 28, Page, "the selected tab running into the page over the page line");
-            At(150, 29, Page, "the selected tab running into the page");
+            At(150, 27, Page, "the selected tab's face down to the page line");
+            At(150, 28, Light, "the page line running under the selected tab too");
             At(50, 28, Light, "the page's white top line under an inactive tab");
             At(50, 29, clear, "the page row below the line, outside every tab");
             At(50, 27, Behind, "an inactive tab stopping above the page line");
-            At(2, 0, clear, "the first tab's cut top corner");
-            At(102, 29, Page, "the selected tab's foot is open, no edge");
+            At(100, 0, Light, "the selected tab's square top-left corner");
         }
         else
         {
             At(50, 0, Shade, "the page's #808080 shade on the band's first row, over an inactive tab");
             At(50, 1, Dark, "the page's black foot against an inactive tab");
-            At(150, 0, Page, "the selected tab breaking the page foot");
-            At(150, 1, Page, "the selected tab breaking the page foot");
+            At(150, 0, Shade, "the page's shade running over the selected tab too");
+            At(150, 1, Dark, "the page's black foot running over the selected tab too");
             At(150, 28, Shade, "the selected tab's #808080 foot");
             At(150, 29, Dark, "the selected tab's black foot on the band's last row");
             At(50, 26, Shade, "an inactive tab's #808080 foot, a step up");
             At(50, 27, Dark, "an inactive tab's black foot, a step up");
             At(50, 29, clear, "the strip below an inactive tab");
-            At(100, 0, Light, "the selected tab's white left edge reaching the page");
+            At(100, 2, Light, "the selected tab's white left edge starting under the page foot");
         }
 
         // Leaving 98SE: nothing the retro styling set survives on a tab or in the band.

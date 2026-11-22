@@ -11,6 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Fixed
 
 - On 98SE the selected view tab no longer runs down into the page. Every tab now stops on the page line.
+- On 98SE the view tabs have square corners, matching KillerShell.
 - HTML reports carry the Trash Polka ink once instead of three times, so each report is about half the size.
 
 ## [1.9.6] - 2026-11-21

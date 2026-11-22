@@ -77,7 +77,8 @@ namespace KillerScan.Shell
             // outer edge (where they sit a step lower than the selected one).
             // Both stop on the page line, so no tab runs down into the content; the selected one
             // stands Step taller at the outer edge instead.
-            tab.Margin = active ? new Thickness(-Overhang, 0, -Overhang, Step) : new Thickness(0, Step, 0, Step);
+            tab.Margin = !active ? new Thickness(0, Step, 0, Step)
+                : bottom ? new Thickness(-Overhang, Step, -Overhang, 0) : new Thickness(-Overhang, 0, -Overhang, Step);
         }
 
         /// <summary>
@@ -88,13 +89,8 @@ namespace KillerScan.Shell
         /// </summary>
         internal static Geometry? TopEdgesClip(FrameworkElement tab)
         {
-            int w = (int)Math.Round(tab.RenderSize.Width), h = (int)Math.Round(tab.RenderSize.Height);
-            if (w < 6 || h < 4) return null;
-            Geometry shape = new RectangleGeometry(new Rect(0, 0, w, h));
-            foreach (var corner in new[] { new Rect(0, 0, 2, 1), new Rect(0, 1, 1, 1), new Rect(w - 2, 0, 2, 1), new Rect(w - 1, 1, 1, 1) })
-                shape = new CombinedGeometry(GeometryCombineMode.Exclude, shape, new RectangleGeometry(corner));
-            shape.Freeze();
-            return shape;
+            // Square corners, as KillerShell's 98SE tabs draw them: nothing is cut away.
+            return null;
         }
 
         internal static void DrawTopEdges(DrawingContext dc, FrameworkElement tab)
@@ -106,13 +102,10 @@ namespace KillerScan.Shell
             Brush dark = (tab.TryFindResource("BevelOuterDarkBrush") as Brush) ?? Brushes.Black;
             void Px(Brush b, int x, int y, int cw = 1, int ch = 1) => dc.DrawRectangle(b, null, new Rect(x, y, cw, ch));
 
-            // The cut corners are a clip (TopEdgesClip), so the strip shows through them.
-            Px(light, 0, 2, 1, h - 2);            // left highlight
-            Px(light, 1, 1);                      // its diagonal into the top
-            Px(light, 2, 0, w - 4, 1);            // top highlight
-            Px(shadow, w - 2, 2, 1, h - 2);       // right, inner
-            Px(dark, w - 1, 2, 1, h - 2);         // right, outer
-            Px(shadow, w - 2, 1);                 // the shadow's diagonal
+            Px(light, 0, 0, 1, h);                // left highlight
+            Px(light, 1, 0, w - 3, 1);            // top highlight
+            Px(shadow, w - 2, 1, 1, h - 1);       // right, inner
+            Px(dark, w - 1, 0, 1, h);             // right, outer
         }
     }
 }
