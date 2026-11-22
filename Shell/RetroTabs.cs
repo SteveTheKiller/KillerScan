@@ -75,7 +75,9 @@ namespace KillerScan.Shell
             // same both ways up: the selected tab overhangs its cell and runs the full row; the
             // others stop Step short at the page (where the page line shows through) and at the
             // outer edge (where they sit a step lower than the selected one).
-            tab.Margin = active ? new Thickness(-Overhang, 0, -Overhang, 0) : new Thickness(0, Step, 0, Step);
+            // Both stop on the page line, so no tab runs down into the content; the selected one
+            // stands Step taller at the outer edge instead.
+            tab.Margin = active ? new Thickness(-Overhang, 0, -Overhang, Step) : new Thickness(0, Step, 0, Step);
         }
 
         /// <summary>
