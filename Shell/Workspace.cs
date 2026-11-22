@@ -12,6 +12,10 @@ namespace KillerScan.Shell
     public partial class MainWindow
     {
         private readonly Grid _workspaceBody = new();
+        // Trash Polka: KillerShell's TerminalInk. The terminal leaves its own fill off under the motif
+        // (TerminalControl.OnRender), and this layer gives it the pinned ink at screen strength, fainter than the
+        // pane's, since every line on it gets read. No background of its own, so other themes draw nothing here.
+        private readonly Border _terminalInk = new() { IsHitTestVisible = false, Visibility = Visibility.Collapsed };
         private readonly Grid _workspaceToolbar = new();
         private readonly Grid _toolbarSurface = new() { UseLayoutRounding = true, Background = Brushes.Transparent };
         private readonly Grid _workspaceSummary = new() { Visibility = Visibility.Collapsed, UseLayoutRounding = true };
@@ -47,6 +51,11 @@ namespace KillerScan.Shell
             // subnet box still reads as a field rather than as textured background.
             toolbarSurface.Children.Add(_workspaceToolbar);
             TitleToolbarHost.Child = toolbarSurface;
+            _terminalInk.SetResourceReference(Border.CornerRadiusProperty, "PanelCornerRadius");
+            Controls.ThemeMotif.SetBaseBrush(_terminalInk, "TerminalBackgroundBrush");
+            Controls.ThemeMotif.SetScreen(_terminalInk, true);
+            Controls.ThemeMotif.SetPart(_terminalInk, Controls.MotifPart.Window);
+            TerminalLayout.Children.Add(_terminalInk);
             TerminalLayout.Children.Add(_workspaceBody);
             TerminalLayout.SizeChanged += (_, _) => ClipWorkspaceSurface();
             NewScan(_startupScanTarget ?? string.Empty);
@@ -104,6 +113,7 @@ namespace KillerScan.Shell
             if (!_workspaceBody.Children.Contains(content)) _workspaceBody.Children.Add(content);
             _selectedWorkspace = content;
             _workspaceView = view;
+            _terminalInk.Visibility = view == "terminal" ? Visibility.Visible : Visibility.Collapsed;
             _workspaceSummary.Visibility = view == "history" ? Visibility.Visible : Visibility.Collapsed;
             // The export menu lives on the rail whatever is in front, so it is told which view it
             // is acting for. Anything built on the scan workspace resolves itself.

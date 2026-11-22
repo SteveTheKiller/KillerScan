@@ -411,9 +411,15 @@ namespace KillerScan.Terminal
             _drawnVersion = _buf.Version;
 
             var rect = new Rect(0, 0, ActualWidth, ActualHeight);
-            var bg = new SolidColorBrush(_palette.Background);
-            bg.Freeze();
-            dc.DrawRectangle(bg, null, rect);
+            // Trash Polka: the screen leaves its fill off so the shell pane's pinned ink under it (MainWindow.xaml
+            // DevicesPane) shows in every blank cell, as KillerShell's terminal does. Its palette background is the pane's
+            // own color there, so cell backgrounds and the cursor hole still match.
+            if (!ShowsInk())
+            {
+                var bg = new SolidColorBrush(_palette.Background);
+                bg.Freeze();
+                dc.DrawRectangle(bg, null, rect);
+            }
 
             if (TryFindResource("GrainTileBrush") is Brush grain)
             {
@@ -444,6 +450,14 @@ namespace KillerScan.Terminal
             dc.Pop();
 
             if (_palette.Scanlines) DrawScanlines(dc);
+        }
+
+        /// <summary>True when the default screen sits on Trash Polka ink. The LCD skin keeps its own phosphor black,
+        /// and high contrast keeps the plain fill, as ThemeMotif itself does.</summary>
+        private bool ShowsInk()
+        {
+            if (_palette.Skin != TerminalSkin.Default || TryFindResource("ThemeMotif") is not true || SystemParameters.HighContrast) return false;
+            return !KillerFamily.Accessibility.HighContrastResources.GetIsActive(this);
         }
 
         private void DrawBackgrounds(DrawingContext dc, Cell[] line, double y)

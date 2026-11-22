@@ -35,6 +35,14 @@ namespace KillerScan.Controls
         /// <summary>Flyouts, context menus and tool bars: fainter again, they carry the most text.</summary>
         internal static double PopupOpacity { get; set; } = 0.18;
 
+        /// <summary>Working screens (ThemeMotif.Screen: terminals, the editor, monitor tiles, tool tables): well under a
+        /// pane, since every line on them gets read.</summary>
+        internal static double ScreenOpacity { get; set; } = 0.2;
+
+        /// <summary>Dashboard tiles (ThemeMotif.Cell): a bit under a screen, so the dark tiles stay quiet on the lighter
+        /// inked page around them.</summary>
+        internal static double CellOpacity { get; set; } = 0.14;
+
         // Every accent-colored mark draws with one of these shared brushes, keyed by its alpha (in 5% steps) and whether
         // it is the darkened shade. Switching accents recolors these few brushes instead of redrawing the pieces, which
         // took seconds per switch (Steve, 2026-11-16). They stay unfrozen for that, so the pieces are never frozen.

@@ -1,4 +1,4 @@
-<UserControl x:Class="KillerScan.Controls.ScanWorkspace" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:a11y="clr-namespace:KillerFamily.Accessibility" xmlns:cm="clr-namespace:System.ComponentModel;assembly=System" Background="{DynamicResource BackgroundBrush}" UseLayoutRounding="True">
+<UserControl x:Class="KillerScan.Controls.ScanWorkspace" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:a11y="clr-namespace:KillerFamily.Accessibility" xmlns:cm="clr-namespace:System.ComponentModel;assembly=System" xmlns:controls="clr-namespace:KillerScan.Controls" Background="{DynamicResource BackgroundBrush}" UseLayoutRounding="True">
 <Grid>
 <Grid.Resources>
     <!-- The type cell, shared by the Devices grid and the Services grid so one list of
@@ -289,8 +289,11 @@
                    TextWrapping="Wrap" VerticalAlignment="Center"/>
     </DockPanel>
 </Border>
+<!-- Trash Polka: the same pinned piece as the shell's content pane under it (MainWindow.xaml
+     DevicesPane), so the opaque face here carries the ink instead of hiding it. -->
 <Border x:Name="DevicesPane"
-                Grid.Row="2" Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
+                Grid.Row="2" Background="{DynamicResource ScanContentPaneBrush}"
+                controls:ThemeMotif.Part="Window" controls:ThemeMotif.BaseBrush="ScanContentPaneBrush" BorderBrush="{DynamicResource PaneBorderBrush}"
                 BorderThickness="0" CornerRadius="{DynamicResource PanelCornerRadius}" Margin="0" Panel.ZIndex="10"
                 >
             <Grid>

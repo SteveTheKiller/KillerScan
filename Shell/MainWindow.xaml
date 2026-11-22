@@ -876,7 +876,9 @@
                      FlyoutCornerRadius with 0,0,4,4 - a dropdown shape that hangs off a button, so
                      this centered card came out with square top corners. PanelCornerRadius is 6 on
                      every flat theme and 0 on 98SE, which is the shape a card wants. -->
+                <!-- Trash Polka: the card carries the split piece, as KillerPDF's shortcut card does. -->
                 <Border Background="{DynamicResource OverlayWindowBrush}" BorderBrush="{DynamicResource OverlayEdgeBrush}"
+                        controls:ThemeMotif.Part="Split" controls:ThemeMotif.BaseBrush="OverlayWindowBrush"
                         BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
                     <Grid>
                         <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}"
@@ -984,7 +986,9 @@
                      FlyoutCornerRadius with 0,0,4,4 - a dropdown shape that hangs off a button, so
                      this centered card came out with square top corners. PanelCornerRadius is 6 on
                      every flat theme and 0 on 98SE, which is the shape a card wants. -->
+                <!-- Trash Polka: the card carries the split piece, as KillerPDF's About card does. -->
                 <Border Background="{DynamicResource OverlayWindowBrush}" BorderBrush="{DynamicResource CardBorderBrush}"
+                        controls:ThemeMotif.Part="Split" controls:ThemeMotif.BaseBrush="OverlayWindowBrush"
                         BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
                     <Grid>
                         <!-- Raised card bevel, KillerShell's About verbatim: FrameOuter pair, so on

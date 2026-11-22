@@ -2,12 +2,16 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:a11y="clr-namespace:KillerFamily.Accessibility"
+        xmlns:controls="clr-namespace:KillerScan.Controls"
         Background="Transparent">
     <UserControl.Resources>
         <!-- One Keep Alive target. Fixed width so the sparkline geometry stays honest and
              the wrap panel makes tidy columns instead of ragged full-width rows. -->
         <DataTemplate x:Key="WatchCardTemplate">
+            <!-- Trash Polka: each card is a tile on the pane, the faint cell strength of the same
+                 pinned piece, as KillerShell's Performance tiles. -->
             <Border Width="264" Margin="0,0,8,8" VerticalAlignment="Top" Focusable="True"
+                    controls:ThemeMotif.Part="Window" controls:ThemeMotif.BaseBrush="SurfaceBrush" controls:ThemeMotif.Cell="True"
                     PreviewMouseLeftButtonDown="WatchCard_Focus" PreviewMouseRightButtonDown="WatchCard_Focus">
                 <Border.Style>
                     <Style TargetType="Border" BasedOn="{StaticResource Card}">
@@ -165,6 +169,7 @@
     <!-- No border of its own: the shell's content pane already draws the one-pixel edge, as it
          does for the Devices view. A second one here doubled it. -->
     <Border Background="{DynamicResource ScanContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}"
+            controls:ThemeMotif.Part="Window" controls:ThemeMotif.BaseBrush="ScanContentPaneBrush"
             BorderThickness="0" CornerRadius="{DynamicResource PanelCornerRadius}">
         <Grid>
             <Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}"

@@ -20,7 +20,7 @@
       "--scan-presentation", "--menu-separators", "--startup-fade", "--release-ui", "--scan-options-ui",
       "--history-ui", "--history-settings-ui", "--history-table-ui", "--menu-icons-ui",
       "--topology", "--topology-stream", "--topology-keyboard", "--device-table", "--card-edit", "--report-language", "--csv-export", "--export-publication", "--history-load", "--run-evidence", "--locations",
-      "--locations-sidebar", "--sidebar-placement", "--keyboard-focus", "--contrast-transitions", "--picker-selection", "--location-workspace", "--recognition-ui", "--access-ui", "--report-sort", "--command-line-path",
+      "--locations-sidebar", "--sidebar-placement", "--trash-polka-surfaces", "--keyboard-focus", "--contrast-transitions", "--picker-selection", "--location-workspace", "--recognition-ui", "--access-ui", "--report-sort", "--command-line-path",
       "--executable-deployment", "--report-logo", "--outline-hover-ui", "--radio-center-ui", "--shrink-to-fit", "--rail-order", "--cli-progress", "--module-path", "--about-signature", "--about-update-failure", "--picker-recovery", "--new-folder","--appdata-isolation", "--prompt-upgrade", "--uninstall-prompt", "--scan-enter-key", "--retro-tabs",
       "--kit-net48", "--focus-ring-styles", "--button-shadows", "--caption-close-size", "--outline-caption", "--cli-watch-deadline", "--cli-json", "--cli-history"
     ],

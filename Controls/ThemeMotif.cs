@@ -78,6 +78,26 @@ namespace KillerScan.Controls
         public static string? GetMotifBrush(DependencyObject element) => (string?)element.GetValue(MotifBrushProperty);
         public static void SetMotifBrush(DependencyObject element, string? value) => element.SetValue(MotifBrushProperty, value);
 
+        /// <summary>
+        /// A working screen (a terminal, the text editor, a monitor tile, a tool's table): the element shows its stretch of
+        /// the sleeve at ScreenOpacity, fainter than a pane, because it is read line by line.
+        /// </summary>
+        public static readonly DependencyProperty ScreenProperty = DependencyProperty.RegisterAttached(
+            "Screen", typeof(bool), typeof(ThemeMotif), new PropertyMetadata(false, OnBaseBrushChanged));
+
+        public static bool GetScreen(DependencyObject element) => (bool)element.GetValue(ScreenProperty);
+        public static void SetScreen(DependencyObject element, bool value) => element.SetValue(ScreenProperty, value);
+
+        /// <summary>
+        /// A tile on a dashboard (a monitor tile and the graph well inside it): the darker face sits on the lighter page,
+        /// so its ink shows at CellOpacity, fainter again than a screen's. Takes precedence over Screen.
+        /// </summary>
+        public static readonly DependencyProperty CellProperty = DependencyProperty.RegisterAttached(
+            "Cell", typeof(bool), typeof(ThemeMotif), new PropertyMetadata(false, OnBaseBrushChanged));
+
+        public static bool GetCell(DependencyObject element) => (bool)element.GetValue(CellProperty);
+        public static void SetCell(DependencyObject element, bool value) => element.SetValue(CellProperty, value);
+
         private static readonly Dictionary<MotifPart, (Color Accent, Size Size, Drawing Piece)> Pieces = [];
 
         // The bitmap pieces, one per set of layers, tinted for the current accent only. A new accent is composed on a
@@ -667,6 +687,8 @@ namespace KillerScan.Controls
             {
                 MotifPart.Chrome => TrashPolkaInk.BackgroundOpacity,
                 MotifPart.Popup => TrashPolkaInk.PopupOpacity,
+                _ when GetCell(element) => TrashPolkaInk.CellOpacity,
+                _ when GetScreen(element) => TrashPolkaInk.ScreenOpacity,
                 _ => TrashPolkaInk.PaneOpacity,
             };
             var size = InkSize(element);

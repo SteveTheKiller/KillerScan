@@ -2,7 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             Background="{DynamicResource ScanContentPaneBrush}" UseLayoutRounding="True">
+             xmlns:controls="clr-namespace:KillerScan.Controls"
+             Background="{DynamicResource ScanContentPaneBrush}" UseLayoutRounding="True"
+             controls:ThemeMotif.Part="Window" controls:ThemeMotif.BaseBrush="ScanContentPaneBrush">
     <UserControl.Resources>
         <Style x:Key="HistoryViewButton" TargetType="Button" BasedOn="{StaticResource ViewTabButton}">
             <Style.Triggers>

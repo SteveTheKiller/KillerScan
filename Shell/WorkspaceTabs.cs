@@ -149,6 +149,9 @@ namespace KillerScan.Shell
             // 98SE: Win98's own tab control, drawn by RetroTabs (Shell/RetroTabs.cs).
             bool retro = Services.ThemeManager.Current == Services.Theme.SE98;
             grain.Opacity = 0;
+            // Off the motif before anything restyles the face: a painted tab repaints its ink over an outside background
+            // change, and on 98SE the restore would land on the retro face. The active tab below takes it back.
+            Controls.ThemeMotif.SetPart(tab, Controls.MotifPart.None);
             RetroTabs.StyleTab((ViewTab)tab, retro, active, bottom);
             if (retro) return;
             if (active)
@@ -157,7 +160,19 @@ namespace KillerScan.Shell
                 // On top of a table (Devices, Services) the tab joins the column header, not the
                 // page, so it takes the header's colour and the two read as one band.
                 bool onHeader = !bottom && (string)tab.Tag is "scan" or "services";
-                tab.SetResourceReference(Border.BackgroundProperty, onHeader ? "TableHeaderBrush" : "ScanContentPaneBrush");
+                string face = onHeader ? "TableHeaderBrush" : "ScanContentPaneBrush";
+                tab.SetResourceReference(Border.BackgroundProperty, face);
+                // Trash Polka: a tab on the page paints the page's pinned piece, so the ink runs through the join with
+                // no seam. The column header is matte, so a tab joined to it stays plain too.
+                if (!onHeader)
+                {
+                    // The terminal meets its tab at screen strength (_terminalInk), so the tab matches it, as KillerShell's
+                    // tool tabs match their screens.
+                    bool screen = (string)tab.Tag == "terminal";
+                    Controls.ThemeMotif.SetBaseBrush(tab, screen ? "TerminalBackgroundBrush" : face);
+                    Controls.ThemeMotif.SetScreen(tab, screen);
+                    Controls.ThemeMotif.SetPart(tab, Controls.MotifPart.Window);
+                }
                 tab.SetResourceReference(Border.BorderBrushProperty, "TabActiveRingFadeBrush");
                 tab.SetResourceReference(Border.BorderThicknessProperty, "TabStripeThickness");
                 tab.SetResourceReference(TextElement.ForegroundProperty, "TextBrush");
