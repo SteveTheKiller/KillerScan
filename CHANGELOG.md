@@ -55,6 +55,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The device card can be customized: Customize hides tiles you never use and brings them back, and the layout is kept for next time.
 - The service, History row and terminal cards can be customized the same way. A few rarely used tiles start in the Hidden drawer, such as SSH as, Copy details and Font.
 - While customizing a card, Alt+arrow keys move the focused tile, and a screen reader hears its new place.
+- While customizing a card, Tab reaches the Hidden drawer, Reset and the close X, and Enter moves a tile either way. A tile hidden from the keyboard comes back from the keyboard.
 
 ## [1.9.5] - 2026-11-09
 
