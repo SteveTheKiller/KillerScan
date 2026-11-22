@@ -21,6 +21,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - A tree's connecting line ends at the right row when an item is added below the last one.
 
 ### Changed
+- Refreshed the bundled MAC vendor database to 58,821 assignments.
 
 - KillerScan.Engine is now licensed under the Mozilla Public License 2.0. The app stays GPLv3.
 - Right-click menus on devices, services, Locations, saved scans, History rows and the terminal are cards. Each names what you clicked, or how many, over a grid of tiles with their shortcuts.
