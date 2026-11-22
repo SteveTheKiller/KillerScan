@@ -38,6 +38,7 @@ namespace KillerScan.Controls
         private void UpdateExportButtonAvailability()
         {
             ExportButton.IsEnabled = _exportContext is "watch" or "terminal" or "history" || ActiveDevices.Count > 0;
+            if (ActiveDevices.Count > 0) ReportWallpaper.Prewarm();
             string shortcuts = CurrentExportContext() switch
             {
                 "services" or "history" => "CSV Ctrl+E",
@@ -200,17 +201,14 @@ namespace KillerScan.Controls
             };
             try
             {
-                // The report shows the devices as they were when Export was picked, but it is built after the dialog:
-                // the first report in a session also renders the Trash Polka ink, about a second.
-                var devices = ActiveDevices.ToList();
-                var session = _active;
-                string subnet = session.ScannedSubnet, theme = ThemeManager.Current.ToString().ToLowerInvariant();
-                var scannedAt = session.ScannedAt;
-                var completion = session.Completion;
-                var refresh = session.Refresh;
-                string location = _location.IsTemporary ? string.Empty : LocationName, adapter = session.Adapter;
+                // Built before the dialog, so the report holds the devices' values as they were when Export was
+                // picked; a scan that renames a device while the dialog is open cannot reach the file. The Trash
+                // Polka ink it carries is warmed in the background once there are devices to export.
+                string html = ReportExport.BuildSnapshotHtml(
+                    ActiveDevices, _active.ScannedSubnet, ThemeManager.Current.ToString().ToLowerInvariant(),
+                    _active.ScannedAt, _active.Completion, _active.Refresh,
+                    _location.IsTemporary ? string.Empty : LocationName, _active.Adapter);
                 if (ShowExportDialog(dlg) != true) return;
-                string html = ReportExport.BuildSnapshotHtml(devices, subnet, theme, scannedAt, completion, refresh, location, adapter);
                 ExportFile.WriteText(dlg.FileName, html, Encoding.UTF8);
                 StatusText.Text = string.Format(Loc("Str_St_Exported"), Path.GetFileName(dlg.FileName));
             }

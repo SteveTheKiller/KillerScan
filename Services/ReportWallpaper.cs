@@ -30,6 +30,15 @@ namespace KillerScan.Services
 
         internal static Layers? Get() => Built.Value;
 
+        private static int _warming;
+
+        /// <summary>Starts the one build in the background, so the first report rarely waits for it. Safe to call often.</summary>
+        internal static void Prewarm()
+        {
+            if (Built.IsValueCreated || Interlocked.Exchange(ref _warming, 1) == 1) return;
+            System.Threading.Tasks.Task.Run(() => Built.Value);
+        }
+
         private static Layers? BuildOnStaThread()
         {
             Layers? result = null;
