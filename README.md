@@ -67,6 +67,6 @@ KillerScan has no usage analytics and does not automatically upload scan results
 
 ## License
 
-The KillerScan app is GPLv3. See [LICENSE](LICENSE). Forks and redistributions of the app must stay GPLv3 with source available.
+The KillerScan app is GPLv3. See [LICENSE](LICENSE). Forks and redistributions of the app must stay GPLv3 with source available. KillerScan.Engine, the scanning engine, is licensed under the Mozilla Public License 2.0; see [Engine/LICENSE](Engine/LICENSE).
 
 The engine under `Engine/` is licensed under the [Mozilla Public License 2.0](Engine/LICENSE).

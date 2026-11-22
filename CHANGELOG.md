@@ -4,59 +4,47 @@ All notable changes to KillerScan are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.9.6] - Unreleased
+## [1.9.6] - 2026-11-21
 
-1.9.6 adds the Trash Polka theme and a New folder button in the file picker, turns the right-click and settings menus into cards and updates the JSON library in the app and engine.
+1.9.6 adds the Trash Polka theme, turns right-click and settings menus into customizable cards, brings saved scans and network tools to the command line, and moves KillerScan.Engine to the Mozilla Public License 2.0.
 
 ### Fixed
 
-- Theme and language menu labels line up with their radio buttons and check boxes again, instead of sitting a pixel high.
-- The theme and language menus keep 8px between their rows and the card edge on every side, and the language menu's divider has the same gap on each side.
-- Menus, cards and drop-down lists opened inside the Devices, Services and Topology views are rounded on all four corners again. One corner used to come out square because it copied the view's tab-side corners.
-- The Mourning theme highlights selections in its original peach with dark text again, instead of pink.
-- The Delete button on a History scan's card has its own caption and tooltip in every language.
-- Disabled card buttons still show their tooltip and shortcut.
-- Chinese (Simplified) and Japanese text uses Microsoft YaHei UI and Yu Gothic UI, the faces Windows draws those languages in, instead of borrowing Traditional Chinese glyphs.
-- A tree's connecting line ends at the right row when an item is added below the one that was last.
-- A device whose reverse DNS name has no forward record now shows that name when the device's own mDNS or NetBIOS name matches it, so a printer shows as `XC-C12789` instead of `XCc12789` (#17).
-- History keeps the scan bar, so Scan or F5 starts a new scan while a saved run is open. The row under it shows the run's dates, then its device count.
-- History exports to HTML again, from the Export card (Ctrl+Shift+E) and from a row's card, next to CSV.
+- A device whose reverse DNS name has no forward record shows that name when its mDNS or NetBIOS name matches, so a printer shows as `XC-C12789` instead of `XCc12789` (#17).
+- History exports to HTML again, from the Export card (Ctrl+Shift+E) and from a row's card.
+- History keeps the scan bar, so Scan or F5 starts a new scan while a saved run is open.
+- Chinese (Simplified) and Japanese draw in Microsoft YaHei UI and Yu Gothic UI instead of borrowing Traditional Chinese glyphs. The title bar and monospaced text use the right face for every language too.
+- The Mourning theme highlights selections in its original peach with dark text again.
+- Menus, cards and drop-down lists inside Devices, Services and Topology are rounded on all four corners again.
+- Theme and language menu labels line up with their radio buttons and check boxes, with an even 8px around the rows.
+- A History scan's Delete button has its own caption and tooltip in every language, and disabled card buttons still show their tooltip.
+- A tree's connecting line ends at the right row when an item is added below the last one.
 
 ### Changed
 
 - KillerScan.Engine is now licensed under the Mozilla Public License 2.0. The app stays GPLv3.
+- Right-click menus on devices, services, Locations, saved scans, History rows and the terminal are cards. Each names what you clicked, or how many, over a grid of tiles with their shortcuts.
+- Scan settings, Location, Export, Topology settings, History, the sidebar and tab-placement menus and the tray menu are cards too, with the current choice checked. Topology's PNG, JPG and HTML exports each have their own tile and shortcut.
+- On a service, tiles for ways in it doesn't offer stay on the card dimmed, so every tile keeps its place.
 - Updated the app and engine JSON dependency to 10.0.15.
-- Right-click menus on devices, services, Locations, saved scans, History rows and the terminal are now cards. Each one names what you clicked over a grid of tiles, one per action, with its keyboard shortcut on the tile and in its tooltip. Lists such as Access, Set Device Type and the zoom steps open beside their tile.
-- Scan settings, Location, Export, Topology settings, the History, sidebar and tab-placement menus and the tray menu are cards too. Scan checks are chips grouped by what they find, with the presets and the adapter list as tiles; Topology order, the sidebar side and tab placement are tiles with the current choice checked; History's This Location and All Locations are tiles with the one in use checked; and Topology's PNG, JPG and HTML exports each have their own tile and shortcut.
-- With several devices or services selected, the card's title says how many.
-- On a service, the ways in that the service does not offer stay on the card dimmed, so a DNS port shows its browser, SSH and RDP tiles grayed out and every tile keeps its place.
-- Buttons no longer cast a drop shadow, including the view toolbar's icons.
-- Menu shortcuts and submenu arrows line up at the right edge of each row.
-- The copyright at the right end of the footer ends 8 px before the corner grip, the same gap in every Killer app.
-- On 98SE, sliders and drop-down lists look like the Windows 98 originals: a sunken channel with a raised gray thumb, and a white field with a raised drop button.
+- Column headers and the active tab above the tables carry the film grain when it is on. Toolbar buttons, tabs, chips, headers and the History and Locations rows draw it over their hover fill.
+- Buttons no longer cast a drop shadow.
+- Menus, cards and pickers keep an even 8px edge, with shortcuts and submenu arrows lined up on the right. Card buttons show their shortcut on a second line.
+- Menu text uses the full text color in Dark, Black, Light and Trash Polka, and the window menu's Close stays a readable red on Light and 98SE.
+- On 98SE, sliders, drop-down lists and the caption Close button look like the Windows 98 originals, and a checked card button shows white text.
 - Column headers show an accent edge when they have keyboard focus.
-- Menu text uses the full text color in Dark, Black, Light and Trash Polka, and the Close entry in the window menu stays a readable red on Light and 98SE.
-- Menus, cards and pickers keep an even 8 px edge, and card buttons show their keyboard shortcut on a second line.
-- The title bar's file name and the monospaced text use the fallback faces for the chosen language, so Chinese, Japanese and other scripts draw in a proper face.
-- On 98SE, the caption Close button draws the Windows 98 pixel X, and a checked card button shows white text.
-- Toolbar buttons, tabs, card chips, column headers and the History and Locations rows draw the film grain over their hover fill, the way menu rows and card tiles do.
-- Column headers carry the film grain whenever it is on, and so does the active tab that joins them above the Devices and Services tables.
-- On Trash Polka, check boxes and radio buttons are solid black inside.
+- The footer copyright ends 8px before the corner grip, as in every Killer app.
 
 ### Added
 
-- `killerscan watch /max-seconds <n>` ends a watch after 1 to 600 seconds and keeps the samples so far. It stops on time even while a ping is still waiting for a reply, and a text-mode run it cut short says so on stderr.
-- `killerscan network /json` and `killerscan vendor <MAC> /json` answer in JSON for scripts. The network answer also names the adapter, whether it is wireless and its link speed.
-- `killerscan history` lists saved scans from every Location, newest first, or from one with `/location`. `killerscan history <run>` shows a run's devices or exports them as CSV, JSON or HTML, and `/compare` lists what was added, removed or changed since its baseline. It only reads History and never changes it.
-- The terminal's `scanhistory` command returns saved scans as objects, and `scanhistory -Run 1 -Compare` returns what changed since its baseline. `netinfo` also returns the adapter, whether it is wireless and its link speed.
-- The terminal has `pinghost`, `trace`, `diagnose`, `watch` and `speedtest`, which return objects. `pinghost` leaves the Windows `ping` command alone.
-- `killerscan /help` lists the ping, trace, diagnose and watch options with their limits and defaults, and the history options.
-- Trash Polka, a new theme under 98SE: black with a tattoo-style ink background in your accent color, from eight accents with Blood red as the default. The ink runs behind every view, through the active tab into the page at any app size, under the Keep Alive cards, which sit as dark inked bars over it, and across About, Keyboard shortcuts and the dialogs. It sits fainter behind the Devices and Services tables and the terminal so every row stays readable, and a selected table row shows light text in every accent. Under a Windows high contrast theme the ink and the tab shade step aside for the system colors. The ink is saved to disk and prepared in the background shortly after KillerScan starts, so switching to Trash Polka is quick, and its memory is released when you pick another theme. Clearing out older saved ink only touches the files KillerScan wrote in its own Motif folder. HTML reports saved under it open in its black and blood red with the same ink behind the page and a device table styled like the app's, every report offers it in the theme switcher, and the command line takes `/theme trashpolka`.
-- The file picker has a New folder button (Ctrl+Shift+N). It checks the name first and says what is wrong with it before anything is created. A share that stops answering never freezes the picker, and screen readers hear why a name was refused.
-- The device card can be customized: Customize hides tiles you never use and brings them back, and the layout is kept for next time.
-- The service, History row and terminal cards can be customized the same way. A few rarely used tiles start in the Hidden drawer, such as SSH as, Copy details and Font.
-- While customizing a card, Alt+arrow keys move the focused tile, and a screen reader hears its new place.
-- While customizing a card, Tab reaches the Hidden drawer, Reset and the close X, and Enter moves a tile either way. A tile hidden from the keyboard comes back from the keyboard.
+- Trash Polka, a new theme: black with tattoo-style ink in your accent color, Blood red by default, behind every view and dialog and fainter behind the tables and terminal. HTML reports offer it too, and the command line takes `/theme trashpolka`.
+- Cards can be customized: Customize hides tiles you never use and brings them back, and the layout is kept. It works from the keyboard too, with Alt+arrow keys to move a tile, and a screen reader hears each move.
+- `killerscan history` lists saved scans from every Location, or one with `/location`, and shows or exports a run as CSV, JSON or HTML. `/compare` lists what changed since its baseline, and History is never changed.
+- The file picker has a New folder button (Ctrl+Shift+N) that checks the name before anything is created.
+- `killerscan watch /max-seconds <n>` ends a watch after 1 to 600 seconds and keeps the samples so far.
+- `killerscan network /json` and `killerscan vendor <MAC> /json` answer in JSON. The network answer also names the adapter, whether it is wireless and its link speed.
+- The terminal has `pinghost`, `trace`, `diagnose`, `watch` and `speedtest`, which return objects, and `scanhistory` returns saved scans and their changes. `netinfo` also returns the adapter and link speed.
+- `killerscan /help` lists the ping, trace, diagnose, watch and history options with their limits and defaults.
 
 ## [1.9.5] - 2026-11-09
 
