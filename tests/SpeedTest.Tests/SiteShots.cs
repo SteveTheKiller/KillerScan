@@ -53,6 +53,9 @@ internal static class SiteShots
             window.Width = width; window.Height = height;
             ThemeManager.Apply(theme);
             ThemeManager.ApplyAccent(theme, accent);
+            // The theme picker's own follow-up (Theme.cs ThemeRadio_Checked): without it 98SE keeps the
+            // wordmark in its navy caption instead of the plain Win98 title.
+            Invoke(window, "ApplyFlatChrome");
             Invoke(window, "SetTabPlacement", tabsBottom);
             Invoke(window, "SelectSidebarSide", sidebarRight, false);
             Invoke(window, "ApplyAppScale", scale, false);
