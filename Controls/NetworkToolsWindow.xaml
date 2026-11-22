@@ -73,6 +73,9 @@
                         <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
+                    <!-- The card's film grain over its whole face, out through the card's padding. -->
+                    <Border Grid.RowSpan="5" Margin="-12,-8" IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}"
+                            Opacity="{DynamicResource GrainOpacity}" CornerRadius="{DynamicResource ControlCornerRadius}"/>
                     <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
