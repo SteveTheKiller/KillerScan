@@ -81,8 +81,12 @@ try {
     $empty = Get-Failure { $script:emptyResult = @(scan 192.0.2.0/30) }
     Require ($null -eq $empty -and $script:emptyResult.Count -eq 0) 'A successful empty scan is an empty result, not an error.'
 
-    $env:KS_EXE = New-FakeExe 'unknown-vendor' 'Unknown' '' 3
+    # vendor asks for /json; an unknown maker is {"known":false} with exit 3, as the real app prints it.
+    $env:KS_EXE = New-FakeExe 'unknown-vendor' '{"mac":"00:11:22:33:44:55","vendor":"","known":false}' '' 3
     Require ($null -eq (vendor 00:11:22:33:44:55)) 'Exit 3 from vendor is the unknown-vendor answer.'
+    $env:KS_EXE = $realExe
+    Require ((vendor 00:11:22:33:44:55) -eq 'CIMSYS Inc') 'The real app names a known maker.'
+    Require ($null -eq (vendor 02:00:00:00:00:01)) 'The real app answers an unknown maker with $null.'
 
     $env:KS_EXE = New-FakeExe 'listed' '[{"id":"a1","name":"Acme Dental","customer":"Acme","lastTargets":"10.1.0.0/24","lastAdapter":""}]' '' 0
     $sites = @(locations)
