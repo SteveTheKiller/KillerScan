@@ -186,9 +186,10 @@ namespace KillerScan.Services
                 string opacity = TrashPolkaInkOpacity();
                 sb.Append("html.theme-trashpolka body::before,html.theme-trashpolka body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:")
                   .Append(opacity).AppendLine("}");
-                sb.Append("html.theme-trashpolka body::before{background:url(").Append(wallpaper.InkUri).AppendLine(") center/cover no-repeat}");
-                sb.Append("html.theme-trashpolka body::after{--tpmask:url(").Append(wallpaper.CoverageUri)
-                  .AppendLine(");background:var(--accent);-webkit-mask:var(--tpmask) center/cover no-repeat;mask:var(--tpmask) center/cover no-repeat}");
+                // Each picture is embedded once, as a variable on the root, and both the page and the table use it.
+                sb.Append("html.theme-trashpolka{--tpink:url(").Append(wallpaper.InkUri).Append(");--tpmask:url(").Append(wallpaper.CoverageUri).AppendLine(")}");
+                sb.AppendLine("html.theme-trashpolka body::before{background:var(--tpink) center/cover no-repeat}");
+                sb.AppendLine("html.theme-trashpolka body::after{background:var(--accent);-webkit-mask:var(--tpmask) center/cover no-repeat;mask:var(--tpmask) center/cover no-repeat}");
                 // The device table is a screen, as in the app: the same ink runs through it at screen strength. The layers
                 // are fixed to the viewport like the page's, so they line up with the ink around the table, and the
                 // table's clip keeps them inside it. The header stays a solid band over them.
@@ -196,9 +197,8 @@ namespace KillerScan.Services
                 sb.AppendLine("html.theme-trashpolka .tablewrap{position:relative;isolation:isolate;clip-path:inset(0 round 8px)}");
                 sb.Append("html.theme-trashpolka .tablewrap::before,html.theme-trashpolka .tablewrap::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:")
                   .Append(screen).AppendLine("}");
-                sb.Append("html.theme-trashpolka .tablewrap::before{background:url(").Append(wallpaper.InkUri).AppendLine(") center/cover no-repeat}");
-                sb.Append("html.theme-trashpolka .tablewrap::after{background:var(--accent);-webkit-mask:url(").Append(wallpaper.CoverageUri)
-                  .Append(") center/cover no-repeat;mask:url(").Append(wallpaper.CoverageUri).AppendLine(") center/cover no-repeat}");
+                sb.AppendLine("html.theme-trashpolka .tablewrap::before{background:var(--tpink) center/cover no-repeat}");
+                sb.AppendLine("html.theme-trashpolka .tablewrap::after{background:var(--accent);-webkit-mask:var(--tpmask) center/cover no-repeat;mask:var(--tpmask) center/cover no-repeat}");
                 // The app's table colors: an accent line under the grained header, #555555 row lines (PaneBorderBrush) and
                 // every other row lifted by RowAltBrush (#18FFFFFF).
                 sb.AppendLine("html.theme-trashpolka th{border-bottom:1px solid var(--accent);background-image:radial-gradient(rgba(255,255,255,.035) .65px,transparent .75px);background-size:3px 3px}");

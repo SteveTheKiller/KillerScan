@@ -67,7 +67,9 @@ internal static class ReportLogoTests
         // Trash Polka carries the app's window ink: the ink and the accent mask as embedded PNGs, scoped to the theme and
         // left out of print and high contrast, and no other theme gets it.
         var wallpaper = ReportWallpaper.Get() ?? throw new InvalidOperationException("The Trash Polka report ink builds.");
-        if (!html.Contains("html.theme-trashpolka body::before{background:url(" + wallpaper.InkUri + ")")
+        if (!html.Contains("html.theme-trashpolka{--tpink:url(" + wallpaper.InkUri + ")")
+            || !html.Contains("html.theme-trashpolka body::before{background:var(--tpink)")
+            || html.IndexOf(wallpaper.InkUri, StringComparison.Ordinal) != html.LastIndexOf(wallpaper.InkUri, StringComparison.Ordinal)
             || !html.Contains("--tpmask:url(" + wallpaper.CoverageUri + ")")
             || html.IndexOf(wallpaper.CoverageUri, StringComparison.Ordinal) != html.LastIndexOf(wallpaper.CoverageUri, StringComparison.Ordinal)
             || !html.Contains("@media print,(forced-colors:active){html.theme-trashpolka body::before"))
