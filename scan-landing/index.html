@@ -50,8 +50,8 @@
 /* Download CTA (flat) */
 .hero-cta { display: flex; flex-direction: column; align-items: stretch; gap: 10px; flex: 0 1 360px; }
 .cta-row { display: flex; flex-direction: column; gap: 12px; max-width: 360px; }
-.download-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: var(--btn); color: var(--btn-text); font-size: 15px; font-weight: 700; padding: 14px 28px; border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.35); transition: filter 0.15s, transform 0.1s, box-shadow 0.15s; }
-.download-btn:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 12px 28px rgba(0,0,0,0.5); color: var(--btn-text); }
+.download-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: var(--btn); color: var(--btn-text); font-size: 15px; font-weight: 700; padding: 14px 28px; border-radius: 6px; transition: filter 0.15s, transform 0.12s; }
+.download-btn:hover { filter: brightness(1.1); transform: translateY(-3px); color: var(--btn-text); }
 .download-btn:active { transform: translateY(1px); }
 .download-btn svg { width: 18px; height: 18px; fill: currentColor; }
 .gh-btn { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; border: 1.5px solid var(--accent); color: var(--accent); background: transparent; font-size: 15px; font-weight: 700; padding: 12.5px 24px; border-radius: 6px; transition: background 0.15s, color 0.15s; }
@@ -77,7 +77,6 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 .sb-thumb:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); box-shadow: 0 12px 24px rgba(0,0,0,0.62); z-index: 2; }
 .sb-thumb img { display: block; width: 100%; height: auto; }
 .sb-thumb { padding: 0; text-align: left; color: var(--text); font: inherit; }
-.sb-preview { padding: 8px 12px 0; color: var(--muted); font-size: 12px; }
 .sb-empty { padding: 22px 16px; font-family: Consolas, monospace; font-size: 12px; color: var(--muted); text-align: center; line-height: 1.6; }
 
 @media (max-width: 900px) {
@@ -249,7 +248,6 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 </div>
 
 <aside class="sidebar">
-<p class="sb-preview" data-i18n="gallery_preview">KillerScan 1.9 preview</p>
 <div class="sb-thumbs" id="sbThumbs">
 <div class="sb-empty" data-i18n="sb_empty">Screenshots<br>coming soon</div>
 </div>
