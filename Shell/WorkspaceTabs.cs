@@ -163,7 +163,7 @@ namespace KillerScan.Shell
                 string face = onHeader ? "TableHeaderBrush" : "ScanContentPaneBrush";
                 tab.SetResourceReference(Border.BackgroundProperty, face);
                 // Trash Polka: a tab on the page paints the page's pinned piece, so the ink runs through the join with
-                // no seam. The column header is matte, so a tab joined to it stays plain too.
+                // no seam. The column header has no ink, so a tab joined to it stays without ink too.
                 if (!onHeader)
                 {
                     // The terminal and the two tables (DevicesPane) meet their tab at screen strength, so the tab matches
@@ -176,9 +176,8 @@ namespace KillerScan.Shell
                 tab.SetResourceReference(Border.BorderBrushProperty, "TabActiveRingFadeBrush");
                 tab.SetResourceReference(Border.BorderThicknessProperty, "TabStripeThickness");
                 tab.SetResourceReference(TextElement.ForegroundProperty, "TextBrush");
-                // The column header is matte, so a tab joined to it is too.
-                if (onHeader) grain.Opacity = 0;
-                else grain.SetResourceReference(UIElement.OpacityProperty, "GrainOpacity");
+                // The column header carries the film grain, so a tab joined to it does too and the two stay one band.
+                grain.SetResourceReference(UIElement.OpacityProperty, "GrainOpacity");
             }
             else
             {

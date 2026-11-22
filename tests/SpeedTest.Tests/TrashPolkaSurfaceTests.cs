@@ -166,13 +166,13 @@ internal static class TrashPolkaSurfaceTests
     private static readonly Dictionary<string, double> InkMeans = [];
     private static List<Rect> Cards = [];
 
-    // A tab above a table joins its column header, which is matte, so a matte tab there is right; any tab that carries
+    // A tab above a table joins its column header, which has no ink, so a tab without ink there is right; any tab that carries
     // ink has to run it into the page under it.
     private static void CheckTopJoin(BitmapSource on, BitmapSource off, FrameworkElement tab, Rect tabBounds, string name)
     {
         var (tabMean, _) = Difference(on, off, Inset(tabBounds, 6));
         Console.WriteLine($"{name}: tab mean diff {tabMean:F2}.");
-        if (tabMean < 0.3 && (string)tab.Tag is "scan" or "services") { Console.WriteLine($"{name}: matte tab on the column header."); return; }
+        if (tabMean < 0.3 && (string)tab.Tag is "scan" or "services") { Console.WriteLine($"{name}: tab without ink on the column header."); return; }
         if (tabMean < 0.3) Failures.Add($"{name}: the active tab renders flat against an inked page.");
         CheckContinuity(on, off, tabBounds, (int)Math.Round(tabBounds.Bottom), pageAbove: false, name);
     }

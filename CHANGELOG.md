@@ -40,6 +40,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The title bar's file name and the monospaced text use the fallback faces for the chosen language, so Chinese, Japanese and other scripts draw in a proper face.
 - On 98SE, the caption Close button draws the Windows 98 pixel X, and a checked card button shows white text.
 - Toolbar buttons, tabs, card chips, column headers and the History and Locations rows draw the film grain over their hover fill, the way menu rows and card tiles do.
+- Column headers carry the film grain whenever it is on, and so does the active tab that joins them above the Devices and Services tables.
 - On Trash Polka, check boxes and radio buttons are solid black inside.
 
 ### Added
