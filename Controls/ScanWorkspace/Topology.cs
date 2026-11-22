@@ -33,6 +33,8 @@ namespace KillerScan.Controls
             }
             ResultsGrid.Visibility = _showTopology ? Visibility.Collapsed : Visibility.Visible;
             TopologyPane.Visibility = _showTopology ? Visibility.Visible : Visibility.Collapsed;
+            // A table is read row by row, so it carries its ink at screen strength; the topology map keeps the pane's.
+            ThemeMotif.SetScreen(DevicesPane, !_showTopology);
             TopologyButton.Tag = _showTopology ? "on" : null;
             UpdateViewChrome();
 

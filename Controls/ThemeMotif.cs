@@ -49,7 +49,7 @@ namespace KillerScan.Controls
 
         // Everything a painted brush depends on. The window size is not in it: the pinned piece never reads it, so a
         // pane whose own place is unchanged keeps its brush through a window resize.
-        private readonly record struct PaintKey(MotifPart Part, Color Accent, Color Base, Rect Pane, double Opacity, Drawing Piece);
+        private readonly record struct PaintKey(MotifPart Part, Color Accent, Color Base, Rect Pane, Size Local, double Opacity, Drawing Piece);
 
         /// <summary>
         /// Inherited: set on the second document pane in split view. Its <c>Window</c> parts (the card and its active
@@ -261,17 +261,28 @@ namespace KillerScan.Controls
             HookRelease();
             element.Loaded -= OnLoaded;
             element.SizeChanged -= Refresh;
+            element.IsVisibleChanged -= OnVisibleChanged;
             element.Unloaded -= OnUnloaded;
             Detach(element);
             if ((MotifPart)e.NewValue == MotifPart.None) { Restore(element); return; }
             element.Loaded += OnLoaded;
             element.SizeChanged += Refresh;
+            element.IsVisibleChanged += OnVisibleChanged;
             element.Unloaded += OnUnloaded;
             if (element.IsLoaded)
             {
                 Attach(element);
                 Paint(element);
             }
+        }
+
+        // A repaint that lands while the element is collapsed has no size to paint and leaves the plain background. WPF
+        // raises no SizeChanged when the element comes back at the size it had before it was collapsed, so showing it
+        // again is the cue to paint, once layout has given it its size.
+        private static void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is not FrameworkElement element || e.NewValue is not true) return;
+            element.Dispatcher.BeginInvoke(() => Paint(element), System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
         private static void OnLoaded(object sender, RoutedEventArgs e)
@@ -733,9 +744,18 @@ namespace KillerScan.Controls
                 piece = cached.Piece;
                 VectorPaints++;
             }
-            var stamp = new PaintKey(part, accent.Color, baseBrush.Color, pane, opacity, piece);
+            // The element's own size is in the stamp too: under a new app size an element that fills its window keeps the
+            // same place in root units but not in its own, and its old brush would stay at the old scale.
+            var stamp = new PaintKey(part, accent.Color, baseBrush.Color, pane, element.RenderSize, opacity, piece);
             if (element.GetValue(PaintedProperty) is PaintKey painted && painted == stamp) return;
-            var brush = TrashPolkaMotif.Compose(baseBrush.Color, piece, pane, window, scale: TrashPolkaInk.Scale, opacity: opacity);
+            // The brush is drawn in the element's own units, but its place in the window is in the root's. Under the app
+            // size (ScaleHost's LayoutTransform) one element unit covers several root units, so the place and the piece's
+            // scale are taken back into element units; read in root units, every element showed its own shifted stretch
+            // of the image and an active tab broke from its page at the join.
+            double units = element.ActualWidth > 0 ? pane.Width / element.ActualWidth : 1;
+            var local = Math.Abs(units - 1) < 1e-9 ? pane
+                : new Rect(pane.X / units, pane.Y / units, element.ActualWidth, element.ActualHeight);
+            var brush = TrashPolkaMotif.Compose(baseBrush.Color, piece, local, window, scale: TrashPolkaInk.Scale / units, opacity: opacity);
             if (unflip is not null)
             {
                 if (brush.IsFrozen) brush = brush.Clone();

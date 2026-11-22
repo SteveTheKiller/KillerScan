@@ -8,10 +8,10 @@
         <!-- One Keep Alive target. Fixed width so the sparkline geometry stays honest and
              the wrap panel makes tidy columns instead of ragged full-width rows. -->
         <DataTemplate x:Key="WatchCardTemplate">
-            <!-- Trash Polka: each card is a tile on the pane, the faint cell strength of the same
-                 pinned piece, as KillerShell's Performance tiles. -->
+            <!-- Trash Polka: each card carries the page's own pinned piece at page strength on the page's base, so the
+                 ink runs through the cards and only their edges mark them out. -->
             <Border Width="264" Margin="0,0,8,8" VerticalAlignment="Top" Focusable="True"
-                    controls:ThemeMotif.Part="Window" controls:ThemeMotif.BaseBrush="SurfaceBrush" controls:ThemeMotif.Cell="True"
+                    controls:ThemeMotif.Part="Window" controls:ThemeMotif.BaseBrush="SurfaceBrush" controls:ThemeMotif.MotifBrush="ScanContentPaneBrush"
                     PreviewMouseLeftButtonDown="WatchCard_Focus" PreviewMouseRightButtonDown="WatchCard_Focus">
                 <Border.Style>
                     <Style TargetType="Border" BasedOn="{StaticResource Card}">

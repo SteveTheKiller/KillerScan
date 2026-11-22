@@ -34,6 +34,7 @@ internal static class TrashPolkaSurfaceTests
         if (_shots is { Length: > 0 }) Directory.CreateDirectory(_shots); else _shots = null;
         App.SetSetting("TabsAtBottom", "1");
         ThemeManager.Apply(Theme.TrashPolka);
+        ThemeManager.ApplyAccent(Theme.TrashPolka, Accent.Teal);
         Require(Application.Current.TryFindResource("ThemeMotif") is true, "Trash Polka turns the motif on.");
 
         var window = new MainWindow
@@ -60,13 +61,40 @@ internal static class TrashPolkaSurfaceTests
             ("watch", "watch", () => Invoke(window, "Watch_Click", window, new RoutedEventArgs())),
             ("terminal", "terminal", () => Invoke(window, "NewTerminalView")),
         };
-        foreach (var view in views)
+        // Both tab rows, at 100% and at a fractional app size: the active tab's ink has to run into the page above it and
+        // below it however big the app is.
+        foreach (var (bottom, scale) in new[] { (true, 1.0), (false, 1.0), (true, 1.24), (false, 1.24) })
         {
-            view.Show();
-            Pump(700);
-            var tab = (FrameworkElement)tabs[view.Tab]!;
-            CheckPane(window, root, pane, tab, view.Name);
+            Invoke(window, "SetTabPlacement", bottom);
+            Invoke(window, "ApplyAppScale", scale, false);
+            Pump(400);
+            string place = (bottom ? "bottom" : "top") + (scale == 1.0 ? "" : "-" + (int)Math.Round(scale * 100));
+            foreach (var view in views)
+            {
+                view.Show();
+                Pump(700);
+                var tab = (FrameworkElement)tabs[view.Tab]!;
+                CheckPane(window, root, pane, tab, view.Name + "-" + place);
+            }
         }
+        Invoke(window, "ApplyAppScale", 1.0, false);
+        Pump(400);
+
+        // The tables and the terminal are working screens: their ink sits at screen strength (ScreenOpacity, about half
+        // the pane's), well under the topology page's, so every row stays readable. The same stretch of the same pinned
+        // piece is compared, so only the strength differs. A terminal whose own ink went missing shows the page's full
+        // ink under it and fails here too.
+        if (InkMeans.TryGetValue("topology-top", out double page))
+            foreach (var screen in new[] { "devices-top", "services-top", "devices-bottom", "services-bottom",
+                         "terminal-top", "terminal-bottom", "terminal-top-124", "terminal-bottom-124" })
+                if (InkMeans.TryGetValue(screen, out double ink))
+                {
+                    Console.WriteLine($"{screen}: screen ink {ink:F2} against the topology page's {page:F2}, ratio {ink / page:F2}.");
+                    if (ink > page * 0.75) Failures.Add($"{screen}: the screen carries the page's full ink ({ink:F2} against {page:F2}), so its rows are hard to read.");
+                }
+
+        CheckWatchCards(window, root, views[3].Show, views[2].Show);
+        CheckSelectedRow(window, root, scan);
 
         // History: the first saved run from the demo scan, shown in its own workspace.
         var list = (ListBox)window.FindName("HistoryList");
@@ -90,7 +118,7 @@ internal static class TrashPolkaSurfaceTests
         window.Close();
 
         if (Failures.Count > 0) throw new InvalidOperationException(string.Join(Environment.NewLine, Failures));
-        Console.WriteLine("PASS: Trash Polka ink on six views, the joined bottom tab, About, shortcuts and four dialogs.");
+        Console.WriteLine("PASS: Trash Polka ink on five views with both tab rows at 100% and 124%, screen-strength tables and terminal, Keep Alive cards, selected rows in every accent, History, About, shortcuts and four dialogs.");
     }
 
     private static void CheckPane(Window window, FrameworkElement root, FrameworkElement pane, FrameworkElement? tab, string name)
@@ -101,8 +129,18 @@ internal static class TrashPolkaSurfaceTests
         var (mean, changed) = Difference(on, off, inner);
         Console.WriteLine($"{name}: pane mean diff {mean:F2}, {changed:P0} of pixels changed.");
         if (mean < 1.0 || changed < 0.25) Failures.Add($"{name}: the pane renders flat, mean diff {mean:F2}, {changed:P0} changed.");
+        // A fixed stretch in the lower middle of the pane, clear of headers and toolbars, for the strength comparison.
+        InkMeans[name] = Difference(on, off, new Rect(bounds.X + bounds.Width * 0.3, bounds.Y + bounds.Height * 0.45,
+            bounds.Width * 0.4, bounds.Height * 0.3)).Mean;
         if (tab is null) return;
         var tabBounds = tab.TransformToAncestor(root).TransformBounds(new Rect(tab.RenderSize));
+        bool top = tabBounds.Bottom < bounds.Top + bounds.Height / 2;
+        if (top)
+        {
+            CheckTopJoin(on, off, tab, tabBounds, name);
+            return;
+        }
+        CheckContinuity(on, off, tabBounds, (int)Math.Round(tabBounds.Top), pageAbove: true, name);
         // The ink is faint in places, so the tab only has to carry some; the seam rule below checks it matches the page.
         var (tabMean, tabChanged) = Difference(on, off, Inset(tabBounds, 6));
         Console.WriteLine($"{name}: tab mean diff {tabMean:F2}, {tabChanged:P0} changed.");
@@ -119,6 +157,149 @@ internal static class TrashPolkaSurfaceTests
         var profile = Enumerable.Range(seam - 5, 11).Select(y => $"{y - seam:+0;-0;0}:{RowLuma(on, y, left, right) - RowLuma(off, y, left, right):F1}");
         Console.WriteLine($"{name}: seam step inked {inked:F2} plain {plain:F2} ink {inkStep:F2}; ink rows {string.Join(" ", profile)}");
         if (Math.Abs(inkStep) >= 10) Failures.Add($"{name}: seam between tab and page, the ink steps {inkStep:F1} luma at the join.");
+    }
+
+    private static readonly Dictionary<string, double> InkMeans = [];
+
+    // A tab above a table joins its column header, which is matte, so a matte tab there is right; any tab that carries
+    // ink has to run it into the page under it.
+    private static void CheckTopJoin(BitmapSource on, BitmapSource off, FrameworkElement tab, Rect tabBounds, string name)
+    {
+        var (tabMean, _) = Difference(on, off, Inset(tabBounds, 6));
+        Console.WriteLine($"{name}: tab mean diff {tabMean:F2}.");
+        if (tabMean < 0.3 && (string)tab.Tag is "scan" or "services") { Console.WriteLine($"{name}: matte tab on the column header."); return; }
+        if (tabMean < 0.3) Failures.Add($"{name}: the active tab renders flat against an inked page.");
+        CheckContinuity(on, off, tabBounds, (int)Math.Round(tabBounds.Bottom), pageAbove: false, name);
+    }
+
+    /// <summary>
+    /// The ink has to be ONE image through the join. Only the ink is compared (the inked render minus the plain one), so
+    /// stripes and text cancel out. The change from two rows inside the tab to two rows inside the page, column by
+    /// column, has to look like any other four-row step inside the page; a tab painting its own copy or a shifted one
+    /// breaks every hex and dot at the join, and that step is far larger.
+    /// </summary>
+    private static void CheckContinuity(BitmapSource on, BitmapSource off, Rect tabBounds, int seam, bool pageAbove, string name)
+    {
+        int left = (int)Math.Ceiling(tabBounds.Left) + 8, right = (int)Math.Floor(tabBounds.Right) - 8;
+        int into = pageAbove ? -1 : 1;
+        var a = Pixels(on); var b = Pixels(off);
+        // Two rows either side: the Keep Alive cards start three rows under a top tab, and their border is a layout edge,
+        // not the page.
+        double join = ColumnStep(a, b, on.PixelWidth, seam - into * 2, seam + into * 2, left, right);
+        double baseline = 0; int n = 0;
+        for (int k = 10; k <= 34; k += 2, n++)
+            baseline += ColumnStep(a, b, on.PixelWidth, seam + into * k, seam + into * (k + 4), left, right);
+        baseline /= n;
+        Console.WriteLine($"{name}: ink step across the join {join:F2}, inside the page {baseline:F2}.");
+        if (join > baseline * 1.8 + 2) Failures.Add($"{name}: the ink breaks at the join between tab and page ({join:F2} against {baseline:F2} inside the page).");
+    }
+
+    private static double ColumnStep(byte[] on, byte[] off, int width, int y1, int y2, int left, int right)
+    {
+        double Ink(int x, int y)
+        {
+            int i = (y * width + x) * 4;
+            return 0.0722 * (on[i] - off[i]) + 0.7152 * (on[i + 1] - off[i + 1]) + 0.2126 * (on[i + 2] - off[i + 2]);
+        }
+        double Plain(int x, int y)
+        {
+            int i = (y * width + x) * 4;
+            return 0.0722 * off[i] + 0.7152 * off[i + 1] + 0.2126 * off[i + 2];
+        }
+        int height = on.Length / 4 / width;
+        if (y1 < 0 || y2 < 0 || y1 >= height || y2 >= height) return double.NaN;
+        double sum = 0; int count = 0;
+        // A column whose plain render already steps here crosses an edge of the layout (a Keep Alive card's top, a
+        // node), where a different face rightly starts; only columns where the page simply continues are compared.
+        for (int x = Math.Max(0, left); x < Math.Min(width, right); x++)
+        {
+            if (Math.Abs(Plain(x, y1) - Plain(x, y2)) > 6) continue;
+            sum += Math.Abs(Ink(x, y1) - Ink(x, y2));
+            count++;
+        }
+        return count == 0 ? double.NaN : sum / count;
+    }
+
+    // The Keep Alive cards carry the page's own ink at the page's strength, so the image runs through them instead of
+    // leaving gray slabs on the page: inside a card the ink matches the Topology page's at the same spot.
+    private static void CheckWatchCards(Window window, FrameworkElement root, Action showWatch, Action showTopology)
+    {
+        Invoke(window, "SetTabPlacement", false);
+        showWatch();
+        Pump(900);
+        var card = Descendants(root).OfType<Border>().FirstOrDefault(b => b.IsVisible && b.Width == 264 && ThemeMotif.GetPart(b) == MotifPart.Window);
+        if (card is null) { Failures.Add("watch cards: no Keep Alive card on screen."); return; }
+        var area = Inset(card.TransformToAncestor(root).TransformBounds(new Rect(card.RenderSize)), 10);
+        var (watchOn, watchOff) = RenderBoth(root, "watch-cards");
+        double inCard = Difference(watchOn, watchOff, area).Mean;
+        showTopology();
+        Pump(900);
+        var (pageOn, pageOff) = RenderBoth(root, "watch-cards-page");
+        double page = Difference(pageOn, pageOff, area).Mean;
+        Console.WriteLine($"watch cards: card ink {inCard:F2} against the page's {page:F2} at the same spot.");
+        if (inCard < page * 0.75) Failures.Add($"watch cards: the cards are gray slabs, ink {inCard:F2} against the page's {page:F2}.");
+    }
+
+    // A selected Devices row: every cell's text against the row behind it, read off the render, at 4.5:1 or better.
+    private static void CheckSelectedRow(Window window, FrameworkElement root, FrameworkElement scan)
+    {
+        Invoke(window, "SetTabPlacement", false);
+        Invoke(window, "ShowScanView", "devices");
+        Pump(500);
+        var grid = (DataGrid)scan.FindName("ResultsGrid");
+        if (grid.Items.Count < 2) { Failures.Add("selected row: the demo scan left fewer than two rows."); return; }
+        grid.SelectedIndex = 1;
+        Pump(500);
+        foreach (Accent accent in Enum.GetValues(typeof(Accent)))
+        {
+            ThemeManager.ApplyAccent(Theme.TrashPolka, accent);
+            Pump(400);
+            grid.SelectedIndex = 1;
+            Pump(200);
+            if (grid.ItemContainerGenerator.ContainerFromIndex(1) is not DataGridRow row) { Failures.Add($"selected row {accent}: no row container."); continue; }
+            CheckSelectedCells(root, row, accent.ToString());
+        }
+        ThemeManager.ApplyAccent(Theme.TrashPolka, Accent.Teal);
+        grid.SelectedIndex = -1;
+        Pump(300);
+    }
+
+    private static void CheckSelectedCells(FrameworkElement root, DataGridRow row, string accent)
+    {
+        var image = Render(root);
+        if (_shots != null) Save(image, Path.Combine(_shots, "selected-row-" + accent + ".png"));
+        var pixels = Pixels(image);
+        int column = 0;
+        foreach (var cell in Descendants(row).OfType<DataGridCell>())
+        {
+            column++;
+            var r = cell.TransformToAncestor(root).TransformBounds(new Rect(cell.RenderSize));
+            if (r.Width < 12 || r.Height < 8) continue;
+            var colors = new List<(int R, int G, int B)>();
+            for (int y = (int)r.Top + 1; y < (int)r.Bottom - 1; y++)
+                for (int x = (int)r.Left + 1; x < (int)r.Right - 1; x++)
+                {
+                    int i = (y * image.PixelWidth + x) * 4;
+                    colors.Add((pixels[i + 2], pixels[i + 1], pixels[i]));
+                }
+            var bg = colors.GroupBy(c => c).OrderByDescending(g => g.Count()).First().Key;
+            int Dist((int R, int G, int B) c) => Math.Abs(c.R - bg.R) + Math.Abs(c.G - bg.G) + Math.Abs(c.B - bg.B);
+            var text = colors.Where(c => Dist(c) > 40).OrderByDescending(Dist).ToList();
+            if (text.Count < 15) continue;
+            var core = text.Take(Math.Max(5, text.Count / 5)).ToList();
+            var ink = ((int)core.Average(c => c.R), (int)core.Average(c => c.G), (int)core.Average(c => c.B));
+            double ratio = Contrast(ink, bg);
+            Console.WriteLine($"selected row {accent}: column {column} text #{ink.Item1:X2}{ink.Item2:X2}{ink.Item3:X2} on #{bg.R:X2}{bg.G:X2}{bg.B:X2}, {ratio:F2}:1.");
+            if (ratio < 4.5) Failures.Add($"selected row {accent}: column {column} text #{ink.Item1:X2}{ink.Item2:X2}{ink.Item3:X2} on #{bg.R:X2}{bg.G:X2}{bg.B:X2} is {ratio:F2}:1, under 4.5:1.");
+        }
+    }
+
+    private static double Contrast((int R, int G, int B) a, (int R, int G, int B) b)
+    {
+        static double Channel(int v) { double c = v / 255.0; return c <= 0.03928 ? c / 12.92 : Math.Pow((c + 0.055) / 1.055, 2.4); }
+        static double Luminance((int R, int G, int B) c) => 0.2126 * Channel(c.R) + 0.7152 * Channel(c.G) + 0.0722 * Channel(c.B);
+        double la = Luminance(a), lb = Luminance(b);
+        return (Math.Max(la, lb) + 0.05) / (Math.Min(la, lb) + 0.05);
     }
 
     private static void CheckOverlay(Window window, FrameworkElement root, string overlayName, string show, string name)

@@ -70,7 +70,7 @@
                             </DataTrigger>
 
                             <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}" Value="True">
-                                <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource GridSelectedTypeTextBrush}"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -290,10 +290,11 @@
     </DockPanel>
 </Border>
 <!-- Trash Polka: the same pinned piece as the shell's content pane under it (MainWindow.xaml
-     DevicesPane), so the opaque face here carries the ink instead of hiding it. -->
+     DevicesPane), so the opaque face here carries the ink instead of hiding it. The tables show it at screen
+     strength so their rows stay readable; Topology.cs drops Screen while the map is up. -->
 <Border x:Name="DevicesPane"
                 Grid.Row="2" Background="{DynamicResource ScanContentPaneBrush}"
-                controls:ThemeMotif.Part="Window" controls:ThemeMotif.BaseBrush="ScanContentPaneBrush" BorderBrush="{DynamicResource PaneBorderBrush}"
+                controls:ThemeMotif.Part="Window" controls:ThemeMotif.BaseBrush="ScanContentPaneBrush" controls:ThemeMotif.Screen="True" BorderBrush="{DynamicResource PaneBorderBrush}"
                 BorderThickness="0" CornerRadius="{DynamicResource PanelCornerRadius}" Margin="0" Panel.ZIndex="10"
                 >
             <Grid>

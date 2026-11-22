@@ -1389,6 +1389,10 @@ namespace KillerScan.Services
             // the accent overlay, for the same reason as TabActiveRingBrush above.
             if (!combined.Contains("GridSelectedTextBrush"))
                 combined["GridSelectedTextBrush"] = combined["PrimaryBrush"];
+            // The Devices table's Type cell on a selected row: the SelectionFg it always used, unless the theme states
+            // its own (Trash Polka, whose SelectionFg is dark for the bright SelectionBg).
+            if (!combined.Contains("GridSelectedTypeTextBrush"))
+                combined["GridSelectedTypeTextBrush"] = combined["SelectionFg"];
 
             // Highlighted ComboBox item text - same shape: the PrimaryBrush the trigger always
             // set, white on 98SE where the highlight bar is the solid navy MenuHoverBrush.

@@ -166,9 +166,9 @@ namespace KillerScan.Shell
                 // no seam. The column header is matte, so a tab joined to it stays plain too.
                 if (!onHeader)
                 {
-                    // The terminal meets its tab at screen strength (_terminalInk), so the tab matches it, as KillerShell's
-                    // tool tabs match their screens.
-                    bool screen = (string)tab.Tag == "terminal";
+                    // The terminal and the two tables (DevicesPane) meet their tab at screen strength, so the tab matches
+                    // them, as KillerShell's tool tabs match their screens.
+                    bool screen = (string)tab.Tag is "terminal" or "scan" or "services";
                     Controls.ThemeMotif.SetBaseBrush(tab, screen ? "TerminalBackgroundBrush" : face);
                     Controls.ThemeMotif.SetScreen(tab, screen);
                     Controls.ThemeMotif.SetPart(tab, Controls.MotifPart.Window);

@@ -51,6 +51,11 @@
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#4A1218" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionBg"         Color="#D7263D" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionFg"         Color="#FFFFFF" po:Freeze="True"/>
+    <!-- A selected table row is the accent's dark shade (RowSelectedBrush), so its text is the light text color in
+         every accent: the accent itself read teal on teal, and SelectionFg is dark on most accents for the bright
+         SelectionBg. -->
+    <SolidColorBrush x:Key="GridSelectedTextBrush"     Color="#f2f2f2" po:Freeze="True"/>
+    <SolidColorBrush x:Key="GridSelectedTypeTextBrush" Color="#f2f2f2" po:Freeze="True"/>
 
     <SolidColorBrush x:Key="InputBorderBrush"    Color="#2e2e2e" po:Freeze="True"/>
     <!-- Flyouts and menus sit a step above the black window. -->
