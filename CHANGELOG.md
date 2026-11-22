@@ -8,6 +8,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 1.9.7 fixes the 98SE theme.
 
+### Changed
+- Refreshed the bundled MAC vendor database to 58,821 assignments.
+
 ### Fixed
 
 - On 98SE the selected view tab no longer runs down into the page. Every tab now stops on the page line.
