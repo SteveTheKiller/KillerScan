@@ -11,7 +11,7 @@
 <meta name="description" data-i18n-content="page_help_description" content="How to use KillerScan: every view, tool, workflow and keyboard shortcut explained.">
 <link rel="icon" type="image/x-icon" href="brand/ks-icon.ico">
 <script defer src="https://koya.thekiller.net/script.js" data-website-id="4589e763-30f4-42b8-a31d-3af4cc9a2882"></script>
-<link rel="stylesheet" href="ks.css?v=20261028-grain">
+<link rel="stylesheet" href="ks.css?v=20261121-clitable">
 <style>
 .content-inner { max-width: 880px; margin: 0 auto; padding: 0 28px 56px; }
 .help-hero { text-align: center; padding: 44px 16px 6px; }
@@ -34,6 +34,7 @@
 .acc-body b { color: var(--text); font-weight: 600; }
 .acc-body h3 { display: none; }
 .acc-body code { font-family: Consolas, monospace; font-size: 12.5px; background: var(--panel); padding: 1px 6px; border-radius: 4px; color: var(--text); }
+.acc-body td + td code { white-space: nowrap; }
 .acc-body .spec-table { margin: 10px 0 12px; }
 .acc-body .cli-demo, .acc-body .codeblock { margin: 10px 0 12px; }
 .kbd-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 44px; align-items: start; }
@@ -244,21 +245,30 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <p data-i18n="tk_term_menu_p2">Clear removes the screen and scrollback without sending input to the program. Ctrl+C copies selected text; with no selection, it reaches the running program. Ctrl+V pastes. Most other keys go to the program while the terminal has focus.</p>
 </div></div></div>
 <div class="acc-item"><button class="acc-head"><span data-i18n="tk_cmd_title">Commands in the terminal</span><span class="chev">&#9656;</span></button><div class="acc-body"><div class="acc-body-inner">
-<p data-i18n="tk_cmd_intro">The terminal carries a small KillerScan module of its own, unpacked from inside the exe like the rest. It gives you five short commands, and the point of them is not that they are shorter than the command line: they hand back <b>objects</b> rather than text.</p>
+<p data-i18n="tk_cmd_intro">The terminal carries a small KillerScan module of its own, unpacked from inside the exe like the rest. It gives you eleven short commands, and the point of them is not that they are shorter than the command line: they hand back <b>objects</b> rather than text.</p>
 <p data-i18n="tk_cmd_intro_p2">A scan you run this way can be filtered, sorted, counted and piped like anything else in PowerShell, without a single line of parsing.</p>
 <table class="spec-table"><tr><th data-i18n="tk_cmd_col_cmd">Command</th><th data-i18n="tk_cmd_col_what">What it gives you</th></tr>
-<tr><td><code>scan</code></td><td data-i18n="tk_cmd_scan">One object per device, with <code>Ip</code>, <code>Hostname</code>, <code>Mac</code>, <code>Vendor</code>, <code>Type</code> and <code>Ports</code>, plus the fingerprint fields behind them. Takes targets in the same forms the subnet box does, and scans the active network when you give it none. <code>-Quick</code> for discovery only, <code>-Timeout</code> in seconds.</td></tr>
-<tr><td><code>probe</code></td><td data-i18n="tk_cmd_probe">The same object for one host, examined in depth.</td></tr>
+<tr><td><code>scan</code></td><td data-i18n="tk_cmd_scan">One object per device, with <code>Ip</code>, <code>Hostname</code>, <code>Mac</code>, <code>Vendor</code>, <code>Type</code> and <code>Ports</code>, plus the fingerprint fields behind them. Takes targets in the same forms the subnet box does, and scans the active network when you give it none. <code>-Quick</code> for discovery only, <code>-Timeout</code> in seconds, <code>-Location</code> to apply a saved Location and record the scan in its history, <code>-Skip</code> to turn checks off, <code>-Adapter</code> to send every probe from one adapter, and <code>-Demo</code> for a made-up network that scans nothing.</td></tr>
+<tr><td><code>probe</code></td><td data-i18n="tk_cmd_probe">The same object for one host, examined in depth, including ports 1 to 1024. It takes <code>-Timeout</code>, <code>-Location</code>, <code>-Skip</code> and <code>-Adapter</code> like <code>scan</code>, but it saves nothing to the Location.</td></tr>
 <tr><td><code>vendor</code></td><td data-i18n="tk_cmd_vendor">The maker of a MAC address, read offline from the database inside the app. Accepts addresses from the pipeline, and gives back nothing at all rather than the word "Unknown" when there is no match.</td></tr>
-<tr><td><code>netinfo</code></td><td data-i18n="tk_cmd_netinfo">The active network as an object: <code>Interface</code>, <code>Address</code>, <code>Subnet</code>, <code>Gateway</code> and <code>Dns</code>. A field Windows could not report is empty rather than a dash.</td></tr>
+<tr><td><code>netinfo</code></td><td data-i18n="tk_cmd_netinfo">The active network as an object: <code>Interface</code>, <code>Adapter</code>, <code>Address</code>, <code>Subnet</code>, <code>Gateway</code>, <code>Dns</code>, <code>Wireless</code> and <code>LinkSpeed</code> in bits per second. A field Windows could not report is <code>$null</code> rather than a dash.</td></tr>
 <tr><td><code>locations</code></td><td data-i18n="tk_cmd_locations">The saved Locations as objects, with the <code>Id</code> and <code>Name</code> that <code>-Location</code> takes, plus <code>Customer</code>, <code>LastTargets</code> and <code>LastAdapter</code>. It changes nothing.</td></tr>
+<tr><td><code>scanhistory</code></td><td data-i18n="tk_cmd_scanhistory">Saved scans from History, newest first, with <code>Number</code>, <code>ScannedAt</code>, <code>Location</code>, <code>Target</code>, <code>Devices</code> and <code>Completion</code>. <code>-Run</code> takes a Number or a ScannedAt and returns that run's devices, and with <code>-Compare</code> it returns what was added, removed or changed since the run's baseline instead. <code>-Location</code> keeps to one Location. It changes nothing.</td></tr>
+<tr><td><code>pinghost</code></td><td data-i18n="tk_cmd_pinghost">Pings one host and returns the replies and the loss as one object. <code>-Count</code> takes 1 to 20 checks and defaults to 4. A host that never answers comes back with <code>Received</code> at 0 rather than as an error, and the name leaves the Windows <code>ping</code> command alone.</td></tr>
+<tr><td><code>trace</code></td><td data-i18n="tk_cmd_trace">Traces the path to one host and returns its hops. <code>-MaxHops</code> takes 1 to 64 and defaults to 30.</td></tr>
+<tr><td><code>diagnose</code></td><td data-i18n="tk_cmd_diagnose">Checks one host's name resolution, reverse DNS, ping, route and TCP ports. <code>-Ports</code> picks the ports to try; without it, KillerScan tries 22, 80, 443, 445 and 3389.</td></tr>
+<tr><td><code>watch</code></td><td data-i18n="tk_cmd_watch">Samples availability and latency for 1 to 16 IPv4 addresses over several rounds. <code>-Count</code> sets 1 to 60 rounds and defaults to 4, <code>-Interval</code> waits 1 to 60 seconds between them and defaults to 1, and <code>-MaxSeconds</code> stops after 1 to 600 seconds and keeps the samples so far.</td></tr>
+<tr><td><code>speedtest</code></td><td data-i18n="tk_cmd_speedtest">Runs KillerSpeed through <code>speed.killerscan.net</code> and returns download, upload, latency and jitter. It moves real test data, so it uses your connection for the length of the test.</td></tr>
 </table>
 <div class="cli-demo" aria-label="KillerScan terminal command examples"><span class="prompt">&gt;</span> scan <span class="arg">| ? Type -eq 'Printer' | ft Ip, Hostname, Vendor</span>
 <span class="prompt">&gt;</span> scan <span class="arg">192.168.50.0/24 -Quick | measure</span>
 <span class="prompt">&gt;</span> scan <span class="arg">| ? { $_.Ports -contains 3389 }</span>
 <span class="prompt">&gt;</span> scan <span class="arg">| sort Vendor | export-csv site.csv -NoTypeInformation</span>
 <span class="prompt">&gt;</span> scan <span class="arg">(netinfo).Subnet</span>
-<span class="prompt">&gt;</span> probe <span class="arg">192.168.50.20 | fl *</span></div>
+<span class="prompt">&gt;</span> probe <span class="arg">192.168.50.20 | fl *</span>
+<span class="prompt">&gt;</span> scanhistory <span class="arg">-Run 1 -Compare</span>
+<span class="prompt">&gt;</span> diagnose <span class="arg">192.168.50.20 -Ports 22, 443</span>
+<span class="prompt">&gt;</span> (watch <span class="arg">192.168.50.1 -Count 60 -MaxSeconds 30).samples | group Success</span></div>
 <p data-i18n="tk_cmd_note">Each command is the app doing the work: the module shells out to the same command line an installed copy puts on PATH, and reads its JSON. It knows where to find a portable copy too, so the commands work from a folder you just dropped the exe into.</p>
 <p data-i18n="tk_cmd_note_p2">The names are deliberately short because they live in this terminal rather than in your own PowerShell profile, where <code>scan</code> would be a rude thing to claim.</p>
 </div></div></div>
@@ -331,6 +341,7 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <tr><td><code>killerscan /probe &lt;IPv4&gt;</code></td><td data-i18n="tk_cli_probe">Deep-probe one host, scanning ports 1-1024 plus KillerScan's extended service list and collecting every available fingerprint.</td></tr>
 <tr><td><code>killerscan /network</code></td><td data-i18n="tk_cli_network">Print the detected interface, local address, subnet, gateway and DNS server without scanning.</td></tr>
 <tr><td><code>killerscan /locations</code></td><td data-i18n="tk_cli_locations">List the saved Locations with their IDs, customers, and last targets and adapters. Add <code>/json</code> for data. It changes nothing.</td></tr>
+<tr><td><code>killerscan /history [run]</code></td><td data-i18n="tk_cli_historycmd">List saved scans from every Location, newest first, or show one run's devices. Add <code>/compare</code> to see what changed since its baseline. It only reads History and never changes it.</td></tr>
 <tr><td><code>killerscan /vendor &lt;MAC&gt;</code></td><td data-i18n="tk_cli_vendorcmd">Resolve a MAC address against the embedded offline IEEE OUI database.</td></tr>
 <tr><td><code>killerscan /ping &lt;target&gt;</code></td><td data-i18n="tk_cli_pingcmd">Measure latency and packet loss with 1 to 20 ICMP checks.</td></tr>
 <tr><td><code>killerscan /trace &lt;target&gt;</code></td><td data-i18n="tk_cli_tracecmd">Trace up to 64 hops to an IPv4 address or hostname.</td></tr>
@@ -338,6 +349,8 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <tr><td><code>killerscan /watch &lt;targets&gt;</code></td><td data-i18n="tk_cli_watchcmd">Sample availability and latency for 1 to 16 IPv4 addresses.</td></tr>
 <tr><td><code>killerscan /speedtest</code></td><td data-i18n="tk_cli_speedtestcmd">Run KillerSpeed and report download, upload, latency, and jitter.</td></tr>
 <tr><td><code>/quick</code></td><td data-i18n="tk_cli_quick">Run discovery, hostname, MAC, vendor, and lightweight device classification without the full port and fingerprint probe.</td></tr>
+<tr><td><code>/location name|id</code>, <code>/skip check,...</code>, <code>/adapter name|ip</code></td><td data-i18n="tk_cli_scope">Apply a saved Location's device names and types, turn individual checks off, or send every probe from one adapter. A scan with <code>/location</code> is recorded in that Location's history; a probe saves nothing.</td></tr>
+<tr><td><code>/count N</code>, <code>/interval N</code>, <code>/max-seconds N</code>,<br><code>/max-hops N</code>, <code>/ports p,p</code></td><td data-i18n="tk_cli_netopts">Ping takes 1 to 20 checks and watch takes 1 to 60 rounds, 4 by default for both. Watch waits 1 to 60 seconds between rounds and can stop after 1 to 600 seconds with the samples so far. Trace stops at 1 to 64 hops, 30 by default, and diagnose tries the listed TCP ports.</td></tr>
 <tr><td><code>/progress</code>, <code>/timeout N</code></td><td data-i18n="tk_cli_progress">Report status every five percent or cancel after a deadline.</td></tr>
 <tr><td><code>/filter text</code>, <code>/type text</code>, <code>/vendor-filter text</code>, <code>/ports p,p</code></td><td data-i18n="tk_cli_filters">Keep only matching devices. The general filter searches displayed values and every collected fingerprint.</td></tr>
 <tr><td><code>/sort field</code>, <code>/descending</code>, <code>/limit N</code></td><td data-i18n="tk_cli_sorting">Order by IP, hostname, MAC, vendor, type or open-port count, reverse it if wanted, then cap the result count.</td></tr>
@@ -346,6 +359,7 @@ html[data-theme="light"] .help-cat, html[data-theme="light"] .kbd-group h4 { tex
 <tr><td><code>/no-header</code>, <code>/theme name</code></td><td data-i18n="tk_cli_headers">Drop table/CSV headings, or select any of the fourteen app themes for HTML output.</td></tr>
 <tr><td><code>/fail-empty</code></td><td data-i18n="tk_cli_failempty">Return exit code 3 when filtering leaves no devices, making empty automation results explicit.</td></tr>
 <tr><td><code>/quiet</code></td><td data-i18n="tk_cli_quiet">Suppress normal progress and results. Intended for unattended use with /export and an exit-code check.</td></tr>
+<tr><td><code>/log &lt;path&gt;</code></td><td data-i18n="tk_cli_log">Also write status, progress and errors to a file. Use it from PowerShell, which never hands a GUI app its <code>2&gt;</code> redirect.</td></tr>
 <tr><td><code>/help</code>, <code>-h</code>, <code>/?</code></td><td data-i18n="tk_cli_help">Print the complete built-in command reference.</td></tr>
 <tr><td><code>/version</code>, <code>-v</code></td><td data-i18n="tk_cli_version">Print the installed version.</td></tr>
 </table>
@@ -371,7 +385,7 @@ killerscan <span class="arg">/scan 192.168.50.0/24 10.0.0.10-20</span></div>
 <tr><td><code>0</code></td><td data-i18n="tk_cli_exit0">The scan and any requested export completed successfully.</td></tr>
 <tr><td><code>1</code></td><td data-i18n="tk_cli_exit1">The scan or export failed, or the scan was canceled.</td></tr>
 <tr><td><code>2</code></td><td data-i18n="tk_cli_exit2">A required value or scan target was missing or invalid.</td></tr>
-<tr><td><code>3</code></td><td data-i18n="tk_cli_exit3">No device matched, or an offline vendor lookup found no registration, when the command requested that distinction.</td></tr>
+<tr><td><code>3</code></td><td data-i18n="tk_cli_exit3">No device was left after filtering with /fail-empty, the vendor or saved scan was not found, or the target never answered a ping, trace, diagnose or watch.</td></tr>
 </table>
 </div></div></div>
 
@@ -573,7 +587,7 @@ window.addEventListener('resize', fit);
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 <div class="egg-toast" id="eggToast"></div>
-<script src="ks-i18n.js?v=25"></script>
+<script src="ks-i18n.js?v=20261121-commands"></script>
 <script src="cli-help-i18n.js?v=1"></script>
 <script src="ks.js?v=20261020-picker-focus-sl20"></script>
 <script>

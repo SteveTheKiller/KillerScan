@@ -422,6 +422,8 @@ html[data-theme="light"] .tech-sec h3 { text-shadow: none; }
 .cli-demo .prompt { user-select: none; }
 .cli-demo .arg, .codeblock .arg { color: #b9dcae; }
 .cli-table td:first-child { white-space: nowrap; }
+/* On a phone the unwrapped syntax column left the description a few pixels wide. */
+@media (max-width: 560px) { .cli-table td:first-child { white-space: normal; width: 40%; } }
 .exit-table { max-width: 720px; }
 .cli-feature { border-left: 2px solid var(--accent); }
 .feature-card code { color: var(--accent); font-family: Consolas, monospace; font-size: .92em; }
