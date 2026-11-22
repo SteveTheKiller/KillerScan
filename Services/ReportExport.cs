@@ -160,8 +160,10 @@ namespace KillerScan.Services
             sb.AppendLine(".themesw button{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);cursor:pointer;padding:0;outline:none;transition:transform .1s}");
             sb.AppendLine(".themesw button:hover{transform:scale(1.15)}.themesw button.active{border-color:var(--text)}");
             sb.AppendLine(".meta{color:var(--muted);font-size:13px;margin:0 0 18px}.meta b{color:var(--text)}");
-            sb.AppendLine(".tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px;background-color:var(--pane);background-image:radial-gradient(rgba(255,255,255,.035) .65px,transparent .75px);background-size:3px 3px;box-shadow:0 10px 30px rgba(0,0,0,.45)}");
-            sb.AppendLine("html.theme-se98 .tablewrap{border-radius:0;border-color:#000;background-image:linear-gradient(45deg,#f2f2f2 25%,transparent 25%,transparent 75%,#f2f2f2 75%),linear-gradient(45deg,#f2f2f2 25%,#fff 25%,#fff 75%,#f2f2f2 75%);background-position:0 0,1px 1px;background-size:2px 2px;box-shadow:none}");
+            sb.AppendLine(".tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px;background-color:var(--pane);background-image:radial-gradient(rgba(255,255,255,.035) .65px,transparent .75px);background-size:3px 3px}");
+            // The shadow sits on a frame around the table, so a theme can clip the table itself without losing it.
+            sb.AppendLine(".tableframe{border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.45)}html.theme-se98 .tableframe{border-radius:0;box-shadow:none}");
+            sb.AppendLine("html.theme-se98 .tablewrap{border-radius:0;border-color:#000;background-image:linear-gradient(45deg,#f2f2f2 25%,transparent 25%,transparent 75%,#f2f2f2 75%),linear-gradient(45deg,#f2f2f2 25%,#fff 25%,#fff 75%,#f2f2f2 75%);background-position:0 0,1px 1px;background-size:2px 2px}");
             sb.AppendLine("table{border-collapse:collapse;width:100%;min-width:760px}");
             sb.AppendLine("th{background:var(--surface);color:var(--muted);text-align:left;padding:10px 14px;font-size:12px;font-weight:600;font-family:Consolas,monospace;letter-spacing:.3px;position:sticky;top:0;white-space:nowrap;cursor:pointer;user-select:none}");
             sb.AppendLine("th:hover{color:var(--text)}th .arrow{display:inline-block;width:10px;font-size:10px;opacity:.7}");
@@ -187,7 +189,22 @@ namespace KillerScan.Services
                 sb.Append("html.theme-trashpolka body::before{background:url(").Append(wallpaper.InkUri).AppendLine(") center/cover no-repeat}");
                 sb.Append("html.theme-trashpolka body::after{--tpmask:url(").Append(wallpaper.CoverageUri)
                   .AppendLine(");background:var(--accent);-webkit-mask:var(--tpmask) center/cover no-repeat;mask:var(--tpmask) center/cover no-repeat}");
-                sb.AppendLine("@media print,(forced-colors:active){html.theme-trashpolka body::before,html.theme-trashpolka body::after{display:none}}");
+                // The device table is a screen, as in the app: the same ink runs through it at screen strength. The layers
+                // are fixed to the viewport like the page's, so they line up with the ink around the table, and the
+                // table's clip keeps them inside it. The header stays a solid band over them.
+                string screen = KillerScan.Controls.TrashPolkaInk.ScreenOpacity.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
+                sb.AppendLine("html.theme-trashpolka .tablewrap{position:relative;isolation:isolate;clip-path:inset(0 round 8px)}");
+                sb.Append("html.theme-trashpolka .tablewrap::before,html.theme-trashpolka .tablewrap::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:")
+                  .Append(screen).AppendLine("}");
+                sb.Append("html.theme-trashpolka .tablewrap::before{background:url(").Append(wallpaper.InkUri).AppendLine(") center/cover no-repeat}");
+                sb.Append("html.theme-trashpolka .tablewrap::after{background:var(--accent);-webkit-mask:url(").Append(wallpaper.CoverageUri)
+                  .Append(") center/cover no-repeat;mask:url(").Append(wallpaper.CoverageUri).AppendLine(") center/cover no-repeat}");
+                // The app's table colors: an accent line under the grained header, #555555 row lines (PaneBorderBrush) and
+                // every other row lifted by RowAltBrush (#18FFFFFF).
+                sb.AppendLine("html.theme-trashpolka th{border-bottom:1px solid var(--accent);background-image:radial-gradient(rgba(255,255,255,.035) .65px,transparent .75px);background-size:3px 3px}");
+                sb.AppendLine("html.theme-trashpolka td{border-top-color:#555555}html.theme-trashpolka tbody tr:first-child td{border-top:0}");
+                sb.AppendLine("html.theme-trashpolka tbody tr:nth-child(even) td{background:rgba(255,255,255,.094)}html.theme-trashpolka tbody tr:hover td{background:var(--hover)}");
+                sb.AppendLine("@media print,(forced-colors:active){html.theme-trashpolka body::before,html.theme-trashpolka body::after,html.theme-trashpolka .tablewrap::before,html.theme-trashpolka .tablewrap::after{display:none}}");
             }
             sb.AppendLine("</style></head><body><div class='wrap'>");
 
@@ -223,7 +240,7 @@ namespace KillerScan.Services
             sb.AppendLine($"<p class='meta'>{Esc(L("Str_Rep_Subnet", "Subnet"))} <b>{Esc(subnetText)}</b> &middot; {Esc(L("Str_Rep_Scanned", "Scanned"))} <b>{scannedAt.ToString("yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture)}</b> &middot; <b>{list.Count}</b> {Esc(L("Str_Rep_Devices", "devices"))}{status}</p>");
 
             // The report's headers reuse the grid's own column keys, so the two never disagree.
-            sb.AppendLine("<div class='tablewrap'><table id='tbl'><thead><tr>");
+            sb.AppendLine("<div class='tableframe'><div class='tablewrap'><table id='tbl'><thead><tr>");
             // Each header holds a real button, so it takes keyboard focus and sorts on Enter and Space.
             sb.AppendLine($"<th data-type='num'><button type='button' class='sortbtn'>{Esc(L("Str_Col_Ip", "IP Address"))} <span class='arrow' aria-hidden='true'></span></button></th>");
             sb.AppendLine($"<th data-type='text'><button type='button' class='sortbtn'>{Esc(L("Str_Col_Host", "Hostname"))} <span class='arrow' aria-hidden='true'></span></button></th>");
@@ -248,7 +265,7 @@ namespace KillerScan.Services
                     // Hovering the ports lists each endpoint and what it answered.
                     $"<td class='mono' title='{Esc(string.Join("\n", DeviceAccess.ForDevice(d).Select(AccessWording.Item)))}'>{Esc(d.OpenPortsDisplay)}</td></tr>");
             }
-            sb.AppendLine("</tbody></table></div>");
+            sb.AppendLine("</tbody></table></div></div>");
 
             // The app name stays outside the translated span - it is the link text and a proper noun.
             sb.AppendLine($"<p class='footer'>{Esc(L("Str_Rep_GeneratedBy", "Generated by"))} <a href='{AppInfo.SiteUrl}' target='_blank' rel='noopener'>KillerScan</a> &middot; &copy; 2026 Steve the Killer</p>");

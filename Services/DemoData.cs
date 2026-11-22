@@ -242,9 +242,17 @@ namespace KillerScan.Services
                 $"{green}Reply from {scan.Gateway}: bytes=32 time=1ms TTL=64{off}",
                 $"{green}Reply from {scan.Gateway}: bytes=32 time=2ms TTL=64{off}",
                 "",
-                $"{cyan}~{off}",
-                $"{green}>{off} ",
             };
+            // Two vendor lookups on the fabricated devices fill the rest of the pane with the CLI's own output.
+            foreach (var device in scan.Devices.Where(d => d.MacAddress.Length > 0 && d.Vendor.Length > 0).Take(2))
+            {
+                lines.Add($"{cyan}~{off}");
+                lines.Add($"{green}>{off} killerscan /vendor {device.MacAddress}");
+                lines.Add(device.Vendor);
+                lines.Add("");
+            }
+            lines.Add($"{cyan}~{off}");
+            lines.Add($"{green}>{off} ");
             return string.Join("\r\n", lines);
         }
 

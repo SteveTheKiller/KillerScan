@@ -79,7 +79,7 @@ internal static class SiteShots
         Shot("04-trash-polka-services", Theme.TrashPolka, Accent.Teal, false, () => Invoke(window, "ServicesButton_Click", window, new RoutedEventArgs()),
             width: 960, height: 640, scale: 1.1);
         Shot("05-dark-terminal", Theme.Dark, Accent.Green, true, () => Invoke(window, "NewTerminalView"), 1500,
-            width: 900, height: 560, sidebarRight: true);
+            width: 800, height: 500, scale: 1.1, sidebarRight: true);
         Shot("06-light-devices", Theme.Light, Accent.Blue, false, () => { Devices(); Pump(300); SelectRow(9); },
             width: 1060, height: 660, scale: 0.9);
         Shot("07-98se-devices", Theme.SE98, Accent.Blue, true, () => { Devices(); Pump(300); SelectRow(2); },
@@ -94,6 +94,17 @@ internal static class SiteShots
         Shot("09-trash-polka-shortcuts", Theme.TrashPolka, Accent.Magenta, false, () => { Devices(); Pump(300); Invoke(window, "ShowShortcuts"); },
             width: 1240, height: 800);
         ((FrameworkElement)window.FindName("ShortcutsOverlay")).Visibility = Visibility.Collapsed;
+        // The HTML report of the same demo scan, opening in Trash Polka; a headless browser captures it afterwards.
+        if (scan.GetType().GetField("_active", Any)?.GetValue(scan) is { } run
+            && run.GetType().GetProperty("Devices")?.GetValue(run) is System.Collections.IEnumerable devices)
+        {
+            // The demo network is random per run, so the subnet line comes from the scan's own addresses.
+            var list = devices.Cast<KillerScan.Engine.NetworkDevice>().ToList();
+            string first = list.OrderBy(x => x.IpSortKey).First().IpAddress;
+            string subnet = first.Substring(0, first.LastIndexOf('.')) + ".0/24";
+            File.WriteAllText(Path.Combine(dir, "10-trash-polka-report.html"), ReportExport.BuildHtml(list, subnet, "trashpolka"));
+            Console.WriteLine("10-trash-polka-report: HTML report in Trash Polka");
+        }
         window.Close();
         Console.WriteLine("PASS: site shots saved to " + dir);
     }
