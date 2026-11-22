@@ -118,6 +118,7 @@ internal static class Program
             if (args.SequenceEqual(new[] { "--locations-sidebar" })) { HistoryUiTests.Isolated = LocationsSidebarTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--sidebar-placement" })) { HistoryUiTests.Isolated = SidebarPlacementTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--trash-polka-surfaces" })) { HistoryUiTests.Isolated = TrashPolkaSurfaceTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
+            if (args.SequenceEqual(new[] { "--site-shots" })) { HistoryUiTests.Isolated = SiteShots.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--keyboard-focus" })) { HistoryUiTests.Isolated = KeyboardFocusTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
             if (args.SequenceEqual(new[] { "--contrast-transitions" })) { await ContrastTransitionTests.Run(); return 0; }
             if (args.SequenceEqual(new[] { "--picker-selection" })) { HistoryUiTests.Isolated = PickerSelectionTests.Run; await HistoryUiTests.Run(lifecycleOnly: true); return 0; }
